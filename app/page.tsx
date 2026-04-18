@@ -242,7 +242,7 @@ export default function LandingPage() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-gray-900"></span>
                 </span>
-                <span className="text-xs font-bold uppercase tracking-widest text-gray-600">The Visual Creator Hub</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-gray-600">The Visual Creator Hub "sudah terupdate"</span>
               </div>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-8 leading-[1.05] tracking-tight">
