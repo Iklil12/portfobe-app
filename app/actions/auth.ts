@@ -21,6 +21,8 @@ export async function registerUser(formData: FormData) {
     // 2. Enkripsi Password agar aman di Hostinger
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName || "User")}&background=random`;
+
     // 3. Simpan data ke MySQL Hostinger dengan Skema Baru (Terpisah)
     const newUser = await prisma.user.create({
       data: {
@@ -28,6 +30,7 @@ export async function registerUser(formData: FormData) {
         email: email,
         password: hashedPassword,
         plan: "FREE",
+        avatar: defaultAvatar,
         
         // Data khusus tabel Profile (Prisma akan otomatis membuatkannya)
         profile: {

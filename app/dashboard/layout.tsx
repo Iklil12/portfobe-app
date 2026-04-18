@@ -196,31 +196,35 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <p className="text-sm font-bold">{userName}</p>
                   <p className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded inline-block ${
                       userPlan === 'PRO' 
-                      ? 'text-yellow-600 bg-yellow-50 border border-yellow-200/50' // Mengubah warna teks PRO menjadi tema emas/kuning
+                      ? 'text-yellow-600 bg-yellow-50 border border-yellow-200/50' 
                       : 'text-gray-400 bg-gray-100'
                   }`}>
                       {userPlan} PLAN
                   </p>
                 </div>
                 
-                {/* INI BAGIAN FOTO YANG BERUBAH: Tambahan logika bingkai emas */}
+                {/* --- PERBAIKAN WADAH BULAT --- */}
                 <div className="relative">
-                  <img 
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=random`} 
-                    className={`w-10 h-10 rounded-full cursor-pointer object-cover transition-all duration-300 ${
+                  <div className={`w-10 h-10 rounded-full overflow-hidden cursor-pointer ${
                       userPlan === 'PRO' 
-                        ? 'border-[2.5px] border-yellow-400 ring-4 ring-yellow-50 shadow-[0_0_12px_rgba(250,204,21,0.4)]' // Bingkai Emas
-                        : 'border border-gray-200' // Bingkai Abu-abu standar
-                    }`} 
-                    alt="Profile" 
-                  />
-                  {/* Bintang kecil opsional untuk akun Pro (silakan hapus jika tidak suka) */}
+                        ? 'border-[2.5px] border-yellow-400 ring-4 ring-yellow-50 shadow-[0_0_12px_rgba(250,204,21,0.4)]' 
+                        : 'border border-gray-200' 
+                    }`}
+                  >
+                    <img 
+                      src={(session?.user as any)?.avatar || session?.user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=random`} 
+                      className="w-full h-full object-cover" 
+                      alt="Profile" 
+                    />
+                  </div>
+                  
                   {userPlan === 'PRO' && (
-                    <div className="absolute -top-1 -right-1 bg-yellow-400 text-white rounded-full w-4 h-4 flex items-center justify-center border border-white shadow-sm">
+                    <div className="absolute -top-1 -right-1 bg-yellow-400 text-white rounded-full w-4 h-4 flex items-center justify-center border border-white shadow-sm z-10">
                       <i className="fas fa-star text-[8px]"></i>
                     </div>
                   )}
                 </div>
+                {/* ----------------------------- */}
 
               </>
             )}

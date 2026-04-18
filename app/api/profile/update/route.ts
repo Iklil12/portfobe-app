@@ -12,33 +12,25 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json();
-    const { firstName, lastName, profession, bio } = body;
     
-    // Siapkan nama lengkap, pastikan tidak kosong
+    // Pastikan kita menangkap 'avatar' dari frontend
+    const { firstName, lastName, profession, bio, avatar } = body; 
+    
     const fullName = `${firstName || ''} ${lastName || ''}`.trim() || "User Baru";
 
-    // Simpan ke tabel Profile melalui relasi User
     const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: {
+        // PENTING: Paksa Prisma untuk menyimpan avatar ke database Hostinger
+        avatar: avatar, 
         profile: {
           upsert: {
-            // Jika user baru pertama kali simpan profil, gunakan ini (Create)
-            create: {
-              fullName: fullName,
-              profession: profession,
-              bio: bio,
-            },
-            // Jika user sudah punya profil dan ingin mengubahnya, gunakan ini (Update)
-            update: {
-              fullName: fullName,
-              profession: profession,
-              bio: bio,
-            }
+            create: { fullName, profession, bio },
+            update: { fullName, profession, bio }
           }
         }
       },
-      include: { profile: true } // Kembalikan data profil agar bisa dibaca frontend
+      include: { profile: true } 
     });
 
     return NextResponse.json({ message: "Profil berhasil disimpan", user: updatedUser });

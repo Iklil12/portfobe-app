@@ -28,7 +28,7 @@ export default function LoginPage() {
     });
 
     if (res?.error) {
-      setErrorMsg("Kredensial yang Anda masukkan tidak cocok.");
+      setErrorMsg("email atau password yang Anda masukkan tidak cocok.");
       setIsLoading(false);
     } else {
       router.push('/dashboard');

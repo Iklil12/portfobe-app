@@ -24,12 +24,17 @@ export const authOptions: NextAuthOptions = {
         const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
         if (!isPasswordValid) return null;
 
+        // RETURN KE BAWAH SAAT LOGIN BERHASIL
         return {
           id: user.id,
           name: user.profile?.fullName || "User",
           email: user.email,
           
-          // PENTING: Ambil data plan dari database dan masukkan ke object yang akan di-return
+          // PENTING: Bawa avatar dari tabel User
+          image: user.avatar, 
+          avatar: user.avatar, 
+          
+          // PENTING: Bawa data lainnya
           plan: user.plan, 
           profession: user.profile?.profession,
           bio: user.profile?.bio,
@@ -38,21 +43,39 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user }: any) {
+    // 1. JWT mengatur apa yang disimpan di dalam "Karcis" / Token
+    async jwt({ token, user, trigger, session }: any) {
+      
+      // JIKA ADA TRIGGER UPDATE DARI FRONTEND (Saat klik Simpan Profil)
+      if (trigger === "update" && session?.user) {
+        token.name = session.user.name;
+        token.picture = session.user.image; // standar bawaan NextAuth untuk gambar
+        token.avatar = session.user.avatar; // custom punya Anda
+        token.profession = session.user.profession;
+        token.bio = session.user.bio;
+      }
+      
+      // JIKA USER BARU PERTAMA KALI LOGIN
       if (user) {
-        // PENTING: Masukkan plan dari user ke token
         token.plan = user.plan; 
         token.profession = user.profession;
         token.bio = user.bio;
+        token.avatar = user.avatar;
+        token.picture = user.avatar;
       }
       return token;
     },
+    
+    // 2. SESSION mengatur apa yang bisa dibaca oleh halaman Frontend (useSession)
     async session({ session, token }: any) {
       if (session.user) {
-        // PENTING: Masukkan plan dari token ke session akhir
         session.user.plan = token.plan; 
         session.user.profession = token.profession;
         session.user.bio = token.bio;
+        
+        // Pastikan frontend bisa membaca foto barunya
+        session.user.avatar = token.avatar;
+        session.user.image = token.picture;
       }
       return session;
     }
