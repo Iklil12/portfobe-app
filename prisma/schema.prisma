@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. TABEL USER (Khusus Keamanan & Login)
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique 
+  password    String    
+  plan        String    @default("FREE")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relasi: 1 User punya 1 Profile, dan bisa punya banyak Links & Projects
+  profile     Profile?  
+  links       Link[]    
+  projects    Project[] 
+}
+
+// 2. TABEL PROFILE (Khusus Tampilan Visual Portofolio)
+model Profile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  fullName         String
+  subdomain        String?  @unique
+  profession       String?
+  bio              String?  @db.Text
+  avatarUrl        String?  @db.Text
+  coverUrl         String?  @db.Text
+  location         String?
+  availableForHire Boolean  @default(true)
+  whatsapp         String?
+  themeColor       String   @default("#000000")
+  fontFamily       String   @default("Inter")
+}
+
+// 3. TABEL LINK (Khusus Daftar Sosial Media & Tautan)
+model Link {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  platform    String   // Contoh: "TikTok", "Instagram", "Website"
+  url         String   @db.Text
+  isActive    Boolean  @default(true)
+  order       Int      @default(0) // Untuk mengatur urutan tampilan
+}
+
+// 4. TABEL PROJECT (Karya/Portofolio)
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  mediaUrl    String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
