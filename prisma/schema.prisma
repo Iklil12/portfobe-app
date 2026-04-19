@@ -21,6 +21,7 @@ model User {
   profile     Profile?  
   links       Link[]    
   projects    Project[] 
+  activities Activity[]
 }
 
 // 2. TABEL PROFILE (Khusus Tampilan Visual Portofolio)
@@ -62,4 +63,14 @@ model Project {
   mediaUrl    String?
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+// BARIS BARU: 5. TABEL ACTIVITY (Log Aktivitas User)
+model Activity {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  actionType  String   // Contoh: "ADD_LINK", "UPDATE_PROFILE", "CHANGE_THEME"
+  details     String   @db.Text // Penjelasan aktivitas
+  createdAt   DateTime @default(now())
 }

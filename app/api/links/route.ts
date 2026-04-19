@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { logActivity } from "@/lib/activity";
 
 // AMBIL SEMUA LINK USER
 export async function GET() {
@@ -24,6 +25,7 @@ export async function POST() {
   const user = await prisma.user.findUnique({ where: { email: session.user.email } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
+  // 1. Simpan link baru ke database
   const newLink = await prisma.link.create({
     data: {
       userId: user.id,
@@ -34,5 +36,9 @@ export async function POST() {
     }
   });
 
+  // 2. Catat aktivitasnya di sini (DI DALAM fungsi POST)
+  await logActivity(user.id, "ADD_LINK", `Menambahkan tautan kosong baru ke profil`);
+
+  // 3. Kembalikan response ke frontend
   return NextResponse.json(newLink);
 }

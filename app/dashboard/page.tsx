@@ -1,14 +1,76 @@
 // app/dashboard/page.tsx
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+// Helper untuk format waktu (misal: "2 jam yang lalu")
+function timeAgo(dateParam: string | Date) {
+  const date = typeof dateParam === 'object' ? dateParam : new Date(dateParam);
+  const today = new Date();
+  const seconds = Math.round((today.getTime() - date.getTime()) / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
+
+  if (seconds < 60) return 'Baru saja';
+  if (minutes < 60) return `${minutes} menit yang lalu`;
+  if (hours < 24) return `${hours} jam yang lalu`;
+  if (days === 1) return 'Kemarin';
+  if (days < 7) return `${days} hari yang lalu`;
+  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+}
+
+// Helper untuk Ikon berdasarkan actionType
+function getActivityIcon(actionType: string) {
+  // Mapping action ke icon FontAwesome
+  const iconMap: Record<string, string> = {
+    'UPDATE_AVATAR': 'fa-camera',
+    'UPDATE_PROFILE': 'fa-user-edit',
+    'ADD_LINK': 'fa-link',
+    'UPDATE_LINK': 'fa-link',
+    'DELETE_LINK': 'fa-trash-alt', // Ikon sampah khusus untuk hapus
+    'CHANGE_THEME': 'fa-palette',
+    'UPLOAD_PROJECT': 'fa-cloud-upload-alt',
+    'UPDATE_PROJECT': 'fa-edit',
+  };
+
+  // Jika ada di map, kembalikan ikonnya. 
+  if (iconMap[actionType]) return iconMap[actionType];
+
+  // Logika fallback menggunakan .includes() untuk kata kunci tertentu
+  if (actionType.includes('LINK')) return 'fa-link';
+  if (actionType.includes('THEME')) return 'fa-palette';
+  if (actionType.includes('PROJECT')) return 'fa-project-diagram';
+
+  // Default jika tidak ada yang cocok
+  return 'fa-check-circle';
+}
+
 export default function DashboardOverview() {
+  const [activities, setActivities] = useState<any[]>([]);
+  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const res = await fetch('/api/activity');
+        if (res.ok) {
+          const data = await res.json();
+          setActivities(data);
+        }
+      } catch (error) {
+        console.error("Gagal memuat aktivitas", error);
+      } finally {
+        setIsLoadingActivities(false);
+      }
+    };
+    fetchActivities();
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 font-sans selection:bg-slate-200 selection:text-slate-900 pb-32">
       
-      {/* INJEKSI CSS UNTUK ANIMASI STAGGERED & FONT */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
         * { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -36,20 +98,18 @@ export default function DashboardOverview() {
         </Link>
       </div>
 
-      {/* 4 STAT CARDS - BUG TERPOTONG DIPERBAIKI DENGAN MIN-HEIGHT & FLEX-COL */}
+      {/* 4 STAT CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 mb-10">
         
         {/* CARD 1: Total Views */}
         <div className="bg-white p-6 md:p-7 flex flex-col justify-between min-h-[160px] rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group animate-enter" style={{animationDelay: '100ms'}}>
           <div className="absolute top-0 left-0 w-full h-[2px] bg-transparent group-hover:bg-[#ff9e00] transition-colors duration-500"></div>
-          
           <div className="flex justify-between items-start mb-4">
               <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Total Views</p>
               <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-slate-900 group-hover:bg-slate-100 transition-colors shrink-0">
                   <i className="fas fa-eye text-xs"></i>
               </div>
           </div>
-          
           <div className="flex items-end justify-between mt-auto">
             <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">1.2k</h3>
             <span className="px-2.5 py-1 bg-slate-50 text-slate-600 rounded-lg text-[10px] font-extrabold flex items-center gap-1 border border-slate-100">
@@ -61,14 +121,12 @@ export default function DashboardOverview() {
         {/* CARD 2: Project Clicks */}
         <div className="bg-white p-6 md:p-7 flex flex-col justify-between min-h-[160px] rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group animate-enter" style={{animationDelay: '150ms'}}>
           <div className="absolute top-0 left-0 w-full h-[2px] bg-transparent group-hover:bg-[#ff9e00] transition-colors duration-500"></div>
-          
           <div className="flex justify-between items-start mb-4">
               <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Project Clicks</p>
               <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-slate-900 group-hover:bg-slate-100 transition-colors shrink-0">
                   <i className="fas fa-mouse-pointer text-xs"></i>
               </div>
           </div>
-          
           <div className="flex items-end justify-between mt-auto">
             <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">482</h3>
             <span className="px-2.5 py-1 bg-slate-50 text-slate-600 rounded-lg text-[10px] font-extrabold flex items-center gap-1 border border-slate-100">
@@ -80,14 +138,12 @@ export default function DashboardOverview() {
         {/* CARD 3: Contact Leads */}
         <div className="bg-white p-6 md:p-7 flex flex-col justify-between min-h-[160px] rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group animate-enter" style={{animationDelay: '200ms'}}>
           <div className="absolute top-0 left-0 w-full h-[2px] bg-transparent group-hover:bg-[#ff9e00] transition-colors duration-500"></div>
-          
           <div className="flex justify-between items-start mb-4">
               <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Contact Leads</p>
               <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-slate-900 group-hover:bg-slate-100 transition-colors shrink-0">
                   <i className="fas fa-envelope text-xs"></i>
               </div>
           </div>
-          
           <div className="flex items-end justify-between mt-auto">
             <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">14</h3>
             <span className="px-2.5 py-1 bg-slate-900 text-white rounded-lg text-[10px] font-extrabold flex items-center gap-1 shadow-sm">
@@ -99,7 +155,6 @@ export default function DashboardOverview() {
         {/* CARD 4: Active Theme */}
         <div className="bg-white p-6 md:p-7 flex flex-col justify-between min-h-[160px] rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group animate-enter" style={{animationDelay: '250ms'}}>
           <div className="absolute top-0 left-0 w-full h-[2px] bg-transparent group-hover:bg-[#ff9e00] transition-colors duration-500"></div>
-          
           <div className="flex justify-between items-start mb-4">
               <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1 flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse relative before:absolute before:inset-0 before:bg-emerald-500 before:rounded-full before:animate-ping"></span>
@@ -109,7 +164,6 @@ export default function DashboardOverview() {
                   <i className="fas fa-swatchbook text-xs"></i>
               </div>
           </div>
-          
           <div className="flex items-end justify-between mt-auto">
             <h3 className="text-[22px] md:text-2xl font-black text-slate-900 tracking-tight leading-none truncate group-hover:text-[#ff9e00] transition-colors">
                 The Boutique
@@ -118,49 +172,61 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      {/* RECENT ACTIVITY */}
+      {/* RECENT ACTIVITY (DINAMIS DARI DATABASE) */}
       <div className="bg-white rounded-[2.5rem] p-8 md:p-10 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] animate-enter" style={{animationDelay: '300ms'}}>
         
         <div className="flex justify-between items-center mb-10">
           <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">Recent Activity</h3>
-          <button className="text-xs font-extrabold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors group flex items-center gap-1">
-              View All <i className="fas fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
-          </button>
+          <Link href="/dashboard/history" className="text-xs font-extrabold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors group flex items-center gap-1">
+            View All <i className="fas fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+        </Link>
         </div>
         
         <div className="space-y-3">
-          {/* Row 1 */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors group cursor-default border border-transparent hover:border-slate-100">
-            <div className="w-12 h-12 shrink-0 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-slate-900 transition-all shadow-sm group-hover:shadow">
-                <i className="fas fa-cloud-upload-alt text-sm"></i>
-            </div>
-            <div className="flex-1 min-w-0">
-                <p className="text-sm font-extrabold text-slate-900 truncate">Berhasil upload aset <span className="text-[#ff9e00] font-black">"Nike Commercial 2025"</span></p>
-                <p className="text-xs font-medium text-slate-400 mt-1">2 jam yang lalu</p>
-            </div>
-          </div>
-          
-          {/* Row 2 */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors group cursor-default border border-transparent hover:border-slate-100">
-            <div className="w-12 h-12 shrink-0 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-slate-900 transition-all shadow-sm group-hover:shadow">
-                <i className="fas fa-palette text-sm"></i>
-            </div>
-            <div className="flex-1 min-w-0">
-                <p className="text-sm font-extrabold text-slate-900 truncate">Mengganti tema portofolio ke <span className="text-[#ff9e00] font-black">"The Boutique"</span></p>
-                <p className="text-xs font-medium text-slate-400 mt-1">Kemarin, 14:20</p>
-            </div>
-          </div>
-
-          {/* Row 3 */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors group cursor-default border border-transparent hover:border-slate-100">
-            <div className="w-12 h-12 shrink-0 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-slate-900 transition-all shadow-sm group-hover:shadow">
-                <i className="fas fa-link text-sm"></i>
-            </div>
-            <div className="flex-1 min-w-0">
-                <p className="text-sm font-extrabold text-slate-900 truncate">Menambahkan tautan <span className="text-[#ff9e00] font-black">Instagram</span> ke profil</p>
-                <p className="text-xs font-medium text-slate-400 mt-1">3 hari yang lalu</p>
-            </div>
-          </div>
+          {isLoadingActivities ? (
+             // SKELETON JIKA MASIH LOADING
+             [1,2,3].map(i => (
+                <div key={i} className="flex gap-4 p-4">
+                   <div className="w-12 h-12 rounded-2xl bg-slate-50 animate-pulse shrink-0"></div>
+                   <div className="flex-1 space-y-2 py-1">
+                      <div className="h-4 bg-slate-100 rounded animate-pulse w-3/4"></div>
+                      <div className="h-3 bg-slate-50 rounded animate-pulse w-1/4"></div>
+                   </div>
+                </div>
+             ))
+          ) : activities.length === 0 ? (
+             // KOSONG JIKA BELUM ADA AKTIVITAS
+             <div className="text-center py-10">
+               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                  <i className="fas fa-history text-xl"></i>
+               </div>
+               <p className="text-slate-500 font-medium text-sm">Belum ada aktivitas yang terekam.</p>
+             </div>
+          ) : (
+            // DATA AKTIVITAS DINAMIS
+            // Perhatikan penambahan 'index' pada map di bawah ini
+            activities.map((activity, index) => (
+              // FIX: flex items-center (Agar di mobile tetap lurus) + animate-enter + animationDelay
+              <div 
+                key={activity.id} 
+                className="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors group cursor-default border border-transparent hover:border-slate-100 animate-enter"
+                style={{animationDelay: `${index * 80}ms`}}
+              >
+                <div className="w-12 h-12 shrink-0 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-slate-900 transition-all shadow-sm group-hover:shadow">
+                    <i className={`fas ${getActivityIcon(activity.actionType)} text-sm`}></i>
+                </div>
+                <div className="flex-1 min-w-0">
+                    <p className="text-sm font-extrabold text-slate-900 truncate">
+                      {/* Sedikit trik agar nama/detail spesifik terlihat menonjol oranye */}
+                      {activity.details.split(/"|'/).map((part: string, i: number) => 
+                         i % 2 === 0 ? part : <span key={i} className="text-[#ff9e00] font-black">"{part}"</span>
+                      )}
+                    </p>
+                    <p className="text-xs font-medium text-slate-400 mt-1">{timeAgo(activity.createdAt)}</p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
