@@ -1,3 +1,4 @@
+// app/dashboard/profile/page.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -233,7 +234,37 @@ export default function ProfilePage() {
         <div className="mb-12 border-b border-slate-100 pb-10 flex flex-col md:flex-row items-center md:items-start gap-8 text-center md:text-left animate-enter" style={{animationDelay: '200ms'}}>
           <CldUploadWidget 
             uploadPreset={cloudinaryPreset}
-            options={{ maxFiles: 1, resourceType: "image", clientAllowedFormats: ["jpg", "png", "webp"] }}
+            options={{ 
+              maxFiles: 1, 
+              resourceType: "image", 
+              clientAllowedFormats: ["jpg", "png", "webp"],
+              sources: ["local", "camera", "url"], 
+              showPoweredBy: false,
+              styles: {
+                palette: {
+                  window: "#ffffff",
+                  windowBorder: "#f1f5f9",
+                  tabIcon: "#64748b",
+                  menuIcons: "#0f172a",
+                  textDark: "#0f172a",
+                  textLight: "#ffffff",
+                  link: "#ff9e00",
+                  action: "#0f172a",
+                  inactiveTabIcon: "#94a3b8",
+                  error: "#ef4444",
+                  inProgress: "#ff9e00",
+                  complete: "#22c55e",
+                  sourceBg: "#f8fafc"
+                },
+                fonts: {
+                  default: null,
+                  "'Plus Jakarta Sans', sans-serif": {
+                    url: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
+                    active: true
+                  }
+                }
+              }
+            }}
             onSuccess={(result) => {
               if (typeof result.info === 'object' && 'secure_url' in result.info) {
                 setAvatarUrl(result.info.secure_url); 

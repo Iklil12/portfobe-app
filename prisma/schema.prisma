@@ -61,8 +61,10 @@ model Project {
   title       String
   description String?
   mediaUrl    String?
+  projectType String   @default("photo") // <--- TAMBAHKAN BARIS INI
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) // (Opsional) Tambahkan ini agar bisa diurutkan dari yang terbaru
 }
 // BARIS BARU: 5. TABEL ACTIVITY (Log Aktivitas User)
 model Activity {
