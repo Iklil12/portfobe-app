@@ -39,8 +39,14 @@ model Profile {
   location         String?
   availableForHire Boolean  @default(true)
   whatsapp         String?
-  themeColor       String   @default("#000000")
-  fontFamily       String   @default("Inter")
+  splashScreen Boolean @default(true)
+  // --- SISTEM TEMA & DESAIN (BARU) ---
+  themeTemplate    String   @default("minimalist") // Preset awal (cth: "brutalism", "minimalist")
+  themeColor       String   @default("#000000")    // Warna utama/aksen
+  fontHeading      String   @default("Inter")      // Font untuk Judul
+  fontBody         String   @default("Inter")      // Font untuk Teks Biasa
+  buttonShape      String   @default("rounded")    // Bentuk tombol: "hard" (kotak), "rounded", "pill"
+  cardStyle        String   @default("flat")       // Gaya kartu: "flat", "hard-shadow", "glass"
 }
 
 // 3. TABEL LINK (Khusus Daftar Sosial Media & Tautan)

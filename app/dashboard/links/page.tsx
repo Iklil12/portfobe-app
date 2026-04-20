@@ -17,6 +17,9 @@ export default function LinksPage() {
   const [linkToDelete, setLinkToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  
+  // STATE BARU: Untuk mendeteksi proses penambahan link
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     fetchLinks();
@@ -72,17 +75,23 @@ export default function LinksPage() {
     }
   };
 
+  // LOGIKA TAMBAH LINK DIPERBARUI DENGAN LOADING STATE
   const addLink = async () => {
-    const res = await fetch('/api/links', { method: 'POST' });
-    if (res.ok) {
-      const newLink = await res.json();
-      const updated = [...links, newLink];
-      setLinks(updated);
-      setOriginalLinks(JSON.parse(JSON.stringify(updated)));
-      toast.success("Link ditambahkan", {
-          icon: '🔗',
-          style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
-      });
+    setIsAdding(true); // Nyalakan loading
+    try {
+      const res = await fetch('/api/links', { method: 'POST' });
+      if (res.ok) {
+        const newLink = await res.json();
+        const updated = [...links, newLink];
+        setLinks(updated);
+        setOriginalLinks(JSON.parse(JSON.stringify(updated)));
+        toast.success("Link ditambahkan", {
+            icon: '🔗',
+            style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+        });
+      }
+    } finally {
+      setIsAdding(false); // Matikan loading
     }
   };
 
@@ -219,17 +228,19 @@ export default function LinksPage() {
           )}
           <button 
             onClick={addLink} 
-            className="flex-1 md:flex-none px-6 py-3.5 bg-white text-slate-900 border border-slate-200 rounded-full text-xs font-extrabold uppercase tracking-widest flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all hover:bg-slate-50 hover:border-slate-300"
+            disabled={isAdding} // Nonaktifkan tombol saat loading
+            className="flex-1 md:flex-none px-6 py-3.5 bg-white text-slate-900 border border-slate-200 rounded-full text-xs font-extrabold uppercase tracking-widest flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50"
           >
-            <i className="fas fa-plus text-[10px]"></i> Tambah Baru
+            {isAdding ? <div className="w-3 h-3 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin"></div> : <i className="fas fa-plus text-[10px]"></i>} 
+            {isAdding ? 'Membuat...' : 'Tambah Baru'}
           </button>
         </div>
       </div>
 
-      {/* --- LIST LINKS (Staggered Entrance Animation) --- */}
+      {/* --- LIST LINKS --- */}
       <div className="space-y-4">
         {isLoading ? (
-          // Skeleton Loading
+          // Skeleton Loading Awal
           [1, 2, 3].map((i, index) => (
             <div 
                 key={i} 
@@ -243,7 +254,7 @@ export default function LinksPage() {
                 </div>
             </div>
           ))
-        ) : links.length === 0 ? (
+        ) : links.length === 0 && !isAdding ? (
           // Empty State
            <div className="py-24 flex flex-col items-center justify-center text-center bg-white rounded-[2.5rem] border border-dashed border-slate-200 hover:border-slate-300 transition-colors animate-enter" style={{animationDelay: '200ms'}}>
              <div className="w-16 h-16 bg-slate-50 border border-slate-100 rounded-full flex items-center justify-center mb-6 text-slate-300 text-2xl shadow-sm">
@@ -255,89 +266,102 @@ export default function LinksPage() {
              </p>
              <button 
                 onClick={addLink} 
-                className="text-xs font-extrabold uppercase tracking-widest bg-slate-900 text-white px-8 py-3.5 rounded-full hover:bg-slate-800 transition-colors shadow-lg active:scale-95 flex items-center gap-2"
+                disabled={isAdding}
+                className="text-xs font-extrabold uppercase tracking-widest bg-slate-900 text-white px-8 py-3.5 rounded-full hover:bg-slate-800 transition-colors shadow-lg active:scale-95 flex items-center gap-2 disabled:opacity-50"
              >
                 <i className="fas fa-plus"></i> Tambah Tautan Pertama
              </button>
            </div>
         ) : (
-          // List Data
-          links.map((link, index) => {
-            const iconClass = getIconClass(link.platform);
-            return (
-              <div 
-                key={link.id} 
-                className="group bg-white p-5 sm:p-6 rounded-[2rem] border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.01)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:border-slate-200 flex flex-col sm:flex-row gap-5 items-center transition-all duration-300 animate-enter"
-                style={{animationDelay: `${index * 80}ms`, opacity: 0}}
-              >
-                <div className="flex w-full items-center gap-4 sm:gap-6">
+          // List Data (Menggunakan Fragment agar Skeleton Tambahan bisa masuk di bawah)
+          <>
+            {links.map((link, index) => {
+              const iconClass = getIconClass(link.platform);
+              return (
+                <div 
+                  key={link.id} 
+                  className="group bg-white p-5 sm:p-6 rounded-[2rem] border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.01)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:border-slate-200 flex flex-col sm:flex-row gap-5 items-center transition-all duration-300 animate-enter"
+                  style={{animationDelay: `${index * 80}ms`, opacity: 0}}
+                >
+                  <div className="flex w-full items-center gap-4 sm:gap-6">
 
-                  {/* Icon Box - DRAG HANDLE DIHAPUS, JADI LEBIH BERSIH */}
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center text-2xl sm:text-3xl shrink-0 group-hover:scale-110 group-hover:rotate-3 group-hover:bg-slate-900 group-hover:text-white group-hover:shadow-md transition-all duration-500 ease-out relative overflow-hidden ml-1 sm:ml-2">
-                    <i className={iconClass}></i>
-                    {/* Subtle inner hover glow */}
-                    <div className="absolute inset-0 bg-[#ff9e00]/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-[20px]"></div>
-                  </div>
+                    {/* Icon Box */}
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center text-2xl sm:text-3xl shrink-0 group-hover:scale-110 group-hover:rotate-3 group-hover:bg-slate-900 group-hover:text-white group-hover:shadow-md transition-all duration-500 ease-out relative overflow-hidden ml-1 sm:ml-2">
+                      <i className={iconClass}></i>
+                      <div className="absolute inset-0 bg-[#ff9e00]/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-[20px]"></div>
+                    </div>
 
-                  {/* Input Fields */}
-                  <div className="flex-1 min-w-0 flex flex-col gap-2 relative">
-                    <input 
-                      type="text" 
-                      value={link.platform} 
-                      onChange={(e) => updateLocalLink(link.id, { platform: e.target.value })}
-                      className="w-full bg-transparent font-extrabold text-slate-900 focus:outline-none focus:text-[#ff9e00] text-lg sm:text-xl transition-colors placeholder:text-slate-300 tracking-tight relative z-10"
-                      placeholder="Nama Platform (cth: Instagram)"
-                    />
-                    <div className="flex items-center gap-2 text-slate-400 focus-within:text-slate-900 transition-colors relative z-10">
-                        <i className="fas fa-link text-[10px]"></i>
-                        <input 
-                          type="url" 
-                          value={link.url} 
-                          onChange={(e) => updateLocalLink(link.id, { url: e.target.value })}
-                          className="w-full bg-transparent text-xs font-medium text-slate-500 focus:outline-none focus:text-slate-900 truncate placeholder:text-slate-300 transition-colors"
-                          placeholder="https://..."
-                        />
+                    {/* Input Fields */}
+                    <div className="flex-1 min-w-0 flex flex-col gap-2 relative">
+                      <input 
+                        type="text" 
+                        value={link.platform} 
+                        onChange={(e) => updateLocalLink(link.id, { platform: e.target.value })}
+                        className="w-full bg-transparent font-extrabold text-slate-900 focus:outline-none focus:text-[#ff9e00] text-lg sm:text-xl transition-colors placeholder:text-slate-300 tracking-tight relative z-10"
+                        placeholder="Nama Platform (cth: Instagram)"
+                      />
+                      <div className="flex items-center gap-2 text-slate-400 focus-within:text-slate-900 transition-colors relative z-10">
+                          <i className="fas fa-link text-[10px]"></i>
+                          <input 
+                            type="url" 
+                            value={link.url} 
+                            onChange={(e) => updateLocalLink(link.id, { url: e.target.value })}
+                            className="w-full bg-transparent text-xs font-medium text-slate-500 focus:outline-none focus:text-slate-900 truncate placeholder:text-slate-300 transition-colors"
+                            placeholder="https://..."
+                          />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* ACTION BAR */}
-                <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                  
-                  {/* Switch Status */}
-                  <div className="flex items-center gap-3">
-                     <span className={`text-[10px] font-extrabold uppercase tracking-widest transition-colors ${link.isActive ? 'text-slate-900' : 'text-slate-300'}`}>
-                       {link.isActive ? 'Visible' : 'Hidden'}
-                     </span>
+                  {/* ACTION BAR */}
+                  <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+                    
+                    {/* Switch Status */}
+                    <div className="flex items-center gap-3">
+                        <span className={`text-[10px] font-extrabold uppercase tracking-widest transition-colors ${link.isActive ? 'text-slate-900' : 'text-slate-300'}`}>
+                          {link.isActive ? 'Visible' : 'Hidden'}
+                        </span>
 
-                    {/* Toggle Button */}
-                    <button
-                      onClick={() => updateLocalLink(link.id, { isActive: !link.isActive })}
-                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 focus:outline-none ${
-                        link.isActive ? 'bg-slate-900' : 'bg-slate-200 hover:bg-slate-300'
-                      }`}
+                      {/* Toggle Button */}
+                      <button
+                        onClick={() => updateLocalLink(link.id, { isActive: !link.isActive })}
+                        className={`relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 focus:outline-none ${
+                          link.isActive ? 'bg-slate-900' : 'bg-slate-200 hover:bg-slate-300'
+                        }`}
+                      >
+                        <span className={`inline-block h-5 w-5 transform rounded-full transition-transform duration-300 shadow-sm ${
+                            link.isActive ? 'translate-x-6 bg-white' : 'translate-x-1 bg-white'
+                        }`} />
+                      </button>
+                    </div>
+
+                    <div className="w-[1px] h-8 bg-slate-100 hidden sm:block"></div>
+
+                    {/* Delete Button */}
+                    <button 
+                      onClick={() => setLinkToDelete(link.id)}
+                      className="w-10 h-10 rounded-full bg-transparent text-slate-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center active:scale-90 transition-all duration-200 shrink-0"
+                      title="Hapus tautan"
                     >
-                      <span className={`inline-block h-5 w-5 transform rounded-full transition-transform duration-300 shadow-sm ${
-                          link.isActive ? 'translate-x-6 bg-white' : 'translate-x-1 bg-white'
-                      }`} />
+                      <i className="fas fa-trash-alt text-sm"></i>
                     </button>
+                    
                   </div>
-
-                  <div className="w-[1px] h-8 bg-slate-100 hidden sm:block"></div>
-
-                  {/* Delete Button */}
-                  <button 
-                    onClick={() => setLinkToDelete(link.id)}
-                    className="w-10 h-10 rounded-full bg-transparent text-slate-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center active:scale-90 transition-all duration-200 shrink-0"
-                    title="Hapus tautan"
-                  >
-                    <i className="fas fa-trash-alt text-sm"></i>
-                  </button>
-                  
                 </div>
+              );
+            })}
+
+            {/* SKELETON EFEK MUNCUL SAAT "TAMBAH BARU" DIKLIK (SEBELUM DATA MASUK) */}
+            {isAdding && (
+              <div className="h-28 w-full bg-white rounded-[2rem] border border-slate-100 flex items-center p-6 gap-6 shadow-sm animate-enter">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-slate-50 rounded-2xl shrink-0 animate-pulse-monochrome border border-slate-100"></div>
+                  <div className="flex-1 space-y-3">
+                      <div className="h-6 w-1/3 bg-slate-50 rounded-lg animate-pulse-monochrome"></div>
+                      <div className="h-4 w-1/2 bg-slate-50 rounded-full animate-pulse-monochrome"></div>
+                  </div>
               </div>
-            );
-          })
+            )}
+          </>
         )}
       </div>
     </main>

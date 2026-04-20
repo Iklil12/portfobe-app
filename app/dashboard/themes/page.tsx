@@ -1,33 +1,76 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 export default function ThemesPage() {
+  const router = useRouter();
   
-  const handleComingSoon = () => {
-    toast('Kustomisasi tema akan segera hadir!', {
-      icon: '✨',
-      style: { 
-        borderRadius: '12px', 
-        background: '#0a0a0a', 
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: '13px',
-        padding: '12px 20px',
-        border: '1px solid #27272a',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
+  // STATE UNTUK MENYIMPAN TEMA & SUBDOMAIN DARI DATABASE
+  const [currentTheme, setCurrentTheme] = useState<string>('brutalism'); // Default fallback
+  const [subdomain, setSubdomain] = useState<string>(''); // Menyimpan subdomain user
+
+  // Mengambil data tema dan subdomain saat halaman dimuat
+  useEffect(() => {
+    const fetchCurrentTheme = async () => {
+      try {
+        const res = await fetch('/api/appearance');
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            if (data.themeTemplate) setCurrentTheme(data.themeTemplate);
+            if (data.subdomain) setSubdomain(data.subdomain); // Mengambil subdomain
+          }
+        }
+      } catch (error) {
+        console.error("Gagal memuat data saat ini:", error);
       }
+    };
+    
+    fetchCurrentTheme();
+  }, []);
+
+  // Fungsi penyeleksi tema
+  const handleUseTheme = (themeId: string, themeName: string) => {
+    // Hanya Neo Brutalism yang bisa diakses untuk diedit
+    if (themeId === 'brutalism') {
+      toast.loading('Menyiapkan editor visual...', { duration: 1000 });
+      setTimeout(() => {
+        router.push('/dashboard/appearance'); // Arahkan ke halaman editor
+      }, 1000);
+    } else {
+      // Tema lain diubah menjadi Coming Soon
+      toast(`Tema ${themeName} akan segera hadir!`, {
+        icon: '🔒',
+        style: { 
+          borderRadius: '12px', 
+          background: '#0a0a0a', 
+          color: '#fff',
+          fontWeight: 'bold',
+          fontSize: '13px',
+          padding: '12px 20px',
+          border: '1px solid #27272a',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
+        }
+      });
+    }
+  };
+
+  const handleProComingSoon = () => {
+    toast('Fitur Pro Creator Editor masih dalam tahap pengembangan.', {
+      icon: '✨',
+      style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
   };
 
   const themes = [
     {
         id: 'minimalist',
-        name: 'The Minimalist',
+        name: 'Minimalist Clean',
         desc: 'Bento Grid, Startup Vibe, Clean Space.',
         preview: 'bg-slate-50',
-        // Pure CSS Interactive Preview: Monokromatik & Sangat Profesional
+        isAvailable: false, // Terkunci
         content: (
             <div className="absolute inset-0 flex items-center justify-center p-6 scale-[0.85] group-hover:scale-95 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] w-full h-full">
                 <div className="w-full h-full grid grid-cols-3 grid-rows-3 gap-3">
@@ -35,7 +78,6 @@ export default function ThemesPage() {
                         <div className="w-1/2 h-3 bg-slate-200 rounded-full"></div>
                     </div>
                     <div className="col-span-1 row-span-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex items-center justify-center opacity-50 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                        {/* Aksen oranye tunggal yang sangat halus */}
                         <div className="w-6 h-6 rounded-full bg-orange-50 text-[#ff9e00] flex items-center justify-center"><i className="fas fa-bolt text-[8px]"></i></div>
                     </div>
                     <div className="col-span-1 row-span-2 bg-slate-900 rounded-2xl shadow-[0_10px_20px_rgba(0,0,0,0.1)] border border-slate-800 opacity-50 group-hover:opacity-100 transition-opacity duration-500 delay-150"></div>
@@ -47,17 +89,19 @@ export default function ThemesPage() {
         )
     },
     {
-        id: 'director',
-        name: 'The Director',
+        id: 'brutalism',
+        name: 'Neo Brutalism',
         desc: 'Dark mode, Cinematic, Massive Type.',
         preview: 'bg-[#0a0a0a]',
+        isAvailable: true, // TERBUKA (Bisa diedit)
         img: 'https://images.unsplash.com/photo-1580234797602-22c37b4a6230?q=80&w=600&auto=format&fit=crop'
     },
     {
-        id: 'gallery',
-        name: 'The Boutique',
+        id: 'elegant',
+        name: 'Elegant Serif',
         desc: 'Earth Tones, Fine Art, Elegant.',
         preview: 'bg-[#f4f4f2]',
+        isAvailable: false, // Terkunci
         img: 'https://images.unsplash.com/photo-1613521140785-e85e427f8002?q=80&w=600&auto=format&fit=crop'
     }
   ];
@@ -65,7 +109,6 @@ export default function ThemesPage() {
   return (
     <main className="min-h-screen bg-[#FAFAFA] font-sans relative overflow-hidden selection:bg-[#ff9e00]/30 selection:text-slate-900 pb-24">
       
-      {/* INJEKSI CSS GLOBAL KHUSUS HALAMAN INI */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
         * { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -76,7 +119,6 @@ export default function ThemesPage() {
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* Latar belakang Grid yang halus dan profesional */
         .bg-grid-slate {
             background-size: 40px 40px;
             background-image: linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
@@ -86,96 +128,132 @@ export default function ThemesPage() {
 
       <Toaster position="top-center" />
 
-      {/* Latar Belakang Grid (Tanpa warna-warni pelangi) */}
       <div className="absolute inset-0 bg-grid-slate pointer-events-none z-0"></div>
 
       <div className="max-w-6xl mx-auto p-6 md:p-10 relative z-10">
         
-        {/* HEADER SECTION - Clean Typography */}
-        <div className="mb-14 animate-enter text-center md:text-left mt-4">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
-            Koleksi <span className="font-light text-slate-400">Tema.</span>
-          </h1>
-          <p className="text-slate-500 font-medium text-lg max-w-xl">Pilih fondasi portofoliomu. Setiap tema dirancang dengan presisi piksel oleh desainer top kami.</p>
+        {/* HEADER SECTION DENGAN TOMBOL LIHAT PORTOFOLIO */}
+        <div className="mb-14 animate-enter flex flex-col md:flex-row md:justify-between md:items-end gap-6 mt-4">
+          <div className="text-center md:text-left">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
+              Koleksi <span className="font-light text-slate-400">Tema.</span>
+            </h1>
+            <p className="text-slate-500 font-medium text-lg max-w-xl">Pilih fondasi portofoliomu. Klik salah satu tema untuk mulai mendesain.</p>
+          </div>
+          
+          {/* Tombol akan muncul jika subdomain user sudah terdeteksi di database */}
+          {subdomain && (
+            <div className="flex justify-center md:justify-end">
+              <a 
+                href={`/${subdomain}`} 
+                target="_blank" 
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-white border border-slate-200 text-slate-900 rounded-full text-xs font-extrabold uppercase tracking-widest hover:border-slate-400 hover:bg-slate-50 transition-all duration-300 shadow-sm hover:shadow-md active:scale-95"
+              >
+                <i className="fas fa-external-link-alt text-[#ff9e00]"></i> Lihat Portofolio
+              </a>
+            </div>
+          )}
         </div>
 
         {/* THEME GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-20 animate-enter" style={{animationDelay: '100ms', opacity: 0}}>
           
-          {themes.map((theme) => (
-              <div key={theme.id} className="bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:border-slate-300 transition-all duration-500 group flex flex-col cursor-pointer hover:-translate-y-1">
-                  
-                  {/* Preview Image/Content Area */}
-                  <div className={`aspect-[4/3] ${theme.preview} relative overflow-hidden`}>
-                      
-                      {theme.img ? (
-                          // Efek gambar grayscale yang elegan saat diam, berubah berwarna saat di-hover
-                          <img 
-                            src={theme.img} 
-                            className="w-full h-full object-cover grayscale-[80%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1s] ease-[cubic-bezier(0.22,1,0.36,1)]" 
-                            alt={theme.name} 
-                          />
-                      ) : (
-                          theme.content
-                      )}
-                      
-                      {/* Hover Overlay Gelap & Tombol yang Sangat Minimalis */}
-                      <div className="absolute inset-0 bg-slate-900/10 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
-                          <button 
-                              onClick={handleComingSoon}
-                              className="bg-white text-slate-900 px-8 py-3.5 rounded-full text-xs font-extrabold tracking-widest uppercase shadow-2xl hover:scale-105 active:scale-95 transition-transform duration-300 translate-y-4 group-hover:translate-y-0 border border-slate-100"
-                          >
-                              Gunakan Tema
-                          </button>
-                      </div>
-                  </div>
+          {themes.map((theme) => {
+              const isActive = currentTheme === theme.id;
 
-                  {/* Keterangan Tema (Typography Presisi) */}
-                  <div className="p-8 bg-white z-10 border-t border-slate-100">
-                      <div className="flex justify-between items-center mb-1.5">
-                        <h4 className="font-extrabold text-slate-900 text-xl tracking-tight">{theme.name}</h4>
-                        {/* Indikator Titik Hitam yang Profesional */}
-                        {theme.id === 'minimalist' && (
-                          <span className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-slate-400">
-                            <span className="w-1.5 h-1.5 rounded-full bg-slate-900"></span> Active
-                          </span>
+              return (
+                <div 
+                  key={theme.id} 
+                  className={`bg-white border-2 ${isActive ? 'border-slate-900 shadow-[0_15px_40px_rgba(0,0,0,0.08)] ring-4 ring-slate-900/5 scale-[1.02]' : theme.isAvailable ? 'border-slate-200 shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:border-slate-400' : 'border-slate-200/60 opacity-90'} rounded-[2rem] overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500 group flex flex-col cursor-pointer hover:-translate-y-1`}
+                >
+                    
+                    {/* Bagian Gambar/Preview */}
+                    <div className={`aspect-[4/3] ${theme.preview} relative overflow-hidden`}>
+                        
+                        {theme.img ? (
+                            <img 
+                              src={theme.img} 
+                              className={`w-full h-full object-cover grayscale-[80%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1s] ease-[cubic-bezier(0.22,1,0.36,1)] ${!theme.isAvailable && 'blur-[1px]'}`} 
+                              alt={theme.name} 
+                            />
+                        ) : (
+                            theme.content
                         )}
-                      </div>
-                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{theme.desc}</p>
-                  </div>
-              </div>
-          ))}
+                        
+                        {/* Overlay Tombol saat di Hover */}
+                        <div className="absolute inset-0 bg-slate-900/10 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
+                            <button 
+                                onClick={() => handleUseTheme(theme.id, theme.name)}
+                                className="bg-white text-slate-900 px-8 py-3.5 rounded-full text-xs font-extrabold tracking-widest uppercase shadow-2xl hover:scale-105 active:scale-95 transition-transform duration-300 translate-y-4 group-hover:translate-y-0 border border-slate-100 flex items-center gap-2"
+                            >
+                                {theme.isAvailable ? (
+                                  isActive ? (
+                                    <> <i className="fas fa-cog text-[10px] text-[#ff9e00]"></i> Kustomisasi Tema </>
+                                  ) : (
+                                    <> <i className="fas fa-palette text-[10px] text-[#ff9e00]"></i> Gunakan Tema </>
+                                  )
+                                ) : (
+                                  <> <i className="fas fa-lock text-[10px] text-slate-400"></i> Segera Hadir </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
 
-          {/* PLACEHOLDER: THEME YANG AKAN DATANG */}
+                    {/* Keterangan Teks di Bawah */}
+                    <div className="p-8 bg-white z-10 border-t border-slate-100 flex-1 flex flex-col justify-between">
+                        <div>
+                          <div className="flex justify-between items-center mb-1.5">
+                            <h4 className={`font-extrabold text-xl tracking-tight ${theme.isAvailable ? 'text-slate-900' : 'text-slate-600'}`}>{theme.name}</h4>
+                            
+                            {/* Indikator Status Tema yang Disempurnakan */}
+                            {isActive ? (
+                              <span className="flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-widest text-slate-900 bg-[#ff9e00] px-2.5 py-1 rounded-md shadow-sm">
+                                <i className="fas fa-check-circle"></i> Saat Ini
+                              </span>
+                            ) : !theme.isAvailable ? (
+                              <span className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-1 rounded-md">
+                                <i className="fas fa-lock"></i> Locked
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+                                <i className="fas fa-unlock"></i> Tersedia
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed mt-2">{theme.desc}</p>
+                        </div>
+                    </div>
+                </div>
+              );
+          })}
+
+          {/* MORE THEMES PLACEHOLDER */}
           <div className="border border-dashed border-slate-300 rounded-[2rem] flex flex-col items-center justify-center p-8 bg-slate-50/50 hover:bg-slate-50 transition-colors duration-300 group cursor-default">
               <div className="w-14 h-14 bg-white border border-slate-100 rounded-2xl flex items-center justify-center shadow-sm mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
-                  <i className="fas fa-lock text-slate-300 group-hover:text-slate-900 transition-colors"></i>
+                  <i className="fas fa-paint-brush text-slate-300 group-hover:text-slate-900 transition-colors"></i>
               </div>
               <h4 className="font-extrabold text-slate-700 text-lg mb-1">More Themes</h4>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Dikurasi oleh desainer kelas dunia.</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Sedang dirancang oleh desainer kami.</p>
           </div>
         </div>
 
-        {/* VISUAL COMING SOON: PRO CREATOR THEME EDITOR - HIGH-END DARK MODE */}
+        {/* PRO CREATOR THEME EDITOR - TETAP COMING SOON */}
         <div 
-          onClick={handleComingSoon}
+          onClick={handleProComingSoon}
           className="relative overflow-hidden bg-[#050505] p-10 md:p-16 rounded-[2.5rem] border border-white/10 cursor-pointer group hover:border-white/20 transition-all duration-500 shadow-2xl animate-enter"
           style={{animationDelay: '200ms', opacity: 0}}
         >
-          {/* Noise Texture untuk Kesan Mewah */}
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/noise-pattern-with-subtle-cross-lines.png')] opacity-[0.03]"></div>
           
-          {/* Pendaran Aksent Oranye yang Sangat Sangat Tipis & Eksklusif */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg h-[200px] bg-[#ff9e00]/5 blur-[120px] rounded-full group-hover:bg-[#ff9e00]/10 transition-colors duration-700"></div>
 
-          {/* Ikon Latar Belakang Tipis */}
           <div className="absolute top-0 right-10 p-10 opacity-[0.02] group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 pointer-events-none">
               <i className="fas fa-swatchbook text-[15rem]"></i>
           </div>
 
           <div className="relative z-10 flex flex-col items-center text-center max-w-2xl mx-auto">
               
-              {/* Badge Pro */}
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 mb-8 group-hover:text-white transition-colors">
                 <i className="fas fa-crown text-[#ff9e00]"></i> Pro Feature
               </div>
@@ -196,7 +274,6 @@ export default function ThemesPage() {
                   ))}
               </div>
 
-              {/* Tombol yang sangat kontras */}
               <div className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-slate-900 rounded-full text-xs font-extrabold uppercase tracking-widest shadow-lg group-hover:bg-slate-200 transition-all duration-300 active:scale-95">
                   <i className="fas fa-lock text-slate-500"></i> Segera Hadir
               </div>
