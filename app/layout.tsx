@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Portfo.be - Professional Portfolio",
   description: "Build your creative presence",
+  icons: {
+    icon: 'icon.svg', // atau '/icon.png' tergantung file yang kamu pakai
+  },
 };
 
 export default function RootLayout({
