@@ -1,6 +1,7 @@
+// File: app/dashboard/layout.tsx
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
@@ -24,13 +25,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // Deteksi rute desain untuk membuka akordion secara default
   const isDesignRoute = pathname === '/dashboard/projects' || pathname === '/dashboard/themes' || pathname === '/dashboard/links';
   const [isDesignMenuOpen, setIsDesignMenuOpen] = useState(isDesignRoute);
 
-  // STATE BARU: Untuk mengontrol modal konfirmasi logout
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // --- STATE BARU: Untuk Mengontrol Popup Profil (Dropdown Menu) ---
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  // Referensi untuk mendeteksi klik di luar popup agar otomatis tertutup
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) => pathname === path;
 
@@ -46,13 +50,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const userName = session?.user?.name || "Creator";
+  const userEmail = session?.user?.email || "user@portfo.be";
   const isLoading = status === "loading"; 
 
-  // FUNGSI BARU: Eksekusi Logout dengan Loading State
   const handleLogout = () => {
     setIsLoggingOut(true);
     signOut({ redirect: true, callbackUrl: '/login' });
   };
+
+  // --- EFEK BARU: Menutup menu profil jika user mengklik bagian luar kotak ---
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#FAFAFA] font-sans text-slate-900 selection:bg-slate-200 selection:text-slate-900 relative">
@@ -70,28 +85,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           0% { opacity: 0; transform: scale(0.95) translateY(10px); }
           100% { opacity: 1; transform: scale(1) translateY(0); }
         }
+        
+        .animate-dropdown { animation: dropdownEnter 0.2s ease-out forwards; transform-origin: top right; }
+        @keyframes dropdownEnter {
+          0% { opacity: 0; transform: scale(0.95) translateY(-10px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
       `}} />
 
       {/* --- MODAL KONFIRMASI LOGOUT --- */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          {/* Latar Belakang Blur */}
           <div 
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-in fade-in duration-300" 
             onClick={() => !isLoggingOut && setShowLogoutModal(false)}
           ></div>
-          
-          {/* Kotak Modal */}
           <div className="relative bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-slate-100 animate-enter-modal z-10">
             <div className="w-16 h-16 bg-slate-50 border border-slate-100 text-slate-900 rounded-full flex items-center justify-center mx-auto mb-6">
               <i className="fas fa-sign-out-alt text-xl translate-x-0.5"></i>
             </div>
-            
             <h3 className="text-2xl font-extrabold text-center mb-2 text-slate-900 tracking-tight">Keluar dari akun?</h3>
             <p className="text-slate-500 text-sm font-medium text-center mb-8 leading-relaxed px-2">
               Sesi Anda akan diakhiri. Anda perlu masuk kembali untuk mengakses dashboard kreator.
             </p>
-            
             <div className="flex gap-3">
               <button 
                 onClick={() => setShowLogoutModal(false)} 
@@ -111,7 +127,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
       )}
-      {/* ---------------------------------- */}
 
       {/* SIDEBAR SISI KIRI */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-100 transform ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'} md:relative md:translate-x-0 flex flex-col justify-between transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]`}>
@@ -134,20 +149,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="space-y-4 px-2 py-4">
                 <div className="h-12 w-full bg-slate-50 rounded-2xl animate-pulse"></div>
                 <div className="h-12 w-full bg-slate-50 rounded-2xl animate-pulse"></div>
-                <div className="pl-12 space-y-2">
-                  <div className="h-8 w-3/4 bg-slate-50/50 rounded-xl animate-pulse"></div>
-                  <div className="h-8 w-3/4 bg-slate-50/50 rounded-xl animate-pulse"></div>
-                </div>
               </div>
             ) : (
               <>
-                {/* Menu: Overview */}
                 <Link href="/dashboard" className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl font-extrabold text-[13px] tracking-wide transition-all group ${isActive('/dashboard') ? 'bg-slate-900 text-white shadow-[0_10px_20px_rgba(0,0,0,0.1)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
                   <i className={`fas fa-layer-group text-lg w-6 text-center transition-colors ${isActive('/dashboard') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
                   Overview
                 </Link>
                 
-                {/* Menu Akordion: Desain */}
                 <div className="pt-2">
                   <button onClick={() => setIsDesignMenuOpen(!isDesignMenuOpen)} className={`w-full flex items-center justify-between px-5 py-3.5 rounded-2xl font-extrabold text-[13px] tracking-wide transition-all group ${isDesignRoute ? 'text-slate-900' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
                     <div className="flex items-center gap-4">
@@ -157,7 +166,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <i className={`fas fa-chevron-down text-[10px] text-slate-400 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isDesignMenuOpen ? 'rotate-180' : ''}`}></i>
                   </button>
                   
-                  {/* Sub-menu Desain */}
                   <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isDesignMenuOpen ? 'max-h-40 py-2 opacity-100' : 'max-h-0 py-0 opacity-0'}`}>
                     <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
                       {isActive('/dashboard/projects') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>}
@@ -174,7 +182,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </div>
                 </div>
 
-                {/* Menu: Analytics */}
                 <Link href="/dashboard/analytics" className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl font-extrabold text-[13px] tracking-wide transition-all group mt-2 ${isActive('/dashboard/analytics') ? 'bg-slate-900 text-white shadow-[0_10px_20px_rgba(0,0,0,0.1)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
                   <i className={`fas fa-chart-pie text-lg w-6 text-center transition-colors ${isActive('/dashboard/analytics') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
                   Metrics
@@ -197,7 +204,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             )}
           </nav>
           
-          {/* BAGIAN KOTAK UPGRADE (DARK & PREMIUM) */}
           <div className="px-6 mt-auto mb-6 pt-10">
             {isLoading ? (
                <div className="h-32 w-full bg-slate-50 rounded-2xl animate-pulse"></div>
@@ -230,28 +236,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
 
-        {/* BAGIAN TOMBOL KELUAR - MODIFIED */}
-        <div className="p-6 border-t border-slate-100 bg-white shrink-0">
-          {isLoading ? (
-             <div className="h-12 w-full bg-slate-50 rounded-2xl animate-pulse"></div>
-          ) : (
-            <button 
-              onClick={() => setShowLogoutModal(true)} 
-              className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-2xl font-bold text-sm text-slate-500 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 transition-all active:scale-95 group"
-            >
-              Keluar <i className="fas fa-sign-out-alt text-xs group-hover:translate-x-1 transition-transform"></i>
-            </button>
-          )}
-        </div>
       </aside>
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative">
         
-        {/* GLOBAL HEADER HEADER */}
+        {/* GLOBAL HEADER */}
         <header className="h-[88px] bg-white/80 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between px-6 sm:px-10 shrink-0 relative z-40">
           <div className="flex items-center gap-4">
-            {/* Hamburger Button untuk Mobile */}
             <button 
               className="md:hidden w-11 h-11 rounded-full border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center shadow-sm"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -261,54 +253,110 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900">{getPageTitle()}</h2>
           </div>
           
-          {/* USER INFO AREA */}
-          <div className="flex items-center gap-5">
-            {isLoading ? (
-              <div className="flex items-center gap-4">
-                <div className="hidden sm:flex flex-col items-end gap-1.5">
-                  <div className="h-4 w-24 bg-slate-200 rounded animate-pulse"></div>
-                  <div className="h-3 w-16 bg-slate-100 rounded animate-pulse"></div>
+          {/* USER INFO AREA (DIBUNGKUS DENGAN REF UNTUK DETEKSI KLIK LUAR) */}
+          <div className="relative" ref={profileMenuRef}>
+            <div className="flex items-center gap-5">
+              {isLoading ? (
+                <div className="flex items-center gap-4">
+                  <div className="hidden sm:flex flex-col items-end gap-1.5">
+                    <div className="h-4 w-24 bg-slate-200 rounded animate-pulse"></div>
+                    <div className="h-3 w-16 bg-slate-100 rounded animate-pulse"></div>
+                  </div>
+                  <div className="w-11 h-11 rounded-full bg-slate-200 border border-slate-100 animate-pulse"></div>
                 </div>
-                <div className="w-11 h-11 rounded-full bg-slate-200 border border-slate-100 animate-pulse"></div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-4 cursor-pointer group">
-                <div className="hidden sm:block text-right">
-                  <p className="text-[13px] font-extrabold text-slate-900 tracking-tight group-hover:text-[#ff9e00] transition-colors">{userName}</p>
-                  <p className={`text-[9px] font-extrabold uppercase tracking-widest mt-0.5 ${
-                      userPlan === 'PRO' ? 'text-[#ff9e00]' : 'text-slate-400'
-                  }`}>
-                      {userPlan} PLAN
-                  </p>
-                </div>
-                
-                {/* Avatar dengan Peringatan Props (Jika PRO) */}
-                <div className="relative">
-                  <div className={`w-11 h-11 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 ${
-                      userPlan === 'PRO' 
-                        ? 'border-2 border-[#ff9e00] shadow-[0_0_15px_rgba(255,158,0,0.3)]' 
-                        : 'border border-slate-200' 
-                    }`}
-                  >
-                    <img 
-                      src={(session?.user as any)?.avatar || session?.user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=f8fafc&color=0f172a&bold=true`} 
-                      className="w-full h-full object-cover" 
-                      alt="Profile" 
-                    />
+              ) : (
+                /* --- TOMBOL UNTUK MEMBUKA POPUP PROFIL --- */
+                <div 
+                  className="flex items-center gap-4 cursor-pointer group" 
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                >
+                  <div className="hidden sm:block text-right">
+                    <p className="text-[13px] font-extrabold text-slate-900 tracking-tight group-hover:text-[#ff9e00] transition-colors">{userName}</p>
+                    <p className={`text-[9px] font-extrabold uppercase tracking-widest mt-0.5 ${
+                        userPlan === 'PRO' ? 'text-[#ff9e00]' : 'text-slate-400'
+                    }`}>
+                        {userPlan} PLAN
+                    </p>
                   </div>
                   
-                  {userPlan === 'PRO' && (
-                    <div className="absolute -top-1 -right-1 bg-[#ff9e00] text-black rounded-full w-4 h-4 flex items-center justify-center border border-white shadow-sm z-10">
-                      <i className="fas fa-crown text-[8px]"></i>
+                  <div className="relative">
+                    <div className={`w-11 h-11 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 ${
+                        userPlan === 'PRO' 
+                          ? 'border-2 border-[#ff9e00] shadow-[0_0_15px_rgba(255,158,0,0.3)]' 
+                          : 'border border-slate-200' 
+                      }`}
+                    >
+                      <img 
+                        src={(session?.user as any)?.avatar || session?.user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=f8fafc&color=0f172a&bold=true`} 
+                        className="w-full h-full object-cover" 
+                        alt="Profile" 
+                      />
                     </div>
+                    {userPlan === 'PRO' && (
+                      <div className="absolute -top-1 -right-1 bg-[#ff9e00] text-black rounded-full w-4 h-4 flex items-center justify-center border border-white shadow-sm z-10">
+                        <i className="fas fa-crown text-[8px]"></i>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* --- KOTAK DROPDOWN MENU PROFIL (MUNCUL SAAT DIKLIK) --- */}
+            {isProfileMenuOpen && !isLoading && (
+              <div className="absolute top-[calc(100%+16px)] right-0 w-64 bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-slate-100 py-3 animate-dropdown z-50">
+                
+                {/* Header Dropdown (Info Email) */}
+                <div className="px-5 py-3 border-b border-slate-100 mb-2">
+                  <p className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Masuk sebagai</p>
+                  <p className="text-sm font-bold text-slate-900 truncate">{userEmail}</p>
+                </div>
+                
+                {/* Daftar Tautan Cepat */}
+                <div className="flex flex-col">
+                  <Link 
+                    href="/dashboard/profile" 
+                    className="px-5 py-3 text-[13px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-3"
+                    onClick={() => setIsProfileMenuOpen(false)}
+                  >
+                    <i className="fas fa-user-edit w-5 text-center text-slate-400"></i> Edit Profil
+                  </Link>
+                  <Link 
+                    href="/dashboard/settings" 
+                    className="px-5 py-3 text-[13px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-3"
+                    onClick={() => setIsProfileMenuOpen(false)}
+                  >
+                    <i className="fas fa-cog w-5 text-center text-slate-400"></i> Pengaturan
+                  </Link>
+                  
+                  {userPlan !== 'PRO' && (
+                    <Link 
+                      href="/dashboard/upgrade" 
+                      className="px-5 py-3 text-[13px] font-bold text-[#ff9e00] hover:bg-[#ff9e00]/10 transition-colors flex items-center gap-3 mt-1"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                    >
+                      <i className="fas fa-arrow-up w-5 text-center"></i> Upgrade Pro
+                    </Link>
                   )}
                 </div>
+
+                <div className="h-px bg-slate-100 my-2 mx-5"></div>
+
+                {/* Tombol Logout Merah */}
+                <button 
+                  onClick={() => { setIsProfileMenuOpen(false); setShowLogoutModal(true); }}
+                  className="w-full px-5 py-3 text-[13px] font-bold text-red-500 hover:bg-red-50 transition-colors flex items-center gap-3 text-left"
+                >
+                  <i className="fas fa-sign-out-alt w-5 text-center"></i> Keluar
+                </button>
+
               </div>
             )}
           </div>
+
         </header>
 
-        {/* DYNAMIC PAGE CONTENT (Tempat halaman anak dirender) */}
+        {/* DYNAMIC PAGE CONTENT */}
         <div className="flex-1 overflow-y-auto">
           {children}
         </div>

@@ -1,10 +1,11 @@
+// File: app/api/projects/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity"; 
 
-// GET: Menarik Semua Proyek untuk ditampilkan di layar
+// 1. GET: Menarik Semua Proyek
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -13,7 +14,6 @@ export async function GET(req: Request) {
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
 
-    // Ambil data dan urutkan dari yang paling baru diupload
     const projects = await prisma.project.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: 'desc' } 
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
   }
 }
 
-// POST: Menyimpan Proyek Baru dari Form Popup
+// 2. POST: Menyimpan Proyek Baru
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -38,12 +38,10 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { title, description, mediaUrl, projectType } = body;
 
-    // Validasi dari server
     if (!title || !mediaUrl) {
       return NextResponse.json({ error: "Judul dan Media wajib diisi" }, { status: 400 });
     }
 
-    // Eksekusi simpan ke database MySQL
     const newProject = await prisma.project.create({
       data: {
         title: title,
@@ -54,10 +52,9 @@ export async function POST(req: Request) {
       }
     });
 
-    // Catat ke History Aktivitas
+    // REKAM AKTIVITAS KE HISTORY
     let actionLabel = "Mengunggah proyek baru";
     if (projectType === 'video') actionLabel = "Menambahkan portofolio video";
-    if (projectType === 'certificate') actionLabel = "Mengunggah sertifikat baru";
     await logActivity(user.id, "UPLOAD_PROJECT", `${actionLabel}: "${title}"`);
 
     return NextResponse.json({ message: "Proyek berhasil ditambahkan", project: newProject }, { status: 201 });
@@ -67,9 +64,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Gagal menyimpan proyek ke server" }, { status: 500 });
   }
 }
-// ... (Biarkan fungsi GET dan POST yang sudah ada di atasnya)
 
-// 3. PATCH: Memperbarui Proyek yang sudah ada
+// 3. PATCH: Memperbarui Proyek
 export async function PATCH(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -85,13 +81,11 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
     }
 
-    // Pastikan proyek tersebut benar-benar milik user yang sedang login
     const existingProject = await prisma.project.findUnique({ where: { id } });
     if (!existingProject || existingProject.userId !== user.id) {
       return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
     }
 
-    // Eksekusi Update ke Database
     const updatedProject = await prisma.project.update({
       where: { id },
       data: {
@@ -102,7 +96,8 @@ export async function PATCH(req: Request) {
       }
     });
 
-    await logActivity(user.id, "UPDATE_PROJECT", `Memperbarui proyek: "${title}"`);
+    // REKAM AKTIVITAS KE HISTORY
+    await logActivity(user.id, "UPDATE_PROJECT", `Memperbarui karya: "${title}"`);
 
     return NextResponse.json({ message: "Proyek berhasil diperbarui", project: updatedProject }, { status: 200 });
 
@@ -111,6 +106,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "Gagal memperbarui proyek" }, { status: 500 });
   }
 }
+
 // 4. DELETE: Menghapus Proyek
 export async function DELETE(req: Request) {
   try {
@@ -120,21 +116,20 @@ export async function DELETE(req: Request) {
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
 
-    // Ambil ID dari URL parameter (contoh: /api/projects?id=123)
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
     if (!id) return NextResponse.json({ error: "ID proyek tidak valid" }, { status: 400 });
 
-    // Pastikan proyek tersebut milik user yang sedang login
     const existingProject = await prisma.project.findUnique({ where: { id } });
     if (!existingProject || existingProject.userId !== user.id) {
       return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
     }
 
-    // Eksekusi penghapusan
     await prisma.project.delete({ where: { id } });
-    await logActivity(user.id, "DELETE_PROJECT", `Menghapus proyek: "${existingProject.title}"`);
+    
+    // REKAM AKTIVITAS KE HISTORY
+    await logActivity(user.id, "DELETE_PROJECT", `Menghapus karya: "${existingProject.title}"`);
 
     return NextResponse.json({ message: "Proyek berhasil dihapus" }, { status: 200 });
 

@@ -13,7 +13,7 @@ export default function PublicPortfolioPage() {
   
   // --- STATE KONTROL ALUR ---
   const [isFetching, setIsFetching] = useState(true);
-  const [showSplash, setShowSplash] = useState(false); // Default false untuk cegah flicker hitam
+  const [showSplash, setShowSplash] = useState(false); 
   const [liftCurtain, setLiftCurtain] = useState(false);
   const [removeSplash, setRemoveSplash] = useState(false);
 
@@ -27,16 +27,12 @@ export default function PublicPortfolioPage() {
           
           // --- LOGIKA PENENTUAN SPLASH ---
           if (result.splashScreen === true) {
-            // Jika ON: Aktifkan splash dan jalankan urutan animasi
             setShowSplash(true);
-            
-            // Beri waktu animasi progress bar (1.5 detik)
             setTimeout(() => {
               setLiftCurtain(true);
               setTimeout(() => setRemoveSplash(true), 800);
             }, 1800);
           } else {
-            // Jika OFF: Langsung buka konten tanpa pernah memunculkan layar hitam
             setLiftCurtain(true);
             setRemoveSplash(true);
             setShowSplash(false);
@@ -91,7 +87,6 @@ export default function PublicPortfolioPage() {
         }
         @keyframes loadProgress { 0% { width: 0%; } 40% { width: 60%; } 100% { width: 100%; } }
         
-        /* Loading Spinner Halus untuk fase awal fetching */
         .initial-loader {
           position: fixed; inset: 0; z-index: 9998; background-color: #F1F5F9;
           display: flex; align-items: center; justify-content: center;
@@ -99,14 +94,12 @@ export default function PublicPortfolioPage() {
         }
       `}} />
 
-      {/* 1. INITIAL LOADER: Muncul hanya saat fetching data awal (Sangat singkat & bersih) */}
       {isFetching && (
         <div className="initial-loader">
           <div className="w-6 h-6 border-2 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
         </div>
       )}
 
-      {/* 2. CINEMATIC SPLASH: Hanya muncul jika database membalas "splashScreen: true" */}
       {!removeSplash && showSplash && (
         <div className={`splash-screen ${liftCurtain ? 'curtain-up' : ''}`}>
           <div className="splash-text">{subdomain || 'LOADING'}.SYS</div>
@@ -114,16 +107,16 @@ export default function PublicPortfolioPage() {
         </div>
       )}
 
-      {/* 3. KONTEN UTAMA */}
-      <main className={`min-h-screen bg-[#F1F5F9] text-black font-sans antialiased selection:bg-black selection:text-white p-0 sm:p-8 md:p-12 relative overflow-x-hidden transition-all duration-1000
+      {/* --- PERBAIKAN UTAMA ADA DI BARIS BAWAH INI (overflow-x-clip) --- */}
+      <main className={`min-h-screen bg-[#F1F5F9] text-black font-sans antialiased selection:bg-black selection:text-white p-0 sm:p-8 md:p-12 relative overflow-x-clip transition-all duration-1000
         ${liftCurtain ? 'opacity-100' : 'opacity-0 h-screen overflow-hidden'}
       `}>
         <style dangerouslySetInnerHTML={{__html: `
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap');
+          @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
         `}} />
         <div className="absolute inset-0 opacity-[0.4] pointer-events-none hidden sm:block" style={{ backgroundImage: 'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
         
-        {/* Render PortfolioView segera setelah data ada */}
         {data && <PortfolioView data={data} theme={data} />}
       </main>
     </>

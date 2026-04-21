@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-// Perhatikan tipe datanya diubah menjadi Promise<{ subdomain: string }>
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ subdomain: string }> }
@@ -27,6 +26,9 @@ export async function GET(
             },
             projects: { 
               orderBy: { createdAt: 'desc' } 
+            },
+            certificates: { 
+              orderBy: { createdAt: 'desc' }
             }
           }
         }

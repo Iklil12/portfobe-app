@@ -22,6 +22,7 @@ model User {
   links       Link[]    
   projects    Project[] 
   activities Activity[]
+  certificates Certificate[]
 }
 
 // 2. TABEL PROFILE (Khusus Tampilan Visual Portofolio)
@@ -80,5 +81,17 @@ model Activity {
   
   actionType  String   // Contoh: "ADD_LINK", "UPDATE_PROFILE", "CHANGE_THEME"
   details     String   @db.Text // Penjelasan aktivitas
+  createdAt   DateTime @default(now())
+}
+model Certificate {
+  id          String   @id @default(uuid())
+  title       String
+  issuer      String?  // Tempat/Lembaga (Misal: Coursera, Google, dsb)
+  year        String?  // Tahun perolehan
+  status      String?  @default("VERIFIED") // Status (Verified/Pending)
+  description String?  @db.Text
+  mediaUrl    String?  // Foto sertifikat
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
 }

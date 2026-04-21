@@ -23,27 +23,24 @@ function timeAgo(dateParam: string | Date) {
 
 // Helper untuk Ikon berdasarkan actionType
 function getActivityIcon(actionType: string) {
-  // Mapping action ke icon FontAwesome
   const iconMap: Record<string, string> = {
     'UPDATE_AVATAR': 'fa-camera',
     'UPDATE_PROFILE': 'fa-user-edit',
     'ADD_LINK': 'fa-link',
     'UPDATE_LINK': 'fa-link',
-    'DELETE_LINK': 'fa-trash-alt', // Ikon sampah khusus untuk hapus
+    'DELETE_LINK': 'fa-trash-alt', 
     'CHANGE_THEME': 'fa-palette',
     'UPLOAD_PROJECT': 'fa-cloud-upload-alt',
     'UPDATE_PROJECT': 'fa-edit',
   };
 
-  // Jika ada di map, kembalikan ikonnya. 
   if (iconMap[actionType]) return iconMap[actionType];
 
-  // Logika fallback menggunakan .includes() untuk kata kunci tertentu
   if (actionType.includes('LINK')) return 'fa-link';
   if (actionType.includes('THEME')) return 'fa-palette';
   if (actionType.includes('PROJECT')) return 'fa-project-diagram';
+  if (actionType.includes('CERTIFICATE')) return 'fa-award';
 
-  // Default jika tidak ada yang cocok
   return 'fa-check-circle';
 }
 
@@ -51,7 +48,17 @@ export default function DashboardOverview() {
   const [activities, setActivities] = useState<any[]>([]);
   const [isLoadingActivities, setIsLoadingActivities] = useState(true);
 
+  // --- STATE BARU UNTUK STATISTIK DARI DATABASE ---
+  const [stats, setStats] = useState({
+    projects: 0,
+    awards: 0,
+    links: 0,
+    themeName: 'Loading...'
+  });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+
   useEffect(() => {
+    // Fetch History Aktivitas
     const fetchActivities = async () => {
       try {
         const res = await fetch('/api/activity');
@@ -65,7 +72,43 @@ export default function DashboardOverview() {
         setIsLoadingActivities(false);
       }
     };
+
+    // Fetch Statistik Database Real-time
+    const fetchStats = async () => {
+      try {
+        // Tarik data dari semua tabel secara bersamaan (Paralel) agar ngebut
+        const [appRes, projRes, certRes, linkRes] = await Promise.all([
+          fetch('/api/appearance').catch(() => null),
+          fetch('/api/projects').catch(() => null),
+          fetch('/api/certificates').catch(() => null),
+          fetch('/api/links').catch(() => null)
+        ]);
+
+        const appData = appRes?.ok ? await appRes.json() : {};
+        const projData = projRes?.ok ? await projRes.json() : [];
+        const certData = certRes?.ok ? await certRes.json() : [];
+        const linkData = linkRes?.ok ? await linkRes.json() : [];
+
+        // Terjemahkan ID Tema ke Nama Cantik
+        let tName = "Neo Brutalism";
+        if (appData?.themeTemplate === 'minimalist') tName = "Minimalist Clean";
+        if (appData?.themeTemplate === 'elegant') tName = "Elegant Serif";
+
+        setStats({
+          projects: Array.isArray(projData) ? projData.length : 0,
+          awards: Array.isArray(certData) ? certData.length : 0,
+          links: Array.isArray(linkData) ? linkData.length : 0,
+          themeName: tName
+        });
+      } catch (error) {
+        console.error("Gagal memuat statistik", error);
+      } finally {
+        setIsLoadingStats(false);
+      }
+    };
+
     fetchActivities();
+    fetchStats();
   }, []);
 
   return (
@@ -91,63 +134,69 @@ export default function DashboardOverview() {
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 mb-2">
             Overview.
           </h1>
-          <p className="text-sm font-medium text-slate-500">Ringkasan performa portofolio Anda selama 30 hari terakhir.</p>
+          <p className="text-sm font-medium text-slate-500">Ringkasan performa dan data portofolio Anda saat ini.</p>
         </div>
         <Link href="/dashboard/projects" className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 text-xs font-extrabold uppercase tracking-widest rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-95 shadow-sm w-max">
             <i className="fas fa-plus text-[10px]"></i> New Project
         </Link>
       </div>
 
-      {/* 4 STAT CARDS */}
+      {/* 4 STAT CARDS (SEKARANG DINAMIS DARI DATABASE) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 mb-10">
         
-        {/* CARD 1: Total Views */}
+        {/* CARD 1: Total Proyek */}
         <div className="bg-white p-6 md:p-7 flex flex-col justify-between min-h-[160px] rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group animate-enter" style={{animationDelay: '100ms'}}>
           <div className="absolute top-0 left-0 w-full h-[2px] bg-transparent group-hover:bg-[#ff9e00] transition-colors duration-500"></div>
           <div className="flex justify-between items-start mb-4">
-              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Total Views</p>
+              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Total Proyek</p>
               <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-slate-900 group-hover:bg-slate-100 transition-colors shrink-0">
-                  <i className="fas fa-eye text-xs"></i>
+                  <i className="fas fa-folder-open text-xs"></i>
               </div>
           </div>
           <div className="flex items-end justify-between mt-auto">
-            <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">1.2k</h3>
+            <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">
+              {isLoadingStats ? '-' : stats.projects}
+            </h3>
             <span className="px-2.5 py-1 bg-slate-50 text-slate-600 rounded-lg text-[10px] font-extrabold flex items-center gap-1 border border-slate-100">
-                <i className="fas fa-arrow-up text-[8px]"></i> 12%
+                <i className="fas fa-database text-[8px] text-[#ff9e00]"></i> Tersimpan
             </span>
           </div>
         </div>
 
-        {/* CARD 2: Project Clicks */}
+        {/* CARD 2: Penghargaan */}
         <div className="bg-white p-6 md:p-7 flex flex-col justify-between min-h-[160px] rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group animate-enter" style={{animationDelay: '150ms'}}>
           <div className="absolute top-0 left-0 w-full h-[2px] bg-transparent group-hover:bg-[#ff9e00] transition-colors duration-500"></div>
           <div className="flex justify-between items-start mb-4">
-              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Project Clicks</p>
+              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Penghargaan</p>
               <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-slate-900 group-hover:bg-slate-100 transition-colors shrink-0">
-                  <i className="fas fa-mouse-pointer text-xs"></i>
+                  <i className="fas fa-award text-xs"></i>
               </div>
           </div>
           <div className="flex items-end justify-between mt-auto">
-            <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">482</h3>
+            <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">
+              {isLoadingStats ? '-' : stats.awards}
+            </h3>
             <span className="px-2.5 py-1 bg-slate-50 text-slate-600 rounded-lg text-[10px] font-extrabold flex items-center gap-1 border border-slate-100">
-                <i className="fas fa-arrow-up text-[8px]"></i> 5%
+                <i className="fas fa-check-circle text-[8px] text-emerald-500"></i> Diverifikasi
             </span>
           </div>
         </div>
 
-        {/* CARD 3: Contact Leads */}
+        {/* CARD 3: Tautan Eksternal */}
         <div className="bg-white p-6 md:p-7 flex flex-col justify-between min-h-[160px] rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group animate-enter" style={{animationDelay: '200ms'}}>
           <div className="absolute top-0 left-0 w-full h-[2px] bg-transparent group-hover:bg-[#ff9e00] transition-colors duration-500"></div>
           <div className="flex justify-between items-start mb-4">
-              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Contact Leads</p>
+              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Tautan Publik</p>
               <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-slate-900 group-hover:bg-slate-100 transition-colors shrink-0">
-                  <i className="fas fa-envelope text-xs"></i>
+                  <i className="fas fa-link text-xs"></i>
               </div>
           </div>
           <div className="flex items-end justify-between mt-auto">
-            <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">14</h3>
+            <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">
+              {isLoadingStats ? '-' : stats.links}
+            </h3>
             <span className="px-2.5 py-1 bg-slate-900 text-white rounded-lg text-[10px] font-extrabold flex items-center gap-1 shadow-sm">
-                New
+                Aktif
             </span>
           </div>
         </div>
@@ -165,8 +214,8 @@ export default function DashboardOverview() {
               </div>
           </div>
           <div className="flex items-end justify-between mt-auto">
-            <h3 className="text-[22px] md:text-2xl font-black text-slate-900 tracking-tight leading-none truncate group-hover:text-[#ff9e00] transition-colors">
-                The Boutique
+            <h3 className="text-[20px] md:text-xl font-black text-slate-900 tracking-tight leading-none truncate group-hover:text-[#ff9e00] transition-colors">
+                {isLoadingStats ? 'Memuat...' : stats.themeName}
             </h3>
           </div>
         </div>
@@ -184,7 +233,6 @@ export default function DashboardOverview() {
         
         <div className="space-y-3">
           {isLoadingActivities ? (
-             // SKELETON JIKA MASIH LOADING
              [1,2,3].map(i => (
                 <div key={i} className="flex gap-4 p-4">
                    <div className="w-12 h-12 rounded-2xl bg-slate-50 animate-pulse shrink-0"></div>
@@ -195,7 +243,6 @@ export default function DashboardOverview() {
                 </div>
              ))
           ) : activities.length === 0 ? (
-             // KOSONG JIKA BELUM ADA AKTIVITAS
              <div className="text-center py-10">
                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
                   <i className="fas fa-history text-xl"></i>
@@ -203,10 +250,7 @@ export default function DashboardOverview() {
                <p className="text-slate-500 font-medium text-sm">Belum ada aktivitas yang terekam.</p>
              </div>
           ) : (
-            // DATA AKTIVITAS DINAMIS
-            // Perhatikan penambahan 'index' pada map di bawah ini
             activities.map((activity, index) => (
-              // FIX: flex items-center (Agar di mobile tetap lurus) + animate-enter + animationDelay
               <div 
                 key={activity.id} 
                 className="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors group cursor-default border border-transparent hover:border-slate-100 animate-enter"
@@ -217,7 +261,6 @@ export default function DashboardOverview() {
                 </div>
                 <div className="flex-1 min-w-0">
                     <p className="text-sm font-extrabold text-slate-900 truncate">
-                      {/* Sedikit trik agar nama/detail spesifik terlihat menonjol oranye */}
                       {activity.details.split(/"|'/).map((part: string, i: number) => 
                          i % 2 === 0 ? part : <span key={i} className="text-[#ff9e00] font-black">"{part}"</span>
                       )}

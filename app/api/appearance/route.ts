@@ -16,7 +16,8 @@ export async function GET() {
         user: {
           include: {
             links: { orderBy: { order: 'asc' } },
-            projects: { orderBy: { createdAt: 'desc' } }
+            projects: { orderBy: { createdAt: 'desc' } },
+            certificates: { orderBy: { createdAt: 'desc' } }
           }
         }
       }
