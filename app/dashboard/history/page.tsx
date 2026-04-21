@@ -125,7 +125,7 @@ export default function HistoryPage() {
            <input 
              ref={searchInputRef}
              type="text" 
-             placeholder="Cari (tekan '/' untuk fokus)" 
+             placeholder="Cari" 
              value={searchQuery}
              onChange={(e) => setSearchQuery(e.target.value)}
              className="w-full pl-11 pr-10 py-3.5 rounded-2xl border border-slate-100 bg-white shadow-sm focus:ring-4 focus:ring-[#ff9e00]/10 focus:border-[#ff9e00]/20 outline-none transition-all text-sm font-bold text-slate-900 placeholder:text-slate-300"

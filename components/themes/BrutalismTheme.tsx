@@ -1,11 +1,20 @@
-// File: components/PortfolioView.tsx
+// File: components/themes/BrutalismTheme.tsx
 "use client";
 
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation'; 
 
+const getYouTubeThumbnail = (url: string) => {
+  if (!url) return '';
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
+  return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : url;
+};
+
 export default function BrutalismTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
   const [openAward, setOpenAward] = useState<string | null>(null);
+  
+  // --- STATE BARU: Untuk kontrol buka/tutup Dropdown Contact ---
+  const [isContactOpen, setIsContactOpen] = useState(false);
   
   const pathname = usePathname();
   const isEditor = pathname?.includes('/dashboard');
@@ -22,6 +31,9 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
   const profession = data?.profession || "Visual Architect";
   const bio = data?.bio || "Telling stories through motion. Based in Indonesia, operating globally.";
   const subdomain = data?.subdomain || "username";
+
+  // --- MENGAMBIL EMAIL USER ---
+  const userEmail = data?.user?.email || data?.email || `hello@${subdomain}.co`;
 
   const archiveItems = data?.user?.projects || data?.projects || [];
   const awardItems = data?.user?.certificates || data?.certificates || [];
@@ -45,7 +57,6 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
     return isLarge ? `rounded-[2rem] ${res('md:rounded-[3rem]')}` : 'rounded-full';
   };
 
-  // --- SOLUSI ANTI-GAGAL: MAP FONT LANGSUNG KE CSS KELUARGA FONT ---
   const getFontFamily = (fontName: string) => {
     if (fontName === 'Space Mono') return "'Space Mono', monospace";
     if (fontName === 'serif' || fontName === 'Elegant Serif') return "'Playfair Display', serif";
@@ -71,9 +82,9 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
         </a>
       )}
 
-      {/* --- INJEKSI CSS KEBAL PELURU (!important) --- */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
         
         .custom-heading { font-family: ${customHeadingFont} !important; }
         .custom-body { font-family: ${customBodyFont} !important; }
@@ -83,7 +94,8 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
         .preview-hard-shadow-sm { box-shadow: 4px 4px 0px 0px ${themeColor}; transition: box-shadow 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
       `}} />
 
-      <header className={`flex text-[10px] ${res('md:text-xs')} uppercase font-bold sticky top-0 z-[100] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] bg-white/95 backdrop-blur-md
+      {/* HEADER NAVBAR KINI RELATIF UNTUK DROPDOWN */}
+      <header className={`relative flex text-[10px] ${res('md:text-xs')} uppercase font-bold sticky top-0 z-[100] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] bg-white/95 backdrop-blur-md
         ${isBrutal ? 'border-b-[3px] border-black divide-x-[3px] divide-black font-mono' : `border-b border-slate-100 shadow-sm ${res(`sm:${getRadiusClass(true)} sm:rounded-b-none`)}`}
       `}>
           <div className={`p-4 ${res('md:p-5')} flex-1 flex justify-between items-center transition-colors duration-700 ${isBrutal ? 'bg-black text-white' : 'text-slate-900'}`}>
@@ -93,12 +105,39 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
           <div className={`hidden ${res('sm:flex')} p-4 md:p-5 w-24 md:w-32 items-center justify-center text-center hover:bg-gray-100 transition-colors duration-300 custom-body`}>
               <a href="#archive">Archive</a>
           </div>
-          <a href={links.length > 0 ? links[0].url : "mailto:hello@example.com"} target="_blank" rel="noreferrer" className={`p-4 ${res('md:p-5 w-24 md:w-32')} text-center cursor-pointer flex items-center justify-center transition-all duration-700 ease-out custom-body ${isBrutal ? 'bg-gray-100 hover:bg-black hover:text-white' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-md'} ${buttonShape !== 'hard' && !isBrutal ? getRadiusClass(false) + res(' mx-3 my-2') : ''}`}>
-              Contact
-          </a>
+
+          {/* --- TOMBOL CONTACT (TOGGLE DROPDOWN) --- */}
+          <button onClick={() => setIsContactOpen(!isContactOpen)} className={`p-4 ${res('md:p-5 w-28 md:w-40')} text-center cursor-pointer flex items-center justify-center gap-2 transition-all duration-700 ease-out custom-body outline-none ${isBrutal ? 'bg-gray-100 hover:bg-black hover:text-white' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-md'} ${buttonShape !== 'hard' && !isBrutal ? getRadiusClass(false) + res(' mx-3 my-2') : ''}`}>
+              Contact <i className={`fas fa-chevron-down transition-transform duration-300 ${isContactOpen ? 'rotate-180' : ''}`}></i>
+          </button>
+
+          {/* --- DROPDOWN MENU CONTACT --- */}
+          <div className={`absolute top-[100%] right-0 w-full sm:w-[320px] bg-white flex flex-col transition-all duration-300 origin-top shadow-2xl ${isContactOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 pointer-events-none'} ${isBrutal ? 'border-b-[3px] sm:border-l-[3px] border-black font-mono' : 'sm:rounded-bl-3xl border border-slate-100 font-sans'}`}>
+              
+              <div className={`p-6 ${res('md:p-8')} ${isBrutal ? 'border-b-[2px] border-black bg-gray-100' : 'border-b border-slate-100 bg-slate-50'}`}>
+                  <p className="text-[9px] text-gray-500 mb-2 font-bold tracking-widest uppercase">Direct Email</p>
+                  <a href={`mailto:${userEmail}`} className={`text-sm ${res('md:text-base')} font-black truncate block hover:text-[#ff9e00] transition-colors custom-heading ${isBrutal ? 'text-black' : 'text-slate-800'}`}>
+                      {userEmail}
+                  </a>
+              </div>
+
+              <div className={`p-6 ${res('md:p-8')} flex flex-col gap-4`}>
+                  <p className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">Social & Links</p>
+                  {links.length > 0 ? links.map((l: any, i: number) => (
+                      <a key={i} href={l.url} target="_blank" rel="noreferrer" className={`group flex justify-between items-center text-xs ${res('md:text-sm')} font-bold uppercase tracking-wide transition-colors ${isBrutal ? 'hover:text-[#ff9e00]' : 'hover:text-blue-600'}`}>
+                          <span>{l.platform}</span>
+                          <i className="fas fa-arrow-right opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all -rotate-45"></i>
+                      </a>
+                  )) : (
+                      <p className="text-xs text-gray-400 lowercase italic">No external links found.</p>
+                  )}
+              </div>
+
+          </div>
       </header>
 
-      <section className={`grid grid-cols-1 ${res('md:grid-cols-12')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isBrutal ? 'border-b-[3px] border-black' : `mb-8 ${res('md:mb-14')} mt-2 ${res('md:mt-8')}`}`}>
+      {/* HERO SECTION */}
+      <section className={`grid grid-cols-1 ${res('md:grid-cols-12')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${!isBrutal ? `mt-2 ${res('md:mt-8')}` : ''}`}>
           <div className={`col-span-1 ${res('md:col-span-8')} p-6 ${res('sm:p-8 md:p-12 lg:p-16')} flex flex-col justify-center relative overflow-hidden transition-all duration-700
             ${isBrutal ? `border-b-[3px] ${res('md:border-b-0 md:border-r-[3px]')} border-black bg-slate-50` : 'bg-white'}
           `}>
@@ -117,7 +156,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                   {bio}
               </p>
           </div>
-          <div className={`col-span-1 ${res('md:col-span-4')} p-8 ${res('md:p-12')} flex items-center justify-center relative transition-colors duration-700 ${isBrutal ? 'bg-gray-100' : 'bg-white'}`}>
+          <div className={`col-span-1 ${res('md:col-span-4')} p-8 ${res('md:p-12')} flex items-center justify-center relative transition-colors duration-700 ${isBrutal ? 'bg-gray-100 border-b-[3px] border-black md:border-b-0' : 'bg-white'}`}>
               {isBrutal && (
                 <div className={`hidden ${res('md:block')} absolute inset-0 pointer-events-none`}>
                   <div className="absolute top-4 left-4 w-3 h-3 border-t-[2px] border-l-[2px] border-black"></div>
@@ -126,36 +165,70 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                   <div className="absolute bottom-4 right-4 w-3 h-3 border-b-[2px] border-r-[2px] border-black"></div>
                 </div>
               )}
-              <div className={`w-full max-w-[160px] ${res('sm:max-w-[200px] md:max-w-[240px]')} aspect-[3/4] overflow-hidden transition-all duration-700 mx-auto ${isBrutal ? `border-[2px] ${res('md:border-[3px]')} border-black preview-hard-shadow-sm p-1.5 ${res('md:p-2')} bg-white ${getRadiusClass(true)}` : getCardClass() + ' ' + getRadiusClass(true)}`}>
+              
+              {/* --- PERBAIKAN: UKURAN FOTO PROFIL DIPERBESAR --- */}
+              {/* Diubah dari max-w-[160px] menjadi max-w-[240px] untuk mobile, dan max-w-[320px] untuk desktop */}
+              <div className={`w-full max-w-[240px] ${res('sm:max-w-[280px] md:max-w-[320px]')} aspect-[3/4] overflow-hidden transition-all duration-700 mx-auto ${isBrutal ? `border-[2px] ${res('md:border-[3px]')} border-black preview-hard-shadow-sm p-1.5 ${res('md:p-2')} bg-white ${getRadiusClass(true)}` : getCardClass() + ' ' + getRadiusClass(true)}`}>
                   <img src={displayAvatar} className={`w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Profile" />
               </div>
           </div>
       </section>
 
-      <section id="archive">
+      {/* --- BLOK STATISTIK BRUTALISM --- */}
+      <section className={`transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] border-b-[3px] border-black bg-black p-[3px] pb-0`}>
+          <div className={`grid grid-cols-2 gap-[3px]`}>
+              <div className={`p-4 ${res('md:p-5')} flex flex-col justify-center transition-colors duration-700 bg-black text-white`}>
+                  <p className="text-[10px] font-bold uppercase tracking-widest mb-1 custom-heading text-white opacity-80">Projects</p>
+                  <p className={`text-2xl ${res('md:text-3xl')} font-black tracking-tighter custom-heading text-white`}>{archiveItems.length}</p>
+              </div>
+              <div className={`p-4 ${res('md:p-5')} flex flex-col justify-center transition-colors duration-700 bg-white`}>
+                  <p className="text-[10px] font-bold uppercase tracking-widest mb-1 custom-heading text-black opacity-80">Awards</p>
+                  <p className={`text-2xl ${res('md:text-3xl')} font-black tracking-tighter custom-heading text-black`}>{awardItems.length}</p>
+              </div>
+          </div>
+      </section>
+
+      {/* ARCHIVE SECTION */}
+      <section id="archive" className={!isBrutal ? `mb-8 ${res('md:mb-14')}` : ''}>
         <div className={`p-4 ${res('md:p-6')} font-bold uppercase flex justify-between transition-all duration-700 ${isBrutal ? `border-b-[3px] border-black bg-gray-100 font-mono text-[10px] ${res('md:text-xs')}` : `bg-white custom-body text-xs ${res('md:text-sm')} text-slate-800 px-6 ${res('sm:px-8')} mt-4`}`}>
             <span>{isBrutal ? '[ Selected Archive ]' : 'Selected Archive'}</span>
             {isBrutal && <span>Vol. 1</span>}
         </div>
-        <div className={`grid grid-cols-1 ${res('md:grid-cols-2')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isBrutal ? `divide-y-[3px] ${res('md:divide-y-0 md:divide-x-[3px]')} divide-black border-b-[3px] border-black` : `gap-4 ${res('sm:gap-6')} p-4 ${res('sm:p-8')} bg-slate-50 border-b border-slate-100`}`}>
-            {archiveItems.length > 0 ? archiveItems.map((p: any, i: number) => (
-              <a href={p.url || '#'} target={p.url ? "_blank" : "_self"} key={i} className={`group cursor-pointer overflow-hidden transition-all duration-700 block ${isBrutal ? `border-b-[3px] ${res('md:border-b-0')} border-black last:border-b-0` : getCardClass() + ' ' + getRadiusClass(true)}`}>
-                  <div className={`p-3 ${res('md:p-5')} flex justify-between font-bold transition-all duration-700 ${isBrutal ? `border-b-[2px] border-black bg-white group-hover:bg-black group-hover:text-white font-mono text-[9px] ${res('md:text-[10px]')}` : `bg-slate-50 text-slate-500 custom-body text-[10px] ${res('md:text-xs')} border-b border-slate-100`}`}>
-                    <span style={{ color: !isBrutal ? themeColor : '' }}>{p.projectType?.toUpperCase() || 'PROJECT'}</span>
-                    <span>0{i+1}</span>
-                  </div>
-                  <div className={`aspect-video bg-gray-200 overflow-hidden transition-all duration-700 ${isBrutal ? 'border-b-[2px] border-black' : ''}`}>
-                    <img src={p.mediaUrl || "https://via.placeholder.com/800x600?text=No+Image"} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" />
-                  </div>
-                  <div className={`p-5 ${res('md:p-8')} bg-white transition-all duration-700`}>
-                    <h3 className={`text-lg ${res('md:text-2xl')} font-black tracking-tighter mb-1 truncate custom-heading`}>{p.title}</h3>
-                    <p className={`transition-all duration-700 text-gray-500 truncate custom-body text-[10px] ${res('md:text-xs')} ${isBrutal && 'uppercase'}`}>{p.description || 'View Details'}</p>
-                  </div>
-              </a>
-            )) : <div className={`p-10 ${res('md:p-16')} text-center col-span-2 opacity-30 font-mono text-[10px] ${res('md:text-xs')} uppercase`}>NO ARCHIVE DATA FOUND.</div>}
+        <div className={`grid grid-cols-1 ${res('md:grid-cols-2')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isBrutal ? `border-b-[3px] border-black overflow-hidden` : `gap-4 ${res('sm:gap-6')} p-4 ${res('sm:p-8')} bg-slate-50 border-b border-slate-100`}`}>
+            {archiveItems.length > 0 ? archiveItems.map((p: any, i: number) => {
+              const linkTarget = p.projectUrl || p.url || p.mediaUrl || '#';
+              const isVideo = p.projectType === 'video';
+
+              return (
+                <a href={linkTarget} target={linkTarget !== '#' ? "_blank" : "_self"} key={i} className={`group cursor-pointer overflow-hidden transition-all duration-700 block ${isBrutal ? `border-b-[3px] border-black last:border-b-0 ${res('md:border-b-0 md:border-r-[3px] md:[&:nth-child(even)]:border-r-0 md:[&:nth-last-child(-n+2)]:border-b-0')} ` : getCardClass() + ' ' + getRadiusClass(true)}`}>
+                    <div className={`p-3 ${res('md:p-5')} flex justify-between font-bold transition-all duration-700 ${isBrutal ? `border-b-[2px] border-black bg-white group-hover:bg-black group-hover:text-white font-mono text-[9px] ${res('md:text-[10px]')}` : `bg-slate-50 text-slate-500 custom-body text-[10px] ${res('md:text-xs')} border-b border-slate-100`}`}>
+                      <span style={{ color: !isBrutal ? themeColor : '' }}>{p.projectType?.toUpperCase() || 'PROJECT'}</span>
+                      <span>0{i+1}</span>
+                    </div>
+                    
+                    <div className={`aspect-video bg-gray-200 relative overflow-hidden transition-all duration-700 ${isBrutal ? 'border-b-[2px] border-black' : ''}`}>
+                      <img src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800x600?text=No+Image")} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" alt={p.title} />
+                      
+                      {isVideo && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className={`w-12 h-12 flex items-center justify-center ${isBrutal ? 'bg-[#ff9e00] border-2 border-black rounded-none' : 'bg-white rounded-full shadow-lg'} text-black`}>
+                             <i className="fas fa-play ml-1"></i>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className={`p-5 ${res('md:p-8')} bg-white transition-all duration-700`}>
+                      <h3 className={`text-lg ${res('md:text-2xl')} font-black tracking-tighter mb-1 truncate custom-heading group-hover:underline decoration-2 underline-offset-4`}>{p.title}</h3>
+                      <p className={`transition-all duration-700 text-gray-500 truncate custom-body text-[10px] ${res('md:text-xs')} ${isBrutal && 'uppercase'}`}>{p.description || 'View Details'}</p>
+                    </div>
+                </a>
+              );
+            }) : <div className={`p-10 ${res('md:p-16')} text-center col-span-2 opacity-30 font-mono text-[10px] ${res('md:text-[11px]')} uppercase`}>NO ARCHIVE DATA FOUND.</div>}
         </div>
       </section>
 
+      {/* AWARDS SECTION */}
       <div className={`p-4 ${res('md:p-6')} font-bold uppercase transition-all duration-700 ${isBrutal ? `border-b-[3px] border-black bg-black text-white font-mono text-[10px] ${res('md:text-xs')}` : `bg-white custom-body text-xs ${res('md:text-sm')} text-slate-800 px-6 ${res('sm:px-8')} mt-8 mb-4`}`}>
           {isBrutal ? '[ Honors_And_Awards.sys ]' : 'Honors & Awards'}
       </div>
@@ -176,13 +249,21 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
               </div>
               <div className={`overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] bg-gray-50 ${openAward === award.id ? `max-h-[600px] ${res('md:max-h-[800px]')}` : 'max-h-0'}`}>
                   <div className={`p-4 ${res('sm:p-5 md:p-8')} flex flex-col ${res('sm:flex-row')} gap-4 ${res('sm:gap-6 md:gap-8')} transition-all duration-700 ${isBrutal ? 'border-t-[3px] border-black' : ''}`}>
-                      <div className={`w-full ${res('sm:w-48 md:w-64')} shrink-0 aspect-video bg-white p-1.5 ${res('sm:p-2')} transition-all duration-700 ${isBrutal ? `border-[2px] border-black preview-hard-shadow-sm ${getRadiusClass(false)}` : `rounded-xl shadow-sm border border-slate-200 overflow-hidden ${getRadiusClass(false)}`}`}>
-                          <img src={award.mediaUrl || "https://via.placeholder.com/400x300?text=Certificate"} className={`w-full h-full object-cover grayscale transition-all duration-700 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Certificate" />
+                      
+                      <div className={`w-full ${res('sm:w-48 md:w-64')} shrink-0 bg-white p-1.5 ${res('sm:p-2')} transition-all duration-700 ${isBrutal ? `border-[2px] border-black preview-hard-shadow-sm ${getRadiusClass(false)}` : `rounded-xl shadow-sm border border-slate-200 overflow-hidden ${getRadiusClass(false)}`}`}>
+                          <img src={award.mediaUrl || "https://via.placeholder.com/400x300?text=Certificate"} className={`w-full h-auto object-contain grayscale transition-all duration-700 hover:grayscale-0 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Certificate" />
                       </div>
+                      
                       <div className={`flex flex-col justify-center text-[10px] ${res('md:text-xs')} mt-2 ${res('sm:mt-0')} transition-all duration-700 custom-body`}>
                           <p className={`font-bold uppercase mb-1.5 ${res('md:mb-2')} transition-colors duration-700 ${isBrutal ? 'text-black' : 'text-slate-500'}`}>&gt; STATUS: {award.status || 'VERIFIED'}</p>
-                          <p className={`text-gray-600 leading-relaxed line-clamp-4 ${res('sm:line-clamp-3 md:line-clamp-none')} max-w-xl`}>{award.description || 'Sertifikasi dan pencapaian terverifikasi.'}</p>
+                          <p className={`text-gray-600 leading-relaxed line-clamp-4 ${res('sm:line-clamp-3 md:line-clamp-none')} max-w-xl mb-4`}>{award.description || 'Sertifikasi dan pencapaian terverifikasi.'}</p>
+                          
+                          <a href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-colors w-max relative group/btn ${isBrutal ? 'text-white bg-black px-4 py-2 hover:bg-[#ff9e00] hover:text-black border-2 border-black' : 'text-black hover:text-gray-500'}`}>
+                            Lihat Lampiran <i className="fas fa-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
+                            {!isBrutal && <span className="absolute bottom-[-4px] left-0 w-0 h-px bg-black transition-all duration-300 group-hover/btn:w-full"></span>}
+                          </a>
                       </div>
+
                   </div>
               </div>
           </div>

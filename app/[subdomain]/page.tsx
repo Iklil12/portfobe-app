@@ -20,12 +20,21 @@ export default function PublicPortfolioPage() {
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
-        const res = await fetch(`/api/portfolio/${subdomain}`);
+        // --- FIX: Hanya menambahkan pencegah Cache agar data selalu baru ---
+        // Sisanya 100% sama persis dengan struktur asli Anda
+        const res = await fetch(`/api/portfolio/${subdomain}?t=${new Date().getTime()}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+
         if (res.ok) {
           const result = await res.json();
           setData(result);
           
-          // --- LOGIKA PENENTUAN SPLASH ---
+          // --- LOGIKA PENENTUAN SPLASH ASLI ---
           if (result.splashScreen === true) {
             setShowSplash(true);
             setTimeout(() => {
@@ -107,7 +116,6 @@ export default function PublicPortfolioPage() {
         </div>
       )}
 
-      {/* --- PERBAIKAN UTAMA ADA DI BARIS BAWAH INI (overflow-x-clip) --- */}
       <main className={`min-h-screen bg-[#F1F5F9] text-black font-sans antialiased selection:bg-black selection:text-white p-0 sm:p-8 md:p-12 relative overflow-x-clip transition-all duration-1000
         ${liftCurtain ? 'opacity-100' : 'opacity-0 h-screen overflow-hidden'}
       `}>
@@ -117,6 +125,7 @@ export default function PublicPortfolioPage() {
         `}} />
         <div className="absolute inset-0 opacity-[0.4] pointer-events-none hidden sm:block" style={{ backgroundImage: 'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
         
+        {/* Dikembalikan ke struktur ASLI: theme={data} */}
         {data && <PortfolioView data={data} theme={data} />}
       </main>
     </>

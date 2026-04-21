@@ -17,7 +17,6 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
   const bio = data?.bio || "A visual storyteller based in Jakarta. I craft meticulous, high-end visual narratives for commercial brands and independent films.";
   const subdomain = data?.subdomain || "username";
   
-  // --- FIX EMAIL: Ambil dari database user ---
   const userEmail = data?.user?.email || data?.email || `hello@${subdomain}.co`;
 
   const archiveItems = data?.user?.projects || data?.projects || [];
@@ -51,6 +50,13 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
         .min-heading { font-family: ${headingFont} !important; }
         .min-body { font-family: ${bodyFont} !important; }
         
+        /* Scrollbar Minimalis & Profesional */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+        * { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+
         ::selection { background: #000000; color: #ffffff; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -84,7 +90,6 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
         </div>
 
         <div className={`pt-8 border-t border-gray-200 ${isMobileView ? 'mt-4' : 'mt-8'}`}>
-          {/* --- PENERAPAN EMAIL DINAMIS --- */}
           <a href={`mailto:${userEmail}`} className="block text-xl font-bold tracking-tight hover:text-gray-500 transition mb-6 truncate min-heading">
             {userEmail}
           </a>
@@ -129,7 +134,6 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
                   
                   <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
                     <div className="w-12 h-12 bg-white flex items-center justify-center rounded-full shadow-2xl scale-75 group-hover:scale-100 transition-transform duration-500">
-                      {/* MEMAKAI KELAS FAS AGAR ICON MUNCUL */}
                       <i className={`fas ${p.projectType === 'video' ? 'fa-play ml-1' : 'fa-arrow-right -rotate-45'} text-black`}></i>
                     </div>
                   </div>
@@ -144,7 +148,6 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
               </a>
             ))}
           </div>
-          {archiveItems.length === 0 && <p className="text-gray-400 text-sm font-mono text-center py-10">No projects available.</p>}
         </section>
 
         <section className="border-t border-gray-200 bg-gray-50/30">
@@ -169,16 +172,22 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
                     </div>
                     <div className="flex items-center justify-end gap-6 w-1/3">
                       <span className={`text-[10px] font-bold uppercase tracking-widest text-gray-500 ${isMobileView ? 'hidden' : 'md:block'} text-right truncate`}>{award.issuer}</span>
-                      {/* ICON PANAH BAWAH */}
                       <i className={`fas fa-chevron-down text-[10px] text-gray-400 transition-transform duration-500 ${isOpen ? 'rotate-180 text-black' : ''}`}></i>
                     </div>
                   </div>
                   
-                  <div className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] bg-gray-50 ${isOpen ? 'max-h-[500px] border-t border-gray-200' : 'max-h-0'}`}>
+                  <div className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] bg-gray-50 ${isOpen ? 'max-h-[800px] border-t border-gray-200' : 'max-h-0'}`}>
                     <div className={`px-8 ${isMobileView ? '' : 'lg:px-12'} py-8 flex gap-8 ${isMobileView ? 'flex-col' : 'flex-col md:flex-row'}`}>
-                      <img src={award.mediaUrl} className={`h-32 object-cover border border-gray-200 grayscale shadow-sm ${isMobileView ? 'w-full' : 'w-full md:w-48'}`} />
+                      {/* --- PERBAIKAN UTAMA: Menggunakan object-contain dan membebaskan h-auto pada mobile agar tidak terpotong --- */}
+                      <div className={`bg-white border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center ${isMobileView ? 'w-full' : 'w-full md:w-64'}`}>
+                        <img 
+                          src={award.mediaUrl} 
+                          className={`w-full h-auto object-contain grayscale hover:grayscale-0 transition-all duration-500`} 
+                          alt="Certificate"
+                        />
+                      </div>
                       
-                      <div className="flex flex-col justify-center">
+                      <div className="flex flex-col justify-center flex-1">
                         <p className="font-bold mb-2 min-heading text-sm uppercase tracking-wider">{award.status || 'Verified Achievement'}</p>
                         <p className="text-xs text-gray-600 max-w-md leading-relaxed mb-6 opacity-90 min-body">{award.description || 'Awarded for exceptional performance and dedication in the respective field.'}</p>
                         
@@ -186,7 +195,6 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
                           Lihat Lampiran <i className="fas fa-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
                           <span className="absolute bottom-[-4px] left-0 w-0 h-px bg-black transition-all duration-300 group-hover/btn:w-full"></span>
                         </a>
-
                       </div>
                     </div>
                   </div>

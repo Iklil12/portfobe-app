@@ -24,6 +24,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const userPlan = typeof rawPlan === 'string' ? rawPlan.toUpperCase() : "FREE";
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
   const isDesignRoute = pathname === '/dashboard/projects' || pathname === '/dashboard/themes' || pathname === '/dashboard/links';
   const [isDesignMenuOpen, setIsDesignMenuOpen] = useState(isDesignRoute);
@@ -31,9 +32,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // --- STATE BARU: Untuk Mengontrol Popup Profil (Dropdown Menu) ---
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  // Referensi untuk mendeteksi klik di luar popup agar otomatis tertutup
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) => pathname === path;
@@ -58,7 +57,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     signOut({ redirect: true, callbackUrl: '/login' });
   };
 
-  // --- EFEK BARU: Menutup menu profil jika user mengklik bagian luar kotak ---
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
@@ -72,7 +70,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex h-screen overflow-hidden bg-[#FAFAFA] font-sans text-slate-900 selection:bg-slate-200 selection:text-slate-900 relative">
       
-      {/* INJEKSI CSS */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
         * { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -96,31 +93,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* --- MODAL KONFIRMASI LOGOUT --- */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div 
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-in fade-in duration-300" 
-            onClick={() => !isLoggingOut && setShowLogoutModal(false)}
-          ></div>
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-in fade-in duration-300" onClick={() => !isLoggingOut && setShowLogoutModal(false)}></div>
           <div className="relative bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-slate-100 animate-enter-modal z-10">
             <div className="w-16 h-16 bg-slate-50 border border-slate-100 text-slate-900 rounded-full flex items-center justify-center mx-auto mb-6">
               <i className="fas fa-sign-out-alt text-xl translate-x-0.5"></i>
             </div>
             <h3 className="text-2xl font-extrabold text-center mb-2 text-slate-900 tracking-tight">Keluar dari akun?</h3>
-            <p className="text-slate-500 text-sm font-medium text-center mb-8 leading-relaxed px-2">
-              Sesi Anda akan diakhiri. Anda perlu masuk kembali untuk mengakses dashboard kreator.
-            </p>
+            <p className="text-slate-500 text-sm font-medium text-center mb-8 leading-relaxed px-2">Sesi Anda akan diakhiri. Anda perlu masuk kembali untuk mengakses dashboard kreator.</p>
             <div className="flex gap-3">
-              <button 
-                onClick={() => setShowLogoutModal(false)} 
-                disabled={isLoggingOut} 
-                className="flex-1 py-3.5 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl font-bold text-slate-700 active:scale-95 transition-all text-sm disabled:opacity-50"
-              >
-                Batalkan
-              </button>
-              <button 
-                onClick={handleLogout} 
-                disabled={isLoggingOut} 
-                className="flex-1 py-3.5 bg-slate-900 hover:bg-slate-800 rounded-xl font-bold text-white shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50"
-              >
+              <button onClick={() => setShowLogoutModal(false)} disabled={isLoggingOut} className="flex-1 py-3.5 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl font-bold text-slate-700 active:scale-95 transition-all text-sm disabled:opacity-50">Batalkan</button>
+              <button onClick={handleLogout} disabled={isLoggingOut} className="flex-1 py-3.5 bg-slate-900 hover:bg-slate-800 rounded-xl font-bold text-white shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50">
                 {isLoggingOut ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : 'Ya, Keluar'}
               </button>
             </div>
@@ -128,118 +110,196 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
 
-      {/* SIDEBAR SISI KIRI */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-100 transform ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'} md:relative md:translate-x-0 flex flex-col justify-between transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]`}>
-        <div className="overflow-y-auto hide-scrollbar flex flex-col h-full">
+      {/* --- SIDEBAR DINAMIS --- */}
+      <aside className={`fixed inset-y-0 left-0 z-50 bg-white border-r border-slate-100 flex flex-col transition-all duration-300 ease-in-out
+        ${isSidebarOpen ? 'translate-x-0 shadow-2xl w-72' : '-translate-x-full md:relative md:translate-x-0'} 
+        ${isSidebarCollapsed ? 'md:w-[88px]' : 'md:w-72'} 
+      `}>
+        
+        {/* STRUKTUR SIDEBAR YANG MEMASTIKAN FLYOUT TIDAK TERPOTONG */}
+        <div className="flex flex-col h-full w-full">
           
-          {/* BAGIAN LOGO */}
-          <div className="h-[88px] flex items-center px-8 shrink-0">
+          {/* HEADER SIDEBAR: LOGO */}
+          <div className="h-[88px] shrink-0 flex items-center justify-center border-b border-transparent px-6 transition-all">
             {isLoading ? (
-              <div className="h-6 w-32 bg-slate-100 rounded animate-pulse"></div>
+              <div className="h-6 w-24 bg-slate-100 rounded animate-pulse"></div>
             ) : (
-              <Link href="/" className="flex items-center group cursor-pointer">
-                <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-7 w-auto object-contain group-hover:scale-105 transition-transform duration-300" />
+              <Link href="/" className="flex items-center group cursor-pointer w-full justify-center transition-all duration-300">
+                 {isSidebarCollapsed ? (
+                   <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-md group-hover:scale-105 transition-transform">P</div>
+                 ) : (
+                   <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-7 w-auto object-contain group-hover:scale-105 transition-transform duration-300 mr-auto" />
+                 )}
               </Link>
             )}
           </div>
 
-          {/* BAGIAN MENU NAVIGASI */}
-          <nav className="px-4 space-y-1 mt-2">
+          {/* MENU NAVIGASI: Hanya bisa di-scroll jika TIDAK diperkecil (agar flyout tidak ketelan) */}
+          <nav className={`flex-1 space-y-1 mt-4 transition-all ${isSidebarCollapsed ? 'overflow-visible px-3' : 'overflow-y-auto hide-scrollbar px-4'}`}>
             {isLoading ? (
-              <div className="space-y-4 px-2 py-4">
+              <div className="space-y-4 py-4">
                 <div className="h-12 w-full bg-slate-50 rounded-2xl animate-pulse"></div>
                 <div className="h-12 w-full bg-slate-50 rounded-2xl animate-pulse"></div>
               </div>
             ) : (
               <>
-                <Link href="/dashboard" className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl font-extrabold text-[13px] tracking-wide transition-all group ${isActive('/dashboard') ? 'bg-slate-900 text-white shadow-[0_10px_20px_rgba(0,0,0,0.1)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
-                  <i className={`fas fa-layer-group text-lg w-6 text-center transition-colors ${isActive('/dashboard') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
-                  Overview
-                </Link>
-                
-                <div className="pt-2">
-                  <button onClick={() => setIsDesignMenuOpen(!isDesignMenuOpen)} className={`w-full flex items-center justify-between px-5 py-3.5 rounded-2xl font-extrabold text-[13px] tracking-wide transition-all group ${isDesignRoute ? 'text-slate-900' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
-                    <div className="flex items-center gap-4">
-                      <i className={`fas fa-paint-roller text-lg w-6 text-center transition-colors ${isDesignRoute ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
-                      Desain
+                <div className="relative group/tooltip">
+                  <Link href="/dashboard" className={`w-full flex items-center py-3.5 rounded-2xl transition-all group ${isActive('/dashboard') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${isSidebarCollapsed ? 'justify-center px-0' : 'px-4 gap-4'}`}>
+                    <i className={`fas fa-layer-group text-center transition-colors ${isSidebarCollapsed ? 'text-xl' : 'text-lg w-6'} ${isActive('/dashboard') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
+                    {!isSidebarCollapsed && <span className="font-extrabold text-[13px] tracking-wide">Overview</span>}
+                  </Link>
+                  {isSidebarCollapsed && (
+                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">
+                      Overview
                     </div>
-                    <i className={`fas fa-chevron-down text-[10px] text-slate-400 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isDesignMenuOpen ? 'rotate-180' : ''}`}></i>
-                  </button>
-                  
-                  <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isDesignMenuOpen ? 'max-h-40 py-2 opacity-100' : 'max-h-0 py-0 opacity-0'}`}>
-                    <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
-                      {isActive('/dashboard/projects') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>}
-                      Proyek & Karya
-                    </Link>
-                    <Link href="/dashboard/themes" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/themes') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
-                      {isActive('/dashboard/themes') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>}
-                      Koleksi Tema
-                    </Link>
-                    <Link href="/dashboard/links" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/links') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
-                      {isActive('/dashboard/links') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>}
-                      Tautan (Links)
-                    </Link>
-                  </div>
+                  )}
                 </div>
-
-                <Link href="/dashboard/analytics" className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl font-extrabold text-[13px] tracking-wide transition-all group mt-2 ${isActive('/dashboard/analytics') ? 'bg-slate-900 text-white shadow-[0_10px_20px_rgba(0,0,0,0.1)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
-                  <i className={`fas fa-chart-pie text-lg w-6 text-center transition-colors ${isActive('/dashboard/analytics') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
-                  Metrics
-                </Link>
-
-                <div className="pt-8 px-5 pb-3">
-                  <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Pengaturan</p>
-                </div>
-
-                <Link href="/dashboard/profile" className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl font-extrabold text-[13px] tracking-wide transition-all group ${isActive('/dashboard/profile') ? 'bg-slate-900 text-white shadow-[0_10px_20px_rgba(0,0,0,0.1)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
-                  <i className={`fas fa-user-circle text-lg w-6 text-center transition-colors ${isActive('/dashboard/profile') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
-                  Profil & Bio
-                </Link>
                 
-                <Link href="/dashboard/settings" className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl font-extrabold text-[13px] tracking-wide transition-all group ${isActive('/dashboard/settings') ? 'bg-slate-900 text-white shadow-[0_10px_20px_rgba(0,0,0,0.1)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
-                  <i className={`fas fa-cog text-lg w-6 text-center transition-colors ${isActive('/dashboard/settings') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
-                  Akun
-                </Link>
+                {/* --- MENU DESAIN (FLYOUT HOVER MURNI CSS - ANTI NGEBUG) --- */}
+                <div className="pt-2 relative group/design">
+                  <button onClick={() => { if(!isSidebarCollapsed) setIsDesignMenuOpen(!isDesignMenuOpen); }} className={`w-full flex items-center transition-all group py-3.5 rounded-2xl ${isDesignRoute ? (isSidebarCollapsed ? 'bg-slate-100 text-slate-900' : 'text-slate-900') : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${isSidebarCollapsed ? 'justify-center px-0 cursor-default' : 'px-4 justify-between'}`}>
+                    <div className={`flex items-center ${isSidebarCollapsed ? '' : 'gap-4'}`}>
+                      <i className={`fas fa-paint-roller text-center transition-colors ${isSidebarCollapsed ? 'text-xl' : 'text-lg w-6'} ${isDesignRoute ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
+                      {!isSidebarCollapsed && <span className="font-extrabold text-[13px] tracking-wide">Desain</span>}
+                    </div>
+                    {!isSidebarCollapsed && <i className={`fas fa-chevron-down text-[10px] text-slate-400 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isDesignMenuOpen ? 'rotate-180' : ''}`}></i>}
+                  </button>
+
+                  {/* Tooltip Tulisan 'Desain' (Hilang jika sedang melihat flyout) */}
+                  {isSidebarCollapsed && (
+                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/design:opacity-100 transition-all duration-300 z-[90] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/design:translate-x-0 group-hover/design:hidden">
+                      Menu Desain
+                    </div>
+                  )}
+
+                  {/* Kotak Melayang (Flyout) saat Diperkecil */}
+                  {isSidebarCollapsed && (
+                    <div className="absolute left-full top-0 w-56 pl-3 opacity-0 pointer-events-none group-hover/design:opacity-100 group-hover/design:pointer-events-auto transition-all duration-300 z-[100] -translate-x-2 group-hover/design:translate-x-0">
+                      <div className="bg-white border border-slate-200 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-2 px-1">
+                        <div className="px-4 py-2 border-b border-slate-100 mb-1">
+                          <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Menu Desain</p>
+                        </div>
+                        <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
+                          Proyek & Karya
+                        </Link>
+                        <Link href="/dashboard/themes" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/themes') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
+                          Koleksi Tema
+                        </Link>
+                        <Link href="/dashboard/links" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/links') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
+                          Tautan (Links)
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Dropdown Biasa (Ke bawah) saat Diperbesar */}
+                  {!isSidebarCollapsed && (
+                    <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isDesignMenuOpen ? 'max-h-40 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 hidden'}`}>
+                      <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
+                        {isActive('/dashboard/projects') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>}
+                        Proyek & Karya
+                      </Link>
+                      <Link href="/dashboard/themes" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/themes') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
+                        {isActive('/dashboard/themes') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>}
+                        Koleksi Tema
+                      </Link>
+                      <Link href="/dashboard/links" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/links') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
+                        {isActive('/dashboard/links') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>}
+                        Tautan (Links)
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative group/tooltip">
+                  <Link href="/dashboard/analytics" className={`w-full flex items-center py-3.5 rounded-2xl transition-all group mt-2 ${isActive('/dashboard/analytics') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${isSidebarCollapsed ? 'justify-center px-0' : 'px-4 gap-4'}`}>
+                    <i className={`fas fa-chart-pie text-center transition-colors ${isSidebarCollapsed ? 'text-xl' : 'text-lg w-6'} ${isActive('/dashboard/analytics') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
+                    {!isSidebarCollapsed && <span className="font-extrabold text-[13px] tracking-wide">Metrics</span>}
+                  </Link>
+                  {isSidebarCollapsed && <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Metrics</div>}
+                </div>
+
+                {!isSidebarCollapsed ? (
+                  <div className="pt-8 px-5 pb-3 transition-opacity duration-300">
+                    <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Pengaturan</p>
+                  </div>
+                ) : (
+                  <div className="pt-6 pb-2 w-full flex justify-center"><div className="w-6 h-[2px] bg-slate-100 rounded-full"></div></div>
+                )}
+
+                <div className="relative group/tooltip">
+                  <Link href="/dashboard/profile" className={`w-full flex items-center py-3.5 rounded-2xl transition-all group ${isActive('/dashboard/profile') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${isSidebarCollapsed ? 'justify-center px-0' : 'px-4 gap-4'}`}>
+                    <i className={`fas fa-user-circle text-center transition-colors ${isSidebarCollapsed ? 'text-xl' : 'text-lg w-6'} ${isActive('/dashboard/profile') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
+                    {!isSidebarCollapsed && <span className="font-extrabold text-[13px] tracking-wide">Profil & Bio</span>}
+                  </Link>
+                  {isSidebarCollapsed && <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Profil</div>}
+                </div>
+                
+                <div className="relative group/tooltip">
+                  <Link href="/dashboard/settings" className={`w-full flex items-center py-3.5 rounded-2xl transition-all group ${isActive('/dashboard/settings') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${isSidebarCollapsed ? 'justify-center px-0' : 'px-4 gap-4'}`}>
+                    <i className={`fas fa-cog text-center transition-colors ${isSidebarCollapsed ? 'text-xl' : 'text-lg w-6'} ${isActive('/dashboard/settings') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
+                    {!isSidebarCollapsed && <span className="font-extrabold text-[13px] tracking-wide">Akun</span>}
+                  </Link>
+                  {isSidebarCollapsed && <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Pengaturan Akun</div>}
+                </div>
               </>
             )}
           </nav>
           
-          <div className="px-6 mt-auto mb-6 pt-10">
-            {isLoading ? (
-               <div className="h-32 w-full bg-slate-50 rounded-2xl animate-pulse"></div>
-            ) : userPlan === 'FREE' ? (
-              <div className="relative overflow-hidden bg-[#0a0a0a] p-6 rounded-3xl shadow-[0_15px_30px_rgba(0,0,0,0.1)] border border-white/10 group hover:border-white/20 transition-colors">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9e00]/10 blur-[50px] group-hover:bg-[#ff9e00]/20 transition-colors duration-500"></div>
-                <i className="fas fa-gem absolute -bottom-4 -right-3 text-7xl text-white opacity-[0.02] transform rotate-12 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 pointer-events-none"></i>
-                
-                <div className="relative z-10">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[9px] font-extrabold uppercase tracking-widest text-[#ff9e00] mb-4">
-                    <i className="fas fa-crown"></i> PRO
+          {/* AREA 3: FOOTER SIDEBAR (SELALU DI BAWAH & ANTI KETELAN) */}
+          <div className={`shrink-0 border-t border-slate-100 bg-white z-10 p-4 transition-all duration-300`}>
+             
+            {/* KOTAK PRO (HILANG JIKA COLLAPSED) */}
+            {!isSidebarCollapsed && (
+              <div className="w-full mb-4">
+                {isLoading ? (
+                   <div className="h-32 w-full bg-slate-50 rounded-2xl animate-pulse"></div>
+                ) : userPlan === 'FREE' ? (
+                  <div className="relative overflow-hidden bg-[#0a0a0a] p-5 rounded-3xl shadow-sm border border-white/10 group hover:border-white/20 transition-colors">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9e00]/10 blur-[50px] group-hover:bg-[#ff9e00]/20 transition-colors duration-500"></div>
+                    <i className="fas fa-gem absolute -bottom-4 -right-3 text-7xl text-white opacity-[0.02] transform rotate-12 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 pointer-events-none"></i>
+                    
+                    <div className="relative z-10">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[9px] font-extrabold uppercase tracking-widest text-[#ff9e00] mb-3">
+                        <i className="fas fa-crown"></i> PRO
+                      </div>
+                      <p className="text-xs font-bold text-white mb-4 leading-snug">Metrik mendalam.</p>
+                      
+                      <Link href="/dashboard/upgrade" className="block w-full text-center bg-white text-slate-900 text-[10px] font-extrabold tracking-widest uppercase py-3 px-2 rounded-xl shadow-lg hover:bg-slate-200 active:scale-95 transition-all">
+                        Upgrade
+                      </Link>
+                    </div>
                   </div>
-                  <p className="text-[14px] font-bold text-white mb-5 leading-snug">Dapatkan akses ke fitur metrik mendalam.</p>
-                  
-                  <Link href="/dashboard/upgrade" className="block w-full text-center bg-white text-slate-900 text-[11px] font-extrabold tracking-widest uppercase py-3.5 px-2 rounded-xl shadow-lg hover:bg-slate-200 active:scale-95 transition-all">
-                    Upgrade
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <div className="relative overflow-hidden bg-slate-50 border border-slate-200 p-6 rounded-3xl group">
-                <i className="fas fa-check-circle absolute -bottom-4 -right-3 text-7xl text-[#ff9e00] opacity-[0.05] transform -rotate-12 transition-transform duration-500 group-hover:scale-110 pointer-events-none"></i>
-                <div className="relative z-10">
-                  <p className="text-[10px] font-extrabold tracking-widest text-[#ff9e00] mb-2 uppercase">Status Akun</p>
-                  <p className="text-[15px] font-extrabold text-slate-900 mb-1 leading-snug">Pro Creator</p>
-                  <p className="text-[11px] text-slate-500 font-medium">Semua fitur terbuka.</p>
-                </div>
+                ) : (
+                  <div className="relative overflow-hidden bg-slate-50 border border-slate-200 p-5 rounded-3xl group">
+                    <i className="fas fa-check-circle absolute -bottom-4 -right-3 text-7xl text-[#ff9e00] opacity-[0.05] transform -rotate-12 transition-transform duration-500 group-hover:scale-110 pointer-events-none"></i>
+                    <div className="relative z-10">
+                      <p className="text-[9px] font-extrabold tracking-widest text-[#ff9e00] mb-2 uppercase">Status Akun</p>
+                      <p className="text-sm font-extrabold text-slate-900 mb-1 leading-snug">Pro Creator</p>
+                      <p className="text-[10px] text-slate-500 font-medium">Fitur terbuka.</p>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
+
+            {/* --- TOMBOL TOGGLE MINIMALIS KOTAK ICON --- */}
+            <div className={`w-full flex ${isSidebarCollapsed ? 'justify-center' : 'justify-end'} transition-all duration-300`}>
+              <button 
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+                className="hidden md:flex w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 items-center justify-center transition-all duration-300 ease-in-out active:scale-90 group shadow-sm"
+                title={isSidebarCollapsed ? "Perbesar Sidebar" : "Perkecil Sidebar"}
+              >
+                <i className={`fas fa-chevron-left text-[12px] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isSidebarCollapsed ? 'rotate-180 group-hover:translate-x-0.5' : 'group-hover:-translate-x-0.5'}`}></i>
+              </button>
+            </div>
+
           </div>
         </div>
-
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative">
+      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative w-full">
         
         {/* GLOBAL HEADER */}
         <header className="h-[88px] bg-white/80 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between px-6 sm:px-10 shrink-0 relative z-40">
@@ -253,7 +313,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900">{getPageTitle()}</h2>
           </div>
           
-          {/* USER INFO AREA (DIBUNGKUS DENGAN REF UNTUK DETEKSI KLIK LUAR) */}
+          {/* USER INFO AREA */}
           <div className="relative" ref={profileMenuRef}>
             <div className="flex items-center gap-5">
               {isLoading ? (
@@ -265,7 +325,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <div className="w-11 h-11 rounded-full bg-slate-200 border border-slate-100 animate-pulse"></div>
                 </div>
               ) : (
-                /* --- TOMBOL UNTUK MEMBUKA POPUP PROFIL --- */
                 <div 
                   className="flex items-center gap-4 cursor-pointer group" 
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -302,17 +361,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               )}
             </div>
 
-            {/* --- KOTAK DROPDOWN MENU PROFIL (MUNCUL SAAT DIKLIK) --- */}
+            {/* KOTAK DROPDOWN MENU PROFIL */}
             {isProfileMenuOpen && !isLoading && (
               <div className="absolute top-[calc(100%+16px)] right-0 w-64 bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-slate-100 py-3 animate-dropdown z-50">
-                
-                {/* Header Dropdown (Info Email) */}
                 <div className="px-5 py-3 border-b border-slate-100 mb-2">
                   <p className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Masuk sebagai</p>
                   <p className="text-sm font-bold text-slate-900 truncate">{userEmail}</p>
                 </div>
                 
-                {/* Daftar Tautan Cepat */}
                 <div className="flex flex-col">
                   <Link 
                     href="/dashboard/profile" 
@@ -342,14 +398,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                 <div className="h-px bg-slate-100 my-2 mx-5"></div>
 
-                {/* Tombol Logout Merah */}
                 <button 
                   onClick={() => { setIsProfileMenuOpen(false); setShowLogoutModal(true); }}
                   className="w-full px-5 py-3 text-[13px] font-bold text-red-500 hover:bg-red-50 transition-colors flex items-center gap-3 text-left"
                 >
                   <i className="fas fa-sign-out-alt w-5 text-center"></i> Keluar
                 </button>
-
               </div>
             )}
           </div>

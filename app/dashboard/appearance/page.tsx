@@ -33,7 +33,7 @@ export default function AppearancePage() {
   const [profession, setProfession] = useState("Profesi / Bio Singkat");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [subdomain, setSubdomain] = useState(""); 
-  const [dbData, setDbData] = useState<any>(null);
+  const [dbData, setDbData] = useState<any>({}); // FIX: Inisialisasi sebagai objek kosong
 
   // --- STATE UNTUK TEMA & PENGATURAN ---
   const [activeTheme, setActiveTheme] = useState("brutalism");
@@ -45,37 +45,59 @@ export default function AppearancePage() {
   const [splashScreen, setSplashScreen] = useState(true); 
 
   useEffect(() => {
-    const fetchThemeAndProfile = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch('/api/appearance');
-        if (res.ok) {
-          const data = await res.json();
-          if (data) {
-            setDbData(data);
-            if (data.fullName) setFullName(data.fullName);
-            if (data.profession) setProfession(data.profession);
-            if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
-            if (data.subdomain) setSubdomain(data.subdomain);
+        // 1. Tarik Data Penampilan Dasar
+        const resApp = await fetch('/api/appearance');
+        let appData: any = {};
+        
+        if (resApp.ok) {
+          appData = await resApp.json();
+          if (appData) {
+            if (appData.fullName) setFullName(appData.fullName);
+            if (appData.profession) setProfession(appData.profession);
+            if (appData.avatarUrl) setAvatarUrl(appData.avatarUrl);
+            if (appData.subdomain) setSubdomain(appData.subdomain);
 
-            if (data.themeTemplate) setActiveTheme(data.themeTemplate);
-            if (data.themeColor) setThemeColor(data.themeColor);
-            if (data.fontHeading) setFontHeading(data.fontHeading);
-            if (data.fontBody) setFontBody(data.fontBody);
-            if (data.buttonShape) setButtonShape(data.buttonShape);
-            if (data.cardStyle) setCardStyle(data.cardStyle);
+            if (appData.themeTemplate) setActiveTheme(appData.themeTemplate);
+            if (appData.themeColor) setThemeColor(appData.themeColor);
+            if (appData.fontHeading) setFontHeading(appData.fontHeading);
+            if (appData.fontBody) setFontBody(appData.fontBody);
+            if (appData.buttonShape) setButtonShape(appData.buttonShape);
+            if (appData.cardStyle) setCardStyle(appData.cardStyle);
             
-            if (data.splashScreen !== undefined && data.splashScreen !== null) {
-              setSplashScreen(data.splashScreen); 
+            if (appData.splashScreen !== undefined && appData.splashScreen !== null) {
+              setSplashScreen(appData.splashScreen); 
             }
           }
         }
+
+        // 2. FIX UTAMA: Tarik juga Proyek, Sertifikat, dan Tautan agar Live Preview tidak Kosong!
+        const [projRes, certRes, linkRes] = await Promise.all([
+          fetch('/api/projects').catch(() => null),
+          fetch('/api/certificates').catch(() => null),
+          fetch('/api/links').catch(() => null)
+        ]);
+
+        const projects = projRes?.ok ? await projRes.json() : [];
+        const certificates = certRes?.ok ? await certRes.json() : [];
+        const links = linkRes?.ok ? await linkRes.json() : [];
+
+        // Gabungkan semuanya ke dbData
+        setDbData({
+          ...appData,
+          projects: Array.isArray(projects) ? projects : [],
+          certificates: Array.isArray(certificates) ? certificates : [],
+          links: Array.isArray(links) ? links : []
+        });
+
       } catch (error) {
         console.error("Gagal memuat data:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchThemeAndProfile();
+    fetchData();
   }, []);
 
   const saveDesign = async () => {
@@ -112,7 +134,6 @@ export default function AppearancePage() {
     );
   }
 
-  // Konfigurasi dinamis berdasarkan tema aktif
   const currentConfig = THEME_CONFIGS[activeTheme] || THEME_CONFIGS.brutalism;
 
   const livePreviewData = {
@@ -124,11 +145,23 @@ export default function AppearancePage() {
     splashScreen
   };
 
-  // 🔴 INI ADALAH BUG FIX UTAMA: Menyelipkan 'themeTemplate' ke Live Preview
   const livePreviewTheme = {
     themeTemplate: activeTheme, 
     themeColor, fontHeading, fontBody, buttonShape, cardStyle
   };
+
+  // --- FIX: Sistem Cerdas Pendeteksi Menu Aktif (Anti-Bug UI) ---
+  const isFontMono = fontHeading?.toLowerCase().includes('space') || fontHeading?.toLowerCase().includes('mono');
+  const isFontSerif = fontHeading?.toLowerCase().includes('serif') || fontHeading?.toLowerCase().includes('elegant') || fontHeading?.toLowerCase().includes('playfair');
+  const isFontSans = !isFontMono && !isFontSerif;
+
+  const isCardHard = cardStyle === 'hard-shadow' || cardStyle === 'hard';
+  const isCardFlat = cardStyle === 'flat';
+  const isCardSoft = cardStyle === 'soft-shadow' || cardStyle === 'soft';
+
+  const isBtnHard = buttonShape === 'hard' || buttonShape === 'square';
+  const isBtnRounded = buttonShape === 'rounded';
+  const isBtnPill = buttonShape === 'pill';
 
   return (
     <main className="h-[calc(100vh-80px)] md:h-screen flex flex-col lg:flex-row bg-[#FAFAFA] font-sans overflow-hidden animate-in fade-in duration-1000">
@@ -147,7 +180,6 @@ export default function AppearancePage() {
         <div className="p-6 md:p-8 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-white sticky top-0 z-20">
           <div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Desain <span className="font-light text-slate-400">& Tema</span></h1>
-            {/* Tampilkan Nama Tema yang Sedang Aktif */}
             <p className="text-xs font-bold text-[#ff9e00] mt-1 uppercase tracking-widest flex items-center gap-2">
               <i className="fas fa-paint-roller"></i> {activeTheme === 'minimalist' ? 'Minimalist Clean' : 'Neo Brutalism'}
             </p>
@@ -175,7 +207,7 @@ export default function AppearancePage() {
 
         <div className="p-6 md:p-8 overflow-y-auto pb-32">
           
-          {/* MENU 1: WARNA AKSEN (Hanya muncul jika diizinkan tema) */}
+          {/* MENU 1: WARNA AKSEN */}
           {currentConfig.showColors && (
             <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-center gap-2 mb-4">
@@ -184,7 +216,7 @@ export default function AppearancePage() {
               </div>
               <div className="flex flex-wrap gap-3">
                 {['#000000', '#0f172a', '#3b82f6', '#ef4444', '#10b981', '#f59e0b'].map(color => (
-                  <button key={color} onClick={() => setThemeColor(color)} className={`w-12 h-12 rounded-full border-2 transition-all duration-300 ease-out hover:scale-110 active:scale-95 ${themeColor === color ? 'border-slate-900 scale-110 shadow-[0_0_20px_rgba(0,0,0,0.15)] ring-4 ring-slate-100' : 'border-transparent shadow-sm'}`} style={{ backgroundColor: color }} />
+                  <button key={color} onClick={() => setThemeColor(color)} className={`w-12 h-12 rounded-full border-2 transition-all duration-300 ease-out hover:scale-110 active:scale-95 ${themeColor.toLowerCase() === color ? 'border-slate-900 scale-110 shadow-[0_0_20px_rgba(0,0,0,0.15)] ring-4 ring-slate-100' : 'border-transparent shadow-sm'}`} style={{ backgroundColor: color }} />
                 ))}
                 <label className="relative w-12 h-12 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 cursor-pointer hover:border-slate-500 hover:scale-105 transition-all duration-300 overflow-hidden group">
                   <input type="color" value={themeColor} onChange={(e) => setThemeColor(e.target.value)} className="absolute inset-[-20px] w-20 h-20 opacity-0 cursor-pointer z-10" />
@@ -203,9 +235,9 @@ export default function AppearancePage() {
                 <h3 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">Tipografi Font</h3>
               </div>
               <div className="flex p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200">
-                <button onClick={() => {setFontHeading('Space Mono'); setFontBody('Space Mono')}} className={`flex-1 py-3.5 rounded-xl text-xs font-bold transition-all duration-300 font-mono uppercase ${fontHeading === 'Space Mono' ? 'bg-white shadow-sm text-slate-900 ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-800'}`}>Monospace</button>
-                <button onClick={() => {setFontHeading('Inter'); setFontBody('Inter')}} className={`flex-1 py-3.5 rounded-xl text-xs font-bold transition-all duration-300 font-sans ${fontHeading === 'Inter' ? 'bg-white shadow-sm text-slate-900 ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-800'}`}>Modern Sans</button>
-                <button onClick={() => {setFontHeading('serif'); setFontBody('serif')}} className={`flex-1 py-3.5 rounded-xl text-xs font-bold transition-all duration-300 font-serif italic ${fontHeading === 'serif' ? 'bg-white shadow-sm text-slate-900 ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-800'}`}>Elegant Serif</button>
+                <button onClick={() => {setFontHeading('Space Mono'); setFontBody('Space Mono')}} className={`flex-1 py-3.5 rounded-xl text-xs font-bold transition-all duration-300 font-mono uppercase ${isFontMono ? 'bg-white shadow-sm text-slate-900 ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-800'}`}>Monospace</button>
+                <button onClick={() => {setFontHeading('Inter'); setFontBody('Inter')}} className={`flex-1 py-3.5 rounded-xl text-xs font-bold transition-all duration-300 font-sans ${isFontSans ? 'bg-white shadow-sm text-slate-900 ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-800'}`}>Modern Sans</button>
+                <button onClick={() => {setFontHeading('serif'); setFontBody('serif')}} className={`flex-1 py-3.5 rounded-xl text-xs font-bold transition-all duration-300 font-serif italic ${isFontSerif ? 'bg-white shadow-sm text-slate-900 ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-800'}`}>Elegant Serif</button>
               </div>
               <div className="w-full h-px bg-slate-100 mt-10"></div>
             </div>
@@ -219,17 +251,17 @@ export default function AppearancePage() {
                 <h3 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">Gaya Kartu Proyek</h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <button onClick={() => setCardStyle('hard-shadow')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${cardStyle === 'hard-shadow' ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
-                  <div className={`w-8 h-8 rounded-md transition-all duration-300 ${cardStyle === 'hard-shadow' ? 'bg-white border-2 border-black shadow-[3px_3px_0px_0px_#ff9e00]' : 'bg-slate-200 border border-slate-300 group-hover:shadow-[3px_3px_0px_0px_#cbd5e1]'}`}></div>
-                  <span className={`text-[10px] font-bold uppercase tracking-widest ${cardStyle === 'hard-shadow' ? 'text-white' : 'text-slate-600'}`}>Neo Brutalism</span>
+                <button onClick={() => setCardStyle('hard-shadow')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${isCardHard ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
+                  <div className={`w-8 h-8 rounded-md transition-all duration-300 ${isCardHard ? 'bg-white border-2 border-black shadow-[3px_3px_0px_0px_#ff9e00]' : 'bg-slate-200 border border-slate-300 group-hover:shadow-[3px_3px_0px_0px_#cbd5e1]'}`}></div>
+                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isCardHard ? 'text-white' : 'text-slate-600'}`}>Neo Brutalism</span>
                 </button>
-                <button onClick={() => setCardStyle('flat')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${cardStyle === 'flat' ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
-                  <div className={`w-8 h-8 rounded-md transition-all duration-300 ${cardStyle === 'flat' ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-slate-200 group-hover:border-slate-400'}`}></div>
-                  <span className={`text-[10px] font-bold uppercase tracking-widest ${cardStyle === 'flat' ? 'text-white' : 'text-slate-600'}`}>Clean Flat</span>
+                <button onClick={() => setCardStyle('flat')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${isCardFlat ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
+                  <div className={`w-8 h-8 rounded-md transition-all duration-300 ${isCardFlat ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-slate-200 group-hover:border-slate-400'}`}></div>
+                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isCardFlat ? 'text-white' : 'text-slate-600'}`}>Clean Flat</span>
                 </button>
-                <button onClick={() => setCardStyle('soft-shadow')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${cardStyle === 'soft-shadow' ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
-                  <div className={`w-8 h-8 rounded-xl transition-all duration-300 ${cardStyle === 'soft-shadow' ? 'bg-white shadow-[0_4px_10px_rgba(255,255,255,0.3)]' : 'bg-white shadow-sm border border-slate-100 group-hover:shadow-md'}`}></div>
-                  <span className={`text-[10px] font-bold uppercase tracking-widest ${cardStyle === 'soft-shadow' ? 'text-white' : 'text-slate-600'}`}>Soft Shadow</span>
+                <button onClick={() => setCardStyle('soft-shadow')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${isCardSoft ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
+                  <div className={`w-8 h-8 rounded-xl transition-all duration-300 ${isCardSoft ? 'bg-white shadow-[0_4px_10px_rgba(255,255,255,0.3)]' : 'bg-white shadow-sm border border-slate-100 group-hover:shadow-md'}`}></div>
+                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isCardSoft ? 'text-white' : 'text-slate-600'}`}>Soft Shadow</span>
                 </button>
               </div>
               <div className="w-full h-px bg-slate-100 mt-10"></div>
@@ -244,17 +276,17 @@ export default function AppearancePage() {
                 <h3 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">Bentuk Elemen</h3>
               </div>
               <div className="grid grid-cols-3 gap-4">
-                <button onClick={() => setButtonShape('hard')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${buttonShape === 'hard' ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
-                  <div className={`w-8 h-4 transition-all duration-300 rounded-none ${buttonShape === 'hard' ? 'bg-[#ff9e00]' : 'bg-slate-300 group-hover:bg-slate-400'}`}></div>
-                  <span className={`text-[10px] font-bold uppercase tracking-widest ${buttonShape === 'hard' ? 'text-white' : 'text-slate-600'}`}>Kotak Tajam</span>
+                <button onClick={() => setButtonShape('hard')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${isBtnHard ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
+                  <div className={`w-8 h-4 transition-all duration-300 rounded-none ${isBtnHard ? 'bg-[#ff9e00]' : 'bg-slate-300 group-hover:bg-slate-400'}`}></div>
+                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isBtnHard ? 'text-white' : 'text-slate-600'}`}>Kotak Tajam</span>
                 </button>
-                <button onClick={() => setButtonShape('rounded')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${buttonShape === 'rounded' ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
-                  <div className={`w-8 h-4 transition-all duration-300 rounded-md ${buttonShape === 'rounded' ? 'bg-[#ff9e00]' : 'bg-slate-300 group-hover:bg-slate-400'}`}></div>
-                  <span className={`text-[10px] font-bold uppercase tracking-widest ${buttonShape === 'rounded' ? 'text-white' : 'text-slate-600'}`}>Melingkar</span>
+                <button onClick={() => setButtonShape('rounded')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${isBtnRounded ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
+                  <div className={`w-8 h-4 transition-all duration-300 rounded-md ${isBtnRounded ? 'bg-[#ff9e00]' : 'bg-slate-300 group-hover:bg-slate-400'}`}></div>
+                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isBtnRounded ? 'text-white' : 'text-slate-600'}`}>Melingkar</span>
                 </button>
-                <button onClick={() => setButtonShape('pill')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${buttonShape === 'pill' ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
-                  <div className={`w-8 h-4 transition-all duration-300 rounded-full ${buttonShape === 'pill' ? 'bg-[#ff9e00]' : 'bg-slate-300 group-hover:bg-slate-400'}`}></div>
-                  <span className={`text-[10px] font-bold uppercase tracking-widest ${buttonShape === 'pill' ? 'text-white' : 'text-slate-600'}`}>Kapsul</span>
+                <button onClick={() => setButtonShape('pill')} className={`group relative px-4 py-5 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 ${isBtnPill ? 'bg-slate-900 border-slate-900 shadow-xl shadow-slate-900/20 -translate-y-1' : 'bg-white border-slate-200 hover:-translate-y-1 hover:shadow-md'}`}>
+                  <div className={`w-8 h-4 transition-all duration-300 rounded-full ${isBtnPill ? 'bg-[#ff9e00]' : 'bg-slate-300 group-hover:bg-slate-400'}`}></div>
+                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isBtnPill ? 'text-white' : 'text-slate-600'}`}>Kapsul</span>
                 </button>
               </div>
               <div className="w-full h-px bg-slate-100 mt-10"></div>
@@ -312,7 +344,6 @@ export default function AppearancePage() {
           </div>
           
           <div className="flex-1 overflow-y-auto custom-scrollbar relative z-0 transition-all duration-700">
-            {/* PASTIKAN KOMPONEN MASTER DIRENDER DI SINI */}
             <PortfolioView data={livePreviewData} theme={livePreviewTheme} isMobileView={previewMode === 'mobile'} />
           </div>
         </div>
