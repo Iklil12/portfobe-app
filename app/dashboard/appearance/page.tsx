@@ -256,7 +256,7 @@ export default function AppearancePage() {
                 <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Desain <span className="font-light text-slate-400">& Tema</span></h1>
                 
                 {isLive ? (
-                  // Jika Live: Hanya div biasa (Statis)
+                  // Jika Live Hanya div biasa (Statis)
                   <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-slate-200 bg-slate-50 shrink-0 cursor-default">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                     <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500 whitespace-nowrap hidden sm:inline-block">Active</span>

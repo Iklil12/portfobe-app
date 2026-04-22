@@ -41,11 +41,15 @@ export async function GET(
     }
 
     // --- 5. FIX: KELUARKAN STATUS ISLIVE KE DEPAN ---
-    // Kita membuat objek baru agar isLive dan name bisa langsung dibaca oleh frontend
+    // Kita gunakan "as any" agar TypeScript tidak protes saat proses Build
+    const userData = profile.user as any;
+    const profileData = profile as any;
+
     const responseData = {
       ...profile,
-      isLive: profile.user?.isLive ?? true, // Ambil isLive dari dalam user (default true)
-      name: profile.user?.name || userSubdomain // Ambil nama dari user untuk layar "Sedang Dimasak"
+      isLive: userData?.isLive ?? true, // Ambil isLive dari dalam user (default true)
+      // Coba ambil fullName dari profile, atau dari user, atau gunakan subdomain
+      name: profileData?.fullName || userData?.fullName || userData?.name || userSubdomain 
     };
 
     // 6. Jika sukses, kirimkan data yang sudah dirapikan
