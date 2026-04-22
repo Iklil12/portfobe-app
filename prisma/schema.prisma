@@ -16,6 +16,7 @@ model User {
   avatar      String  
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  isLive  Boolean @default(false)
   
   // Relasi: 1 User punya 1 Profile, dan bisa punya banyak Links & Projects
   profile     Profile?  

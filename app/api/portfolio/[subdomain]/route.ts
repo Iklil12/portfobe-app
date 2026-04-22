@@ -6,10 +6,10 @@ export async function GET(
   { params }: { params: Promise<{ subdomain: string }> }
 ) {
   try {
-    // 1. AWAIT PARAMS: Ini adalah kunci untuk mengatasi error Next.js terbaru
+    // 1. AWAIT PARAMS: Kunci untuk error Next.js terbaru
     const resolvedParams = await params;
     
-    // 2. Bersihkan teks: Hilangkan spasi tidak sengaja dan ubah ke huruf kecil
+    // 2. Bersihkan teks
     const userSubdomain = resolvedParams.subdomain.trim().toLowerCase();
 
     // 3. Cari di database
@@ -40,8 +40,16 @@ export async function GET(
       return NextResponse.json({ error: "Portfolio tidak ditemukan" }, { status: 404 });
     }
 
-    // 5. Jika sukses
-    return NextResponse.json(profile);
+    // --- 5. FIX: KELUARKAN STATUS ISLIVE KE DEPAN ---
+    // Kita membuat objek baru agar isLive dan name bisa langsung dibaca oleh frontend
+    const responseData = {
+      ...profile,
+      isLive: profile.user?.isLive ?? true, // Ambil isLive dari dalam user (default true)
+      name: profile.user?.name || userSubdomain // Ambil nama dari user untuk layar "Sedang Dimasak"
+    };
+
+    // 6. Jika sukses, kirimkan data yang sudah dirapikan
+    return NextResponse.json(responseData);
     
   } catch (error) {
     console.error("🔥 CRITICAL API ERROR:", error);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -8,6 +8,58 @@ export default function SettingsPage() {
   const { data: session } = useSession();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // STATE BARU: Untuk fitur Toggle Live/Offline
+  const [isLive, setIsLive] = useState(true);
+  const [isLoadingStatus, setIsLoadingStatus] = useState(true);
+
+  // FUNGSI BARU: Mengambil status dari database saat halaman dimuat
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch('/api/account/status');
+        if (res.ok) {
+          const data = await res.json();
+          setIsLive(data.isLive);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil status portofolio");
+      } finally {
+        setIsLoadingStatus(false);
+      }
+    };
+    fetchStatus();
+  }, []);
+
+  // FUNGSI BARU: Menangani klik pada tombol toggle
+  const toggleStatus = async () => {
+    const newStatus = !isLive;
+    setIsLive(newStatus); // Update UI seketika (Optimistic UI) agar terasa cepat
+    
+    const loadingToast = toast.loading(
+      newStatus ? 'Mempublikasikan portofolio...' : 'Menyembunyikan portofolio...', 
+      {
+        style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+      }
+    );
+
+    try {
+      const res = await fetch('/api/account/status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isLive: newStatus })
+      });
+
+      if (res.ok) {
+        toast.success(newStatus ? 'Portofolio kini Live!' : 'Portofolio disembunyikan.', { id: loadingToast });
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      setIsLive(!newStatus); // Kembalikan posisi toggle jika API gagal
+      toast.error('Gagal mengubah status.', { id: loadingToast });
+    }
+  };
 
   const handleComingSoon = () => {
     toast('Fitur ini sedang dalam pengembangan.', {
@@ -141,19 +193,33 @@ export default function SettingsPage() {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <h4 className="text-xl font-extrabold text-slate-900 tracking-tight">Status Portofolio</h4>
-              <span className="px-2 py-1 rounded-md bg-slate-50 border border-slate-200 text-slate-700 text-[9px] font-extrabold uppercase tracking-widest flex items-center gap-1.5">
-                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse relative before:absolute before:inset-0 before:bg-emerald-500 before:rounded-full before:animate-ping"></span> Live
-              </span>
+              
+              {/* Badge berubah dinamis menyesuaikan state isLive */}
+              {isLive ? (
+                <span className="px-2 py-1 rounded-md bg-slate-50 border border-slate-200 text-slate-700 text-[9px] font-extrabold uppercase tracking-widest flex items-center gap-1.5 transition-all">
+                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse relative before:absolute before:inset-0 before:bg-emerald-500 before:rounded-full before:animate-ping"></span> Live
+                </span>
+              ) : (
+                <span className="px-2 py-1 rounded-md bg-slate-50 border border-slate-200 text-slate-400 text-[9px] font-extrabold uppercase tracking-widest flex items-center gap-1.5 transition-all">
+                   <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Offline
+                </span>
+              )}
             </div>
-            <p className="text-sm text-slate-500 font-medium">Website portofolio Anda saat ini dapat dikunjungi oleh publik.</p>
+            
+            <p className="text-sm text-slate-500 font-medium">
+              {isLive 
+                ? "Website portofolio Anda saat ini dapat dikunjungi oleh publik." 
+                : "Website Anda saat ini sedang disembunyikan dari publik."}
+            </p>
           </div>
           
-          {/* Toggle Switch Tiruan */}
+          {/* Toggle Switch Aktif */}
           <button 
-            onClick={handleComingSoon}
-            className="shrink-0 w-14 h-8 bg-slate-900 rounded-full p-1 cursor-not-allowed opacity-90 relative shadow-inner group"
+            onClick={toggleStatus}
+            disabled={isLoadingStatus}
+            className={`shrink-0 w-14 h-8 rounded-full p-1 relative shadow-inner transition-colors duration-300 ${isLive ? 'bg-slate-900' : 'bg-slate-300'} ${isLoadingStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-90'}`}
           >
-             <div className="w-6 h-6 bg-white rounded-full shadow-sm translate-x-6 group-hover:scale-95 transition-transform"></div>
+             <div className={`w-6 h-6 bg-white rounded-full shadow-sm transition-transform duration-300 ${isLive ? 'translate-x-6' : 'translate-x-0'}`}></div>
           </button>
         </div>
 
