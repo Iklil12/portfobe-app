@@ -5,7 +5,9 @@ import { useSession, signOut } from 'next-auth/react';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function SettingsPage() {
-  const { data: session } = useSession();
+  // --- FIX 1: Ambil fungsi update dari useSession ---
+  const { data: session, update } = useSession();
+  
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -52,6 +54,16 @@ export default function SettingsPage() {
 
       if (res.ok) {
         toast.success(newStatus ? 'Portofolio kini Live!' : 'Portofolio disembunyikan.', { id: loadingToast });
+        
+        // --- FIX 2: SINKRONISASI KE SESSION (AGAR NOTIF LAYOUT BERUBAH) ---
+        await update({
+          ...session,
+          user: {
+            ...session?.user,
+            isLive: newStatus
+          }
+        });
+
       } else {
         throw new Error();
       }

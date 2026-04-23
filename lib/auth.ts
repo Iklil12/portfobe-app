@@ -31,7 +31,6 @@ export const authOptions: NextAuthOptions = {
           include: { profile: true }
         });
 
-        // Pastikan user ada, dan cegah login manual jika dia pakai akun Google
         if (!user || !user.password || user.password === "GOOGLE_LOGIN_NO_PASSWORD") {
             throw new Error("Email tidak ditemukan atau gunakan Login Google.");
         }
@@ -39,8 +38,6 @@ export const authOptions: NextAuthOptions = {
         const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
         if (!isPasswordValid) throw new Error("Password salah.");
 
-        // --- BYPASS TYPESCRIPT ---
-        // Agar TS tidak protes saat kita mencoba mencari property name atau image
         const userData = user as any;
 
         return {
@@ -52,31 +49,37 @@ export const authOptions: NextAuthOptions = {
           plan: userData.plan, 
           profession: user.profile?.profession,
           bio: user.profile?.bio,
+          subdomain: user.profile?.subdomain,
+          isLive: userData.isLive
         };
       }
     })
   ],
 
   callbacks: {
+    // 0. REDIRECT CALLBACK: Mengatasi masalah "Harus klik login Google 2 kali"
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith(baseUrl)) return url;
+      else if (url.startsWith("/")) return new URL(url, baseUrl).toString();
+      return baseUrl + "/dashboard";
+    },
+
     // 1. SIGN IN CALLBACK: Di sinilah Auto-Register & Pengisian Tabel Account Terjadi
     async signIn({ user, account }: any) {
       if (account?.provider === "google") {
         try {
           const existingUser = await prisma.user.findUnique({
             where: { email: user.email },
-            include: { profile: true } // Tarik sekalian profilnya
+            include: { profile: true } 
           });
 
-          // JIKA USER GOOGLE BELUM PERNAH DAFTAR SAMA SEKALI
           if (!existingUser) {
-            // Kita buatkan tabel User, Profile, DAN Account sekaligus!
             await prisma.user.create({
               data: {
                 email: user.email,
-                password: "GOOGLE_LOGIN_NO_PASSWORD", // Wajib diisi menurut Schema
-                avatar: user.image || "", // Wajib diisi menurut Schema
+                password: "GOOGLE_LOGIN_NO_PASSWORD", 
+                avatar: user.image || "", 
                 
-                // Buat Profil
                 profile: {
                     create: {
                         fullName: user.name || "Pengguna Baru", 
@@ -84,7 +87,6 @@ export const authOptions: NextAuthOptions = {
                     }
                 },
                 
-                // Buat Account (Penghubung ke Google)
                 accounts: {
                     create: {
                         type: account.type,
@@ -97,9 +99,6 @@ export const authOptions: NextAuthOptions = {
               },
             });
           } else {
-             // JIKA USER SUDAH ADA (misal daftar manual sebelumnya)
-             
-             // 1. Cek apakah tabel Profile-nya sudah ada
              if (!existingUser.profile) {
                  await prisma.profile.create({
                      data: {
@@ -110,13 +109,11 @@ export const authOptions: NextAuthOptions = {
                  });
              }
              
-             // 2. Cek apakah tabel Account-nya sudah ditautkan
              const existingAccount = await prisma.account.findFirst({
                  where: { provider: account.provider, providerAccountId: account.providerAccountId }
              });
              
              if (!existingAccount) {
-                 // Tautkan akun Google ini ke User yang sudah ada
                  await prisma.account.create({
                      data: {
                          userId: existingUser.id,
@@ -129,26 +126,38 @@ export const authOptions: NextAuthOptions = {
                  });
              }
           }
-          return true; // Izinkan masuk!
+          return true; 
         } catch (error) {
           console.error("Gagal Auto-Register Google:", error);
-          return false; // Tolak login jika database bermasalah
+          return false; 
         }
       }
-      return true; // Izinkan login manual
+      return true; 
     },
 
-    // 2. JWT CALLBACK: Update & Pasokan Data
+    // 2. JWT CALLBACK: SINKRONISASI DATABASE 100% AKURAT
     async jwt({ token, user, trigger, session, account }: any) {
-      if (trigger === "update" && session?.user) {
-        token.name = session.user.name;
-        token.picture = session.user.image; 
-        token.avatar = session.user.avatar; 
-        token.profession = session.user.profession;
-        token.bio = session.user.bio;
+      
+      // LOGIKA BARU: Jika Frontend bilang "update", panggil ulang data dari Database!
+      if (trigger === "update") {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email as string },
+          include: { profile: true }
+        });
+        
+        if (dbUser) {
+          const uData = dbUser as any;
+          token.name = dbUser.profile?.fullName || uData.name || "User";
+          token.profession = dbUser.profile?.profession;
+          token.bio = dbUser.profile?.bio;
+          token.subdomain = dbUser.profile?.subdomain; // Sinkronisasi Subdomain!
+          token.isLive = uData.isLive;
+          token.avatar = uData.avatar;
+          token.picture = dbUser.profile?.avatarUrl || uData.avatar || token.picture;
+        }
       }
       
-      // Ambil data terbaru dari Database setiap kali login
+      // Ambil data terbaru saat login pertama kali
       if (user || account?.provider === "google") {
         const emailToFind = user?.email || token.email;
         if (emailToFind) {
@@ -158,7 +167,7 @@ export const authOptions: NextAuthOptions = {
           });
           
           if (dbUser) {
-            const uData = dbUser as any; // Bypass TS
+            const uData = dbUser as any; 
             
             token.id = uData.id; 
             token.name = dbUser.profile?.fullName || uData.name || "User";
@@ -168,6 +177,9 @@ export const authOptions: NextAuthOptions = {
             token.bio = dbUser.profile?.bio;
             token.avatar = uData.avatar; 
             token.picture = dbUser.profile?.avatarUrl || uData.avatar || user?.image;
+            
+            token.subdomain = dbUser.profile?.subdomain;
+            token.isLive = uData.isLive;
           }
         }
       }
@@ -183,6 +195,9 @@ export const authOptions: NextAuthOptions = {
         session.user.bio = token.bio;
         session.user.avatar = token.avatar;
         session.user.image = token.picture;
+        
+        session.user.subdomain = token.subdomain;
+        session.user.isLive = token.isLive;
       }
       return session;
     }

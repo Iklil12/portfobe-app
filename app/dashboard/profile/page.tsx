@@ -1,10 +1,11 @@
-// app/dashboard/profile/page.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import toast, { Toaster } from 'react-hot-toast';
 import { CldUploadWidget } from 'next-cloudinary';
+
+// HAPUS BARIS INI DARI KODINGAN ANDA SEBELUMNYA: const { update } = useSession(); 
 
 export default function ProfilePage() {
   const { data: session, status, update } = useSession();
@@ -36,7 +37,7 @@ export default function ProfilePage() {
             setFirstName(names[0] || "");
             setLastName(names.slice(1).join(" ") || "");
             
-            const dbSubdomain = data.profile?.subdomain || data.subdomain;
+            const dbSubdomain = data.profile?.subdomain || data.subdomain || "";
             const emailPrefix = (session?.user?.email || "").split('@')[0] || "user";
             const finalSubdomain = dbSubdomain || emailPrefix;
             
@@ -75,7 +76,7 @@ export default function ProfilePage() {
       return;
     }
 
-    // Tunggu user berhenti mengetik selama 500ms sebelum nembak API (biar server tidak jebol)
+    // Tunggu user berhenti mengetik selama 500ms sebelum nembak API
     const timeoutId = setTimeout(async () => {
       setSubdomainStatus('checking');
       try {
@@ -140,15 +141,19 @@ export default function ProfilePage() {
           style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' },
           iconTheme: { primary: '#22c55e', secondary: '#0a0a0a' }
         });
-        setInitialSubdomain(subdomain); // Update acuan awal setelah simpan berhasil
+        setInitialSubdomain(subdomain); 
         
+        // --- FIX UTAMA: PUSH SEMUA DATA KE DALAM SESSION/COOKIE ---
         await update({
           ...session,
           user: {
             ...session?.user,
             image: avatarUrl, 
             avatar: avatarUrl, 
-            name: `${firstName} ${lastName}`.trim()
+            name: `${firstName} ${lastName}`.trim(),
+            subdomain: subdomain,      // <- Ini yang menyelesaikan bug subdomain notif!
+            profession: profession,    // <- Ini yang menyelesaikan bug profesi notif!
+            bio: bio                   // <- Ini yang menyelesaikan bug bio notif!
           }
         });
 
@@ -203,7 +208,6 @@ export default function ProfilePage() {
   const defaultUsername = session?.user?.email?.split('@')[0] || "user";
   const cloudinaryPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "paperions_preset";
 
-  // Penentu warna border & background form subdomain berdasarkan status pengecekan
   const getSubdomainStyle = () => {
     if (subdomainStatus === 'taken') return 'border-red-400 bg-red-50 ring-[3px] ring-red-400/20';
     if (subdomainStatus === 'available') return 'border-green-400 bg-green-50 ring-[3px] ring-green-400/20';
@@ -295,7 +299,6 @@ export default function ProfilePage() {
                     {firstName ? `${firstName} ${lastName}` : fullName}
                   </h2>
                   
-                  {/* EDIT SUBDOMAIN DENGAN REAL-TIME VALIDATION */}
                   <div className="flex flex-col items-center justify-center md:justify-start mb-6 w-full md:w-auto relative">
                     <div className={`relative flex items-center gap-1 text-sm font-bold text-slate-600 pl-4 pr-12 py-2.5 rounded-full border transition-all overflow-hidden max-w-[280px] sm:max-w-md w-full md:w-auto ${getSubdomainStyle()}`}>
                        <i className="fas fa-link shrink-0 mr-1 opacity-50"></i>
@@ -309,14 +312,12 @@ export default function ProfilePage() {
                          className="bg-transparent outline-none text-slate-900 w-full min-w-[80px] p-0 border-none focus:ring-0 truncate"
                        />
                        
-                       {/* Indikator Status (Kanan Dalam Input) */}
                        <div className="absolute right-[46px] top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
                          {subdomainStatus === 'checking' && <div className="w-3.5 h-3.5 border-2 border-slate-300 border-t-[#ff9e00] rounded-full animate-spin"></div>}
                          {subdomainStatus === 'available' && <i className="fas fa-check-circle text-green-500 text-sm"></i>}
                          {subdomainStatus === 'taken' && <i className="fas fa-times-circle text-red-500 text-sm"></i>}
                        </div>
 
-                       {/* Batas Tipis */}
                        <div className="absolute right-9 top-1/2 -translate-y-1/2 w-px h-4 bg-slate-200"></div>
                        
                        <button 
@@ -329,7 +330,6 @@ export default function ProfilePage() {
                        </button>
                     </div>
                     
-                    {/* Pesan Error di Bawah Input jika Diambil */}
                     <div className="h-4 mt-1 w-full text-center md:text-left">
                        {subdomainStatus === 'taken' && (
                           <span className="text-[10px] font-bold text-red-500 animate-enter">
@@ -377,7 +377,7 @@ export default function ProfilePage() {
           
           <div className="group animate-enter" style={{animationDelay: '500ms'}}>
             <label className="block text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Bio Ringkas</label>
-            <textarea rows={5} value={bio} onChange={(e) => setBio(e.target.value)} className="w-full px-5 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-[#ff9e00] focus:ring-[4px] focus:ring-[#ff9e00]/15 outline-none transition-all text-sm font-medium leading-relaxed text-slate-900 resize-none" />
+            <textarea rows={5} maxLength={250} value={bio} onChange={(e) => setBio(e.target.value)} className="w-full px-5 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-[#ff9e00] focus:ring-[4px] focus:ring-[#ff9e00]/15 outline-none transition-all text-sm font-medium leading-relaxed text-slate-900 resize-none" />
           </div>
           
           <div className="pt-8 mt-10 border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-end gap-3 animate-enter" style={{animationDelay: '600ms'}}>
