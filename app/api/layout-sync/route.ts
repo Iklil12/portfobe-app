@@ -3,7 +3,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-export async function GET() {
+// --- BRUTE-FORCE ANTI-CACHE: Dijamin 100% Real-Time ---
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
+
+export async function GET(req: Request) { 
   try {
     const session = await getServerSession(authOptions);
 
@@ -11,7 +16,6 @@ export async function GET() {
       return NextResponse.json(null, { status: 401 });
     }
 
-    // Tarik semua data yang dibutuhkan oleh Layout dari Database
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       include: { profile: true }
@@ -19,7 +23,7 @@ export async function GET() {
 
     if (!user) return NextResponse.json(null, { status: 404 });
 
-    // Kembalikan versi paling segar (fresh) dari database
+    // Format khusus yang HANYA dibutuhkan oleh Layout
     return NextResponse.json({
       isLive: user.isLive,
       subdomain: user.profile?.subdomain || null,

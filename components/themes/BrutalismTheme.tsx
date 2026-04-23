@@ -1,4 +1,3 @@
-// File: components/themes/BrutalismTheme.tsx
 "use client";
 
 import React, { useState } from 'react';
@@ -67,7 +66,8 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
   const customBodyFont = getFontFamily(fontBody);
 
   return (
-    <div className={`w-full max-w-5xl mx-auto bg-white relative z-10 flex flex-col min-h-screen ${res('sm:min-h-0')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] animate-in fade-in slide-in-from-bottom-8 duration-1000
+    // FIX: Tambahkan text-slate-900 (Warna Default Hitam) pada kontainer paling luar agar menimpa css nyasar dari Editor
+    <div className={`w-full max-w-5xl mx-auto bg-white text-slate-900 relative z-10 flex flex-col min-h-screen ${res('sm:min-h-0')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] animate-in fade-in slide-in-from-bottom-8 duration-1000
       ${isBrutal ? `border-x-0 border-y-0 border-black ${res('sm:border-x-[3px] sm:border-y-[3px] sm:preview-hard-shadow')}` : `border-x-0 border-slate-200 ${res(`sm:border-x ${cardStyle==='soft-shadow'?'sm:shadow-[0_20px_50px_rgba(0,0,0,0.1)]':''} sm:${getRadiusClass(true)}`)}`}
     `}>
       
@@ -102,12 +102,12 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
               <span className={`transition-all duration-700 custom-heading`}>{fullName}( )</span>
               <span className="animate-pulse transition-colors duration-700" style={{ color: isBrutal ? '#fff' : themeColor }}>● REC</span>
           </div>
-          <div className={`hidden ${res('sm:flex')} p-4 md:p-5 w-24 md:w-32 items-center justify-center text-center hover:bg-gray-100 transition-colors duration-300 custom-body`}>
+          <div className={`hidden ${res('sm:flex')} p-4 md:p-5 w-24 md:w-32 items-center justify-center text-center hover:bg-gray-100 transition-colors duration-300 custom-body text-slate-900`}>
               <a href="#archive">Archive</a>
           </div>
 
           {/* --- TOMBOL CONTACT (TOGGLE DROPDOWN) --- */}
-          <button onClick={() => setIsContactOpen(!isContactOpen)} className={`p-4 ${res('md:p-5 w-28 md:w-40')} text-center cursor-pointer flex items-center justify-center gap-2 transition-all duration-700 ease-out custom-body outline-none ${isBrutal ? 'bg-gray-100 hover:bg-black hover:text-white' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-md'} ${buttonShape !== 'hard' && !isBrutal ? getRadiusClass(false) + res(' mx-3 my-2') : ''}`}>
+          <button onClick={() => setIsContactOpen(!isContactOpen)} className={`p-4 ${res('md:p-5 w-28 md:w-40')} text-center cursor-pointer flex items-center justify-center gap-2 transition-all duration-700 ease-out custom-body outline-none ${isBrutal ? 'bg-gray-100 text-black hover:bg-black hover:text-white' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-md'} ${buttonShape !== 'hard' && !isBrutal ? getRadiusClass(false) + res(' mx-3 my-2') : ''}`}>
               Contact <i className={`fas fa-chevron-down transition-transform duration-300 ${isContactOpen ? 'rotate-180' : ''}`}></i>
           </button>
 
@@ -124,7 +124,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
               <div className={`p-6 ${res('md:p-8')} flex flex-col gap-4`}>
                   <p className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">Social & Links</p>
                   {links.length > 0 ? links.map((l: any, i: number) => (
-                      <a key={i} href={l.url} target="_blank" rel="noreferrer" className={`group flex justify-between items-center text-xs ${res('md:text-sm')} font-bold uppercase tracking-wide transition-colors ${isBrutal ? 'hover:text-[#ff9e00]' : 'hover:text-blue-600'}`}>
+                      <a key={i} href={l.url} target="_blank" rel="noreferrer" className={`group flex justify-between items-center text-xs ${res('md:text-sm')} font-bold uppercase tracking-wide transition-colors ${isBrutal ? 'text-slate-900 hover:text-[#ff9e00]' : 'text-slate-900 hover:text-blue-600'}`}>
                           <span>{l.platform}</span>
                           <i className="fas fa-arrow-right opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all -rotate-45"></i>
                       </a>
@@ -143,16 +143,16 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
           `}>
               {isBrutal && <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>}
               {isBrutal && (
-                <div className={`inline-block border-[2px] border-black px-3 py-1 mb-4 ${res('md:mb-8')} w-max font-mono text-[9px] ${res('md:text-[10px]')} font-bold uppercase bg-white preview-hard-shadow-sm relative z-10 transition-all duration-700 ${getRadiusClass(false)}`}>
+                <div className={`inline-block text-slate-900 border-[2px] border-black px-3 py-1 mb-4 ${res('md:mb-8')} w-max font-mono text-[9px] ${res('md:text-[10px]')} font-bold uppercase bg-white preview-hard-shadow-sm relative z-10 transition-all duration-700 ${getRadiusClass(false)}`}>
                     ID: {subdomain?.toUpperCase() || 'USER'}-V1
                 </div>
               )}
               
-              <h1 className={`text-4xl ${res('sm:text-5xl md:text-6xl lg:text-7xl')} font-black uppercase leading-[0.9] tracking-tighter mb-4 ${res('md:mb-6')} relative z-10 transition-all duration-700 custom-heading`}>
+              <h1 className={`text-slate-900 text-4xl ${res('sm:text-5xl md:text-6xl lg:text-7xl')} font-black uppercase leading-[0.9] tracking-tighter mb-4 ${res('md:mb-6')} relative z-10 transition-all duration-700 custom-heading`}>
                   {profession ? profession.split(' ').map((w:any, i:any) => <React.Fragment key={i}>{w}<br/></React.Fragment>) : 'Visual Architect'}
               </h1>
               
-              <p className={`text-[10px] ${res('md:text-[11px]')} max-w-[280px] ${res('sm:max-w-xs md:max-w-md')} opacity-80 relative z-10 leading-relaxed transition-all duration-700 custom-body ${isBrutal ? `uppercase font-bold border-l-[2px] ${res('md:border-l-[3px]')} border-black pl-3 ${res('md:pl-5')} bg-white/50 backdrop-blur-sm p-2 ${res('md:p-3')}` : 'text-slate-500'}`}>
+              <p className={`text-[10px] ${res('md:text-[11px]')} max-w-[280px] ${res('sm:max-w-xs md:max-w-md')} opacity-80 relative z-10 leading-relaxed transition-all duration-700 custom-body ${isBrutal ? `uppercase font-bold border-l-[2px] ${res('md:border-l-[3px]')} border-black pl-3 ${res('md:pl-5')} bg-white/50 backdrop-blur-sm p-2 ${res('md:p-3')} text-slate-900` : 'text-slate-500'}`}>
                   {bio}
               </p>
           </div>
@@ -166,8 +166,6 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                 </div>
               )}
               
-              {/* --- PERBAIKAN: UKURAN FOTO PROFIL DIPERBESAR --- */}
-              {/* Diubah dari max-w-[160px] menjadi max-w-[240px] untuk mobile, dan max-w-[320px] untuk desktop */}
               <div className={`w-full max-w-[240px] ${res('sm:max-w-[280px] md:max-w-[320px]')} aspect-[3/4] overflow-hidden transition-all duration-700 mx-auto ${isBrutal ? `border-[2px] ${res('md:border-[3px]')} border-black preview-hard-shadow-sm p-1.5 ${res('md:p-2')} bg-white ${getRadiusClass(true)}` : getCardClass() + ' ' + getRadiusClass(true)}`}>
                   <img src={displayAvatar} className={`w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Profile" />
               </div>
@@ -190,7 +188,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
 
       {/* ARCHIVE SECTION */}
       <section id="archive" className={!isBrutal ? `mb-8 ${res('md:mb-14')}` : ''}>
-        <div className={`p-4 ${res('md:p-6')} font-bold uppercase flex justify-between transition-all duration-700 ${isBrutal ? `border-b-[3px] border-black bg-gray-100 font-mono text-[10px] ${res('md:text-xs')}` : `bg-white custom-body text-xs ${res('md:text-sm')} text-slate-800 px-6 ${res('sm:px-8')} mt-4`}`}>
+        <div className={`p-4 ${res('md:p-6')} font-bold uppercase flex justify-between transition-all duration-700 ${isBrutal ? `border-b-[3px] border-black bg-gray-100 text-slate-900 font-mono text-[10px] ${res('md:text-xs')}` : `bg-white custom-body text-xs ${res('md:text-sm')} text-slate-800 px-6 ${res('sm:px-8')} mt-4`}`}>
             <span>{isBrutal ? '[ Selected Archive ]' : 'Selected Archive'}</span>
             {isBrutal && <span>Vol. 1</span>}
         </div>
@@ -201,7 +199,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
 
               return (
                 <a href={linkTarget} target={linkTarget !== '#' ? "_blank" : "_self"} key={i} className={`group cursor-pointer overflow-hidden transition-all duration-700 block ${isBrutal ? `border-b-[3px] border-black last:border-b-0 ${res('md:border-b-0 md:border-r-[3px] md:[&:nth-child(even)]:border-r-0 md:[&:nth-last-child(-n+2)]:border-b-0')} ` : getCardClass() + ' ' + getRadiusClass(true)}`}>
-                    <div className={`p-3 ${res('md:p-5')} flex justify-between font-bold transition-all duration-700 ${isBrutal ? `border-b-[2px] border-black bg-white group-hover:bg-black group-hover:text-white font-mono text-[9px] ${res('md:text-[10px]')}` : `bg-slate-50 text-slate-500 custom-body text-[10px] ${res('md:text-xs')} border-b border-slate-100`}`}>
+                    <div className={`p-3 ${res('md:p-5')} flex justify-between font-bold transition-all duration-700 ${isBrutal ? `border-b-[2px] border-black bg-white group-hover:bg-black text-slate-900 group-hover:text-white font-mono text-[9px] ${res('md:text-[10px]')}` : `bg-slate-50 text-slate-500 custom-body text-[10px] ${res('md:text-xs')} border-b border-slate-100`}`}>
                       <span style={{ color: !isBrutal ? themeColor : '' }}>{p.projectType?.toUpperCase() || 'PROJECT'}</span>
                       <span>0{i+1}</span>
                     </div>
@@ -212,19 +210,19 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                       {isVideo && (
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <div className={`w-12 h-12 flex items-center justify-center ${isBrutal ? 'bg-[#ff9e00] border-2 border-black rounded-none' : 'bg-white rounded-full shadow-lg'} text-black`}>
-                             <i className="fas fa-play ml-1"></i>
+                              <i className="fas fa-play ml-1"></i>
                           </div>
                         </div>
                       )}
                     </div>
                     
                     <div className={`p-5 ${res('md:p-8')} bg-white transition-all duration-700`}>
-                      <h3 className={`text-lg ${res('md:text-2xl')} font-black tracking-tighter mb-1 truncate custom-heading group-hover:underline decoration-2 underline-offset-4`}>{p.title}</h3>
+                      <h3 className={`text-lg text-slate-900 ${res('md:text-2xl')} font-black tracking-tighter mb-1 truncate custom-heading group-hover:underline decoration-2 underline-offset-4`}>{p.title}</h3>
                       <p className={`transition-all duration-700 text-gray-500 truncate custom-body text-[10px] ${res('md:text-xs')} ${isBrutal && 'uppercase'}`}>{p.description || 'View Details'}</p>
                     </div>
                 </a>
               );
-            }) : <div className={`p-10 ${res('md:p-16')} text-center col-span-2 opacity-30 font-mono text-[10px] ${res('md:text-[11px]')} uppercase`}>NO ARCHIVE DATA FOUND.</div>}
+            }) : <div className={`p-10 ${res('md:p-16')} text-center col-span-2 text-slate-900 opacity-30 font-mono text-[10px] ${res('md:text-[11px]')} uppercase`}>NO ARCHIVE DATA FOUND.</div>}
         </div>
       </section>
 
@@ -234,16 +232,16 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
       </div>
       <div className={`transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isBrutal ? 'bg-white' : `px-4 ${res('sm:px-8')} pb-8 bg-white`}`}>
         {awardItems.length > 0 ? awardItems.map((award: any) => (
-          <div key={award.id} className={`flex flex-col transition-all duration-700 overflow-hidden ${isBrutal ? 'border-b-[3px] border-black' : `mb-3 ${res('sm:mb-4')} ` + getCardClass() + ' ' + getRadiusClass(true)}`}>
+          <div key={award.id} className={`flex flex-col transition-all duration-700 overflow-hidden ${isBrutal ? 'border-b-[3px] border-black text-slate-900' : `mb-3 ${res('sm:mb-4')} ` + getCardClass() + ' ' + getRadiusClass(true)}`}>
               <div className={`p-4 ${res('sm:p-5 md:p-6')} flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors duration-300 ${!isBrutal && openAward === award.id ? 'border-b border-slate-100' : ''}`} onClick={() => setOpenAward(openAward === award.id ? null : award.id)}>
                   <div className={`flex items-center gap-3 ${res('sm:gap-4 md:gap-6')} overflow-hidden`}>
-                      <span className={`font-bold w-6 ${res('sm:w-8 md:w-12')} shrink-0 whitespace-nowrap text-center transition-all duration-700 custom-heading text-xs ${res('md:text-sm')} ${!isBrutal && 'text-slate-400'}`}>
+                      <span className={`font-bold w-6 ${res('sm:w-8 md:w-12')} shrink-0 whitespace-nowrap text-center transition-all duration-700 custom-heading text-xs ${res('md:text-sm')} ${!isBrutal ? 'text-slate-400' : 'text-slate-900'}`}>
                         {openAward === award.id ? '[ - ]' : '[ + ]'}
                       </span>
-                      <h3 className={`text-sm ${res('sm:text-base md:text-xl lg:text-2xl')} font-black tracking-tighter truncate max-w-[150px] ${res('sm:max-w-[250px] md:max-w-[400px]')} transition-all duration-700 custom-heading ${isBrutal && 'uppercase'}`}>{award.title}</h3>
+                      <h3 className={`text-sm text-slate-900 ${res('sm:text-base md:text-xl lg:text-2xl')} font-black tracking-tighter truncate max-w-[150px] ${res('sm:max-w-[250px] md:max-w-[400px]')} transition-all duration-700 custom-heading ${isBrutal && 'uppercase'}`}>{award.title}</h3>
                   </div>
                   
-                  <span className={`text-[8px] ${res('sm:text-[9px] md:text-[10px]')} font-bold uppercase text-right shrink-0 whitespace-nowrap ml-2 ${res('md:ml-4')} transition-all duration-700 custom-body ${!isBrutal && 'text-slate-400'}`}>
+                  <span className={`text-[8px] ${res('sm:text-[9px] md:text-[10px]')} font-bold uppercase text-right shrink-0 whitespace-nowrap ml-2 ${res('md:ml-4')} transition-all duration-700 custom-body ${!isBrutal ? 'text-slate-400' : 'text-slate-900'}`}>
                     {award.issuer || 'CERTIFICATE'} <br className={res('sm:hidden')} /> <span className={`hidden ${res('sm:inline')}`}>/</span> {award.year || new Date(award.createdAt).getFullYear()}
                   </span>
               </div>
@@ -267,10 +265,10 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                   </div>
               </div>
           </div>
-        )) : <div className={`p-8 ${res('md:p-12')} text-center font-bold text-gray-400 text-[10px] ${res('md:text-[11px]')} uppercase transition-all duration-700 ${isBrutal ? 'font-mono border-b-[3px] border-black' : 'font-sans'}`}>NO AWARDS RECORDED.</div>}
+        )) : <div className={`p-8 ${res('md:p-12')} text-center font-bold text-gray-400 text-[10px] ${res('md:text-[11px]')} uppercase transition-all duration-700 ${isBrutal ? 'font-mono border-b-[3px] border-black text-slate-900' : 'font-sans'}`}>NO AWARDS RECORDED.</div>}
       </div>
 
-      <footer className={`p-5 ${res('sm:p-6 md:p-8')} font-bold uppercase flex flex-col ${res('sm:flex-row')} justify-between items-center gap-3 ${res('sm:gap-4')} transition-all duration-700 custom-body ${isBrutal ? `bg-gray-100 font-mono text-[9px] ${res('md:text-[10px]')}` : `bg-slate-900 text-white text-[9px] ${res('md:text-[10px]')} mt-4 ${res('sm:mt-6 sm:'+getRadiusClass(true)+' sm:rounded-t-none')}`}`}>
+      <footer className={`p-5 ${res('sm:p-6 md:p-8')} font-bold uppercase flex flex-col ${res('sm:flex-row')} justify-between items-center gap-3 ${res('sm:gap-4')} transition-all duration-700 custom-body ${isBrutal ? `bg-gray-100 text-slate-900 font-mono text-[9px] ${res('md:text-[10px]')}` : `bg-slate-900 text-white text-[9px] ${res('md:text-[10px]')} mt-4 ${res('sm:mt-6 sm:'+getRadiusClass(true)+' sm:rounded-t-none')}`}`}>
           <div className={`flex gap-3 ${res('sm:gap-4')} flex-wrap justify-center`}>
             {links.length > 0 ? links.map((l: any, i: number) => {
               const isDarkAccent = themeColor === '#000000' || themeColor === '#0f172a';

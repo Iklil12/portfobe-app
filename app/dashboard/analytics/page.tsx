@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import { showToast } from '@/lib/customToast'; // Import fungsi popup sakti kita
 
 export default function AnalyticsPage() {
   // State untuk memicu animasi progress bar saat halaman selesai dimuat
@@ -13,19 +13,12 @@ export default function AnalyticsPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  // --- MENGGUNAKAN UTILITY showToast ---
   const handleComingSoon = () => {
-    toast('Analitik mendalam sedang dalam tahap akhir pengembangan!', {
-      icon: '📈',
-      style: { 
-        borderRadius: '12px', 
-        background: '#0a0a0a', 
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: '13px',
-        padding: '12px 20px',
-        border: '1px solid #27272a',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-      }
+    showToast({
+      message: "Analitik mendalam sedang dalam tahap akhir pengembangan!",
+      id: "analytics-coming-soon-toast", // ID unik Anti-Spam
+      icon: "fa-chart-line" // Menggunakan icon grafik fontawesome
     });
   };
 
@@ -46,8 +39,6 @@ export default function AnalyticsPage() {
             100% { opacity: 1; transform: translateY(0); }
         }
       `}} />
-
-      <Toaster position="top-center" />
 
       {/* HEADER SECTION (Sesuai Referensi Gambar) */}
       <div className="mb-14 animate-enter text-center md:text-left">

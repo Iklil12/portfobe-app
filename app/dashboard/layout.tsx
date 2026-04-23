@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import useSWR from 'swr'; 
+import { Toaster } from 'react-hot-toast'; 
 
 interface NotificationItem {
   id: string;
@@ -20,15 +21,21 @@ interface NotificationItem {
   border: string;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+// Fetcher kebal cache browser
+const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then((res) => {
+  if (!res.ok) throw new Error("API Error");
+  return res.json();
+});
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: session, status } = useSession(); 
 
-  // --- SWR SEKARANG MEMANTAU SEMUA DATA PROFIL (SYNC GLOBAL) ---
-  const { data: syncData } = useSWR('/api/user/sync', fetcher, {
-    refreshInterval: 15000, 
+
+
+  // --- MENGGUNAKAN API LAYOUT-SYNC YANG SUDAH TERBUKTI AMAN ---
+  const { data: syncData } = useSWR('/api/layout-sync', fetcher, {
+    refreshInterval: 10000,
     revalidateOnFocus: true, 
   });
 
@@ -79,15 +86,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     signOut({ redirect: true, callbackUrl: '/login' });
   };
 
-  // --- PRIORITASKAN DATA DARI SWR, JIKA BELUM MUNCUL PAKAI DARI COOKIE/SESSION ---
+  // --- PENARIKAN DATA SWR ---
   const userPlan = syncData?.plan ? String(syncData.plan).toUpperCase() : (typeof (session?.user as any)?.plan === 'string' ? (session?.user as any)?.plan.toUpperCase() : "FREE");
-  const isWebLive = syncData ? syncData.isLive : (session?.user as any)?.isLive !== false;
+  // Pastikan membaca data yang benar dari syncData
+  const isWebLive = syncData && syncData.isLive !== undefined ? syncData.isLive : ((session?.user as any)?.isLive !== false);
   const userSubdomain = syncData ? syncData.subdomain : (session?.user as any)?.subdomain;
   const userProfession = syncData ? syncData.profession : (session?.user as any)?.profession;
   const userBio = syncData ? syncData.bio : (session?.user as any)?.bio;
   const userAvatar = syncData ? syncData.avatar : ((session?.user as any)?.avatar || session?.user?.image);
 
-  // LOGIKA VALIDASI
   const isSubdomainEmpty = !userSubdomain || String(userSubdomain).trim() === '' || String(userSubdomain) === 'null';
   const isProfessionEmpty = !userProfession || String(userProfession).trim() === '' || String(userProfession) === 'null';
   const isBioEmpty = !userBio || String(userBio).trim() === '' || String(userBio) === 'null';
@@ -130,6 +137,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+    // --- TAMBAHKAN 3 BARIS INI ---
+  const isEditorPage = pathname === '/dashboard/appearance';
+  if (isEditorPage) {
+    return <>{children}</>; // Render halaman murni tanpa Navbar & Sidebar!
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#FAFAFA] font-sans text-slate-900 selection:bg-slate-200 selection:text-slate-900 relative">
@@ -336,12 +348,45 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
-        <header className="animate-page-load delay-100 h-[88px] bg-white/80 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between px-6 sm:px-10 shrink-0 relative z-40">
-          <div className="flex items-center gap-4">
-            <button className="md:hidden w-11 h-11 rounded-full border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center shadow-sm" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+        <header className="sticky top-0 z-40 h-[88px] w-full bg-white/60 backdrop-blur-xl border-b border-slate-100/50 flex items-center justify-between px-6 sm:px-10 shrink-0 animate-page-load delay-100">
+          {/* --- BAGIAN HEADER BARU DENGAN SEARCH BAR PREMIUM --- */}
+          <div className="flex items-center gap-6 flex-1">
+            {/* Tombol Mobile Hamburger */}
+            <button 
+              className="md:hidden w-11 h-11 rounded-full border border-slate-200 bg-white/80 text-slate-600 hover:text-slate-900 active:scale-90 transition-all flex items-center justify-center shadow-sm" 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
               <i className="fas fa-bars text-sm"></i>
             </button>
-            <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900">{getPageTitle()}</h2>
+
+            {/* GLOBAL SEARCH BAR */}
+            <div className="hidden md:flex relative group max-w-md w-full">
+              <div className={`
+                relative flex items-center w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
+                bg-slate-100/40 border border-slate-200/40 rounded-2xl px-4 py-2.5
+                focus-within:bg-white focus-within:border-[#ff9e00]/40 focus-within:ring-4 focus-within:ring-[#ff9e00]/5
+                focus-within:w-[110%] group-hover:border-slate-300/60 backdrop-blur-md
+              `}>
+                <div className="flex items-center justify-center text-slate-400 group-focus-within:text-[#ff9e00] transition-colors duration-300">
+                  <i className="fas fa-search text-xs"></i>
+                </div>
+
+                <input 
+                  type="text" 
+                  placeholder="Cari proyek, tema, atau bantuan..." 
+                  className="bg-transparent border-none outline-none text-[13px] font-bold text-slate-700 placeholder:text-slate-400/80 w-full px-3"
+                />
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="hidden group-focus-within:block w-3.5 h-3.5 border-2 border-slate-200 border-t-[#ff9e00] rounded-full animate-spin mr-1"></div>
+                  <div className="hidden lg:flex items-center gap-1 px-2 py-1 rounded-lg bg-white/80 border border-slate-200 shadow-sm text-[10px] font-black text-slate-400 group-focus-within:opacity-0 transition-opacity">
+                    <span className="text-[12px]">⌘</span>
+                    <span>K</span>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute inset-0 bg-[#ff9e00]/10 blur-2xl rounded-full opacity-0 group-focus-within:opacity-20 transition-opacity duration-500 -z-10"></div>
+            </div>
           </div>
           
           <div className="flex items-center gap-4 sm:gap-6">
@@ -458,6 +503,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {isSidebarOpen && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 md:hidden transition-opacity" onClick={() => setIsSidebarOpen(false)}></div>
       )}
+
+      {/* --- TOASTER DIPINDAHKAN KE SINI AGAR MELAYANG DI ATAS SEGALANYA --- */}
+      <Toaster 
+        position="top-center" 
+        reverseOrder={false}
+        containerStyle={{ zIndex: 999999 }} 
+      />
+
     </div>
   );
 }
