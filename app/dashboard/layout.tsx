@@ -4,8 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
+import useSWR from 'swr'; 
 
-// --- DEFINISI TIPE DATA AGAR TIDAK ERROR SAAT BUILD ---
 interface NotificationItem {
   id: string;
   type: 'critical' | 'warning' | 'info' | 'promo' | 'announcement';
@@ -14,13 +14,24 @@ interface NotificationItem {
   desc: string;
   link: string;
   btnText?: string;
-  btnColor?: string; // Properti opsional
+  btnColor?: string;
   color: string;
   bg: string;
   border: string;
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const { data: session, status } = useSession(); 
+
+  // --- SWR SEKARANG MEMANTAU SEMUA DATA PROFIL (SYNC GLOBAL) ---
+  const { data: syncData } = useSWR('/api/user/sync', fetcher, {
+    refreshInterval: 15000, 
+    revalidateOnFocus: true, 
+  });
+
   React.useEffect(() => {
     if (typeof document !== 'undefined' && !document.querySelector('#font-awesome-cdn')) {
       const link = document.createElement('link');
@@ -31,12 +42,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, []);
   
-  const pathname = usePathname();
-  const { data: session, status } = useSession(); 
-  
-  const rawPlan = (session?.user as any)?.plan || "FREE";
-  const userPlan = typeof rawPlan === 'string' ? rawPlan.toUpperCase() : "FREE";
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
@@ -74,19 +79,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     signOut({ redirect: true, callbackUrl: '/login' });
   };
 
-  const userSubdomain = (session?.user as any)?.subdomain;
-  const isWebLive = (session?.user as any)?.isLive !== false; 
-  const userProfession = (session?.user as any)?.profession;
-  const userBio = (session?.user as any)?.bio;
-  const userAvatar = (session?.user as any)?.avatar || session?.user?.image;
+  // --- PRIORITASKAN DATA DARI SWR, JIKA BELUM MUNCUL PAKAI DARI COOKIE/SESSION ---
+  const userPlan = syncData?.plan ? String(syncData.plan).toUpperCase() : (typeof (session?.user as any)?.plan === 'string' ? (session?.user as any)?.plan.toUpperCase() : "FREE");
+  const isWebLive = syncData ? syncData.isLive : (session?.user as any)?.isLive !== false;
+  const userSubdomain = syncData ? syncData.subdomain : (session?.user as any)?.subdomain;
+  const userProfession = syncData ? syncData.profession : (session?.user as any)?.profession;
+  const userBio = syncData ? syncData.bio : (session?.user as any)?.bio;
+  const userAvatar = syncData ? syncData.avatar : ((session?.user as any)?.avatar || session?.user?.image);
 
+  // LOGIKA VALIDASI
   const isSubdomainEmpty = !userSubdomain || String(userSubdomain).trim() === '' || String(userSubdomain) === 'null';
   const isProfessionEmpty = !userProfession || String(userProfession).trim() === '' || String(userProfession) === 'null';
   const isBioEmpty = !userBio || String(userBio).trim() === '' || String(userBio) === 'null';
   const isBioShort = !isBioEmpty && String(userBio).trim().length < 30;
   const isAvatarEmpty = !userAvatar || String(userAvatar).includes('ui-avatars.com') || String(userAvatar).trim() === '' || String(userAvatar) === 'null';
 
-  // --- PAKAI INTERFACE DI SINI ---
   const notifications: NotificationItem[] = [];
 
   if (!isWebLive) {
@@ -130,42 +137,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
         * { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
         .animate-enter-modal { animation: modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes modalEnter {
-          0% { opacity: 0; transform: scale(0.95) translateY(10px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        
+        @keyframes modalEnter { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         .animate-dropdown { animation: dropdownEnter 0.2s ease-out forwards; transform-origin: top right; }
-        @keyframes dropdownEnter {
-          0% { opacity: 0; transform: scale(0.95) translateY(-10px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        
+        @keyframes dropdownEnter { 0% { opacity: 0; transform: scale(0.95) translateY(-10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         .animate-page-load { opacity: 0; animation: smoothPageLoad 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        @keyframes smoothPageLoad {
-          0% { opacity: 0; transform: translateY(15px); filter: blur(4px); }
-          100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
+        @keyframes smoothPageLoad { 0% { opacity: 0; transform: translateY(15px); filter: blur(4px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
         .delay-100 { animation-delay: 100ms; }
         .delay-200 { animation-delay: 200ms; }
         .delay-300 { animation-delay: 300ms; }
-
-        .skeleton-premium {
-          background: linear-gradient(110deg, #f1f5f9 8%, #e2e8f0 18%, #f1f5f9 33%);
-          background-size: 200% 100%;
-          animation: 1.5s shine linear infinite;
-        }
-        @keyframes shine {
-          to { background-position-x: -200%; }
-        }
+        .skeleton-premium { background: linear-gradient(110deg, #f1f5f9 8%, #e2e8f0 18%, #f1f5f9 33%); background-size: 200% 100%; animation: 1.5s shine linear infinite; }
+        @keyframes shine { to { background-position-x: -200%; } }
       `}} />
 
-      {/* --- MODAL KONFIRMASI LOGOUT --- */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300" onClick={() => !isLoggingOut && setShowLogoutModal(false)}></div>
@@ -185,7 +171,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
 
-      {/* --- SIDEBAR DINAMIS --- */}
       <aside className={`animate-page-load fixed inset-y-0 left-0 z-50 bg-white border-r border-slate-100 flex flex-col transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
         ${isSidebarOpen ? 'translate-x-0 shadow-2xl w-72' : '-translate-x-full md:relative md:translate-x-0'} 
         ${isSidebarCollapsed ? 'md:w-[88px]' : 'md:w-72'} 
@@ -342,11 +327,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
 
             <div className={`w-full flex transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isSidebarCollapsed ? 'justify-center' : 'justify-end'}`}>
-              <button 
-                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
-                className="hidden md:flex w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 items-center justify-center transition-all duration-300 ease-in-out active:scale-90 group shadow-sm"
-                title={isSidebarCollapsed ? "Perbesar Sidebar" : "Perkecil Sidebar"}
-              >
+              <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="hidden md:flex w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 items-center justify-center transition-all duration-300 ease-in-out active:scale-90 group shadow-sm" title={isSidebarCollapsed ? "Perbesar Sidebar" : "Perkecil Sidebar"}>
                 <i className={`fas fa-chevron-left text-[12px] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isSidebarCollapsed ? 'rotate-180 group-hover:translate-x-0.5' : 'group-hover:-translate-x-0.5'}`}></i>
               </button>
             </div>
@@ -357,10 +338,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
         <header className="animate-page-load delay-100 h-[88px] bg-white/80 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between px-6 sm:px-10 shrink-0 relative z-40">
           <div className="flex items-center gap-4">
-            <button 
-              className="md:hidden w-11 h-11 rounded-full border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center shadow-sm"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            >
+            <button className="md:hidden w-11 h-11 rounded-full border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center shadow-sm" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
               <i className="fas fa-bars text-sm"></i>
             </button>
             <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900">{getPageTitle()}</h2>
@@ -369,14 +347,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-4 sm:gap-6">
             {!isLoading && (
               <div className="relative" ref={notifRef}>
-                <button 
-                  onClick={() => setIsNotifOpen(!isNotifOpen)} 
-                  className="relative w-11 h-11 rounded-full border border-slate-200 bg-white text-slate-400 hover:text-slate-900 hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center shadow-sm"
-                >
+                <button onClick={() => setIsNotifOpen(!isNotifOpen)} className="relative w-11 h-11 rounded-full border border-slate-200 bg-white text-slate-400 hover:text-slate-900 hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center shadow-sm">
                   <i className="fas fa-bell"></i>
-                  {alertCount > 0 && (
-                    <span className="absolute top-2.5 right-3 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>
-                  )}
+                  {alertCount > 0 && <span className="absolute top-2.5 right-3 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>}
                 </button>
 
                 {isNotifOpen && (
@@ -385,7 +358,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       <p className="text-[11px] font-extrabold uppercase tracking-widest text-slate-900">Pusat Informasi</p>
                       {alertCount > 0 && <span className="text-[9px] px-2 py-0.5 bg-red-100 text-red-600 rounded-full font-bold">{alertCount} Info</span>}
                     </div>
-                    
                     <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
                       {notifications.length === 0 ? (
                         <div className="px-5 py-6 text-center text-slate-500 text-xs font-medium">Belum ada notifikasi baru.</div>
@@ -418,37 +390,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <div className="w-11 h-11 rounded-full skeleton-premium border border-slate-100"></div>
                 </div>
               ) : (
-                <div 
-                  className="flex items-center gap-4 cursor-pointer group" 
-                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                >
+                <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
                   <div className="hidden sm:block text-right">
                     <p className="text-[13px] font-extrabold text-slate-900 tracking-tight group-hover:text-[#ff9e00] transition-colors">{userName}</p>
-                    <p className={`text-[9px] font-extrabold uppercase tracking-widest mt-0.5 ${
-                        userPlan === 'PRO' ? 'text-[#ff9e00]' : 'text-slate-400'
-                    }`}>
-                        {userPlan} PLAN
-                    </p>
+                    <p className={`text-[9px] font-extrabold uppercase tracking-widest mt-0.5 ${userPlan === 'PRO' ? 'text-[#ff9e00]' : 'text-slate-400'}`}>{userPlan} PLAN</p>
                   </div>
-                  
                   <div className="relative">
-                    <div className={`w-11 h-11 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 ${
-                        userPlan === 'PRO' 
-                          ? 'border-2 border-[#ff9e00] shadow-[0_0_15px_rgba(255,158,0,0.3)]' 
-                          : 'border border-slate-200' 
-                      }`}
-                    >
-                      <img 
-                        src={(session?.user as any)?.avatar || session?.user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=f8fafc&color=0f172a&bold=true`} 
-                        className="w-full h-full object-cover" 
-                        alt="Profile" 
-                      />
+                    <div className={`w-11 h-11 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 ${userPlan === 'PRO' ? 'border-2 border-[#ff9e00] shadow-[0_0_15px_rgba(255,158,0,0.3)]' : 'border border-slate-200'}`}>
+                      <img src={userAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=f8fafc&color=0f172a&bold=true`} className="w-full h-full object-cover" alt="Profile" />
                     </div>
-                    {userPlan === 'PRO' && (
-                      <div className="absolute -top-1 -right-1 bg-[#ff9e00] text-black rounded-full w-4 h-4 flex items-center justify-center border border-white shadow-sm z-10">
-                        <i className="fas fa-crown text-[8px]"></i>
-                      </div>
-                    )}
+                    {userPlan === 'PRO' && <div className="absolute -top-1 -right-1 bg-[#ff9e00] text-black rounded-full w-4 h-4 flex items-center justify-center border border-white shadow-sm z-10"><i className="fas fa-crown text-[8px]"></i></div>}
                   </div>
                 </div>
               )}
@@ -459,7 +410,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <p className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Masuk sebagai</p>
                     <p className="text-sm font-bold text-slate-900 truncate">{userEmail}</p>
                   </div>
-                  
                   <div className="flex flex-col">
                     <Link href="/dashboard/profile" className="px-5 py-3 text-[13px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
                       <i className="fas fa-user-edit w-5 text-center text-slate-400"></i> Edit Profil
@@ -473,9 +423,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       </Link>
                     )}
                   </div>
-
                   <div className="h-px bg-slate-100 my-2 mx-5"></div>
-
                   <button onClick={() => { setIsProfileMenuOpen(false); setShowLogoutModal(true); }} className="w-full px-5 py-3 text-[13px] font-bold text-red-500 hover:bg-red-50 transition-colors flex items-center gap-3 text-left">
                     <i className="fas fa-sign-out-alt w-5 text-center"></i> Keluar
                   </button>
