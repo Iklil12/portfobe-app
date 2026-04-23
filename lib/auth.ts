@@ -39,19 +39,19 @@ export const authOptions: NextAuthOptions = {
 
         const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
         if (!isPasswordValid) return null;
-
+        const userData = user as any;
         // RETURN KE BAWAH SAAT LOGIN BERHASIL
         return {
-          id: user.id,
-          name: user.profile?.fullName || user.name || "User",
-          email: user.email,
+          id: userData.id,
+          name: user.profile?.fullName || userData.name || "User",
+          email: userData.email,
           
-          // PENTING: Bawa avatar dari tabel User (atau image bawaan DB)
-          image: user.avatar || user.image, 
-          avatar: user.avatar, 
+          // PENTING: Bawa avatar dari tabel User (atau image bawaan Google)
+          image: userData.avatar || userData.image, 
+          avatar: userData.avatar, 
           
           // PENTING: Bawa data lainnya
-          plan: user.plan, 
+          plan: userData.plan, 
           profession: user.profile?.profession,
           bio: user.profile?.bio,
         };
