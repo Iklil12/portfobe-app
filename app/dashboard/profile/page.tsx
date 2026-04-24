@@ -335,6 +335,7 @@ export default function ProfilePage() {
                          
                          <input
                            type="text"
+                           maxLength={15}
                            value={subdomain} 
                            onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                            placeholder={defaultUsername}
@@ -388,11 +389,11 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 animate-enter" style={{animationDelay: '300ms'}}>
               <div className="group">
                 <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 group-focus-within:text-slate-900 transition-colors">Nama Depan <span className="text-rose-500">*</span></label>
-                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full px-5 py-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-[4px] focus:ring-slate-900/5 outline-none transition-all text-sm font-bold text-slate-900" />
+                <input type="text" maxLength={10} value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full px-5 py-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-[4px] focus:ring-slate-900/5 outline-none transition-all text-sm font-bold text-slate-900" />
               </div>
               <div className="group">
                 <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 group-focus-within:text-slate-900 transition-colors">Nama Belakang</label>
-                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full px-5 py-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-[4px] focus:ring-slate-900/5 outline-none transition-all text-sm font-bold text-slate-900" />
+                <input type="text" maxLength={10} value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full px-5 py-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-[4px] focus:ring-slate-900/5 outline-none transition-all text-sm font-bold text-slate-900" />
               </div>
             </div>
             
@@ -401,7 +402,7 @@ export default function ProfilePage() {
                 <span>Profesi Utama <span className="text-rose-500">*</span></span>
                 {!profession && <span className="text-[9px] text-slate-400 normal-case font-medium">Ditampilkan di bawah namamu</span>}
               </label>
-              <input type="text" value={profession} onChange={(e) => setProfession(e.target.value)} className="w-full px-5 py-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-[4px] focus:ring-slate-900/5 outline-none transition-all text-sm font-bold text-slate-900" />
+              <input type="text" maxLength={20} value={profession} onChange={(e) => setProfession(e.target.value)} className="w-full px-5 py-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-[4px] focus:ring-slate-900/5 outline-none transition-all text-sm font-bold text-slate-900" />
             </div>
             
             <div className="group animate-enter" style={{animationDelay: '500ms'}}>

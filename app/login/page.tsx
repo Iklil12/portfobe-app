@@ -1,4 +1,3 @@
-// app/login/page.tsx
 "use client";
 
 import React, { useState } from 'react';
@@ -12,6 +11,12 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  // --- STATE KHUSUS LUPA PASSWORD ---
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [isForgotLoading, setIsForgotLoading] = useState(false);
+  const [forgotStatus, setForgotStatus] = useState({ type: "", message: "" });
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,10 +47,36 @@ export default function LoginPage() {
     await signIn('google', { callbackUrl: '/dashboard' });
   };
 
-  return (
-    <div className="bg-[#FAFAFA] text-slate-900 flex min-h-screen font-sans selection:bg-[#ff9e00]/30 selection:text-slate-900">
+  const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsForgotLoading(true);
+    setForgotStatus({ type: "", message: "" });
+
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
       
-      {/* INJEKSI CSS UNTUK ANIMASI & FONT (SAMA DENGAN LANDING PAGE) */}
+      // Apapun hasilnya, kita selalu tampilkan sukses demi keamanan (anti-enumeration)
+      if (res.ok) {
+        setForgotStatus({ type: "success", message: "Jika email Anda terdaftar, kami telah mengirimkan instruksi reset ke kotak masuk Anda." });
+        setForgotEmail(""); // Kosongkan input
+      } else {
+        setForgotStatus({ type: "error", message: "Terjadi kesalahan jaringan. Coba lagi nanti." });
+      }
+    } catch (error) {
+      setForgotStatus({ type: "error", message: "Terjadi kesalahan server." });
+    } finally {
+      setIsForgotLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-[#FAFAFA] text-slate-900 flex min-h-screen font-sans selection:bg-[#ff9e00]/30 selection:text-slate-900 relative">
+      
+      {/* INJEKSI CSS UNTUK ANIMASI & FONT */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
         @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
@@ -60,6 +91,62 @@ export default function LoginPage() {
         .animate-blob { animation: blob 8s infinite ease-in-out; }
         .animation-delay-2000 { animation-delay: 2s; }
       `}} />
+
+      {/* --- MODAL LUPA PASSWORD --- */}
+      {showForgotModal && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity animate-in fade-in duration-300" 
+            onClick={() => !isForgotLoading && setShowForgotModal(false)}
+          ></div>
+          
+          <div className="relative bg-white rounded-[2rem] p-8 md:p-10 max-w-md w-full shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-slate-100 animate-in zoom-in-95 fade-in duration-300 z-10">
+            <button 
+              onClick={() => setShowForgotModal(false)} 
+              disabled={isForgotLoading}
+              className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            >
+              <i className="fas fa-times"></i>
+            </button>
+            
+            <h3 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">Lupa Sandi?</h3>
+            <p className="text-slate-500 mb-8 text-sm font-medium leading-relaxed">
+              Masukkan alamat email yang terdaftar. Kami akan mengirimkan tautan untuk mereset kata sandi Anda.
+            </p>
+            
+            {forgotStatus.message && (
+              <div className={`mb-6 p-4 rounded-xl text-sm font-bold border flex items-start gap-3 ${forgotStatus.type === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-100'}`}>
+                <i className={`fas mt-0.5 ${forgotStatus.type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}`}></i>
+                <p className="leading-relaxed">{forgotStatus.message}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-1">Alamat Email</label>
+                <div className="relative">
+                  <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                  <input 
+                    type="email" 
+                    required 
+                    value={forgotEmail} 
+                    onChange={(e) => setForgotEmail(e.target.value)} 
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-[#ff9e00] focus:ring-[3px] focus:ring-[#ff9e00]/20 focus:bg-white transition-all" 
+                    placeholder="email@anda.com" 
+                  />
+                </div>
+              </div>
+              <button 
+                type="submit" 
+                disabled={isForgotLoading || !forgotEmail} 
+                className={`mt-2 py-3.5 rounded-xl font-bold text-white bg-slate-900 transition-all flex items-center justify-center gap-2 text-sm shadow-md ${isForgotLoading || !forgotEmail ? 'opacity-70 cursor-not-allowed' : 'hover:bg-slate-800 active:scale-[0.98]'}`}
+              >
+                {isForgotLoading ? <i className="fas fa-circle-notch fa-spin"></i> : 'Kirim Link Reset'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* SISI KIRI: LOGIN FORM AREA */}
       <div className="w-full lg:w-[55%] bg-white flex flex-col justify-center px-6 sm:px-16 md:px-24 xl:px-40 relative z-10 shadow-[20px_0_50px_rgba(0,0,0,0.03)]">
@@ -99,8 +186,20 @@ export default function LoginPage() {
             <div className="group">
               <div className="flex justify-between items-center mb-2">
                 <label className="block text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-focus-within:text-[#ff9e00] transition-colors">Password</label>
-                <Link href="#" className="text-[11px] font-bold text-slate-400 hover:text-[#ff9e00] uppercase tracking-widest transition-colors">Lupa Password?</Link>
+                
+                {/* --- TOMBOL TRIGGER MODAL LUPA PASSWORD --- */}
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setShowForgotModal(true);
+                    setForgotStatus({ type: "", message: "" });
+                  }}
+                  className="text-[11px] font-bold text-slate-400 hover:text-[#ff9e00] uppercase tracking-widest transition-colors outline-none"
+                >
+                  Lupa Password?
+                </button>
               </div>
+              
               <div className="relative">
                 <input 
                   name="password" 
@@ -169,13 +268,11 @@ export default function LoginPage() {
 
       {/* SISI KANAN: VISUAL PRESTIGE (SAMA DENGAN TEMA HERO) */}
       <div className="hidden lg:flex lg:w-[45%] relative bg-[#0a0a0a] items-center justify-center p-16 overflow-hidden">
-        {/* Animated Background Blobs */}
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/noise-pattern-with-subtle-cross-lines.png')] opacity-[0.03] pointer-events-none"></div>
         <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-[#ff9e00]/20 rounded-full blur-[100px] animate-blob"></div>
         <div className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
         
         <div className="relative z-10 w-full max-w-md">
-          {/* Glassmorphism Testimonial Card */}
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden group hover:border-white/20 transition-all duration-500">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#ff9e00] to-purple-500 opacity-50 group-hover:opacity-100 transition-opacity"></div>
             

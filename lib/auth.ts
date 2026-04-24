@@ -3,10 +3,12 @@ import GoogleProvider from "next-auth/providers/google";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
+import { Resend } from 'resend'; // <-- IMPORT RESEND DI SINI
+
+// Inisialisasi Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const authOptions: NextAuthOptions = {
-  // Tanpa PrismaAdapter, karena kita tangani sendiri agar cocok dengan schema database kita
-  
   session: {
     strategy: "jwt",
   },
@@ -57,14 +59,14 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    // 0. REDIRECT CALLBACK: Mengatasi masalah "Harus klik login Google 2 kali"
+    // 0. REDIRECT CALLBACK
     async redirect({ url, baseUrl }) {
       if (url.startsWith(baseUrl)) return url;
       else if (url.startsWith("/")) return new URL(url, baseUrl).toString();
       return baseUrl + "/dashboard";
     },
 
-    // 1. SIGN IN CALLBACK: Di sinilah Auto-Register & Pengisian Tabel Account Terjadi
+    // 1. SIGN IN CALLBACK: Auto-Register Google & Pengisian Tabel Account
     async signIn({ user, account }: any) {
       if (account?.provider === "google") {
         try {
@@ -74,6 +76,7 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!existingUser) {
+            // USER BARU DIBUAT
             await prisma.user.create({
               data: {
                 email: user.email,
@@ -98,7 +101,33 @@ export const authOptions: NextAuthOptions = {
                 }
               },
             });
+
+            // ==============================================================
+            // EKSEKUSI WELCOME EMAIL KE USER BARU
+            // ==============================================================
+            resend.emails.send({
+              from: 'Portfobe <hellocreator@mail.ritions.com>',
+              to: user.email,
+              replyTo: 'ikliluluyun@ritions.com', // User bisa balas langsung ke Anda
+              subject: 'Welcome to Portfobe!',
+              html: `
+                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
+                <p style="font-size: 16px;">Hey,</p>
+                <p style="font-size: 16px;">My name is <strong>IKLIL</strong> — I'm the founder and CEO of <strong>portfobe</strong>.</p>
+                <p style="font-size: 16px;">Saya ingin mengucapkan terima kasih secara personal karena kamu telah memilih portfobe sebagai tempat untuk memamerkan karya terbaikmu. Kami membangun platform ini dengan satu misi: membantu kreator seperti kamu memiliki 'rumah digital' yang profesional, elegan, dan selesai dalam hitungan menit.</p>
+                <p style="font-size: 16px;">Saya sangat tidak sabar melihat portofolio yang akan kamu bangun. Jika kamu punya masukan, ide fitur, atau sekadar ingin menyapa, jangan ragu untuk membalas email ini. Saya membaca semua pesan yang masuk.</p>
+                <p style="font-size: 16px;">Selamat berkarya dan selamat membangun <em>brand</em> personalmu!</p>
+                <br />
+                <p style="font-size: 16px; margin-bottom: 5px;">Best,</p>
+                <p style="font-size: 16px; font-weight: bold; margin-top: 0; margin-bottom: 2px;">IKLIL</p>
+                <p style="font-size: 14px; color: #64748b; margin-top: 0;">Founder, portfobe</p>
+              </div>
+              `,
+            }).catch(err => console.error("Gagal kirim Welcome Email:", err));
+            // ==============================================================
+
           } else {
+             // USER LAMA LOGIN
              if (!existingUser.profile) {
                  await prisma.profile.create({
                      data: {
@@ -135,35 +164,15 @@ export const authOptions: NextAuthOptions = {
       return true; 
     },
 
-    // 2. JWT CALLBACK: SINKRONISASI DATABASE 100% AKURAT
+    // 2. JWT CALLBACK: Sinkronisasi Akurat
     async jwt({ token, user, trigger, session, account }: any) {
+      const emailToFind = user?.email || token?.email;
       
-      // LOGIKA BARU: Jika Frontend bilang "update", panggil ulang data dari Database!
-      if (trigger === "update") {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: token.email as string },
-          include: { profile: true }
-        });
-        
-        if (dbUser) {
-          const uData = dbUser as any;
-          token.name = dbUser.profile?.fullName || uData.name || "User";
-          token.profession = dbUser.profile?.profession;
-          token.bio = dbUser.profile?.bio;
-          token.subdomain = dbUser.profile?.subdomain; // Sinkronisasi Subdomain!
-          token.isLive = uData.isLive;
-          token.avatar = uData.avatar;
-          token.picture = dbUser.profile?.avatarUrl || uData.avatar || token.picture;
-        }
-      }
-      
-      // Ambil data terbaru saat login pertama kali
-      if (user || account?.provider === "google") {
-        const emailToFind = user?.email || token.email;
+      if (user || trigger === "update") {
         if (emailToFind) {
           const dbUser = await prisma.user.findUnique({
             where: { email: emailToFind },
-            include: { profile: true }
+            include: { profile: true, accounts: true } 
           });
           
           if (dbUser) {
@@ -177,16 +186,18 @@ export const authOptions: NextAuthOptions = {
             token.bio = dbUser.profile?.bio;
             token.avatar = uData.avatar; 
             token.picture = dbUser.profile?.avatarUrl || uData.avatar || user?.image;
-            
             token.subdomain = dbUser.profile?.subdomain;
             token.isLive = uData.isLive;
+
+            token.isOAuthLinked = dbUser.accounts && dbUser.accounts.length > 0;
+            token.isStrictlyGoogle = dbUser.password === "GOOGLE_LOGIN_NO_PASSWORD";
           }
         }
       }
       return token;
     },
     
-    // 3. SESSION CALLBACK: Oper Karcis ke Frontend
+    // 3. SESSION CALLBACK: Oper status ke Frontend
     async session({ session, token }: any) {
       if (session.user) {
         session.user.id = token.id as string; 
@@ -195,9 +206,11 @@ export const authOptions: NextAuthOptions = {
         session.user.bio = token.bio;
         session.user.avatar = token.avatar;
         session.user.image = token.picture;
-        
         session.user.subdomain = token.subdomain;
         session.user.isLive = token.isLive;
+
+        session.user.isOAuthLinked = token.isOAuthLinked;
+        session.user.isStrictlyGoogle = token.isStrictlyGoogle;
       }
       return session;
     }

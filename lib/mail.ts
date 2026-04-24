@@ -1,0 +1,29 @@
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export const sendWelcomeEmail = async (email: string, name: string) => {
+  try {
+    await resend.emails.send({
+      from: 'Portfobe <hellocreator@mail.ritions.com>',
+      to: email,
+      replyTo: 'ikliluluyun@ritions.com', // User bisa balas langsung ke Anda
+      subject: 'Welcome to Portfobe!',
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
+          <p style="font-size: 16px;">Hey,</p>
+          <p style="font-size: 16px;">My name is <strong>IKLIL</strong> — I'm the founder and CEO of <strong>portfobe</strong>.</p>
+          <p style="font-size: 16px;">Saya ingin mengucapkan terima kasih secara personal karena kamu telah memilih portfobe sebagai tempat untuk memamerkan karya terbaikmu. Kami membangun platform ini dengan satu misi: membantu kreator seperti kamu memiliki 'rumah digital' yang profesional, elegan, dan selesai dalam hitungan menit.</p>
+          <p style="font-size: 16px;">Saya sangat tidak sabar melihat portofolio yang akan kamu bangun. Jika kamu punya masukan, ide fitur, atau sekadar ingin menyapa, jangan ragu untuk membalas email ini. Saya membaca semua pesan yang masuk.</p>
+          <p style="font-size: 16px;">Selamat berkarya dan selamat membangun <em>brand</em> personalmu!</p>
+          <br />
+          <p style="font-size: 16px; margin-bottom: 5px;">Best,</p>
+          <p style="font-size: 16px; font-weight: bold; margin-top: 0; margin-bottom: 2px;">IKLIL</p>
+          <p style="font-size: 14px; color: #64748b; margin-top: 0;">Founder, portfobe</p>
+        </div>
+      `,
+    });
+  } catch (error) {
+    console.error("Gagal mengirim welcome email:", error);
+  }
+};
