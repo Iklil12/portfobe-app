@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
         
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
-          include: { profile: true }
+          include: { profile: true, siteAppearance: true }
         });
 
         if (!user || !user.password || user.password === "GOOGLE_LOGIN_NO_PASSWORD") {
@@ -72,7 +72,7 @@ export const authOptions: NextAuthOptions = {
         try {
           const existingUser = await prisma.user.findUnique({
             where: { email: user.email },
-            include: { profile: true } 
+            include: { profile: true ,siteAppearance: true} 
           });
 
           if (!existingUser) {
@@ -89,6 +89,9 @@ export const authOptions: NextAuthOptions = {
                         avatarUrl: user.image || "",
                     }
                 },
+                siteAppearance: {
+                    create: {}
+                  },
                 
                 accounts: {
                     create: {

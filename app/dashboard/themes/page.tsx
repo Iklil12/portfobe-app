@@ -19,8 +19,9 @@ export default function ThemesPage() {
         if (res.ok) {
           const data = await res.json();
           if (data) {
-            if (data.themeTemplate) setCurrentTheme(data.themeTemplate);
-            if (data.subdomain) setSubdomain(data.subdomain);
+            // FIX: Arahkan ke laci yang benar
+            if (data.siteAppearance?.themeTemplate) setCurrentTheme(data.siteAppearance.themeTemplate);
+            if (data.profile?.subdomain) setSubdomain(data.profile.subdomain);
           }
         }
       } catch (error) {
@@ -36,7 +37,7 @@ export default function ThemesPage() {
 
   const handleUseTheme = async (themeId: string, themeName: string) => {
     // 1. Sekarang kita mengizinkan 'brutalism' DAN 'minimalist' untuk masuk
-    if (themeId === 'brutalism' || themeId === 'minimalist') {
+    if (themeId === 'brutalism' || themeId === 'minimalist' || themeId === 'cinematic' || themeId === 'acid') {
       const toastId = toast.loading(`Menerapkan tema ${themeName}...`, {
         style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
       });
@@ -117,6 +118,22 @@ export default function ThemesPage() {
         preview: 'bg-[#0a0a0a]',
         isAvailable: true, 
         img: 'https://images.unsplash.com/photo-1580234797602-22c37b4a6230?q=80&w=600&auto=format&fit=crop'
+    },
+    {
+        id: 'cinematic',
+        name: 'Cinematic Dark',
+        desc: 'Editorial, High-end, Director Vibe.',
+        preview: 'bg-[#0a0a0a]',
+        isAvailable: true, 
+        img: 'https://images.unsplash.com/photo-1580234797602-22c37b4a6230?q=80&w=600&auto=format&fit=crop'
+    },
+    {
+        id: 'acid',
+        name: 'Acid Tech',
+        desc: 'Cyberpunk, Brutalism, Neon Vibes.',
+        preview: 'bg-[#09090b]',
+        isAvailable: true, 
+        img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=600&auto=format&fit=crop'
     },
     {
         id: 'elegant',

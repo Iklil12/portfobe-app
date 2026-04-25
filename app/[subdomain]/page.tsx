@@ -1,9 +1,8 @@
-// File: app/[subdomain]/page.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link'; // Ditambahkan untuk tombol kembali
+import Link from 'next/link'; 
 import PortfolioView from '@/components/PortfolioView';
 
 export default function PublicPortfolioPage() {
@@ -33,8 +32,9 @@ export default function PublicPortfolioPage() {
           const result = await res.json();
           setData(result);
           
-          // --- LOGIKA PENENTUAN SPLASH ASLI ---
-          if (result.splashScreen === true) {
+          // --- LOGIKA PENENTUAN SPLASH ASLI (DIARAHKAN KE SITE_APPEARANCE) ---
+          // Kita pakai optional chaining (?.) untuk jaga-jaga kalau datanya null
+          if (result.siteAppearance?.splashScreen === true || result.splashScreen === true) {
             setShowSplash(true);
             setTimeout(() => {
               setLiftCurtain(true);
@@ -147,7 +147,7 @@ export default function PublicPortfolioPage() {
                 <span className="text-white text-[10px] uppercase tracking-widest bg-white/20 px-2 py-0.5">Offline</span>
              </div>
              <p className="text-white/90 text-xs sm:text-sm leading-relaxed mb-2">
-               Akses ke entitas <b className="text-white">{data.name || subdomain}</b> ditangguhkan sementara.
+               Akses ke entitas <b className="text-white">{data.profile?.fullName || data.name || subdomain}</b> ditangguhkan sementara.
              </p>
              <p className="text-white/50 text-[11px] leading-relaxed">
                Pembaruan arsitektur atau konten sedang berlangsung di balik layar. Silakan muat ulang halaman ini nanti.
@@ -229,8 +229,8 @@ export default function PublicPortfolioPage() {
         `}} />
         <div className="absolute inset-0 opacity-[0.4] pointer-events-none hidden sm:block" style={{ backgroundImage: 'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
         
-        {/* Dikembalikan ke struktur ASLI: theme={data} */}
-        {data && <PortfolioView data={data} theme={data} />}
+        {/* --- PERBAIKAN: Props 'theme' sekarang diarahkan ke data.siteAppearance --- */}
+        {data && <PortfolioView data={data} theme={data.siteAppearance || data} />}
       </main>
     </>
   );

@@ -17,7 +17,7 @@ export async function PATCH(req: Request) {
     // Ambil data User & Profile yang sekarang ada di database
     const currentUser = await prisma.user.findUnique({
       where: { email: session.user.email },
-      include: { profile: true }
+      include: { profile: true, siteAppearance: true } // Pastikan untuk menarik data siteAppearance juga
     });
 
     if (!currentUser) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
@@ -48,7 +48,7 @@ export async function PATCH(req: Request) {
           }
         }
       },
-      include: { profile: true } 
+      include: { profile: true, siteAppearance: true } 
     });
 
     // LOGIKA HISTORY / ACTIVITY LOG (SANGAT DETAIL)

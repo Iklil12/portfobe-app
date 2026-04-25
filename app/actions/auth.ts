@@ -41,6 +41,9 @@ export async function registerUser(formData: FormData) {
           create: {
             fullName: fullName,
           }
+        },
+        siteAppearance: {
+          create: {}
         }
       }
     });

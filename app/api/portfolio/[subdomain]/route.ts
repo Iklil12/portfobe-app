@@ -12,47 +12,43 @@ export async function GET(
     // 2. Bersihkan teks
     const userSubdomain = resolvedParams.subdomain.trim().toLowerCase();
 
-    // 3. Cari di database
-    const profile = await prisma.profile.findFirst({
+    // 3. Cari di database (SEKARANG KITA JADIKAN 'USER' SEBAGAI AKARNYA)
+    const userData = await prisma.user.findFirst({
       where: { 
-        subdomain: userSubdomain 
+        profile: {
+          subdomain: userSubdomain // Cari user berdasarkan subdomain di dalam profilnya
+        }
       },
       include: {
-        user: {
-          include: {
-            links: { 
-              where: { isActive: true }, 
-              orderBy: { order: 'asc' } 
-            },
-            projects: { 
-              orderBy: { createdAt: 'desc' } 
-            },
-            certificates: { 
-              orderBy: { createdAt: 'desc' }
-            }
-          }
+        profile: true,
+        siteAppearance: true, // <--- INI DIA BINTANG UTAMANYA!
+        links: { 
+          where: { isActive: true }, 
+          orderBy: { order: 'asc' } 
+        },
+        projects: { 
+          orderBy: { createdAt: 'desc' } 
+        },
+        certificates: { 
+          orderBy: { createdAt: 'desc' }
         }
       }
     });
 
     // 4. Jika tidak ketemu
-    if (!profile) {
+    if (!userData || !userData.profile) {
       return NextResponse.json({ error: "Portfolio tidak ditemukan" }, { status: 404 });
     }
 
-    // --- 5. FIX: KELUARKAN STATUS ISLIVE KE DEPAN ---
-    // Kita gunakan "as any" agar TypeScript tidak protes saat proses Build
-    const userData = profile.user as any;
-    const profileData = profile as any;
-
+    // 5. Susun Ulang Data (Biar frontend tinggal pakai tanpa ribet)
+    // Karena userData sudah jadi akar, isLive, email, dll otomatis ada di luar.
     const responseData = {
-      ...profile,
-      isLive: userData?.isLive ?? true, // Ambil isLive dari dalam user (default true)
-      // Coba ambil fullName dari profile, atau dari user, atau gunakan subdomain
-      name: profileData?.fullName || userData?.fullName || userData?.name || userSubdomain 
+      ...userData,
+      name: userData.profile.fullName || userSubdomain,
+      subdomain: userData.profile.subdomain
     };
 
-    // 6. Jika sukses, kirimkan data yang sudah dirapikan
+    // 6. Jika sukses, kirimkan data utuh
     return NextResponse.json(responseData);
     
   } catch (error) {

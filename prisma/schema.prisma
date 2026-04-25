@@ -9,26 +9,28 @@ datasource db {
 
 // 1. TABEL USER (Khusus Keamanan & Login)
 model User {
-  id          String    @id @default(uuid())
-  email       String    @unique 
-  password    String    
-  plan        String    @default("FREE")
-  avatar      String  
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  isLive  Boolean @default(false)
+  id                     String    @id @default(uuid())
+  email                  String    @unique 
+  password               String    
+  plan                   String    @default("FREE")
+  avatar                 String  
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  isLive                 Boolean   @default(false)
   pendingEmail           String?
   emailVerificationToken String?
   tokenExpires           DateTime?
   
-  // Relasi: 1 User punya 1 Profile, dan bisa punya banyak Links & Projects
-  profile     Profile?  
-  links       Link[]    
-  projects    Project[] 
-  activities Activity[]
-  certificates Certificate[]
-  accounts      Account[]
+  // Relasi
+  profile          Profile?  
+  siteAppearance   SiteAppearance? // <--- RELASI BARU KE TABEL TEMA/WEBSITE
+  links            Link[]    
+  projects         Project[] 
+  activities       Activity[]
+  certificates     Certificate[]
+  accounts         Account[]
 }
+
 model PasswordResetToken {
   id      String   @id @default(cuid())
   email   String
@@ -37,6 +39,7 @@ model PasswordResetToken {
 
   @@unique([email, token])
 }
+
 model Account {
   id                 String  @id @default(cuid())
   userId             String
@@ -54,7 +57,8 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([provider, providerAccountId])
 }
-// 2. TABEL PROFILE (Khusus Tampilan Visual Portofolio)
+
+// 2. TABEL PROFILE (Khusus Identitas Pribadi & URL)
 model Profile {
   id               String   @id @default(uuid())
   userId           String   @unique
@@ -69,17 +73,24 @@ model Profile {
   location         String?
   availableForHire Boolean  @default(true)
   whatsapp         String?
-  splashScreen Boolean @default(true)
-  // --- SISTEM TEMA & DESAIN (BARU) ---
+}
+
+// BARIS BARU: 3. TABEL TEMA & DESAIN WEBSITE (Dipisah dari Profile)
+model SiteAppearance {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  splashScreen     Boolean  @default(true)
   themeTemplate    String   @default("minimalist") // Preset awal (cth: "brutalism", "minimalist")
   themeColor       String   @default("#000000")    // Warna utama/aksen
   fontHeading      String   @default("Inter")      // Font untuk Judul
   fontBody         String   @default("Inter")      // Font untuk Teks Biasa
-  buttonShape      String   @default("rounded")    // Bentuk tombol: "hard" (kotak), "rounded", "pill"
+  buttonShape      String   @default("rounded")    // Bentuk tombol: "hard", "rounded", "pill"
   cardStyle        String   @default("flat")       // Gaya kartu: "flat", "hard-shadow", "glass"
 }
 
-// 3. TABEL LINK (Khusus Daftar Sosial Media & Tautan)
+// 4. TABEL LINK (Khusus Daftar Sosial Media & Tautan)
 model Link {
   id          String   @id @default(uuid())
   userId      String
@@ -91,18 +102,19 @@ model Link {
   order       Int      @default(0) // Untuk mengatur urutan tampilan
 }
 
-// 4. TABEL PROJECT (Karya/Portofolio)
+// 5. TABEL PROJECT (Karya/Portofolio)
 model Project {
   id          String   @id @default(uuid())
   title       String
   description String?
   mediaUrl    String?
-  projectType String   @default("photo") // <--- TAMBAHKAN BARIS INI
+  projectType String   @default("photo")
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now()) // (Opsional) Tambahkan ini agar bisa diurutkan dari yang terbaru
+  createdAt   DateTime @default(now()) 
 }
-// BARIS BARU: 5. TABEL ACTIVITY (Log Aktivitas User)
+
+// 6. TABEL ACTIVITY (Log Aktivitas User)
 model Activity {
   id          String   @id @default(uuid())
   userId      String
@@ -112,6 +124,8 @@ model Activity {
   details     String   @db.Text // Penjelasan aktivitas
   createdAt   DateTime @default(now())
 }
+
+// 7. TABEL CERTIFICATE (Sertifikat/Pencapaian)
 model Certificate {
   id          String   @id @default(uuid())
   title       String
@@ -121,6 +135,6 @@ model Certificate {
   description String?  @db.Text
   mediaUrl    String?  // Foto sertifikat
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
 }

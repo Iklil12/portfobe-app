@@ -1,4 +1,3 @@
-// File: components/themes/MinimalistTheme.tsx
 "use client";
 
 import React, { useState } from 'react';
@@ -12,18 +11,21 @@ const getYouTubeThumbnail = (url: string) => {
 export default function MinimalistTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
   const [openAward, setOpenAward] = useState<string | null>(null);
 
-  const fullName = data?.fullName || "Jamal Arifin";
-  const profession = data?.profession || "Director & Editor";
-  const bio = data?.bio || "A visual storyteller based in Jakarta. I craft meticulous, high-end visual narratives for commercial brands and independent films.";
-  const subdomain = data?.subdomain || "username";
+  // --- MENGAMBIL DATA IDENTITAS (Dari tabel Profile yang sudah dipisah) ---
+  const fullName = data?.profile?.fullName || data?.fullName || "Jamal Arifin";
+  const profession = data?.profile?.profession || data?.profession || "Director & Editor";
+  const bio = data?.profile?.bio || data?.bio || "A visual storyteller based in Jakarta. I craft meticulous, high-end visual narratives for commercial brands and independent films.";
+  const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
   
-  const userEmail = data?.user?.email || data?.email || `hello@${subdomain}.co`;
+  // --- MENGAMBIL EMAIL USER (Langsung dari tabel User) ---
+  const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
 
-  const archiveItems = data?.user?.projects || data?.projects || [];
-  const awardItems = data?.user?.certificates || data?.certificates || [];
-  const links = data?.user?.links?.filter((l: any) => l.isActive) || data?.links?.filter((l: any) => l.isActive) || [];
+  // --- MENGAMBIL DATA RELASI (Project, Sertifikat, Link) ---
+  const archiveItems = data?.projects || data?.user?.projects || [];
+  const awardItems = data?.certificates || data?.user?.certificates || [];
+  const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
-  const rawAvatar = data?.avatarUrl || data?.user?.avatar || "";
+  const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
   const cleanAvatar = rawAvatar.replace(/"/g, '').trim();
   const displayAvatar = (cleanAvatar !== "" && cleanAvatar !== "null") ? cleanAvatar : `https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop`;
 
@@ -38,6 +40,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
     return "'Inter', sans-serif"; 
   };
   
+  // --- MENGAMBIL DATA TEMA (Dari tabel SiteAppearance) ---
   const headingFont = getFontFamily(theme?.fontHeading);
   const bodyFont = getFontFamily(theme?.fontBody);
 

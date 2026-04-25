@@ -72,11 +72,15 @@ export default function DashboardOverview() {
         const linkData = linkRes?.ok ? await linkRes.json() : [];
         const actData = actRes?.ok ? await actRes.json() : [];
 
-        if (appData?.subdomain) setSubdomain(appData.subdomain);
+        // FIX: Panggil data dari laci yang tepat sesuai skema baru
+        if (appData?.profile?.subdomain) setSubdomain(appData.profile.subdomain);
 
         let tName = "Neo Brutalism";
-        if (appData?.themeTemplate === 'minimalist') tName = "Minimalist Clean";
-        if (appData?.themeTemplate === 'elegant') tName = "Elegant Serif";
+        const currentTheme = appData?.siteAppearance?.themeTemplate;
+        if (currentTheme === 'minimalist') tName = "Minimalist Clean";
+        if (currentTheme === 'elegant') tName = "Elegant Serif";
+        if (currentTheme === 'cinematic') tName = "Cinematic Dark";
+        if (currentTheme === 'acid') tName = "Acid Punk";
 
         setStats({
           projects: Array.isArray(projData) ? projData.length : 0,

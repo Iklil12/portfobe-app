@@ -1,33 +1,34 @@
+//app/api/appearance/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 
-// MENGAMBIL TEMA & PROFIL YANG SEDANG DIPAKAI
+// MENGAMBIL TEMA & PROFIL YANG SEDANG DIPAKAI (UNTUK PREVIEW)
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const profile = await prisma.profile.findFirst({
-      where: { user: { email: session.user.email } },
+    // Tarik data dari User sebagai induknya, lalu include semua relasinya
+    const userData = await prisma.user.findUnique({
+      where: { email: session.user.email },
       include: {
-        user: {
-          include: {
-            links: { orderBy: { order: 'asc' } },
-            projects: { orderBy: { createdAt: 'desc' } },
-            certificates: { orderBy: { createdAt: 'desc' } }
-          }
-        }
+        profile: true,
+        siteAppearance: true, // <--- Panggil tabel baru di sini
+        links: { orderBy: { order: 'asc' } },
+        projects: { orderBy: { createdAt: 'desc' } },
+        certificates: { orderBy: { createdAt: 'desc' } }
       }
     });
 
-    if (!profile) return NextResponse.json({});
+    if (!userData) return NextResponse.json({});
 
-    // Kirim semua data termasuk links dan projects untuk preview 100% mirip
-    return NextResponse.json(profile);
+    // Kirim semua data secara utuh untuk dirender di halaman preview
+    return NextResponse.json(userData);
   } catch (error) {
+    console.error("GET Appearance Error:", error);
     return NextResponse.json({ error: "Gagal mengambil data" }, { status: 500 });
   }
 }
@@ -43,7 +44,7 @@ export async function PATCH(req: Request) {
 
     const body = await req.json();
     
-    // 1. TANGKAP splashScreen DARI FRONTEND
+    // TANGKAP DATA DARI FRONTEND
     const { 
         themeTemplate, 
         themeColor, 
@@ -51,10 +52,11 @@ export async function PATCH(req: Request) {
         fontBody, 
         buttonShape, 
         cardStyle,
-        splashScreen // <--- Tambahkan ini
+        splashScreen
     } = body;
 
-    const updatedProfile = await prisma.profile.upsert({
+    // UPDATE ATAU CREATE KE TABEL SITE_APPEARANCE
+    const updatedAppearance = await prisma.siteAppearance.upsert({
       where: { userId: user.id },
       update: { 
         themeTemplate, 
@@ -63,24 +65,23 @@ export async function PATCH(req: Request) {
         fontBody, 
         buttonShape, 
         cardStyle,
-        splashScreen // <--- 2. UPDATE KE DATABASE
+        splashScreen
       },
       create: {
-        userId: user.id,
-        fullName: session.user.name || session.user.email.split('@')[0], 
+        userId: user.id, // Sambungkan ke User yang sedang login
         themeTemplate, 
         themeColor, 
         fontHeading, 
         fontBody, 
         buttonShape, 
         cardStyle,
-        splashScreen // <--- 3. INSERT KE DATABASE (JIKA PROFIL BARU)
+        splashScreen
       }
     });
 
     await logActivity(user.id, "UPDATE_THEME", `Memperbarui tema portofolio ke ${themeTemplate}`);
 
-    return NextResponse.json(updatedProfile);
+    return NextResponse.json(updatedAppearance);
   } catch (error) {
     console.error("PATCH Appearance Error:", error);
     return NextResponse.json({ error: "Gagal menyimpan tema" }, { status: 500 });

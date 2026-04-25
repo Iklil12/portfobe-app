@@ -16,7 +16,8 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       include: { 
-        profile: true // KUNCI UTAMA: Wajib 'true' agar data subdomain ditarik dari database
+        profile: true,
+        siteAppearance: true 
       } 
     });
 

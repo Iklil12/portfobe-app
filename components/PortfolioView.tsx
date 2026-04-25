@@ -1,4 +1,4 @@
-// File: components/PortfolioView.tsx
+
 "use client";
 
 import React from 'react';
@@ -7,18 +7,25 @@ import { usePathname } from 'next/navigation';
 // 1. IMPORT SEMUA TEMA DARI FOLDER THEMES
 import BrutalismTheme from './themes/BrutalismTheme';
 import MinimalistTheme from './themes/MinimalistTheme';
+import CinematicTheme from './themes/CinematicTheme';
+import AcidTheme from './themes/AcidTheme';
 
 // 2. DAFTARKAN TEMA KE DALAM "THEME REGISTRY"
 const THEME_MAP: Record<string, React.FC<any>> = {
   'brutalism': BrutalismTheme,
   'minimalist': MinimalistTheme,
+  'cinematic': CinematicTheme,
+  'acid': AcidTheme,
+  
   // Nanti tinggal tambah: 'elegant': ElegantTheme, dst...
 };
 
 export default function PortfolioView({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
   const pathname = usePathname();
   const isEditor = pathname?.includes('/dashboard');
-  const subdomain = data?.subdomain || "";
+  
+  // PENYESUAIAN BARU: Ambil subdomain dari dalam objek profile
+  const subdomain = data?.profile?.subdomain || data?.subdomain || "";
 
   // 3. CEK TEMA APA YANG SEDANG DIPILIH USER DI DATABASE
   // Jika tidak ada data, kita jadikan brutalism sebagai default/fallback

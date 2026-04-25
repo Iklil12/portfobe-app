@@ -1,3 +1,4 @@
+// File: app/api/layout-sync/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -18,7 +19,8 @@ export async function GET(req: Request) {
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      include: { profile: true }
+      include: { profile: true , siteAppearance: true}
+      
     });
 
     if (!user) return NextResponse.json(null, { status: 404 });

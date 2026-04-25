@@ -20,25 +20,28 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
 
   const res = (desktopClasses: string) => isMobileView ? '' : desktopClasses;
 
+  // --- MENGAMBIL DATA TEMA (Dari tabel SiteAppearance) ---
   const themeColor = theme?.themeColor || "#000000";
   const fontHeading = theme?.fontHeading || "Space Mono";
   const fontBody = theme?.fontBody || "Inter";
   const cardStyle = theme?.cardStyle || "hard-shadow";
   const buttonShape = theme?.buttonShape || "hard";
 
-  const fullName = data?.fullName || "Nama Anda";
-  const profession = data?.profession || "Visual Architect";
-  const bio = data?.bio || "Telling stories through motion. Based in Indonesia, operating globally.";
-  const subdomain = data?.subdomain || "username";
+  // --- MENGAMBIL DATA IDENTITAS (Dari tabel Profile yang sudah dipisah) ---
+  const fullName = data?.profile?.fullName || data?.fullName || "Nama Anda";
+  const profession = data?.profile?.profession || data?.profession || "Visual Architect";
+  const bio = data?.profile?.bio || data?.bio || "Telling stories through motion. Based in Indonesia, operating globally.";
+  const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
 
-  // --- MENGAMBIL EMAIL USER ---
-  const userEmail = data?.user?.email || data?.email || `hello@${subdomain}.co`;
+  // --- MENGAMBIL EMAIL USER (Langsung dari tabel User) ---
+  const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
 
-  const archiveItems = data?.user?.projects || data?.projects || [];
-  const awardItems = data?.user?.certificates || data?.certificates || [];
-  const links = data?.user?.links?.filter((l: any) => l.isActive) || data?.links?.filter((l: any) => l.isActive) || [];
+  // --- MENGAMBIL DATA RELASI (Project, Sertifikat, Link) ---
+  const archiveItems = data?.projects || data?.user?.projects || [];
+  const awardItems = data?.certificates || data?.user?.certificates || [];
+  const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
-  const rawAvatar = data?.avatarUrl || data?.user?.avatar || "";
+  const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.avatar || "";
   const cleanAvatar = rawAvatar.replace(/"/g, '').trim();
   const displayAvatar = (cleanAvatar !== "" && cleanAvatar !== "null") ? cleanAvatar : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(fullName)}&backgroundColor=000000&textColor=ffffff`;
 
