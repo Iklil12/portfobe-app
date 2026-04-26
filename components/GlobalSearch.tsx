@@ -5,8 +5,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import toast from "react-hot-toast";
-import useSWR from "swr"; // <-- Pastikan SWR sudah di-install (npm install swr)
+import useSWR, { mutate } from "swr";
 import { useSession, signOut } from "next-auth/react";
+
 
 // =========================================================================
 // 1. DATA MENU STATIS (Single Source of Truth)
@@ -128,7 +129,7 @@ export default function GlobalSearch() {
     if (!acc[item.group]) acc[item.group] = [];
     acc[item.group].push(item);
     return acc;
-  }, {} as Record<string, typeof APP_COMMANDS>);
+  }, {} as Record<string, any[]>);
 
 
   // =========================================================================
@@ -248,13 +249,15 @@ export default function GlobalSearch() {
                   <p className="text-xs text-slate-400 mt-1">Coba gunakan kata kunci seperti "sandi", "hapus", atau nama proyek Anda.</p>
                 </div>
               ) : (
-                Object.entries(groupedResults).map(([groupName, items]) => (
+                // 1. Tambahkan : [string, any] di sini
+                Object.entries(groupedResults).map(([groupName, items]: [string, any]) => (
                   <div key={groupName} className="mb-4 last:mb-0">
                     <div className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] flex items-center gap-3">
                       {groupName} <div className="h-px bg-slate-200 flex-1"></div>
                     </div>
                     <div className="space-y-1">
-                      {items.map((item) => {
+                      {/* 2. Tambahkan (items as any[]) dan (item: any) di sini */}
+                      {(items as any[]).map((item: any) => {
                         const currentIndex = globalItemIndex; 
                         const isSelected = currentIndex === selectedIndex;
                         globalItemIndex++; 

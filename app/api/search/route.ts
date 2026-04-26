@@ -13,28 +13,28 @@ export async function GET(request: Request) {
   if (!session || query.length < 2) return NextResponse.json([]);
 
   try {
-    const userId = session.user.id;
+    const userId = (session.user as any)?.id;
 
     // 🚀 GOD MODE: Cari ke 4 tabel sekaligus secara paralel!
     const [projects, links, certificates, activities] = await Promise.all([
       // 1. Cari Proyek (berdasarkan judul)
       prisma.project.findMany({
-        where: { userId, title: { contains: query, mode: 'insensitive' } },
+        where: { userId, title: { contains: query} },
         take: 3
       }),
       // 2. Cari Tautan/Link (berdasarkan nama platform, misal "Instagram")
       prisma.link.findMany({
-        where: { userId, platform: { contains: query, mode: 'insensitive' } },
+        where: { userId, platform: { contains: query} },
         take: 3
       }),
       // 3. Cari Sertifikat (berdasarkan judul sertifikat)
       prisma.certificate.findMany({
-        where: { userId, title: { contains: query, mode: 'insensitive' } },
+        where: { userId, title: { contains: query} },
         take: 2
       }),
       // 4. Cari Riwayat Aktivitas (berdasarkan detail aktivitas)
       prisma.activity.findMany({
-        where: { userId, details: { contains: query, mode: 'insensitive' } },
+        where: { userId, details: { contains: query} },
         take: 2
       })
     ]);

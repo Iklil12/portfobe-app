@@ -350,7 +350,6 @@ export default function AppearancePage() {
             <PortfolioView data={livePreviewData} theme={livePreviewTheme} isMobileView={previewMode === 'mobile'} />
           </div>
         </div>
-
       </div>
     </main>
   );
