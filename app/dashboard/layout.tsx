@@ -1,3 +1,4 @@
+// app/dashboard/layout.tsx
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -5,7 +6,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import useSWR from 'swr'; 
-import { Toaster } from 'react-hot-toast'; 
+import { Toaster } from 'react-hot-toast';
+import OnboardingModal from "@/components/OnboardingModal"; // Import Modal
+import WelcomeBannerModal from "@/components/WelcomeBannerModal"; // Import Modal
+import GlobalSearch from "@/components/GlobalSearch"; // <-- TAMBAHKAN INI
 
 interface NotificationItem {
   id: string;
@@ -21,7 +25,6 @@ interface NotificationItem {
   border: string;
 }
 
-// Fetcher kebal cache browser
 const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then((res) => {
   if (!res.ok) throw new Error("API Error");
   return res.json();
@@ -31,9 +34,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const { data: session, status } = useSession(); 
 
-
-
-  // --- MENGGUNAKAN API LAYOUT-SYNC YANG SUDAH TERBUKTI AMAN ---
   const { data: syncData } = useSWR('/api/layout-sync', fetcher, {
     refreshInterval: 10000,
     revalidateOnFocus: true, 
@@ -66,29 +66,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const isActive = (path: string) => pathname === path;
 
-  const getPageTitle = () => {
-    if (pathname === '/dashboard') return 'Overview';
-    if (pathname === '/dashboard/projects') return 'Proyek & Karya';
-    if (pathname === '/dashboard/themes') return 'Koleksi Tema';
-    if (pathname === '/dashboard/links') return 'Tautan (Links)';
-    if (pathname === '/dashboard/analytics') return 'Audience Metrics';
-    if (pathname === '/dashboard/profile') return 'Profil & Bio';
-    if (pathname === '/dashboard/settings') return 'Pengaturan Akun';
-    return 'Panel Creator';
-  };
-
-  const userName = session?.user?.name || "Creator";
+// Prioritaskan fullName dari database, kalau kosong baru pakai nama dari session Google
+  const userName = syncData?.fullName || session?.user?.name || "Creator";
   const userEmail = session?.user?.email || "user@portfo.be";
   const isLoading = status === "loading"; 
 
   const handleLogout = () => {
     setIsLoggingOut(true);
+    
+    // --- TAMBAHAN BARU: Hapus ingatan pop-up saat user keluar ---
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem("hasSeenWelcomePromo");
+    }
+    
     signOut({ redirect: true, callbackUrl: '/login' });
   };
 
-  // --- PENARIKAN DATA SWR ---
   const userPlan = syncData?.plan ? String(syncData.plan).toUpperCase() : (typeof (session?.user as any)?.plan === 'string' ? (session?.user as any)?.plan.toUpperCase() : "FREE");
-  // Pastikan membaca data yang benar dari syncData
   const isWebLive = syncData && syncData.isLive !== undefined ? syncData.isLive : ((session?.user as any)?.isLive !== false);
   const userSubdomain = syncData ? syncData.subdomain : (session?.user as any)?.subdomain;
   const userProfession = syncData ? syncData.profession : (session?.user as any)?.profession;
@@ -103,27 +97,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const notifications: NotificationItem[] = [];
 
-  if (!isWebLive) {
-    notifications.push({ id: 'offline', type: 'critical', icon: 'fa-eye-slash', title: 'Web Sedang Nonaktif', desc: 'Portofolio Anda disembunyikan. Aktifkan agar bisa diakses publik.', link: '/dashboard/settings', btnText: 'Aktifkan Web', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200' });
-  }
-  if (isSubdomainEmpty) {
-    notifications.push({ id: 'subdomain', type: 'warning', icon: 'fa-link', title: 'Subdomain Kosong', desc: 'Klaim URL unik Anda sekarang sebelum diambil orang lain.', link: '/dashboard/profile', btnText: 'Atur URL', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' });
-  }
-  if (isAvatarEmpty) {
-    notifications.push({ id: 'avatar', type: 'warning', icon: 'fa-camera', title: 'Foto Profil Belum Ada', desc: 'Unggah foto asli Anda agar klien lebih mudah mengenali Anda.', link: '/dashboard/profile', btnText: 'Unggah Foto', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' });
-  }
-  if (isProfessionEmpty) {
-    notifications.push({ id: 'profession', type: 'info', icon: 'fa-briefcase', title: 'Profesi Belum Diisi', desc: 'Tambahkan profesi atau keahlian utama Anda.', link: '/dashboard/profile', btnText: 'Isi Profesi', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' });
-  }
-  if (isBioEmpty) {
-    notifications.push({ id: 'bio-empty', type: 'info', icon: 'fa-align-left', title: 'Bio Masih Kosong', desc: 'Ceritakan sedikit tentang perjalanan karir Anda kepada pengunjung.', link: '/dashboard/profile', btnText: 'Tulis Bio', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' });
-  } else if (isBioShort) {
-    notifications.push({ id: 'bio-short', type: 'info', icon: 'fa-pen-to-square', title: 'Bio Terlalu Singkat', desc: 'Bio yang lebih detail (min. 30 karakter) akan terlihat lebih profesional.', link: '/dashboard/profile', btnText: 'Perpanjang', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' });
-  }
-
-  if (userPlan === 'FREE') {
-    notifications.push({ id: 'promo', type: 'promo', icon: 'fa-crown', title: 'Upgrade ke Pro', desc: 'Dapatkan analitik mendalam dan kustom domain sesukamu.', link: '/dashboard/upgrade', color: 'text-[#ff9e00]', bg: 'bg-[#ff9e00]/10', border: 'border-[#ff9e00]/20' });
-  }
+  if (!isWebLive) notifications.push({ id: 'offline', type: 'critical', icon: 'fa-eye-slash', title: 'Web Sedang Nonaktif', desc: 'Portofolio Anda disembunyikan. Aktifkan agar bisa diakses publik.', link: '/dashboard/settings', btnText: 'Aktifkan Web', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200' });
+  if (isSubdomainEmpty) notifications.push({ id: 'subdomain', type: 'warning', icon: 'fa-link', title: 'Subdomain Kosong', desc: 'Klaim URL unik Anda sekarang sebelum diambil orang lain.', link: '/dashboard/profile', btnText: 'Atur URL', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' });
+  if (isAvatarEmpty) notifications.push({ id: 'avatar', type: 'warning', icon: 'fa-camera', title: 'Foto Profil Belum Ada', desc: 'Unggah foto asli Anda agar klien lebih mudah mengenali Anda.', link: '/dashboard/profile', btnText: 'Unggah Foto', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' });
+  if (isProfessionEmpty) notifications.push({ id: 'profession', type: 'info', icon: 'fa-briefcase', title: 'Profesi Belum Diisi', desc: 'Tambahkan profesi atau keahlian utama Anda.', link: '/dashboard/profile', btnText: 'Isi Profesi', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' });
+  if (isBioEmpty) notifications.push({ id: 'bio-empty', type: 'info', icon: 'fa-align-left', title: 'Bio Masih Kosong', desc: 'Ceritakan sedikit tentang perjalanan karir Anda kepada pengunjung.', link: '/dashboard/profile', btnText: 'Tulis Bio', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' });
+  else if (isBioShort) notifications.push({ id: 'bio-short', type: 'info', icon: 'fa-pen-to-square', title: 'Bio Terlalu Singkat', desc: 'Bio yang lebih detail (min. 30 karakter) akan terlihat lebih profesional.', link: '/dashboard/profile', btnText: 'Perpanjang', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' });
+  if (userPlan === 'FREE') notifications.push({ id: 'promo', type: 'promo', icon: 'fa-crown', title: 'Upgrade ke Pro', desc: 'Dapatkan analitik mendalam dan kustom domain sesukamu.', link: '/dashboard/upgrade', color: 'text-[#ff9e00]', bg: 'bg-[#ff9e00]/10', border: 'border-[#ff9e00]/20' });
+  
   notifications.push({ id: 'announcement', type: 'announcement', icon: 'fa-bullhorn', title: 'Pembaruan Sistem v2.0', desc: 'Tema Neo Brutalism kini lebih stabil dan cepat diakses!', link: '/dashboard/themes', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' });
 
   const topBanner = notifications.find(n => n.type === 'critical' || n.type === 'warning' || n.type === 'info');
@@ -137,15 +118,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-    // --- TAMBAHKAN 3 BARIS INI ---
+
+  const isDashboardRoot = pathname === '/dashboard';
   const isEditorPage = pathname === '/dashboard/appearance';
-  if (isEditorPage) {
-    return <>{children}</>; // Render halaman murni tanpa Navbar & Sidebar!
+  
+  // Force Redirect Onboarding
+  if (!isLoading && isSubdomainEmpty && !isDashboardRoot) {
+    if (typeof window !== 'undefined') window.location.href = '/dashboard'; 
   }
+
+  if (isEditorPage) return <>{children}</>; 
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#FAFAFA] font-sans text-slate-900 selection:bg-slate-200 selection:text-slate-900 relative">
       
+      {/* GLOBAL STYLES & LAYOUT ANIMATIONS */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
         * { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -157,13 +144,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         @keyframes dropdownEnter { 0% { opacity: 0; transform: scale(0.95) translateY(-10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         .animate-page-load { opacity: 0; animation: smoothPageLoad 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
         @keyframes smoothPageLoad { 0% { opacity: 0; transform: translateY(15px); filter: blur(4px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        .skeleton-premium { background: linear-gradient(110deg, #f1f5f9 8%, #e2e8f0 18%, #f1f5f9 33%); background-size: 200% 100%; animation: 1.5s shine linear infinite; }
+        @keyframes shine { to { background-position-x: -200%; } }
         .delay-100 { animation-delay: 100ms; }
         .delay-200 { animation-delay: 200ms; }
         .delay-300 { animation-delay: 300ms; }
-        .skeleton-premium { background: linear-gradient(110deg, #f1f5f9 8%, #e2e8f0 18%, #f1f5f9 33%); background-size: 200% 100%; animation: 1.5s shine linear infinite; }
-        @keyframes shine { to { background-position-x: -200%; } }
       `}} />
 
+      {/* LOGOUT MODAL */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300" onClick={() => !isLoggingOut && setShowLogoutModal(false)}></div>
@@ -183,6 +171,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
 
+      {/* SIDEBAR */}
       <aside className={`animate-page-load fixed inset-y-0 left-0 z-50 bg-white border-r border-slate-100 flex flex-col transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
         ${isSidebarOpen ? 'translate-x-0 shadow-2xl w-72' : '-translate-x-full md:relative md:translate-x-0'} 
         ${isSidebarCollapsed ? 'md:w-[88px]' : 'md:w-72'} 
@@ -215,11 +204,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <i className={`fas fa-layer-group text-center transition-all duration-300 ${isSidebarCollapsed ? 'text-xl' : 'text-lg w-6'} ${isActive('/dashboard') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
                     <span className={`font-extrabold text-[13px] tracking-wide whitespace-nowrap transition-all ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden ${isSidebarCollapsed ? 'max-w-0 opacity-0 duration-200 delay-0' : 'max-w-[200px] opacity-100 duration-500 delay-150'}`}>Overview</span>
                   </Link>
-                  {isSidebarCollapsed && (
-                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">
-                      Overview
-                    </div>
-                  )}
+                  {isSidebarCollapsed && <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Overview</div>}
                 </div>
                 
                 <div className="pt-2 relative group/design">
@@ -232,26 +217,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </button>
 
                   {isSidebarCollapsed && (
-                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/design:opacity-100 transition-all duration-300 z-[90] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/design:translate-x-0 group-hover/design:hidden">
-                      Menu Desain
-                    </div>
-                  )}
-
-                  {isSidebarCollapsed && (
                     <div className="absolute left-full top-0 w-56 pl-3 opacity-0 pointer-events-none group-hover/design:opacity-100 group-hover/design:pointer-events-auto transition-all duration-300 z-[100] -translate-x-2 group-hover/design:translate-x-0">
                       <div className="bg-white border border-slate-200 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-2 px-1">
                         <div className="px-4 py-2 border-b border-slate-100 mb-1">
                           <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Menu Desain</p>
                         </div>
-                        <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
-                          Proyek & Karya
-                        </Link>
-                        <Link href="/dashboard/themes" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/themes') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
-                          Koleksi Tema
-                        </Link>
-                        <Link href="/dashboard/links" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/links') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
-                          Tautan (Links)
-                        </Link>
+                        <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Proyek & Karya</Link>
+                        <Link href="/dashboard/themes" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/themes') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Koleksi Tema</Link>
+                        <Link href="/dashboard/links" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/links') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Tautan (Links)</Link>
                       </div>
                     </div>
                   )}
@@ -259,16 +232,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   {!isSidebarCollapsed && (
                     <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isDesignMenuOpen ? 'max-h-40 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 hidden'}`}>
                       <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
-                        {isActive('/dashboard/projects') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>}
-                        Proyek & Karya
+                        {isActive('/dashboard/projects') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} Proyek & Karya
                       </Link>
                       <Link href="/dashboard/themes" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/themes') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
-                        {isActive('/dashboard/themes') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>}
-                        Koleksi Tema
+                        {isActive('/dashboard/themes') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} Koleksi Tema
                       </Link>
                       <Link href="/dashboard/links" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/links') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
-                        {isActive('/dashboard/links') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>}
-                        Tautan (Links)
+                        {isActive('/dashboard/links') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} Tautan (Links)
                       </Link>
                     </div>
                   )}
@@ -347,46 +317,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
+      {/* MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
         <header className="sticky top-0 z-40 h-[88px] w-full bg-white/60 backdrop-blur-xl border-b border-slate-100/50 flex items-center justify-between px-6 sm:px-10 shrink-0 animate-page-load delay-100">
-          {/* --- BAGIAN HEADER BARU DENGAN SEARCH BAR PREMIUM --- */}
           <div className="flex items-center gap-6 flex-1">
-            {/* Tombol Mobile Hamburger */}
-            <button 
-              className="md:hidden w-11 h-11 rounded-full border border-slate-200 bg-white/80 text-slate-600 hover:text-slate-900 active:scale-90 transition-all flex items-center justify-center shadow-sm" 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            >
+            <button className="md:hidden w-11 h-11 rounded-full border border-slate-200 bg-white/80 text-slate-600 hover:text-slate-900 active:scale-90 transition-all flex items-center justify-center shadow-sm" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
               <i className="fas fa-bars text-sm"></i>
             </button>
 
-            {/* GLOBAL SEARCH BAR */}
-            <div className="hidden md:flex relative group max-w-md w-full">
-              <div className={`
-                relative flex items-center w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
-                bg-slate-100/40 border border-slate-200/40 rounded-2xl px-4 py-2.5
-                focus-within:bg-white focus-within:border-[#ff9e00]/40 focus-within:ring-4 focus-within:ring-[#ff9e00]/5
-                focus-within:w-[110%] group-hover:border-slate-300/60 backdrop-blur-md
-              `}>
-                <div className="flex items-center justify-center text-slate-400 group-focus-within:text-[#ff9e00] transition-colors duration-300">
-                  <i className="fas fa-search text-xs"></i>
-                </div>
-
-                <input 
-                  type="text" 
-                  placeholder="Cari proyek, tema, atau bantuan..." 
-                  className="bg-transparent border-none outline-none text-[13px] font-bold text-slate-700 placeholder:text-slate-400/80 w-full px-3"
-                />
-
-                <div className="flex items-center gap-2 shrink-0">
-                  <div className="hidden group-focus-within:block w-3.5 h-3.5 border-2 border-slate-200 border-t-[#ff9e00] rounded-full animate-spin mr-1"></div>
-                  <div className="hidden lg:flex items-center gap-1 px-2 py-1 rounded-lg bg-white/80 border border-slate-200 shadow-sm text-[10px] font-black text-slate-400 group-focus-within:opacity-0 transition-opacity">
-                    <span className="text-[12px]">⌘</span>
-                    <span>K</span>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute inset-0 bg-[#ff9e00]/10 blur-2xl rounded-full opacity-0 group-focus-within:opacity-20 transition-opacity duration-500 -z-10"></div>
-            </div>
+            <GlobalSearch />
           </div>
           
           <div className="flex items-center gap-4 sm:gap-6">
@@ -504,13 +443,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 md:hidden transition-opacity" onClick={() => setIsSidebarOpen(false)}></div>
       )}
 
-      {/* --- TOASTER DIPINDAHKAN KE SINI AGAR MELAYANG DI ATAS SEGALANYA --- */}
+      {/* ========================================= */}
+      {/* RENDER ONBOARDING MODAL COMPONENT         */}
+      {/* ========================================= */}
+      {(!isLoading && isSubdomainEmpty && !isEditorPage) && (
+        <OnboardingModal userName={userName} />
+      )}
+      {/* ========================================= */}
+      {/* 2. RENDER WELCOME/PROMO MODAL (USER LAMA) */}
+      {/* ========================================= */}
+      {(!isLoading && !isSubdomainEmpty && !isEditorPage) && (
+        <WelcomeBannerModal 
+          userName={userName} 
+          userPlan={userPlan}
+          // --- SIMULASI DATA DARI SUPER ADMIN ---
+          // Nanti ini bisa diganti jadi: adminData={syncData.adminPromo}
+          adminData={{
+            isActive: false, // Ubah jadi true kalau Super Admin mau menyalakan Promo
+            type: "promo",
+            title: "Diskon 50% Pro Plan! 🎉",
+            desc: "Khusus untukmu minggu ini! Upgrade ke Pro dan nikmati fitur custom domain serta analitik tanpa batas.",
+            btnText: "Klaim Diskon",
+            btnLink: "/dashboard/upgrade"
+          }}
+        />
+      )}
+
       <Toaster 
         position="top-center" 
         reverseOrder={false}
         containerStyle={{ zIndex: 999999 }} 
       />
-
     </div>
   );
 }

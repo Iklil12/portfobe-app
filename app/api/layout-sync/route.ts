@@ -32,7 +32,8 @@ export async function GET(req: Request) {
       profession: user.profile?.profession || null,
       bio: user.profile?.bio || null,
       avatar: user.profile?.avatarUrl || user.avatar || null,
-      plan: user.plan || "FREE"
+      plan: user.plan || "FREE",
+      fullName: user.profile?.fullName,
     });
   } catch (error) {
     return NextResponse.json(null, { status: 500 });
