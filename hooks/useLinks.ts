@@ -18,6 +18,8 @@ export function useLinks() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [userPlan, setUserPlan] = useState<'FREE' | 'PRO'>('FREE');
+  const [linkCount, setLinkCount] = useState(0);
 
   useEffect(() => {
     setMounted(true);
@@ -26,17 +28,22 @@ export function useLinks() {
 
   const fetchLinks = async () => {
     try {
-      const res = await fetch('/api/links');
-      if (res.ok) {
-        const jsonResult = await res.json();
-        
-        // Jaring pengaman: Ambil array dari properti .data, atau fallback ke array kosong
-        const linksArray = Array.isArray(jsonResult.data) 
-          ? jsonResult.data 
-          : (Array.isArray(jsonResult) ? jsonResult : []);
+      const [linksRes, planRes] = await Promise.all([
+        fetch('/api/links'),
+        fetch('/api/layout-sync').catch(() => null)
+      ]);
 
+      if (linksRes.ok) {
+        const jsonResult = await linksRes.json();
+        const linksArray = Array.isArray(jsonResult.data) ? jsonResult.data : (Array.isArray(jsonResult) ? jsonResult : []);
         setLinks(linksArray);
+        setLinkCount(jsonResult.meta?.total || linksArray.length);
         setOriginalLinks(JSON.parse(JSON.stringify(linksArray)));
+      }
+
+      if (planRes?.ok) {
+        const planJson = await planRes.json();
+        setUserPlan(planJson.plan || 'FREE');
       }
     } finally {
       setTimeout(() => setIsLoading(false), 500);
@@ -87,6 +94,7 @@ export function useLinks() {
         const newLink = await res.json();
         const updated = [...links, newLink];
         setLinks(updated);
+        setLinkCount(prev => prev + 1); // Update Count Real-time
         setOriginalLinks(JSON.parse(JSON.stringify(updated)));
         toast.success("Link ditambahkan", {
             icon: '🔗',
@@ -106,6 +114,7 @@ export function useLinks() {
       if (res.ok) {
         const updated = links.filter(l => l.id !== linkToDelete);
         setLinks(updated);
+        setLinkCount(prev => Math.max(0, prev - 1)); // Update Count Real-time
         setOriginalLinks(JSON.parse(JSON.stringify(updated)));
         toast.success("Link terhapus", {
           style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' },
@@ -128,6 +137,8 @@ export function useLinks() {
       isSaving,
       isAdding,
       hasChanges,
+      userPlan,
+      linkCount
     },
     actions: {
       setLinkToDelete,

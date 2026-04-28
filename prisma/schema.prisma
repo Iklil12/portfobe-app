@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ENUM PLAN
+enum PlanType {
+  FREE
+  PRO
+}
+
 // 1. TABEL USER (Khusus Keamanan & Login)
 enum Role {
   USER
@@ -17,7 +23,8 @@ model User {
   id                     String    @id @default(uuid())
   email                  String    @unique 
   password               String    
-  plan                   String    @default("FREE")
+  plan                   PlanType  @default(FREE)
+  planExpiredAt          DateTime? // Null = FREE selamanya, atau PRO yang belum diset
   role                   Role      @default(USER)
   avatar                 String  
   createdAt              DateTime  @default(now())
@@ -35,6 +42,9 @@ model User {
   activities       Activity[]
   certificates     Certificate[]
   accounts         Account[]
+  analytics        Analytics[]   // <--- RELASI ANALITIK
+  transactions     Transaction[] // <--- RELASI TRANSAKSI
+  dailyStats       DailyStats[]  // <--- RELASI DAILY STATS
 }
 
 model PasswordResetToken {
@@ -87,7 +97,7 @@ model SiteAppearance {
   userId           String   @unique
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  splashScreen     Boolean  @default(true)
+  splashScreen     Boolean  @default(false)
   themeTemplate    String   @default("minimalist") // Preset awal (cth: "brutalism", "minimalist")
   themeColor       String   @default("#000000")    // Warna utama/aksen
   fontHeading      String   @default("Inter")      // Font untuk Judul
@@ -118,6 +128,8 @@ model Project {
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now()) 
+
+  @@index([createdAt])
 }
 
 // 6. TABEL ACTIVITY (Log Aktivitas User)
@@ -129,6 +141,8 @@ model Activity {
   actionType  String   // Contoh: "ADD_LINK", "UPDATE_PROFILE", "CHANGE_THEME"
   details     String   @db.Text // Penjelasan aktivitas
   createdAt   DateTime @default(now())
+
+  @@index([createdAt])
 }
 
 // 7. TABEL CERTIFICATE (Sertifikat/Pencapaian)
@@ -156,6 +170,9 @@ model Announcement {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([createdAt])
 }
 
 // 9. TABEL ADMIN LOG (Riwayat Aktivitas Admin)
@@ -167,4 +184,58 @@ model AdminLog {
   target      String?
   details     String?  @db.Text
   createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([category])
+  @@index([adminEmail])
 }
+
+// 10. TABEL ANALYTICS (Data Pengunjung & Traffic)
+model Analytics {
+  id          String   @id @default(uuid())
+  userId      String   // User ID pemilik portofolio yang dikunjungi
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  sessionId   String?  // ID Unik untuk satu sesi kunjungan
+  type        String   @default("VIEW") // VIEW, CLICK, PROJECT_OPEN
+  ipAddress   String?  // Untuk hitung Unique Visitors
+  userAgent   String?  @db.Text // Browser/OS
+  referrer    String?  @db.Text // Asal traffic (IG, Google, etc)
+  pagePath    String?  // Halaman yang dikunjungi (cth: "/", "/projects")
+  
+  duration    Int      @default(0)   // Durasi dalam detik
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt     // Terakhir aktif (Heartbeat)
+
+  @@index([createdAt])
+  @@index([type])
+}
+
+// 11. TABEL TRANSAKSI (Riwayat Pembayaran Plan)
+model Transaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Int      // Dalam Rupiah (IDR)
+  status    String   // PENDING, SUCCESS, FAILED
+  plan      PlanType
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// 12. TABEL DAILY STATS (Agregasi untuk Dashboard)
+model DailyStats {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime // Tanggal ringkasan (00:00:00)
+  views     Int      @default(0)
+  clicks    Int      @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@index([date])
+}

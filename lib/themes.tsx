@@ -7,6 +7,7 @@ export const THEMES_DATA = [
       desc: 'Bento Grid, Startup Vibe, Clean Space.',
       preview: 'bg-slate-100',
       isAvailable: true, 
+      isPro: false,
       content: (
           <div className="absolute inset-0 flex items-center justify-center p-6 scale-90 w-full h-full opacity-80 group-hover:opacity-100 group-hover:scale-100 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]">
               <div className="w-full h-full grid grid-cols-3 grid-rows-3 gap-3">
@@ -30,6 +31,7 @@ export const THEMES_DATA = [
       desc: 'Dark mode, Cinematic, Massive Type.',
       preview: 'bg-[#0a0a0a]',
       isAvailable: true, 
+      isPro: true,
       img: 'https://images.unsplash.com/photo-1580234797602-22c37b4a6230?q=80&w=600&auto=format&fit=crop'
   },
   {
@@ -38,6 +40,7 @@ export const THEMES_DATA = [
       desc: 'Editorial, High-end, Director Vibe.',
       preview: 'bg-[#0a0a0a]',
       isAvailable: true, 
+      isPro: true,
       img: 'https://images.unsplash.com/photo-1580234797602-22c37b4a6230?q=80&w=600&auto=format&fit=crop'
   },
   {
@@ -46,6 +49,7 @@ export const THEMES_DATA = [
       desc: 'Cyberpunk, Brutalism, Neon Vibes.',
       preview: 'bg-[#09090b]',
       isAvailable: true, 
+      isPro: true,
       img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=600&auto=format&fit=crop'
   },
   {

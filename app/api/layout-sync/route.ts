@@ -34,6 +34,7 @@ export async function GET(req: Request) {
       avatar: user.profile?.avatarUrl || user.avatar || null,
       plan: user.plan || "FREE",
       fullName: user.profile?.fullName,
+      email: user.email,
     });
   } catch (error) {
     return NextResponse.json(null, { status: 500 });

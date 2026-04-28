@@ -40,11 +40,23 @@ export async function PATCH(req: Request) {
     const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: {
-        avatar: avatar, // Simpan url foto (atau string kosong jika dihapus)
+        avatar: avatar, // Simpan url foto di tabel User
         profile: {
           upsert: {
-            create: { fullName, subdomain, profession, bio },
-            update: { fullName, subdomain, profession, bio }
+            create: { 
+              fullName, 
+              subdomain, 
+              profession, 
+              bio,
+              avatarUrl: avatar // Sinkronkan ke tabel Profile juga
+            },
+            update: { 
+              fullName, 
+              subdomain, 
+              profession, 
+              bio,
+              avatarUrl: avatar // Sinkronkan ke tabel Profile juga
+            }
           }
         }
       },

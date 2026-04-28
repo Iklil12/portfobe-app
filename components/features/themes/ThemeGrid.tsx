@@ -33,14 +33,20 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
 
                 <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/20 to-black/90 opacity-70 group-hover:opacity-80 transition-opacity duration-500"></div>
                 
-                <div className="absolute top-5 left-5 z-20">
+                <div className="absolute top-5 left-5 z-20 flex flex-col gap-2">
                   {isActive ? (
                     <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-900 bg-white px-3 py-1.5 rounded-xl shadow-lg border border-white/20 backdrop-blur-md">
-                      <i className="fas fa-check-circle"></i> Dipakai
+                      <i className="fas fa-check-circle text-emerald-500"></i> Dipakai
                     </span>
                   ) : !theme.isAvailable && (
                     <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-white bg-slate-900/50 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-md">
                       <i className="fas fa-lock"></i> Segera
+                    </span>
+                  )}
+                  
+                  {theme.isPro && (
+                    <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-white bg-slate-900 px-3 py-1.5 rounded-xl shadow-xl border border-white/10">
+                      <i className="fas fa-crown text-[#ff9e00]"></i> PRO
                     </span>
                   )}
                 </div>

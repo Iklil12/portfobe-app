@@ -12,6 +12,10 @@ export function useProjects() {
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'all' | 'video' | 'photo' | 'certificate'>('all');
+  
+  const [userPlan, setUserPlan] = useState<'FREE' | 'PRO'>('FREE');
+  const [projectCount, setProjectCount] = useState(0);
+  const [certCount, setCertCount] = useState(0);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [projectTitle, setProjectTitle] = useState("");
@@ -29,13 +33,19 @@ export function useProjects() {
   const fetchAllData = async () => {
       try {
         setIsLoading(true);
-        const [projRes, certRes] = await Promise.all([
+        const [projRes, certRes, planRes] = await Promise.all([
           fetch('/api/projects').catch(() => null),
-          fetch('/api/certificates').catch(() => null) 
+          fetch('/api/certificates').catch(() => null),
+          fetch('/api/layout-sync').catch(() => null)
         ]);
 
-        const projJson = projRes?.ok ? await projRes.json() : { data: [] };
-        const certJson = certRes?.ok ? await certRes.json() : { data: [] };
+        const projJson = projRes?.ok ? await projRes.json() : { data: [], meta: { total: 0 } };
+        const certJson = certRes?.ok ? await certRes.json() : { data: [], meta: { total: 0 } };
+        const planJson = planRes?.ok ? await planRes.json() : { plan: 'FREE' };
+
+        setProjectCount(projJson.meta?.total || 0);
+        setCertCount(certJson.meta?.total || 0);
+        setUserPlan(planJson.plan || 'FREE');
 
         // Ambil array-nya dari properti .data
         const projArray = Array.isArray(projJson.data) ? projJson.data : (Array.isArray(projJson) ? projJson : []);
@@ -200,7 +210,10 @@ export function useProjects() {
       isSubmitting,
       itemToDelete,
       isDeleting,
-      filteredItems
+      filteredItems,
+      userPlan,
+      projectCount,
+      certCount
     },
     actions: {
       setProjectType,

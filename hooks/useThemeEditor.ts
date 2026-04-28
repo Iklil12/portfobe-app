@@ -10,6 +10,7 @@ export function useThemeEditor() {
   const [isEditorCollapsed, setIsEditorCollapsed] = useState(false);
   const [showOfflineModal, setShowOfflineModal] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
+  const [showProModal, setShowProModal] = useState(false);
 
   // --- STATE UNTUK DATA PROFIL ---
   const [fullName, setFullName] = useState("Nama Anda");
@@ -100,7 +101,13 @@ export function useThemeEditor() {
           showToast({ message: 'Desain berhasil dipublikasikan!', id: toastId, icon: 'fa-check-circle' });
         }
       } else {
-        throw new Error('Gagal menyimpan');
+        const errorData = await res.json();
+        if (res.status === 403 && (errorData.code === 'THEME_LOCKED' || errorData.code === 'FEATURE_LOCKED')) {
+          toast.dismiss(toastId);
+          setShowProModal(true); // Tampilkan Modal bukan cuma Toast
+        } else {
+          throw new Error('Gagal menyimpan');
+        }
       }
     } catch (error) {
       showToast({ message: 'Terjadi kesalahan server.', id: toastId, icon: 'fa-exclamation-triangle' });
@@ -142,6 +149,7 @@ export function useThemeEditor() {
       cardStyle,
       splashScreen,
       isThemeModalOpen,
+      showProModal,
 
       livePreviewData,
       livePreviewTheme
@@ -157,6 +165,7 @@ export function useThemeEditor() {
       setCardStyle,
       setSplashScreen,
       setIsThemeModalOpen,
+      setShowProModal,
       saveDesign
     }
   };

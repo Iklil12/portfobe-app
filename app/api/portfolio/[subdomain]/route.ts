@@ -40,15 +40,24 @@ export async function GET(
       return NextResponse.json({ error: "Portfolio tidak ditemukan" }, { status: 404 });
     }
 
-    // 5. Susun Ulang Data (Biar frontend tinggal pakai tanpa ribet)
-    // Karena userData sudah jadi akar, isLive, email, dll otomatis ada di luar.
+    // 5. SOFT LOCK: Batasi data berdasarkan plan untuk halaman publik
+    // Data ke-6 dst tetap AMAN di database, hanya tidak ditampilkan ke publik
+    const isFree = userData.plan === 'FREE';
+    const publicProjects     = isFree ? userData.projects.slice(0, 5)     : userData.projects;
+    const publicLinks        = isFree ? userData.links.slice(0, 1)        : userData.links;
+    const publicCertificates = isFree ? userData.certificates.slice(0, 2) : userData.certificates;
+
+    // 6. Susun Ulang Data
     const responseData = {
       ...userData,
-      name: userData.profile.fullName || userSubdomain,
+      projects:     publicProjects,
+      links:        publicLinks,
+      certificates: publicCertificates,
+      name:      userData.profile.fullName || userSubdomain,
       subdomain: userData.profile.subdomain
     };
 
-    // 6. Jika sukses, kirimkan data utuh
+    // 7. Jika sukses, kirimkan data
     return NextResponse.json(responseData);
     
   } catch (error) {

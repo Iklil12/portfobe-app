@@ -17,24 +17,24 @@ export function OverviewHeader({ subdomain }: OverviewHeaderProps) {
         <p className="text-sm font-medium text-slate-500">Ringkasan performa dan data portofolio Anda saat ini.</p>
       </div>
       
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex w-full md:w-auto items-center gap-2 md:gap-3">
         {subdomain && (
             <a 
                 href={`/${subdomain}`} 
                 target="_blank" 
                 rel="noreferrer"
-                className="animate-enter group inline-flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 text-slate-900 rounded-full text-[11px] font-extrabold uppercase tracking-widest hover:border-slate-300 hover:bg-slate-50 transition-all duration-500 shadow-sm active:scale-95"
+                className="flex-1 md:flex-none animate-enter group inline-flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-white border border-slate-200 text-slate-900 rounded-2xl md:rounded-full text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest hover:border-slate-300 hover:bg-slate-50 transition-all duration-500 shadow-sm active:scale-95"
             >
                 <i className="fas fa-external-link-alt text-slate-400 group-hover:text-[#ff9e00] transition-colors"></i>
-                Lihat Portofolio
+                <span className="whitespace-nowrap">Lihat Web</span>
             </a>
         )}
         <Link 
             href="/dashboard/projects" 
-            className="animate-enter inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white text-[11px] font-extrabold uppercase tracking-widest rounded-full hover:bg-slate-800 transition-all active:scale-95 shadow-md"
+            className="flex-1 md:flex-none animate-enter inline-flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-slate-900 text-white text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest rounded-2xl md:rounded-full hover:bg-slate-800 transition-all active:scale-95 shadow-md"
             style={{ animationDelay: '100ms' }}
         >
-            <i className="fas fa-plus text-[10px]"></i> New Project
+            <i className="fas fa-plus text-[10px]"></i> <span className="whitespace-nowrap">New Project</span>
         </Link>
       </div>
     </div>

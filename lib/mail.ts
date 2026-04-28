@@ -27,3 +27,26 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
     console.error("Gagal mengirim welcome email:", error);
   }
 };
+
+export const sendSupportEmail = async (name: string, email: string, message: string) => {
+  try {
+    await resend.emails.send({
+      from: 'Portfobe Support <support@mail.ritions.com>',
+      to: 'ikliluluyun@ritions.com',
+      replyTo: email,
+      subject: `[SUPPORT] Pesan Baru dari ${name}`,
+      html: `
+        <div style="font-family: sans-serif; padding: 20px; color: #333;">
+          <h2 style="color: #0f172a;">Pesan Dukungan Baru</h2>
+          <p><strong>Dari:</strong> ${name} (${email})</p>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+          <p style="white-space: pre-wrap;">${message}</p>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Gagal mengirim email support:", error);
+    return { success: false, error };
+  }
+};

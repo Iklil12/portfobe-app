@@ -54,7 +54,7 @@ export default function ProjectsPage() {
         {state.mounted && createPortal(<ProjectFormModal state={state} actions={actions} />, document.body)}
         {state.mounted && createPortal(<DeleteConfirmModal state={state} actions={actions} />, document.body)}
 
-        <ProjectHeader actions={actions} />
+        <ProjectHeader state={state} actions={actions} />
         <ProjectFilterTabs state={state} actions={actions} />
         <ProjectList state={state} actions={actions} />
         

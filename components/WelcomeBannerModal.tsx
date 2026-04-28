@@ -76,7 +76,7 @@ export default function WelcomeBannerModal({ userName, userPlan = "FREE", adminD
     displayBg = "from-slate-900 to-slate-800";
     displayIcon = <i className="fas fa-crown text-5xl sm:text-6xl text-[#ff9e00] animate-pulse"></i>;
     btnText = "Upgrade ke Pro";
-    btnLink = "/dashboard/upgrade";
+    btnLink = "/pricing";
     badgeLabel = "💎 Rekomendasi";
   } else {
     displayTitle = `${greeting.text}, ${firstName}! ${greeting.icon}`;

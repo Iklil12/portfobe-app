@@ -8,6 +8,25 @@ import { Resend } from 'resend'; // <-- IMPORT RESEND DI SINI
 // Inisialisasi Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      plan: string;
+      profession: string;
+      bio: string;
+      avatar: string;
+      image: string;
+      subdomain: string;
+      isLive: boolean;
+      isOAuthLinked: boolean;
+      isStrictlyGoogle: boolean;
+    };
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",

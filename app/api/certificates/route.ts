@@ -64,6 +64,18 @@ export async function POST(req: Request) {
 
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
+    // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
+    if (user.plan === 'FREE') {
+      const certCount = await prisma.certificate.count({ where: { userId: user.id } });
+      if (certCount >= 2) {
+        return NextResponse.json({ 
+          error: "Kuota FREE maksimal 2 sertifikat. Silakan upgrade ke PRO.",
+          code: "QUOTA_EXCEEDED"
+        }, { status: 403 });
+      }
+    }
+    // -----------------------------------------
+
     const body = await req.json();
     const { title, description, mediaUrl, issuer, year, status } = body;
 

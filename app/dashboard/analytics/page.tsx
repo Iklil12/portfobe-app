@@ -1,31 +1,61 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { showToast } from '@/lib/customToast'; // Import fungsi popup sakti kita
+import { showToast } from '@/lib/customToast';
+import useSWR from 'swr';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  Cell,
+  AreaChart,
+  Area
+} from 'recharts';
+
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function AnalyticsPage() {
-  // State untuk memicu animasi progress bar saat halaman selesai dimuat
-  const [isMounted, setIsMounted] = useState(false);
+  const [range, setRange] = useState('7d');
+  const { data, isLoading, error } = useSWR(`/api/analytics/stats?range=${range}`, fetcher, {
+    refreshInterval: 30000 // Refresh every 30s
+  });
 
+  const { data: userData } = useSWR('/api/layout-sync', fetcher);
+  const userPlan = userData?.plan || 'FREE';
+
+  const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
-    // Memberikan jeda sedikit sebelum animasi berjalan agar transisinya terlihat mulus
-    const timer = setTimeout(() => setIsMounted(true), 150);
-    return () => clearTimeout(timer);
+    setIsMounted(true);
   }, []);
 
-  // --- MENGGUNAKAN UTILITY showToast ---
-  const handleComingSoon = () => {
+  const handleProFeature = () => {
     showToast({
-      message: "Analitik mendalam sedang dalam tahap akhir pengembangan!",
-      id: "analytics-coming-soon-toast", // ID unik Anti-Spam
-      icon: "fa-chart-line" // Menggunakan icon grafik fontawesome
+      message: userPlan === 'FREE' ? "Upgrade ke PRO untuk membuka metrik ini!" : "Fitur Heatmaps & Demografis sedang dikembangkan!",
+      id: "analytics-pro-toast",
+      icon: "fa-crown"
     });
   };
+
+  if (isLoading || !isMounted) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-10 h-10 border-[3px] border-slate-200 border-t-slate-900 rounded-full animate-spin mb-4"></div>
+        <p className="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest animate-pulse">Menghitung Data Audience...</p>
+      </div>
+    );
+  }
+
+  const statsData: { totalViews: number; uniqueVisitors: number; avgTime: string; bounceRate: string } = data?.stats || { totalViews: 0, uniqueVisitors: 0, avgTime: '0s', bounceRate: '0%' };
+  const chartData: { day: string; views: number }[] = data?.chartData || [];
+  const sources: { name: string; count: number; percentage: number }[] = data?.sources || [];
 
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-10 font-sans selection:bg-slate-200 selection:text-slate-900 pb-32">
       
-      {/* INJEKSI CSS UNTUK ANIMASI & FONT */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
         * { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -40,96 +70,140 @@ export default function AnalyticsPage() {
         }
       `}} />
 
-      {/* HEADER SECTION (Sesuai Referensi Gambar) */}
-      <div className="mb-14 animate-enter text-center md:text-left">
-        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 mb-2">
-          Audience <span className="font-light text-slate-400">Metrics.</span>
-        </h1>
-        <p className="text-sm font-medium text-slate-500">Pantau performa, jangkauan, dan interaksi portofolio Anda secara real-time.</p>
+      {/* HEADER SECTION */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 animate-enter gap-6">
+        <div className="text-center md:text-left">
+          <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
+              Audience <span className="font-light text-slate-400">Metrics.</span>
+            </h1>
+            {userPlan === 'PRO' ? (
+               <span className="bg-slate-900 text-white text-[9px] font-black px-2.5 py-1 rounded-md tracking-widest uppercase flex items-center gap-1.5 shadow-sm">
+                  <i className="fas fa-crown text-[8px] text-[#ff9e00]"></i> PRO
+               </span>
+            ) : (
+               <span className="bg-slate-100 text-slate-500 text-[9px] font-black px-2.5 py-1 rounded-md tracking-widest uppercase border border-slate-200">FREE</span>
+            )}
+          </div>
+          <p className="text-sm font-medium text-slate-500">Pantau performa, jangkauan, dan interaksi portofolio Anda.</p>
+        </div>
+        
+        {/* RANGE SELECTOR */}
+        <div className="flex bg-slate-100 p-1 rounded-2xl self-center md:self-auto border border-slate-200/50">
+          {[
+            { id: '7d', label: '7 Hari', pro: false },
+            { id: '30d', label: '30 Hari', pro: true },
+            { id: 'all', label: 'Semua', pro: true }
+          ].map((item) => {
+            const isLocked = item.pro && userPlan === 'FREE';
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  if (isLocked) {
+                    showToast({ message: "Upgrade PRO untuk melihat data historis lebih dari 7 hari!", id: "range-pro", icon: "fa-lock" });
+                    return;
+                  }
+                  setRange(item.id);
+                }}
+                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${range === item.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+              >
+                {item.label}
+                {isLocked && <i className="fas fa-lock text-[8px] opacity-40"></i>}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* STATS OVERVIEW (4 Cards - Persis seperti Referensi Gambar) */}
+      {/* STATS OVERVIEW */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
         {[
-            { label: 'Total Views', val: '1.2k', up: '+ 12%', icon: 'fa-eye' },
-            { label: 'Unique Visitors', val: '842', up: '+ 5%', icon: 'fa-user' },
-            { label: 'Avg. Time', val: '2m 14s', up: '+ 18%', icon: 'fa-clock' },
-            { label: 'Bounce Rate', val: '42%', up: '↓ 2%', icon: 'fa-sign-out-alt', isNegative: true },
-        ].map((stat, i) => (
-            <div key={i} className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 animate-enter flex flex-col justify-between min-h-[140px] group" style={{animationDelay: `${i * 100}ms`}}>
-                
-                <div className="flex justify-between items-start mb-6">
-                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">{stat.label}</p>
-                    {/* Ikon Bulat Abu-abu di Pojok Kanan Atas */}
-                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-slate-100 group-hover:text-slate-600 transition-colors shrink-0">
-                        <i className={`fas ${stat.icon} text-[10px]`}></i>
+            { label: 'Total Views', val: statsData.totalViews, icon: 'fa-eye', pro: false },
+            { label: 'Unique Visitors', val: statsData.uniqueVisitors, icon: 'fa-user', pro: false },
+            { label: 'Avg. Time', val: statsData.avgTime, icon: 'fa-clock', pro: true },
+            { label: 'Bounce Rate', val: statsData.bounceRate, icon: 'fa-sign-out-alt', pro: true },
+        ].map((stat, i) => {
+            const isLocked = stat.pro && userPlan === 'FREE';
+            return (
+              <div key={i} className={`bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 animate-enter flex flex-col justify-between min-h-[140px] group relative ${isLocked ? 'cursor-pointer overflow-hidden' : ''}`} style={{animationDelay: `${i * 100}ms`}} onClick={isLocked ? handleProFeature : undefined}>
+                  {isLocked && (
+                    <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center transition-all group-hover:backdrop-blur-[1px] group-hover:bg-white/30">
+                        <div className="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs shadow-lg mb-2">
+                           <i className="fas fa-lock"></i>
+                        </div>
+                        <span className="text-[9px] font-black uppercase tracking-tighter text-slate-900">PRO ONLY</span>
                     </div>
-                </div>
-                
-                <div className="flex items-end justify-between mt-auto">
-                    <h3 className="text-3xl md:text-[2.5rem] font-black text-slate-900 tracking-tighter leading-none">{stat.val}</h3>
-                    {/* Badge Persentase */}
-                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold flex items-center gap-1 border ${stat.isNegative ? 'bg-red-50 text-red-600 border-red-100' : 'bg-slate-50 text-slate-600 border-slate-100'}`}>
-                        {stat.isNegative ? '' : <i className="fas fa-arrow-up text-[8px]"></i>} {stat.up}
-                    </span>
-                </div>
-            </div>
-        ))}
+                  )}
+                  <div className="flex justify-between items-start mb-6">
+                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">{stat.label}</p>
+                      <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-slate-100 group-hover:text-slate-600 transition-colors shrink-0">
+                          <i className={`fas ${stat.icon} text-[10px]`}></i>
+                      </div>
+                  </div>
+                  <div className="flex items-end justify-between mt-auto">
+                      <h3 className={`text-3xl md:text-[2.5rem] font-black text-slate-900 tracking-tighter leading-none ${isLocked ? 'blur-sm grayscale opacity-30' : ''}`}>{stat.val}</h3>
+                  </div>
+              </div>
+            );
+        })}
       </div>
 
-      {/* CHARTS GRID (Data Visualization Monochrome) */}
+      {/* CHARTS GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-16">
         
-        {/* TRAFFIC CHART (Interactive Bar Chart) */}
-        <div className="bg-white p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] transition-all animate-enter flex flex-col" style={{animationDelay: '400ms'}}>
+        {/* TRAFFIC CHART (RECHARTS) */}
+        <div className="bg-white p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] transition-all animate-enter flex flex-col h-[450px]" style={{animationDelay: '400ms'}}>
           <div className="flex justify-between items-start mb-10">
             <div>
               <h4 className="font-extrabold text-lg text-slate-900 tracking-tight mb-1">Traffic Overview</h4>
-              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">7 Hari Terakhir</p>
+              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Aktivitas harian</p>
             </div>
             <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 shrink-0">
               <i className="fas fa-chart-line text-sm"></i>
             </div>
           </div>
           
-          <div className="flex items-end justify-between gap-2 sm:gap-4 h-48 mt-auto pt-6">
-            {[
-              { day: 'SEN', h: '40%', v: '120' },
-              { day: 'SEL', h: '60%', v: '180' },
-              { day: 'RAB', h: '50%', v: '150' },
-              { day: 'KAM', h: '90%', v: '300', active: true },
-              { day: 'JUM', h: '70%', v: '210' },
-              { day: 'SAB', h: '55%', v: '165' },
-              { day: 'MIN', h: '65%', v: '195' },
-            ].map((bar, i) => (
-              <div key={i} className="flex flex-col items-center justify-end h-full w-full relative group cursor-crosshair">
-                
-                {/* Tooltip Hover */}
-                <span className="absolute -top-10 bg-slate-900 text-white text-[11px] px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-300 font-bold z-10 pointer-events-none shadow-lg">
-                  {bar.v}
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45"></div>
-                </span>
-                
-                {/* Bar Graph (Tinggi diset via inline style berdasarkan prop, dianimasikan jika isMounted) */}
-                <div 
-                  className={`w-full max-w-[48px] rounded-t-xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${bar.active ? 'bg-[#0f172a] shadow-md' : 'bg-slate-100 group-hover:bg-[#ff9e00] group-hover:shadow-[0_10px_20px_rgba(255,158,0,0.2)]'}`}
-                  style={{ 
-                    height: isMounted ? bar.h : '0%',
-                    transitionDelay: `${i * 50}ms`
-                  }}
-                ></div>
-                
-                {/* Axis Label */}
-                <span className={`text-[9px] font-extrabold uppercase tracking-widest mt-4 transition-colors ${bar.active ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-900'}`}>
-                  {bar.day}
-                </span>
-              </div>
-            ))}
+          <div className="flex-1 w-full min-h-[300px] mt-auto">
+            {isMounted && (
+              <ResponsiveContainer width="100%" height="100%" minHeight={300}>
+                <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis 
+                  dataKey="day" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 9, fontWeight: 800, fill: '#94a3b8' }} 
+                  dy={15}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 9, fontWeight: 800, fill: '#94a3b8' }} 
+                />
+                <Tooltip 
+                  cursor={{ fill: '#f8fafc', radius: 10 }}
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', fontSize: '11px', fontWeight: 'bold' }}
+                />
+                <Bar 
+                  dataKey="views" 
+                  fill="#0f172a" 
+                  radius={[10, 10, 0, 0]} 
+                  barSize={32}
+                  animationDuration={1500}
+                >
+                    {chartData.map((entry: any, index: number) => (
+                    <Cell key={`cell-${index}`} fill={index === chartData.length - 1 ? '#0f172a' : '#e2e8f0'} className="hover:fill-[#ff9e00] transition-colors" />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            )}
           </div>
         </div>
 
-        {/* SOURCES CHART (Progress Bars) - BUG DIPERBAIKI */}
-        <div className="bg-white p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] transition-all animate-enter flex flex-col" style={{animationDelay: '500ms'}}>
+        {/* TOP SOURCES */}
+        <div className="bg-white p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] transition-all animate-enter flex flex-col h-[450px]" style={{animationDelay: '500ms'}}>
           <div className="flex justify-between items-start mb-10">
             <div>
               <h4 className="font-extrabold text-lg text-slate-900 tracking-tight mb-1">Top Sources</h4>
@@ -140,31 +214,31 @@ export default function AnalyticsPage() {
             </div>
           </div>
           
-          <div className="space-y-8 mt-auto">
-            {[
-              { name: 'Instagram', icon: 'fab fa-instagram', val: '58%' },
-              { name: 'Direct Link', icon: 'fas fa-link', val: '24%' },
-              { name: 'Google Search', icon: 'fab fa-google', val: '18%' },
-            ].map((src, i) => (
+          <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar">
+            {sources.length === 0 ? (
+               <div className="flex flex-col items-center justify-center py-10 opacity-30">
+                  <i className="fas fa-ghost text-4xl mb-4"></i>
+                  <p className="text-[10px] font-bold uppercase tracking-widest">Belum ada data traffic</p>
+               </div>
+            ) : sources.map((src, i) => (
               <div key={i} className="group/src cursor-default">
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-sm font-bold flex items-center gap-3 text-slate-700 group-hover/src:text-slate-900 transition-colors">
-                    {/* Monochrome Icons */}
                     <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover/src:bg-white group-hover/src:border-slate-200 group-hover/src:text-slate-900 transition-all shrink-0">
-                        <i className={`${src.icon} text-xs`}></i>
+                        <i className={`fas ${src.name === 'Instagram' ? 'fab fa-instagram' : src.name === 'Google' ? 'fab fa-google' : src.name === 'WhatsApp' ? 'fab fa-whatsapp' : 'fa-link'} text-xs`}></i>
                     </div>
                     {src.name}
                   </span>
-                  <span className="text-sm font-black text-slate-900">{src.val}</span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-xs font-black text-slate-900">{src.percentage}%</span>
+                    <span className="text-[9px] font-bold text-slate-400">{src.count} Hits</span>
+                  </div>
                 </div>
-                
-                {/* Progress Bar Track */}
                 <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                  {/* Progress Bar Fill - Menggunakan isMounted agar animasi berjalan mulus */}
                   <div 
                     className="bg-slate-900 h-full rounded-full transition-all ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/src:bg-[#ff9e00]" 
                     style={{ 
-                      width: isMounted ? src.val : '0%',
+                      width: `${src.percentage}%`,
                       transitionDuration: '1.5s',
                       transitionDelay: `${i * 150}ms`
                     }}
@@ -176,9 +250,9 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* SECTION COMING SOON - PRO CREATOR DARK THEME */}
+      {/* SECTION COMING SOON - PRO CREATOR */}
       <div 
-        onClick={handleComingSoon}
+        onClick={handleProFeature}
         className="relative overflow-hidden bg-[#050505] p-10 md:p-16 rounded-[2.5rem] border border-slate-800 cursor-pointer group shadow-2xl animate-enter hover:border-slate-700 transition-all duration-500"
         style={{animationDelay: '600ms'}}
       >
@@ -202,7 +276,7 @@ export default function AnalyticsPage() {
             
             <div className="flex flex-wrap justify-center gap-3 mb-10">
                 {['Real-time Tracking', 'Visitor Demographics', 'Click Heatmaps', 'Conversion Funnel'].map((tag, i) => (
-                    <span key={tag} className="px-5 py-2 bg-[#111] text-slate-400 text-[10px] font-bold rounded-full uppercase tracking-widest border border-white/5 hover:bg-white/10 hover:text-white transition-colors cursor-default" style={{animationDelay: `${i*100}ms`}}>
+                    <span key={tag} className="px-5 py-2 bg-[#111] text-slate-400 text-[10px] font-bold rounded-full uppercase tracking-widest border border-white/5 hover:bg-white/10 hover:text-white transition-colors cursor-default">
                         {tag}
                     </span>
                 ))}

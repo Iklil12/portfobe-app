@@ -136,8 +136,11 @@ export function Topbar({
                   <Link href="/dashboard/settings" className="px-5 py-3 text-[13px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
                     <i className="fas fa-cog w-5 text-center text-slate-400"></i> Pengaturan
                   </Link>
+                  <Link href="/support" className="px-5 py-3 text-[13px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
+                    <i className="fas fa-headset w-5 text-center text-slate-400"></i> Pusat Bantuan
+                  </Link>
                   {userPlan !== 'PRO' && (
-                    <Link href="/dashboard/upgrade" className="px-5 py-3 text-[13px] font-bold text-[#ff9e00] hover:bg-[#ff9e00]/10 transition-colors flex items-center gap-3 mt-1" onClick={() => setIsProfileMenuOpen(false)}>
+                    <Link href="/pricing" className="px-5 py-3 text-[13px] font-bold text-[#ff9e00] hover:bg-[#ff9e00]/10 transition-colors flex items-center gap-3 mt-1" onClick={() => setIsProfileMenuOpen(false)}>
                       <i className="fas fa-arrow-up w-5 text-center"></i> Upgrade Pro
                     </Link>
                   )}

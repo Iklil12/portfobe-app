@@ -61,7 +61,7 @@ export function useDashboardLayout() {
   if (isProfessionEmpty) notifications.push({ id: 'profession', type: 'info', icon: 'fa-briefcase', title: 'Profesi Belum Diisi', desc: 'Tambahkan profesi atau keahlian utama Anda.', link: '/dashboard/profile', btnText: 'Isi Profesi', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' });
   if (isBioEmpty) notifications.push({ id: 'bio-empty', type: 'info', icon: 'fa-align-left', title: 'Bio Masih Kosong', desc: 'Ceritakan sedikit tentang perjalanan karir Anda kepada pengunjung.', link: '/dashboard/profile', btnText: 'Tulis Bio', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' });
   else if (isBioShort) notifications.push({ id: 'bio-short', type: 'info', icon: 'fa-pen-to-square', title: 'Bio Terlalu Singkat', desc: 'Bio yang lebih detail (min. 30 karakter) akan terlihat lebih profesional.', link: '/dashboard/profile', btnText: 'Perpanjang', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' });
-  if (userPlan === 'FREE') notifications.push({ id: 'promo', type: 'promo', icon: 'fa-crown', title: 'Upgrade ke Pro', desc: 'Dapatkan analitik mendalam dan kustom domain sesukamu.', link: '/dashboard/upgrade', color: 'text-[#ff9e00]', bg: 'bg-[#ff9e00]/10', border: 'border-[#ff9e00]/20' });
+  if (userPlan === 'FREE') notifications.push({ id: 'promo', type: 'promo', icon: 'fa-crown', title: 'Upgrade ke Pro', desc: 'Dapatkan analitik mendalam dan kustom domain sesukamu.', link: '/pricing', color: 'text-[#ff9e00]', bg: 'bg-[#ff9e00]/10', border: 'border-[#ff9e00]/20' });
   
   // Sisipkan pengumuman dari Superadmin ke lonceng (hanya yang channel BELL atau BOTH)
   if (Array.isArray(announcementsData)) {

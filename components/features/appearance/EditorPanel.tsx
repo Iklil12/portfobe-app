@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ThemeSelectionModal } from './ThemeSelectionModal';
+import { ProUpgradeModal } from '@/components/ProUpgradeModal';
 
 // --- IMPORT KOMPONEN KONTROL EDITOR ---
 import BrutalismControls from '@/components/editor-controls/BrutalismControls';
@@ -21,7 +22,8 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     cardStyle, 
     buttonShape, 
     splashScreen,
-    isThemeModalOpen
+    isThemeModalOpen,
+    showProModal
   } = state;
 
   const { 
@@ -34,11 +36,22 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     setButtonShape, 
     setSplashScreen,
     setIsThemeModalOpen,
-    setActiveTheme
+    setActiveTheme,
+    setShowProModal
   } = actions;
 
   return (
     <>
+      <ProUpgradeModal 
+        isOpen={showProModal}
+        onClose={() => setShowProModal(false)}
+        feature={
+          splashScreen ? "Fitur Cinematic Intro" :
+          activeTheme === 'brutalism' ? "Tema Neo Brutalism" :
+          activeTheme === 'cinematic' ? "Tema Cinematic Dark" :
+          activeTheme === 'acid' ? "Tema Acid Tech" : undefined
+        }
+      />
       <ThemeSelectionModal 
         isOpen={isThemeModalOpen}
         onClose={() => setIsThemeModalOpen(false)}
@@ -175,7 +188,12 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100/50 text-indigo-500 flex items-center justify-center shrink-0 group-hover:bg-indigo-100 transition-colors"><i className="fas fa-play text-sm ml-1"></i></div>
                 <div>
-                  <h3 className="text-sm font-black text-slate-900 tracking-tight mb-1 group-hover:text-indigo-600 transition-colors">Cinematic Intro</h3>
+                  <h3 className="text-sm font-black text-slate-900 tracking-tight mb-1 group-hover:text-indigo-600 transition-colors flex items-center gap-2">
+                    Cinematic Intro
+                    <span className="bg-slate-900 text-white text-[7px] font-black px-1.5 py-0.5 rounded-md tracking-widest uppercase flex items-center gap-1 shadow-sm">
+                        <i className="fas fa-crown text-[6px] text-[#ff9e00]"></i> PRO
+                    </span>
+                  </h3>
                   <p className="text-[11px] text-slate-500 font-medium leading-relaxed">Tampilkan animasi transisi memukau<br/>sebelum portofolio dimuat penuh.</p>
                 </div>
               </div>

@@ -55,6 +55,21 @@ export async function PATCH(req: Request) {
         splashScreen
     } = body;
 
+    // --- PLAN ENFORCEMENT: PRO FEATURES ---
+    const proThemes = ['brutalism', 'cinematic', 'acid'];
+    const isProTheme = proThemes.includes(themeTemplate);
+    const isProSplash = splashScreen === true;
+
+    if ((isProTheme || isProSplash) && user.plan === 'FREE') {
+      return NextResponse.json({ 
+        error: isProTheme 
+          ? "Tema ini eksklusif untuk PRO Creator." 
+          : "Fitur Cinematic Intro eksklusif untuk PRO Creator.",
+        code: "FEATURE_LOCKED" // Ubah jadi lebih umum
+      }, { status: 403 });
+    }
+    // ------------------------------------
+
     // UPDATE ATAU CREATE KE TABEL SITE_APPEARANCE
     const updatedAppearance = await prisma.siteAppearance.upsert({
       where: { userId: user.id },

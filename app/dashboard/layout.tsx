@@ -106,7 +106,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             title: "Diskon 50% Pro Plan! 🎉",
             desc: "Khusus untukmu minggu ini! Upgrade ke Pro dan nikmati fitur custom domain serta analitik tanpa batas.",
             btnText: "Klaim Diskon",
-            btnLink: "/dashboard/upgrade"
+            btnLink: "/pricing"
           }}
         />
       )}

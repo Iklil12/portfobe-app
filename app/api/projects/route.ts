@@ -54,6 +54,18 @@ export async function POST(req: Request) {
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
 
+    // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
+    if (user.plan === 'FREE') {
+      const projectCount = await prisma.project.count({ where: { userId: user.id } });
+      if (projectCount >= 5) {
+        return NextResponse.json({ 
+          error: "Kuota FREE maksimal 5 proyek. Silakan upgrade ke PRO.",
+          code: "QUOTA_EXCEEDED"
+        }, { status: 403 });
+      }
+    }
+    // -----------------------------------------
+
     const body = await req.json();
     const { title, description, mediaUrl, projectType } = body;
 
