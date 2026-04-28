@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link'; 
 import PortfolioView from '@/components/PortfolioView';
+// Tambahkan di dalam komponen utama Anda
 
 export default function PublicPortfolioPage() {
   const params = useParams();
@@ -16,6 +17,11 @@ export default function PublicPortfolioPage() {
   const [showSplash, setShowSplash] = useState(false); 
   const [liftCurtain, setLiftCurtain] = useState(false);
   const [removeSplash, setRemoveSplash] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
 
   useEffect(() => {
     const fetchPortfolio = async () => {
@@ -56,14 +62,73 @@ export default function PublicPortfolioPage() {
   }, [subdomain]);
 
   // --- TAMPILAN 404 (JIKA USER TIDAK ADA) ---
-  if (!isFetching && !data) {
+if (!isFetching && !data) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F1F5F9] font-mono p-10 text-center animate-in fade-in duration-700">
-        <h1 className="text-6xl font-black mb-4 text-slate-800">404</h1>
-        <p className="uppercase font-bold text-slate-500 mb-8">Portfolio [ {subdomain} ] Not Found.</p>
-        <Link href="/" className="px-8 py-3 bg-slate-900 text-white font-bold uppercase text-xs rounded-full hover:bg-slate-800 transition-colors">
-          Kembali ke Beranda
-        </Link>
+      <div 
+        onMouseMove={handleMouseMove}
+        className="relative min-h-screen flex flex-col items-center justify-center bg-[#050505] overflow-hidden font-sans selection:bg-white selection:text-black"
+      >
+        {/* ========================================= */}
+        {/* EFEK 1: MOUSE SPOTLIGHT (Lampu Sorot)     */}
+        {/* ========================================= */}
+        <div
+          className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300"
+          style={{
+            background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255,255,255,0.06), transparent 40%)`
+          }}
+        />
+
+        {/* ========================================= */}
+        {/* EFEK 2: ARCHITECTURAL GRID + FADE MASK    */}
+        {/* ========================================= */}
+        <div className="absolute inset-0 z-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+
+        {/* ========================================= */}
+        {/* KONTEN UTAMA                              */}
+        {/* ========================================= */}
+        <div className="relative z-20 flex flex-col items-center text-center animate-in slide-in-from-bottom-10 fade-in duration-1000 ease-out">
+          
+          {/* Typografi 404 Bertumpuk (Glitch/Ghost Effect) */}
+          <div className="relative inline-block mb-2 cursor-default select-none">
+             <h1 className="text-[8rem] md:text-[15rem] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-900 leading-none tracking-tighter">
+               404
+             </h1>
+             {/* Bayangan berdenyut di belakang teks */}
+             <h1 className="absolute top-0 left-0 text-[8rem] md:text-[15rem] font-black text-white leading-none tracking-tighter opacity-10 animate-pulse blur-sm">
+               404
+             </h1>
+          </div>
+
+          {/* Garis Pemisah Elegan */}
+          <div className="h-px w-24 bg-gradient-to-r from-transparent via-slate-600 to-transparent my-6"></div>
+
+          {/* Teks Pesan */}
+          <h2 className="text-xl md:text-2xl font-bold text-slate-200 tracking-tight mb-3">
+            Destinasi Tidak Diketahui
+          </h2>
+          <p className="text-slate-500 font-medium max-w-md mx-auto mb-10 px-4 leading-relaxed">
+            Portofolio dengan ruang nama <span className="text-white px-2 py-0.5 bg-white/10 rounded-md font-mono text-sm border border-white/20 shadow-sm mx-1">{subdomain}</span> belum diciptakan atau telah menguap ke udara.
+          </p>
+
+          {/* Tombol Monokrom Interaktif */}
+          <Link
+            href="/"
+            className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black font-bold uppercase tracking-widest text-[11px] rounded-full overflow-hidden transition-transform hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)]"
+          >
+            <span className="relative z-10 flex items-center gap-2 transition-colors group-hover:text-black">
+              <i className="fas fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
+              Kembali ke Beranda
+            </span>
+            {/* Efek sapuan warna saat di-hover */}
+            <div className="absolute inset-0 bg-slate-200 scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left transition-transform duration-500 ease-out z-0"></div>
+          </Link>
+        </div>
+
+        {/* ========================================= */}
+        {/* ORNAMEN MENGAMBANG (Floating Geometry)    */}
+        {/* ========================================= */}
+        <div className="absolute top-1/4 left-10 md:left-32 w-32 h-32 border border-white/5 rounded-full animate-[spin_10s_linear_infinite] blur-[1px] pointer-events-none"></div>
+        <div className="absolute bottom-1/4 right-10 md:right-32 w-64 h-64 border border-white/5 rounded-full animate-[spin_15s_linear_infinite_reverse] blur-[2px] pointer-events-none"></div>
       </div>
     );
   }

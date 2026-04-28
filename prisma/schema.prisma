@@ -8,11 +8,17 @@ datasource db {
 }
 
 // 1. TABEL USER (Khusus Keamanan & Login)
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id                     String    @id @default(uuid())
   email                  String    @unique 
   password               String    
   plan                   String    @default("FREE")
+  role                   Role      @default(USER)
   avatar                 String  
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
@@ -136,5 +142,29 @@ model Certificate {
   mediaUrl    String?  // Foto sertifikat
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+// 8. TABEL ANNOUNCEMENT (Pengumuman Global dari Superadmin)
+model Announcement {
+  id          String   @id @default(uuid())
+  title       String
+  message     String   @db.Text
+  type        String   @default("INFO") // INFO, WARNING, SUCCESS, DANGER
+  channel     String   @default("BOTH") // BANNER, BELL, BOTH
+  targetPlan  String   @default("ALL") // FREE, PRO, ALL
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 9. TABEL ADMIN LOG (Riwayat Aktivitas Admin)
+model AdminLog {
+  id          String   @id @default(uuid())
+  adminEmail  String
+  action      String
+  category    String   @default("GENERAL")
+  target      String?
+  details     String?  @db.Text
   createdAt   DateTime @default(now())
 }
