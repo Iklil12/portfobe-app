@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Toaster } from 'react-hot-toast';
+
 import OnboardingModal from "@/components/OnboardingModal";
 import WelcomeBannerModal from "@/components/WelcomeBannerModal";
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
@@ -111,7 +111,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         />
       )}
 
-      <Toaster position="top-center" reverseOrder={false} containerStyle={{ zIndex: 999999 }} />
+
     </div>
   );
 }

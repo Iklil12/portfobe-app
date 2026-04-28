@@ -9,6 +9,7 @@ export function useThemeEditor() {
   
   const [isEditorCollapsed, setIsEditorCollapsed] = useState(false);
   const [showOfflineModal, setShowOfflineModal] = useState(false);
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
 
   // --- STATE UNTUK DATA PROFIL ---
   const [fullName, setFullName] = useState("Nama Anda");
@@ -140,6 +141,7 @@ export function useThemeEditor() {
       buttonShape,
       cardStyle,
       splashScreen,
+      isThemeModalOpen,
 
       livePreviewData,
       livePreviewTheme
@@ -154,6 +156,7 @@ export function useThemeEditor() {
       setButtonShape,
       setCardStyle,
       setSplashScreen,
+      setIsThemeModalOpen,
       saveDesign
     }
   };

@@ -1,8 +1,8 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers"; // Import provider yang baru dibuat
+import { Providers } from "./providers"; 
+import { Toaster } from 'react-hot-toast'; // <-- 1. Tambahkan import ini
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "Portfo.be - Professional Portfolio",
   description: "Build your creative presence",
   icons: {
-    icon: 'icon.svg', // atau '/icon.png' tergantung file yang kamu pakai
+    icon: 'icon.svg', 
   },
 };
 
@@ -39,9 +39,20 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-full flex flex-col text-gray-900 bg-white">
-        {/* Bungkus children dengan Providers di sini */}
         <Providers>
           {children}
+          {/* 2. Pasang Toaster global di sini dengan z-index absolut dan margin top agar tidak tertutup Navbar */}
+          <Toaster 
+            position="top-center" 
+            containerStyle={{ zIndex: 1000000 }}
+            toastOptions={{ 
+              className: 'z-[1000000]',
+              style: { 
+                zIndex: 1000000,
+                marginTop: '20px'
+              } 
+            }} 
+          />
         </Providers>
       </body>
     </html>

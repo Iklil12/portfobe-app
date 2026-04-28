@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Toaster } from 'react-hot-toast';
+
 import { useThemes } from '@/hooks/useThemes';
 import { ThemeSkeleton } from '@/components/features/themes/ThemeSkeleton';
 import { ThemeHeader } from '@/components/features/themes/ThemeHeader';
@@ -38,7 +38,7 @@ export default function ThemesPage() {
         }
       `}} />
 
-      <Toaster position="top-center" toastOptions={{ className: 'z-[999999]' }} />
+
 
       <div className="absolute inset-0 bg-grid-slate pointer-events-none z-0 mask-image:linear-gradient(to_bottom,white,transparent)"></div>
       <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-slate-200/50 rounded-full blur-[120px] pointer-events-none z-0"></div>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { Toaster } from 'react-hot-toast';
+
 import { useProjects } from '@/hooks/useProjects';
 import { ProjectHeader } from '@/components/features/projects/ProjectHeader';
 import { ProjectFilterTabs } from '@/components/features/projects/ProjectFilterTabs';
@@ -15,7 +15,7 @@ export default function ProjectsPage() {
 
   return (
     <main className="min-h-screen bg-[#FAFAFA] font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-20">
-      <Toaster position="top-center" toastOptions={{ className: 'z-[999999]' }} />
+
       
       {/* INJEKSI CSS ANIMASI, BACKGROUND & SKELETON */}
       <style dangerouslySetInnerHTML={{__html: `

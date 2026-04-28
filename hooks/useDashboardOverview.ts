@@ -27,10 +27,18 @@ export function useDashboardOverview() {
         ]);
 
         const appData = appRes?.ok ? await appRes.json() : {};
-        const projData = projRes?.ok ? await projRes.json() : [];
-        const certData = certRes?.ok ? await certRes.json() : [];
-        const linkData = linkRes?.ok ? await linkRes.json() : [];
-        const actData = actRes?.ok ? await actRes.json() : [];
+        const projJson = projRes?.ok ? await projRes.json() : { data: [] };
+        const certJson = certRes?.ok ? await certRes.json() : { data: [] };
+        const linkJson = linkRes?.ok ? await linkRes.json() : { data: [] };
+        const actJson = actRes?.ok ? await actRes.json() : { data: [] };
+
+        // Helper untuk ambil array dari properti .data atau fallback
+        const getArray = (json: any) => Array.isArray(json.data) ? json.data : (Array.isArray(json) ? json : []);
+
+        const projData = getArray(projJson);
+        const certData = getArray(certJson);
+        const linkData = getArray(linkJson);
+        const actData = getArray(actJson);
 
         if (appData?.profile?.subdomain) setSubdomain(appData.profile.subdomain);
 

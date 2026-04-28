@@ -27,27 +27,31 @@ export function useProjects() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchAllData = async () => {
-    try {
-      setIsLoading(true);
-      const [projRes, certRes] = await Promise.all([
-        fetch('/api/projects').catch(() => null),
-        fetch('/api/certificates').catch(() => null) 
-      ]);
+      try {
+        setIsLoading(true);
+        const [projRes, certRes] = await Promise.all([
+          fetch('/api/projects').catch(() => null),
+          fetch('/api/certificates').catch(() => null) 
+        ]);
 
-      const projData = projRes?.ok ? await projRes.json() : [];
-      const certData = certRes?.ok ? await certRes.json() : [];
+        const projJson = projRes?.ok ? await projRes.json() : { data: [] };
+        const certJson = certRes?.ok ? await certRes.json() : { data: [] };
 
-      const formattedProj = Array.isArray(projData) ? projData.map(p => ({ ...p, itemType: 'project' })) : [];
-      const formattedCert = Array.isArray(certData) ? certData.map(c => ({ ...c, itemType: 'certificate', projectType: 'certificate' })) : [];
+        // Ambil array-nya dari properti .data
+        const projArray = Array.isArray(projJson.data) ? projJson.data : (Array.isArray(projJson) ? projJson : []);
+        const certArray = Array.isArray(certJson.data) ? certJson.data : (Array.isArray(certJson) ? certJson : []);
 
-      const combined = [...formattedProj, ...formattedCert].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      setItems(combined);
-    } catch (error) {
-      console.error("Gagal mengambil data", error);
-    } finally {
-      setTimeout(() => setIsLoading(false), 600);
-    }
-  };
+        const formattedProj = projArray.map((p: any) => ({ ...p, itemType: 'project' }));
+        const formattedCert = certArray.map((c: any) => ({ ...c, itemType: 'certificate', projectType: 'certificate' }));
+
+        const combined = [...formattedProj, ...formattedCert].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setItems(combined);
+      } catch (error) {
+        console.error("Gagal mengambil data", error);
+      } finally {
+        setTimeout(() => setIsLoading(false), 600);
+      }
+    };
 
   useEffect(() => {
     setMounted(true);

@@ -57,8 +57,14 @@ export default function HistoryPage() {
       try {
         const res = await fetch('/api/activity/all');
         if (res.ok) {
-          const data = await res.json();
-          setActivities(data);
+          const jsonResult = await res.json();
+          
+          // Jaring pengaman: Ambil array dari properti .data, atau fallback ke array kosong
+          const activitiesArray = Array.isArray(jsonResult.data) 
+            ? jsonResult.data 
+            : (Array.isArray(jsonResult) ? jsonResult : []);
+            
+          setActivities(activitiesArray);
         }
       } finally {
         setIsLoading(false);

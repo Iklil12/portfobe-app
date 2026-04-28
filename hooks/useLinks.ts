@@ -1,3 +1,4 @@
+//file hook/useLinks.ts
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
@@ -27,15 +28,20 @@ export function useLinks() {
     try {
       const res = await fetch('/api/links');
       if (res.ok) {
-        const data = await res.json();
-        setLinks(data);
-        setOriginalLinks(JSON.parse(JSON.stringify(data)));
+        const jsonResult = await res.json();
+        
+        // Jaring pengaman: Ambil array dari properti .data, atau fallback ke array kosong
+        const linksArray = Array.isArray(jsonResult.data) 
+          ? jsonResult.data 
+          : (Array.isArray(jsonResult) ? jsonResult : []);
+
+        setLinks(linksArray);
+        setOriginalLinks(JSON.parse(JSON.stringify(linksArray)));
       }
     } finally {
       setTimeout(() => setIsLoading(false), 500);
     }
   };
-
   const hasChanges = JSON.stringify(links) !== JSON.stringify(originalLinks);
 
   const updateLocalLink = (id: string, data: Partial<LinkData>) => {

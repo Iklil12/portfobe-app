@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Toaster } from 'react-hot-toast';
+
 import { useThemeEditor } from '@/hooks/useThemeEditor';
 import { EditorPanel } from '@/components/features/appearance/EditorPanel';
 import { PreviewPanel } from '@/components/features/appearance/PreviewPanel';
@@ -48,7 +48,7 @@ export default function AppearancePage() {
       )}
 
       {/* TOASTER UNTUK NOTIFIKASI DI ATAS SEMUANYA */}
-      <Toaster position="bottom-center" toastOptions={{ className: 'z-[9999999]' }} />
+
 
       {/* PANEL KIRI: EDITOR TATA LETAK */}
       <EditorPanel state={state} actions={actions} />
