@@ -5,16 +5,35 @@ import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 
 // AMBIL SEMUA LINK USER
-export async function GET() {
+export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const links = await prisma.link.findMany({
-    where: { user: { email: session.user.email } },
-    orderBy: { order: 'asc' }
-  });
+  const { searchParams } = new URL(req.url);
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "20");
+  const skip = (page - 1) * limit;
 
-  return NextResponse.json(links);
+  const [links, total] = await Promise.all([
+    prisma.link.findMany({
+      where: { user: { email: session.user.email } },
+      orderBy: { order: 'asc' },
+      take: limit,
+      skip: skip,
+    }),
+    prisma.link.count({
+      where: { user: { email: session.user.email } }
+    })
+  ]);
+
+  return NextResponse.json({
+    data: links,
+    meta: {
+      total,
+      page,
+      lastPage: Math.ceil(total / limit)
+    }
+  });
 }
 
 // TAMBAH LINK BARU

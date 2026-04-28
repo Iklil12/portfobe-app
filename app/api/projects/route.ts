@@ -14,12 +14,31 @@ export async function GET(req: Request) {
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
 
-    const projects = await prisma.project.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: 'desc' } 
-    });
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const skip = (page - 1) * limit;
 
-    return NextResponse.json(projects);
+    const [projects, total] = await Promise.all([
+      prisma.project.findMany({
+        where: { userId: user.id },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: skip,
+      }),
+      prisma.project.count({
+        where: { userId: user.id },
+      })
+    ]);
+
+    return NextResponse.json({
+      data: projects,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     console.error("Error Fetch Projects:", error);
     return NextResponse.json({ error: "Gagal mengambil data" }, { status: 500 });

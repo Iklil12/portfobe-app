@@ -5,8 +5,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity"; // <-- IMPORT SISTEM HISTORY DITAMBAHKAN
 
-// MENGAMBIL SEMUA SERTIFIKAT USER
-export async function GET() {
+// MENGAMBIL SERTIFIKAT USER DENGAN PAGINATION
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
@@ -19,12 +19,31 @@ export async function GET() {
 
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-    const certificates = await prisma.certificate.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: 'desc' }
-    });
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const skip = (page - 1) * limit;
 
-    return NextResponse.json(certificates);
+    const [certificates, total] = await Promise.all([
+      prisma.certificate.findMany({
+        where: { userId: user.id },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: skip,
+      }),
+      prisma.certificate.count({
+        where: { userId: user.id },
+      })
+    ]);
+
+    return NextResponse.json({
+      data: certificates,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     console.error("GET Certificates Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
