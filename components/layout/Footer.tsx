@@ -7,6 +7,7 @@ export function Footer() {
     <footer className="bg-[#050505] text-slate-400 pt-24 pb-12 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
           
+          {/* CTA SECTION - Dipertahankan karena ini bagus untuk konversi */}
           <div className="bg-[#111] rounded-[2.5rem] p-10 md:p-16 mb-24 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group hover:border-white/20 transition-colors duration-500">
               <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-[#ff9e00]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
               <div className="relative z-10 text-center md:text-left">
@@ -18,8 +19,11 @@ export function Footer() {
               </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 mb-20">
-              <div className="col-span-2 lg:col-span-2 pr-0 md:pr-12">
+          {/* GRID SECTION - Disesuaikan menjadi 4 Kolom agar proporsional */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-20">
+              
+              {/* KOLOM LOGO & DESKRIPSI (Mengambil 2 porsi grid) */}
+              <div className="col-span-2 pr-0 md:pr-12">
                   <div className="text-2xl font-black tracking-tighter text-white flex items-center gap-2 mb-6">
                       <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-8 md:h-10 w-auto object-contain brightness-0 invert" />
                   </div>
@@ -31,39 +35,28 @@ export function Footer() {
                   </div>
               </div>
               
-              <div>
+              {/* KOLOM PLATFORM (Disederhanakan untuk Landing Page) */}
+              <div className="col-span-1">
                   <h4 className="text-white font-bold mb-6">Platform</h4>
                   <ul className="space-y-4 text-sm font-medium">
                       <li><a href="#features" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Features</a></li>
-                      <li><a href="#templates" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Templates</a></li>
                       <li><a href="#pricing" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Pricing</a></li>
-                      <li><a href="#" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Changelog</a></li>
                   </ul>
               </div>
               
-              <div>
-                  <h4 className="text-white font-bold mb-6">Resources</h4>
-                  <ul className="space-y-4 text-sm font-medium">
-                      <li><a href="#" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Help Center</a></li>
-                      <li><a href="#" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Community</a></li>
-                      <li><a href="#" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Creator Blog</a></li>
-                      <li><a href="#" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Hire an Expert</a></li>
-                  </ul>
-              </div>
-              
-              <div>
+              {/* KOLOM LEGAL (Wajib untuk rilis MVP) */}
+              <div className="col-span-1">
                   <h4 className="text-white font-bold mb-6">Legal</h4>
                   <ul className="space-y-4 text-sm font-medium">
-                      <li><a href="#" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Privacy Policy</a></li>
-                      <li><a href="#" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Terms of Service</a></li>
-                      <li><a href="#" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Cookie Policy</a></li>
+                      <li><Link href="/privacy" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Privacy Policy</Link></li>
+                      <li><Link href="/terms" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Terms of Service</Link></li>
                   </ul>
               </div>
           </div>
 
+          {/* BOTTOM COPYRIGHT */}
           <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold uppercase tracking-widest text-slate-600">
               <p>&copy; {new Date().getFullYear()} Portfo.be Inc.</p>
-              <p>Designed in Indonesia <i className="fas fa-heart text-red-500 ml-1 animate-pulse"></i></p>
           </div>
       </div>
     </footer>

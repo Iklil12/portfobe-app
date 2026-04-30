@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const key = searchParams.get("key");
     const authHeader = req.headers.get("Authorization");
     const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.substring(7) : null;
-    
+
     const secret = process.env.CRON_SECRET;
 
     if (!secret) {

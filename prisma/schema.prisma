@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-musl", "linux-musl-openssl-3.0.x"]
 }
 
@@ -8,44 +8,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ENUM PLAN
-enum PlanType {
-  FREE
-  PRO
-}
-
-// 1. TABEL USER (Khusus Keamanan & Login)
-enum Role {
-  USER
-  ADMIN
-}
-
 model User {
-  id                     String    @id @default(uuid())
-  email                  String    @unique 
-  password               String    
-  plan                   PlanType  @default(FREE)
-  planExpiredAt          DateTime? // Null = FREE selamanya, atau PRO yang belum diset
-  role                   Role      @default(USER)
-  avatar                 String  
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
-  isLive                 Boolean   @default(false)
+  id                     String          @id @default(uuid())
+  email                  String          @unique
+  password               String
+  plan                   PlanType        @default(FREE)
+  role                   Role            @default(USER)
+  avatar                 String
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  isLive                 Boolean         @default(false)
   pendingEmail           String?
   emailVerificationToken String?
   tokenExpires           DateTime?
-  
-  // Relasi
-  profile          Profile?  
-  siteAppearance   SiteAppearance? // <--- RELASI BARU KE TABEL TEMA/WEBSITE
-  links            Link[]    
-  projects         Project[] 
-  activities       Activity[]
-  certificates     Certificate[]
-  accounts         Account[]
-  analytics        Analytics[]   // <--- RELASI ANALITIK
-  transactions     Transaction[] // <--- RELASI TRANSAKSI
-  dailyStats       DailyStats[]  // <--- RELASI DAILY STATS
+  planExpiredAt          DateTime?
+  accounts               Account[]
+  activities             Activity[]
+  analytics              Analytics[]
+  certificates           Certificate[]
+  dailyStats             DailyStats[]
+  links                  Link[]
+  profile                Profile?
+  projects               Project[]
+  siteAppearance         SiteAppearance?
+  transactions           Transaction[]
 }
 
 model PasswordResetToken {
@@ -58,68 +44,64 @@ model PasswordResetToken {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([provider, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
-// 2. TABEL PROFILE (Khusus Identitas Pribadi & URL)
 model Profile {
-  id               String   @id @default(uuid())
-  userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id               String  @id @default(uuid())
+  userId           String  @unique
   fullName         String
-  subdomain        String?  @unique
+  subdomain        String? @unique
   profession       String?
-  bio              String?  @db.Text
-  avatarUrl        String?  @db.Text
-  coverUrl         String?  @db.Text
+  bio              String? @db.Text
+  avatarUrl        String? @db.Text
+  coverUrl         String? @db.Text
   location         String?
-  availableForHire Boolean  @default(true)
+  availableForHire Boolean @default(true)
   whatsapp         String?
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// BARIS BARU: 3. TABEL TEMA & DESAIN WEBSITE (Dipisah dari Profile)
 model SiteAppearance {
-  id               String   @id @default(uuid())
-  userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  splashScreen     Boolean  @default(false)
-  themeTemplate    String   @default("minimalist") // Preset awal (cth: "brutalism", "minimalist")
-  themeColor       String   @default("#000000")    // Warna utama/aksen
-  fontHeading      String   @default("Inter")      // Font untuk Judul
-  fontBody         String   @default("Inter")      // Font untuk Teks Biasa
-  buttonShape      String   @default("rounded")    // Bentuk tombol: "hard", "rounded", "pill"
-  cardStyle        String   @default("flat")       // Gaya kartu: "flat", "hard-shadow", "glass"
+  id            String  @id @default(uuid())
+  userId        String  @unique
+  splashScreen  Boolean @default(false)
+  themeTemplate String  @default("minimalist")
+  themeColor    String  @default("#000000")
+  fontHeading   String  @default("Inter")
+  fontBody      String  @default("Inter")
+  buttonShape   String  @default("rounded")
+  cardStyle     String  @default("flat")
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// 4. TABEL LINK (Khusus Daftar Sosial Media & Tautan)
 model Link {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  platform    String   // Contoh: "TikTok", "Instagram", "Website"
-  url         String   @db.Text
-  isActive    Boolean  @default(true)
-  order       Int      @default(0) // Untuk mengatur urutan tampilan
+  id       String  @id @default(uuid())
+  userId   String
+  platform String
+  url      String  @db.Text
+  isActive Boolean @default(true)
+  order    Int     @default(0)
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Link_userId_fkey")
 }
 
-// 5. TABEL PROJECT (Karya/Portofolio)
 model Project {
   id          String   @id @default(uuid())
   title       String
@@ -127,116 +109,134 @@ model Project {
   mediaUrl    String?
   projectType String   @default("photo")
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now()) 
-
-  @@index([createdAt])
-}
-
-// 6. TABEL ACTIVITY (Log Aktivitas User)
-model Activity {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  actionType  String   // Contoh: "ADD_LINK", "UPDATE_PROFILE", "CHANGE_THEME"
-  details     String   @db.Text // Penjelasan aktivitas
   createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
+  @@index([userId], map: "Project_userId_fkey")
 }
 
-// 7. TABEL CERTIFICATE (Sertifikat/Pencapaian)
+model Activity {
+  id         String   @id @default(uuid())
+  userId     String
+  actionType String
+  details    String   @db.Text
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([userId])
+}
+
 model Certificate {
   id          String   @id @default(uuid())
   title       String
-  issuer      String?  // Tempat/Lembaga (Misal: Coursera, Google, dsb)
-  year        String?  // Tahun perolehan
-  status      String?  @default("VERIFIED") // Status (Verified/Pending)
+  issuer      String?
+  year        String?
+  status      String?  @default("VERIFIED")
   description String?  @db.Text
-  mediaUrl    String?  // Foto sertifikat
+  mediaUrl    String?
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Certificate_userId_fkey")
 }
 
-// 8. TABEL ANNOUNCEMENT (Pengumuman Global dari Superadmin)
 model Announcement {
-  id          String   @id @default(uuid())
-  title       String
-  message     String   @db.Text
-  type        String   @default("INFO") // INFO, WARNING, SUCCESS, DANGER
-  channel     String   @default("BOTH") // BANNER, BELL, BOTH
-  targetPlan  String   @default("ALL") // FREE, PRO, ALL
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  title      String
+  message    String   @db.Text
+  type       String   @default("INFO")
+  channel    String   @default("BOTH")
+  targetPlan String   @default("ALL")
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@index([isActive])
   @@index([createdAt])
 }
 
-// 9. TABEL ADMIN LOG (Riwayat Aktivitas Admin)
 model AdminLog {
-  id          String   @id @default(uuid())
-  adminEmail  String
-  action      String
-  category    String   @default("GENERAL")
-  target      String?
-  details     String?  @db.Text
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  adminEmail String
+  action     String
+  category   String   @default("GENERAL")
+  target     String?
+  details    String?  @db.Text
+  createdAt  DateTime @default(now())
 
   @@index([createdAt])
   @@index([category])
   @@index([adminEmail])
 }
 
-// 10. TABEL ANALYTICS (Data Pengunjung & Traffic)
 model Analytics {
-  id          String   @id @default(uuid())
-  userId      String   // User ID pemilik portofolio yang dikunjungi
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  sessionId   String?  // ID Unik untuk satu sesi kunjungan
-  type        String   @default("VIEW") // VIEW, CLICK, PROJECT_OPEN
-  ipAddress   String?  // Untuk hitung Unique Visitors
-  userAgent   String?  @db.Text // Browser/OS
-  referrer    String?  @db.Text // Asal traffic (IG, Google, etc)
-  pagePath    String?  // Halaman yang dikunjungi (cth: "/", "/projects")
-  
-  duration    Int      @default(0)   // Durasi dalam detik
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt     // Terakhir aktif (Heartbeat)
+  id        String   @id @default(uuid())
+  userId    String
+  sessionId String?
+  type      String   @default("VIEW")
+  ipAddress String?
+  userAgent String?  @db.Text
+  referrer  String?  @db.Text
+  pagePath  String?
+  duration  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([type])
+  @@index([userId], map: "Analytics_userId_fkey")
 }
 
-// 11. TABEL TRANSAKSI (Riwayat Pembayaran Plan)
 model Transaction {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  amount    Int      // Dalam Rupiah (IDR)
-  status    String   // PENDING, SUCCESS, FAILED
+  amount    Int
+  status    String
   plan      PlanType
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
+  @@index([userId], map: "Transaction_userId_fkey")
 }
 
-// 12. TABEL DAILY STATS (Agregasi untuk Dashboard)
 model DailyStats {
   id        String   @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  date      DateTime // Tanggal ringkasan (00:00:00)
+  date      DateTime
   views     Int      @default(0)
   clicks    Int      @default(0)
-  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, date])
   @@index([date])
-}
+  @@index([userId])
+}
+
+enum PlanType {
+  FREE
+  PRO
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+model LoginAttempt {
+  id        String    @id @default(uuid())
+  ip        String
+  email     String
+  count     Int       @default(1)
+  isBlocked Boolean   @default(false)
+  blockedAt DateTime?
+  updatedAt DateTime  @default(now()) @updatedAt
+
+  @@index([email])
+  @@index([ip])
+}

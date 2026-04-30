@@ -65,7 +65,7 @@ export function PricingSection() {
               </Link>
               
               <ul className="space-y-5 flex-1">
-                {['Unlimited Pages & Blocks', 'Custom Domain (.com/.id)', 'Advanced Analytics Dashboard', 'Remove Portfo.be Badge', 'Priority Support'].map((list, i) => (
+                {['Unlimited Pages & Blocks', 'Custom Domain (.com/.id) coming soon', 'Advanced Analytics Dashboard', 'Remove Portfo.be Badge', 'Priority Support'].map((list, i) => (
                     <li key={i} className="group/item flex items-start gap-4 text-slate-300 text-sm font-medium leading-relaxed hover:text-white transition-all duration-300 cursor-default">
                       <div className="w-5 h-5 rounded-full bg-[#a855f7] flex items-center justify-center shrink-0 mt-0.5 group-hover/item:scale-110 transition-transform duration-300">
                         <i className="fas fa-check text-[10px] text-white"></i>
