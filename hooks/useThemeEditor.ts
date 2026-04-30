@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { mutate } from 'swr';
+import { useSearchParams } from 'next/navigation';
 import { showToast } from '@/lib/customToast';
 
 export function useThemeEditor() {
+  const searchParams = useSearchParams();
+  const previewTheme = searchParams.get('previewTheme');
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   
@@ -52,7 +56,15 @@ export function useThemeEditor() {
 
             if (appData.siteAppearance) {
               const sa = appData.siteAppearance;
-              if (sa.themeTemplate) setActiveTheme(sa.themeTemplate);
+              
+              // LOGIKA TEASER: Gunakan tema dari URL jika ada (Preview Mode)
+              // Jika tidak ada, baru gunakan tema dari database
+              if (previewTheme) {
+                setActiveTheme(previewTheme);
+              } else if (sa.themeTemplate) {
+                setActiveTheme(sa.themeTemplate);
+              }
+
               if (sa.themeColor) setThemeColor(sa.themeColor);
               if (sa.fontHeading) setFontHeading(sa.fontHeading);
               if (sa.fontBody) setFontBody(sa.fontBody);
@@ -74,7 +86,7 @@ export function useThemeEditor() {
       }
     };
     fetchData();
-  }, []);
+  }, [previewTheme]); // Re-run jika previewTheme berubah
 
   const saveDesign = async () => {
     setIsSaving(true);
@@ -102,9 +114,10 @@ export function useThemeEditor() {
         }
       } else {
         const errorData = await res.json();
+        // Jika backend menolak karena user FREE memilih tema PRO
         if (res.status === 403 && (errorData.code === 'THEME_LOCKED' || errorData.code === 'FEATURE_LOCKED')) {
           toast.dismiss(toastId);
-          setShowProModal(true); // Tampilkan Modal bukan cuma Toast
+          setShowProModal(true); 
         } else {
           throw new Error('Gagal menyimpan');
         }

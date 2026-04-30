@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
@@ -19,7 +21,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
   const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
 
   // --- RELASI ---
-  const archiveItems = data?.projects || data?.user?.projects || [];
+  const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
   const awardItems = data?.certificates || data?.user?.certificates || [];
   const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -178,6 +180,44 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                   </a>
                 )
               }) : <div className="py-20 text-center text-gray-600 font-mono text-xs uppercase tracking-widest">No projects available.</div>}
+          </div>
+
+          {/* Tombol Gallery Utama (Cinematic Venom Style) */}
+          <div className="w-full flex justify-center mt-20 mb-16">
+            <Link href={`/${subdomain}/gallery`} className="block no-underline">
+              <motion.button
+                initial="initial"
+                whileHover="hover"
+                whileTap={{ scale: 0.95 }}
+                className="relative flex flex-col items-center justify-center cursor-pointer overflow-visible rounded-full border border-white/10 w-[110px] h-[110px] bg-transparent"
+              >
+                <motion.div
+                  variants={{
+                    initial: { scale: 0, opacity: 0 },
+                    hover: { scale: 1, opacity: 1 }
+                  }}
+                  transition={{ type: "spring", stiffness: 70, damping: 15 }}
+                  style={{ background: 'linear-gradient(45deg, #C1A362, #785b1c)' }}
+                  className="absolute inset-0 z-0 rounded-full blur-sm"
+                />
+                <motion.div
+                  variants={{
+                    initial: { scale: 1, opacity: 0 },
+                    hover: { scale: 1.15, opacity: 0.6 }
+                  }}
+                  style={{ background: 'linear-gradient(45deg, #C1A362, #785b1c)', filter: 'blur(20px)' }}
+                  className="absolute inset-0 w-full h-full rounded-full z-[-1]"
+                />
+                <div className="relative z-10 flex flex-col items-center justify-center gap-1 text-center text-white">
+                  <i className="fas fa-images text-xl"></i>
+                  <span className="font-black tracking-[0.2em] uppercase text-[10px]">EXPLORE</span>
+                  <motion.i 
+                    variants={{ initial: { opacity: 0, y: -5 }, hover: { opacity: 1, y: 2 } }}
+                    className="fas fa-chevron-down text-[8px]"
+                  ></motion.i>
+                </div>
+              </motion.button>
+            </Link>
           </div>
       </section>
 

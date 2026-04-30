@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { LinkData } from '@/hooks/useLinks';
+import toast from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface LinkItemProps {
   link: LinkData;
@@ -7,28 +9,56 @@ interface LinkItemProps {
   actions: any;
 }
 
+const PLATFORMS = [
+  { id: 'instagram', name: 'Instagram', icon: 'fa-brands fa-instagram', placeholder: 'https://instagram.com/username' },
+  { id: 'whatsapp', name: 'WhatsApp', icon: 'fa-brands fa-whatsapp', placeholder: 'https://wa.me/628...' },
+  { id: 'tiktok', name: 'TikTok', icon: 'fa-brands fa-tiktok', placeholder: 'https://tiktok.com/@username' },
+  { id: 'linkedin', name: 'LinkedIn', icon: 'fa-brands fa-linkedin', placeholder: 'https://linkedin.com/in/username' },
+  { id: 'youtube', name: 'YouTube', icon: 'fa-brands fa-youtube', placeholder: 'https://youtube.com/@channel' },
+  { id: 'x', name: 'X / Twitter', icon: 'fa-brands fa-x-twitter', placeholder: 'https://x.com/username' },
+  { id: 'github', name: 'GitHub', icon: 'fa-brands fa-github', placeholder: 'https://github.com/username' },
+  { id: 'custom', name: 'Website / Custom', icon: 'fa-solid fa-link', placeholder: 'https://yourwebsite.com' },
+];
+
 export function LinkItem({ link, index, actions }: LinkItemProps) {
   const { updateLocalLink, setLinkToDelete } = actions;
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const getIconClass = (platform: string) => {
-    const p = platform.toLowerCase();
-    if (p.includes('instagram')) return 'fab fa-instagram';
-    if (p.includes('behance')) return 'fab fa-behance';
-    if (p.includes('whatsapp')) return 'fab fa-whatsapp';
-    if (p.includes('github')) return 'fab fa-github';
-    if (p.includes('linkedin')) return 'fab fa-linkedin-in';
-    if (p.includes('youtube')) return 'fab fa-youtube';
-    if (p.includes('x') || p.includes('twitter')) return 'fab fa-x-twitter';
-    if (p.includes('tiktok')) return 'fab fa-tiktok';
-    if (p.includes('dribbble')) return 'fab fa-dribbble';
-    return 'fas fa-link';
+  const currentPlatform = PLATFORMS.find(p => p.id === link.platform) || PLATFORMS[PLATFORMS.length - 1];
+  const iconClass = currentPlatform.icon;
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleUrlChange = (val: string) => {
+    if (link.platform === 'whatsapp' && val.length > 8 && !val.includes('wa.me')) {
+      toast('Format WhatsApp sebaiknya menggunakan wa.me', {
+        id: 'wa-hint',
+        icon: '💡',
+        style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '12px' },
+        duration: 2000
+      });
+    }
+    updateLocalLink(link.id, { url: val });
   };
 
-  const iconClass = getIconClass(link.platform);
+  const selectPlatform = (id: string) => {
+    updateLocalLink(link.id, { platform: id });
+    setIsOpen(false);
+  };
 
   return (
     <div 
-      className="group bg-white p-5 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.06)] hover:border-slate-300 flex flex-col sm:flex-row gap-5 sm:gap-6 items-start sm:items-center transition-all duration-500 animate-enter"
+      className={`group bg-white p-5 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.06)] hover:border-slate-300 flex flex-col sm:flex-row gap-5 sm:gap-6 items-start sm:items-center transition-all duration-500 animate-enter relative ${isOpen ? 'z-[110]' : 'z-10'}`}
       style={{animationDelay: `${index * 80}ms`, opacity: 0}}
     >
       <div className="flex w-full items-center gap-4 sm:gap-6">
@@ -40,22 +70,60 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
         </div>
 
         {/* Input Fields */}
-        <div className="flex-1 min-w-0 flex flex-col gap-1.5 sm:gap-2 relative">
-          <input 
-            type="text" 
-            value={link.platform} 
-            onChange={(e) => updateLocalLink(link.id, { platform: e.target.value })}
-            className="w-full bg-transparent font-black text-slate-900 focus:outline-none focus:text-slate-700 text-lg sm:text-xl transition-colors placeholder:text-slate-300 tracking-tight relative z-10"
-            placeholder="Nama Platform (cth: Instagram)"
-          />
+        <div className="flex-1 min-w-0 flex flex-col gap-1 sm:gap-1.5 relative">
+          
+          {/* CUSTOM DROPDOWN */}
+          <div className="relative" ref={dropdownRef}>
+            <button 
+              onClick={() => setIsOpen(!isOpen)}
+              className="flex items-center gap-2 w-full text-left font-black text-slate-900 hover:text-slate-600 transition-colors text-lg sm:text-xl tracking-tight group/btn"
+            >
+              {currentPlatform.name}
+              <motion.i 
+                animate={{ rotate: isOpen ? 180 : 0 }}
+                className="fas fa-chevron-down text-[10px] text-slate-300 group-hover/btn:text-slate-900 transition-colors"
+              />
+            </button>
+
+            <AnimatePresence>
+              {isOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute left-0 top-full mt-2 w-64 bg-white/90 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-2xl z-[100] overflow-hidden p-1.5"
+                >
+                  <div className="max-h-60 overflow-y-auto custom-scrollbar">
+                    {PLATFORMS.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => selectPlatform(p.id)}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                          link.platform === p.id 
+                            ? 'bg-slate-900 text-white shadow-lg' 
+                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                        }`}
+                      >
+                        <i className={`${p.icon} w-5 text-center`}></i>
+                        {p.name}
+                        {link.platform === p.id && <i className="fas fa-check ml-auto text-[10px]"></i>}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          
+          {/* URL INPUT */}
           <div className="flex items-center gap-2 text-slate-300 focus-within:text-slate-900 transition-colors relative z-10">
               <i className="fas fa-link text-[10px] sm:text-xs"></i>
               <input 
                 type="url" 
                 value={link.url} 
-                onChange={(e) => updateLocalLink(link.id, { url: e.target.value })}
+                onChange={(e) => handleUrlChange(e.target.value)}
                 className="w-full bg-transparent text-[11px] sm:text-xs font-semibold text-slate-500 focus:outline-none focus:text-slate-900 truncate placeholder:text-slate-300 transition-colors"
-                placeholder="https://..."
+                placeholder={currentPlatform.placeholder}
               />
           </div>
         </div>

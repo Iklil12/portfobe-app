@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
@@ -19,7 +21,7 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
   const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
 
   // --- RELASI ---
-  const archiveItems = data?.projects || data?.user?.projects || [];
+  const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
   const awardItems = data?.certificates || data?.user?.certificates || [];
   const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -188,8 +190,30 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
               }) : <div className="py-20 text-center text-zinc-600 font-bold text-xs uppercase tracking-widest acid-body">SYSTEM: NO_DATA_FOUND</div>}
           </div>
           
-          <div className="px-6 md:px-12 mt-16 flex justify-center">
-              <a href={`mailto:${userEmail}`} className={`btn-acid font-bold uppercase tracking-[0.2em] acid-body ${isMobileView ? 'px-8 py-3 text-[10px]' : 'px-10 py-4 text-sm'}`}>Contact for Full Archive ↗</a>
+          {/* Tombol Gallery Utama (Acid Style) */}
+          <div className="w-full flex justify-center mt-20 mb-20">
+            <Link href={`/${subdomain}/gallery`} className="block no-underline">
+              <motion.button
+                whileHover={{ scale: 1.05, skewX: -12 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative px-12 py-4 font-black uppercase tracking-[0.3em] text-xs border-2 transition-all duration-300"
+                style={{ 
+                  borderColor: themeColor, 
+                  color: themeColor,
+                  boxShadow: `0 0 20px ${themeColor}44`
+                }}
+              >
+                <motion.div 
+                  className="absolute inset-0 z-0"
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  style={{ backgroundColor: themeColor }}
+                />
+                <span className="relative z-10 flex items-center gap-3 mix-blend-difference">
+                  <i className="fas fa-images"></i> Explore_Full_Archive
+                </span>
+              </motion.button>
+            </Link>
           </div>
       </section>
 

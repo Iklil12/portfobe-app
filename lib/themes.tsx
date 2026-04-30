@@ -31,7 +31,7 @@ export const THEMES_DATA = [
       desc: 'Dark mode, Cinematic, Massive Type.',
       preview: 'bg-[#0a0a0a]',
       isAvailable: true, 
-      isPro: true,
+      isPro: false,
       img: 'https://images.unsplash.com/photo-1580234797602-22c37b4a6230?q=80&w=600&auto=format&fit=crop'
   },
   {

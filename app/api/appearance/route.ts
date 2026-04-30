@@ -56,7 +56,7 @@ export async function PATCH(req: Request) {
     } = body;
 
     // --- PLAN ENFORCEMENT: PRO FEATURES ---
-    const proThemes = ['brutalism', 'cinematic', 'acid'];
+    const proThemes = ['cinematic', 'acid'];
     const isProTheme = proThemes.includes(themeTemplate);
     const isProSplash = splashScreen === true;
 

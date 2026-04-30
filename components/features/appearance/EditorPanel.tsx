@@ -23,7 +23,8 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     buttonShape, 
     splashScreen,
     isThemeModalOpen,
-    showProModal
+    showProModal,
+    isLoading
   } = state;
 
   const { 
@@ -111,33 +112,39 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                 <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600"><i className="fas fa-swatchbook text-[11px]"></i></div>
                 <h3 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-800">Basis Tema</h3>
               </div>
-              <button 
-                onClick={() => setIsThemeModalOpen(true)} 
-                className="group flex items-center gap-1.5 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-colors"
-              >
-                Ubah <i className="fas fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>
-              </button>
+              {!isLoading && (
+                <button 
+                  onClick={() => setIsThemeModalOpen(true)} 
+                  className="group flex items-center gap-1.5 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-colors"
+                >
+                  Ubah <i className="fas fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>
+                </button>
+              )}
             </div>
             
-            <div className="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm flex items-center justify-between group hover:border-slate-300 transition-colors cursor-pointer" onClick={() => setIsThemeModalOpen(true)}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
-                  <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : 'fa-cube'} text-sm`}></i>
+            {isLoading ? (
+              <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50 animate-pulse h-20"></div>
+            ) : (
+              <div className="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm flex items-center justify-between group hover:border-slate-300 transition-colors cursor-pointer" onClick={() => setIsThemeModalOpen(true)}>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : 'fa-cube'} text-sm`}></i>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-black text-slate-900 text-sm tracking-tight">
+                      {activeTheme === 'minimalist' ? 'Minimalist Clean' :
+                        activeTheme === 'cinematic' ? 'Cinematic Dark' :
+                          activeTheme === 'acid' ? 'Acid Punk' :
+                            'Neo Brutalism'}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-0.5">Tema Aktif Saat Ini</span>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="font-black text-slate-900 text-sm tracking-tight">
-                    {activeTheme === 'minimalist' ? 'Minimalist Clean' :
-                      activeTheme === 'cinematic' ? 'Cinematic Dark' :
-                        activeTheme === 'acid' ? 'Acid Punk' :
-                          'Neo Brutalism'}
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-0.5">Tema Aktif Saat Ini</span>
+                <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                  <i className="fas fa-check text-[10px]"></i>
                 </div>
               </div>
-              <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                <i className="fas fa-check text-[10px]"></i>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* DIVIDER */}
@@ -183,27 +190,31 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
           </div>
 
           {/* TOGGLE SPLASH SCREEN */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm mb-6 group hover:border-slate-300 hover:shadow-md transition-all cursor-pointer" onClick={() => setSplashScreen(!splashScreen)}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100/50 text-indigo-500 flex items-center justify-center shrink-0 group-hover:bg-indigo-100 transition-colors"><i className="fas fa-play text-sm ml-1"></i></div>
-                <div>
-                  <h3 className="text-sm font-black text-slate-900 tracking-tight mb-1 group-hover:text-indigo-600 transition-colors flex items-center gap-2">
-                    Cinematic Intro
-                    <span className="bg-slate-900 text-white text-[7px] font-black px-1.5 py-0.5 rounded-md tracking-widest uppercase flex items-center gap-1 shadow-sm">
-                        <i className="fas fa-crown text-[6px] text-[#ff9e00]"></i> PRO
-                    </span>
-                  </h3>
-                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed">Tampilkan animasi transisi memukau<br/>sebelum portofolio dimuat penuh.</p>
+          {isLoading ? (
+            <div className="bg-slate-100 border border-slate-200 rounded-3xl p-6 h-24 animate-pulse mb-6"></div>
+          ) : (
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm mb-6 group hover:border-slate-300 hover:shadow-md transition-all cursor-pointer" onClick={() => setSplashScreen(!splashScreen)}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100/50 text-indigo-500 flex items-center justify-center shrink-0 group-hover:bg-indigo-100 transition-colors"><i className="fas fa-play text-sm ml-1"></i></div>
+                  <div>
+                    <h3 className="text-sm font-black text-slate-900 tracking-tight mb-1 group-hover:text-indigo-600 transition-colors flex items-center gap-2">
+                      Cinematic Intro
+                      <span className="bg-slate-900 text-white text-[7px] font-black px-1.5 py-0.5 rounded-md tracking-widest uppercase flex items-center gap-1 shadow-sm">
+                          <i className="fas fa-crown text-[6px] text-[#ff9e00]"></i> PRO
+                      </span>
+                    </h3>
+                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed">Tampilkan animasi transisi memukau<br/>sebelum portofolio dimuat penuh.</p>
+                  </div>
                 </div>
+                <button className={`w-14 h-8 rounded-full relative transition-all duration-300 ease-in-out shrink-0 outline-none shadow-inner border ${splashScreen ? 'bg-indigo-600 border-indigo-700' : 'bg-slate-100 border-slate-200'}`}>
+                  <div className={`w-6 h-6 rounded-full bg-white absolute top-[3px] transition-all duration-300 shadow-md flex items-center justify-center ${splashScreen ? 'left-[26px]' : 'left-1'}`}>
+                    {splashScreen && <i className="fas fa-check text-[8px] text-indigo-600"></i>}
+                  </div>
+                </button>
               </div>
-              <button className={`w-14 h-8 rounded-full relative transition-all duration-300 ease-in-out shrink-0 outline-none shadow-inner border ${splashScreen ? 'bg-indigo-600 border-indigo-700' : 'bg-slate-100 border-slate-200'}`}>
-                <div className={`w-6 h-6 rounded-full bg-white absolute top-[3px] transition-all duration-300 shadow-md flex items-center justify-center ${splashScreen ? 'left-[26px]' : 'left-1'}`}>
-                  {splashScreen && <i className="fas fa-check text-[8px] text-indigo-600"></i>}
-                </div>
-              </button>
             </div>
-          </div>
+          )}
 
         </div>
       </div>

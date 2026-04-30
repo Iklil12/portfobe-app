@@ -25,7 +25,7 @@ const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then((res) =>
 export function useDashboardLayout() {
   const { data: session, status } = useSession(); 
 
-  const { data: syncData } = useSWR('/api/layout-sync', fetcher, {
+  const { data: syncData, error: syncError, isLoading: isSyncLoading } = useSWR('/api/layout-sync', fetcher, {
     refreshInterval: 10000,
     revalidateOnFocus: true, 
   });
@@ -36,7 +36,7 @@ export function useDashboardLayout() {
     revalidateOnFocus: true,
   });
 
-  const isLoading = status === "loading";
+  const isLoading = status === "loading" || (status === "authenticated" && !syncData && !syncError);
   
   const userName = syncData?.fullName || session?.user?.name || "Creator";
   const userEmail = session?.user?.email || "user@portfo.be";

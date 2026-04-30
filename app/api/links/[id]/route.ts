@@ -16,6 +16,28 @@ export async function PATCH(
     const { id } = await params; 
     const body = await req.json();
 
+    // 1. Validasi URL jika ada perubahan URL
+    if (body.url && !body.url.startsWith("http://") && !body.url.startsWith("https://")) {
+      return NextResponse.json({ error: "URL wajib diawali dengan http:// atau https://" }, { status: 400 });
+    }
+
+    // 2. Cari data link saat ini
+    const currentLink = await prisma.link.findUnique({ where: { id: id } });
+    if (!currentLink) return NextResponse.json({ error: "Link tidak ditemukan" }, { status: 404 });
+
+    // 3. Validasi Limit 4 Link Aktif
+    if (body.isActive === true && currentLink.isActive === false) {
+      const activeCount = await prisma.link.count({
+        where: { userId: currentLink.userId, isActive: true }
+      });
+
+      if (activeCount >= 4) {
+        return NextResponse.json({ 
+          error: "Maksimal hanya 4 link yang bisa tampil di profil." 
+        }, { status: 403 });
+      }
+    }
+
     const updatedLink = await prisma.link.update({
       where: { id: id },
       data: { ...body }

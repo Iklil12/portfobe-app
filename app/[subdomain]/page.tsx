@@ -1,8 +1,11 @@
+//app/[subdomain]/page.tsx
+
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link'; 
+import { motion } from 'framer-motion';
 import PortfolioView from '@/components/PortfolioView';
 
 export default function PublicPortfolioPage() {
@@ -23,7 +26,6 @@ export default function PublicPortfolioPage() {
   };
 
   useEffect(() => {
-    // Cleanup heartbeat on unmount or subdomain change
     return () => {
       if (heartbeatRef.current) clearInterval(heartbeatRef.current);
     };
@@ -33,30 +35,20 @@ export default function PublicPortfolioPage() {
     const fetchPortfolio = async () => {
       try {
         const res = await fetch(`/api/portfolio/${subdomain}?t=${new Date().getTime()}`, {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
+          cache: 'no-store'
         });
 
         if (res.ok) {
           const result = await res.json();
           setData(result);
 
-          // --- TRACKING ANALYTICS DENGAN HEARTBEAT ---
           if (result.id) {
-            // Gunakan fallback jika crypto.randomUUID tidak tersedia (karena konteks non-secure/HTTP)
             const generateSessionId = () => {
-              if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-                return crypto.randomUUID();
-              }
+              if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
               return Math.random().toString(36).substring(2) + Date.now().toString(36);
             };
-
             const sessionId = generateSessionId();
             
-            // 1. Initial View
             const trackRes = await fetch('/api/analytics/track', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -71,25 +63,19 @@ export default function PublicPortfolioPage() {
             if (trackRes.ok) {
               const trackData = await trackRes.json();
               const analyticsId = trackData.id;
-              
               if (analyticsId) {
-                // 2. Setup Heartbeat (Setiap 30 detik)
                 if (heartbeatRef.current) clearInterval(heartbeatRef.current);
                 heartbeatRef.current = setInterval(() => {
                   fetch('/api/analytics/track', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      type: 'HEARTBEAT',
-                      analyticsId: analyticsId
-                    })
+                    body: JSON.stringify({ type: 'HEARTBEAT', analyticsId })
                   }).catch(() => null);
                 }, 30000);
               }
             }
           }
           
-          // --- LOGIKA PENENTUAN SPLASH ASLI ---
           if (result.siteAppearance?.splashScreen === true || result.splashScreen === true) {
             setShowSplash(true);
             setTimeout(() => {
@@ -115,7 +101,6 @@ export default function PublicPortfolioPage() {
     }
   }, [subdomain]);
 
-  // --- TAMPILAN 404 ---
   if (!isFetching && !data) {
     return (
       <div onMouseMove={handleMouseMove} className="relative min-h-screen flex flex-col items-center justify-center bg-[#050505] overflow-hidden font-sans selection:bg-white selection:text-black">
@@ -131,7 +116,6 @@ export default function PublicPortfolioPage() {
     );
   }
 
-  // --- TAMPILAN OFFLINE ---
   if (!isFetching && data && data.isLive === false) {
     return (
       <div className="relative min-h-screen bg-[#050505] flex flex-col items-center justify-center p-6 text-center font-sans overflow-hidden">
@@ -148,42 +132,15 @@ export default function PublicPortfolioPage() {
     <>
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
-
-        .splash-screen {
-          position: fixed; inset: 0; z-index: 9999; background-color: #050505;
-          display: flex; flex-direction: column; align-items: center; justify-content: center;
-          transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
-        }
+        .splash-screen { position: fixed; inset: 0; z-index: 9999; background-color: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1); }
         .curtain-up { transform: translateY(-100%); }
-
-        .splash-text {
-          color: #ffffff; font-family: 'Space Mono', monospace; font-size: 11px;
-          letter-spacing: 0.3em; text-transform: uppercase; font-weight: bold;
-          opacity: 0;
-          animation: blurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        .splash-line-container {
-          width: 180px; height: 1px; background-color: rgba(255,255,255,0.15);
-          margin-top: 24px; overflow: hidden; opacity: 0;
-          animation: blurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
-        }
-        .splash-line-progress {
-          height: 100%; background-color: #ffffff; width: 0%;
-          animation: loadProgress 1.5s cubic-bezier(0.8, 0, 0.2, 1) 0.4s forwards;
-        }
-        @keyframes blurFadeIn {
-          0%   { opacity: 0; filter: blur(5px); transform: translateY(10px); }
-          100% { opacity: 1; filter: blur(0px); transform: translateY(0); }
-        }
-        @keyframes loadProgress {
-          0%   { width: 0%; }
-          40%  { width: 60%; }
-          100% { width: 100%; }
-        }
-        .initial-loader {
-          position: fixed; inset: 0; z-index: 9998; background-color: #F1F5F9;
-          display: flex; align-items: center; justify-content: center;
-        }
+        .splash-text { color: #ffffff; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: bold; opacity: 0; animation: blurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        .splash-line-container { width: 180px; height: 1px; background-color: rgba(255,255,255,0.15); margin-top: 24px; overflow: hidden; opacity: 0; animation: blurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards; }
+        .splash-line-progress { height: 100%; background-color: #ffffff; width: 0%; animation: loadProgress 1.5s cubic-bezier(0.8, 0, 0.2, 1) 0.4s forwards; }
+        @keyframes blurFadeIn { 0% { opacity: 0; filter: blur(5px); transform: translateY(10px); } 100% { opacity: 1; filter: blur(0px); transform: translateY(0); } }
+        @keyframes loadProgress { 0% { width: 0%; } 40% { width: 60%; } 100% { width: 100%; } }
+        .initial-loader { position: fixed; inset: 0; z-index: 9998; background-color: #F1F5F9; display: flex; align-items: center; justify-content: center; }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
       `}} />
 
       {isFetching && (
@@ -195,15 +152,13 @@ export default function PublicPortfolioPage() {
       {!removeSplash && showSplash && (
         <div className={`splash-screen ${liftCurtain ? 'curtain-up' : ''}`}>
           <div className="splash-text">{subdomain?.toUpperCase() || 'LOADING'}.SYS</div>
-          <div className="splash-line-container">
-            <div className="splash-line-progress"></div>
-          </div>
+          <div className="splash-line-container"><div className="splash-line-progress"></div></div>
         </div>
       )}
 
       <main className={`min-h-screen bg-[#F1F5F9] text-black font-sans antialiased p-0 sm:p-8 md:p-12 relative overflow-x-clip transition-all duration-1000 ${liftCurtain ? 'opacity-100' : 'opacity-0 h-screen overflow-hidden'}`}>
         <div className="absolute inset-0 opacity-[0.4] pointer-events-none hidden sm:block" style={{ backgroundImage: 'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
-        {data && <PortfolioView data={data} theme={data.siteAppearance || data} />}
+        {data && liftCurtain && <PortfolioView data={data} theme={data.siteAppearance || data} />}
       </main>
     </>
   );

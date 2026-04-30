@@ -1,19 +1,18 @@
 "use client";
 
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import { useThemeEditor } from '@/hooks/useThemeEditor';
 import { EditorPanel } from '@/components/features/appearance/EditorPanel';
 import { PreviewPanel } from '@/components/features/appearance/PreviewPanel';
 import { OfflineModal } from '@/components/features/appearance/OfflineModal';
 
-export default function AppearancePage() {
+function AppearanceEditor() {
   const { state, actions } = useThemeEditor();
 
   if (state.isLoading) {
     return (
       <div className="h-screen w-screen flex flex-col items-center justify-center bg-[#FAFAFA] animate-in fade-in duration-500 m-0 p-0 absolute inset-0 z-[999999]">
-        <style dangerouslySetInnerHTML={{ __html: `@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');` }} />
         <div className="w-10 h-10 border-[3px] border-slate-200 border-t-slate-900 rounded-full animate-spin mb-4"></div>
         <p className="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest animate-pulse">Memuat Editor Canvas...</p>
       </div>
@@ -47,9 +46,6 @@ export default function AppearancePage() {
         <OfflineModal setShowOfflineModal={actions.setShowOfflineModal} />
       )}
 
-      {/* TOASTER UNTUK NOTIFIKASI DI ATAS SEMUANYA */}
-
-
       {/* PANEL KIRI: EDITOR TATA LETAK */}
       <EditorPanel state={state} actions={actions} />
 
@@ -57,5 +53,18 @@ export default function AppearancePage() {
       <PreviewPanel state={state} actions={actions} />
       
     </main>
+  );
+}
+
+export default function AppearancePage() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-[#FAFAFA]">
+        <div className="w-10 h-10 border-[3px] border-slate-200 border-t-slate-900 rounded-full animate-spin mb-4"></div>
+        <p className="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest">Sinkronisasi Canvas...</p>
+      </div>
+    }>
+      <AppearanceEditor />
+    </Suspense>
   );
 }

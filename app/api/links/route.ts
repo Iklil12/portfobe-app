@@ -56,20 +56,26 @@ export async function POST() {
   }
   // -----------------------------------------
 
+  // --- ACTIVE LIMIT: CEK MAKSIMAL 4 LINK AKTIF ---
+  const activeCount = await prisma.link.count({ 
+    where: { userId: user.id, isActive: true } 
+  });
+  const shouldBeActive = activeCount < 4;
+  // -----------------------------------------
+
   // 1. Simpan link baru ke database
   const newLink = await prisma.link.create({
     data: {
       userId: user.id,
-      platform: "Baru",
+      platform: "custom",
       url: "https://",
-      isActive: true,
+      isActive: shouldBeActive,
       order: 0
     }
   });
 
-  // 2. Catat aktivitasnya di sini (DI DALAM fungsi POST)
-  await logActivity(user.id, "ADD_LINK", `Menambahkan tautan kosong baru ke profil`);
+  // 2. Catat aktivitasnya
+  await logActivity(user.id, "ADD_LINK", `Menambahkan tautan baru ke profil`);
 
-  // 3. Kembalikan response ke frontend
   return NextResponse.json(newLink);
 }

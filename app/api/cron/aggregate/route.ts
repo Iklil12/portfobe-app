@@ -3,11 +3,20 @@ import prisma from "@/lib/prisma";
 
 export async function GET(req: Request) {
   try {
-    // 1. Verifikasi Keamanan (Optional: Gunakan API Key di header)
+    // 1. Verifikasi Keamanan
     const { searchParams } = new URL(req.url);
     const key = searchParams.get("key");
-    if (key !== process.env.CRON_SECRET) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authHeader = req.headers.get("Authorization");
+    const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.substring(7) : null;
+    
+    const secret = process.env.CRON_SECRET;
+
+    if (!secret) {
+      return NextResponse.json({ error: "Unauthorized: CRON_SECRET not set in server environment" }, { status: 401 });
+    }
+
+    if (key !== secret && bearerToken !== secret) {
+      return NextResponse.json({ error: "Unauthorized: Key mismatch" }, { status: 401 });
     }
 
     // 2. Tentukan Tanggal Agregasi (Kemarin)

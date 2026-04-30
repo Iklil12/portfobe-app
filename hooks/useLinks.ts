@@ -52,12 +52,28 @@ export function useLinks() {
   const hasChanges = JSON.stringify(links) !== JSON.stringify(originalLinks);
 
   const updateLocalLink = (id: string, data: Partial<LinkData>) => {
+    // Validasi Limit 4 Link Aktif di Frontend
+    if (data.isActive === true) {
+      const activeCount = links.filter(l => l.isActive).length;
+      const targetLink = links.find(l => l.id === id);
+      
+      if (activeCount >= 4 && targetLink && !targetLink.isActive) {
+        toast.error("Maksimal hanya 4 link yang bisa tampil di profil.", {
+          id: 'active-limit',
+          icon: '⚠️',
+          style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+        });
+        return; // Batalkan update
+      }
+    }
+    
     setLinks(prev => prev.map(l => l.id === id ? { ...l, ...data } : l));
   };
 
   const saveAllChanges = async () => {
     setIsSaving(true);
-    const toastId = toast.loading('Menyimpan perubahan...', {
+    toast.loading('Menyimpan perubahan...', {
+        id: 'save-links',
         style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
     try {
@@ -65,22 +81,28 @@ export function useLinks() {
         return JSON.stringify(link) !== JSON.stringify(originalLinks[index]);
       });
 
-      await Promise.all(changedLinks.map(link => 
-        fetch(`/api/links/${link.id}`, {
+      await Promise.all(changedLinks.map(async (link) => {
+        const res = await fetch(`/api/links/${link.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(link)
-        })
-      ));
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || "Gagal menyimpan perubahan");
+        }
+        return res.json();
+      }));
 
       setOriginalLinks(JSON.parse(JSON.stringify(links)));
       toast.success("Perubahan tersimpan!", { 
-          id: toastId,
+          id: 'save-links',
           iconTheme: { primary: '#22c55e', secondary: '#0a0a0a' },
           style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
       });
-    } catch (error) {
-      toast.error("Gagal menyimpan", { id: toastId });
+    } catch (error: any) {
+      toast.error(error.message || "Gagal menyimpan", { id: 'save-links' });
     } finally {
       setIsSaving(false);
     }
@@ -94,13 +116,19 @@ export function useLinks() {
         const newLink = await res.json();
         const updated = [...links, newLink];
         setLinks(updated);
-        setLinkCount(prev => prev + 1); // Update Count Real-time
+        setLinkCount(prev => prev + 1); 
         setOriginalLinks(JSON.parse(JSON.stringify(updated)));
         toast.success("Link ditambahkan", {
+            id: 'add-link',
             icon: '🔗',
             style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
         });
+      } else {
+        const errorData = await res.json();
+        toast.error(errorData.error || "Gagal menambah link", { id: 'add-link' });
       }
+    } catch (err) {
+      toast.error("Masalah jaringan", { id: 'add-link' });
     } finally {
       setIsAdding(false); 
     }

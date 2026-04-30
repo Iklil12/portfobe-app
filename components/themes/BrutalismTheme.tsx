@@ -1,7 +1,10 @@
+//components/themes/BrutalismTheme.tsx
 "use client";
 
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation'; 
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
@@ -37,7 +40,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
   const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
 
   // --- MENGAMBIL DATA RELASI (Project, Sertifikat, Link) ---
-  const archiveItems = data?.projects || data?.user?.projects || [];
+  const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
   const awardItems = data?.certificates || data?.user?.certificates || [];
   const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -226,6 +229,20 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                 </a>
               );
             }) : <div className={`p-10 ${res('md:p-16')} text-center col-span-2 text-slate-900 opacity-30 font-mono text-[10px] ${res('md:text-[11px]')} uppercase`}>NO ARCHIVE DATA FOUND.</div>}
+        </div>
+
+        {/* Tombol Gallery Utama (Brutalist Style) */}
+        <div className="w-full flex justify-center mt-12 mb-12">
+          <Link href={`/${subdomain}/gallery`} className="block no-underline">
+            <motion.button
+              whileHover={{ x: -4, y: -4, boxShadow: `8px 8px 0px 0px ${isBrutal ? themeColor : '#000'}` }}
+              whileTap={{ x: 0, y: 0, boxShadow: '0px 0px 0px 0px #000' }}
+              className={`px-12 py-5 font-black uppercase tracking-widest text-sm transition-all duration-200 flex items-center gap-4 ${isBrutal ? 'border-[3px] border-black bg-white text-black' : 'bg-black text-white rounded-xl shadow-xl'}`}
+              style={{ fontFamily: customHeadingFont }}
+            >
+              <i className="fas fa-images"></i> EXPLORE ALL_INDEX
+            </motion.button>
+          </Link>
         </div>
       </section>
 
