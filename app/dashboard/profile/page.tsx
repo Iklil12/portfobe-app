@@ -15,7 +15,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FAFAFA] font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-24">
+    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-24">
       
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
@@ -39,13 +39,12 @@ export default function ProfilePage() {
         }
       `}} />
 
-      <div className="absolute inset-0 bg-grid-slate pointer-events-none z-0 mask-image:linear-gradient(to_bottom,white,transparent)"></div>
-      <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-slate-200/50 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      {/* ELEMEN DEKORASI BACKGROUND DIHAPUS (Dipindah ke layout.tsx) */}
 
       <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-10 relative z-10">
         <ProfileHeader />
 
-        <div className="bg-white p-6 sm:p-10 md:p-12 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] transition-all duration-500 relative animate-enter" style={{animationDelay: '200ms'}}>
+        <div className="bg-white p-6 sm:p-10 md:p-12 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] transition-all duration-500 relative animate-enter overflow-hidden" style={{animationDelay: '200ms'}}>
           <AvatarUpload state={state} actions={actions} />
           <ProfileForm state={state} actions={actions} />
         </div>

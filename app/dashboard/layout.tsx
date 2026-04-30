@@ -15,6 +15,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Tutup sidebar mobile otomatis saat pindah rute/menu
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
+
   const {
     isLoading,
     userName,
@@ -69,21 +74,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Sidebar isLoading={isLoading} userPlan={userPlan} isSidebarOpen={isSidebarOpen} />
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
-        <GlobalAnnouncementBanner announcements={announcementsData} userPlan={userPlan} />
-        <Topbar 
-          isLoading={isLoading}
-          userName={userName}
-          userEmail={userEmail}
-          userPlan={userPlan}
-          userAvatar={userAvatar}
-          alertCount={notifications.length}
-          notifications={notifications}
-          onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-        />
+        
+        {/* GLOBAL BACKGROUND STATIC - Tidak akan ikut tergeser oleh Notifikasi */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+           <div className="absolute inset-0" style={{ backgroundSize: '40px 40px', backgroundImage: 'linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px)', maskImage: 'linear-gradient(to bottom, white 40%, transparent)' }}></div>
+           <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-slate-200/50 rounded-full blur-[120px]"></div>
+           <div className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-amber-400/5 rounded-full blur-[120px]"></div>
+        </div>
 
-        <TopBanner isLoading={isLoading} topBanner={topBanner} />
+        <div className="relative z-50 w-full flex flex-col">
+          <GlobalAnnouncementBanner announcements={announcementsData} userPlan={userPlan} />
+          <Topbar 
+            isLoading={isLoading}
+            userName={userName}
+            userEmail={userEmail}
+            userPlan={userPlan}
+            userAvatar={userAvatar}
+            alertCount={notifications.length}
+            notifications={notifications}
+            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          />
+          <TopBanner isLoading={isLoading} topBanner={topBanner} />
+        </div>
 
-        <div className="flex-1 overflow-y-auto animate-page-load delay-300">
+        <div className="flex-1 overflow-y-auto animate-page-load delay-300 relative z-10">
           {children}
         </div>
       </main>

@@ -16,7 +16,7 @@ export default function SettingsPage() {
   const { state, actions } = useSettings();
 
   return (
-    <main className="min-h-screen bg-[#FAFAFA] font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-24">
+    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-24">
       
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
@@ -28,18 +28,11 @@ export default function SettingsPage() {
             100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
         .animate-spin-slow { animation: spin 10s linear infinite; }
-        .bg-grid-slate {
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
-        }
         .shimmer { background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
       `}} />
 
-      <div className="absolute inset-0 bg-grid-slate pointer-events-none z-0 mask-image:linear-gradient(to_bottom,white,transparent)"></div>
-      <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-slate-200/50 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-[20%] left-[-10%] w-[30vw] h-[30vw] bg-slate-200/30 rounded-full blur-[100px] pointer-events-none z-0"></div>
+      {/* ELEMEN DEKORASI BACKGROUND DIHAPUS (Dipindah ke layout.tsx) */}
 
       <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-10 relative z-10">
 

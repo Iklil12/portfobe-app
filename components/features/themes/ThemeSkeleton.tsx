@@ -2,13 +2,12 @@ import React from 'react';
 
 export function ThemeSkeleton() {
   return (
-    <main className="min-h-screen bg-[#FAFAFA] font-sans relative overflow-hidden pb-24">
+    <main className="min-h-screen font-sans relative overflow-hidden pb-24">
       <style dangerouslySetInnerHTML={{__html: `
-        .bg-grid-slate { background-size: 40px 40px; background-image: linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px); }
         .shimmer { background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
       `}} />
-      <div className="absolute inset-0 bg-grid-slate pointer-events-none z-0 mask-image:linear-gradient(to_bottom,white,transparent)"></div>
+      {/* ELEMEN DEKORASI BACKGROUND DIHAPUS (Dipindah ke layout.tsx) */}
       <div className="max-w-6xl mx-auto p-6 md:p-10 relative z-10">
         
         {/* Header Skeleton */}

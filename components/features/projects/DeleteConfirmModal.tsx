@@ -9,21 +9,53 @@ export function DeleteConfirmModal({ state, actions }: { state: any, actions: an
   if (!itemToDelete) return null;
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6">
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity animate-in fade-in duration-300" onClick={!isDeleting ? cancelDelete : undefined}></div>
-      <div className="bg-white rounded-[2rem] w-full max-w-sm relative z-10 shadow-[0_20px_60px_rgba(0,0,0,0.15)] animate-enter border border-slate-100 flex flex-col overflow-hidden text-center p-8">
-        <div className="w-16 h-16 bg-slate-100 text-slate-800 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
-          <i className="fas fa-exclamation-triangle text-2xl"></i>
-        </div>
-        <h3 className="text-xl font-bold text-slate-900 mb-2 tracking-tight">Hapus Data?</h3>
-        <p className="text-sm text-slate-500 mb-8 leading-relaxed">
-          Apakah Anda yakin ingin menghapus <span className="font-bold text-slate-900">"{itemToDelete.title}"</span>? Data akan hilang permanen.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 w-full">
-          <button onClick={cancelDelete} disabled={isDeleting} className="w-full sm:flex-1 py-3.5 rounded-xl font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 transition-colors text-sm disabled:opacity-50">Batal</button>
-          <button onClick={executeDelete} disabled={isDeleting} className="w-full sm:flex-1 py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-rose-600 shadow-md transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2">
-            {isDeleting ? <i className="fas fa-circle-notch fa-spin text-white"></i> : 'Ya, Hapus'}
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+      {/* 1. Full Screen Blur */}
+      <div className="absolute inset-0 bg-slate-900/30 backdrop-blur-md transition-opacity animate-in fade-in duration-300" onClick={!isDeleting ? cancelDelete : undefined}></div>
+      
+      {/* Modal Container */}
+      <div className="relative z-10 w-full max-w-[310px] md:max-w-[400px] animate-enter mx-auto">
+        {/* 2. Outer Blurred Box */}
+        <div className="absolute inset-[-12px] md:inset-[-20px] bg-white/40 backdrop-blur-2xl rounded-[2rem] border border-white/50 shadow-2xl"></div>
+        
+        {/* 3. Main Inner White Box */}
+        <div className="relative bg-white rounded-[1.5rem] p-5 md:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.08)] flex flex-col text-center">
+          
+          {/* Close Button */}
+          <button onClick={!isDeleting ? cancelDelete : undefined} className="absolute top-3 right-3 md:top-4 md:right-4 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors">
+             <i className="fas fa-times text-xs md:text-sm"></i>
           </button>
+
+          {/* Rippling Orange Icon */}
+          <div className="relative flex items-center justify-center mx-auto mb-4 w-10 h-10 md:w-12 md:h-12">
+            <div className="absolute inset-0 bg-[#ff9e00]/20 rounded-full animate-ping opacity-70" style={{ animationDuration: '2s' }}></div>
+            <div className="absolute inset-1.5 bg-[#ff9e00]/10 rounded-full"></div>
+            <div className="relative w-5 h-5 md:w-6 md:h-6 bg-[#ff9e00] text-white rounded-full flex items-center justify-center shadow-md">
+              <i className="fas fa-exclamation text-[8px] md:text-[10px]"></i>
+            </div>
+          </div>
+
+          <h3 className="text-lg md:text-xl font-black text-slate-900 mb-1.5 md:mb-2 tracking-tight">Hapus Proyek?</h3>
+          <p className="text-xs md:text-sm font-medium text-slate-500 mb-5 md:mb-6 leading-relaxed px-1">
+            Data ini akan dihapus permanen dari sistem dan tidak dapat dikembalikan lagi.
+          </p>
+
+          <div className="flex flex-row gap-2 md:gap-3 w-full">
+            <button 
+              onClick={executeDelete} 
+              disabled={isDeleting} 
+              className="flex-1 py-2.5 md:py-3 bg-[#ff9e00] hover:bg-[#e68e00] rounded-xl font-bold text-white shadow-lg shadow-[#ff9e00]/20 active:scale-95 transition-all flex items-center justify-center gap-2 text-xs md:text-sm disabled:opacity-50"
+            >
+              {isDeleting ? <i className="fas fa-circle-notch fa-spin text-white"></i> : 'Delete'}
+            </button>
+            <button 
+              onClick={cancelDelete} 
+              disabled={isDeleting} 
+              className="flex-1 py-2.5 md:py-3 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl font-bold text-slate-700 active:scale-95 transition-all text-xs md:text-sm disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>

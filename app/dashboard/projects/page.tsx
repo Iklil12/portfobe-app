@@ -14,7 +14,7 @@ export default function ProjectsPage() {
   const { state, actions } = useProjects();
 
   return (
-    <main className="min-h-screen bg-[#FAFAFA] font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-20">
+    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-20">
 
       
       {/* INJEKSI CSS ANIMASI, BACKGROUND & SKELETON */}
@@ -45,9 +45,7 @@ export default function ProjectsPage() {
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
       `}} />
 
-      {/* ELEMEN DEKORASI BACKGROUND MONOKROM */}
-      <div className="absolute inset-0 bg-grid pointer-events-none z-0 mask-image:linear-gradient(to_bottom,white,transparent)"></div>
-      <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-slate-200/40 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      {/* ELEMEN DEKORASI BACKGROUND DIHAPUS (Dipindah ke layout.tsx) */}
       
       <div className="max-w-6xl mx-auto p-4 sm:p-6 md:p-10 relative z-10">
         

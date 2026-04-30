@@ -18,19 +18,55 @@ import {
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
+// Smooth Counter Component
+function AnimatedCounter({ value, duration = 1500 }: { value: number | string, duration?: number }) {
+  const [count, setCount] = useState(typeof value === 'number' ? 0 : value);
+
+  useEffect(() => {
+    if (typeof value !== 'number') return;
+    let startTime: number | null = null;
+    let animationFrame: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      
+      const easeOut = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setCount(Math.round(easeOut * value));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [value, duration]);
+
+  return <>{typeof count === 'number' ? count.toLocaleString() : count}</>;
+}
+
 export default function AnalyticsPage() {
+  const [isAnimationReady, setIsAnimationReady] = useState(false);
   const [range, setRange] = useState('7d');
   const { data, isLoading, error } = useSWR(`/api/analytics/stats?range=${range}`, fetcher, {
     refreshInterval: 30000 // Refresh every 30s
   });
 
-  const { data: userData } = useSWR('/api/layout-sync', fetcher);
+  const { data: userData, isLoading: isUserLoading } = useSWR('/api/layout-sync', fetcher);
   const userPlan = userData?.plan || 'FREE';
 
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!isLoading && !isUserLoading && isMounted) {
+      const timer = setTimeout(() => setIsAnimationReady(true), 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, isUserLoading, isMounted]);
 
   const handleProFeature = () => {
     showToast({
@@ -40,7 +76,7 @@ export default function AnalyticsPage() {
     });
   };
 
-  if (isLoading || !isMounted) {
+  if (isLoading || isUserLoading || !isMounted) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <div className="w-10 h-10 border-[3px] border-slate-200 border-t-slate-900 rounded-full animate-spin mb-4"></div>
@@ -142,7 +178,9 @@ export default function AnalyticsPage() {
                       </div>
                   </div>
                   <div className="flex items-end justify-between mt-auto">
-                      <h3 className={`text-3xl md:text-[2.5rem] font-black text-slate-900 tracking-tighter leading-none ${isLocked ? 'blur-sm grayscale opacity-30' : ''}`}>{stat.val}</h3>
+                      <h3 className={`text-3xl md:text-[2.5rem] font-black text-slate-900 tracking-tighter leading-none ${isLocked ? 'blur-sm grayscale opacity-30' : ''}`}>
+                         <AnimatedCounter value={stat.val} duration={1200 + (i * 200)} />
+                      </h3>
                   </div>
               </div>
             );
@@ -214,7 +252,7 @@ export default function AnalyticsPage() {
             </div>
           </div>
           
-          <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar">
             {sources.length === 0 ? (
                <div className="flex flex-col items-center justify-center py-10 opacity-30">
                   <i className="fas fa-ghost text-4xl mb-4"></i>
@@ -230,15 +268,15 @@ export default function AnalyticsPage() {
                     {src.name}
                   </span>
                   <div className="flex flex-col items-end">
-                    <span className="text-xs font-black text-slate-900">{src.percentage}%</span>
-                    <span className="text-[9px] font-bold text-slate-400">{src.count} Hits</span>
+                    <span className="text-xs font-black text-slate-900"><AnimatedCounter value={src.percentage} duration={1500} />%</span>
+                    <span className="text-[9px] font-bold text-slate-400"><AnimatedCounter value={src.count} duration={1300} /> Hits</span>
                   </div>
                 </div>
                 <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
                   <div 
                     className="bg-slate-900 h-full rounded-full transition-all ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/src:bg-[#ff9e00]" 
                     style={{ 
-                      width: `${src.percentage}%`,
+                      width: isAnimationReady ? `${src.percentage}%` : '0%',
                       transitionDuration: '1.5s',
                       transitionDelay: `${i * 150}ms`
                     }}

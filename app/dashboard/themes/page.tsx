@@ -14,7 +14,7 @@ export default function ThemesPage() {
   if (state.isLoading) return <ThemeSkeleton />;
 
   return (
-    <main className="min-h-screen bg-[#FAFAFA] font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-24">
+    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-24">
       
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
@@ -30,18 +30,9 @@ export default function ThemesPage() {
         }
         
         .animate-spin-slow { animation: spin 10s linear infinite; }
-
-        .bg-grid-slate {
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
-        }
       `}} />
 
-
-
-      <div className="absolute inset-0 bg-grid-slate pointer-events-none z-0 mask-image:linear-gradient(to_bottom,white,transparent)"></div>
-      <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-slate-200/50 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      {/* ELEMEN DEKORASI BACKGROUND DIHAPUS (Dipindah ke layout.tsx) */}
 
       <div className="max-w-6xl mx-auto p-6 md:p-10 relative z-10">
         <ThemeHeader state={state} />

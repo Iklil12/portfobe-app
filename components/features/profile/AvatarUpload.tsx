@@ -1,6 +1,7 @@
 import React from 'react';
 import { CldUploadWidget } from 'next-cloudinary';
 import { showToast } from '@/lib/customToast';
+import Link from 'next/link';
 
 interface AvatarUploadProps {
   state: any;
@@ -8,136 +9,100 @@ interface AvatarUploadProps {
 }
 
 export function AvatarUpload({ state, actions }: AvatarUploadProps) {
-  const { session, firstName, lastName, subdomain, subdomainStatus, avatarUrl } = state;
-  const { setSubdomain, setAvatarUrl, handleRemoveAvatar } = actions;
+  const { session, firstName, lastName, avatarUrl } = state;
+  const { setAvatarUrl } = actions;
 
   const fullName = session?.user?.name || "User Portfo";
-  const defaultUsername = session?.user?.email?.split('@')[0] || "user";
+  const email = session?.user?.email || "user@example.com";
   const cloudinaryPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "paperions_preset";
-
-  const handleCopyLink = () => {
-    const linkToCopy = `portfo.be/${subdomain}`;
-    navigator.clipboard.writeText(linkToCopy);
-    showToast({
-      message: "Tautan berhasil disalin!",
-      id: "copy-link-toast",
-      icon: "fa-link"
-    });
-  };
-
-  const getSubdomainStyle = () => {
-    if (subdomainStatus === 'taken') return 'border-rose-400 bg-rose-50 ring-[3px] ring-rose-400/20';
-    if (subdomainStatus === 'available') return 'border-emerald-400 bg-emerald-50 ring-[3px] ring-emerald-400/20';
-    return 'border-slate-200 bg-slate-50/50 hover:bg-white focus-within:bg-white focus-within:border-slate-900 focus-within:ring-[3px] focus-within:ring-slate-900/10';
-  };
+  
+  // Deteksi status PRO (Asumsi dari skema NextAuth)
+  const isPro = session?.user?.plan === 'PRO' || session?.user?.role === 'PRO';
 
   return (
-    <div className="mb-10 sm:mb-12 border-b border-slate-100 pb-8 sm:pb-10 flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-8 text-center md:text-left">
-      <CldUploadWidget 
-        uploadPreset={cloudinaryPreset}
-        options={{ 
-          maxFiles: 1, 
-          resourceType: "image", 
-          clientAllowedFormats: ["jpg", "png", "webp"],
-          sources: ["local", "camera", "url"], 
-          showPoweredBy: false,
-          styles: {
-            palette: {
-              window: "#ffffff", windowBorder: "#f1f5f9", tabIcon: "#64748b", menuIcons: "#0f172a",
-              textDark: "#0f172a", textLight: "#ffffff", link: "#0f172a", action: "#0f172a",
-              inactiveTabIcon: "#94a3b8", error: "#ef4444", inProgress: "#0f172a", complete: "#22c55e", sourceBg: "#f8fafc"
-            },
-            fonts: {
-              default: null,
-              "'Plus Jakarta Sans', sans-serif": { url: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap", active: true }
-            }
-          }
-        }}
-        onSuccess={(result) => {
-          if (typeof result.info === 'object' && 'secure_url' in result.info) {
-            setAvatarUrl(result.info.secure_url); 
-            showToast({ message: "Foto terunggah! Jangan lupa klik Simpan.", id: "upload-success-toast", icon: "fa-cloud-upload-alt" });
-          }
-        }}
-      >
-        {({ open }) => (
-          <>
-            <div className="relative shrink-0 w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 group cursor-pointer" onClick={() => open()}>
-              <div className="absolute -inset-1 bg-slate-900 rounded-full blur-lg opacity-0 group-hover:opacity-10 transition duration-500"></div>
-              
-              <div className="relative w-full h-full rounded-full border-[5px] border-white shadow-[0_5px_20px_rgba(0,0,0,0.06)] overflow-hidden z-10 bg-slate-50">
-                <img 
-                  src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName + ' ' + lastName || fullName)}&background=f8fafc&color=0f172a&bold=true`} 
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110" 
-                  alt="Profile Avatar"
-                />
-                <div className="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px]">
-                  <i className="fas fa-camera text-xl mb-1"></i>
-                  <span className="text-[9px] font-bold uppercase tracking-widest mt-1">Ubah Foto</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col justify-center h-full pt-2 w-full md:w-auto relative">
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mb-3">
-                {firstName ? `${firstName} ${lastName}` : fullName}
-              </h2>
-              
-              <div className="flex flex-col items-center justify-center md:justify-start mb-5 sm:mb-6 w-full md:w-auto relative">
-                <div className={`relative flex items-center gap-1 text-[13px] sm:text-sm font-bold text-slate-600 pl-4 pr-12 py-3 sm:py-2.5 rounded-xl sm:rounded-full border transition-all overflow-hidden max-w-[280px] sm:max-w-md w-full md:w-auto shadow-sm ${getSubdomainStyle()}`}>
-                   <i className="fas fa-link shrink-0 mr-1 opacity-50"></i>
-                   <span className="opacity-50 select-none shrink-0 whitespace-nowrap">portfo.be/</span>
-                   
-                   <input
-                     type="text"
-                     maxLength={15}
-                     value={subdomain} 
-                     onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                     placeholder={defaultUsername}
-                     className="bg-transparent outline-none text-slate-900 w-full min-w-[80px] p-0 border-none focus:ring-0 truncate"
-                   />
-                   
-                   <div className="absolute right-[46px] top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-                     {subdomainStatus === 'checking' && <div className="w-3.5 h-3.5 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin"></div>}
-                     {subdomainStatus === 'available' && <i className="fas fa-check-circle text-emerald-500 text-sm"></i>}
-                     {subdomainStatus === 'taken' && <i className="fas fa-times-circle text-rose-500 text-sm"></i>}
-                   </div>
+    <div className="relative mb-8 border-b border-slate-100 pb-8 sm:pb-10 pt-32 sm:pt-40">
+      {/* Banner / Cover Image - Gap tipis 6px dari dinding luar dan melingkar di semua sudut */}
+      <div className="absolute -top-[18px] -left-[18px] -right-[18px] sm:-top-[34px] sm:-left-[34px] sm:-right-[34px] md:-top-[42px] md:-left-[42px] md:-right-[42px] h-40 sm:h-48 bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 rounded-[1.25rem] sm:rounded-[1.5rem] overflow-hidden z-0 border border-slate-200/40 flex items-center justify-center group">
+         
+         {/* Efek Pola Grid Tipis (Desain Kreatif) */}
+         <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(#f97316 0.5px, transparent 0.5px)', backgroundSize: '20px 20px', opacity: 0.15 }}></div>
+         
+         {/* Cahaya Latar Berpendar (Glow) */}
+         <div className="absolute -bottom-12 -left-12 w-56 h-56 bg-orange-400/20 rounded-full blur-3xl group-hover:bg-orange-400/30 transition-colors duration-700"></div>
+         <div className="absolute -top-12 -right-12 w-56 h-56 bg-amber-400/20 rounded-full blur-3xl group-hover:bg-amber-400/30 transition-colors duration-700"></div>
 
-                   <div className="absolute right-9 top-1/2 -translate-y-1/2 w-px h-4 bg-slate-200"></div>
-                   
-                   <button 
-                     type="button" 
-                     onClick={handleCopyLink} 
-                     className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg sm:rounded-full transition-all"
-                     title="Salin Tautan"
-                   >
-                     <i className="far fa-copy text-[11px]"></i>
-                   </button>
+         {/* Logo Tengah */}
+         <div className="relative z-10 p-4">
+             <div className="absolute inset-0 bg-white/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+             <img 
+                src="/portfo.be.png" 
+                className="relative h-10 sm:h-12 md:h-14 w-auto object-contain opacity-80 drop-shadow-sm" 
+                alt="Portfo.be Cover" 
+             />
+         </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-end justify-between gap-4 relative z-10">
+        {/* Avatar & Info Area */}
+        <div className="flex flex-col items-center sm:items-start w-full sm:w-auto">
+          <CldUploadWidget 
+            uploadPreset={cloudinaryPreset}
+            options={{ maxFiles: 1, resourceType: "image", clientAllowedFormats: ["jpg", "png", "webp"], sources: ["local", "camera", "url"], showPoweredBy: false }}
+            onSuccess={(result) => {
+              if (typeof result.info === 'object' && 'secure_url' in result.info) {
+                setAvatarUrl(result.info.secure_url); 
+                showToast({ message: "Foto terunggah! Jangan lupa klik Simpan.", id: "upload-success-toast", icon: "fa-cloud-upload-alt" });
+              }
+            }}
+          >
+            {({ open }) => (
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 group cursor-pointer -mt-16 sm:-mt-20 mb-4 z-20" onClick={() => open()}>
+                <div className="absolute -inset-1 bg-slate-900 rounded-full blur-lg opacity-0 group-hover:opacity-10 transition duration-500"></div>
+                <div className="relative w-full h-full rounded-full border-4 border-white shadow-[0_4px_15px_rgba(0,0,0,0.08)] overflow-hidden bg-slate-50">
+                  <img 
+                    src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName + ' ' + lastName || fullName)}&background=fff7ed&color=ea580c&bold=true`} 
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110" 
+                    alt="Profile Avatar"
+                  />
+                  <div className="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px]">
+                    <i className="fas fa-camera text-xl mb-1"></i>
+                  </div>
                 </div>
-                
-                <div className="h-4 mt-1.5 w-full text-center md:text-left">
-                   {subdomainStatus === 'taken' && (
-                      <span className="text-[10px] font-bold text-rose-500 animate-enter">
-                        Subdomain ini sudah digunakan orang lain.
-                      </span>
-                   )}
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-center md:justify-start gap-2.5 sm:gap-3">
-                <button type="button" onClick={() => open()} className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-700 bg-white border border-slate-200 px-5 sm:px-6 py-3 rounded-xl sm:rounded-full hover:border-slate-400 hover:bg-slate-50 transition-all active:scale-95 shadow-sm flex items-center gap-2">
-                  <i className="fas fa-cloud-upload-alt"></i> Unggah Baru
-                </button>
-                {avatarUrl && !avatarUrl.includes('ui-avatars.com') && (
-                  <button type="button" onClick={handleRemoveAvatar} className="w-11 h-11 rounded-xl sm:rounded-full bg-white border border-slate-200 text-slate-400 hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50 transition-all active:scale-95 flex items-center justify-center shadow-sm" title="Hapus Foto">
-                    <i className="fas fa-trash-alt text-[13px]"></i>
-                  </button>
+                {/* Verified Badge - HANYA MUNCUL JIKA PRO */}
+                {isPro && (
+                  <div className="absolute bottom-1 right-1 w-8 h-8 bg-blue-500 rounded-full border-[3px] border-white flex items-center justify-center text-white text-[11px] shadow-sm">
+                    <i className="fas fa-check"></i>
+                  </div>
                 )}
               </div>
+            )}
+          </CldUploadWidget>
+
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 mb-1.5">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                {firstName ? `${firstName} ${lastName}` : fullName}
+              </h2>
+              {/* Pro Creator Tag - HANYA MUNCUL JIKA PRO */}
+              {isPro && (
+                <span className="bg-orange-50 text-orange-600 border border-orange-200 text-[10px] font-extrabold px-2 py-0.5 rounded-md flex items-center gap-1 uppercase tracking-widest shadow-sm">
+                  <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></span> Pro Creator
+                </span>
+              )}
             </div>
-          </>
-        )}
-      </CldUploadWidget>
+            <p className="text-[13px] font-medium text-slate-500 flex items-center gap-1.5">
+              <i className="far fa-envelope opacity-70"></i> {email}
+            </p>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center justify-center sm:justify-end gap-3 w-full sm:w-auto mt-6 sm:mt-0">
+          <Link href="/dashboard/projects" className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600 text-slate-700 text-[13px] font-bold shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all active:scale-95">
+            <i className="fas fa-archive text-orange-500"></i> Archive
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
