@@ -26,14 +26,14 @@ export function useDashboardLayout() {
   const { data: session, status } = useSession(); 
 
   const { data: syncData, error: syncError, isLoading: isSyncLoading } = useSWR('/api/layout-sync', fetcher, {
-    refreshInterval: 10000,
     revalidateOnFocus: true, 
+    revalidateOnReconnect: true,
   });
 
-  // Fetch pengumuman dari Superadmin secara real-time
+  // Fetch pengumuman dari Superadmin (Tanpa Polling Waktu)
   const { data: announcementsData } = useSWR('/api/announcements', fetcher, {
-    refreshInterval: 30000,
     revalidateOnFocus: true,
+    revalidateOnReconnect: true,
   });
 
   const isLoading = status === "loading" || (status === "authenticated" && !syncData && !syncError);

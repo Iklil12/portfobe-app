@@ -71,7 +71,7 @@ export default function PublicPortfolioPage() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: 'HEARTBEAT', analyticsId })
                   }).catch(() => null);
-                }, 30000);
+                }, 60000); // 60 Detik (Lebih Ringan)
               }
             }
           }

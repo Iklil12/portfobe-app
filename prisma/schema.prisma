@@ -75,6 +75,8 @@ model Profile {
   availableForHire Boolean @default(true)
   whatsapp         String?
   user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([fullName])
 }
 
 model SiteAppearance {
@@ -219,15 +221,6 @@ model DailyStats {
   @@index([userId])
 }
 
-enum PlanType {
-  FREE
-  PRO
-}
-
-enum Role {
-  USER
-  ADMIN
-}
 model LoginAttempt {
   id        String    @id @default(uuid())
   ip        String
@@ -239,4 +232,14 @@ model LoginAttempt {
 
   @@index([email])
   @@index([ip])
+}
+
+enum PlanType {
+  FREE
+  PRO
+}
+
+enum Role {
+  USER
+  ADMIN
 }
