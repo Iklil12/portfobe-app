@@ -1,5 +1,6 @@
 //file hook/useLinks.ts
 import { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import toast from 'react-hot-toast';
 
 export interface LinkData {
@@ -10,6 +11,10 @@ export interface LinkData {
 }
 
 export function useLinks() {
+  // Baca plan dari cache SWR yang sudah ada — TANPA network request baru
+  const { data: syncData } = useSWR('/api/dashboard/sync');
+  const cachedPlan = (syncData?.layout?.plan || 'FREE') as 'FREE' | 'PRO';
+
   const [mounted, setMounted] = useState(false);
   const [links, setLinks] = useState<LinkData[]>([]);
   const [originalLinks, setOriginalLinks] = useState<LinkData[]>([]);
@@ -18,7 +23,6 @@ export function useLinks() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const [userPlan, setUserPlan] = useState<'FREE' | 'PRO'>('FREE');
   const [linkCount, setLinkCount] = useState(0);
 
   useEffect(() => {
@@ -28,10 +32,7 @@ export function useLinks() {
 
   const fetchLinks = async () => {
     try {
-      const [linksRes, planRes] = await Promise.all([
-        fetch('/api/links'),
-        fetch('/api/layout-sync').catch(() => null)
-      ]);
+      const linksRes = await fetch('/api/links');
 
       if (linksRes.ok) {
         const jsonResult = await linksRes.json();
@@ -40,11 +41,7 @@ export function useLinks() {
         setLinkCount(jsonResult.meta?.total || linksArray.length);
         setOriginalLinks(JSON.parse(JSON.stringify(linksArray)));
       }
-
-      if (planRes?.ok) {
-        const planJson = await planRes.json();
-        setUserPlan(planJson.plan || 'FREE');
-      }
+      // Plan diambil dari SWR cache, tidak perlu fetch /api/layout-sync
     } finally {
       setTimeout(() => setIsLoading(false), 500);
     }
@@ -165,7 +162,7 @@ export function useLinks() {
       isSaving,
       isAdding,
       hasChanges,
-      userPlan,
+      userPlan: cachedPlan,
       linkCount
     },
     actions: {

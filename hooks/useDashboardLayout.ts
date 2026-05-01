@@ -25,16 +25,17 @@ const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then((res) =>
 export function useDashboardLayout() {
   const { data: session, status } = useSession(); 
 
-  const { data: syncData, error: syncError, isLoading: isSyncLoading } = useSWR('/api/layout-sync', fetcher, {
+  // Gunakan BFF API: Gabungan dari Layout, Announcements, dan Stats
+  const { data: dashboardSyncData, error: syncError, isLoading: isSyncLoading } = useSWR('/api/dashboard/sync', fetcher, {
     revalidateOnFocus: true, 
     revalidateOnReconnect: true,
+    dedupingInterval: 10000,
+    focusThrottleInterval: 10000,
   });
 
-  // Fetch pengumuman dari Superadmin (Tanpa Polling Waktu)
-  const { data: announcementsData } = useSWR('/api/announcements', fetcher, {
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-  });
+  // Destructure data agar UI tidak error
+  const syncData = dashboardSyncData?.layout;
+  const announcementsData = dashboardSyncData?.announcements;
 
   const isLoading = status === "loading" || (status === "authenticated" && !syncData && !syncError);
   

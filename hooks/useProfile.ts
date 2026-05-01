@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import useSWR, { mutate } from 'swr';
 import toast from 'react-hot-toast';
-import { mutate } from 'swr';
 import { showToast } from '@/lib/customToast';
 
 export function useProfile() {
@@ -9,60 +9,44 @@ export function useProfile() {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [subdomain, setSubdomain] = useState(""); 
-  const [initialSubdomain, setInitialSubdomain] = useState(""); 
+  const [subdomain, setSubdomain] = useState("");
+  const [initialSubdomain, setInitialSubdomain] = useState("");
   const [subdomainStatus, setSubdomainStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
 
   const [profession, setProfession] = useState("");
   const [bio, setBio] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState(""); 
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [isLoadingData, setIsLoadingData] = useState(true);
 
   const isFormValid = firstName.trim() !== "" && profession.trim() !== "" && subdomainStatus !== 'taken';
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch('/api/profile', { cache: 'no-store' });
-        if (res.ok) {
-          const data = await res.json();
-          if (data) {
-            const names = (data.fullName || session?.user?.name || "").split(" ");
-            setFirstName(names[0] || "");
-            setLastName(names.slice(1).join(" ") || "");
-            
-            const dbSubdomain = data.profile?.subdomain || data.subdomain || "";
-            const emailPrefix = (session?.user?.email || "").split('@')[0] || "user";
-            const finalSubdomain = dbSubdomain || emailPrefix;
-            
-            setSubdomain(finalSubdomain); 
-            setInitialSubdomain(finalSubdomain); 
-            
-            setProfession(data.profession || data.profile?.profession || "");
-            setBio(data.bio || data.profile?.bio || "");
-            
-            if (data.avatarUrl || data.avatar || data.profile?.avatarUrl) {
-              setAvatarUrl(data.avatarUrl || data.avatar || data.profile?.avatarUrl);
-            } else {
-              setAvatarUrl((session?.user as any)?.avatar || session?.user?.image || "");
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Gagal mengambil profil:", error);
-      } finally {
-        // Delay tipis agar skeleton shimmer terlihat elegan
-        setTimeout(() => setIsLoadingData(false), 500);
-      }
-    };
+  // ✅ Gunakan useSWR — dilindungi SWRConfig global (focusThrottleInterval, dedupingInterval)
+  // null key saat belum authenticated = tidak fetch sama sekali
+  const { data: profileData, isLoading: isSWRLoading } = useSWR(
+    status === 'authenticated' ? '/api/profile' : null
+  );
 
-    if (status === "authenticated") {
-      fetchProfile();
-    } else if (status === "unauthenticated") {
-      setIsLoadingData(false);
-    }
-  }, [status, session]);
+  const isLoadingData = status === 'loading' || (status === 'authenticated' && isSWRLoading);
+
+  // Isi form state HANYA saat data dari SWR berubah (bukan tiap session update)
+  useEffect(() => {
+    if (!profileData) return;
+
+    const names = (profileData.fullName || session?.user?.name || "").split(" ");
+    setFirstName(names[0] || "");
+    setLastName(names.slice(1).join(" ") || "");
+
+    const dbSubdomain = profileData.profile?.subdomain || profileData.subdomain || "";
+    const emailPrefix = (session?.user?.email || "").split('@')[0] || "user";
+    setSubdomain(dbSubdomain || emailPrefix);
+    setInitialSubdomain(dbSubdomain || emailPrefix);
+
+    setProfession(profileData.profession || profileData.profile?.profession || "");
+    setBio(profileData.bio || profileData.profile?.bio || "");
+
+    const avatar = profileData.avatarUrl || profileData.avatar || profileData.profile?.avatarUrl;
+    setAvatarUrl(avatar || (session?.user as any)?.avatar || session?.user?.image || "");
+  }, [profileData]); // ← HANYA bereaksi ke data, bukan session object
 
   useEffect(() => {
     if (!subdomain || subdomain === initialSubdomain) {
@@ -89,7 +73,7 @@ export function useProfile() {
   }, [subdomain, initialSubdomain]);
 
   const handleRemoveAvatar = () => {
-    setAvatarUrl(""); 
+    setAvatarUrl("");
     showToast({
       message: "Foto dihapus. Klik Simpan untuk memperbarui database.",
       id: "remove-avatar-toast",
@@ -98,8 +82,8 @@ export function useProfile() {
   };
 
   const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault(); 
-    
+    e.preventDefault();
+
     if (!isFormValid) {
       showToast({
         message: "Formulir tidak valid. Periksa kembali isian Anda.",
@@ -111,7 +95,7 @@ export function useProfile() {
 
     setIsSaving(true);
     const toastId = toast.loading('Menyimpan profil...', {
-        style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+      style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
 
     try {
@@ -121,34 +105,34 @@ export function useProfile() {
         body: JSON.stringify({
           firstName,
           lastName,
-          subdomain, 
+          subdomain,
           profession,
           bio,
-          avatar: avatarUrl 
+          avatar: avatarUrl
         }),
       });
 
       if (response.ok) {
         toast.success("Profil berhasil diperbarui!", {
-          id: toastId, 
+          id: toastId,
           duration: 3000,
           style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' },
           iconTheme: { primary: '#22c55e', secondary: '#0a0a0a' }
         });
-        setInitialSubdomain(subdomain); 
-        
-        mutate('/api/layout-sync');
+        setInitialSubdomain(subdomain);
+
+        mutate('/api/dashboard/sync');
 
         await update({
           ...session,
           user: {
             ...session?.user,
-            image: avatarUrl, 
-            avatar: avatarUrl, 
+            image: avatarUrl,
+            avatar: avatarUrl,
             name: `${firstName} ${lastName}`.trim(),
-            subdomain: subdomain,      
-            profession: profession,    
-            bio: bio                   
+            subdomain: subdomain,
+            profession: profession,
+            bio: bio
           }
         });
 

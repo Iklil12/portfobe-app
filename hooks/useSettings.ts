@@ -114,8 +114,8 @@ export function useSettings() {
       { style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' } }
     );
 
-    mutate('/api/layout-sync', (currentData: any) => {
-      return { ...currentData, isLive: newStatus };
+    mutate('/api/dashboard/sync', (currentData: any) => {
+      return { ...currentData, layout: { ...currentData?.layout, isLive: newStatus } };
     }, { revalidate: false });
 
     try {
@@ -127,15 +127,15 @@ export function useSettings() {
 
       if (res.ok) {
         toast.success(newStatus ? 'Portofolio kini Live!' : 'Portofolio disembunyikan.', { id: loadingToast });
-        mutate('/api/layout-sync');
+        mutate('/api/dashboard/sync');
         await update({ ...session, user: { ...session?.user, isLive: newStatus } });
       } else {
         throw new Error();
       }
     } catch (error) {
       setIsLive(!newStatus); 
-      mutate('/api/layout-sync', (currentData: any) => {
-        return { ...currentData, isLive: !newStatus };
+      mutate('/api/dashboard/sync', (currentData: any) => {
+        return { ...currentData, layout: { ...currentData?.layout, isLive: !newStatus } };
       }, { revalidate: true });
       toast.error('Gagal mengubah status.', { id: loadingToast });
     }

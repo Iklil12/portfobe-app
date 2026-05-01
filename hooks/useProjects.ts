@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import toast from 'react-hot-toast';
 import { showToast } from '@/lib/customToast';
 
 export type ProjectType = 'video' | 'photo' | 'certificate' | null;
 
 export function useProjects() {
-  const [mounted, setMounted] = useState(false);
+  // Baca plan dari cache SWR yang sudah ada — TANPA network request baru
+  const { data: syncData } = useSWR('/api/dashboard/sync');
+  const cachedPlan = (syncData?.layout?.plan || 'FREE') as 'FREE' | 'PRO';
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projectType, setProjectType] = useState<ProjectType>(null);
-  
+  const [mounted, setMounted] = useState(false);
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'all' | 'video' | 'photo' | 'certificate'>('all');
   
-  const [userPlan, setUserPlan] = useState<'FREE' | 'PRO'>('FREE');
   const [projectCount, setProjectCount] = useState(0);
   const [certCount, setCertCount] = useState(0);
 
@@ -33,21 +36,18 @@ export function useProjects() {
   const fetchAllData = async () => {
       try {
         setIsLoading(true);
-        const [projRes, certRes, planRes] = await Promise.all([
+        const [projRes, certRes] = await Promise.all([
           fetch('/api/projects').catch(() => null),
           fetch('/api/certificates').catch(() => null),
-          fetch('/api/layout-sync').catch(() => null)
         ]);
 
         const projJson = projRes?.ok ? await projRes.json() : { data: [], meta: { total: 0 } };
         const certJson = certRes?.ok ? await certRes.json() : { data: [], meta: { total: 0 } };
-        const planJson = planRes?.ok ? await planRes.json() : { plan: 'FREE' };
 
         setProjectCount(projJson.meta?.total || 0);
         setCertCount(certJson.meta?.total || 0);
-        setUserPlan(planJson.plan || 'FREE');
+        // Plan diambil dari SWR cache, tidak perlu setUserPlan di sini
 
-        // Ambil array-nya dari properti .data
         const projArray = Array.isArray(projJson.data) ? projJson.data : (Array.isArray(projJson) ? projJson : []);
         const certArray = Array.isArray(certJson.data) ? certJson.data : (Array.isArray(certJson) ? certJson : []);
 
@@ -211,7 +211,7 @@ export function useProjects() {
       itemToDelete,
       isDeleting,
       filteredItems,
-      userPlan,
+      userPlan: cachedPlan,
       projectCount,
       certCount
     },

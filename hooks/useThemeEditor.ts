@@ -104,7 +104,7 @@ export function useThemeEditor() {
       });
 
       if (res.ok) {
-        mutate('/api/layout-sync');
+        mutate('/api/dashboard/sync');
         toast.dismiss(toastId);
 
         if (!isLive) {

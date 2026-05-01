@@ -2,13 +2,29 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import { SWRConfig } from "swr";
 import { Toaster, resolveValue, toast } from 'react-hot-toast';
+
+const globalFetcher = (url: string) =>
+  fetch(url, { cache: 'no-store' }).then((res) => {
+    if (!res.ok) throw new Error("API Error");
+    return res.json();
+  });
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
-      {children}
-      <Toaster position="top-center" containerStyle={{ zIndex: 1000000, marginTop: '20px' }}>
+      <SWRConfig
+        value={{
+          fetcher: globalFetcher,
+          revalidateOnFocus: true,
+          focusThrottleInterval: 10000,
+          dedupingInterval: 10000,
+          revalidateOnReconnect: true,
+        }}
+      >
+        {children}
+        <Toaster position="top-center" containerStyle={{ zIndex: 1000000, marginTop: '20px' }}>
         {(t) => {
           const message = resolveValue(t.message, t) as React.ReactNode;
           
@@ -80,7 +96,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
             </div>
           );
         }}
-      </Toaster>
+        </Toaster>
+      </SWRConfig>
     </SessionProvider>
   );
 }

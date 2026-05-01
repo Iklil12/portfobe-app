@@ -10,46 +10,24 @@ const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then((res) =>
 });
 
 export function useDashboardOverview() {
-  // 1. Definisikan semua SWR hooks (Optimasi: Matikan revalidateOnFocus untuk data statis)
-  const { data: appearanceData, isLoading: isLoadingApp } = useSWR('/api/appearance', fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
+  // HANYA 1 API CALL UNTUK SELURUH HALAMAN DASBOR (Mega BFF)
+  const { data: dashboardSyncData, isLoading: isLoadingSync } = useSWR('/api/dashboard/sync', fetcher, {
+    revalidateOnFocus: true,
+    dedupingInterval: 10000,
+    focusThrottleInterval: 10000,
   });
-  const { data: projectsData, isLoading: isLoadingProj } = useSWR('/api/projects', fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  });
-  const { data: certsData, isLoading: isLoadingCerts } = useSWR('/api/certificates', fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  });
-  const { data: linksData, isLoading: isLoadingLinks } = useSWR('/api/links', fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  });
-  const { data: activitiesData, isLoading: isLoadingActivities } = useSWR('/api/activity', fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  });
-  const { data: analyticsData, isLoading: isLoadingAnalytics } = useSWR('/api/analytics/stats', fetcher);
 
-  // 2. Gunakan useMemo untuk mengolah data (Menjaga UI tetap sama)
   const processedData = useMemo(() => {
-    const getArray = (json: any) => {
-      if (!json) return [];
-      return Array.isArray(json.data) ? json.data : (Array.isArray(json) ? json : []);
-    };
+    // Destructure data dari payload gabungan
+    const layout = dashboardSyncData?.layout || {};
+    const overview = dashboardSyncData?.overview || { projectsCount: 0, certificatesCount: 0, linksCount: 0, activities: [] };
+    const analyticsData = dashboardSyncData?.stats || null;
 
-    const projArr = getArray(projectsData);
-    const certArr = getArray(certsData);
-    const linkArr = getArray(linksData);
-    const actArr = getArray(activitiesData);
-
-    const subdomain = appearanceData?.profile?.subdomain || '';
-    const userPlan = appearanceData?.plan || 'FREE';
+    const subdomain = layout.subdomain || '';
+    const userPlan = layout.plan || 'FREE';
 
     let tName = "Neo Brutalism";
-    const currentTheme = appearanceData?.siteAppearance?.themeTemplate;
+    const currentTheme = layout.siteAppearance?.themeTemplate;
     if (currentTheme === 'minimalist') tName = "Minimalist Clean";
     if (currentTheme === 'elegant') tName = "Elegant Serif";
     if (currentTheme === 'cinematic') tName = "Cinematic Dark";
@@ -57,32 +35,32 @@ export function useDashboardOverview() {
 
     // --- CALCULATE PORTFOLIO STRENGTH ---
     let score = 0;
-    if (appearanceData?.profile?.bio) score += 15;
-    if (appearanceData?.profile?.avatarUrl) score += 15;
-    if (appearanceData?.profile?.profession) score += 10;
-    if (projArr.length > 0) score += 20;
-    if (linkArr.length > 0) score += 20;
-    if (certArr.length > 0) score += 20;
+    if (layout.bio) score += 15;
+    if (layout.avatar) score += 15;
+    if (layout.profession) score += 10;
+    if (overview.projectsCount > 0) score += 20;
+    if (overview.linksCount > 0) score += 20;
+    if (overview.certificatesCount > 0) score += 20;
 
     return {
       stats: {
-        projects: projArr.length,
-        awards: certArr.length,
-        links: linkArr.length,
+        projects: overview.projectsCount,
+        awards: overview.certificatesCount,
+        links: overview.linksCount,
         themeName: tName,
         strength: score
       },
-      activities: actArr,
+      activities: overview.activities,
       subdomain,
       userPlan,
       analytics: analyticsData
     };
-  }, [appearanceData, projectsData, certsData, linksData, activitiesData, analyticsData]);
+  }, [dashboardSyncData]);
 
   return {
     ...processedData,
-    isLoadingStats: isLoadingApp || isLoadingProj || isLoadingCerts || isLoadingLinks,
-    isLoadingActivities,
-    isLoadingAnalytics
+    isLoadingStats: isLoadingSync,
+    isLoadingActivities: isLoadingSync,
+    isLoadingAnalytics: isLoadingSync
   };
 }
