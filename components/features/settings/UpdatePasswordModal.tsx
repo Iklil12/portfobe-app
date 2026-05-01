@@ -28,7 +28,7 @@ export function UpdatePasswordModal({ state, actions }: UpdatePasswordModalProps
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6">
       <div 
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity animate-in fade-in duration-300" 
+        className="absolute inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity animate-in fade-in duration-300" 
         onClick={() => {
             if (!isUpdatingPassword) {
                 setShowPasswordModal(false);
@@ -36,7 +36,8 @@ export function UpdatePasswordModal({ state, actions }: UpdatePasswordModalProps
             }
         }}
       ></div>
-      <div className="relative bg-white rounded-[2rem] p-8 md:p-10 max-w-md w-full shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-slate-100 animate-in zoom-in-95 fade-in duration-300 z-10 overflow-hidden">
+      <div className="relative w-full max-w-md bg-white/60 backdrop-blur-xl p-2 md:p-3 rounded-[32px] shadow-2xl border border-white/40 animate-in zoom-in-95 fade-in duration-300 z-10">
+        <div className="bg-white rounded-[24px] p-6 md:p-8 w-full shadow-sm border border-slate-100 overflow-hidden">
         
         {isSuccessModal ? (
             /* --- TAMPILAN SUKSES ELEGAN --- */
@@ -56,7 +57,7 @@ export function UpdatePasswordModal({ state, actions }: UpdatePasswordModalProps
                   setShowPasswordModal(false);
                   setTimeout(() => setIsSuccessModal(false), 300);
                 }} 
-                className="w-full bg-slate-900 text-white py-3.5 rounded-xl text-sm font-bold tracking-wide hover:bg-slate-800 transition-all active:scale-[0.98] shadow-md"
+                className="w-full bg-[#ff9e00] text-white py-3.5 rounded-full text-sm font-bold tracking-wide hover:bg-[#ff9e00]/90 transition-all active:scale-[0.98] shadow-[0_8px_20px_rgba(255,158,0,0.3)]"
               >
                 Selesai
               </button>
@@ -69,11 +70,11 @@ export function UpdatePasswordModal({ state, actions }: UpdatePasswordModalProps
                   {isStrictlyGoogle ? "Buat kata sandi agar Anda bisa login menggunakan email ini tanpa melalui Google." : "Pastikan kata sandi baru Anda unik dan aman."}
                 </p>
                 
-                <form onSubmit={onSubmit} className="flex flex-col gap-4">
+                <form onSubmit={onSubmit} className="flex flex-col gap-5">
                   {!isStrictlyGoogle && (
                     <div>
-                      <div className="flex justify-between items-end mb-2 ml-1 pr-1">
-                        <label className="block text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Sandi Saat Ini</label>
+                      <div className="flex justify-between items-end mb-2 ml-3 pr-3">
+                        <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500">Sandi Saat Ini</label>
                         <button 
                           type="button"
                           onClick={handleInternalForgotPassword}
@@ -83,34 +84,35 @@ export function UpdatePasswordModal({ state, actions }: UpdatePasswordModalProps
                         </button>
                       </div>
                       <div className="relative">
-                        <i className="fas fa-unlock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="password" required value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-[#ff9e00] focus:ring-[3px] focus:ring-[#ff9e00]/20 focus:bg-white transition-all" placeholder="Sandi lama Anda" />
+                        <i className="fas fa-unlock absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="password" required value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border border-slate-200 rounded-full text-sm font-bold text-slate-700 outline-none focus:border-[#ff9e00] focus:ring-[3px] focus:ring-[#ff9e00]/20 focus:bg-white transition-all hover:border-slate-300" placeholder="Sandi lama Anda" />
                       </div>
                     </div>
                   )}
                   <div>
-                    <label className="block text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-1">Sandi Baru</label>
+                    <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-3">Sandi Baru</label>
                     <div className="relative">
-                      <i className="fas fa-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                      <input type="password" required minLength={6} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-[#ff9e00] focus:ring-[3px] focus:ring-[#ff9e00]/20 focus:bg-white transition-all" placeholder="Minimal 6 karakter" />
+                      <i className="fas fa-key absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                      <input type="password" required minLength={6} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border border-slate-200 rounded-full text-sm font-bold text-slate-700 outline-none focus:border-[#ff9e00] focus:ring-[3px] focus:ring-[#ff9e00]/20 focus:bg-white transition-all hover:border-slate-300" placeholder="Minimal 6 karakter" />
                     </div>
                   </div>
-                  <div className="mb-4">
-                    <label className="block text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-1">Konfirmasi Sandi</label>
+                  <div className="mb-2">
+                    <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-3">Konfirmasi Sandi</label>
                     <div className="relative">
-                      <i className="fas fa-check-double absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                      <input type="password" required minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-[#ff9e00] focus:ring-[3px] focus:ring-[#ff9e00]/20 focus:bg-white transition-all" placeholder="Ulangi sandi baru" />
+                      <i className="fas fa-check-double absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                      <input type="password" required minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border border-slate-200 rounded-full text-sm font-bold text-slate-700 outline-none focus:border-[#ff9e00] focus:ring-[3px] focus:ring-[#ff9e00]/20 focus:bg-white transition-all hover:border-slate-300" placeholder="Ulangi sandi baru" />
                     </div>
                   </div>
                   <div className="flex gap-3 pt-2">
-                    <button type="button" onClick={() => setShowPasswordModal(false)} disabled={isUpdatingPassword} className="flex-1 py-3.5 rounded-xl font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-all text-sm">Batal</button>
-                    <button type="submit" disabled={isUpdatingPassword} className="flex-1 py-3.5 rounded-xl font-bold text-white bg-slate-900 hover:bg-slate-800 transition-all flex items-center justify-center gap-2 text-sm shadow-md">
-                      {isUpdatingPassword ? <i className="fas fa-spinner animate-spin"></i> : 'Simpan Sandi'}
+                    <button type="button" onClick={() => setShowPasswordModal(false)} disabled={isUpdatingPassword} className="flex-1 py-3.5 rounded-full font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-all text-sm">Batal</button>
+                    <button type="submit" disabled={isUpdatingPassword} className="flex-1 py-3.5 rounded-full font-bold text-white bg-[#ff9e00] hover:bg-[#ff9e00]/90 transition-all flex items-center justify-center gap-2 text-sm shadow-[0_8px_20px_rgba(255,158,0,0.3)]">
+                      {isUpdatingPassword ? <i className="fas fa-circle-notch animate-spin text-white/70"></i> : 'Simpan Sandi'}
                     </button>
                   </div>
                 </form>
             </>
         )}
+        </div>
       </div>
     </div>
   );

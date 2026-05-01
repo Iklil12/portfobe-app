@@ -62,25 +62,27 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
         onClick={handleCloseModal} 
       />
       
-      {/* Modal Container */}
-      <motion.div 
+      {/* Outer Glass Container */}
+      <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }} 
         animate={{ opacity: 1, scale: 1, y: 0 }} 
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={modalSpring}
-        className="bg-white rounded-[24px] w-full max-w-2xl relative z-10 shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-slate-100 flex flex-col max-h-[90vh] overflow-hidden"
+        className="relative w-full max-w-2xl bg-white/60 backdrop-blur-xl p-2 md:p-3 rounded-[32px] shadow-2xl border border-white/40 z-10 flex flex-col max-h-[95vh]"
       >
-        {/* Tombol Tutup dengan interaksi putar */}
-        <motion.button 
-          whileHover={{ scale: 1.1, rotate: 90 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={handleCloseModal} 
-          className="absolute top-5 right-5 sm:top-6 sm:right-6 w-9 h-9 flex items-center justify-center rounded-full bg-slate-100/50 border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors z-20"
-        >
-          <i className="fas fa-times text-sm"></i>
-        </motion.button>
+        {/* Inner Content Container */}
+        <div className="bg-white rounded-[24px] w-full shadow-sm border border-slate-100 flex flex-col overflow-hidden h-full relative">
+          {/* Tombol Tutup dengan interaksi putar */}
+          <motion.button 
+            whileHover={{ scale: 1.1, rotate: 90 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleCloseModal} 
+            className="absolute top-5 right-5 sm:top-6 sm:right-6 w-9 h-9 flex items-center justify-center rounded-full bg-slate-100/50 border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors z-20"
+          >
+            <i className="fas fa-times text-sm"></i>
+          </motion.button>
 
-        <div className="overflow-y-auto custom-scrollbar w-full h-full">
+          <div className="overflow-y-auto custom-scrollbar w-full h-full relative z-10">
           <div className="p-6 sm:p-8 md:p-10">
             
             {/* Modal Header */}
@@ -141,10 +143,10 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* INPUT JUDUL */}
                     <div className={projectType === 'certificate' ? 'md:col-span-1' : 'md:col-span-2'}>
-                      <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-1">Judul {projectType === 'certificate' ? 'Sertifikat/Acara' : 'Proyek'} <span className="text-rose-500">*</span></label>
+                      <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-3">Judul {projectType === 'certificate' ? 'Sertifikat/Acara' : 'Proyek'} <span className="text-rose-500">*</span></label>
                       <input 
                         type="text" value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} placeholder={projectType === 'certificate' ? "Contoh: Lomba Film UI 2022..." : "Contoh: UI/UX Masterclass..."}
-                        className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 placeholder:font-medium placeholder:text-slate-400 hover:border-slate-300" 
+                        className="w-full px-5 py-3.5 rounded-full border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 placeholder:font-medium placeholder:text-slate-400 hover:border-slate-300" 
                       />
                     </div>
 
@@ -152,24 +154,24 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                     {projectType === 'certificate' && (
                       <>
                         <div className="md:col-span-1">
-                          <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-1">Pencapaian / Status <span className="text-rose-500">*</span></label>
+                          <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-3">Pencapaian / Status <span className="text-rose-500">*</span></label>
                           <input 
                             type="text" value={certStatus} onChange={(e) => setCertStatus(e.target.value)} placeholder="Misal: Juara 1, Staff Kominfo..."
-                            className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 placeholder:font-medium placeholder:text-slate-400 hover:border-slate-300" 
+                            className="w-full px-5 py-3.5 rounded-full border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 placeholder:font-medium placeholder:text-slate-400 hover:border-slate-300" 
                           />
                         </div>
                         <div className="md:col-span-1">
-                          <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-1">Lembaga / Penyelenggara <span className="text-rose-500">*</span></label>
+                          <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-3">Lembaga / Penyelenggara <span className="text-rose-500">*</span></label>
                           <input 
                             type="text" value={certIssuer} onChange={(e) => setCertIssuer(e.target.value)} placeholder="Misal: BEM KM, Coursera..."
-                            className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 placeholder:font-medium placeholder:text-slate-400 hover:border-slate-300" 
+                            className="w-full px-5 py-3.5 rounded-full border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 placeholder:font-medium placeholder:text-slate-400 hover:border-slate-300" 
                           />
                         </div>
                         <div className="md:col-span-1">
-                          <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-1">Tahun <span className="text-rose-500">*</span></label>
+                          <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-3">Tahun <span className="text-rose-500">*</span></label>
                           <input 
                             type="number" value={certYear} onChange={(e) => setCertYear(e.target.value)} placeholder="Misal: 2024"
-                            className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 placeholder:font-medium placeholder:text-slate-400 hover:border-slate-300" 
+                            className="w-full px-5 py-3.5 rounded-full border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 placeholder:font-medium placeholder:text-slate-400 hover:border-slate-300" 
                           />
                         </div>
                       </>
@@ -177,13 +179,13 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
 
                     {/* INPUT MEDIA */}
                     <div className="md:col-span-2">
-                      <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-1">
+                      <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-3">
                         {projectType === 'video' ? 'Tautan Video (YouTube)' : 'Unggah File Gambar'} <span className="text-rose-500">*</span>
                       </label>
                       {projectType === 'video' ? (
                         <input 
                           type="text" value={mediaUrl} onChange={(e) => setMediaUrl(e.target.value)} placeholder="https://youtube.com/..."
-                          className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 hover:border-slate-300" 
+                          className="w-full px-5 py-3.5 rounded-full border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 hover:border-slate-300" 
                         />
                       ) : (
                         <CldUploadWidget 
@@ -228,10 +230,10 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                     </div>
                     {/* INPUT DESKRIPSI */}
                     <div className="md:col-span-2">
-                      <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-1">Deskripsi (Opsional)</label>
+                      <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-3">Deskripsi (Opsional)</label>
                       <textarea 
                         rows={3} value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} placeholder="Tambahkan penjelasan singkat..."
-                        className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-medium text-slate-900 resize-none transition-all duration-300 placeholder:text-slate-400 hover:border-slate-300 custom-scrollbar" 
+                        className="w-full px-5 py-4 rounded-[24px] border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-medium text-slate-900 resize-none transition-all duration-300 placeholder:text-slate-400 hover:border-slate-300 custom-scrollbar" 
                       />
                     </div>
                   </div>
@@ -243,17 +245,17 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                         whileTap={{ scale: 0.96 }}
                         type="button" 
                         onClick={() => setProjectType(null)} 
-                        className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-slate-600 bg-slate-50 border border-slate-200 transition-colors text-sm"
+                        className="w-full sm:w-auto px-8 py-3.5 rounded-full font-bold text-slate-600 bg-slate-50 border border-slate-200 transition-colors text-sm"
                       >
                         Kembali
                       </motion.button>
                     )}
                     <motion.button 
-                      whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2)" }}
+                      whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       type="submit" 
                       disabled={isSubmitting} 
-                      className="w-full sm:flex-1 py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="w-full sm:flex-1 py-3.5 rounded-full bg-[#ff9e00] text-white font-bold text-sm shadow-[0_8px_20px_rgba(255,158,0,0.3)] hover:bg-[#ff9e00]/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                       {isSubmitting && <i className="fas fa-circle-notch animate-spin text-white/70"></i>}
                       {isSubmitting ? 'Memproses...' : 'Simpan ke Portofolio'}
@@ -264,6 +266,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
             </AnimatePresence>
             
           </div>
+        </div>
         </div>
       </motion.div>
     </div>
