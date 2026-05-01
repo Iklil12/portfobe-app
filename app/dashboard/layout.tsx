@@ -82,7 +82,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
            <div className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-amber-400/5 rounded-full blur-[120px]"></div>
         </div>
 
-        <div className="relative z-50 w-full flex flex-col">
+        <div className="relative z-40 w-full flex flex-col">
           <GlobalAnnouncementBanner announcements={announcementsData} userPlan={userPlan} />
           <Topbar 
             isLoading={isLoading}

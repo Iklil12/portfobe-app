@@ -97,7 +97,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.2s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 z-0"></div>
               
               <div className="relative flex items-center gap-2 z-10 drop-shadow-sm">
-                {isSaving ? <i className="fas fa-circle-notch fa-spin text-white/90"></i> : <i className="fas fa-save text-orange-100"></i>}
+                {isSaving ? <i className="fas fa-circle-notch animate-spin text-white/90"></i> : <i className="fas fa-save text-orange-100"></i>}
                 <span>{isSaving ? 'Menyimpan...' : 'Save'}</span>
               </div>
             </button>

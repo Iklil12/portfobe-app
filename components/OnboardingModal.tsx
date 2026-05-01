@@ -212,7 +212,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                     </div>
                     {err && <p className="text-[11px] font-bold text-red-500 ml-1 animate-pulse"><i className="fas fa-exclamation-circle mr-1"></i> {err}</p>}
                     <button type="submit" disabled={sub.length < 3 || isValidating} className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-sm shadow-[0_10px_20px_rgba(0,0,0,0.1)] hover:-translate-y-1 active:scale-95 transition-all disabled:opacity-50 disabled:hover:translate-y-0 flex justify-center items-center gap-2">
-                      {isValidating ? <><i className="fas fa-circle-notch fa-spin text-lg"></i> Mengecek...</> : <>Kunci Nama Ini <i className="fas fa-arrow-right"></i></>}
+                      {isValidating ? <><i className="fas fa-circle-notch animate-spin text-lg"></i> Mengecek...</> : <>Kunci Nama Ini <i className="fas fa-arrow-right"></i></>}
                     </button>
                   </form>
                 </div>
@@ -243,7 +243,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                     {professions.map((p) => (
                       <button key={p.id} onClick={() => finishOnboarding(p.id)} disabled={isSubmitting} className={`flex flex-col items-center justify-center p-4 sm:p-5 rounded-2xl border-2 border-transparent bg-white shadow-sm hover:border-slate-200 transition-all group hover:-translate-y-1 active:scale-95 ${p.shadow} disabled:opacity-50`}>
                         <div className={`w-12 h-12 rounded-2xl ${p.bg} ${p.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                          {isSubmitting ? <i className="fas fa-circle-notch fa-spin text-xl"></i> : <i className={`fas ${p.icon} text-xl`}></i>}
+                          {isSubmitting ? <i className="fas fa-circle-notch animate-spin text-xl"></i> : <i className={`fas ${p.icon} text-xl`}></i>}
                         </div>
                         <span className="text-[11px] sm:text-xs font-black text-slate-700 text-center uppercase tracking-tight">{p.label}</span>
                       </button>

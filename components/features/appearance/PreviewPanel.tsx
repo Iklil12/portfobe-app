@@ -38,7 +38,7 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
 
         {isEditorCollapsed && (
           <button onClick={saveDesign} disabled={isSaving} className="hidden lg:flex px-6 py-2.5 bg-black text-white rounded-full text-[10px] font-extrabold uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-50 items-center justify-center gap-2 animate-in fade-in zoom-in duration-300">
-            {isSaving ? <i className="fas fa-spinner fa-spin"></i> : <i className="fas fa-save"></i>} Simpan
+            {isSaving ? <i className="fas fa-spinner animate-spin"></i> : <i className="fas fa-save"></i>} Simpan
           </button>
         )}
 

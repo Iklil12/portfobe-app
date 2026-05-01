@@ -255,7 +255,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                       disabled={isSubmitting} 
                       className="w-full sm:flex-1 py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                     >
-                      {isSubmitting && <i className="fas fa-circle-notch fa-spin text-white/70"></i>}
+                      {isSubmitting && <i className="fas fa-circle-notch animate-spin text-white/70"></i>}
                       {isSubmitting ? 'Memproses...' : 'Simpan ke Portofolio'}
                     </motion.button>
                   </div>

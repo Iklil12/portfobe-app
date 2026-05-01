@@ -141,7 +141,7 @@ export default function LoginPage() {
                 disabled={isForgotLoading || !forgotEmail} 
                 className={`mt-2 py-3.5 rounded-xl font-bold text-white bg-slate-900 transition-all flex items-center justify-center gap-2 text-sm shadow-md ${isForgotLoading || !forgotEmail ? 'opacity-70 cursor-not-allowed' : 'hover:bg-slate-800 active:scale-[0.98]'}`}
               >
-                {isForgotLoading ? <i className="fas fa-circle-notch fa-spin"></i> : 'Kirim Link Reset'}
+                {isForgotLoading ? <i className="fas fa-circle-notch animate-spin"></i> : 'Kirim Link Reset'}
               </button>
             </form>
           </div>

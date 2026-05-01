@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import GlobalSearch from "@/components/GlobalSearch";
@@ -35,8 +36,10 @@ export function Topbar({
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const handleClickOutside = (event: MouseEvent) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) setIsProfileMenuOpen(false);
       if (notifRef.current && !notifRef.current.contains(event.target as Node)) setIsNotifOpen(false);
@@ -72,23 +75,26 @@ export function Topbar({
               </button>
 
               {isNotifOpen && (
-                <div className="absolute top-[calc(100%+12px)] right-0 w-80 bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-slate-100 py-3 animate-dropdown z-50">
-                  <div className="px-5 py-2 border-b border-slate-100 mb-2 flex justify-between items-center">
-                    <p className="text-[11px] font-extrabold uppercase tracking-widest text-slate-900">Pusat Informasi</p>
-                    {alertCount > 0 && <span className="text-[9px] px-2 py-0.5 bg-red-100 text-red-600 rounded-full font-bold">{alertCount} Info</span>}
+                <div className="absolute top-[calc(100%+12px)] right-[-60px] md:right-0 w-[320px] bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] border border-slate-200 py-2 animate-dropdown z-50">
+                  <div className="px-4 py-3 border-b border-slate-100 mb-1 flex justify-between items-center">
+                    <p className="text-[11px] font-extrabold uppercase tracking-widest text-slate-800">Pusat Informasi</p>
+                    {alertCount > 0 && <span className="text-[10px] px-2.5 py-0.5 bg-red-100 text-red-600 rounded-full font-bold">{alertCount} Info</span>}
                   </div>
-                  <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
+                  <div className="max-h-[60vh] overflow-y-auto px-2 custom-scrollbar flex flex-col gap-1">
                     {notifications.length === 0 ? (
-                      <div className="px-5 py-6 text-center text-slate-500 text-xs font-medium">Belum ada notifikasi baru.</div>
+                      <div className="px-5 py-8 text-center text-slate-400">
+                        <i className="fas fa-bell-slash text-2xl mb-2 opacity-20"></i>
+                        <p className="text-sm font-medium">Tidak ada notifikasi baru.</p>
+                      </div>
                     ) : (
                       notifications.map((notif) => (
-                        <Link key={notif.id} href={notif.link} onClick={() => setIsNotifOpen(false)} className="px-5 py-3 hover:bg-slate-50 transition-colors flex items-start gap-4 border-b border-slate-50 last:border-0 group">
-                          <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${notif.bg} ${notif.color}`}>
+                        <Link key={notif.id} href={notif.link} onClick={() => setIsNotifOpen(false)} className="p-3 hover:bg-slate-50 rounded-xl transition-colors flex items-start gap-3 group">
+                          <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${notif.type === 'critical' ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-blue-500'}`}>
                             <i className={`fas ${notif.icon} text-sm`}></i>
                           </div>
                           <div className="flex-1 pt-0.5">
-                            <p className={`text-xs font-bold mb-1 ${notif.type === 'critical' ? 'text-red-600' : 'text-slate-900'}`}>{notif.title}</p>
-                            <p className="text-[10px] text-slate-500 leading-relaxed">{notif.desc}</p>
+                            <p className={`text-sm font-bold mb-1 ${notif.type === 'critical' ? 'text-red-600' : 'text-slate-800'}`}>{notif.title}</p>
+                            <p className="text-[13px] text-slate-500 font-medium leading-relaxed">{notif.desc}</p>
                           </div>
                         </Link>
                       ))
@@ -124,31 +130,58 @@ export function Topbar({
             )}
 
             {isProfileMenuOpen && !isLoading && (
-              <div className="absolute top-[calc(100%+16px)] right-0 w-64 bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-slate-100 py-3 animate-dropdown z-50">
-                <div className="px-5 py-3 border-b border-slate-100 mb-2">
-                  <p className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Masuk sebagai</p>
-                  <p className="text-sm font-bold text-slate-900 truncate">{userEmail}</p>
+              <div className="absolute top-[calc(100%+16px)] right-0 w-[280px] bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] border border-slate-200 py-2 animate-dropdown z-50">
+                {/* Header Profile */}
+                <div className="px-4 py-3 flex items-center gap-3 border-b border-slate-100 mb-1">
+                  <div className="relative shrink-0">
+                    {userAvatar ? (
+                      <img src={userAvatar} alt="Avatar" className="w-10 h-10 rounded-full object-cover border border-slate-200" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold border border-slate-200">
+                        {userName ? userName.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+                  </div>
+                  <div className="flex flex-col overflow-hidden">
+                    <p className="text-sm font-bold text-slate-900 truncate">{userName || "Pengguna"}</p>
+                    <p className="text-xs text-slate-500 truncate">{userEmail}</p>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <Link href="/dashboard/profile" className="px-5 py-3 text-[13px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
-                    <i className="fas fa-user-edit w-5 text-center text-slate-400"></i> Edit Profil
+
+                {/* Menu Items */}
+                <div className="flex flex-col px-2">
+                  <Link href="/dashboard/profile" className="px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
+                    <i className="fas fa-user text-slate-400 w-4 text-center"></i> 
+                    <span className="flex-1">Edit Profil</span>
                   </Link>
-                  <Link href="/dashboard/settings" className="px-5 py-3 text-[13px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
-                    <i className="fas fa-cog w-5 text-center text-slate-400"></i> Pengaturan
+                  <Link href="/dashboard/settings" className="px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
+                    <i className="fas fa-cog text-slate-400 w-4 text-center"></i> 
+                    <span className="flex-1">Pengaturan</span>
                   </Link>
-                  <Link href="/support" className="px-5 py-3 text-[13px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
-                    <i className="fas fa-headset w-5 text-center text-slate-400"></i> Pusat Bantuan
+                  
+                  <div className="h-px bg-slate-100 my-1 mx-2"></div>
+                  
+                  <Link href="/support" className="px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
+                    <i className="fas fa-headset text-slate-400 w-4 text-center"></i> 
+                    <span className="flex-1">Pusat Bantuan</span>
                   </Link>
                   {userPlan !== 'PRO' && (
-                    <Link href="/pricing" className="px-5 py-3 text-[13px] font-bold text-[#ff9e00] hover:bg-[#ff9e00]/10 transition-colors flex items-center gap-3 mt-1" onClick={() => setIsProfileMenuOpen(false)}>
-                      <i className="fas fa-arrow-up w-5 text-center"></i> Upgrade Pro
+                    <Link href="/pricing" className="px-3 py-2.5 text-[13px] font-semibold text-[#ff9e00] hover:bg-[#ff9e00]/10 rounded-lg transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
+                      <i className="fas fa-arrow-up w-4 text-center"></i> 
+                      <span className="flex-1">Upgrade Pro</span>
                     </Link>
                   )}
                 </div>
-                <div className="h-px bg-slate-100 my-2 mx-5"></div>
-                <button onClick={() => { setIsProfileMenuOpen(false); setShowLogoutModal(true); }} className="w-full px-5 py-3 text-[13px] font-bold text-red-500 hover:bg-red-50 transition-colors flex items-center gap-3 text-left">
-                  <i className="fas fa-sign-out-alt w-5 text-center"></i> Keluar
-                </button>
+                
+                <div className="h-px bg-slate-100 mt-2 mb-3"></div>
+                
+                {/* Sign Out Button */}
+                <div className="px-4 pb-2">
+                  <button onClick={() => { setIsProfileMenuOpen(false); setShowLogoutModal(true); }} className="w-full px-4 py-2.5 text-[13px] font-bold text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2">
+                    <i className="fas fa-sign-out-alt"></i> Keluar
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -156,8 +189,9 @@ export function Topbar({
       </header>
 
       {/* LOGOUT MODAL */}
-      {showLogoutModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* LOGOUT MODAL */}
+      {showLogoutModal && mounted && createPortal(
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
           {/* 1. Full Screen Blur */}
           <div className="absolute inset-0 bg-slate-900/30 backdrop-blur-md transition-opacity duration-300" onClick={() => !isLoggingOut && setShowLogoutModal(false)}></div>
           
@@ -194,7 +228,7 @@ export function Topbar({
                   disabled={isLoggingOut} 
                   className="flex-1 py-2.5 md:py-3 bg-[#ff9e00] hover:bg-[#e68e00] rounded-xl font-bold text-white shadow-lg shadow-[#ff9e00]/20 active:scale-95 transition-all flex items-center justify-center gap-2 text-xs md:text-sm disabled:opacity-50"
                 >
-                  {isLoggingOut ? <i className="fas fa-circle-notch fa-spin text-white"></i> : 'Keluar'}
+                  {isLoggingOut ? <i className="fas fa-circle-notch animate-spin text-white"></i> : 'Keluar'}
                 </button>
                 <button 
                   onClick={() => setShowLogoutModal(false)} 
@@ -206,7 +240,8 @@ export function Topbar({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

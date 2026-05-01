@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers"; 
-import { Toaster } from 'react-hot-toast'; // <-- 1. Tambahkan import ini
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,18 +40,6 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col text-gray-900 bg-white">
         <Providers>
           {children}
-          {/* 2. Pasang Toaster global di sini dengan z-index absolut dan margin top agar tidak tertutup Navbar */}
-          <Toaster 
-            position="top-center" 
-            containerStyle={{ zIndex: 1000000 }}
-            toastOptions={{ 
-              className: 'z-[1000000]',
-              style: { 
-                zIndex: 1000000,
-                marginTop: '20px'
-              } 
-            }} 
-          />
         </Providers>
       </body>
     </html>

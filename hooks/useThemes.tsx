@@ -39,12 +39,8 @@ export function useThemes() {
 
     if (!theme.isAvailable) {
       toast(`Tema ${themeName} akan segera hadir!`, {
-        icon: '🔒',
-        style: { 
-          borderRadius: '16px', background: '#0a0a0a', color: '#fff',
-          fontWeight: '600', fontSize: '13px', padding: '14px 24px',
-          border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
-        }
+        id: `theme-coming-soon-${themeId}`,
+        icon: '🔒'
       });
       return;
     }
@@ -53,8 +49,8 @@ export function useThemes() {
     // Langsung arahkan ke Editor dengan query param untuk PREVIEW.
     if (theme.isPro && userPlan === 'FREE') {
       toast.success(`Pratinjau tema ${themeName} aktif!`, {
-        icon: '✨',
-        style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+        id: `theme-preview-${themeId}`,
+        icon: '✨'
       });
       
       router.push(`/dashboard/appearance?previewTheme=${themeId}`);
@@ -63,7 +59,7 @@ export function useThemes() {
 
     // Jika tema FREE atau user sudah PRO, simpan ke database seperti biasa
     const toastId = toast.loading(`Menerapkan tema ${themeName}...`, {
-      style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+      id: 'apply-theme-loading'
     });
     
     try {
@@ -75,9 +71,7 @@ export function useThemes() {
 
       if (res.ok) {
         toast.success('Tema berhasil diterapkan!', { 
-            id: toastId,
-            style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' },
-            iconTheme: { primary: '#22c55e', secondary: '#0a0a0a' }
+            id: toastId
         });
         
         setCurrentTheme(themeId);
@@ -95,8 +89,8 @@ export function useThemes() {
 
   const handleProComingSoon = () => {
     toast('Fitur Pro Creator Editor masih dalam tahap pengembangan.', {
-      icon: '✨',
-      style: { borderRadius: '16px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: '600', border: '1px solid rgba(255,255,255,0.1)' }
+      id: 'pro-editor-coming-soon',
+      icon: '✨'
     });
   };
 

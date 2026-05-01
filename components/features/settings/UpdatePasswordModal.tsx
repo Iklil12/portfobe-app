@@ -105,7 +105,7 @@ export function UpdatePasswordModal({ state, actions }: UpdatePasswordModalProps
                   <div className="flex gap-3 pt-2">
                     <button type="button" onClick={() => setShowPasswordModal(false)} disabled={isUpdatingPassword} className="flex-1 py-3.5 rounded-xl font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-all text-sm">Batal</button>
                     <button type="submit" disabled={isUpdatingPassword} className="flex-1 py-3.5 rounded-xl font-bold text-white bg-slate-900 hover:bg-slate-800 transition-all flex items-center justify-center gap-2 text-sm shadow-md">
-                      {isUpdatingPassword ? <i className="fas fa-spinner fa-spin"></i> : 'Simpan Sandi'}
+                      {isUpdatingPassword ? <i className="fas fa-spinner animate-spin"></i> : 'Simpan Sandi'}
                     </button>
                   </div>
                 </form>
