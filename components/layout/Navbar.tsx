@@ -3,7 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-export function Navbar() {
+interface NavbarProps {
+  isLoggedIn?: boolean;
+}
+
+export function Navbar({ isLoggedIn = false }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -39,10 +43,18 @@ export function Navbar() {
           </div>
           
           <div className="hidden md:flex items-center space-x-3">
-            <Link href="/login" className="text-slate-600 hover:text-slate-900 text-sm font-bold px-5 py-2 hover:bg-slate-100 rounded-full transition-colors">Log in</Link>
-            <Link href="/register" className="px-7 py-2.5 rounded-full bg-[#0f172a] text-white text-sm font-bold hover:bg-black transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20 active:scale-95 flex items-center gap-2 group">
-              Get Started
-            </Link>
+            {isLoggedIn ? (
+              <Link href="/dashboard" className="px-7 py-2.5 rounded-full bg-[#ff9e00] text-black text-sm font-bold hover:bg-[#e88f00] transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20 active:scale-95 flex items-center gap-2">
+                <i className="fas fa-layer-group text-xs"></i> Go to Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="text-slate-600 hover:text-slate-900 text-sm font-bold px-5 py-2 hover:bg-slate-100 rounded-full transition-colors">Log in</Link>
+                <Link href="/register" className="px-7 py-2.5 rounded-full bg-[#0f172a] text-white text-sm font-bold hover:bg-black transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20 active:scale-95 flex items-center gap-2 group">
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
           
           <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden text-slate-900 focus:outline-none bg-slate-100 hover:bg-slate-200 w-10 h-10 rounded-full flex items-center justify-center active:scale-90 transition-all">
@@ -71,10 +83,18 @@ export function Navbar() {
             ))}
         </div>
         <div className="p-6 border-t border-slate-100 flex flex-col gap-3">
-            <Link href="/login" className="block w-full text-slate-900 font-bold py-4 text-center bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors">Log in</Link>
-            <Link href="/register" className="block w-full py-4 rounded-xl bg-slate-900 text-white text-center font-bold shadow-lg hover:bg-black transition-colors flex items-center justify-center gap-2">
-              Get Started Free <i className="fas fa-bolt text-yellow-400"></i>
-            </Link>
+            {isLoggedIn ? (
+              <Link href="/dashboard" className="block w-full py-4 rounded-xl bg-[#ff9e00] text-black text-center font-bold shadow-lg hover:bg-[#e88f00] transition-colors flex items-center justify-center gap-2">
+                <i className="fas fa-layer-group text-xs"></i> Go to Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="block w-full text-slate-900 font-bold py-4 text-center bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors">Log in</Link>
+                <Link href="/register" className="block w-full py-4 rounded-xl bg-slate-900 text-white text-center font-bold shadow-lg hover:bg-black transition-colors flex items-center justify-center gap-2">
+                  Get Started Free <i className="fas fa-bolt text-yellow-400"></i>
+                </Link>
+              </>
+            )}
         </div>
       </div>
     </>

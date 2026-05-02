@@ -1,3 +1,4 @@
+//src/hooks/useThemes.tsx
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -10,17 +11,31 @@ export function useThemes() {
   const [subdomain, setSubdomain] = useState<string>(''); 
   const [userPlan, setUserPlan] = useState<string>('FREE');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'pro' | 'favorites'>('all');
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const isFirstRender = React.useRef(true);
 
+  // Sinkronisasi data saat mount
   useEffect(() => {
     const fetchCurrentTheme = async () => {
       try {
-        const res = await fetch('/api/appearance');
+        const res = await fetch('/api/appearance?mode=lite');
         if (res.ok) {
           const data = await res.json();
           if (data) {
             if (data.siteAppearance?.themeTemplate) setCurrentTheme(data.siteAppearance.themeTemplate);
             if (data.profile?.subdomain) setSubdomain(data.profile.subdomain);
             if (data.plan) setUserPlan(data.plan.toUpperCase());
+            
+            // Ambil favorit dari DB
+            if (data.siteAppearance?.favoriteThemes) {
+                try {
+                    const parsed = JSON.parse(data.siteAppearance.favoriteThemes);
+                    setFavorites(parsed);
+                } catch (e) {
+                    setFavorites([]);
+                }
+            }
           }
         }
       } catch (error) {
@@ -32,6 +47,31 @@ export function useThemes() {
     
     fetchCurrentTheme();
   }, []);
+
+  // DEBOUNCE SYNC: Kirim ke database hanya setelah user berhenti klik selama 1 detik
+  useEffect(() => {
+    // Lewati eksekusi saat pertama kali komponen dirender atau saat data baru dimuat dari DB
+    if (isFirstRender.current) {
+        if (favorites.length > 0 || !isLoading) {
+            isFirstRender.current = false;
+        }
+        return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        await fetch('/api/appearance', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ favoriteThemes: favorites })
+        });
+      } catch (error) {
+        console.error("Gagal menyimpan favorit ke DB:", error);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [favorites]);
 
   const handleUseTheme = async (themeId: string, themeName: string) => {
     const theme = THEMES_DATA.find(t => t.id === themeId);
@@ -94,6 +134,22 @@ export function useThemes() {
     });
   };
 
+  const toggleFavorite = (themeId: string) => {
+    const isFav = favorites.includes(themeId);
+    const updatedFavorites = isFav
+      ? favorites.filter(id => id !== themeId)
+      : [...favorites, themeId];
+    
+    // Update local state instan untuk UX cepat
+    setFavorites(updatedFavorites);
+    
+    // Tampilkan toast
+    toast(isFav ? 'Dihapus dari favorit' : 'Ditambahkan ke favorit ❤️', {
+      id: `fav-${themeId}`,
+    });
+  };
+
+  const allThemes = THEMES_DATA;
   const themes = THEMES_DATA;
 
   return {
@@ -101,12 +157,16 @@ export function useThemes() {
       currentTheme,
       subdomain,
       userPlan,
-      isLoading
+      isLoading,
+      activeFilter,
+      favorites
     },
     actions: {
       handleUseTheme,
-      handleProComingSoon
+      handleProComingSoon,
+      setActiveFilter,
+      toggleFavorite
     },
-    themes
+    themes: allThemes
   };
 }

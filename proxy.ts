@@ -1,11 +1,11 @@
 import middleware from "next-auth/middleware";
 
-// Next.js 16 meminta fungsi diekspor secara eksplisit
+// Mengikuti standar Next.js 16: menggunakan proxy.ts sebagai pengganti middleware.ts
 export default function proxy(req: any) {
   return middleware(req);
 }
 
 export const config = { 
-  // Mengunci folder dashboard dan semua sub-foldernya
+  // Proteksi untuk folder dashboard
   matcher: ["/dashboard/:path*"] 
 };

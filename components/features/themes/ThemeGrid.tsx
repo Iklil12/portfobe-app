@@ -1,13 +1,14 @@
 import React from 'react';
 
 export function ThemeGrid({ themes, state, actions }: { themes: any[], state: any, actions: any }) {
-  const { currentTheme } = state;
-  const { handleUseTheme } = actions;
+  const { currentTheme, favorites = [] } = state;
+  const { handleUseTheme, toggleFavorite } = actions;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-24">
       {themes.map((theme, index) => {
           const isActive = currentTheme === theme.id;
+          const isFavorite = favorites.includes(theme.id);
 
           return (
             <div 
@@ -32,6 +33,19 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
                 </div>
 
                 <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/20 to-black/90 opacity-70 group-hover:opacity-80 transition-opacity duration-500"></div>
+                
+                {/* FAVORITE BUTTON */}
+                <button
+                  onClick={(e) => { e.stopPropagation(); toggleFavorite(theme.id); }}
+                  className={`absolute top-4 right-4 z-20 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md
+                    ${isFavorite
+                      ? 'bg-rose-500 border-rose-400 text-white scale-110 shadow-lg shadow-rose-500/30'
+                      : 'bg-black/30 border-white/10 text-white/50 hover:bg-rose-500/80 hover:border-rose-400 hover:text-white opacity-0 group-hover:opacity-100'
+                    }`}
+                  title={isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit'}
+                >
+                  <i className={`${isFavorite ? 'fas' : 'far'} fa-heart text-[11px]`}></i>
+                </button>
                 
                 <div className="absolute top-5 left-5 z-20 flex flex-col gap-2">
                   {isActive ? (

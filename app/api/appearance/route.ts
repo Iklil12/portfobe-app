@@ -6,17 +6,34 @@ import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 
 // MENGAMBIL TEMA & PROFIL YANG SEDANG DIPAKAI (UNTUK PREVIEW)
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // Tarik data dari User sebagai induknya, lalu include semua relasinya
+    const { searchParams } = new URL(req.url);
+    const mode = searchParams.get('mode');
+
+    // MODE LITE: Hanya ambil data dasar untuk performa tinggi (digunakan di Themes Page)
+    if (mode === 'lite') {
+      const liteData = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: {
+          id: true,
+          plan: true,
+          profile: { select: { subdomain: true, fullName: true } },
+          siteAppearance: { select: { themeTemplate: true, favoriteThemes: true } }
+        }
+      });
+      return NextResponse.json(liteData);
+    }
+
+    // MODE FULL: Tarik data lengkap untuk Editor / Preview
     const userData = await prisma.user.findUnique({
       where: { email: session.user.email },
       include: {
         profile: true,
-        siteAppearance: true, // <--- Panggil tabel baru di sini
+        siteAppearance: true,
         links: { orderBy: { order: 'asc' } },
         projects: { orderBy: { createdAt: 'desc' } },
         certificates: { orderBy: { createdAt: 'desc' } }
@@ -24,8 +41,6 @@ export async function GET() {
     });
 
     if (!userData) return NextResponse.json({});
-
-    // Kirim semua data secara utuh untuk dirender di halaman preview
     return NextResponse.json(userData);
   } catch (error) {
     console.error("GET Appearance Error:", error);
@@ -52,23 +67,28 @@ export async function PATCH(req: Request) {
         fontBody, 
         buttonShape, 
         cardStyle,
-        splashScreen
+        splashScreen,
+        favoriteThemes
     } = body;
 
-    // --- PLAN ENFORCEMENT: PRO FEATURES ---
-    const proThemes = ['cinematic', 'acid'];
-    const isProTheme = proThemes.includes(themeTemplate);
-    const isProSplash = splashScreen === true;
+    // OPTIMASI: Jika hanya update favorit, lewati pengecekan plan dan logging
+    const isOnlyFavorites = favoriteThemes !== undefined && themeTemplate === undefined;
 
-    if ((isProTheme || isProSplash) && user.plan === 'FREE') {
-      return NextResponse.json({ 
-        error: isProTheme 
-          ? "Tema ini eksklusif untuk PRO Creator." 
-          : "Fitur Cinematic Intro eksklusif untuk PRO Creator.",
-        code: "FEATURE_LOCKED" // Ubah jadi lebih umum
-      }, { status: 403 });
+    if (!isOnlyFavorites) {
+      // --- PLAN ENFORCEMENT: PRO FEATURES ---
+      const proThemes = ['cinematic', 'acid'];
+      const isProTheme = proThemes.includes(themeTemplate);
+      const isProSplash = splashScreen === true;
+
+      if ((isProTheme || isProSplash) && user.plan === 'FREE') {
+        return NextResponse.json({ 
+          error: isProTheme 
+            ? "Tema ini eksklusif untuk PRO Creator." 
+            : "Fitur Cinematic Intro eksklusif untuk PRO Creator.",
+          code: "FEATURE_LOCKED"
+        }, { status: 403 });
+      }
     }
-    // ------------------------------------
 
     // UPDATE ATAU CREATE KE TABEL SITE_APPEARANCE
     const updatedAppearance = await prisma.siteAppearance.upsert({
@@ -80,25 +100,29 @@ export async function PATCH(req: Request) {
         fontBody, 
         buttonShape, 
         cardStyle,
-        splashScreen
+        splashScreen,
+        favoriteThemes: favoriteThemes ? JSON.stringify(favoriteThemes) : undefined
       },
       create: {
-        userId: user.id, // Sambungkan ke User yang sedang login
+        userId: user.id,
         themeTemplate, 
         themeColor, 
         fontHeading, 
         fontBody, 
         buttonShape, 
         cardStyle,
-        splashScreen
+        splashScreen,
+        favoriteThemes: favoriteThemes ? JSON.stringify(favoriteThemes) : "[]"
       }
     });
 
-    await logActivity(user.id, "UPDATE_THEME", `Memperbarui tema portofolio ke ${themeTemplate}`);
+    if (!isOnlyFavorites) {
+      await logActivity(user.id, "UPDATE_THEME", `Memperbarui tema portofolio ke ${themeTemplate}`);
+    }
 
     return NextResponse.json(updatedAppearance);
   } catch (error) {
     console.error("PATCH Appearance Error:", error);
     return NextResponse.json({ error: "Gagal menyimpan tema" }, { status: 500 });
   }
-}
+}
