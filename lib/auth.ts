@@ -1,9 +1,10 @@
+// lib/auth.ts
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
-import { Resend } from 'resend'; // <-- IMPORT RESEND DI SINI
+import { Resend } from 'resend'; 
 
 // Inisialisasi Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -134,7 +135,7 @@ export const authOptions: NextAuthOptions = {
             resend.emails.send({
               from: 'Portfobe <hellocreator@mail.ritions.com>',
               to: user.email,
-              replyTo: 'ikliluluyun@ritions.com', // User bisa balas langsung ke Anda
+              replyTo: 'ikliluluyun@ritions.com', 
               subject: 'Welcome to Portfobe!',
               html: `
                 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
@@ -190,32 +191,60 @@ export const authOptions: NextAuthOptions = {
       return true; 
     },
 
-    // 2. JWT CALLBACK: Sinkronisasi Akurat
+    // 2. JWT CALLBACK: Sinkronisasi Akurat Tanpa Spam Database
     async jwt({ token, user, trigger, session, account }: any) {
-      const emailToFind = user?.email || token?.email;
-      
-      if (user || trigger === "update") {
-        if (emailToFind) {
+      // Jika ada trigger update dari client (misal ubah profile), langsung perbarui tokennya
+      if (trigger === "update" && session) {
+        return { ...token, ...session };
+      }
+
+      // HANYA JALAN SEKALI SAAT AWAL LOGIN
+      if (user) {
+        // Jika login pakai Email/Password, oper langsung datanya (hemat 1 query!)
+        if (account?.provider === "credentials") {
+          token.id = user.id;
+          token.name = user.name;
+          token.email = user.email;
+          token.plan = user.plan;
+          token.profession = user.profession;
+          token.bio = user.bio;
+          token.avatar = user.avatar;
+          token.picture = user.image;
+          token.subdomain = user.subdomain;
+          token.isLive = user.isLive;
+          token.isOAuthLinked = false;
+          token.isStrictlyGoogle = false;
+          return token;
+        }
+
+        // Jika login via Google, tarik datanya pakai SELECT agar sangat ringan
+        if (account?.provider === "google") {
           const dbUser = await prisma.user.findUnique({
-            where: { email: emailToFind },
-            include: { profile: true, accounts: true } 
+            where: { email: user.email },
+            select: {
+              id: true,
+              email: true,
+              plan: true,
+              avatar: true,
+              password: true,
+              isLive: true,
+              profile: { select: { fullName: true, profession: true, bio: true, avatarUrl: true, subdomain: true } },
+              accounts: { select: { id: true } }
+            }
           });
-          
+
           if (dbUser) {
-            const uData = dbUser as any; 
-            
-            token.id = uData.id; 
-            token.name = dbUser.profile?.fullName || uData.name || "User";
-            token.email = uData.email;
-            token.plan = uData.plan;
+            token.id = dbUser.id;
+            token.name = dbUser.profile?.fullName || user.name || "User";
+            token.email = dbUser.email;
+            token.plan = dbUser.plan;
             token.profession = dbUser.profile?.profession;
             token.bio = dbUser.profile?.bio;
-            token.avatar = uData.avatar; 
-            token.picture = dbUser.profile?.avatarUrl || uData.avatar || user?.image;
+            token.avatar = dbUser.avatar;
+            token.picture = dbUser.profile?.avatarUrl || dbUser.avatar || user.image;
             token.subdomain = dbUser.profile?.subdomain;
-            token.isLive = uData.isLive;
-
-            token.isOAuthLinked = dbUser.accounts && dbUser.accounts.length > 0;
+            token.isLive = dbUser.isLive;
+            token.isOAuthLinked = dbUser.accounts.length > 0;
             token.isStrictlyGoogle = dbUser.password === "GOOGLE_LOGIN_NO_PASSWORD";
           }
         }
@@ -223,20 +252,19 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     
-    // 3. SESSION CALLBACK: Oper status ke Frontend
+    // 3. SESSION CALLBACK: Oper status ke Frontend dengan instan
     async session({ session, token }: any) {
       if (session.user) {
         session.user.id = token.id as string; 
-        session.user.plan = token.plan; 
-        session.user.profession = token.profession;
-        session.user.bio = token.bio;
-        session.user.avatar = token.avatar;
-        session.user.image = token.picture;
-        session.user.subdomain = token.subdomain;
-        session.user.isLive = token.isLive;
-
-        session.user.isOAuthLinked = token.isOAuthLinked;
-        session.user.isStrictlyGoogle = token.isStrictlyGoogle;
+        session.user.plan = token.plan as string; 
+        session.user.profession = token.profession as string;
+        session.user.bio = token.bio as string;
+        session.user.avatar = token.avatar as string;
+        session.user.image = token.picture as string;
+        session.user.subdomain = token.subdomain as string;
+        session.user.isLive = token.isLive as boolean;
+        session.user.isOAuthLinked = token.isOAuthLinked as boolean;
+        session.user.isStrictlyGoogle = token.isStrictlyGoogle as boolean;
       }
       return session;
     }

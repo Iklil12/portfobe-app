@@ -1,4 +1,4 @@
-// app/providers.tsx
+//app/providers.tsx
 "use client";
 
 import { SessionProvider } from "next-auth/react";
@@ -13,7 +13,7 @@ const globalFetcher = (url: string) =>
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
+    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
       <SWRConfig
         value={{
           fetcher: globalFetcher,
