@@ -2,6 +2,7 @@ import React from 'react';
 import { CldUploadWidget } from 'next-cloudinary';
 import { showToast } from '@/lib/customToast';
 import Link from 'next/link';
+import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 
 interface AvatarUploadProps {
   state: any;
@@ -11,13 +12,16 @@ interface AvatarUploadProps {
 export function AvatarUpload({ state, actions }: AvatarUploadProps) {
   const { session, firstName, lastName, avatarUrl } = state;
   const { setAvatarUrl } = actions;
+  
+  // Ambil userPlan langsung dari layout hook (sinkron dengan Topbar)
+  const { userPlan } = useDashboardLayout();
 
   const fullName = session?.user?.name || "User Portfo";
   const email = session?.user?.email || "user@example.com";
   const cloudinaryPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "paperions_preset";
   
-  // Deteksi status PRO (Asumsi dari skema NextAuth)
-  const isPro = session?.user?.plan === 'PRO' || session?.user?.role === 'PRO';
+  // Deteksi status PRO
+  const isPro = userPlan === 'PRO';
 
   return (
     <div className="relative mb-8 border-b border-slate-100 pb-8 sm:pb-10 pt-32 sm:pt-40">
