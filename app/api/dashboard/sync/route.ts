@@ -21,7 +21,6 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const range = searchParams.get("range") || "7d";
 
-    // 1. Tentukan rentang waktu untuk analitik
     let startDate = new Date();
     if (range === "7d") startDate.setDate(startDate.getDate() - 7);
     else if (range === "30d") startDate.setDate(startDate.getDate() - 30);
@@ -30,8 +29,8 @@ export async function GET(req: Request) {
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
 
-    // 2. PARALLEL EXECUTION dengan Promise.all (Mega BFF Refactor - 1 Koneksi Cepat)
-    const [user, announcements, historicalStats, todayLogs, projects, certificates, links, activities] = await Promise.all([
+    // 2. PARALLEL EXECUTION: OPTIMASI SUPER RINGAN
+    const [user, announcements, historicalStats, todayLogs, projectsCount, certificatesCount, linksCount, activities] = await Promise.all([
       // A. Layout & Appearance
       prisma.user.findUnique({
         where: { email: userEmail },
@@ -46,43 +45,21 @@ export async function GET(req: Request) {
       `,
       // C. Historical Stats
       prisma.dailyStats.findMany({
-        where: {
-          userId,
-          date: { gte: startDate, lt: startOfToday }
-        },
+        where: { userId, date: { gte: startDate, lt: startOfToday } },
         orderBy: { date: 'asc' }
       }),
       // D. Today Logs
       prisma.analytics.findMany({
-        where: {
-          userId,
-          createdAt: { gte: startOfToday }
-        },
-        select: {
-          id: true,
-          type: true,
-          ipAddress: true,
-          duration: true,
-          sessionId: true,
-          referrer: true
-        }
+        where: { userId, createdAt: { gte: startOfToday } },
+        select: { id: true, type: true, ipAddress: true, duration: true, sessionId: true, referrer: true }
       }),
-      // E. Projects (Hanya ambil ID untuk hitung jumlah)
-      prisma.project.findMany({
-        where: { userId },
-        select: { id: true }
-      }),
-      // F. Certificates (Hanya ambil ID)
-      prisma.certificate.findMany({
-        where: { userId },
-        select: { id: true }
-      }),
-      // G. Links (Hanya ambil ID)
-      prisma.link.findMany({
-        where: { userId },
-        select: { id: true }
-      }),
-      // H. Activities (Ambil data terbatas untuk timeline)
+      // E. Projects (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
+      prisma.project.count({ where: { userId } }),
+      // F. Certificates (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
+      prisma.certificate.count({ where: { userId } }),
+      // G. Links (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
+      prisma.link.count({ where: { userId } }),
+      // H. Activities (Tetap dibatasi take: 10)
       prisma.activity.findMany({
         where: { userId },
         orderBy: { createdAt: 'desc' },
@@ -108,8 +85,7 @@ export async function GET(req: Request) {
 
     // --- 4. Format Data Announcements ---
     const formattedAnnouncements = Array.isArray(announcements) ? announcements.map((a: any) => ({
-      ...a,
-      isActive: Boolean(a.isActive),
+      ...a, isActive: Boolean(a.isActive),
     })) : [];
 
     // --- 5. Format Data Stats Analytics ---
@@ -153,11 +129,8 @@ export async function GET(req: Request) {
           else if (r.includes("whatsapp") || r.includes("wa.me")) ref = "WhatsApp";
           else if (r.includes("linkedin")) ref = "LinkedIn";
           else {
-              try {
-                  ref = new URL(log.referrer).hostname.replace('www.', '');
-              } catch(e) {
-                  ref = "Other";
-              }
+              try { ref = new URL(log.referrer).hostname.replace('www.', ''); } 
+              catch(e) { ref = "Other"; }
           }
         }
         sourcesMap[ref] = (sourcesMap[ref] || 0) + 1;
@@ -165,9 +138,7 @@ export async function GET(req: Request) {
 
       const sources = Object.entries(sourcesMap)
         .map(([name, count]) => ({ 
-          name, 
-          count, 
-          percentage: Math.round((count / (todayViews || 1)) * 100) 
+          name, count, percentage: Math.round((count / (todayViews || 1)) * 100) 
         }))
         .sort((a, b) => b.count - a.count);
 
@@ -201,9 +172,9 @@ export async function GET(req: Request) {
       announcements: formattedAnnouncements,
       stats: statsResult,
       overview: {
-        projectsCount: projects.length,
-        certificatesCount: certificates.length,
-        linksCount: links.length,
+        projectsCount: projectsCount, // LANGSUNG MENGGUNAKAN HASIL COUNT (Angka murni)
+        certificatesCount: certificatesCount, // LANGSUNG MENGGUNAKAN HASIL COUNT
+        linksCount: linksCount, // LANGSUNG MENGGUNAKAN HASIL COUNT
         activities
       }
     });
