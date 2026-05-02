@@ -5,6 +5,10 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
+
 // MENGAMBIL TEMA & PROFIL YANG SEDANG DIPAKAI (UNTUK PREVIEW)
 export async function GET(req: Request) {
   try {
@@ -58,6 +62,7 @@ export async function PATCH(req: Request) {
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     const body = await req.json();
+    console.log("PATCH Appearance Body:", body);
     
     // TANGKAP DATA DARI FRONTEND
     const { 

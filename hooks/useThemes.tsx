@@ -13,7 +13,7 @@ export function useThemes() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'pro' | 'favorites'>('all');
   const [favorites, setFavorites] = useState<string[]>([]);
-  const isFirstRender = React.useRef(true);
+  const dataLoaded = React.useRef(false);
 
   // Sinkronisasi data saat mount
   useEffect(() => {
@@ -31,7 +31,7 @@ export function useThemes() {
             if (data.siteAppearance?.favoriteThemes) {
                 try {
                     const parsed = JSON.parse(data.siteAppearance.favoriteThemes);
-                    setFavorites(parsed);
+                    setFavorites(Array.isArray(parsed) ? parsed : []);
                 } catch (e) {
                     setFavorites([]);
                 }
@@ -41,7 +41,11 @@ export function useThemes() {
       } catch (error) {
         console.error("Gagal memuat data saat ini:", error);
       } finally {
-        setTimeout(() => setIsLoading(false), 800);
+        setIsLoading(false);
+        // Tandai bahwa data awal sudah masuk, sekarang perubahan boleh disimpan ke DB
+        setTimeout(() => {
+            dataLoaded.current = true;
+        }, 100);
       }
     };
     
@@ -50,21 +54,20 @@ export function useThemes() {
 
   // DEBOUNCE SYNC: Kirim ke database hanya setelah user berhenti klik selama 1 detik
   useEffect(() => {
-    // Lewati eksekusi saat pertama kali komponen dirender atau saat data baru dimuat dari DB
-    if (isFirstRender.current) {
-        if (favorites.length > 0 || !isLoading) {
-            isFirstRender.current = false;
-        }
-        return;
-    }
+    // JANGAN SIMPAN jika data awal belum selesai dimuat
+    if (!dataLoaded.current) return;
 
     const timer = setTimeout(async () => {
       try {
-        await fetch('/api/appearance', {
+        const res = await fetch('/api/appearance', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ favoriteThemes: favorites })
         });
+        
+        if (!res.ok) {
+            console.error("Gagal menyimpan favorit");
+        }
       } catch (error) {
         console.error("Gagal menyimpan favorit ke DB:", error);
       }
