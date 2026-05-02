@@ -108,7 +108,7 @@ export async function GET(req: Request) {
       const logsWithDuration = todayLogs.filter((l: any) => l.duration > 0);
       const totalDuration = logsWithDuration.reduce((acc: number, curr: any) => acc + curr.duration, 0);
       const avgDurationSeconds = logsWithDuration.length > 0 ? Math.round(totalDuration / logsWithDuration.length) : 0;
-      
+
       const minutes = Math.floor(avgDurationSeconds / 60);
       const seconds = avgDurationSeconds % 60;
       const avgTimeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
@@ -129,16 +129,16 @@ export async function GET(req: Request) {
           else if (r.includes("whatsapp") || r.includes("wa.me")) ref = "WhatsApp";
           else if (r.includes("linkedin")) ref = "LinkedIn";
           else {
-              try { ref = new URL(log.referrer).hostname.replace('www.', ''); } 
-              catch(e) { ref = "Other"; }
+            try { ref = new URL(log.referrer).hostname.replace('www.', ''); }
+            catch (e) { ref = "Other"; }
           }
         }
         sourcesMap[ref] = (sourcesMap[ref] || 0) + 1;
       });
 
       const sources = Object.entries(sourcesMap)
-        .map(([name, count]) => ({ 
-          name, count, percentage: Math.round((count / (todayViews || 1)) * 100) 
+        .map(([name, count]) => ({
+          name, count, percentage: Math.round((count / (todayViews || 1)) * 100)
         }))
         .sort((a, b) => b.count - a.count);
 
@@ -152,10 +152,10 @@ export async function GET(req: Request) {
 
       const chartData: any[] = [];
       for (let i = 6; i >= 0; i--) {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          const label = d.toLocaleDateString('id-ID', { weekday: 'short' }).toUpperCase();
-          chartData.push({ day: label, views: chartDataMap[label] || 0 });
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const label = d.toLocaleDateString('id-ID', { weekday: 'short' }).toUpperCase();
+        chartData.push({ day: label, views: chartDataMap[label] || 0 });
       }
 
       statsResult = {
