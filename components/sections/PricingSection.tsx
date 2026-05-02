@@ -56,7 +56,7 @@ export function PricingSection() {
               <p className="text-slate-400 text-sm font-medium mb-8 h-10 leading-relaxed">Advanced features, custom domain, and analytics dashboard.</p>
               
               <div className="mb-8 flex items-baseline gap-1">
-                  <span className="text-5xl md:text-6xl font-bold text-white tracking-tighter">Rp99k</span>
+                  <span className="text-5xl md:text-6xl font-bold text-white tracking-tighter">Rp49k</span>
                   <span className="text-slate-500 font-medium">/mo</span>
               </div>
               
