@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 interface SidebarProps {
   isLoading: boolean;
@@ -54,7 +55,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen }: SidebarProps) {
                </div>
                
                <div className={`absolute inset-0 flex items-center justify-start transition-all duration-300 ease-in-out opacity-100 scale-100 ${shouldCollapse ? 'md:opacity-0 md:scale-75 md:pointer-events-none' : ''}`}>
-                 <img src="/portfo.be.png" alt="Portfo.be Logo" className={`h-7 w-auto object-contain group-hover:scale-105 transition-transform duration-300`} />
+                 <LazyImage src="/portfo.be.png" alt="Portfo.be Logo" className={`h-7 w-auto object-contain group-hover:scale-105 transition-transform duration-300`} />
                </div>
             </Link>
           )}

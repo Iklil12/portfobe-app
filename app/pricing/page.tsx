@@ -7,15 +7,11 @@ import useSWR from 'swr';
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function PricingPage() {
-  // layout-sync mungkin 401 kalau guest, itu oke.
-  const { data: userData, error } = useSWR('/api/layout-sync', fetcher, {
-    shouldRetryOnError: false
-  });
-  
-  const isLoggedIn = !!userData && !error;
-  const userPlan = userData?.plan || 'FREE';
-  
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+
+  const isLoggedIn = false;
+  const userPlan = 'FREE';
+
 
   const plans = [
     {
@@ -25,8 +21,8 @@ export default function PricingPage() {
       period: "Selamanya",
       badge: "Free Plan",
       isPro: false,
-      buttonText: !isLoggedIn ? "Mulai Gratis" : (userPlan === 'FREE' ? "Paket Saat Ini" : "Kembali ke Dasar"),
-      link: !isLoggedIn ? "/register" : "/dashboard",
+      buttonText: "Mulai Gratis",
+      link: "/register",
       features: [
         { text: "Maksimal 5 Proyek", active: true },
         { text: "Maksimal 2 Sertifikat", active: true },
@@ -45,8 +41,8 @@ export default function PricingPage() {
       period: billingCycle === 'monthly' ? "/ bulan" : "/ bulan, ditagih tahunan",
       badge: "Paling Populer",
       isPro: true,
-      buttonText: !isLoggedIn ? "Daftar Pro" : (userPlan === 'PRO' ? "Paket Aktif" : "Upgrade Sekarang"),
-      link: !isLoggedIn ? "/register?plan=pro" : "#", // Link upgrade sesungguhnya nanti di sini
+      buttonText: "Daftar Pro",
+      link: "/register?plan=pro",
       features: [
         { text: "Proyek Tanpa Batas", active: true },
         { text: "Sertifikat Tanpa Batas", active: true },
@@ -89,14 +85,8 @@ export default function PricingPage() {
             <img src="/portfo.be.png" alt="Logo" className="h-6 w-auto" />
           </Link>
           <div className="flex items-center gap-4">
-             {isLoggedIn ? (
-               <Link href="/dashboard" className="text-xs font-bold text-slate-900 px-5 py-2.5 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-all">Dashboard</Link>
-             ) : (
-               <>
-                 <Link href="/login" className="text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors">Login</Link>
-                 <Link href="/register" className="text-xs font-bold text-white px-5 py-2.5 bg-slate-900 rounded-full hover:bg-slate-800 transition-all shadow-md">Daftar</Link>
-               </>
-             )}
+            <Link href="/login" className="text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors">Login</Link>
+            <Link href="/register" className="text-xs font-bold text-white px-5 py-2.5 bg-slate-900 rounded-full hover:bg-slate-800 transition-all shadow-md">Daftar</Link>
           </div>
         </div>
 

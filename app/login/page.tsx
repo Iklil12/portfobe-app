@@ -5,13 +5,6 @@ import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import LoginClient from './LoginClient';
 
-export default async function LoginPage() {
-  const session = await getServerSession(authOptions);
-
-  // Jika sudah login, langsung lempar ke dashboard tanpa render apapun
-  if (session) {
-    redirect('/dashboard');
-  }
-
+export default function LoginPage() {
   return <LoginClient />;
 }

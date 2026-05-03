@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import { LazyImage } from '@/components/ui/LazyImage';
 import { TEMPLATE_LIST } from '@/lib/constants';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
@@ -32,7 +33,7 @@ export function TemplatesSection() {
               <div key={item.id} className="group relative rounded-[2rem] overflow-hidden bg-[#111] break-inside-avoid shadow-2xl hover:shadow-[0_20px_50px_rgba(255,158,0,0.1)] transition-all duration-700 cursor-pointer">
                 
                 <div className={`w-full overflow-hidden ${aspectClass}`}>
-                  <img 
+                  <LazyImage 
                     src={item.image} 
                     alt={item.title} 
                     className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[1s] ease-[cubic-bezier(0.16,1,0.3,1)]" 

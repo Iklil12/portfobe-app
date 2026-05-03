@@ -1,10 +1,12 @@
+//components/features/projects/ProjectList.tsx
 "use client";
 
 import React from 'react';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 const getYouTubeThumbnail = (url: string) => {
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-  return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : url;
+  return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
 export function ProjectList({ state, actions }: { state: any, actions: any }) {
@@ -61,7 +63,7 @@ export function ProjectList({ state, actions }: { state: any, actions: any }) {
           style={{ animationDelay: `${index * 50}ms` }}
         >
           <div className="relative aspect-[4/3] rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100/50">
-            <img 
+            <LazyImage 
               src={item.projectType === 'video' ? getYouTubeThumbnail(item.mediaUrl) : item.mediaUrl} 
               alt={item.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

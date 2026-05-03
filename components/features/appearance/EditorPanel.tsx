@@ -24,8 +24,12 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     splashScreen,
     isThemeModalOpen,
     showProModal,
-    isLoading
+    isLoading,
+    livePreviewData,
+    favorites
   } = state;
+
+  const userPlan = livePreviewData?.plan || 'FREE';
 
   const { 
     setIsEditorCollapsed, 
@@ -38,7 +42,8 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     setSplashScreen,
     setIsThemeModalOpen,
     setActiveTheme,
-    setShowProModal
+    setShowProModal,
+    toggleFavorite
   } = actions;
 
   return (
@@ -58,6 +63,9 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         onClose={() => setIsThemeModalOpen(false)}
         activeTheme={activeTheme}
         onSelectTheme={(themeId) => setActiveTheme(themeId)}
+        favorites={favorites}
+        userPlan={userPlan}
+        onToggleFavorite={toggleFavorite}
       />
       
       <div className={`

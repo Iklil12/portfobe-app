@@ -1,4 +1,5 @@
 import React from 'react';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 export function ThemeGrid({ themes, state, actions }: { themes: any[], state: any, actions: any }) {
   const { currentTheme, favorites = [] } = state;
@@ -22,7 +23,7 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
             >
                 <div className="absolute inset-0 bg-slate-100">
                     {theme.img ? (
-                        <img 
+                        <LazyImage 
                           src={theme.img} 
                           className={`w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105 ${!theme.isAvailable && 'blur-[2px] grayscale'}`} 
                           alt={theme.name} 
@@ -32,12 +33,12 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
                     )}
                 </div>
 
-                <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/20 to-black/90 opacity-70 group-hover:opacity-80 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/20 to-black/90 opacity-70 group-hover:opacity-80 transition-opacity duration-500 z-10"></div>
                 
                 {/* FAVORITE BUTTON */}
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleFavorite(theme.id); }}
-                  className={`absolute top-4 right-4 z-20 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md
+                  className={`absolute top-4 right-4 z-30 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md
                     ${isFavorite
                       ? 'bg-rose-500 border-rose-400 text-white scale-110 shadow-lg shadow-rose-500/30'
                       : 'bg-black/30 border-white/10 text-white/50 hover:bg-rose-500/80 hover:border-rose-400 hover:text-white opacity-0 group-hover:opacity-100'
@@ -47,7 +48,7 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
                   <i className={`${isFavorite ? 'fas' : 'far'} fa-heart text-[11px]`}></i>
                 </button>
                 
-                <div className="absolute top-5 left-5 z-20 flex flex-col gap-2">
+                <div className="absolute top-5 left-5 z-30 flex flex-col gap-2">
                   {isActive ? (
                     <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-900 bg-white px-3 py-1.5 rounded-xl shadow-lg border border-white/20 backdrop-blur-md">
                       <i className="fas fa-check-circle text-emerald-500"></i> Dipakai
@@ -65,7 +66,7 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
                   )}
                 </div>
 
-                <div className="absolute inset-x-3 bottom-3 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-[2rem] p-5 sm:p-6 flex flex-col transform transition-all duration-500">
+                <div className="absolute inset-x-3 bottom-3 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-[2rem] p-5 sm:p-6 flex flex-col transform transition-all duration-500 z-20">
                     
                     <div className="flex justify-between items-start mb-2">
                       <h4 className={`font-extrabold text-xl sm:text-2xl tracking-tight text-white drop-shadow-sm`}>
@@ -84,12 +85,13 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
 
                     <button 
                         onClick={() => handleUseTheme(theme.id, theme.name)}
+                        disabled={!theme.isAvailable && !isActive}
                         className={`w-full py-3.5 rounded-xl text-[11px] font-extrabold tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 border
                           ${isActive 
                             ? 'bg-white text-slate-900 border-white shadow-md hover:bg-slate-100' 
                             : theme.isAvailable 
                               ? 'bg-slate-800/80 text-white border-slate-700 hover:bg-white hover:text-slate-900' 
-                              : 'bg-slate-800/50 text-slate-500 border-slate-700/50 cursor-not-allowed'
+                              : 'bg-slate-800/50 text-slate-500 border-slate-700/50 cursor-not-allowed opacity-60'
                           }
                         `}
                     >

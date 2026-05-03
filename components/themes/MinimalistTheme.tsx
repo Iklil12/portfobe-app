@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-  return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : url;
+  return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
 // --- VARIANTS ANIMASI LEVEL DEWA (Dengan Koreografi Delay) ---
@@ -116,9 +117,17 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
             </motion.div>
           </div>
           
-          <motion.div variants={imageReveal} className="w-full aspect-[4/5] overflow-hidden mb-8 border border-gray-200 relative group">
-            <img src={displayAvatar} alt={fullName} className="w-full h-full object-cover grayscale transition-all duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 group-hover:grayscale-0" />
-            <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+          <motion.div variants={imageReveal} className="w-full aspect-[4/5] mb-8 relative group">
+            <div className="w-full h-full overflow-hidden border border-gray-200 relative">
+              <LazyImage src={displayAvatar} alt={fullName} className="w-full h-full object-cover grayscale transition-all duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 group-hover:grayscale-0" />
+              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            </div>
+            {/* Verified Badge */}
+            {(data?.plan === 'PRO' || data?.userPlan === 'PRO') && (
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-500 rounded-full border-[3px] border-white flex items-center justify-center text-white text-[10px] shadow-lg z-20">
+                <i className="fas fa-check"></i>
+              </div>
+            )}
           </motion.div>
 
           <motion.h2 variants={cinematicBlurUp} className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-3 min-heading">
@@ -194,7 +203,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
                 href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} className="group cursor-pointer block"
               >
                 <div className="w-full aspect-[4/3] bg-gray-100 mb-4 border border-gray-200 overflow-hidden relative">
-                  <img src={p.projectType === 'video' ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] grayscale group-hover:grayscale-0 group-hover:scale-110" />
+                  <LazyImage src={p.projectType === 'video' ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] grayscale group-hover:grayscale-0 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-black/30 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-center">
                     <div className="w-14 h-14 bg-white flex items-center justify-center rounded-full shadow-2xl scale-50 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 delay-100 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
                       <i className={`fas ${p.projectType === 'video' ? 'fa-play ml-1' : 'fa-arrow-right -rotate-45'} text-black`}></i>
@@ -308,7 +317,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.6, ease: premiumEase }} className="overflow-hidden bg-white border-t border-gray-200">
                         <div className={`px-8 ${isMobileView ? '' : 'lg:px-12'} py-8 flex gap-8 ${isMobileView ? 'flex-col' : 'flex-col md:flex-row'}`}>
                           <motion.div initial={{ scale: 0.9, filter: "blur(5px)" }} animate={{ scale: 1, filter: "blur(0px)" }} transition={{ duration: 0.8, delay: 0.2, ease: premiumEase }} className={`bg-gray-50 border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center p-2 ${isMobileView ? 'w-full' : 'w-full md:w-64'}`}>
-                            <img src={award.mediaUrl} className="w-full h-auto object-contain grayscale hover:grayscale-0 hover:scale-105 transition-all duration-700" alt="Certificate" />
+                            <LazyImage src={award.mediaUrl} className="w-full h-auto object-contain grayscale hover:grayscale-0 hover:scale-105 transition-all duration-700" alt="Certificate" />
                           </motion.div>
                           
                           <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.3, ease: premiumEase }} className="flex flex-col justify-center flex-1">

@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-  return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : url;
+  return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
 export default function CinematicTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
@@ -81,7 +82,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
       {/* HERO SECTION */}
       <header className="relative min-h-[90vh] flex flex-col justify-end pb-16 px-6 md:px-12 overflow-hidden pt-32">
           <div className="absolute inset-0 z-0">
-              <img src={displayAvatar} alt="Hero Background" className="w-full h-full object-cover grayscale opacity-30 scale-105 animate-[pulse_10s_ease-in-out_infinite]" />
+              <LazyImage src={displayAvatar} alt="Hero Background" className="w-full h-full object-cover grayscale opacity-30 scale-105 animate-[pulse_10s_ease-in-out_infinite]" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
           </div>
 
@@ -174,7 +175,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                       
                       {!isMobileView && (
                         <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vh] z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden hidden md:block ${radiusClass}`}>
-                            <img src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} className="w-full h-full object-cover grayscale opacity-50" alt={p.title} />
+                            <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale opacity-50" />
                         </div>
                       )}
                   </a>
@@ -265,7 +266,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                           <div className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'max-h-[500px]' : 'max-h-0'}`}>
                               <div className={`pb-6 flex gap-5 ${isMobileView ? 'flex-col' : 'flex-col md:flex-row'}`}>
                                   <div className={`shrink-0 bg-[#111] flex items-center justify-center overflow-hidden ${radiusClass} ${isMobileView ? 'w-full aspect-video' : 'w-full md:w-48 h-32'}`}>
-                                    <img src={award.mediaUrl || "https://via.placeholder.com/600"} className="w-full h-full object-contain p-2 grayscale hover:grayscale-0 transition-all duration-500" alt="Certificate" />
+                                    <LazyImage src={award.mediaUrl || "https://via.placeholder.com/600"} className="w-full h-full object-contain p-2 grayscale hover:grayscale-0 transition-all duration-500" alt="Certificate" />
                                   </div>
                                   <div className="flex flex-col justify-center cine-body">
                                       <p className="text-white font-bold mb-1 text-[11px] uppercase tracking-wider">{award.status || 'Verified'}</p>

@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-  return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : url;
+  return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
 export default function AcidTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
@@ -121,9 +122,17 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
           </div>
 
           {!isMobileView && (
-            <div className="hidden lg:block absolute top-1/4 right-12 w-72 h-[450px] grayscale hover:grayscale-0 transition duration-700 z-30">
+            <div className="hidden lg:block absolute top-1/4 right-12 w-72 h-[450px] transition duration-700 z-30 group">
                 <div className="absolute inset-0 acid-bg transform translate-x-4 translate-y-4 -z-10"></div>
-                <img src={displayAvatar} className="w-full h-full object-cover border-2 border-zinc-800 relative z-20" alt="Hero" />
+                <div className="w-full h-full overflow-hidden border-2 border-zinc-800 relative grayscale hover:grayscale-0 transition-all duration-700">
+                  <LazyImage src={displayAvatar} alt="Hero" className="w-full h-full object-cover" />
+                </div>
+                {/* Verified Badge */}
+                {(data?.plan === 'PRO' || data?.userPlan === 'PRO') && (
+                  <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-blue-500 rounded-full border-4 border-black flex items-center justify-center text-white text-[14px] shadow-[5px_5px_0px_rgba(0,0,0,1)] z-40">
+                    <i className="fas fa-check"></i>
+                  </div>
+                )}
             </div>
           )}
       </header>
@@ -183,7 +192,7 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
                       </div>
                       
                       {!isMobileView && (
-                          <img src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} className="hover-img hidden md:block grayscale object-cover" alt={p.title} />
+                          <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="hover-img hidden md:block grayscale object-cover" />
                       )}
                   </a>
                 )
@@ -238,7 +247,7 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
                           <div className={`overflow-hidden transition-all duration-400 ease-in-out ${isOpen ? 'max-h-[600px]' : 'max-h-0'}`}>
                               <div className={`px-2 md:px-4 pb-8 pt-4 flex items-start gap-6 border-t border-[#09090b]/20 mt-2 md:mt-4 ${isMobileView ? 'flex-col' : 'flex-col md:flex-row'}`}>
                                   <div className={`shrink-0 bg-[#000] border-2 border-[#09090b] flex items-center justify-center p-1 ${isMobileView ? 'w-full aspect-video' : 'w-48 h-32'}`}>
-                                     <img src={award.mediaUrl || "https://via.placeholder.com/600"} className="w-full h-full object-contain p-2 grayscale" alt="Certificate" />
+                                     <LazyImage src={award.mediaUrl || "https://via.placeholder.com/600"} className="w-full h-full object-contain p-2 grayscale" alt="Certificate" />
                                   </div>
                                   <div className="acid-body">
                                       <h4 className={`font-bold uppercase tracking-widest mb-2 ${isMobileView ? 'text-[10px]' : 'text-xs'}`}>{award.issuer}</h4>

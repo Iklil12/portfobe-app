@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { mutate } from 'swr';
 import { useSearchParams } from 'next/navigation';
@@ -33,6 +33,8 @@ export function useThemeEditor() {
   const [buttonShape, setButtonShape] = useState("hard");
   const [cardStyle, setCardStyle] = useState("hard-shadow");
   const [splashScreen, setSplashScreen] = useState(true);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const dataLoaded = useRef(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,6 +75,17 @@ export function useThemeEditor() {
               if (sa.splashScreen !== undefined && sa.splashScreen !== null) {
                 setSplashScreen(sa.splashScreen);
               }
+
+              if (sa.favoriteThemes) {
+                try {
+                  const parsed = typeof sa.favoriteThemes === 'string' 
+                    ? JSON.parse(sa.favoriteThemes) 
+                    : sa.favoriteThemes;
+                  setFavorites(Array.isArray(parsed) ? parsed : []);
+                } catch (e) {
+                  setFavorites([]);
+                }
+              }
             }
           }
         }
@@ -82,11 +95,33 @@ export function useThemeEditor() {
       } catch (error) {
         console.error("Gagal memuat data:", error);
       } finally {
-        setTimeout(() => setIsLoading(false), 500);
+        setTimeout(() => {
+          setIsLoading(false);
+          dataLoaded.current = true;
+        }, 500);
       }
     };
     fetchData();
   }, [previewTheme]); // Re-run jika previewTheme berubah
+
+  // Sync favorites to DB
+  useEffect(() => {
+    if (!dataLoaded.current) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        await fetch('/api/appearance', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ favoriteThemes: favorites })
+        });
+      } catch (error) {
+        console.error("Gagal sinkronisasi favorit");
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [favorites]);
 
   const saveDesign = async () => {
     setIsSaving(true);
@@ -129,6 +164,20 @@ export function useThemeEditor() {
     }
   };
 
+  const toggleFavorite = (themeId: string) => {
+    const isFav = favorites.includes(themeId);
+    const updatedFavorites = isFav
+      ? favorites.filter(id => id !== themeId)
+      : [...favorites, themeId];
+    
+    setFavorites(updatedFavorites);
+    
+    toast(isFav ? 'Dihapus dari favorit' : 'Ditambahkan ke favorit ❤️', {
+      id: `fav-${themeId}`,
+      style: { borderRadius: '10px', background: '#333', color: '#fff', fontSize: '12px' }
+    });
+  };
+
   // Persiapan data untuk Live Preview
   const livePreviewData = {
     ...dbData,
@@ -165,7 +214,8 @@ export function useThemeEditor() {
       showProModal,
 
       livePreviewData,
-      livePreviewTheme
+      livePreviewTheme,
+      favorites
     },
     actions: {
       setIsEditorCollapsed,
@@ -179,7 +229,8 @@ export function useThemeEditor() {
       setSplashScreen,
       setIsThemeModalOpen,
       setShowProModal,
-      saveDesign
+      saveDesign,
+      toggleFavorite
     }
   };
 }

@@ -8,14 +8,6 @@ import toast from 'react-hot-toast';
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function SupportPage() {
-  const { data: userData, error } = useSWR('/api/layout-sync', fetcher, {
-    shouldRetryOnError: false
-  });
-
-  const isLoggedIn = !!userData && !error;
-  const userPlan = userData?.plan || 'FREE';
-  const isPro = userPlan === 'PRO';
-
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -23,15 +15,9 @@ export default function SupportPage() {
   });
   const [isSending, setIsSending] = useState(false);
 
-  useEffect(() => {
-    if (userData) {
-      setFormData(prev => ({
-        ...prev,
-        name: userData.fullName || '',
-        email: userData.email || ''
-      }));
-    }
-  }, [userData]);
+  const isLoggedIn = false;
+  const isPro = false;
+
 
   const handleSend = async () => {
     if (!formData.name || !formData.email || !formData.message) {
@@ -63,7 +49,7 @@ export default function SupportPage() {
   };
 
   const waNumber = "6283144303789"; // Ganti dengan nomor WhatsApp admin Anda
-  const waMessage = encodeURIComponent(`Halo Admin Portfobe! Saya ${userData?.fullName || 'User'} (${userData?.email || 'Guest'}). Saya butuh bantuan terkait...`);
+  const waMessage = encodeURIComponent(`Halo Admin Portfobe! Saya User (Guest). Saya butuh bantuan terkait...`);
   const waUrl = `https://wa.me/${waNumber}?text=${waMessage}`;
 
   return (
@@ -96,11 +82,7 @@ export default function SupportPage() {
             <img src="/portfo.be.png" alt="Logo" className="h-6 w-auto" />
           </Link>
           <div className="flex items-center gap-4">
-            {isLoggedIn ? (
-              <Link href="/dashboard" className="text-xs font-bold text-slate-900 px-5 py-2.5 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-all">Dashboard</Link>
-            ) : (
-              <Link href="/login" className="text-xs font-bold text-slate-900 px-5 py-2.5 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-all">Login</Link>
-            )}
+            <Link href="/login" className="text-xs font-bold text-slate-900 px-5 py-2.5 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-all">Login</Link>
           </div>
         </div>
 

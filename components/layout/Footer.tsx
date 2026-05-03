@@ -40,7 +40,8 @@ export function Footer() {
                   <h4 className="text-white font-bold mb-6">Platform</h4>
                   <ul className="space-y-4 text-sm font-medium">
                       <li><a href="#features" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Features</a></li>
-                      <li><a href="#pricing" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Pricing</a></li>
+                      <li><a href="/pricing" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Pricing</a></li>
+                      <li><a href="/support" className="hover:text-white hover:pl-1 transition-all duration-300 inline-block">Support</a></li>
                   </ul>
               </div>
               

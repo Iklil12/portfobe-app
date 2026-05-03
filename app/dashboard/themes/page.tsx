@@ -26,10 +26,17 @@ export default function ThemesPage() {
   const favoriteThemes = themes.filter(t => favorites.includes(t.id));
 
   const filteredThemes = (() => {
-    if (activeFilter === 'free')      return availableThemes.filter(t => !t.isPro);
-    if (activeFilter === 'pro')       return availableThemes.filter(t => t.isPro);
-    if (activeFilter === 'favorites') return favoriteThemes;
-    return themes; // 'all' — tampilkan semua
+    let list = themes;
+    if (activeFilter === 'free')      list = availableThemes.filter(t => !t.isPro);
+    else if (activeFilter === 'pro')  list = availableThemes.filter(t => t.isPro);
+    else if (activeFilter === 'favorites') list = favoriteThemes;
+    
+    // Sort: Tema yang sedang aktif berada di urutan pertama
+    return [...list].sort((a, b) => {
+      if (a.id === state.currentTheme) return -1;
+      if (b.id === state.currentTheme) return 1;
+      return 0;
+    });
   })();
 
   return (

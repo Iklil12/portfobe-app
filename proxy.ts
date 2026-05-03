@@ -7,5 +7,6 @@ export default function proxy(req: any) {
 
 export const config = { 
   // Proteksi untuk folder dashboard
-  matcher: ["/dashboard/:path*"] 
+  matcher: ["/dashboard/:path*"],
+
 };

@@ -1,15 +1,13 @@
-//components/themes/BrutalismTheme.tsx
-"use client";
-
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation'; 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-  return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : url;
+  return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
 export default function BrutalismTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
@@ -172,8 +170,16 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                 </div>
               )}
               
-              <div className={`w-full max-w-[240px] ${res('sm:max-w-[280px] md:max-w-[320px]')} aspect-[3/4] overflow-hidden transition-all duration-700 mx-auto ${isBrutal ? `border-[2px] ${res('md:border-[3px]')} border-black preview-hard-shadow-sm p-1.5 ${res('md:p-2')} bg-white ${getRadiusClass(true)}` : getCardClass() + ' ' + getRadiusClass(true)}`}>
-                  <img src={displayAvatar} className={`w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Profile" />
+              <div className="w-full max-w-[240px] sm:max-w-[280px] md:max-w-[320px] aspect-[3/4] mx-auto relative group">
+                  <div className={`w-full h-full overflow-hidden transition-all duration-700 ${isBrutal ? `border-[2px] md:border-[3px] border-black preview-hard-shadow-sm p-1.5 md:p-2 bg-white ${getRadiusClass(true)}` : getCardClass() + ' ' + getRadiusClass(true)}`}>
+                      <LazyImage src={displayAvatar} className={`w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Profile" />
+                  </div>
+                  {/* Verified Badge */}
+                  {(data?.plan === 'PRO' || data?.userPlan === 'PRO') && (
+                    <div className="absolute -bottom-2 -right-2 w-9 h-9 bg-blue-500 rounded-full border-[3px] border-black flex items-center justify-center text-white text-[11px] shadow-lg z-20">
+                      <i className="fas fa-check"></i>
+                    </div>
+                  )}
               </div>
           </div>
       </section>
@@ -211,7 +217,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                     </div>
                     
                     <div className={`aspect-video bg-gray-200 relative overflow-hidden transition-all duration-700 ${isBrutal ? 'border-b-[2px] border-black' : ''}`}>
-                      <img src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800x600?text=No+Image")} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" alt={p.title} />
+                      <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800x600?text=No+Image")} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" alt={p.title} />
                       
                       {isVideo && (
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -269,7 +275,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                   <div className={`p-4 ${res('sm:p-5 md:p-8')} flex flex-col ${res('sm:flex-row')} gap-4 ${res('sm:gap-6 md:gap-8')} transition-all duration-700 ${isBrutal ? 'border-t-[3px] border-black' : ''}`}>
                       
                       <div className={`w-full ${res('sm:w-48 md:w-64')} shrink-0 bg-white p-1.5 ${res('sm:p-2')} transition-all duration-700 ${isBrutal ? `border-[2px] border-black preview-hard-shadow-sm ${getRadiusClass(false)}` : `rounded-xl shadow-sm border border-slate-200 overflow-hidden ${getRadiusClass(false)}`}`}>
-                          <img src={award.mediaUrl || "https://via.placeholder.com/400x300?text=Certificate"} className={`w-full h-auto object-contain grayscale transition-all duration-700 hover:grayscale-0 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Certificate" />
+                          <LazyImage src={award.mediaUrl || "https://via.placeholder.com/400x300?text=Certificate"} className={`w-full h-auto object-contain grayscale transition-all duration-700 hover:grayscale-0 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Certificate" />
                       </div>
                       
                       <div className={`flex flex-col justify-center text-[10px] ${res('md:text-xs')} mt-2 ${res('sm:mt-0')} transition-all duration-700 custom-body`}>

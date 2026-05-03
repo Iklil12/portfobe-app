@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CloseModalButton } from '@/components/ui/CloseModalButton';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 interface GalleryModalViewProps {
   projects: any[];
@@ -13,7 +14,7 @@ interface GalleryModalViewProps {
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-  return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : url;
+  return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
 // --- VARIANTS ANIMASI ---
@@ -119,7 +120,7 @@ export default function GalleryModalView({ projects, subdomain }: GalleryModalVi
                     className="group relative overflow-hidden rounded-xl bg-white/5 border border-white/5 cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
                   >
                     {/* IMPLEMENTASI THUMBNAIL YANG SUDAH DIPERBAIKI */}
-                    <img 
+                    <LazyImage 
                       src={displayMedia} 
                       alt={project.title}
                       className="w-full h-auto object-cover transition-all duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:opacity-80"

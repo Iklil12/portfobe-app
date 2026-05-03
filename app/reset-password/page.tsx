@@ -1,3 +1,4 @@
+//app/reset-password/page.tsx
 "use client";
 
 import React, { useState, Suspense } from 'react';

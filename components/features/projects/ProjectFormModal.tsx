@@ -5,6 +5,7 @@ import { CldUploadWidget } from 'next-cloudinary';
 import { motion, AnimatePresence } from 'framer-motion';
 import { showToast } from '@/lib/customToast';
 import { ProjectType } from '@/hooks/useProjects';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 // --- VARIANTS ANIMASI ---
 const modalSpring = { type: "spring", stiffness: 300, damping: 25 } as const;
@@ -207,7 +208,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                             >
                               {mediaUrl ? (
                                 <div className="relative w-full h-48 bg-slate-100">
-                                  <img src={mediaUrl} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover/upload:scale-105" />
+                                  <LazyImage src={mediaUrl} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover/upload:scale-105" />
                                   <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/upload:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
                                     <span className="bg-white/20 border border-white/40 text-white px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 shadow-xl">
                                       <i className="fas fa-camera"></i> Ganti Gambar

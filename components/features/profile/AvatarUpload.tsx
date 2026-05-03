@@ -3,6 +3,7 @@ import { CldUploadWidget } from 'next-cloudinary';
 import { showToast } from '@/lib/customToast';
 import Link from 'next/link';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 interface AvatarUploadProps {
   state: any;
@@ -38,7 +39,7 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
          {/* Logo Tengah */}
          <div className="relative z-10 p-4">
              <div className="absolute inset-0 bg-white/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-             <img 
+             <LazyImage 
                 src="/portfo.be.png" 
                 className="relative h-10 sm:h-12 md:h-14 w-auto object-contain opacity-80 drop-shadow-sm" 
                 alt="Portfo.be Cover" 
@@ -63,7 +64,7 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
               <div className="relative w-28 h-28 sm:w-32 sm:h-32 group cursor-pointer -mt-16 sm:-mt-20 mb-4 z-20" onClick={() => open()}>
                 <div className="absolute -inset-1 bg-slate-900 rounded-full blur-lg opacity-0 group-hover:opacity-10 transition duration-500"></div>
                 <div className="relative w-full h-full rounded-full border-4 border-white shadow-[0_4px_15px_rgba(0,0,0,0.08)] overflow-hidden bg-slate-50">
-                  <img 
+                  <LazyImage 
                     src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName + ' ' + lastName || fullName)}&background=fff7ed&color=ea580c&bold=true`} 
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110" 
                     alt="Profile Avatar"
@@ -74,7 +75,7 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
                 </div>
                 {/* Verified Badge - HANYA MUNCUL JIKA PRO */}
                 {isPro && (
-                  <div className="absolute bottom-1 right-1 w-8 h-8 bg-blue-500 rounded-full border-[3px] border-white flex items-center justify-center text-white text-[11px] shadow-sm">
+                  <div className="absolute -bottom-0.5 -right-0.5 w-9 h-9 bg-blue-500 rounded-full border-[3px] border-white flex items-center justify-center text-white text-[12px] shadow-lg z-40">
                     <i className="fas fa-check"></i>
                   </div>
                 )}
