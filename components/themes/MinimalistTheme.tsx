@@ -220,72 +220,24 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
               </motion.a>
             ))}
           </motion.div>
-
-          {/* --- TOMBOL VENOM MONOCHROME (SUDAH DIINJEKSI LANGSUNG) --- */}
+          {/* --- MINIMALIST EXPLORE BUTTON --- */}
           <motion.div 
             initial="hidden" 
             whileInView="visible" 
             viewport={{ once: true }} 
             variants={cinematicBlurUp} 
             custom={0.3} 
-            className="w-full flex justify-center mt-16 mb-12 relative z-10"
+            className="w-full flex justify-center mt-16 mb-20 relative z-10"
           >
-            <Link href={`/${subdomain}/gallery`} className="block no-underline">
-              <motion.button
-                initial="initial"
-                whileHover="hover"
-                whileTap={{ scale: 0.95 }}
-                className="relative flex items-center justify-center gap-3 px-10 py-4 cursor-pointer overflow-hidden rounded-full border border-black/20 bg-transparent transition-colors duration-300"
-              >
-                {/* Lapisan Venom (Clip-path Reveal) */}
-                <motion.div
-                  variants={{
-                    initial: { 
-                      scale: 0, 
-                      opacity: 0,
-                      clipPath: "circle(0% at 50% 50%)" 
-                    },
-                    hover: { 
-                      scale: 1, 
-                      opacity: 1,
-                      clipPath: "circle(150% at 50% 50%)" 
-                    }
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 50,
-                    damping: 15,
-                    mass: 1,
-                    opacity: { duration: 0.4 },
-                    clipPath: { duration: 1.2, ease: premiumEase } 
-                  }}
-                  className="absolute inset-0 z-0 rounded-full blur-xl origin-center bg-black"
-                />
-
-                {/* Teks Content */}
-                <motion.span
-                  variants={{
-                    initial: { color: "#262626" },
-                    hover: { color: "#ffffff" }
-                  }}
-                  transition={{ duration: 0.2 }}
-                  className="relative z-10 font-black tracking-[0.2em] uppercase text-xs"
-                >
-                  EXPLORE
-                </motion.span>
-
-                {/* Ikon Panah */}
-                <motion.span
-                  variants={{
-                    initial: { color: "#262626", x: 0 },
-                    hover: { color: "#ffffff", x: 5 }
-                  }}
-                  transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
-                  className="relative z-10 flex items-center justify-center"
-                >
-                  <i className="fa-solid fa-arrow-right-long text-xs"></i>
-                </motion.span>
-              </motion.button>
+            <Link href={`/${subdomain}/gallery`} scroll={false} className="group inline-flex items-center gap-4 md:gap-6 no-underline p-2">
+                <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500 relative">
+                  EXPLORE ARCHIVE
+                  <span className="absolute -bottom-2 left-0 w-0 h-px bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
+                </span>
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-200 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-black group-hover:border-black shadow-sm group-hover:shadow-md overflow-hidden relative">
+                    <i className="fas fa-arrow-right absolute transform -translate-x-[150%] text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 text-[10px] md:text-xs"></i>
+                    <i className="fas fa-arrow-right absolute transform translate-x-0 text-gray-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%] opacity-100 group-hover:opacity-0 text-[10px] md:text-xs"></i>
+                </div>
             </Link>
           </motion.div>
         </section>

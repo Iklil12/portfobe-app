@@ -48,7 +48,7 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
   };
 
   return (
-    <div className={`w-full min-h-screen bg-[#09090b] text-[#fafafa] selection:text-black overflow-x-hidden relative ${isMobileView ? 'text-xs' : 'text-sm'}`}>
+    <div className={`w-full min-h-screen bg-[#09090b] text-[#fafafa] selection:text-black relative ${isMobileView ? 'text-xs' : 'text-sm'}`}>
       
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700&family=Inter:wght@400;600&display=swap');
@@ -82,15 +82,17 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
       `}} />
 
       {/* NAVBAR */}
-      <nav className={`absolute top-0 left-0 w-full z-50 mix-blend-difference flex justify-between items-center ${isMobileView ? 'p-5' : 'p-6 md:px-12'}`}>
-          <div className={`acid-heading font-extrabold tracking-tighter text-white uppercase ${isMobileView ? 'text-xl' : 'text-2xl md:text-3xl'}`}>
-              {firstName}<span className="acid-text">.</span>{lastName || 'PORTFO'}
-          </div>
-          <div className={`hidden md:flex font-bold uppercase tracking-widest text-white acid-body ${isMobileView ? 'gap-3 text-[9px]' : 'gap-8 text-sm'}`}>
-              <a href="#work" className="hover:text-[var(--theme-color)] transition" style={{ '--theme-color': themeColor } as any}>Index</a>
-              <a href="#awards" className="hover:text-[var(--theme-color)] transition" style={{ '--theme-color': themeColor } as any}>Awards</a>
-          </div>
-      </nav>
+      <div className="sticky top-0 left-0 right-0 z-[99] h-0">
+          <nav className={`mix-blend-difference flex justify-between items-center ${isMobileView ? 'p-5' : 'p-6 md:px-12'}`}>
+              <div className={`acid-heading font-extrabold tracking-tighter text-white uppercase ${isMobileView ? 'text-xl' : 'text-2xl md:text-3xl'}`}>
+                  {firstName}<span className="acid-text">.</span>{lastName || 'PORTFO'}
+              </div>
+              <div className={`flex font-bold uppercase tracking-widest text-white acid-body ${isMobileView ? 'gap-3 text-[9px]' : 'gap-3 text-[9px] md:gap-8 md:text-sm'}`}>
+                  <a href="#work" className="hover:text-[var(--theme-color)] transition" style={{ '--theme-color': themeColor } as any}>Index</a>
+                  <a href="#awards" className="hover:text-[var(--theme-color)] transition" style={{ '--theme-color': themeColor } as any}>Awards</a>
+              </div>
+          </nav>
+      </div>
 
       {/* HERO SECTION */}
       <header className={`relative min-h-[90vh] flex flex-col justify-center ${isMobileView ? 'pt-24 pb-16' : 'pt-32 pb-20'}`}>
@@ -101,14 +103,24 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
               </div>
               
               <h1 className={`acid-heading font-extrabold uppercase tracking-tighter text-[#fafafa] mb-4 w-full leading-[0.85] break-words
-                  ${isMobileView ? 'text-5xl' : 'text-[clamp(5rem,12vw,11rem)]'}
+                  ${isMobileView ? 'text-5xl' : 'text-5xl md:text-[clamp(5rem,12vw,11rem)]'}
               `}>
                   {firstName} <br/>
                   <span className="text-transparent" style={{ WebkitTextStroke: '2px #fafafa' }}>{lastName || profession}</span>
               </h1>
               
-              <div className={`flex w-full max-w-5xl border-t-2 border-zinc-800 pt-8 ${isMobileView ? 'flex-col gap-6 mt-6' : 'flex-col md:flex-row gap-8 md:gap-16 mt-8'}`}>
-                  <p className={`text-zinc-400 font-medium leading-relaxed acid-body ${isMobileView ? 'text-sm' : 'text-lg md:text-xl max-w-md'}`}>
+              {/* Mobile Avatar */}
+              <div className={`${isMobileView ? 'flex mt-8 mb-10' : 'flex lg:hidden mt-8 mb-10'} w-full justify-center relative z-30 group`}>
+                  <div className="w-[85%] max-w-[280px] aspect-[4/5] relative">
+                      <div className="absolute inset-0 acid-bg transform translate-x-3 translate-y-3 -z-10"></div>
+                      <div className="w-full h-full overflow-hidden border-2 border-zinc-800 relative grayscale transition-all duration-700">
+                        <LazyImage src={displayAvatar} alt="Hero" className="w-full h-full object-cover" />
+                      </div>
+                  </div>
+              </div>
+              
+              <div className={`flex w-full max-w-5xl border-t-2 border-zinc-800 pt-8 ${isMobileView ? 'flex-col gap-6 mt-2' : 'flex-col gap-6 mt-2 md:flex-row md:gap-8 lg:gap-16 md:mt-8'}`}>
+                  <p className={`text-zinc-400 font-medium leading-relaxed acid-body ${isMobileView ? 'text-sm' : 'text-sm md:text-lg lg:text-xl max-w-md'}`}>
                       {bio}
                   </p>
                   <div className="flex flex-col gap-4 text-xs md:text-sm font-bold uppercase tracking-widest text-zinc-300 acid-body">
@@ -138,35 +150,37 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
       </header>
 
       {/* MARQUEE */}
-      <div className={`acid-bg text-[#09090b] py-3 overflow-hidden border-y-4 border-[#09090b] -rotate-2 scale-105 my-10 relative z-20 shadow-[0_0_50px_rgba(223,255,0,0.2)]`}>
-          <div className="w-[200%] flex animate-marquee acid-heading font-bold text-2xl md:text-4xl uppercase tracking-tighter">
-              <div className="flex items-center gap-8 px-4">
-                  {[...Array(6)].map((_, i) => (<React.Fragment key={i}><span>{profession}</span><span>///</span></React.Fragment>))}
-              </div>
-              <div className="flex items-center gap-8 px-4">
-                  {[...Array(6)].map((_, i) => (<React.Fragment key={i+10}><span>{profession}</span><span>///</span></React.Fragment>))}
-              </div>
-          </div>
+      <div className="w-full overflow-hidden py-10 -my-10">
+        <div className={`acid-bg text-[#09090b] py-3 overflow-hidden border-y-4 border-[#09090b] -rotate-2 scale-105 relative z-20 shadow-[0_0_50px_rgba(223,255,0,0.2)] my-10`}>
+            <div className="w-[200%] flex animate-marquee acid-heading font-bold text-2xl md:text-4xl uppercase tracking-tighter">
+                <div className="flex items-center gap-8 px-4">
+                    {[...Array(6)].map((_, i) => (<React.Fragment key={i}><span>{profession}</span><span>///</span></React.Fragment>))}
+                </div>
+                <div className="flex items-center gap-8 px-4">
+                    {[...Array(6)].map((_, i) => (<React.Fragment key={i+10}><span>{profession}</span><span>///</span></React.Fragment>))}
+                </div>
+            </div>
+        </div>
       </div>
 
       {/* STATS SECTION */}
       <section className="px-6 md:px-12 py-16 md:py-20">
           <div className={`grid gap-4 md:gap-8 ${isMobileView ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4'}`}>
-              <div className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition ${isMobileView ? 'p-5' : 'p-8'}`}>
+              <div className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition ${isMobileView ? 'p-5' : 'p-5 md:p-8'}`}>
                   <span className="acid-text font-bold text-[9px] md:text-xs uppercase tracking-widest acid-body">Projects</span>
-                  <span className={`acid-heading font-extrabold ${isMobileView ? 'text-4xl' : 'text-5xl md:text-7xl'}`}>{archiveItems.length}</span>
+                  <span className={`acid-heading font-extrabold ${isMobileView ? 'text-4xl' : 'text-4xl md:text-5xl lg:text-7xl'}`}>{archiveItems.length}</span>
               </div>
-              <div className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition ${isMobileView ? 'p-5' : 'p-8'}`}>
+              <div className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition ${isMobileView ? 'p-5' : 'p-5 md:p-8'}`}>
                   <span className="acid-text font-bold text-[9px] md:text-xs uppercase tracking-widest acid-body">Awards</span>
-                  <span className={`acid-heading font-extrabold ${isMobileView ? 'text-4xl' : 'text-5xl md:text-7xl'}`}>{awardItems.length}</span>
+                  <span className={`acid-heading font-extrabold ${isMobileView ? 'text-4xl' : 'text-4xl md:text-5xl lg:text-7xl'}`}>{awardItems.length}</span>
               </div>
-              <div className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition ${isMobileView ? 'p-5' : 'p-8'}`}>
+              <div className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition ${isMobileView ? 'p-5' : 'p-5 md:p-8'}`}>
                   <span className="acid-text font-bold text-[9px] md:text-xs uppercase tracking-widest acid-body">Links</span>
-                  <span className={`acid-heading font-extrabold ${isMobileView ? 'text-4xl' : 'text-5xl md:text-7xl'}`}>{links.length}</span>
+                  <span className={`acid-heading font-extrabold ${isMobileView ? 'text-4xl' : 'text-4xl md:text-5xl lg:text-7xl'}`}>{links.length}</span>
               </div>
-              <div className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition cursor-pointer ${isMobileView ? 'p-5' : 'p-8'}`} onClick={() => window.location.href = `mailto:${userEmail}`}>
+              <div className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition cursor-pointer ${isMobileView ? 'p-5' : 'p-5 md:p-8'}`} onClick={() => window.location.href = `mailto:${userEmail}`}>
                   <span className="acid-text font-bold text-[9px] md:text-xs uppercase tracking-widest acid-body">Hire Me</span>
-                  <span className={`acid-heading font-extrabold flex items-center ${isMobileView ? 'text-4xl' : 'text-5xl md:text-7xl'}`}><i className="fas fa-envelope"></i></span>
+                  <span className={`acid-heading font-extrabold flex items-center ${isMobileView ? 'text-4xl' : 'text-4xl md:text-5xl lg:text-7xl'}`}><i className="fas fa-envelope"></i></span>
               </div>
           </div>
       </section>
@@ -174,7 +188,7 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
       {/* PROJECTS SECTION */}
       <section id="work" className="pt-10 pb-20 md:pb-32">
           <div className="px-6 md:px-12 mb-10 flex justify-between items-end border-b-2 border-zinc-800 pb-6">
-              <h2 className={`acid-heading font-extrabold uppercase tracking-tighter ${isMobileView ? 'text-4xl' : 'text-[clamp(3rem,6vw,5rem)]'}`}>PROJECT<br/>INDEX</h2>
+              <h2 className={`acid-heading font-extrabold uppercase tracking-tighter ${isMobileView ? 'text-4xl' : 'text-4xl md:text-[clamp(3rem,6vw,5rem)]'}`}>PROJECT<br/>INDEX</h2>
               {!isMobileView && <span className="acid-text font-bold text-xs md:text-sm uppercase tracking-widest acid-body">Hover to Reveal</span>}
           </div>
 
@@ -182,46 +196,46 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
               {archiveItems.length > 0 ? archiveItems.map((p: any, i: number) => {
                 const isVideo = p.projectType === 'video';
                 return (
-                  <a href={p.projectUrl || p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} className={`project-item relative w-full flex justify-between cursor-pointer ${isMobileView ? 'flex-col py-6 px-6' : 'flex-col md:flex-row md:items-center py-8 md:py-12 px-6 md:px-12'}`}>
+                  <a href={p.projectUrl || p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} className={`project-item relative w-full flex justify-between cursor-pointer ${isMobileView ? 'flex-col py-6 px-6' : 'flex-col py-6 px-6 md:flex-row md:items-center md:py-12 md:px-12'}`}>
                       <div className="flex flex-col relative z-10 pointer-events-none">
                           <span className="font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] mb-2 opacity-70 acid-body">0{i+1} / {p.projectType}</span>
-                          <h3 className={`acid-heading font-extrabold uppercase tracking-tighter line-clamp-1 ${isMobileView ? 'text-3xl' : 'text-[clamp(2rem,4vw,4rem)]'}`}>{p.title}</h3>
+                          <h3 className={`acid-heading font-extrabold uppercase tracking-tighter line-clamp-1 ${isMobileView ? 'text-3xl' : 'text-3xl md:text-[clamp(2rem,4vw,4rem)]'}`}>{p.title}</h3>
                       </div>
-                      <div className={`font-bold uppercase tracking-widest opacity-70 acid-body relative z-10 pointer-events-none ${isMobileView ? 'mt-3 text-[10px]' : 'mt-4 md:mt-0 text-xs md:text-sm'}`}>
+                      <div className={`font-bold uppercase tracking-widest opacity-70 acid-body relative z-10 pointer-events-none ${isMobileView ? 'mt-3 text-[10px]' : 'mt-3 text-[10px] md:mt-0 md:text-sm'}`}>
                           {p.description || 'View details'} • {new Date(p.createdAt).getFullYear()}
                       </div>
+                      {/* Mobile Inline Image */}
+                      <div className={`${isMobileView ? 'block mt-6' : 'block md:hidden mt-6'} w-full aspect-[16/9] relative z-10 overflow-hidden border-2 border-zinc-800`}>
+                          <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale" />
+                      </div>
                       
-                      {!isMobileView && (
-                          <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="hover-img hidden md:block grayscale object-cover" />
-                      )}
+                      {/* Desktop Hover Image */}
+                      <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className={`${isMobileView ? 'hidden' : 'hover-img hidden md:block'} grayscale object-cover`} />
                   </a>
                 )
               }) : <div className="py-20 text-center text-zinc-600 font-bold text-xs uppercase tracking-widest acid-body">SYSTEM: NO_DATA_FOUND</div>}
           </div>
           
-          {/* Tombol Gallery Utama (Acid Style) */}
-          <div className="w-full flex justify-center mt-20 mb-20">
-            <Link href={`/${subdomain}/gallery`} className="block no-underline">
-              <motion.button
-                whileHover={{ scale: 1.05, skewX: -12 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative px-12 py-4 font-black uppercase tracking-[0.3em] text-xs border-2 transition-all duration-300"
-                style={{ 
-                  borderColor: themeColor, 
-                  color: themeColor,
-                  boxShadow: `0 0 20px ${themeColor}44`
-                }}
-              >
-                <motion.div 
-                  className="absolute inset-0 z-0"
-                  initial={{ width: 0 }}
-                  whileHover={{ width: "100%" }}
-                  style={{ backgroundColor: themeColor }}
-                />
-                <span className="relative z-10 flex items-center gap-3 mix-blend-difference">
-                  <i className="fas fa-images"></i> Explore_Full_Archive
-                </span>
-              </motion.button>
+          {/* Tombol Gallery Utama (Acid Style Redesign) */}
+          <div className={`w-full ${isMobileView ? 'mt-8 mb-12' : 'mt-8 mb-12 md:mt-20 md:mb-24'} border-y-2 border-zinc-800`}>
+            <Link href={`/${subdomain}/gallery`} scroll={false} className="group block w-full no-underline relative overflow-hidden bg-[#09090b] hover:bg-zinc-900 transition-colors duration-300">
+                <div className={`flex items-center justify-between px-6 ${isMobileView ? 'py-6' : 'py-6 md:px-12 md:py-12 lg:py-16'}`}>
+                    <div className="flex flex-col relative z-10">
+                        <span className="acid-text font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] acid-body mb-2 md:mb-4 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-none animate-pulse" style={{ backgroundColor: themeColor }}></span> System: Access_Granted
+                        </span>
+                        <h3 className={`acid-heading font-extrabold uppercase tracking-tighter text-[#fafafa] group-hover:text-[var(--theme-color)] transition-colors duration-300 leading-none ${isMobileView ? 'text-3xl' : 'text-3xl md:text-5xl lg:text-[5.5rem]'}`} style={{ '--theme-color': themeColor } as any}>
+                            VIEW_FULL<br/>ARCHIVE
+                        </h3>
+                    </div>
+                    
+                    <div className={`shrink-0 border-2 border-zinc-800 group-hover:border-[var(--theme-color)] transition-all duration-300 flex items-center justify-center bg-[#09090b] group-hover:bg-[var(--theme-color)] group-hover:rotate-12 ${isMobileView ? 'w-10 h-10' : 'w-10 h-10 md:w-24 md:h-24 lg:w-32 lg:h-32'}`} style={{ '--theme-color': themeColor } as any}>
+                        <i className={`fas fa-arrow-right group-hover:-rotate-45 transition-transform duration-300 text-zinc-500 group-hover:text-[#09090b] ${isMobileView ? 'text-sm' : 'text-sm md:text-3xl lg:text-5xl'}`}></i>
+                    </div>
+                </div>
+                
+                {/* Acid abstract shapes on hover */}
+                <div className="absolute -left-20 -bottom-20 w-64 h-64 rounded-full blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none" style={{ backgroundColor: themeColor }}></div>
             </Link>
           </div>
       </section>
@@ -229,17 +243,17 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
       {/* AWARDS SECTION */}
       <section className="acid-bg text-[#09090b] py-20 md:py-24" id="awards">
           <div className="max-w-6xl mx-auto px-6 md:px-12">
-              <h2 className={`acid-heading font-extrabold uppercase tracking-tighter mb-12 ${isMobileView ? 'text-4xl' : 'text-[clamp(3rem,6vw,5rem)]'}`}>RECOGNITION</h2>
+              <h2 className={`acid-heading font-extrabold uppercase tracking-tighter mb-12 ${isMobileView ? 'text-4xl' : 'text-4xl md:text-[clamp(3rem,6vw,5rem)]'}`}>RECOGNITION</h2>
               
               <div className="border-t-4 border-[#09090b]">
                   {awardItems.length > 0 ? awardItems.map((award: any, i: number) => {
                     const isOpen = openAward === award.id;
                     return (
                       <div key={i} className="border-b-4 border-[#09090b] group">
-                          <div className={`award-row flex justify-between items-center cursor-pointer hover:bg-[#09090b] hover:text-[var(--theme-color)] transition-colors px-2 md:px-4 ${isMobileView ? 'py-5' : 'py-6'}`} style={{ '--theme-color': themeColor } as any} onClick={() => setOpenAward(isOpen ? null : award.id)}>
+                          <div className={`award-row flex justify-between items-center cursor-pointer hover:bg-[#09090b] hover:text-[var(--theme-color)] transition-colors px-2 md:px-4 ${isMobileView ? 'py-5' : 'py-5 md:py-6'}`} style={{ '--theme-color': themeColor } as any} onClick={() => setOpenAward(isOpen ? null : award.id)}>
                               <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto">
-                                  <span className={`font-bold acid-body shrink-0 ${isMobileView ? 'text-lg w-12' : 'text-xl md:text-2xl w-16'}`}>{award.year || new Date(award.createdAt).getFullYear()}</span>
-                                  <h3 className={`acid-heading font-extrabold uppercase tracking-tighter line-clamp-1 ${isMobileView ? 'text-xl' : 'text-2xl md:text-4xl'}`}>{award.title}</h3>
+                                  <span className={`font-bold acid-body shrink-0 ${isMobileView ? 'text-lg w-12' : 'text-lg w-12 md:text-2xl md:w-16'}`}>{award.year || new Date(award.createdAt).getFullYear()}</span>
+                                  <h3 className={`acid-heading font-extrabold uppercase tracking-tighter line-clamp-1 ${isMobileView ? 'text-xl' : 'text-xl md:text-2xl lg:text-4xl'}`}>{award.title}</h3>
                               </div>
                               <i className={`fas fa-plus text-xl md:text-2xl transition-transform duration-300 shrink-0 ml-4 ${isOpen ? 'rotate-45 text-white' : ''}`}></i>
                           </div>
@@ -266,12 +280,12 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
       <footer className="pt-24 md:pt-32 pb-12 px-6 md:px-12 text-center bg-[#09090b]">
           <p className="acid-text font-bold uppercase tracking-[0.3em] mb-6 acid-body text-[10px] md:text-xs">Drop a Line</p>
           <a href={`mailto:${userEmail}`} className={`block acid-heading font-extrabold uppercase tracking-tighter leading-[0.8] transition-colors duration-300 mb-16 md:mb-20 hover:text-[var(--theme-color)]`} style={{ '--theme-color': themeColor } as any}>
-              <span className={`block w-full break-words ${isMobileView ? 'text-5xl' : 'text-[clamp(5rem,15vw,10rem)]'}`}>CONTACT</span>
+              <span className={`block w-full break-words ${isMobileView ? 'text-5xl' : 'text-5xl md:text-[clamp(5rem,15vw,10rem)]'}`}>CONTACT</span>
           </a>
           
-          <div className={`flex justify-between items-center border-t border-zinc-800 pt-8 font-bold uppercase tracking-widest text-zinc-500 acid-body ${isMobileView ? 'flex-col gap-4 text-[9px]' : 'flex-col md:flex-row text-[10px] md:text-xs'}`}>
+          <div className={`flex justify-between items-center border-t border-zinc-800 pt-8 font-bold uppercase tracking-widest text-zinc-500 acid-body ${isMobileView ? 'flex-col gap-4 text-[9px]' : 'flex-col gap-4 text-[9px] md:flex-row md:text-xs'}`}>
               <p>© 2026 {fullName}</p>
-              <div className={`flex ${isMobileView ? 'gap-4 my-2' : 'gap-6 my-4 md:my-0'}`}>
+              <div className={`flex ${isMobileView ? 'gap-4 my-2' : 'gap-4 my-2 md:gap-6 md:my-0'}`}>
                   {links.map((l: any, i: number) => (
                       <a key={i} href={l.url} target="_blank" rel="noreferrer" className="hover:text-white transition" style={{ transition: 'color 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.color = themeColor} onMouseLeave={(e) => e.currentTarget.style.color = '#71717a'}>{l.platform.substring(0, 2)}</a>
                   ))}

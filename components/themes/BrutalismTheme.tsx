@@ -71,7 +71,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
 
   return (
     // FIX: Tambahkan text-slate-900 (Warna Default Hitam) pada kontainer paling luar agar menimpa css nyasar dari Editor
-    <div className={`w-full max-w-5xl mx-auto bg-white text-slate-900 relative z-10 flex flex-col min-h-screen ${res('sm:min-h-0')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] animate-in fade-in slide-in-from-bottom-8 duration-1000
+    <div className={`w-full md:w-[98%] max-w-none mx-auto bg-white text-slate-900 relative z-10 flex flex-col min-h-screen ${res('sm:min-h-0')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] animate-in fade-in slide-in-from-bottom-8 duration-1000
       ${isBrutal ? `border-x-0 border-y-0 border-black ${res('sm:border-x-[3px] sm:border-y-[3px] sm:preview-hard-shadow')}` : `border-x-0 border-slate-200 ${res(`sm:border-x ${cardStyle==='soft-shadow'?'sm:shadow-[0_20px_50px_rgba(0,0,0,0.1)]':''} sm:${getRadiusClass(true)}`)}`}
     `}>
       
@@ -142,12 +142,12 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
 
       {/* HERO SECTION */}
       <section className={`grid grid-cols-1 ${res('md:grid-cols-12')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${!isBrutal ? `mt-2 ${res('md:mt-8')}` : ''}`}>
-          <div className={`col-span-1 ${res('md:col-span-8')} p-6 ${res('sm:p-8 md:p-12 lg:p-16')} flex flex-col justify-center relative overflow-hidden transition-all duration-700
-            ${isBrutal ? `border-b-[3px] ${res('md:border-b-0 md:border-r-[3px]')} border-black bg-slate-50` : 'bg-white'}
+          <div className={`hidden ${res('md:flex')} flex-col col-span-1 ${res('md:col-span-7')} p-6 ${res('sm:p-8 md:p-12 lg:p-16')} justify-center relative overflow-hidden transition-all duration-700
+            ${isBrutal ? `${res('md:border-r-[3px]')} border-black bg-slate-50` : 'bg-white'}
           `}>
               {isBrutal && <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>}
               {isBrutal && (
-                <div className={`inline-block text-slate-900 border-[2px] border-black px-3 py-1 mb-4 ${res('md:mb-8')} w-max font-mono text-[9px] ${res('md:text-[10px]')} font-bold uppercase bg-white preview-hard-shadow-sm relative z-10 transition-all duration-700 ${getRadiusClass(false)}`}>
+                <div className={`inline-block text-slate-900 border-[2px] border-black px-3 py-1 mb-0 ${res('md:mb-8')} w-max font-mono text-[9px] ${res('md:text-[10px]')} font-bold uppercase bg-white preview-hard-shadow-sm relative z-10 transition-all duration-700 ${getRadiusClass(false)}`}>
                     ID: {subdomain?.toUpperCase() || 'USER'}-V1
                 </div>
               )}
@@ -156,11 +156,11 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                   {profession ? profession.split(' ').map((w:any, i:any) => <React.Fragment key={i}>{w}<br/></React.Fragment>) : 'Visual Architect'}
               </h1>
               
-              <p className={`text-[10px] ${res('md:text-[11px]')} max-w-[280px] ${res('sm:max-w-xs md:max-w-md')} opacity-80 relative z-10 leading-relaxed transition-all duration-700 custom-body ${isBrutal ? `uppercase font-bold border-l-[2px] ${res('md:border-l-[3px]')} border-black pl-3 ${res('md:pl-5')} bg-white/50 backdrop-blur-sm p-2 ${res('md:p-3')} text-slate-900` : 'text-slate-500'}`}>
+              <p className={`text-sm max-w-[280px] ${res('sm:max-w-xs md:max-w-md')} opacity-80 relative z-10 leading-relaxed transition-all duration-700 custom-body ${isBrutal ? 'font-bold text-slate-900' : 'text-slate-500'}`}>
                   {bio}
               </p>
           </div>
-          <div className={`col-span-1 ${res('md:col-span-4')} p-8 ${res('md:p-12')} flex items-center justify-center relative transition-colors duration-700 ${isBrutal ? 'bg-gray-100 border-b-[3px] border-black md:border-b-0' : 'bg-white'}`}>
+          <div className={`col-span-1 ${res('md:col-span-5')} p-8 ${res('md:p-12')} flex items-center justify-center relative transition-colors duration-700 ${isBrutal ? 'bg-gray-100' : 'bg-white'}`}>
               {isBrutal && (
                 <div className={`hidden ${res('md:block')} absolute inset-0 pointer-events-none`}>
                   <div className="absolute top-4 left-4 w-3 h-3 border-t-[2px] border-l-[2px] border-black"></div>
@@ -170,7 +170,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                 </div>
               )}
               
-              <div className="w-full max-w-[240px] sm:max-w-[280px] md:max-w-[320px] aspect-[3/4] mx-auto relative group">
+              <div className="w-full md:max-w-[420px] aspect-[3/4] mx-auto relative group">
                   <div className={`w-full h-full overflow-hidden transition-all duration-700 ${isBrutal ? `border-[2px] md:border-[3px] border-black preview-hard-shadow-sm p-1.5 md:p-2 bg-white ${getRadiusClass(true)}` : getCardClass() + ' ' + getRadiusClass(true)}`}>
                       <LazyImage src={displayAvatar} className={`w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Profile" />
                   </div>
@@ -181,6 +181,19 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
                     </div>
                   )}
               </div>
+          </div>
+
+          {/* Mobile Title & Bio */}
+          <div className={`col-span-1 flex ${res('md:hidden')} p-6 ${res('sm:p-8')} flex-col justify-center relative overflow-hidden transition-all duration-700 ${isBrutal ? 'border-b-[3px] border-black bg-slate-50' : 'bg-white'}`}>
+              {isBrutal && <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>}
+              
+              <h1 className={`text-slate-900 text-3xl font-black uppercase leading-[0.9] tracking-tighter mb-4 relative z-10 transition-all duration-700 custom-heading`}>
+                  {profession ? profession.split(' ').map((w:any, i:any) => <React.Fragment key={i}>{w}<br/></React.Fragment>) : 'Visual Architect'}
+              </h1>
+              
+              <p className={`text-sm opacity-80 relative z-10 leading-relaxed transition-all duration-700 custom-body ${isBrutal ? 'font-bold text-slate-900' : 'text-slate-500'}`}>
+                  {bio}
+              </p>
           </div>
       </section>
 
@@ -239,7 +252,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
 
         {/* Tombol Gallery Utama (Brutalist Style) */}
         <div className="w-full flex justify-center mt-12 mb-12">
-          <Link href={`/${subdomain}/gallery`} className="block no-underline">
+          <Link href={`/${subdomain}/gallery`} scroll={false} className="block no-underline">
             <motion.button
               whileHover={{ x: -4, y: -4, boxShadow: `8px 8px 0px 0px ${isBrutal ? themeColor : '#000'}` }}
               whileTap={{ x: 0, y: 0, boxShadow: '0px 0px 0px 0px #000' }}

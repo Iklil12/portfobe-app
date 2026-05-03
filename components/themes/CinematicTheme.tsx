@@ -173,51 +173,45 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                           <span className="text-gray-500 mt-1 text-[10px] md:text-sm truncate max-w-[200px]">{p.description || 'View Project'}</span>
                       </div>
                       
-                      {!isMobileView && (
-                        <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vh] z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden hidden md:block ${radiusClass}`}>
-                            <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale opacity-50" />
-                        </div>
-                      )}
+                      {/* Mobile Inline Image */}
+                      <div className={`${isMobileView ? 'block mt-5' : 'block md:hidden mt-5'} w-full aspect-video relative z-10 overflow-hidden ${radiusClass}`}>
+                          <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale" />
+                      </div>
+                      
+                      {/* Desktop Absolute Hover Image */}
+                      <div className={`${isMobileView ? 'hidden' : 'hidden md:block'} absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vh] z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden ${radiusClass}`}>
+                          <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale opacity-50" />
+                      </div>
                   </a>
                 )
               }) : <div className="py-20 text-center text-gray-600 font-mono text-xs uppercase tracking-widest">No projects available.</div>}
           </div>
 
-          {/* Tombol Gallery Utama (Cinematic Venom Style) */}
-          <div className="w-full flex justify-center mt-20 mb-16">
-            <Link href={`/${subdomain}/gallery`} className="block no-underline">
-              <motion.button
-                initial="initial"
-                whileHover="hover"
-                whileTap={{ scale: 0.95 }}
-                className="relative flex flex-col items-center justify-center cursor-pointer overflow-visible rounded-full border border-white/10 w-[110px] h-[110px] bg-transparent"
-              >
-                <motion.div
-                  variants={{
-                    initial: { scale: 0, opacity: 0 },
-                    hover: { scale: 1, opacity: 1 }
-                  }}
-                  transition={{ type: "spring", stiffness: 70, damping: 15 }}
-                  style={{ background: 'linear-gradient(45deg, #C1A362, #785b1c)' }}
-                  className="absolute inset-0 z-0 rounded-full blur-sm"
-                />
-                <motion.div
-                  variants={{
-                    initial: { scale: 1, opacity: 0 },
-                    hover: { scale: 1.15, opacity: 0.6 }
-                  }}
-                  style={{ background: 'linear-gradient(45deg, #C1A362, #785b1c)', filter: 'blur(20px)' }}
-                  className="absolute inset-0 w-full h-full rounded-full z-[-1]"
-                />
-                <div className="relative z-10 flex flex-col items-center justify-center gap-1 text-center text-white">
-                  <i className="fas fa-images text-xl"></i>
-                  <span className="font-black tracking-[0.2em] uppercase text-[10px]">EXPLORE</span>
-                  <motion.i 
-                    variants={{ initial: { opacity: 0, y: -5 }, hover: { opacity: 1, y: 2 } }}
-                    className="fas fa-chevron-down text-[8px]"
-                  ></motion.i>
+          {/* Tombol Gallery Utama (Sleek Cinematic Style) */}
+          <div className={`w-full flex justify-center mb-20 px-6 ${isMobileView ? 'mt-8' : 'mt-12'}`}>
+            <Link href={`/${subdomain}/gallery`} scroll={false} className="group relative block w-full max-w-4xl no-underline overflow-hidden border-y border-[#1f1f1f] hover:border-white/30 transition-colors duration-700">
+                {/* Background Glow Effect */}
+                <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-700"></div>
+                
+                <div className={`relative z-10 flex items-center justify-between ${isMobileView ? 'py-8 px-2' : 'py-10 md:py-14 px-2 md:px-8'}`}>
+                    <div className="flex flex-col">
+                        <span className={`font-mono text-gray-500 uppercase tracking-[0.3em] group-hover:text-gray-300 transition-colors duration-500 ${isMobileView ? 'text-[9px] mb-2' : 'text-[9px] md:text-xs mb-3'}`}>
+                            <i className="fas fa-film mr-2"></i>Full Index
+                        </span>
+                        <h3 className={`font-black uppercase tracking-tighter text-gray-300 group-hover:text-white transition-colors duration-500 cine-heading flex items-center gap-4 ${isMobileView ? 'text-[26px]' : 'text-3xl md:text-6xl'}`}>
+                            Explore Archive
+                        </h3>
+                    </div>
+                    
+                    {/* Animated Arrow */}
+                    <div className={`flex items-center justify-center shrink-0 rounded-full border border-[#1f1f1f] group-hover:border-white group-hover:bg-white group-hover:text-black transition-all duration-700 text-gray-500 ${isMobileView ? 'w-10 h-10' : 'w-12 h-12 md:w-20 md:h-20'}`}>
+                        <i className={`fas fa-arrow-right group-hover:-rotate-45 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isMobileView ? 'text-sm' : 'text-lg md:text-2xl'}`}></i>
+                    </div>
                 </div>
-              </motion.button>
+                
+                {/* Scanning Line (Cinematic Lens Flare effect) */}
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1.5s] ease-in-out"></div>
+                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent translate-x-full group-hover:-translate-x-full transition-transform duration-[1.5s] ease-in-out"></div>
             </Link>
           </div>
       </section>
