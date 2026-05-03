@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import { AnimateOnScroll } from '@/components/ui/AnimateOnScroll';
 
 // Smooth Counter Component
 function AnimatedCounter({ value, duration = 1500 }: { value: number, duration?: number }) {
@@ -86,6 +87,7 @@ export function MetricsSummary({ analytics, strength, isLoading }: MetricsSummar
     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 mb-12">
       
       {/* CARD 1: TOTAL VIEWS */}
+      <AnimateOnScroll delay={0}>
       <div className="bg-white border border-slate-100 p-5 md:p-7 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
         <div className="flex flex-col h-full justify-between relative z-10">
             <div>
@@ -111,8 +113,10 @@ export function MetricsSummary({ analytics, strength, isLoading }: MetricsSummar
             </div>
         </div>
       </div>
+      </AnimateOnScroll>
 
       {/* CARD 2: TODAY'S TRAFFIC */}
+      <AnimateOnScroll delay={80}>
       <div className="bg-[#0a0a0a] p-5 md:p-7 rounded-[2rem] md:rounded-[2.5rem] shadow-xl hover:shadow-2xl transition-all group overflow-hidden relative">
         <div className="flex flex-col h-full justify-between relative z-10">
             <div>
@@ -138,9 +142,11 @@ export function MetricsSummary({ analytics, strength, isLoading }: MetricsSummar
             </div>
         </div>
       </div>
+      </AnimateOnScroll>
 
       {/* CARD 3: PORTFOLIO STRENGTH */}
-      <div className="col-span-2 md:col-span-1 bg-white border border-slate-100 p-5 md:p-7 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+      <AnimateOnScroll delay={160} className="col-span-2 md:col-span-1">
+      <div className="h-full bg-white border border-slate-100 p-5 md:p-7 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
         <div className="flex flex-col h-full justify-between relative z-10">
             <div>
                 <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 flex justify-between items-center">
@@ -166,6 +172,7 @@ export function MetricsSummary({ analytics, strength, isLoading }: MetricsSummar
             </div>
         </div>
       </div>
+      </AnimateOnScroll>
 
     </div>
   );

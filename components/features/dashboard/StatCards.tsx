@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { AnimateOnScroll } from '@/components/ui/AnimateOnScroll';
 
 // Smooth Counter Component
 function AnimatedCounter({ value, duration = 1500 }: { value: number, duration?: number }) {
@@ -46,7 +47,8 @@ export function StatCards({ stats, isLoading }: StatCardsProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-10">
       {/* CARD 1: Projects */}
-      <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 animate-enter" style={{animationDelay: '100ms'}}>
+      <AnimateOnScroll delay={0}>
+      <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300">
         <div className="flex justify-between items-start mb-4 md:mb-6">
             <p className="text-[8px] md:text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Proyek</p>
             <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><i className="fas fa-folder-open text-[10px] md:text-xs"></i></div>
@@ -62,9 +64,11 @@ export function StatCards({ stats, isLoading }: StatCardsProps) {
           <span className="hidden sm:block px-2 py-1 bg-slate-50 text-slate-500 rounded-lg text-[9px] font-extrabold uppercase border border-slate-100">Live</span>
         </div>
       </div>
+      </AnimateOnScroll>
 
       {/* CARD 2: Awards */}
-      <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 animate-enter" style={{animationDelay: '150ms'}}>
+      <AnimateOnScroll delay={70}>
+      <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300">
         <div className="flex justify-between items-start mb-4 md:mb-6">
             <p className="text-[8px] md:text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Penghargaan</p>
             <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><i className="fas fa-award text-[10px] md:text-xs"></i></div>
@@ -80,9 +84,11 @@ export function StatCards({ stats, isLoading }: StatCardsProps) {
           <span className="hidden sm:block px-2 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-extrabold uppercase border border-emerald-100">Verified</span>
         </div>
       </div>
+      </AnimateOnScroll>
 
       {/* CARD 3: Links */}
-      <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 animate-enter" style={{animationDelay: '200ms'}}>
+      <AnimateOnScroll delay={140}>
+      <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300">
         <div className="flex justify-between items-start mb-4 md:mb-6">
             <p className="text-[8px] md:text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Tautan</p>
             <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><i className="fas fa-link text-[10px] md:text-xs"></i></div>
@@ -98,9 +104,11 @@ export function StatCards({ stats, isLoading }: StatCardsProps) {
           <span className="hidden sm:block px-2.5 py-1 bg-slate-900 text-white rounded-lg text-[9px] font-extrabold uppercase shadow-sm">Aktif</span>
         </div>
       </div>
+      </AnimateOnScroll>
 
       {/* CARD 4: Active Theme */}
-      <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 animate-enter" style={{animationDelay: '250ms'}}>
+      <AnimateOnScroll delay={210}>
+      <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300">
         <div className="flex justify-between items-start mb-4 md:mb-6">
             <p className="text-[8px] md:text-[10px] font-extrabold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 md:gap-2">
               <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-emerald-500 relative flex">
@@ -119,6 +127,7 @@ export function StatCards({ stats, isLoading }: StatCardsProps) {
           )}
         </div>
       </div>
+      </AnimateOnScroll>
     </div>
   );
 }

@@ -59,11 +59,11 @@ export async function GET(req: Request) {
       prisma.certificate.count({ where: { userId } }),
       // G. Links (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
       prisma.link.count({ where: { userId } }),
-      // H. Activities (Tetap dibatasi take: 10)
+      // H. Activities (Dibatasi take: 5 agar ringan)
       prisma.activity.findMany({
         where: { userId },
         orderBy: { createdAt: 'desc' },
-        take: 10,
+        take: 5,
         select: { id: true, actionType: true, details: true, createdAt: true }
       })
     ]);
