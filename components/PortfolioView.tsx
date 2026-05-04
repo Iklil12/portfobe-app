@@ -10,6 +10,7 @@ import BrutalismTheme from './themes/BrutalismTheme';
 import MinimalistTheme from './themes/MinimalistTheme';
 import CinematicTheme from './themes/CinematicTheme';
 import AcidTheme from './themes/AcidTheme';
+import BentoTheme from './themes/BentoGrid';
 
 // 2. DAFTARKAN TEMA KE DALAM "THEME REGISTRY"
 const THEME_MAP: Record<string, React.FC<any>> = {
@@ -17,6 +18,7 @@ const THEME_MAP: Record<string, React.FC<any>> = {
   'minimalist': MinimalistTheme,
   'cinematic': CinematicTheme,
   'acid': AcidTheme,
+  'bentogrid': BentoTheme,
   
   // Nanti tinggal tambah: 'elegant': ElegantTheme, dst...
 };

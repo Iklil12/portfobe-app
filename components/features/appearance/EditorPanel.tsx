@@ -10,6 +10,7 @@ import BrutalismControls from '@/components/editor-controls/BrutalismControls';
 import MinimalistControls from '@/components/editor-controls/MinimalistControls';
 import CinematicControls from '@/components/editor-controls/CinematicControls';
 import AcidControls from '@/components/editor-controls/AcidControls';
+import BentoGridControls from '@/components/editor-controls/BentoGridControls';
 
 export function EditorPanel({ state, actions }: { state: any, actions: any }) {
   const { 
@@ -55,6 +56,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
           splashScreen ? "Fitur Cinematic Intro" :
           activeTheme === 'brutalism' ? "Tema Neo Brutalism" :
           activeTheme === 'cinematic' ? "Tema Cinematic Dark" :
+          activeTheme === 'bentogrid' ? "Tema Bento Grid" :
           activeTheme === 'acid' ? "Tema Acid Tech" : undefined
         }
       />
@@ -147,13 +149,14 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                 <div className="relative p-5 rounded-3xl border border-white/60 bg-gradient-to-br from-white to-slate-50/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 group-hover:-translate-y-1">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 shadow-inner flex items-center justify-center text-white transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
-                      <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : 'fa-cube'} text-lg drop-shadow-md`}></i>
+                      <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : 'fa-cube'} text-lg drop-shadow-md`}></i>
                     </div>
                     <div className="flex flex-col">
                       <span className="font-black text-slate-900 text-base tracking-tight group-hover:text-slate-600 transition-colors">
                         {activeTheme === 'minimalist' ? 'Minimalist Clean' :
                           activeTheme === 'cinematic' ? 'Cinematic Dark' :
                             activeTheme === 'acid' ? 'Acid Punk' :
+                              activeTheme === 'bentogrid' ? 'Bento Grid' :
                               'Neo Brutalism'}
                       </span>
                       <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1 flex items-center gap-1.5">
@@ -187,6 +190,9 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
             )}
             {activeTheme === 'acid' && (
               <AcidControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} />
+            )}
+            {activeTheme === 'bentogrid' && (
+              <BentoGridControls themeColor={themeColor} setThemeColor={setThemeColor} />
             )}
           </div>
 

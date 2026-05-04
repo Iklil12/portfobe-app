@@ -132,6 +132,8 @@ export async function GET(req: NextRequest) {
         else if (r.includes("google")) ref = "Google";
         else if (r.includes("whatsapp") || r.includes("wa.me")) ref = "WhatsApp";
         else if (r.includes("linkedin")) ref = "LinkedIn";
+        else if (r.includes("tiktok")) ref = "TikTok";
+        else if (r.includes("youtube") || r.includes("youtu.be")) ref = "YouTube";
         else {
             try {
                 const hostname = new URL(log.referrer).hostname.replace('www.', '');

@@ -59,5 +59,14 @@ export const THEMES_DATA = [
       preview: 'bg-[#e5e5e5]',
       isAvailable: false, 
       img: 'https://images.unsplash.com/photo-1613521140785-e85e427f8002?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+      id: 'bentogrid',
+      name: 'Bento Grid',
+      desc: 'Modern, structured layout with glassmorphism.',
+      preview: 'bg-[#09090b]',
+      isAvailable: true, 
+      isPro: false,
+      img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop'
   }
 ];
