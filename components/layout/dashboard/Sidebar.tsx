@@ -51,11 +51,11 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen }: SidebarProps) {
           ) : (
             <Link href="/" className="flex items-center group cursor-pointer w-full relative h-full">
                <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-in-out opacity-0 scale-75 pointer-events-none ${shouldCollapse ? 'md:opacity-100 md:scale-100' : ''}`}>
-                 <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-md group-hover:scale-105 transition-transform">P</div>
+                 <LazyImage src="/portfobe.png" alt="Logo" className="w-10 h-10 object-contain  transition-transform" />
                </div>
                
                <div className={`absolute inset-0 flex items-center justify-start transition-all duration-300 ease-in-out opacity-100 scale-100 ${shouldCollapse ? 'md:opacity-0 md:scale-75 md:pointer-events-none' : ''}`}>
-                 <LazyImage src="/portfo.be.png" alt="Portfo.be Logo" className={`h-7 w-auto object-contain group-hover:scale-105 transition-transform duration-300`} />
+                 <LazyImage src="/portfo.be.png" alt="Portfo.be Logo" className={`h-13 w-auto object-contain transition-transform duration-300`} />
                </div>
             </Link>
           )}
