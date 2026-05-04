@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -11,32 +11,61 @@ export async function GET(req: Request) {
     }
 
     const userId = session.user.id;
-    const { searchParams } = new URL(req.url);
-    const range = searchParams.get("range") || "7d";
+    // Tangkap parameter range dari req.nextUrl.searchParams
+    const range = req.nextUrl.searchParams.get("range") || "7d";
 
-    // 1. Tentukan rentang waktu
-    let startDate = new Date();
-    if (range === "7d") startDate.setDate(startDate.getDate() - 7);
-    else if (range === "30d") startDate.setDate(startDate.getDate() - 30);
-    else startDate = new Date(0);
+    // 1. Buat variabel startDate berdasarkan parameter range
+    let startDate: Date | undefined;
+    if (range === "1d") {
+      startDate = new Date();
+      startDate.setHours(0, 0, 0, 0);
+    } else if (range === "7d") {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);
+    } else if (range === "30d") {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+    } else if (range === "all") {
+      startDate = undefined;
+    } else {
+      // Default
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);
+    }
 
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
 
     // 2. AMBIL DATA HISTORIS DARI DAILY STATS (Cepat & Ringan)
+    const chartStartDate = startDate ? startDate : new Date(0);
     const historicalStats = await prisma.dailyStats.findMany({
       where: {
         userId,
-        date: { gte: startDate, lt: startOfToday }
+        date: { gte: chartStartDate, lt: startOfToday }
       },
       orderBy: { date: 'asc' }
     });
 
-    // 3. AMBIL DATA HARI INI DARI ANALYTICS MENTAH (Hanya sedikit data)
+    // 3. AMBIL DATA HARI INI DARI ANALYTICS MENTAH (Untuk Unique Visitors & Traffic Sources)
     const todayLogs = await prisma.analytics.findMany({
       where: {
         userId,
         createdAt: { gte: startOfToday }
+      }
+    });
+
+    // 3b. AMBIL DATA KHUSUS UNTUK METRIK AVG TIME & BOUNCE RATE BERDASARKAN startDate
+    const metricsWhere: any = { userId };
+    if (startDate) {
+      metricsWhere.createdAt = { gte: startDate };
+    }
+    const metricsLogs = await prisma.analytics.findMany({
+      where: metricsWhere,
+      select: {
+        id: true,
+        sessionId: true,
+        duration: true,
+        type: true,
       }
     });
 
@@ -57,8 +86,8 @@ export async function GET(req: Request) {
     const todayUnique = new Set(todayLogs.map(log => log.ipAddress)).size;
     const uniqueVisitors = todayUnique + Math.round(historicalViews * 0.7);
 
-    // 6. Hitung Average Time & Bounce Rate (Hanya dari data hari ini agar akurat & cepat)
-    const logsWithDuration = todayLogs.filter(l => l.duration > 0);
+    // 6. Hitung Average Time & Bounce Rate (HANYA dari data dalam rentang startDate)
+    const logsWithDuration = metricsLogs.filter(l => l.duration > 0);
     const totalDuration = logsWithDuration.reduce((acc, curr) => acc + curr.duration, 0);
     const avgDurationSeconds = logsWithDuration.length > 0 ? Math.round(totalDuration / logsWithDuration.length) : 0;
     
@@ -66,8 +95,26 @@ export async function GET(req: Request) {
     const seconds = avgDurationSeconds % 60;
     const avgTimeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
 
-    const totalSessions = new Set(todayLogs.filter(l => l.sessionId).map(l => l.sessionId)).size || todayViews;
-    const bouncedSessions = new Set(todayLogs.filter(l => l.duration < 10).map(l => l.sessionId || l.id)).size;
+    // Rumus Bounce Rate: Persentase sesi dengan 1 pageview dibagi total sesi
+    const sessionsMap: Record<string, number> = {};
+    let fallbackTotalViews = 0;
+    
+    metricsLogs.forEach(log => {
+      if (log.type === 'VIEW') fallbackTotalViews++;
+      if (log.sessionId) {
+        sessionsMap[log.sessionId] = (sessionsMap[log.sessionId] || 0) + 1;
+      }
+    });
+
+    let totalSessions = Object.keys(sessionsMap).length;
+    let bouncedSessions = Object.values(sessionsMap).filter(views => views === 1).length;
+
+    // Fallback jika tidak ada data sessionId
+    if (totalSessions === 0 && fallbackTotalViews > 0) {
+      totalSessions = fallbackTotalViews;
+      bouncedSessions = metricsLogs.filter(l => l.duration < 10).length;
+    }
+
     const bounceRate = totalSessions > 0 ? Math.round((bouncedSessions / totalSessions) * 100) : 0;
 
     // 7. Traffic Sources (Gunakan data hari ini saja untuk performa)
@@ -76,7 +123,10 @@ export async function GET(req: Request) {
       let ref = "Direct";
       if (log.referrer && log.referrer !== "Direct") {
         const r = log.referrer.toLowerCase();
-        if (r.includes("instagram")) ref = "Instagram";
+        if (r.includes("portfo.be") || r.includes("localhost")) {
+          ref = "Direct";
+        }
+        else if (r.includes("instagram")) ref = "Instagram";
         else if (r.includes("t.co") || r.includes("twitter")) ref = "Twitter / X";
         else if (r.includes("facebook")) ref = "Facebook";
         else if (r.includes("google")) ref = "Google";
@@ -84,9 +134,14 @@ export async function GET(req: Request) {
         else if (r.includes("linkedin")) ref = "LinkedIn";
         else {
             try {
-                ref = new URL(log.referrer).hostname.replace('www.', '');
+                const hostname = new URL(log.referrer).hostname.replace('www.', '');
+                if (hostname.includes("portfo.be") || hostname.includes("localhost")) {
+                  ref = "Direct";
+                } else {
+                  ref = hostname;
+                }
             } catch(e) {
-                ref = "Other";
+                // Jika gagal parsing URL, tetap Direct
             }
         }
       }

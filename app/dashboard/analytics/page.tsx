@@ -139,7 +139,7 @@ function InfoTooltip({ content, children }: { content: string, children: React.R
 
 export default function AnalyticsPage() {
   const [isAnimationReady, setIsAnimationReady] = useState(false);
-  const [range, setRange] = useState('7d');
+  const [range, setRange] = useState('1d');
   const { data, isLoading, error } = useSWR(`/api/analytics/stats?range=${range}`, fetcher, {
     refreshInterval: 30000 // Refresh every 30s
   });
@@ -225,8 +225,9 @@ export default function AnalyticsPage() {
         </div>
 
         {/* RANGE SELECTOR */}
-        <div className="flex bg-slate-100 p-1 rounded-2xl self-center md:self-auto border border-slate-200/50">
+        <div className="flex bg-slate-100 p-1 rounded-2xl self-center md:self-auto border border-slate-200/50 overflow-x-auto max-w-full">
           {[
+            { id: '1d', label: 'Hari Ini', pro: false },
             { id: '7d', label: '7 Hari', pro: false },
             { id: '30d', label: '30 Hari', pro: true },
             { id: 'all', label: 'Semua', pro: true }
@@ -242,7 +243,7 @@ export default function AnalyticsPage() {
                   }
                   setRange(item.id);
                 }}
-                className={`px-6 py-2.5 rounded-xl text-[10px] font-black tracking-widest transition-all flex items-center gap-2 ${range === item.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`px-4 sm:px-6 py-2.5 rounded-xl text-[10px] font-black tracking-widest transition-all flex items-center gap-2 whitespace-nowrap ${range === item.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
               >
                 {item.label}
                 {isLocked && <i className="fas fa-lock text-[8px] opacity-40"></i>}

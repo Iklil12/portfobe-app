@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { userId, type, pagePath, analyticsId, sessionId } = body;
+    const { userId, type, pagePath, url, analyticsId, sessionId, referrer: clientReferrer } = body;
 
     // 1. LOGIKA HEARTBEAT (Update durasi, sangat ringan)
     if (type === "HEARTBEAT" && analyticsId) {
@@ -33,7 +33,63 @@ export async function POST(req: Request) {
     const headersList = await headers();
     const ip = headersList.get("x-forwarded-for")?.split(',')[0] || "unknown";
     const userAgent = headersList.get("user-agent") || "unknown";
-    const referrer = headersList.get("referer") || "Direct";
+    
+    // Gunakan document.referrer dari sisi client
+    // Jika tidak ada, cek header referer
+    // Filter internal domain agar tidak terhitung sebagai source
+    let finalReferrer = "Direct";
+    
+    const isValidReferrer = (ref: string | null) => {
+      if (!ref || ref === "") return false;
+      const r = ref.toLowerCase();
+      if (r.includes("portfo.be") || r.includes("localhost")) return false;
+      return true;
+    };
+
+    if (isValidReferrer(clientReferrer)) {
+      finalReferrer = clientReferrer;
+    } else if (isValidReferrer(headersList.get("referer"))) {
+      finalReferrer = headersList.get("referer")!;
+    }
+    
+    // Fallback deteksi tingkat lanjut (Advanced Detection)
+    // Jika masih "Direct", cek dari User-Agent (In-App Browser) atau URL Parameters
+    if (finalReferrer === "Direct") {
+      const ua = userAgent.toLowerCase();
+      if (ua.includes("instagram")) {
+        finalReferrer = "Instagram";
+      } else if (ua.includes("fban") || ua.includes("fbav") || ua.includes("facebook")) {
+        finalReferrer = "Facebook";
+      } else if (ua.includes("whatsapp")) {
+        finalReferrer = "WhatsApp";
+      } else if (ua.includes("twitter")) {
+        finalReferrer = "Twitter / X";
+      } else if (ua.includes("tiktok")) {
+        finalReferrer = "TikTok";
+      } else if (url) {
+        // Cek URL parameters (fallback jika dibuka di browser eksternal via link khusus)
+        try {
+          const urlObj = new URL(url);
+          if (urlObj.searchParams.has("igsh") || urlObj.searchParams.has("igshid")) {
+            finalReferrer = "Instagram";
+          } else if (urlObj.searchParams.has("fbclid")) {
+            finalReferrer = "Facebook";
+          } else if (urlObj.searchParams.has("gclid")) {
+            finalReferrer = "Google";
+          } else if (urlObj.searchParams.has("twclid")) {
+            finalReferrer = "Twitter / X";
+          }
+        } catch (e) {
+          // Abaikan error parsing URL
+        }
+      }
+    }
+
+    console.log("[TRACK API DEBUG] UserAgent:", userAgent);
+    console.log("[TRACK API DEBUG] URL:", url);
+    console.log("[TRACK API DEBUG] Client Referrer:", clientReferrer);
+    console.log("[TRACK API DEBUG] Header Referrer:", headersList.get("referer"));
+    console.log("[TRACK API DEBUG] Final Referrer:", finalReferrer);
 
     const newLog = await prisma.analytics.create({
       data: {
@@ -42,7 +98,7 @@ export async function POST(req: Request) {
         type: type || "VIEW",
         ipAddress: ip,
         userAgent,
-        referrer,
+        referrer: finalReferrer,
         pagePath: pagePath || "/",
       },
     });

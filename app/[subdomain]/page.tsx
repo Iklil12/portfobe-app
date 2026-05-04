@@ -56,7 +56,9 @@ export default function PublicPortfolioPage() {
                 userId: result.id,
                 type: 'VIEW',
                 pagePath: window.location.pathname,
-                sessionId: sessionId
+                url: window.location.href,
+                sessionId: sessionId,
+                referrer: document.referrer
               })
             });
 
