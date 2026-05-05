@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
 
+const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
+
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
@@ -30,7 +32,8 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
   const displayAvatar = (rawAvatar.replace(/"/g, '').trim() !== "" && rawAvatar !== "null") ? rawAvatar.replace(/"/g, '').trim() : `https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop`;
 
   // --- PENGATURAN DESAIN ---
-  const themeColor = theme?.themeColor || "#DFFF00";
+  const rawThemeColor = theme?.themeColor || "#DFFF00";
+  const themeColor = isValidHexColor(rawThemeColor) ? rawThemeColor : "#ff9e00";
   const fontHeading = theme?.fontHeading || "Syne";
   const fontBody = theme?.fontBody || "Space Grotesk";
 

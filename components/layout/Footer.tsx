@@ -29,9 +29,9 @@ export function Footer() {
                   </div>
                   <p className="text-sm font-medium leading-relaxed mb-8 text-slate-500 max-w-sm">The premier hub for visual creators to showcase work, share links, and land high-paying clients without writing a single line of code.</p>
                   <div className="flex gap-4">
-                      <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-blue-500 hover:scale-110 hover:-translate-y-1 transition-all duration-300"><i className="fab fa-twitter"></i></a>
-                      <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-pink-600 hover:scale-110 hover:-translate-y-1 transition-all duration-300"><i className="fab fa-instagram"></i></a>
-                      <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white hover:text-black hover:scale-110 hover:-translate-y-1 transition-all duration-300"><i className="fab fa-tiktok"></i></a>
+                      <a href="https://web.facebook.com/profile.php?id=61589094247534" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-blue-500 hover:scale-110 hover:-translate-y-1 transition-all duration-300"><i className="fab fa-facebook"></i></a>
+                      <a href="https://www.instagram.com/portfo.be/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-pink-600 hover:scale-110 hover:-translate-y-1 transition-all duration-300"><i className="fab fa-instagram"></i></a>
+                      <a href="https://www.tiktok.com/@portfo.be" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white hover:text-black hover:scale-110 hover:-translate-y-1 transition-all duration-300"><i className="fab fa-tiktok"></i></a>
                   </div>
               </div>
               

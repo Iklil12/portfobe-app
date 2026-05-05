@@ -127,17 +127,27 @@ export function useSettings() {
 
       if (res.ok) {
         toast.success(newStatus ? 'Portofolio kini Live!' : 'Portofolio disembunyikan.', { id: loadingToast });
-        mutate('/api/dashboard/sync');
-        await update({ ...session, user: { ...session?.user, isLive: newStatus } });
+        await update({ isLive: newStatus, isEmailVerified: true });
       } else {
-        throw new Error();
+        const errorData = await res.json().catch(() => ({}));
+        if (errorData.error === "FORBIDDEN") {
+           throw new Error("FORBIDDEN");
+        }
+        throw new Error("UNKNOWN");
       }
-    } catch (error) {
+    } catch (error: any) {
       setIsLive(!newStatus); 
       mutate('/api/dashboard/sync', (currentData: any) => {
         return { ...currentData, layout: { ...currentData?.layout, isLive: !newStatus } };
       }, { revalidate: true });
-      toast.error('Gagal mengubah status.', { id: loadingToast });
+
+      if (error.message === "FORBIDDEN") {
+        toast.error("Email belum diverifikasi!", { id: loadingToast });
+        // Force refresh session state for the client (must match jwt callback root properties)
+        await update({ isEmailVerified: false });
+      } else {
+        toast.error('Gagal mengubah status.', { id: loadingToast });
+      }
     }
   };
 

@@ -18,9 +18,8 @@ model User {
   createdAt              DateTime        @default(now())
   updatedAt              DateTime        @updatedAt
   isLive                 Boolean         @default(false)
+  emailVerified          DateTime?
   pendingEmail           String?
-  emailVerificationToken String?
-  tokenExpires           DateTime?
   planExpiredAt          DateTime?
   accounts               Account[]
   activities             Activity[]
@@ -41,6 +40,14 @@ model PasswordResetToken {
   expires DateTime
 
   @@unique([email, token])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 model Account {
@@ -232,6 +239,16 @@ model LoginAttempt {
   updatedAt DateTime  @default(now()) @updatedAt
 
   @@index([email])
+  @@index([ip])
+}
+
+model RegisterAttempt {
+  id        String   @id @default(uuid())
+  ip        String
+  count     Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@index([ip])
 }
 

@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
 
+const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
+
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
@@ -22,7 +24,8 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
   const res = (desktopClasses: string) => isMobileView ? '' : desktopClasses;
 
   // --- MENGAMBIL DATA TEMA (Dari tabel SiteAppearance) ---
-  const themeColor = theme?.themeColor || "#000000";
+  const rawThemeColor = theme?.themeColor || "#000000";
+  const themeColor = isValidHexColor(rawThemeColor) ? rawThemeColor : "#ff9e00";
   const fontHeading = theme?.fontHeading || "Space Mono";
   const fontBody = theme?.fontBody || "Inter";
   const cardStyle = theme?.cardStyle || "hard-shadow";

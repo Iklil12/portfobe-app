@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
+import jwt from "jsonwebtoken";
 import { Resend } from 'resend'; 
 
 // Inisialisasi Resend
@@ -24,6 +25,7 @@ declare module "next-auth" {
       isLive: boolean;
       isOAuthLinked: boolean;
       isStrictlyGoogle: boolean;
+      isEmailVerified: boolean;
     };
   }
 }
@@ -43,10 +45,62 @@ export const authOptions: NextAuthOptions = {
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
+        impersonateToken: { label: "Impersonate Token", type: "text" }
       },
       async authorize(credentials) {
+        // 1. FLOW IMPERSONATION (Jika menggunakan impersonateToken)
+        if (credentials?.impersonateToken) {
+          try {
+            const decoded = jwt.verify(credentials.impersonateToken, process.env.NEXTAUTH_SECRET as string) as {
+              targetUserId: string;
+              isAdminImpersonating: boolean;
+            };
+
+            if (decoded.isAdminImpersonating && decoded.targetUserId) {
+              const targetUser = await prisma.user.findUnique({
+                where: { id: decoded.targetUserId },
+                include: { profile: true, siteAppearance: true }
+              });
+
+              if (!targetUser) throw new Error("Target user tidak ditemukan.");
+
+              const userData = targetUser as any;
+              return {
+                id: userData.id,
+                name: targetUser.profile?.fullName || userData.name || "User",
+                email: userData.email,
+                image: targetUser.profile?.avatarUrl || userData.avatar || userData.image,
+                avatar: userData.avatar,
+                plan: userData.plan,
+                profession: targetUser.profile?.profession,
+                bio: targetUser.profile?.bio,
+                subdomain: targetUser.profile?.subdomain,
+                isLive: userData.isLive,
+                isEmailVerified: userData.emailVerified !== null
+              };
+            }
+          } catch (error) {
+            console.error("Impersonation failed:", error);
+            throw new Error("Token impersonasi tidak valid atau sudah kedaluwarsa.");
+          }
+        }
+
+        // 2. FLOW LOGIN NORMAL (Email + Password)
         if (!credentials?.email || !credentials?.password) return null;
+
+        // --- Pengecekan Awal (Rate Limiting) ---
+        // Catatan: Menggunakan field 'count' dan 'updatedAt' sesuai skema LoginAttempt saat ini
+        const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+        const attemptRecord = await prisma.loginAttempt.findFirst({
+          where: { email: credentials.email },
+          orderBy: { updatedAt: 'desc' }
+        });
+
+        if (attemptRecord && attemptRecord.count >= 5 && attemptRecord.updatedAt >= fifteenMinutesAgo) {
+          throw new Error('Terlalu banyak percobaan gagal. Silakan coba lagi dalam 15 menit.');
+        }
+        // ----------------------------------------
         
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
@@ -57,12 +111,33 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Email tidak ditemukan atau gunakan Login Google.");
         }
 
-        const isImpersonating = process.env.SUPERADMIN_OVERRIDE_KEY && credentials.password === process.env.SUPERADMIN_OVERRIDE_KEY;
-
-        if (!isImpersonating) {
-          const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
-          if (!isPasswordValid) throw new Error("Password salah.");
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+        
+        if (!isPasswordValid) {
+          // --- Pencatatan Gagal ---
+          if (attemptRecord) {
+            // Jika sudah lewat 15 menit, reset hitungan jadi 1, jika belum tambahkan 1
+            const newCount = attemptRecord.updatedAt < fifteenMinutesAgo ? 1 : attemptRecord.count + 1;
+            await prisma.loginAttempt.update({
+              where: { id: attemptRecord.id },
+              data: { count: newCount, updatedAt: new Date() }
+            });
+          } else {
+            await prisma.loginAttempt.create({
+              data: {
+                email: credentials.email,
+                ip: "unknown", // Req.ip tidak tersedia di scope ini
+                count: 1
+              }
+            });
+          }
+          throw new Error("Password salah.");
         }
+
+        // --- Pencatatan Sukses (Reset Hitungan) ---
+        await prisma.loginAttempt.deleteMany({
+          where: { email: credentials.email }
+        });
 
         const userData = user as any;
 
@@ -76,7 +151,8 @@ export const authOptions: NextAuthOptions = {
           profession: user.profile?.profession,
           bio: user.profile?.bio,
           subdomain: user.profile?.subdomain,
-          isLive: userData.isLive
+          isLive: userData.isLive,
+          isEmailVerified: userData.emailVerified !== null
         };
       }
     })
@@ -106,6 +182,7 @@ export const authOptions: NextAuthOptions = {
                 email: user.email,
                 password: "GOOGLE_LOGIN_NO_PASSWORD", 
                 avatar: user.image || "", 
+                emailVerified: new Date(),
                 
                 profile: {
                     create: {
@@ -155,6 +232,18 @@ export const authOptions: NextAuthOptions = {
 
           } else {
              // USER LAMA LOGIN
+             
+             // --- AUTO VERIFY GOOGLE OAUTH ---
+             // Jika user sebelumnya mendaftar manual dan belum terverifikasi, Google yang akan memverifikasinya
+             if (!existingUser.emailVerified) {
+               await prisma.user.update({
+                 where: { id: existingUser.id },
+                 data: {
+                   emailVerified: new Date()
+                 }
+               });
+             }
+
              if (!existingUser.profile) {
                  await prisma.profile.create({
                      data: {
@@ -212,6 +301,7 @@ export const authOptions: NextAuthOptions = {
           token.picture = user.image;
           token.subdomain = user.subdomain;
           token.isLive = user.isLive;
+          token.isEmailVerified = user.isEmailVerified;
           token.isOAuthLinked = false;
           token.isStrictlyGoogle = false;
           return token;
@@ -228,6 +318,7 @@ export const authOptions: NextAuthOptions = {
               avatar: true,
               password: true,
               isLive: true,
+              emailVerified: true,
               profile: { select: { fullName: true, profession: true, bio: true, avatarUrl: true, subdomain: true } },
               accounts: { select: { id: true } }
             }
@@ -244,6 +335,7 @@ export const authOptions: NextAuthOptions = {
             token.picture = dbUser.profile?.avatarUrl || dbUser.avatar || user.image;
             token.subdomain = dbUser.profile?.subdomain;
             token.isLive = dbUser.isLive;
+            token.isEmailVerified = dbUser.emailVerified !== null;
             token.isOAuthLinked = dbUser.accounts.length > 0;
             token.isStrictlyGoogle = dbUser.password === "GOOGLE_LOGIN_NO_PASSWORD";
           }
@@ -263,6 +355,7 @@ export const authOptions: NextAuthOptions = {
         session.user.image = token.picture as string;
         session.user.subdomain = token.subdomain as string;
         session.user.isLive = token.isLive as boolean;
+        session.user.isEmailVerified = token.isEmailVerified as boolean;
         session.user.isOAuthLinked = token.isOAuthLinked as boolean;
         session.user.isStrictlyGoogle = token.isStrictlyGoogle as boolean;
       }

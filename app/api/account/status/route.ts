@@ -20,6 +20,20 @@ export async function PATCH(req: Request) {
 
   const { isLive } = await req.json();
 
+  if (isLive === true) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { emailVerified: true }
+    });
+
+    if (!user || user.emailVerified === null) {
+      return NextResponse.json({ 
+        error: "FORBIDDEN", 
+        message: "Verifikasi email Anda terlebih dahulu untuk mengaktifkan portofolio." 
+      }, { status: 403 });
+    }
+  }
+
   await prisma.user.update({
     where: { email: session.user.email },
     data: { isLive },

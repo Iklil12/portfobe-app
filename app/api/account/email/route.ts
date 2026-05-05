@@ -58,8 +58,18 @@ export async function PATCH(req: Request) {
       where: { email: user.email },
       data: {
         pendingEmail: newEmail,
-        emailVerificationToken: token,
-        tokenExpires: expires
+      }
+    });
+
+    await prisma.verificationToken.deleteMany({
+      where: { identifier: user.email }
+    });
+
+    await prisma.verificationToken.create({
+      data: {
+        identifier: user.email,
+        token: token,
+        expires: expires
       }
     });
 

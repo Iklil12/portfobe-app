@@ -4,6 +4,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
+const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
+
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
@@ -29,7 +31,8 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
   const linkedinLink = links.find((l: any) => l.platform.toLowerCase().includes('linkedin'));
 
   // Theme settings
-  const highlightColor = theme?.themeColor || '#ff9e00';
+  const rawHighlightColor = theme?.themeColor || '#ff9e00';
+  const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#ff9e00';
 
   const nameParts = fullName.split(' ');
   const firstName = nameParts[0];

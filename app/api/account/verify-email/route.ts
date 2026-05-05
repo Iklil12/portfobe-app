@@ -15,16 +15,24 @@ export async function GET(req: Request) {
     }
 
     // 1. Cari user yang punya token ini
-    const user = await prisma.user.findFirst({
-      where: { emailVerificationToken: token }
+    const verification = await prisma.verificationToken.findUnique({
+      where: { token: token }
     });
 
-    if (!user || !user.pendingEmail || !user.tokenExpires) {
+    if (!verification) {
+      return NextResponse.redirect(`${settingsUrl}?error=Tautan tidak valid atau sudah digunakan`);
+    }
+
+    const user = await prisma.user.findUnique({
+       where: { email: verification.identifier }
+    });
+
+    if (!user || !user.pendingEmail) {
       return NextResponse.redirect(`${settingsUrl}?error=Tautan tidak valid atau sudah digunakan`);
     }
 
     // 2. Cek apakah waktunya sudah lewat 15 menit
-    if (new Date() > user.tokenExpires) {
+    if (new Date() > verification.expires) {
       return NextResponse.redirect(`${settingsUrl}?error=Tautan kadaluarsa, silakan ajukan ulang`);
     }
 
@@ -34,9 +42,11 @@ export async function GET(req: Request) {
       data: {
         email: user.pendingEmail,
         pendingEmail: null,
-        emailVerificationToken: null,
-        tokenExpires: null
       }
+    });
+
+    await prisma.verificationToken.delete({
+       where: { token: token }
     });
 
     // 4. Arahkan kembali ke Settings dengan indikator sukses

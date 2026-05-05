@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
 
+const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
+
 const getYouTubeThumbnail = (url: string) => {
   if (!url) return '';
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
@@ -30,7 +32,8 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
   const displayAvatar = (rawAvatar.replace(/"/g, '').trim() !== "" && rawAvatar !== "null") ? rawAvatar.replace(/"/g, '').trim() : `https://images.unsplash.com/photo-1580234797602-22c37b4a6230?q=80&w=2067&auto=format&fit=crop`;
 
   // --- PENGATURAN DESAIN ---
-  const themeColor = theme?.themeColor || "#ffffff";
+  const rawThemeColor = theme?.themeColor || "#ffffff";
+  const themeColor = isValidHexColor(rawThemeColor) ? rawThemeColor : "#ff9e00";
   const fontHeading = theme?.fontHeading || "Inter";
   const fontBody = theme?.fontBody || "Inter";
   const cardStyle = theme?.cardStyle || "hard"; 
