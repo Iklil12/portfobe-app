@@ -14,33 +14,36 @@ import BentoGridControls from '@/components/editor-controls/BentoGridControls';
 import ViewfinderControls from '@/components/editor-controls/ViewfinderControls';
 
 export function EditorPanel({ state, actions }: { state: any, actions: any }) {
-  const { 
-    isEditorCollapsed, 
-    isSaving, 
-    activeTheme, 
-    themeColor, 
-    fontHeading, 
-    fontBody, 
-    cardStyle, 
-    buttonShape, 
+  const {
+    isEditorCollapsed,
+    isSaving,
+    activeTheme,
+    themeColor,
+    fontHeading,
+    fontBody,
+    cardStyle,
+    buttonShape,
     splashScreen,
     isThemeModalOpen,
     showProModal,
     isLoading,
     livePreviewData,
-    favorites
+    favorites,
+    subdomain: stateSubdomain
   } = state;
+
+  const subdomain = stateSubdomain || livePreviewData?.subdomain;
 
   const userPlan = livePreviewData?.plan || 'FREE';
 
-  const { 
-    setIsEditorCollapsed, 
-    saveDesign, 
-    setThemeColor, 
-    setFontHeading, 
-    setFontBody, 
-    setCardStyle, 
-    setButtonShape, 
+  const {
+    setIsEditorCollapsed,
+    saveDesign,
+    setThemeColor,
+    setFontHeading,
+    setFontBody,
+    setCardStyle,
+    setButtonShape,
     setSplashScreen,
     setIsThemeModalOpen,
     setActiveTheme,
@@ -50,18 +53,18 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
   return (
     <>
-      <ProUpgradeModal 
+      <ProUpgradeModal
         isOpen={showProModal}
         onClose={() => setShowProModal(false)}
         feature={
           splashScreen ? "Fitur Cinematic Intro" :
-          activeTheme === 'brutalism' ? "Tema Neo Brutalism" :
-          activeTheme === 'cinematic' ? "Tema Cinematic Dark" :
-          activeTheme === 'bentogrid' ? "Tema Bento Grid" :
-          activeTheme === 'acid' ? "Tema Acid Tech" : undefined
+            activeTheme === 'brutalism' ? "Tema Neo Brutalism" :
+              activeTheme === 'cinematic' ? "Tema Cinematic Dark" :
+                activeTheme === 'bentogrid' ? "Tema Bento Grid" :
+                  activeTheme === 'acid' ? "Tema Acid Tech" : undefined
         }
       />
-      <ThemeSelectionModal 
+      <ThemeSelectionModal
         isOpen={isThemeModalOpen}
         onClose={() => setIsThemeModalOpen(false)}
         activeTheme={activeTheme}
@@ -70,7 +73,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         userPlan={userPlan}
         onToggleFavorite={toggleFavorite}
       />
-      
+
       <div className={`
         h-full flex flex-col z-30 relative shrink-0
         bg-gradient-to-b from-white/95 to-slate-50/95 backdrop-blur-2xl 
@@ -99,14 +102,14 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
             </div>
 
             {/* Tombol Save Inline */}
-            <button 
-              onClick={saveDesign} 
-              disabled={isSaving} 
+            <button
+              onClick={saveDesign}
+              disabled={isSaving}
               className="relative overflow-hidden px-5 py-2.5 rounded-xl text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all duration-300 shadow-[0_4px_12px_-2px_rgba(15,23,42,0.2)] hover:shadow-[0_8px_20px_-4px_rgba(15,23,42,0.3)] hover:-translate-y-0.5 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 disabled:cursor-not-allowed group bg-slate-900 hover:bg-black text-white flex items-center gap-2 border border-slate-700/50 shrink-0"
             >
               {/* Efek kilap (shine) */}
               <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.2s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 z-0"></div>
-              
+
               <div className="relative flex items-center gap-2 z-10 drop-shadow-sm">
                 {isSaving ? <i className="fas fa-circle-notch animate-spin text-white/90"></i> : <i className="fas fa-save text-slate-300"></i>}
                 <span>{isSaving ? 'Menyimpan...' : 'Save'}</span>
@@ -114,6 +117,8 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
             </button>
           </div>
         </div>
+
+
 
         {/* Tombol Collapse Panel Editor */}
         <div className="absolute top-1/2 -right-[15px] -translate-y-1/2 z-[100] hidden lg:flex">
@@ -124,7 +129,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
         {/* Konten Menu Editor */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 pb-32 relative z-10">
-          
+
           {/* SECTION: TEMA AKTIF */}
           <div className="mb-10">
             <div className="flex items-center justify-between mb-5">
@@ -133,15 +138,15 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                 <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-800">Basis Tema</h3>
               </div>
               {!isLoading && (
-                <button 
-                  onClick={() => setIsThemeModalOpen(true)} 
+                <button
+                  onClick={() => setIsThemeModalOpen(true)}
                   className="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100/50 text-[10px] font-bold text-slate-600 hover:bg-slate-200 hover:text-slate-900 uppercase tracking-widest transition-all"
                 >
                   Ganti <i className="fas fa-arrow-right text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
                 </button>
               )}
             </div>
-            
+
             {isLoading ? (
               <div className="p-5 rounded-3xl border border-slate-100 bg-slate-50/50 animate-pulse h-24"></div>
             ) : (
@@ -158,7 +163,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                           activeTheme === 'cinematic' ? 'Cinematic Dark' :
                             activeTheme === 'acid' ? 'Acid Punk' :
                               activeTheme === 'bentogrid' ? 'Bento Grid' :
-                              'Neo Brutalism'}
+                                'Neo Brutalism'}
                       </span>
                       <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1 flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -217,10 +222,10 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                       <h3 className={`text-sm font-black tracking-tight mb-1 transition-colors flex items-center gap-2 ${splashScreen ? 'text-slate-900' : 'text-slate-700 group-hover:text-slate-900'}`}>
                         Cinematic Intro
                         <span className="bg-gradient-to-r from-slate-700 to-slate-900 text-white text-[7px] font-black px-1.5 py-0.5 rounded-md tracking-widest uppercase flex items-center gap-1 shadow-sm">
-                            <i className="fas fa-crown text-[6px]"></i> PRO
+                          <i className="fas fa-crown text-[6px]"></i> PRO
                         </span>
                       </h3>
-                      <p className="text-[10px] text-slate-500 font-medium leading-relaxed">Animasi transisi memukau sebelum<br/>portofolio Anda terbuka penuh.</p>
+                      <p className="text-[10px] text-slate-500 font-medium leading-relaxed">Animasi transisi memukau sebelum<br />portofolio Anda terbuka penuh.</p>
                     </div>
                   </div>
                   <button className={`w-14 h-8 rounded-full relative transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shrink-0 outline-none shadow-inner border ${splashScreen ? 'bg-slate-800 border-slate-900' : 'bg-slate-200 border-slate-300'}`}>
@@ -235,6 +240,22 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
         </div>
       </div>
+
+      {/* MOBILE FLOATING BUTTONS (Only on mobile) */}
+      {!isEditorCollapsed && (
+        <div className="lg:hidden">
+          {subdomain && (
+            <a 
+              href={`/${subdomain}`} 
+              target="_blank" 
+              rel="noreferrer"
+              className="fixed bottom-6 right-6 z-[100] px-6 py-3.5 bg-[#ff9e00] text-black font-black uppercase text-[10px] tracking-widest rounded-full shadow-[0_10px_30px_rgba(255,158,0,0.4)] hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 border-[2px] border-black"
+            >
+              <i className="fas fa-external-link-alt"></i> Live Preview
+            </a>
+          )}
+        </div>
+      )}
     </>
   );
 }

@@ -5,16 +5,16 @@ import PortfolioView from '@/components/PortfolioView';
 
 export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
-  
-  const { 
-    isEditorCollapsed, 
-    isSaving, 
-    subdomain, 
-    isLive, 
-    livePreviewData, 
-    livePreviewTheme 
+
+  const {
+    isEditorCollapsed,
+    isSaving,
+    subdomain,
+    isLive,
+    livePreviewData,
+    livePreviewTheme
   } = state;
-  
+
   const { setIsEditorCollapsed, saveDesign } = actions;
 
   return (
@@ -67,7 +67,7 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
         </div>
 
         <div className={`flex-1 relative z-0 transition-all duration-700 overflow-hidden ${previewMode === 'desktop' ? 'bg-white' : 'bg-transparent'}`}>
-          <div 
+          <div
             className={`custom-scrollbar transition-all duration-700 ${previewMode === 'desktop' ? 'origin-top-left overflow-y-auto overflow-x-hidden' : 'w-full h-full overflow-y-auto'}`}
             style={previewMode === 'desktop' ? { width: '140%', height: '140%', transform: 'scale(0.71428)' } : { transform: 'translateZ(0)', width: '100%', height: '100%' }}
           >
@@ -78,9 +78,9 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
 
       {/* FLOATING LIVE PREVIEW BUTTON (Luar Kotak Preview) */}
       {subdomain && (
-        <a 
-          href={`/${subdomain}`} 
-          target="_blank" 
+        <a
+          href={`/${subdomain}`}
+          target="_blank"
           rel="noreferrer"
           className="absolute bottom-6 right-6 z-50 px-6 py-3.5 bg-[#ff9e00] text-black font-black uppercase text-[10px] tracking-widest rounded-full shadow-[0_10px_30px_rgba(255,158,0,0.4)] hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 border-[2px] border-black"
         >

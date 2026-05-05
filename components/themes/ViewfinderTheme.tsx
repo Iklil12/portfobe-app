@@ -30,7 +30,6 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
     const primaryColor = theme?.themeColor || '#FF0033';
 
     const [timecode] = useState("00:04:26:15");
-    const [exploreOpen, setExploreOpen] = useState(false);
     const [selectedCert, setSelectedCert] = useState<any>(null);
 
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -153,63 +152,13 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
         }
         `}} />
 
-            {/* MODAL: EXPLORE ALL */}
-            <AnimatePresence>
-                {exploreOpen && (
-                    <motion.div 
-                        initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-                        animate={{ opacity: 1, backdropFilter: "blur(10px)" }}
-                        exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-                        transition={{ duration: 0.5, ease: cinematicEase }}
-                        className="absolute inset-0 z-[9999] bg-[#050505]/95 overflow-y-auto vf-scroll p-6 pointer-events-auto"
-                    >
-                        <motion.button 
-                            whileHover={{ scale: 1.1, rotate: 90 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => setExploreOpen(false)} 
-                            className="absolute top-4 right-4 text-2xl text-white hover:text-[var(--primary)] z-50 w-10 h-10 bg-black/60 rounded-full flex items-center justify-center transition-colors"
-                        >
-                            <i className="fas fa-times"></i>
-                        </motion.button>
-                        <div className="max-w-5xl mx-auto pt-10">
-                            <motion.h2 
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: 0.2, duration: 0.8, ease: cinematicEase }}
-                                className="font-cinema text-5xl tracking-wide text-[#F3F3F1] mb-8"
-                            >
-                                ALL PROJECTS <span style={{ color: 'var(--primary)' }}>.</span>
-                            </motion.h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                {projects.map((p: any, idx: number) => (
-                                    <motion.a 
-                                        initial={{ opacity: 0, y: 30 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.3 + (idx * 0.05), duration: 0.6, ease: cinematicEase }}
-                                        whileHover={{ scale: 1.02, y: -5, borderColor: "rgba(255,255,255,0.5)" }}
-                                        href={p.url || p.mediaUrl || p.projectUrl || '#'} 
-                                        key={p.id} target="_blank" rel="noreferrer" 
-                                        className="block border border-white/10 bg-[#111] p-4 transition-colors"
-                                    >
-                                        <div className="w-full aspect-video overflow-hidden bg-gray-900 mb-3 relative">
-                                            <img src={getYouTubeThumbnail(p)} alt={p.title} className="w-full h-full object-cover opacity-80" />
-                                        </div>
-                                        <h3 className="font-cinema text-xl tracking-wide text-[#F3F3F1]">{p.title}</h3>
-                                        <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">{p.projectType}</p>
-                                    </motion.a>
-                                ))}
-                                {projects.length === 0 && <p className="text-gray-500 font-mono col-span-2">No projects found.</p>}
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+
 
 
             {/* ===== STICKY HUD OVERLAY ===== */}
             <div className="fixed inset-0 z-50 pointer-events-none vf-hud-padding flex flex-col justify-between" style={{ mixBlendMode: 'difference' }}>
                 {/* Top */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.5, delay: 0.5, ease: cinematicEase }}
                     className="flex justify-between items-start vf-hud-text font-bold tracking-widest text-white"
                 >
@@ -227,7 +176,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                 </motion.div>
 
                 {/* Viewfinder brackets */}
-                <motion.div 
+                <motion.div
                     initial={{ scale: 1.2, opacity: 0 }} animate={{ scale: 1, opacity: 0.2 }} transition={{ duration: 2, ease: cinematicEase }}
                     className="absolute vf-hud-brackets flex items-center justify-center pointer-events-none"
                 >
@@ -244,7 +193,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                 </motion.div>
 
                 {/* Bottom */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.5, delay: 0.5, ease: cinematicEase }}
                     className="flex justify-between items-end vf-hud-text font-bold tracking-widest text-white"
                 >
@@ -269,22 +218,22 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
 
                     {/* Hero Content */}
                     <div className="relative z-10 flex items-center justify-center px-6 py-24 mix-blend-difference" style={{ minHeight: '100svh' }}>
-                        <motion.div 
+                        <motion.div
                             // PERUBAHAN: Gunakan whileInView dan once: false agar berulang saat di-scroll naik/turun
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: false, amount: 0.3 }}
                             variants={{
                                 hidden: { opacity: 0, scale: 0.95 },
-                                visible: { 
-                                    opacity: 1, 
-                                    scale: 1, 
-                                    transition: { duration: 1.2, ease: cinematicEase, staggerChildren: 0.2 } 
+                                visible: {
+                                    opacity: 1,
+                                    scale: 1,
+                                    transition: { duration: 1.2, ease: cinematicEase, staggerChildren: 0.2 }
                                 }
                             }}
                             className="vf-hero-container"
                         >
-                            <motion.p 
+                            <motion.p
                                 variants={{
                                     hidden: { opacity: 0, letterSpacing: '1em' },
                                     visible: { opacity: 1, letterSpacing: '0.4em', transition: { duration: 1.5, ease: cinematicEase } }
@@ -293,8 +242,8 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                             >
                                 {profession}
                             </motion.p>
-                            
-                            <motion.h1 
+
+                            <motion.h1
                                 // PERUBAHAN: Mengganti class CSS dengan animasi clipPath murni dari Framer agar bisa di-reset
                                 variants={{
                                     hidden: { opacity: 0, y: 30, clipPath: 'inset(100% 0 0 0)' },
@@ -305,7 +254,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                                 {firstName}<br />{lastName}
                             </motion.h1>
 
-                            <motion.p 
+                            <motion.p
                                 variants={{
                                     hidden: { opacity: 0, y: 20 },
                                     visible: { opacity: 1, y: 0, transition: { duration: 1, ease: cinematicEase } }
@@ -315,7 +264,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                                 "{bio}"
                             </motion.p>
 
-                            <motion.div 
+                            <motion.div
                                 variants={{
                                     hidden: { opacity: 0 },
                                     visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
@@ -323,11 +272,11 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                                 className="vf-social-row"
                             >
                                 {links.map((link: any, idx: number) => (
-                                    <motion.a 
+                                    <motion.a
                                         variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
                                         whileHover={{ scale: 1.3, color: "#F3F3F1" }}
                                         whileTap={{ scale: 0.9 }}
-                                        key={idx} href={link.url} target="_blank" rel="noreferrer" 
+                                        key={idx} href={link.url} target="_blank" rel="noreferrer"
                                         className="transition-colors duration-300"
                                     >
                                         <i className={`fab fa-${link.platform.toLowerCase()}`}></i>
@@ -340,7 +289,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
 
                 {/* ===== REEL SECTION ===== */}
                 <section id="reel" className="relative z-20 py-20 bg-[#050505] border-y border-white/10 overflow-hidden">
-                    <motion.div 
+                    <motion.div
                         initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }}
                         variants={fadeUpVariants}
                         className="vf-reel-header pointer-events-auto"
@@ -348,18 +297,18 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                         <h2 className="font-cinema tracking-wide text-[#F3F3F1] vf-section-title">THE REEL <span style={{ color: 'var(--primary)' }}>.</span></h2>
                         <div className="vf-button-group">
                             <div className="vf-nav-btns">
-                                <motion.button 
+                                <motion.button
                                     whileHover={{ x: -8, backgroundColor: "#F3F3F1", color: "#050505" }}
                                     whileTap={{ scale: 0.9 }}
-                                    onClick={scrollLeft} 
+                                    onClick={scrollLeft}
                                     className="vf-nav-btn text-[10px] sm:text-sm border border-white/20 px-4 sm:px-6 py-2 transition-colors uppercase tracking-[0.1em] sm:tracking-[0.2em] font-bold bg-transparent text-white"
                                 >
                                     <i className="fas fa-chevron-left mr-2"></i> PREV
                                 </motion.button>
-                                <motion.button 
+                                <motion.button
                                     whileHover={{ x: 8, backgroundColor: "#F3F3F1", color: "#050505" }}
                                     whileTap={{ scale: 0.9 }}
-                                    onClick={scrollRight} 
+                                    onClick={scrollRight}
                                     className="vf-nav-btn text-[10px] sm:text-sm border border-white/20 px-4 sm:px-6 py-2 transition-colors uppercase tracking-[0.1em] sm:tracking-[0.2em] font-bold bg-transparent text-white"
                                 >
                                     NEXT <i className="fas fa-chevron-right ml-2"></i>
@@ -370,15 +319,15 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
 
                     <div ref={scrollRef} className="film-strip flex gap-4 overflow-x-auto px-4 pb-8 pt-2 pointer-events-auto">
                         {projects.length > 0 ? projects.map((p: any, idx: number) => (
-                            <motion.a 
-                            // PERBAIKAN: Hapus x: 50, gunakan scale, dan set once: true
+                            <motion.a
+                                // PERBAIKAN: Hapus x: 50, gunakan scale, dan set once: true
                                 initial={{ opacity: 0, scale: 0.95, filter: "blur(5px)" }}
                                 whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                                 viewport={{ once: false, amount: 0.15 }} // Akan animate lagi jika discroll up/down
                                 transition={{ duration: 0.8, delay: (idx % 3) * 0.1, ease: cinematicEase }}
                                 whileHover={{ y: -5 }}
-                                href={p.url || p.mediaUrl || p.projectUrl || '#'} 
-                                key={p.id} target="_blank" rel="noreferrer" 
+                                href={p.url || p.mediaUrl || p.projectUrl || '#'}
+                                key={p.id} target="_blank" rel="noreferrer"
                                 className="film-frame flex-none block vf-reel-card group"
                             >
                                 <div className="w-full aspect-video overflow-hidden bg-gray-900 border border-white/20 relative">
@@ -405,19 +354,19 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                         <div className="flex-none w-4"></div>
                     </div>
 
-                    <motion.div 
+                    <motion.div
                         initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.5 }}
                         variants={fadeUpVariants}
                         className="mt-12 flex justify-center"
                     >
-                        <div onClick={() => setExploreOpen(true)}>
-                            <motion.div 
+                        <Link href={`/${subdomain}/gallery`} scroll={false}>
+                            <motion.div
                                 whileHover="hover"
                                 initial="initial"
                                 className="group flex items-center gap-3 px-8 py-3 border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-black transition-all duration-300 cursor-pointer uppercase font-black tracking-[0.3em] text-[10px] sm:text-xs"
                             >
                                 <span>EXPLORE ALL</span>
-                                <motion.i 
+                                <motion.i
                                     variants={{
                                         initial: { x: 0, y: 0 },
                                         hover: { x: 5, y: -5 }
@@ -425,14 +374,14 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                                     className="fas fa-arrow-right -rotate-45"
                                 ></motion.i>
                             </motion.div>
-                        </div>
+                        </Link>
                     </motion.div>
                 </section>
 
                 {/* ===== PRODUCTION LOG ===== */}
                 <section id="log" className="relative z-20 py-24 px-6 bg-[#F3F3F1] text-[#050505]">
                     <div className="max-w-3xl mx-auto">
-                        <motion.div 
+                        <motion.div
                             initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }}
                             variants={fadeUpVariants}
                             className="border-b-2 border-[#050505] pb-3 mb-6 flex justify-between items-end"
@@ -441,7 +390,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                             <span className="font-bold uppercase tracking-widest vf-hud-text">FILE_NO: 0042</span>
                         </motion.div>
 
-                        <motion.div 
+                        <motion.div
                             initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }}
                             variants={{
                                 hidden: { opacity: 0 },
@@ -462,18 +411,18 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                             ))}
                         </motion.div>
 
-                        <motion.h3 
+                        <motion.h3
                             initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.5 }} variants={fadeUpVariants}
                             className="text-[10px] font-bold uppercase tracking-widest mb-3 bg-[#050505] text-[#F3F3F1] inline-block px-3 py-1"
                         >
                             FESTIVALS & RECOGNITION
                         </motion.h3>
-                        
+
                         <div className="border-y-2 border-[#050505]">
                             {certificates.length > 0 ? certificates.map((cert: any, idx: number) => (
-                                <motion.div 
-                                    initial={{ opacity: 0, x: -30 }} 
-                                    whileInView={{ opacity: 1, x: 0 }} 
+                                <motion.div
+                                    initial={{ opacity: 0, x: -30 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
                                     viewport={{ once: false, amount: 0.2 }}
                                     transition={{ duration: 0.6, delay: idx * 0.05, ease: cinematicEase }}
                                     key={cert.id} className="border-b border-gray-300 overflow-hidden"
@@ -489,7 +438,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                                             <i className="fas fa-chevron-right text-xs opacity-30"></i>
                                         </div>
                                     </motion.div>
-                                    
+
                                     <AnimatePresence>
                                         {selectedCert?.id === cert.id && (
                                             <motion.div
@@ -533,13 +482,13 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                 </section>
 
                 {/* ===== FOOTER ===== */}
-                <motion.footer 
+                <motion.footer
                     initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }}
                     variants={fadeUpVariants}
                     className="relative z-20 py-24 bg-[#050505] text-center border-t border-white/5"
                 >
                     <p className="vf-hud-text uppercase tracking-[0.3em] font-bold mb-4" style={{ color: 'var(--primary)' }}>Cut. That's a wrap.</p>
-                    <motion.h2 
+                    <motion.h2
                         whileHover={{ scale: 1.05 }}
                         className="font-cinema text-[#F3F3F1] hover:text-[var(--primary)] transition-colors cursor-pointer mb-10 vf-footer-title leading-tight inline-block"
                     >

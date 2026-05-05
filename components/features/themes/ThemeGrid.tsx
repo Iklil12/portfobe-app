@@ -38,10 +38,10 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
                 {/* FAVORITE BUTTON */}
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleFavorite(theme.id); }}
-                  className={`absolute top-4 right-4 z-30 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md
+                  className={`absolute top-4 right-4 z-30 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border
                     ${isFavorite
                       ? 'bg-rose-500 border-rose-400 text-white scale-110 shadow-lg shadow-rose-500/30'
-                      : 'bg-black/30 border-white/10 text-white/50 hover:bg-rose-500/80 hover:border-rose-400 hover:text-white opacity-0 group-hover:opacity-100'
+                      : 'bg-black/60 border-white/10 text-white/50 hover:bg-rose-500/80 hover:border-rose-400 hover:text-white opacity-0 group-hover:opacity-100'
                     }`}
                   title={isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit'}
                 >
@@ -50,11 +50,11 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
                 
                 <div className="absolute top-5 left-5 z-30 flex flex-col gap-2">
                   {isActive ? (
-                    <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-900 bg-white px-3 py-1.5 rounded-xl shadow-lg border border-white/20 backdrop-blur-md">
+                    <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-900 bg-white px-3 py-1.5 rounded-xl shadow-lg border border-white/20">
                       <i className="fas fa-check-circle text-emerald-500"></i> Dipakai
                     </span>
                   ) : !theme.isAvailable && (
-                    <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-white bg-slate-900/50 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-md">
+                    <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-white bg-slate-900/80 px-3 py-1.5 rounded-xl border border-white/10">
                       <i className="fas fa-lock"></i> Segera
                     </span>
                   )}
@@ -66,7 +66,7 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
                   )}
                 </div>
 
-                <div className="absolute inset-x-3 bottom-3 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-[2rem] p-5 sm:p-6 flex flex-col transform transition-all duration-500 z-20">
+                <div className="absolute inset-x-3 bottom-3 bg-slate-900/80 border border-white/10 rounded-[2rem] p-5 sm:p-6 flex flex-col transform transition-all duration-500 z-20">
                     
                     <div className="flex justify-between items-start mb-2">
                       <h4 className={`font-extrabold text-xl sm:text-2xl tracking-tight text-white drop-shadow-sm`}>
