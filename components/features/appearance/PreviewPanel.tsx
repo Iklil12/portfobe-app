@@ -50,26 +50,43 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
       </div>
 
       {/* CONTAINER MOCKUP DEVICE */}
-      <div className={`relative z-10 flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden shrink-0 mt-12 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-slate-200/80
-        ${previewMode === 'desktop' ? 'w-full max-w-6xl h-full max-h-[85vh] rounded-2xl sm:rounded-[2rem]' : 'w-[360px] h-[750px] max-h-[85vh] border-[12px] border-slate-900 rounded-[3rem]'}
+      <div className={`relative z-10 flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden shrink-0 mt-12 shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-slate-200/80
+        ${previewMode === 'desktop' ? 'bg-white w-full max-w-6xl h-full max-h-[85vh] rounded-2xl sm:rounded-[2rem]' : 'bg-black w-[360px] h-[750px] max-h-[85vh] border-[12px] border-slate-900 rounded-[3rem]'}
       `}>
-        <div className="shrink-0 transition-all duration-700 z-20 border-b border-slate-100 bg-white">
+        <div className="shrink-0 transition-all duration-700 z-20">
           {previewMode === 'desktop' ? (
-            <div className="h-12 flex items-center px-4 gap-3 bg-slate-50/80 backdrop-blur-sm">
+            <div className="h-12 flex items-center px-4 gap-3 bg-slate-50/80 backdrop-blur-sm border-b border-slate-100">
               <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-slate-300"></div><div className="w-3 h-3 rounded-full bg-slate-300"></div><div className="w-3 h-3 rounded-full bg-slate-300"></div></div>
               <div className="mx-auto px-6 py-1.5 bg-white text-[10px] font-mono text-slate-400 rounded-md flex items-center gap-2 font-bold shadow-sm border border-slate-200/50 truncate max-w-[250px]">
                 <i className="fas fa-lock"></i>portfo.be/{subdomain || 'username'}
               </div>
             </div>
           ) : (
-            <div className="h-7 bg-white flex justify-center w-full relative transition-all duration-700"><div className="w-28 h-6 bg-slate-900 rounded-b-3xl"></div></div>
+            <div className="absolute top-0 left-0 h-7 bg-transparent flex justify-center w-full z-50 pointer-events-none transition-all duration-700"><div className="w-28 h-6 bg-slate-900 rounded-b-3xl"></div></div>
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar relative z-0 transition-all duration-700 bg-white">
-          <PortfolioView data={livePreviewData} theme={livePreviewTheme} isMobileView={previewMode === 'mobile'} />
+        <div className={`flex-1 relative z-0 transition-all duration-700 overflow-hidden ${previewMode === 'desktop' ? 'bg-white' : 'bg-transparent'}`}>
+          <div 
+            className={`custom-scrollbar transition-all duration-700 ${previewMode === 'desktop' ? 'origin-top-left overflow-y-auto overflow-x-hidden' : 'w-full h-full overflow-y-auto'}`}
+            style={previewMode === 'desktop' ? { width: '140%', height: '140%', transform: 'scale(0.71428)' } : { transform: 'translateZ(0)', width: '100%', height: '100%' }}
+          >
+            <PortfolioView data={livePreviewData} theme={livePreviewTheme} isMobileView={previewMode === 'mobile'} />
+          </div>
         </div>
       </div>
+
+      {/* FLOATING LIVE PREVIEW BUTTON (Luar Kotak Preview) */}
+      {subdomain && (
+        <a 
+          href={`/${subdomain}`} 
+          target="_blank" 
+          rel="noreferrer"
+          className="absolute bottom-6 right-6 z-50 px-6 py-3.5 bg-[#ff9e00] text-black font-black uppercase text-[10px] tracking-widest rounded-full shadow-[0_10px_30px_rgba(255,158,0,0.4)] hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 border-[2px] border-black"
+        >
+          <i className="fas fa-external-link-alt"></i> Live Preview
+        </a>
+      )}
     </div>
   );
 }

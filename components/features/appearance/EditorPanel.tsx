@@ -11,6 +11,7 @@ import MinimalistControls from '@/components/editor-controls/MinimalistControls'
 import CinematicControls from '@/components/editor-controls/CinematicControls';
 import AcidControls from '@/components/editor-controls/AcidControls';
 import BentoGridControls from '@/components/editor-controls/BentoGridControls';
+import ViewfinderControls from '@/components/editor-controls/ViewfinderControls';
 
 export function EditorPanel({ state, actions }: { state: any, actions: any }) {
   const { 
@@ -193,6 +194,9 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
             )}
             {activeTheme === 'bentogrid' && (
               <BentoGridControls themeColor={themeColor} setThemeColor={setThemeColor} />
+            )}
+            {activeTheme === 'viewfinder' && (
+              <ViewfinderControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} cardStyle={cardStyle} setCardStyle={setCardStyle} buttonShape={buttonShape} setButtonShape={setButtonShape} />
             )}
           </div>
 

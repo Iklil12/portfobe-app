@@ -11,6 +11,7 @@ import MinimalistTheme from './themes/MinimalistTheme';
 import CinematicTheme from './themes/CinematicTheme';
 import AcidTheme from './themes/AcidTheme';
 import BentoTheme from './themes/BentoGrid';
+import ViewfinderTheme from './themes/ViewfinderTheme';
 
 // 2. DAFTARKAN TEMA KE DALAM "THEME REGISTRY"
 const THEME_MAP: Record<string, React.FC<any>> = {
@@ -19,6 +20,7 @@ const THEME_MAP: Record<string, React.FC<any>> = {
   'cinematic': CinematicTheme,
   'acid': AcidTheme,
   'bentogrid': BentoTheme,
+  'viewfinder': ViewfinderTheme,
   
   // Nanti tinggal tambah: 'elegant': ElegantTheme, dst...
 };
@@ -38,19 +40,7 @@ export default function PortfolioView({ data, theme, isMobileView = false }: { d
   const SelectedThemeComponent = THEME_MAP[activeThemeName] || THEME_MAP['brutalism'];
 
   return (
-    <div className="relative w-full h-full">
-      {/* FLOATING BUTTON (Selalu muncul di semua tema saat di Editor) */}
-      {isEditor && subdomain && (
-        <a 
-          href={`/${subdomain}`} 
-          target="_blank" 
-          rel="noreferrer"
-          className="fixed bottom-6 right-6 z-[99999] px-6 py-3.5 bg-[#ff9e00] text-black font-black uppercase text-[10px] tracking-widest rounded-full shadow-[0_10px_30px_rgba(255,158,0,0.4)] hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 border-[2px] border-black"
-        >
-          <i className="fas fa-external-link-alt"></i> Live Preview
-        </a>
-      )}
-
+    <div className="relative w-full h-full" style={{ containerType: 'inline-size' }}>
       {/* RENDER TEMA YANG DIPILIH SECARA DINAMIS */}
       <SelectedThemeComponent data={data} theme={theme} isMobileView={isMobileView} />
     </div>

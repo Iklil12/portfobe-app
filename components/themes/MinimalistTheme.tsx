@@ -14,36 +14,36 @@ const getYouTubeThumbnail = (url: string) => {
 };
 
 // --- VARIANTS ANIMASI LEVEL DEWA (Dengan Koreografi Delay) ---
-const premiumEase = [0.16, 1, 0.3, 1] as const; 
+const premiumEase = [0.16, 1, 0.3, 1] as const;
 
 // Menerima parameter 'custom' untuk mengatur urutan (delay) secara spesifik
 const cinematicBlurUp = {
   hidden: { opacity: 0, y: 40, filter: "blur(12px)" },
-  visible: (customDelay = 0) => ({ 
-    opacity: 1, 
-    y: 0, 
-    filter: "blur(0px)", 
-    transition: { duration: 1.4, ease: premiumEase, delay: customDelay } 
+  visible: (customDelay = 0) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 1.4, ease: premiumEase, delay: customDelay }
   })
 };
 
 const cinematicBlurRight = {
   hidden: { opacity: 0, x: -40, filter: "blur(12px)" },
-  visible: (customDelay = 0) => ({ 
-    opacity: 1, 
-    x: 0, 
-    filter: "blur(0px)", 
-    transition: { duration: 1.4, ease: premiumEase, delay: customDelay } 
+  visible: (customDelay = 0) => ({
+    opacity: 1,
+    x: 0,
+    filter: "blur(0px)",
+    transition: { duration: 1.4, ease: premiumEase, delay: customDelay }
   })
 };
 
 const imageReveal = {
   hidden: { opacity: 0, scale: 1.1, filter: "blur(20px)" },
-  visible: (customDelay = 0) => ({ 
-    opacity: 1, 
-    scale: 1, 
+  visible: (customDelay = 0) => ({
+    opacity: 1,
+    scale: 1,
     filter: "blur(0px)",
-    transition: { duration: 1.6, ease: premiumEase, delay: customDelay } 
+    transition: { duration: 1.6, ease: premiumEase, delay: customDelay }
   })
 };
 
@@ -80,16 +80,17 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
     if (!fontName) return "'Inter', sans-serif";
     if (fontName.toLowerCase().includes('space') || fontName.toLowerCase().includes('mono')) return "'Space Mono', monospace";
     if (fontName.toLowerCase().includes('serif') || fontName.toLowerCase().includes('elegant')) return "'Playfair Display', serif";
-    return "'Inter', sans-serif"; 
+    return "'Inter', sans-serif";
   };
-  
+
   const headingFont = getFontFamily(theme?.fontHeading);
   const bodyFont = getFontFamily(theme?.fontBody);
 
   return (
     <div className={`flex w-full min-h-screen bg-white text-black relative min-body ${isMobileView ? 'flex-col' : 'flex-col lg:flex-row'}`}>
-      
-      <style dangerouslySetInnerHTML={{__html: `
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap');
         .min-heading { font-family: ${headingFont} !important; }
         .min-body { font-family: ${bodyFont} !important; }
@@ -104,21 +105,21 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
       `}} />
 
       {/* --- KIRI: SIDEBAR (Mulai Animasi di Detik 0.1) --- */}
-      <motion.aside 
+      <motion.aside
         initial="hidden" animate="visible" variants={getStaggerContainer(0.1, 0.15)}
         className={`bg-gray-50 border-gray-200 p-8 flex flex-col justify-between z-10 overflow-y-auto hide-scrollbar ${isMobileView ? 'w-full relative h-auto border-b' : 'w-full lg:w-[35%] lg:sticky lg:top-0 lg:h-screen lg:border-r lg:p-12'}`}
       >
         <div>
           <div className="flex justify-between items-start mb-10">
             <motion.h1 variants={cinematicBlurRight} className="text-2xl font-black tracking-tighter uppercase leading-none min-heading">
-              {firstName}<br/>{lastName || '.'}
+              {firstName}<br />{lastName || '.'}
             </motion.h1>
             <motion.div variants={cinematicBlurRight} className="flex items-center gap-2 mt-1">
               <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></span>
               <span className="text-[9px] font-bold uppercase tracking-widest text-gray-500">Available</span>
             </motion.div>
           </div>
-          
+
           <motion.div variants={imageReveal} className="w-full aspect-[4/5] mb-8 relative group">
             <div className="w-full h-full overflow-hidden border border-gray-200 relative">
               <LazyImage src={displayAvatar} alt={fullName} className="w-full h-full object-cover grayscale transition-all duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 group-hover:grayscale-0" />
@@ -138,7 +139,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
           <motion.p variants={cinematicBlurUp} className="text-gray-600 text-sm leading-relaxed mb-6 min-body">
             {bio}
           </motion.p>
-          
+
           <motion.ul variants={cinematicBlurUp} className="text-xs font-mono text-gray-500 space-y-2 mb-8 opacity-80">
             {['Minimalist Layout', 'Clean Typography', 'High-end Visuals'].map((item, idx) => (
               <motion.li key={idx} whileHover={{ x: 5, color: "#000" }} transition={{ type: "spring", stiffness: 300, damping: 20 }} className="cursor-default">
@@ -165,9 +166,9 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
 
       {/* --- KANAN: MAIN CONTENT --- */}
       <main className={`bg-white ${isMobileView ? 'w-full' : 'w-full lg:w-[65%]'}`}>
-        
+
         {/* STATS SECTION */}
-        <motion.section 
+        <motion.section
           initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
           variants={getStaggerContainer(0.8, 0.2)} className="border-b border-gray-200"
         >
@@ -185,8 +186,8 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
 
         {/* PROJECTS SECTION */}
         <section className={`p-8 ${isMobileView ? '' : 'lg:p-12'}`}>
-          <motion.div 
-            initial="hidden" whileInView="visible" viewport={{ once: true }} 
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true }}
             variants={cinematicBlurUp} custom={1.2}
             className="flex justify-between items-end mb-10 border-b border-gray-100 pb-6"
           >
@@ -194,13 +195,13 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
             <span className="text-[10px] font-mono text-gray-400 uppercase">Archive</span>
           </motion.div>
 
-          <motion.div 
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} 
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }}
             variants={getStaggerContainer(1.4, 0.25)}
             className={`grid grid-cols-1 gap-8 ${isMobileView ? '' : 'md:grid-cols-2'}`}
           >
             {archiveItems.map((p: any, i: number) => (
-              <motion.a 
+              <motion.a
                 variants={cinematicBlurUp} whileHover={{ y: -8 }} transition={{ type: "spring", stiffness: 100, damping: 20 }}
                 href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} className="group cursor-pointer block"
               >
@@ -217,29 +218,29 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
                     <h3 className="text-base font-bold tracking-tight mb-1 min-heading group-hover:text-gray-600 transition-colors">{p.title}</h3>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{p.projectType}</p>
                   </div>
-                  <span className="text-[10px] font-mono text-gray-400 pt-1 group-hover:text-black transition-colors">0{i+1}</span>
+                  <span className="text-[10px] font-mono text-gray-400 pt-1 group-hover:text-black transition-colors">0{i + 1}</span>
                 </div>
               </motion.a>
             ))}
           </motion.div>
           {/* --- MINIMALIST EXPLORE BUTTON --- */}
-          <motion.div 
-            initial="hidden" 
-            whileInView="visible" 
-            viewport={{ once: true }} 
-            variants={cinematicBlurUp} 
-            custom={0.3} 
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={cinematicBlurUp}
+            custom={0.3}
             className="w-full flex justify-center mt-16 mb-20 relative z-10"
           >
             <Link href={`/${subdomain}/gallery`} scroll={false} className="group inline-flex items-center gap-4 md:gap-6 no-underline p-2">
-                <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500 relative">
-                  EXPLORE ARCHIVE
-                  <span className="absolute -bottom-2 left-0 w-0 h-px bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
-                </span>
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-200 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-black group-hover:border-black shadow-sm group-hover:shadow-md overflow-hidden relative">
-                    <i className="fas fa-arrow-right absolute transform -translate-x-[150%] text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 text-[10px] md:text-xs"></i>
-                    <i className="fas fa-arrow-right absolute transform translate-x-0 text-gray-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%] opacity-100 group-hover:opacity-0 text-[10px] md:text-xs"></i>
-                </div>
+              <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500 relative">
+                EXPLORE ARCHIVE
+                <span className="absolute -bottom-2 left-0 w-0 h-px bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
+              </span>
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-200 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-black group-hover:border-black shadow-sm group-hover:shadow-md overflow-hidden relative">
+                <i className="fas fa-arrow-right absolute transform -translate-x-[150%] text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 text-[10px] md:text-xs"></i>
+                <i className="fas fa-arrow-right absolute transform translate-x-0 text-gray-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%] opacity-100 group-hover:opacity-0 text-[10px] md:text-xs"></i>
+              </div>
             </Link>
           </motion.div>
         </section>
@@ -249,7 +250,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cinematicBlurUp} custom={0.2} className={`p-8 ${isMobileView ? '' : 'lg:p-12'} pb-6`}>
             <h2 className="text-2xl font-black uppercase tracking-tighter min-heading">Honors & Awards</h2>
           </motion.div>
-          
+
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={getStaggerContainer(0.4, 0.2)} className="border-t border-gray-200">
             {awardItems.length > 0 ? awardItems.map((award: any, i: number) => {
               const isOpen = openAward === award.id;
@@ -265,7 +266,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
                       <motion.i animate={{ rotate: isOpen ? 180 : 0 }} transition={{ type: "spring", stiffness: 200, damping: 15 }} className="fas fa-chevron-down text-[10px] text-gray-400" />
                     </div>
                   </div>
-                  
+
                   <AnimatePresence>
                     {isOpen && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.6, ease: premiumEase }} className="overflow-hidden bg-white border-t border-gray-200">
@@ -273,11 +274,11 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
                           <motion.div initial={{ scale: 0.9, filter: "blur(5px)" }} animate={{ scale: 1, filter: "blur(0px)" }} transition={{ duration: 0.8, delay: 0.2, ease: premiumEase }} className={`bg-gray-50 border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center p-2 ${isMobileView ? 'w-full' : 'w-full md:w-64'}`}>
                             <LazyImage src={award.mediaUrl} className="w-full h-auto object-contain grayscale hover:grayscale-0 hover:scale-105 transition-all duration-700" alt="Certificate" />
                           </motion.div>
-                          
+
                           <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.3, ease: premiumEase }} className="flex flex-col justify-center flex-1">
                             <p className="font-bold mb-2 min-heading text-sm uppercase tracking-wider">{award.status || 'Verified Achievement'}</p>
                             <p className="text-xs text-gray-600 max-w-md leading-relaxed mb-6 opacity-90 min-body">{award.description || 'Awarded for exceptional performance and dedication in the respective field.'}</p>
-                            
+
                             <a href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-black hover:text-gray-500 transition-colors w-max relative group/btn">
                               Lihat Lampiran <i className="fas fa-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
                               <span className="absolute bottom-[-4px] left-0 w-0 h-px bg-black transition-all duration-300 group-hover/btn:w-full"></span>

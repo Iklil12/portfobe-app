@@ -158,8 +158,7 @@ export default function PublicPortfolioPage() {
         </div>
       )}
 
-      <main className={`min-h-screen bg-[#F1F5F9] text-black font-sans antialiased p-0 sm:p-8 md:p-12 relative overflow-x-clip transition-all duration-1000 ${liftCurtain ? 'opacity-100' : 'opacity-0 h-screen overflow-hidden'}`}>
-        <div className="absolute inset-0 opacity-[0.4] pointer-events-none hidden sm:block" style={{ backgroundImage: 'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+      <main className={`min-h-screen relative overflow-x-clip transition-all duration-1000 ${liftCurtain ? 'opacity-100' : 'opacity-0 h-screen overflow-hidden'}`}>
         {data && liftCurtain && <PortfolioView data={data} theme={data.siteAppearance || data} />}
       </main>
     </>

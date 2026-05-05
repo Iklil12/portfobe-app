@@ -68,5 +68,14 @@ export const THEMES_DATA = [
       isAvailable: true, 
       isPro: false,
       img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+      id: 'viewfinder',
+      name: 'Viewfinder',
+      desc: 'Cinematic layout with timecode and recording interface.',
+      preview: 'bg-[#050505]',
+      isAvailable: true, 
+      isPro: true,
+      img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop'
   }
 ];
