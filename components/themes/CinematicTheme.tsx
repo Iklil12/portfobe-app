@@ -54,7 +54,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
     const radiusClass = cardStyle === 'soft' || cardStyle === 'soft-shadow' ? 'rounded-2xl' : 'rounded-none';
 
     return (
-        <div className={`w-full min-h-screen bg-[#0a0a0a] text-white selection:bg-white selection:text-black relative ${isMobileView ? 'text-xs' : 'text-sm'}`}>
+        <div className={`w-full min-h-screen bg-[#0a0a0a] text-white selection:bg-white selection:text-black relative text-sm`}>
 
             <style dangerouslySetInnerHTML={{
                 __html: `
@@ -75,9 +75,9 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
       `}} />
 
             {/* NAVBAR */}
-            <nav className={`absolute top-0 left-0 w-full z-50 mix-blend-difference flex justify-between items-center cine-body ${isMobileView ? 'p-5' : 'p-6'}`}>
-                <div className={`font-black tracking-tighter cine-heading ${isMobileView ? 'text-lg' : 'text-xl'}`}>{firstName[0]}{lastName ? lastName[0] : ''}.</div>
-                <div className={`flex font-bold uppercase tracking-widest ${isMobileView ? 'gap-3 text-[9px]' : 'gap-4 md:gap-6 text-xs md:text-sm'}`}>
+            <nav className={`absolute top-0 left-0 w-full z-50 mix-blend-difference flex justify-between items-center cine-body p-6`}>
+                <div className={`font-black tracking-tighter cine-heading text-xl`}>{firstName[0]}{lastName ? lastName[0] : ''}.</div>
+                <div className={`flex font-bold uppercase tracking-widest gap-4 @md:gap-6 text-xs @md:text-sm`}>
                     <a href="#work" className="hover:cine-accent transition">Work</a>
                     <a href="#about" className="hover:cine-accent transition">Info</a>
                 </div>
@@ -85,22 +85,22 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
 
             {/* HERO SECTION */}
             <header className="relative min-h-[90vh] flex flex-col justify-end pb-16 px-6 md:px-12 overflow-hidden pt-32">
-                <div className="absolute inset-0 z-0">
+                <div className="absolute inset-0 z-0 @container">
                     <LazyImage src={displayAvatar} alt="Hero Background" className="w-full h-full object-cover grayscale opacity-30 scale-105 animate-[pulse_10s_ease-in-out_infinite]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
                 </div>
 
                 {/* PERBAIKAN: Ubah md: menjadi lg: agar bio di tablet tetap di bawah nama */}
-                <div className={`relative z-10 w-full flex justify-between gap-6 ${isMobileView ? 'flex-col items-start' : 'flex-col lg:flex-row lg:items-end lg:gap-10'}`}>
+                <div className={`relative z-10 w-full flex justify-between gap-6 flex-col @lg:flex-row @lg:items-end @lg:gap-10`}>
                     <div className="flex-1 w-full min-w-0">
-                        <p className={`text-gray-400 font-bold uppercase tracking-[0.3em] mb-4 flex items-center gap-3 cine-body ${isMobileView ? 'text-[9px]' : 'text-xs md:text-sm'}`}>
+                        <p className={`text-gray-400 font-bold uppercase tracking-[0.3em] mb-4 flex items-center gap-3 cine-body text-xs @md:text-sm`}>
                             <span className="w-2 h-2 rounded-full animate-pulse shrink-0" style={{ backgroundColor: themeColor }}></span>
                             <span className="truncate">{profession}</span>
                         </p>
 
                         {/* PERBAIKAN: Penggunaan text-[clamp()] agar font membesar/mengecil bagai karet */}
                         <h1 className={`font-black leading-[0.85] tracking-tighter uppercase cine-heading break-words w-full
-                      ${isMobileView ? 'text-[3.5rem] sm:text-[4rem]' : 'text-[clamp(4rem,10vw,10rem)]'}
+                      text-[clamp(4rem,10vw,10rem)]
                   `}>
                             {firstName}<br />
                             <span className="text-transparent break-words w-full block" style={{ WebkitTextStroke: `2px ${themeColor === '#000000' ? '#ffffff' : themeColor}` }}>
@@ -110,13 +110,13 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                     </div>
 
                     {/* PERBAIKAN: Posisi bio diatur jadi rata kiri saat tablet, baru rata kanan saat layar sangat besar */}
-                    <div className={`cine-body ${isMobileView ? 'w-full text-left pb-2' : 'w-full lg:max-w-sm text-left lg:text-right pb-4 lg:pb-6 shrink-0'}`}>
-                        <p className={`text-gray-400 leading-relaxed ${isMobileView ? 'text-xs mt-4' : 'text-sm md:text-base mt-6 lg:mt-0'}`}>
+                    <div className={`cine-body w-full @lg:max-w-sm text-left @lg:text-right pb-4 @lg:pb-6 shrink-0`}>
+                        <p className={`text-gray-400 leading-relaxed text-sm @md:text-base mt-6 @lg:mt-0`}>
                             {bio}
                         </p>
-                        <div className={`mt-6 flex flex-wrap gap-4 ${isMobileView ? 'justify-start' : 'justify-start lg:justify-end'}`}>
+                        <div className={`mt-6 flex flex-wrap gap-4 justify-start @lg:justify-end`}>
                             {links.map((l: any, i: number) => (
-                                <a key={i} href={l.url} target="_blank" rel="noreferrer" className={`text-white hover:cine-accent transition font-bold uppercase tracking-widest ${isMobileView ? 'text-[10px]' : 'text-xs md:text-sm'}`}>{l.platform}</a>
+                                <a key={i} href={l.url} target="_blank" rel="noreferrer" className={`text-white hover:cine-accent transition font-bold uppercase tracking-widest text-xs @md:text-sm`}>{l.platform}</a>
                             ))}
                         </div>
                     </div>
@@ -125,7 +125,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
 
             {/* MARQUEE */}
             <div className={`w-full bg-white text-black py-3 overflow-hidden border-y border-white cine-heading`}>
-                <div className={`flex whitespace-nowrap animate-marquee font-black uppercase tracking-tighter ${isMobileView ? 'text-lg' : 'text-xl md:text-3xl'}`}>
+                <div className={`flex whitespace-nowrap animate-marquee font-black uppercase tracking-tighter text-xl @md:text-3xl`}>
                     <div className="flex items-center space-x-6 px-4">
                         {[...Array(6)].map((_, i) => (<React.Fragment key={i}><span>{profession}</span><span>•</span></React.Fragment>))}
                     </div>
@@ -137,53 +137,53 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
 
             {/* STATS SECTION */}
             <section className="border-b border-[#1f1f1f]" id="about">
-                <div className={`grid divide-[#1f1f1f] ${isMobileView ? 'grid-cols-2 divide-x divide-y' : 'grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0'}`}>
-                    <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 ${isMobileView ? 'p-6' : 'p-8 md:p-16'}`}>
-                        <span className={`font-black mb-1 tracking-tighter cine-heading ${isMobileView ? 'text-4xl' : 'text-4xl md:text-7xl'}`}>{archiveItems.length}</span>
+                <div className={`grid divide-[#1f1f1f] grid-cols-2 @md:grid-cols-4 divide-x divide-y @md:divide-y-0`}>
+                    <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 p-8 @md:p-16`}>
+                        <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>{archiveItems.length}</span>
                         <span className="text-[9px] md:text-xs uppercase tracking-widest font-bold cine-body">Projects</span>
                     </div>
-                    <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 ${isMobileView ? 'p-6' : 'p-8 md:p-16'}`}>
-                        <span className={`font-black mb-1 tracking-tighter cine-heading ${isMobileView ? 'text-4xl' : 'text-4xl md:text-7xl'}`}>{awardItems.length}</span>
+                    <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 p-8 @md:p-16`}>
+                        <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>{awardItems.length}</span>
                         <span className="text-[9px] md:text-xs uppercase tracking-widest font-bold cine-body">Awards</span>
                     </div>
-                    <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 ${isMobileView ? 'p-6' : 'p-8 md:p-16'}`}>
-                        <span className={`font-black mb-1 tracking-tighter cine-heading ${isMobileView ? 'text-4xl' : 'text-4xl md:text-7xl'}`}>{links.length}</span>
+                    <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 p-8 @md:p-16`}>
+                        <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>{links.length}</span>
                         <span className="text-[9px] md:text-xs uppercase tracking-widest font-bold cine-body">Links</span>
                     </div>
-                    <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 group cursor-pointer ${isMobileView ? 'p-6' : 'p-8 md:p-16'}`} onClick={() => window.location.href = `mailto:${userEmail}`}>
-                        <span className={`font-black mb-2 tracking-tighter cine-heading ${isMobileView ? 'text-3xl mt-1' : 'text-4xl md:text-6xl'}`}><i className="fas fa-envelope group-hover:scale-110 transition-transform"></i></span>
+                    <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 group cursor-pointer p-8 @md:p-16`} onClick={() => window.location.href = `mailto:${userEmail}`}>
+                        <span className={`font-black mb-2 tracking-tighter cine-heading text-4xl @md:text-6xl`}><i className="fas fa-envelope group-hover:scale-110 transition-transform"></i></span>
                         <span className="text-[9px] md:text-xs uppercase tracking-widest font-bold cine-body mt-1">Hire Me</span>
                     </div>
                 </div>
             </section>
 
             {/* PROJECTS SECTION */}
-            <section className={`${isMobileView ? 'py-16 px-6' : 'py-20 md:py-24 px-6 md:px-12'}`} id="work">
+            <section className={`py-20 @md:py-24 px-6 @md:px-12`} id="work">
                 <div className="flex justify-between items-end mb-12">
-                    <h2 className={`font-black uppercase tracking-tighter cine-heading ${isMobileView ? 'text-4xl' : 'text-[clamp(2.5rem,8vw,5rem)]'}`}>Selected<br />Works <span className="text-gray-600 text-xl md:text-2xl">({archiveItems.length})</span></h2>
+                    <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8vw,5rem)]`}>Selected<br />Works <span className="text-gray-600 text-xl md:text-2xl">({archiveItems.length})</span></h2>
                 </div>
 
                 <div className="flex flex-col border-t border-[#1f1f1f]">
                     {archiveItems.length > 0 ? archiveItems.map((p: any, i: number) => {
                         const isVideo = p.projectType === 'video';
                         return (
-                            <a href={p.projectUrl || p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} className={`project-row relative group flex justify-between cursor-pointer cine-border-accent ${isMobileView ? 'flex-col py-6' : 'flex-col md:flex-row md:items-center py-8 md:py-14'}`}>
-                                <div className={`flex relative z-10 pointer-events-none ${isMobileView ? 'flex-col gap-2' : 'flex-col md:flex-row md:items-center gap-4 md:gap-20'}`}>
-                                    {!isMobileView && <span className="text-gray-600 font-mono text-sm md:text-lg hidden md:block">0{i + 1}</span>}
-                                    <h3 className={`font-black tracking-tighter uppercase group-hover:cine-accent text-gray-300 transition-colors cine-heading line-clamp-1 ${isMobileView ? 'text-2xl' : 'text-[clamp(1.5rem,5vw,4rem)]'}`}>{p.title}</h3>
+                            <a href={p.projectUrl || p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} className={`project-row relative group flex justify-between cursor-pointer cine-border-accent flex-col @md:flex-row @md:items-center py-8 @md:py-14`}>
+                                <div className={`flex relative z-10 pointer-events-none flex-col @md:flex-row @md:items-center gap-4 @md:gap-20`}>
+                                    <span className="text-gray-600 font-mono text-sm @md:text-lg hidden @md:block">0{i + 1}</span>
+                                    <h3 className={`font-black tracking-tighter uppercase group-hover:cine-accent text-gray-300 transition-colors cine-heading line-clamp-1 text-[clamp(1.5rem,5vw,4rem)]`}>{p.title}</h3>
                                 </div>
-                                <div className={`flex flex-col relative z-10 pointer-events-none cine-body ${isMobileView ? 'mt-3 text-left' : 'mt-4 md:mt-0 md:text-right'}`}>
+                                <div className={`flex flex-col relative z-10 pointer-events-none cine-body mt-4 @md:mt-0 @md:text-right`}>
                                     <span className="text-[10px] md:text-sm font-bold uppercase tracking-widest text-white">{p.projectType}</span>
                                     <span className="text-gray-500 mt-1 text-[10px] md:text-sm truncate max-w-[200px]">{p.description || 'View Project'}</span>
                                 </div>
 
                                 {/* Mobile Inline Image */}
-                                <div className={`${isMobileView ? 'block mt-5' : 'block md:hidden mt-5'} w-full aspect-video relative z-10 overflow-hidden ${radiusClass}`}>
+                                <div className={`block @md:hidden mt-5 w-full aspect-video relative z-10 overflow-hidden ${radiusClass}`}>
                                     <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale" />
                                 </div>
 
                                 {/* Desktop Absolute Hover Image */}
-                                <div className={`${isMobileView ? 'hidden' : 'hidden md:block'} absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vh] z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden ${radiusClass}`}>
+                                <div className={`hidden @md:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vh] z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden ${radiusClass}`}>
                                     <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale opacity-50" />
                                 </div>
                             </a>
@@ -192,24 +192,24 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                 </div>
 
                 {/* Tombol Gallery Utama (Sleek Cinematic Style) */}
-                <div className={`w-full flex justify-center mb-20 px-6 ${isMobileView ? 'mt-8' : 'mt-12'}`}>
+                <div className={`w-full flex justify-center mb-20 px-6 mt-12`}>
                     <Link href={`/${subdomain}/gallery`} scroll={false} className="group relative block w-full max-w-4xl no-underline overflow-hidden border-y border-[#1f1f1f] hover:border-white/30 transition-colors duration-700">
                         {/* Background Glow Effect */}
                         <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-700"></div>
 
-                        <div className={`relative z-10 flex items-center justify-between ${isMobileView ? 'py-8 px-2' : 'py-10 md:py-14 px-2 md:px-8'}`}>
+                        <div className={`relative z-10 flex items-center justify-between py-10 @md:py-14 px-2 @md:px-8`}>
                             <div className="flex flex-col">
-                                <span className={`font-mono text-gray-500 uppercase tracking-[0.3em] group-hover:text-gray-300 transition-colors duration-500 ${isMobileView ? 'text-[9px] mb-2' : 'text-[9px] md:text-xs mb-3'}`}>
+                                <span className={`font-mono text-gray-500 uppercase tracking-[0.3em] group-hover:text-gray-300 transition-colors duration-500 text-[9px] @md:text-xs mb-3`}>
                                     <i className="fas fa-film mr-2"></i>Full Index
                                 </span>
-                                <h3 className={`font-black uppercase tracking-tighter text-gray-300 group-hover:text-white transition-colors duration-500 cine-heading flex items-center gap-4 ${isMobileView ? 'text-[26px]' : 'text-3xl md:text-6xl'}`}>
+                                <h3 className={`font-black uppercase tracking-tighter text-gray-300 group-hover:text-white transition-colors duration-500 cine-heading flex items-center gap-4 text-3xl @md:text-6xl`}>
                                     Explore Archive
                                 </h3>
                             </div>
 
                             {/* Animated Arrow */}
-                            <div className={`flex items-center justify-center shrink-0 rounded-full border border-[#1f1f1f] group-hover:border-white group-hover:bg-white group-hover:text-black transition-all duration-700 text-gray-500 ${isMobileView ? 'w-10 h-10' : 'w-12 h-12 md:w-20 md:h-20'}`}>
-                                <i className={`fas fa-arrow-right group-hover:-rotate-45 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isMobileView ? 'text-sm' : 'text-lg md:text-2xl'}`}></i>
+                            <div className={`flex items-center justify-center shrink-0 rounded-full border border-[#1f1f1f] group-hover:border-white group-hover:bg-white group-hover:text-black transition-all duration-700 text-gray-500 w-12 h-12 @md:w-20 @md:h-20`}>
+                                <i className={`fas fa-arrow-right group-hover:-rotate-45 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] text-lg @md:text-2xl`}></i>
                             </div>
                         </div>
 
@@ -221,49 +221,39 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
             </section>
 
             {/* AWARDS SECTION */}
-            <section className={`bg-[#050505] border-t border-[#1f1f1f] ${isMobileView ? 'py-16 px-6' : 'py-20 md:py-24 px-6 md:px-12'}`}>
-                <div className={`grid gap-10 ${isMobileView ? 'grid-cols-1' : 'md:grid-cols-12 md:gap-12'}`}>
-                    <div className={`${isMobileView ? 'col-span-1' : 'md:col-span-4'}`}>
+            <section className={`bg-[#050505] border-t border-[#1f1f1f] py-20 @md:py-24 px-6 @md:px-12`}>
+                <div className={`grid gap-10 @md:grid-cols-12 @md:gap-12`}>
+                    <div className={`@md:col-span-4`}>
                         <div className="md:sticky md:top-24">
-                            <h2 className={`font-black uppercase tracking-tighter mb-3 cine-heading ${isMobileView ? 'text-3xl' : 'text-3xl md:text-5xl'}`}>Recognition</h2>
-                            <p className={`text-gray-500 max-w-xs cine-body ${isMobileView ? 'text-xs' : 'text-sm'}`}>Acknowledged by the industry for exceptional visual storytelling.</p>
+                            <h2 className={`font-black uppercase tracking-tighter mb-3 cine-heading text-3xl @md:text-5xl`}>Recognition</h2>
+                            <p className={`text-gray-500 max-w-xs cine-body text-sm`}>Acknowledged by the industry for exceptional visual storytelling.</p>
                         </div>
                     </div>
 
-                    <div className={`border-t border-[#1f1f1f] ${isMobileView ? 'col-span-1' : 'md:col-span-8'}`}>
+                    <div className={`border-t border-[#1f1f1f] @md:col-span-8`}>
                         {awardItems.length > 0 ? awardItems.map((award: any, i: number) => {
                             const isOpen = openAward === award.id;
                             return (
                                 <div key={i} className="border-b border-[#1f1f1f]">
-                                    <div className={`award-row flex justify-between items-center cursor-pointer text-gray-400 ${isMobileView ? 'py-5 flex-wrap' : 'py-6 md:py-8 flex-wrap md:flex-nowrap'}`} onClick={() => setOpenAward(isOpen ? null : award.id)}>
+                                    <div className={`award-row flex justify-between items-center cursor-pointer text-gray-400 py-6 @md:py-8 flex-wrap @md:flex-nowrap`} onClick={() => setOpenAward(isOpen ? null : award.id)}>
 
-                                        <div className={`flex justify-between items-center ${isMobileView ? 'w-full mb-2' : 'w-full md:w-auto mb-2 md:mb-0'}`}>
-                                            <h3 className={`font-bold uppercase tracking-tighter cine-heading ${isOpen ? 'text-white' : ''} ${isMobileView ? 'text-lg' : 'text-xl md:text-2xl'}`}>{award.title}</h3>
-                                            {isMobileView ? (
-                                                <span className="font-mono text-[10px]">{award.year || new Date(award.createdAt).getFullYear()}</span>
-                                            ) : (
-                                                <span className="md:hidden font-mono text-[10px]">{award.year || new Date(award.createdAt).getFullYear()}</span>
-                                            )}
+                                        <div className={`flex justify-between items-center w-full @md:w-auto mb-2 @md:mb-0`}>
+                                            <h3 className={`font-bold uppercase tracking-tighter cine-heading ${isOpen ? 'text-white' : ''} text-xl @md:text-2xl`}>{award.title}</h3>
+                                            <span className="@md:hidden font-mono text-[10px]">{award.year || new Date(award.createdAt).getFullYear()}</span>
                                         </div>
 
-                                        {!isMobileView && (
-                                            <div className="hidden md:flex flex-1 justify-center">
-                                                <span className="text-[10px] md:text-sm uppercase tracking-widest cine-body">{award.issuer}</span>
-                                            </div>
-                                        )}
+                                        <div className="hidden @md:flex flex-1 justify-center"><span className="text-[10px] @md:text-sm uppercase tracking-widest cine-body">{award.issuer}</span></div>
 
-                                        <div className={`flex items-center ${isMobileView ? 'gap-0 w-full justify-start mt-1' : 'gap-6'}`}>
-                                            {!isMobileView && (
-                                                <span className="hidden md:block font-mono text-sm">{award.year || new Date(award.createdAt).getFullYear()}</span>
-                                            )}
+                                        <div className={`flex items-center gap-6`}>
+                                            <span className="hidden @md:block font-mono text-sm">{award.year || new Date(award.createdAt).getFullYear()}</span>
                                             <i className={`fas fa-arrow-right transition-transform duration-300 text-sm ${isOpen ? '-rotate-45 text-white' : 'rotate-45'}`}></i>
                                         </div>
 
                                     </div>
 
                                     <div className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'max-h-[500px]' : 'max-h-0'}`}>
-                                        <div className={`pb-6 flex gap-5 ${isMobileView ? 'flex-col' : 'flex-col md:flex-row'}`}>
-                                            <div className={`shrink-0 bg-[#111] flex items-center justify-center overflow-hidden ${radiusClass} ${isMobileView ? 'w-full aspect-video' : 'w-full md:w-48 h-32'}`}>
+                                        <div className={`pb-6 flex gap-5 flex-col @md:flex-row`}>
+                                            <div className={`shrink-0 bg-[#111] flex items-center justify-center overflow-hidden ${radiusClass} w-full @md:w-48 h-32`}>
                                                 <LazyImage src={award.mediaUrl || "https://via.placeholder.com/600"} className="w-full h-full object-contain p-2 grayscale hover:grayscale-0 transition-all duration-500" alt="Certificate" />
                                             </div>
                                             <div className="flex flex-col justify-center cine-body">
@@ -281,15 +271,15 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
             </section>
 
             {/* FOOTER CTA */}
-            <footer className={`bg-white text-black text-center relative overflow-hidden group ${isMobileView ? 'py-20 px-6' : 'py-24 md:py-32 px-6 md:px-12'}`}>
+            <footer className={`bg-white text-black text-center relative overflow-hidden group py-24 @md:py-32 px-6 @md:px-12`}>
                 <a href={`mailto:${userEmail}`} className="relative z-10 block cursor-pointer">
-                    <p className={`font-bold uppercase tracking-[0.3em] text-gray-500 mb-4 group-hover:text-black transition cine-body ${isMobileView ? 'text-[10px]' : 'text-xs md:text-sm'}`}>Got a project?</p>
-                    <h2 className={`font-black uppercase tracking-tighter leading-none group-hover:-translate-y-2 transition-transform duration-500 cine-heading ${isMobileView ? 'text-5xl' : 'text-[clamp(3rem,10vw,8rem)]'}`}>
+                    <p className={`font-bold uppercase tracking-[0.3em] text-gray-500 mb-4 group-hover:text-black transition cine-body text-xs @md:text-sm`}>Got a project?</p>
+                    <h2 className={`font-black uppercase tracking-tighter leading-none group-hover:-translate-y-2 transition-transform duration-500 cine-heading text-[clamp(3rem,10vw,8rem)]`}>
                         Let's Talk
                     </h2>
                 </a>
 
-                <div className={`mt-16 flex justify-between items-center font-bold text-gray-500 uppercase tracking-widest cine-body ${isMobileView ? 'flex-col gap-3 text-[9px]' : 'flex-col md:flex-row mt-20 md:mt-24 text-xs md:text-sm'}`}>
+                <div className={`mt-16 flex justify-between items-center font-bold text-gray-500 uppercase tracking-widest cine-body flex-col @md:flex-row mt-20 @md:mt-24 text-xs @md:text-sm`}>
                     <p>© 2026 {fullName}</p>
                     <p className="flex items-center gap-2">
                         <i className="fas fa-link"></i> portfo.be/{subdomain}

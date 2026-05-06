@@ -68,10 +68,12 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
 
         <div className={`flex-1 relative z-0 transition-all duration-700 overflow-hidden ${previewMode === 'desktop' ? 'bg-white' : 'bg-transparent'}`}>
           <div
-            className={`custom-scrollbar transition-all duration-700 ${previewMode === 'desktop' ? 'origin-top-left overflow-y-auto overflow-x-hidden' : 'w-full h-full overflow-y-auto'}`}
+            className={`transition-all duration-700 ${previewMode === 'desktop' ? 'origin-top-left' : ''}`}
             style={previewMode === 'desktop' ? { width: '140%', height: '140%', transform: 'scale(0.71428)' } : { transform: 'translateZ(0)', width: '100%', height: '100%' }}
           >
-            <PortfolioView data={livePreviewData} theme={livePreviewTheme} isMobileView={previewMode === 'mobile'} />
+            <div className="w-full h-full overflow-y-auto overflow-x-hidden custom-scrollbar @container">
+              <PortfolioView data={livePreviewData} theme={livePreviewTheme} isMobileView={previewMode === 'mobile'} />
+            </div>
           </div>
         </div>
       </div>

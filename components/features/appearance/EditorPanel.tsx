@@ -12,6 +12,10 @@ import CinematicControls from '@/components/editor-controls/CinematicControls';
 import AcidControls from '@/components/editor-controls/AcidControls';
 import BentoGridControls from '@/components/editor-controls/BentoGridControls';
 import ViewfinderControls from '@/components/editor-controls/ViewfinderControls';
+import SpatialControls from '@/components/editor-controls/SpatialControls';
+import MonolithControls from '@/components/editor-controls/MonolithControls';
+import SplitControls from '@/components/editor-controls/SplitControls';
+import EditorialControls from '@/components/editor-controls/EditorialControls';
 
 export function EditorPanel({ state, actions }: { state: any, actions: any }) {
   const {
@@ -61,7 +65,11 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
             activeTheme === 'brutalism' ? "Tema Neo Brutalism" :
               activeTheme === 'cinematic' ? "Tema Cinematic Dark" :
                 activeTheme === 'bentogrid' ? "Tema Bento Grid" :
-                  activeTheme === 'acid' ? "Tema Acid Tech" : undefined
+                  activeTheme === 'spatial' ? "Tema Aura Spatial" :
+                    activeTheme === 'monolith' ? "Tema Monolith Vanguard" :
+                      activeTheme === 'acid' ? "Tema Acid Tech" : 
+                        activeTheme === 'split' ? "Tema Nexus Split" : 
+                          activeTheme === 'editorial' ? "Tema Editorial Clean" : undefined
         }
       />
       <ThemeSelectionModal
@@ -155,7 +163,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                 <div className="relative p-5 rounded-3xl border border-white/60 bg-gradient-to-br from-white to-slate-50/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 group-hover:-translate-y-1">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 shadow-inner flex items-center justify-center text-white transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
-                      <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : 'fa-cube'} text-lg drop-shadow-md`}></i>
+                      <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : activeTheme === 'spatial' ? 'fa-star' : activeTheme === 'monolith' ? 'fa-cubes' : activeTheme === 'split' ? 'fa-columns' : activeTheme === 'editorial' ? 'fa-newspaper' : 'fa-cube'} text-lg drop-shadow-md`}></i>
                     </div>
                     <div className="flex flex-col">
                       <span className="font-black text-slate-900 text-base tracking-tight group-hover:text-slate-600 transition-colors">
@@ -163,7 +171,11 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                           activeTheme === 'cinematic' ? 'Cinematic Dark' :
                             activeTheme === 'acid' ? 'Acid Punk' :
                               activeTheme === 'bentogrid' ? 'Bento Grid' :
-                                'Neo Brutalism'}
+                                activeTheme === 'spatial' ? 'Aura Spatial' :
+                                  activeTheme === 'monolith' ? 'Monolith Vanguard' :
+                                    activeTheme === 'split' ? 'Nexus Split' :
+                                      activeTheme === 'editorial' ? 'Editorial Clean' :
+                                        'Neo Brutalism'}
                       </span>
                       <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1 flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -202,6 +214,18 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
             )}
             {activeTheme === 'viewfinder' && (
               <ViewfinderControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} cardStyle={cardStyle} setCardStyle={setCardStyle} buttonShape={buttonShape} setButtonShape={setButtonShape} />
+            )}
+            {activeTheme === 'spatial' && (
+              <SpatialControls themeColor={themeColor} setThemeColor={setThemeColor} />
+            )}
+            {activeTheme === 'monolith' && (
+              <MonolithControls themeColor={themeColor} setThemeColor={setThemeColor} />
+            )}
+            {activeTheme === 'split' && (
+              <SplitControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} buttonShape={buttonShape} setButtonShape={setButtonShape} />
+            )}
+            {activeTheme === 'editorial' && (
+              <EditorialControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} buttonShape={buttonShape} setButtonShape={setButtonShape} />
             )}
           </div>
 

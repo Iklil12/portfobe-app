@@ -156,7 +156,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
 
 
             {/* ===== STICKY HUD OVERLAY ===== */}
-            <div className="fixed inset-0 z-50 pointer-events-none vf-hud-padding flex flex-col justify-between" style={{ mixBlendMode: 'difference' }}>
+            <div className="fixed inset-0 z-50 pointer-events-none vf-hud-padding flex flex-col justify-between @container" style={{ mixBlendMode: 'difference' }}>
                 {/* Top */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.5, delay: 0.5, ease: cinematicEase }}

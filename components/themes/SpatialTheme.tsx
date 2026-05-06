@@ -1,0 +1,318 @@
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { LazyImage } from '@/components/ui/LazyImage';
+
+const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
+
+const getYouTubeThumbnail = (url: string) => {
+    if (!url) return '';
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
+    return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
+};
+
+export default function AuraTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+    const [isCopied, setIsCopied] = useState(false);
+    const [currentTime, setCurrentTime] = useState("");
+
+    // Update Jam Real-Time
+    useEffect(() => {
+        const updateTime = () => {
+            const now = new Date();
+            setCurrentTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
+        };
+        updateTime();
+        const interval = setInterval(updateTime, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Data Parsing
+    const fullName = data?.profile?.fullName || data?.fullName || "Budi Arsitek";
+    const profession = data?.profile?.profession || data?.profession || "Software Engineer & UI/UX Enthusiast";
+    const bio = data?.profile?.bio || data?.bio || "Crafting digital experiences with precision, blending aesthetic design with robust engineering.";
+    const location = data?.profile?.location || data?.location || "Indonesia";
+    const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
+    const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
+    const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
+    const awardItems = data?.certificates || data?.user?.certificates || [];
+    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+
+    const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
+    const cleanAvatar = rawAvatar.replace(/"/g, '').trim();
+    const displayAvatar = (cleanAvatar !== "" && cleanAvatar !== "null") ? cleanAvatar : `https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop`;
+
+    const githubLink = links.find((l: any) => l.platform.toLowerCase().includes('github'));
+    const linkedinLink = links.find((l: any) => l.platform.toLowerCase().includes('linkedin'));
+
+    // Theme Setup
+    const rawHighlightColor = theme?.themeColor || '#6366f1'; // Default elegant blue
+    const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#6366f1';
+
+    const handleCopyEmail = (e: React.MouseEvent) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(userEmail);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+    };
+
+    const firstName = fullName.split(' ')[0];
+
+    // Animasi Elegan (Lebih halus dan melayang)
+    const auraAnim = {
+        hidden: { opacity: 0, y: 40, filter: "blur(10px)" },
+        visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } }
+    };
+    const staggerContainer = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+    };
+
+    return (
+        <main className={`min-h-screen bg-[#020202] text-slate-200 font-sans selection:bg-[var(--hl)] selection:text-white relative overflow-hidden pb-20`} style={{ '--hl': highlightColor } as React.CSSProperties}>
+
+            <style dangerouslySetInnerHTML={{
+                __html: `
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        
+        /* Glassmorphism Mewah */
+        .glass-panel {
+          background: rgba(255, 255, 255, 0.02);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glass-panel:hover {
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-nav {
+          background: rgba(10, 10, 10, 0.5);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Animasi Latar Belakang Aura */
+        @keyframes aura-float {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+            33% { transform: translate(30px, -50px) scale(1.1); opacity: 0.5; }
+            66% { transform: translate(-20px, 20px) scale(0.9); opacity: 0.4; }
+            100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+        }
+        .aura-1 { animation: aura-float 15s ease-in-out infinite; }
+        .aura-2 { animation: aura-float 20s ease-in-out infinite reverse; }
+
+        /* Kustomisasi Teks Gradien */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+        }
+      `}} />
+
+            {/* DYNAMIC AURA BACKGROUND */}
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#020202] @container">
+                <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full blur-[120px] mix-blend-screen aura-1" style={{ background: `radial-gradient(circle, ${highlightColor}40 0%, transparent 70%)` }}></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full blur-[150px] mix-blend-screen aura-2" style={{ background: `radial-gradient(circle, ${highlightColor}30 0%, transparent 70%)` }}></div>
+                {/* Noise Overlay for texture */}
+                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+            </div>
+
+            {/* FLOATING NAVBAR */}
+            <motion.nav 
+                initial={{ y: -100 }} animate={{ y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as any }}
+                className="fixed top-0 left-0 w-full z-50 glass-nav flex justify-center py-4 px-6"
+            >
+                <div className="w-full max-w-6xl flex justify-between items-center">
+                    <span className="font-semibold tracking-tight text-white">{firstName} <span className="opacity-40">Portfolio</span></span>
+                    <div className="flex items-center gap-6 text-sm font-medium text-slate-400">
+                        <a href="#projects" className="hover:text-white transition-colors">Projects</a>
+                        <a href="#awards" className="hover:text-white transition-colors hidden md:block">Awards</a>
+                        <a href={`mailto:${userEmail}`} className="text-white hover:opacity-80 transition-opacity">Contact</a>
+                    </div>
+                </div>
+            </motion.nav>
+
+            <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col pt-32 md:pt-40">
+
+                {/* HERO SECTION (Centered, Elegant) */}
+                <motion.div 
+                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={staggerContainer}
+                    className={`flex flex-col items-center text-center px-8`}
+                >
+                    {/* Status Pill */}
+                    <motion.div variants={auraAnim} className="inline-flex items-center gap-3 px-4 py-2 rounded-full glass-panel mb-8">
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--hl)] opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--hl)]"></span>
+                        </span>
+                        <span className="text-xs font-medium text-slate-300">Available for new opportunities</span>
+                    </motion.div>
+
+                    {/* Massive Elegant Typography */}
+                    <motion.h1 variants={auraAnim} className={`font-semibold tracking-[-0.04em] text-gradient leading-[1.1] max-w-4xl mx-auto text-7xl @md:text-[6rem]`}>
+                        Building digital experiences that <span className="italic font-light text-white">inspire.</span>
+                    </motion.h1>
+
+                    <motion.p variants={auraAnim} className={`text-slate-400 font-normal leading-relaxed max-w-2xl mx-auto mt-8 text-xl`}>
+                        {bio}
+                    </motion.p>
+
+                    {/* Action Row & Avatar */}
+                    <motion.div variants={auraAnim} className={`flex items-center justify-center gap-4 mt-12 w-full flex-row`}>
+                        
+                        {/* Avatar Capsule */}
+                        <div className="glass-panel p-1.5 pr-6 rounded-full flex items-center gap-4 hover:scale-105 transition-transform duration-500">
+                            <div className="w-12 h-12 rounded-full overflow-hidden relative">
+                                <LazyImage src={displayAvatar} alt={fullName} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex flex-col text-left">
+                                <span className="text-sm font-semibold text-white">{fullName}</span>
+                                <span className="text-[11px] text-slate-400">{location} • {currentTime}</span>
+                            </div>
+                        </div>
+
+                        {/* Copy Email Button */}
+                        <div onClick={handleCopyEmail} className="glass-panel p-4 px-6 rounded-full flex items-center gap-3 cursor-pointer group hover:scale-105 transition-transform duration-500 relative overflow-hidden">
+                            {isCopied && <motion.div initial={{ opacity: 1, scale: 0 }} animate={{ opacity: 0, scale: 2 }} className="absolute inset-0 bg-[var(--hl)] opacity-20"></motion.div>}
+                            <span className={`text-sm font-medium transition-colors ${isCopied ? 'text-[var(--hl)]' : 'text-slate-300 group-hover:text-white'}`}>
+                                {isCopied ? 'Email Copied!' : 'Copy Email'}
+                            </span>
+                            <i className={`text-sm ${isCopied ? 'fas fa-check text-[var(--hl)]' : 'far fa-copy text-slate-500 group-hover:text-white transition-colors'}`}></i>
+                        </div>
+
+                    </motion.div>
+                </motion.div>
+
+                {/* DIVIDER */}
+                <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: false }} transition={{ duration: 1.5, ease: "easeInOut" }} className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent my-24 md:my-32"></motion.div>
+
+                {/* PROJECTS SECTION (Asymmetrical Layout) */}
+                <div id="projects" className={`flex flex-col w-full px-8 gap-12`}>
+                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={auraAnim} className="flex justify-between items-end mb-4">
+                        <h2 className={`font-medium tracking-tight text-white text-4xl`}>Selected Works</h2>
+                        <span className="text-slate-500 font-medium">({archiveItems.length})</span>
+                    </motion.div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
+                        {archiveItems.map((p: any, i: number) => {
+                            // Logic Asimetris: Proyek 1 besar (8 col), Proyek 2 kecil (4 col), dst dibalik.
+                            const colSpan = 'col-span-1 ' + (i % 4 === 0 || i % 4 === 3 ? '@md:col-span-7' : '@md:col-span-5');
+                            const isVideo = p.projectType === 'video';
+                            
+                            return (
+                                <motion.a
+                                    href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
+                                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={auraAnim}
+                                    className={`group flex flex-col gap-4 cursor-pointer ${colSpan}`}
+                                >
+                                    {/* Image Container with deep shadow and glow on hover */}
+                                    <div className="w-full aspect-[4/3] rounded-[24px] overflow-hidden relative glass-panel p-2 transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(var(--hl-rgb),0.15)] group-hover:border-[var(--hl)]/30">
+                                        <div className="w-full h-full rounded-[16px] overflow-hidden relative bg-[#0a0a0a]">
+                                            <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" />
+                                            {/* Hover Overlay */}
+                                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-[2px]">
+                                                <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                                                    <i className="fas fa-arrow-right -rotate-45 text-white"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Text Content */}
+                                    <div className="flex flex-col px-2">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <h3 className="text-xl font-medium text-white group-hover:text-[var(--hl)] transition-colors">{p.title}</h3>
+                                            <span className="text-[10px] uppercase tracking-widest text-slate-500 border border-slate-800 px-2 py-1 rounded-full">{p.projectType}</span>
+                                        </div>
+                                        <p className="text-sm text-slate-400 line-clamp-2 mt-2 leading-relaxed">{p.description || 'View detailed case study of this project.'}</p>
+                                    </div>
+                                </motion.a>
+                            );
+                        })}
+                    </div>
+
+                    {/* Explore More Button */}
+                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: false }} variants={auraAnim} className="w-full flex justify-center mt-8">
+                        <Link href={`/${subdomain}/gallery`} scroll={false} className="glass-panel px-8 py-4 rounded-full flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group">
+                            <span className="font-medium text-white">Explore Full Archive</span>
+                            <i className="fas fa-arrow-right text-sm text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all"></i>
+                        </Link>
+                    </motion.div>
+                </div>
+
+                {/* AWARDS SECTION (Sleek List View) */}
+                {awardItems.length > 0 && (
+                    <div id="awards" className={`flex flex-col w-full mt-24 md:mt-32 px-8`}>
+                        <motion.div initial="hidden" whileInView="visible" viewport={{ once: false }} variants={auraAnim} className="mb-8">
+                            <h2 className={`font-medium tracking-tight text-white text-4xl`}>Recognitions</h2>
+                        </motion.div>
+
+                        <div className="flex flex-col border-t border-white/10">
+                            {awardItems.slice(0, 5).map((award: any, i: number) => (
+                                <motion.a 
+                                    href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
+                                    initial="hidden" whileInView="visible" viewport={{ once: false }} variants={auraAnim}
+                                    className={`flex items-center justify-between py-6 border-b border-white/5 group cursor-pointer flex-row`}
+                                >
+                                    <div className="flex items-center gap-6 w-full md:w-auto">
+                                        <span className="text-sm font-mono text-slate-500 w-12">{award.year || new Date(award.createdAt).getFullYear()}</span>
+                                        <div className="flex flex-col">
+                                            <h4 className="text-lg md:text-xl font-medium text-white group-hover:text-[var(--hl)] transition-colors">{award.title}</h4>
+                                            <span className="text-xs text-slate-400 mt-1">{award.issuer}</span>
+                                        </div>
+                                    </div>
+                                    <div className={`flex items-center justify-between w-full md:w-auto pl-16 @md:pl-0`}>
+                                        <p className="text-sm text-slate-500 line-clamp-1 max-w-xs hidden lg:block">{award.description}</p>
+                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all ml-0 md:ml-8">
+                                            <i className="fas fa-arrow-right -rotate-45 text-slate-400 group-hover:text-white transition-colors"></i>
+                                        </div>
+                                    </div>
+                                </motion.a>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* FOOTER (Massive CTA) */}
+                <motion.footer 
+                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={auraAnim} 
+                    className={`mt-24 md:mt-40 mb-10 glass-panel rounded-[40px] flex flex-col items-center text-center relative overflow-hidden mx-8 p-20`}
+                >
+                    {/* Inner Glow */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full blur-[100px] opacity-20 pointer-events-none" style={{ backgroundColor: highlightColor }}></div>
+                    
+                    <h2 className={`font-semibold tracking-tight text-white relative z-10 text-6xl @md:text-7xl`}>
+                        Let's build something <br className="hidden md:block" />
+                        <span className="text-slate-400">extraordinary.</span>
+                    </h2>
+                    
+                    <a href={`mailto:${userEmail}`} className="mt-10 px-8 py-4 bg-white text-black rounded-full font-semibold text-lg hover:scale-105 transition-transform duration-300 relative z-10 shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                        Get in touch
+                    </a>
+
+                    <div className="w-full mt-20 pt-8 border-t border-white/10 flex justify-between items-center relative z-10 flex-col md:flex-row gap-6">
+                        <div className="flex items-center gap-2 text-sm text-slate-400">
+                            <div className="w-2 h-2 rounded-full bg-[var(--hl)]"></div>
+                            <span>© {new Date().getFullYear()} {fullName}. All rights reserved.</span>
+                        </div>
+                        <div className="flex gap-4">
+                            {links.map((l: any, i: number) => (
+                                <a key={i} href={l.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
+                                    <i className={`fab fa-${l.platform.toLowerCase()}`}></i>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </motion.footer>
+
+            </div>
+        </main>
+    );
+}

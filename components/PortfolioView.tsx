@@ -12,6 +12,10 @@ import CinematicTheme from './themes/CinematicTheme';
 import AcidTheme from './themes/AcidTheme';
 import BentoTheme from './themes/BentoGrid';
 import ViewfinderTheme from './themes/ViewfinderTheme';
+import SpatialTheme from './themes/SpatialTheme';
+import MonolithTheme from './themes/MonolithTheme';
+import SplitTheme from './themes/SplitTheme';
+import EditorialTheme from './themes/EditorialTheme';
 
 // 2. DAFTARKAN TEMA KE DALAM "THEME REGISTRY"
 const THEME_MAP: Record<string, React.FC<any>> = {
@@ -21,6 +25,10 @@ const THEME_MAP: Record<string, React.FC<any>> = {
   'acid': AcidTheme,
   'bentogrid': BentoTheme,
   'viewfinder': ViewfinderTheme,
+  'spatial': SpatialTheme,
+  'monolith': MonolithTheme,
+  'split': SplitTheme,
+  'editorial': EditorialTheme,
   
   // Nanti tinggal tambah: 'elegant': ElegantTheme, dst...
 };

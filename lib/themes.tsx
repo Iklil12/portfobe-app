@@ -77,5 +77,41 @@ export const THEMES_DATA = [
       isAvailable: true, 
       isPro: true,
       img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+      id: 'spatial',
+      name: 'Aura Spatial',
+      desc: 'Elegant, glassy, floating elements with dynamic aura.',
+      preview: 'bg-[#020202]',
+      isAvailable: true,
+      isPro: true,
+      img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+      id: 'monolith',
+      name: 'Monolith Vanguard',
+      desc: 'Edge-to-edge brutalist typography with massive interactions.',
+      preview: 'bg-[#050505]',
+      isAvailable: true,
+      isPro: true,
+      img: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+      id: 'split',
+      name: 'Nexus Split',
+      desc: 'Dual-panel layout with sticky sidebar and floating interactive elements.',
+      preview: 'bg-[#050505]',
+      isAvailable: true,
+      isPro: true,
+      img: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+      id: 'editorial',
+      name: 'Editorial Clean',
+      desc: 'Elegant editorial layout with classic typography and minimal interface.',
+      preview: 'bg-[#fdfdfc]',
+      isAvailable: true,
+      isPro: true,
+      img: 'https://images.unsplash.com/photo-1613521140785-e85e427f8002?q=80&w=600&auto=format&fit=crop'
   }
 ];

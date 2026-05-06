@@ -60,7 +60,7 @@ export const authOptions: NextAuthOptions = {
             if (decoded.isAdminImpersonating && decoded.targetUserId) {
               const targetUser = await prisma.user.findUnique({
                 where: { id: decoded.targetUserId },
-                include: { profile: true, siteAppearance: true }
+                include: { profile: true, siteAppearance: true, accounts: true }
               });
 
               if (!targetUser) throw new Error("Target user tidak ditemukan.");
@@ -77,7 +77,9 @@ export const authOptions: NextAuthOptions = {
                 bio: targetUser.profile?.bio,
                 subdomain: targetUser.profile?.subdomain,
                 isLive: userData.isLive,
-                isEmailVerified: userData.emailVerified !== null
+                isEmailVerified: userData.emailVerified !== null,
+                isOAuthLinked: userData.accounts && userData.accounts.length > 0,
+                isStrictlyGoogle: userData.password === "GOOGLE_LOGIN_NO_PASSWORD"
               };
             }
           } catch (error) {
@@ -104,7 +106,7 @@ export const authOptions: NextAuthOptions = {
         
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
-          include: { profile: true, siteAppearance: true }
+          include: { profile: true, siteAppearance: true, accounts: true }
         });
 
         if (!user || !user.password || user.password === "GOOGLE_LOGIN_NO_PASSWORD") {
@@ -152,7 +154,9 @@ export const authOptions: NextAuthOptions = {
           bio: user.profile?.bio,
           subdomain: user.profile?.subdomain,
           isLive: userData.isLive,
-          isEmailVerified: userData.emailVerified !== null
+          isEmailVerified: userData.emailVerified !== null,
+          isOAuthLinked: userData.accounts && userData.accounts.length > 0,
+          isStrictlyGoogle: userData.password === "GOOGLE_LOGIN_NO_PASSWORD"
         };
       }
     })
@@ -302,8 +306,8 @@ export const authOptions: NextAuthOptions = {
           token.subdomain = user.subdomain;
           token.isLive = user.isLive;
           token.isEmailVerified = user.isEmailVerified;
-          token.isOAuthLinked = false;
-          token.isStrictlyGoogle = false;
+          token.isOAuthLinked = (user as any).isOAuthLinked || false;
+          token.isStrictlyGoogle = (user as any).isStrictlyGoogle || false;
           return token;
         }
 
