@@ -13,8 +13,14 @@ const getYouTubeThumbnail = (url: string) => {
     return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
-export default function EditorialTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+export default function EditorialTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+
+  // --- ANIMASI STABILISASI ---
+  // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
+  // Tapi tetap gunakan whileInView untuk live site agar ada efek scroll reveal.
+  const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+
 
     // Ekstraksi Data
     const fullName = data?.profile?.fullName || data?.fullName || "Budi Arsitek";
@@ -64,20 +70,18 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
 
     return (
         // Background Off-White (Putih Kanvas) dan Teks Abu-abu Gelap / Hitam
-        <main className="w-full bg-[#fdfdfc] text-[#111111] font-sans selection:bg-[var(--hl)] selection:text-white overflow-x-hidden @container" style={{ '--hl': highlightColor } as React.CSSProperties}>
+        <main className="w-full bg-[#fdfdfc] text-[#111111] font-sans selection:bg-[var(--hl)] selection:text-white overflow-x-hidden @container editorial-theme" style={{ '--hl': highlightColor } as React.CSSProperties}>
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap');
-        
-        .font-sans { font-family: '${fontBody}', sans-serif; }
-        .font-serif { font-family: '${fontHeading}', serif; }
+        .editorial-theme .font-sans { font-family: '${fontBody}', sans-serif; }
+        .editorial-theme .font-serif { font-family: '${fontHeading}', serif; }
 
-        /* Custom Scrollbar untuk tema terang */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #fdfdfc; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--hl); }
+        /* Custom Scrollbar — scoped ke editorial-theme */
+        .editorial-theme ::-webkit-scrollbar { width: 6px; }
+        .editorial-theme ::-webkit-scrollbar-track { background: #fdfdfc; }
+        .editorial-theme ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .editorial-theme ::-webkit-scrollbar-thumb:hover { background: var(--hl); }
 
         .border-subtle { border-color: rgba(0, 0, 0, 0.08); }
         .bg-subtle { background-color: rgba(0, 0, 0, 0.03); }
@@ -93,7 +97,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
       `}} />
 
             {/* NAVBAR (Kapsul Melayang di Tengah) */}
-            <div className="fixed top-6 left-0 w-full z-50 flex justify-center pointer-events-none px-4">
+            <div className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} top-6 left-0 w-full z-50 flex justify-center pointer-events-none px-4`}>
                 <nav className="pointer-events-auto bg-white/80 backdrop-blur-md border border-subtle shadow-soft rounded-full px-4 py-2 @md:px-6 @md:py-3 flex items-center justify-between gap-4 @md:gap-16 w-full max-w-max">
                     <span className="font-sans font-bold tracking-tight text-sm">
                         {firstName}
@@ -112,7 +116,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
             {/* HERO SECTION (Clean Editorial Layout) */}
             <section className={`relative w-full max-w-[1600px] mx-auto flex flex-col justify-center min-h-[90svh] pt-32 px-6 @md:pt-40 @md:px-12 @lg:px-20`}>
 
-                <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={staggerContainer} className="flex flex-col @md:flex-row items-center justify-between gap-12 @lg:gap-24 h-full">
+                <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerContainer} className="flex flex-col @md:flex-row items-center justify-between gap-12 @lg:gap-24 h-full">
 
                     {/* Left Typography */}
                     <div className="flex flex-col w-full @md:w-3/5 order-2 @md:order-1">
@@ -121,7 +125,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                             Creative Portfolio
                         </motion.span>
 
-                        <motion.h1 variants={fadeUp} className={`font-sans font-semibold tracking-tight text-[#111] leading-[1.05] mb-8 text-5xl @md:text-6xl @lg:text-[6.5vw]`}>
+                        <motion.h1 variants={fadeUp} className={`font-sans font-semibold tracking-tight text-[#111] leading-[1.05] mb-8 text-5xl @md:text-6xl @lg:text-[6.5cqi]`}>
                             Designing <span className="font-serif italic text-slate-500">clarity</span> out of complexity.
                         </motion.h1>
 
@@ -150,12 +154,12 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
             </section>
 
             {/* MARQUEE SEPARATOR */}
-            <div className="w-full border-y border-subtle py-4 md:py-6 bg-white overflow-hidden my-12 md:my-20">
-                <div className="w-[200%] flex animate-marquee font-serif italic text-2xl md:text-4xl text-slate-300 whitespace-nowrap">
-                    <div className="flex items-center gap-8 md:gap-16 px-4 md:px-8">
+            <div className="w-full border-y border-subtle py-4 @md:py-6 bg-white overflow-hidden my-12 @md:my-20">
+                <div className="w-[200%] flex animate-marquee font-serif italic text-2xl @md:text-4xl text-slate-300 whitespace-nowrap">
+                    <div className="flex items-center gap-8 @md:gap-16 px-4 @md:px-8">
                         {[...Array(5)].map((_, i) => (<React.Fragment key={i}><span className="hover:text-[var(--hl)] transition-colors">{profession}</span><span className="text-slate-200">✦</span></React.Fragment>))}
                     </div>
-                    <div className="flex items-center gap-8 md:gap-16 px-4 md:px-8">
+                    <div className="flex items-center gap-8 @md:gap-16 px-4 @md:px-8">
                         {[...Array(5)].map((_, i) => (<React.Fragment key={i + 10}><span className="hover:text-[var(--hl)] transition-colors">{profession}</span><span className="text-slate-200">✦</span></React.Fragment>))}
                     </div>
                 </div>
@@ -164,7 +168,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
             {/* SELECTED WORKS (Staggered / Offset Grid Layout) */}
             <section id="work" className={`w-full max-w-[1600px] mx-auto flex flex-col px-6 py-12 @md:px-12 @lg:px-20 @md:py-24`}>
 
-                <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} className="flex flex-col @md:flex-row justify-between items-start @md:items-end mb-16 @md:mb-24 gap-6">
+                <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="flex flex-col @md:flex-row justify-between items-start @md:items-end mb-16 @md:mb-24 gap-6">
                     <h2 className={`font-sans font-semibold tracking-tight text-[#111] text-4xl @md:text-5xl @lg:text-6xl`}>
                         Selected <span className="font-serif italic text-slate-400">Works</span>
                     </h2>
@@ -183,7 +187,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                         return (
                             <motion.a
                                 href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
-                                initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={fadeUp}
+                                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                 className={`flex flex-col group cursor-pointer w-full ${isEven ? '@md:mt-32' : ''}`}
                             >
                                 {/* Image Box */}
@@ -213,7 +217,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                     })}
                 </div>
 
-                <motion.div initial="hidden" whileInView="visible" viewport={{ once: false }} variants={fadeUp} className="w-full flex justify-center mt-20 @md:mt-32">
+                <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className="w-full flex justify-center mt-20 @md:mt-32">
                     <Link href={`/${subdomain}/gallery`} scroll={false} className={`group inline-flex items-center justify-center gap-4 px-8 py-4 ${radiusClass} border border-subtle hover:border-[var(--hl)] hover:bg-[var(--hl)] hover:text-white transition-all duration-300 font-sans font-medium text-sm @md:text-base text-[#111]`}>
                         View Full Archive
                         <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
@@ -227,7 +231,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                 <section id="awards" className="w-full bg-white border-y border-subtle py-20 @md:py-32">
                     <div className={`max-w-[1600px] mx-auto flex flex-col @lg:flex-row gap-12 @lg:gap-24 px-6 @md:px-12 @lg:px-20`}>
 
-                        <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }} variants={fadeUp} className="w-full @lg:w-1/3">
+                        <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="w-full @lg:w-1/3">
                             <h2 className={`font-sans font-semibold tracking-tight text-[#111] mb-4 text-4xl @md:text-5xl`}>
                                 Honors & <br /><span className="font-serif italic text-slate-400">Awards</span>
                             </h2>
@@ -240,7 +244,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                             {awardItems.map((award: any, i: number) => (
                                 <motion.a
                                     href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
-                                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp}
+                                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                     className="group flex flex-col @md:flex-row @md:items-center justify-between border-b border-subtle py-6 @md:py-8 cursor-pointer relative overflow-hidden"
                                 >
                                     {/* Hover Line Effect */}
@@ -268,7 +272,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
             {/* FOOTER (Giant Minimal CTA) */}
             <footer className={`w-full bg-[#fdfdfc] flex flex-col items-center justify-center pt-32 pb-12 px-6 @md:px-12 @lg:px-20`}>
 
-                <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} className="flex flex-col items-center text-center w-full max-w-4xl mx-auto mb-24 @md:mb-40">
+                <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="flex flex-col items-center text-center w-full max-w-4xl mx-auto mb-24 @md:mb-40">
                     <span className="font-sans text-[10px] @md:text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-8">What's Next?</span>
 
                     <div onClick={handleCopyEmail} className="cursor-pointer group relative w-full">

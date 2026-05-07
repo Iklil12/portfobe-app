@@ -13,8 +13,14 @@ const getYouTubeThumbnail = (url: string) => {
     return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
-export default function AcidTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+export default function AcidTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [openAward, setOpenAward] = useState<string | null>(null);
+
+  // --- ANIMASI STABILISASI ---
+  // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
+  // Tapi tetap gunakan whileInView untuk live site agar ada efek scroll reveal.
+  const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+
 
     // --- IDENTITAS ---
     const fullName = data?.profile?.fullName || data?.fullName || "Jamal Arifin";
@@ -69,16 +75,14 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
     };
 
     return (
-        <div className={`w-full min-h-screen bg-[#09090b] text-[#fafafa] selection:text-black relative text-sm`}>
+        <div className={`w-full min-h-screen bg-[#09090b] text-[#fafafa] selection:text-black relative text-sm acid-theme`}>
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700&family=Inter:wght@400;600&display=swap');
-        
         .acid-heading { font-family: ${getHeadingFont(fontHeading)} !important; }
         .acid-body { font-family: ${getBodyFont(fontBody)} !important; }
         
-        ::selection { background: ${themeColor}; color: #000000; }
+        .acid-theme ::selection { background: ${themeColor}; color: #000000; }
         
         .acid-text { color: ${themeColor} !important; }
         .acid-bg { background-color: ${themeColor} !important; }
@@ -98,9 +102,9 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
         .btn-acid:hover { color: #000 !important; }
         .btn-acid:hover::before { width: 100%; }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #09090b; }
-        ::-webkit-scrollbar-thumb { background: #27272a; }
+        .acid-theme ::-webkit-scrollbar { width: 6px; }
+        .acid-theme ::-webkit-scrollbar-track { background: #09090b; }
+        .acid-theme ::-webkit-scrollbar-thumb { background: #27272a; }
       `}} />
 
             {/* NAVBAR */}
@@ -109,7 +113,7 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
                     initial={{ y: -50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.8, ease: acidEase }}
-                    className={`mix-blend-difference flex justify-between items-center p-6 @md:px-12`}
+                    className={`${!isCardPreview ? 'mix-blend-difference' : ''} flex justify-between items-center p-6 @md:px-12`}
                 >
                     <div className={`acid-heading font-extrabold tracking-tighter text-white uppercase text-2xl @md:text-3xl`}>
                         {firstName}<span className="acid-text">.</span>{lastName || 'PORTFO'}
@@ -126,17 +130,17 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
 
                 <motion.div 
                     initial="hidden" 
-                    whileInView="visible" 
-                    viewport={{ once: false, amount: 0.3 }} 
+                    {...{ [animationTrigger]: "visible" }} 
+                    viewport={{ once: true, amount: 0 }} 
                     variants={staggerContainer}
-                    className={`px-6 md:px-12 relative z-10 flex flex-col items-start mt-10`}
+                    className={`px-6 @md:px-12 relative z-10 flex flex-col items-start mt-10`}
                 >
-                    <motion.div variants={fadeUp} className="acid-bg text-[#09090b] px-4 py-1.5 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] mb-8 inline-block transform -skew-x-12 acid-body">
+                    <motion.div variants={fadeUp} className="acid-bg text-[#09090b] px-4 py-1.5 font-bold text-[10px] @md:text-xs uppercase tracking-[0.2em] mb-8 inline-block transform -skew-x-12 acid-body">
                         Available for New Projects
                     </motion.div>
 
                     <motion.h1 variants={fadeUp} className={`acid-heading font-extrabold uppercase tracking-tighter text-[#fafafa] mb-4 w-full leading-[0.85] break-words
-                  text-5xl @md:text-[clamp(5rem,12vw,11rem)]
+                  text-5xl @md:text-[clamp(5rem,12cqi,11rem)]
               `}>
                         {firstName} <br />
                         <span className="text-transparent" style={{ WebkitTextStroke: '2px #fafafa' }}>{lastName || profession}</span>
@@ -156,7 +160,7 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
                         <p className={`text-zinc-400 font-medium leading-relaxed acid-body text-sm @md:text-lg @lg:text-xl max-w-md`}>
                             {bio}
                         </p>
-                        <div className="flex flex-col gap-4 text-xs md:text-sm font-bold uppercase tracking-widest text-zinc-300 acid-body">
+                        <div className="flex flex-col gap-4 text-xs @md:text-sm font-bold uppercase tracking-widest text-zinc-300 acid-body">
                             {links.map((l: any, i: number) => (
                                 <motion.a 
                                     whileHover={{ x: 5 }}
@@ -177,9 +181,9 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
                     <motion.div 
                         initial={{ opacity: 0, x: 50, rotate: 5 }} 
                         whileInView={{ opacity: 1, x: 0, rotate: 0 }} 
-                        viewport={{ once: false, amount: 0.3 }}
+                        viewport={{ once: true, amount: 0 }}
                         transition={{ duration: 1, ease: acidEase }}
-                        className="hidden lg:block absolute top-1/4 right-12 w-72 h-[450px] transition duration-700 z-30 group"
+                        className="hidden @lg:block absolute top-1/4 right-12 w-72 h-[450px] transition duration-700 z-30 group"
                     >
                         <div className="absolute inset-0 acid-bg transform translate-x-4 translate-y-4 -z-10 transition-transform group-hover:translate-x-6 group-hover:translate-y-6"></div>
                         <div className="w-full h-full overflow-hidden border-2 border-zinc-800 relative grayscale hover:grayscale-0 transition-all duration-700">
@@ -188,7 +192,7 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
                         {/* Verified Badge */}
                         {(data?.plan === 'PRO' || data?.userPlan === 'PRO') && (
                             <motion.div 
-                                initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: false }} transition={{ delay: 0.5, type: "spring" }}
+                                initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.5, type: "spring" }}
                                 className="absolute -bottom-4 -right-4 w-12 h-12 bg-blue-500 rounded-full border-4 border-black flex items-center justify-center text-white text-[14px] shadow-[5px_5px_0px_rgba(0,0,0,1)] z-40"
                             >
                                 <i className="fas fa-check"></i>
@@ -199,11 +203,11 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
 
             {/* MARQUEE */}
             <motion.div 
-                initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: false, amount: 0.5 }} transition={{ duration: 1 }}
+                initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0 }} transition={{ duration: 1 }}
                 className="w-full overflow-hidden py-10 -my-10"
             >
                 <div className={`acid-bg text-[#09090b] py-3 overflow-hidden border-y-4 border-[#09090b] -rotate-2 scale-105 relative z-20 shadow-[0_0_50px_rgba(223,255,0,0.2)] my-10`}>
-                    <div className="w-[200%] flex animate-marquee acid-heading font-bold text-2xl md:text-4xl uppercase tracking-tighter">
+                    <div className="w-[200%] flex animate-marquee acid-heading font-bold text-2xl @md:text-4xl uppercase tracking-tighter">
                         <div className="flex items-center gap-8 px-4">
                             {[...Array(6)].map((_, i) => (<React.Fragment key={i}><span>{profession}</span><span>///</span></React.Fragment>))}
                         </div>
@@ -215,10 +219,10 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
             </motion.div>
 
             {/* STATS SECTION */}
-            <section className="px-6 md:px-12 py-16 md:py-20">
+            <section className="px-6 @md:px-12 py-16 @md:py-20">
                 <motion.div 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }} variants={staggerContainer}
-                    className={`grid gap-4 md:gap-8 grid-cols-2 @md:grid-cols-4`}
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerContainer}
+                    className={`grid gap-4 @md:gap-8 grid-cols-2 @md:grid-cols-4`}
                 >
                     {[
                         { label: "Projects", value: archiveItems.length },
@@ -226,13 +230,13 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
                         { label: "Links", value: links.length }
                     ].map((stat, idx) => (
                         <motion.div key={idx} variants={fadeUp} className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition p-5 @md:p-8`}>
-                            <span className="acid-text font-bold text-[9px] md:text-xs uppercase tracking-widest acid-body">{stat.label}</span>
+                            <span className="acid-text font-bold text-[9px] @md:text-xs uppercase tracking-widest acid-body">{stat.label}</span>
                             <span className={`acid-heading font-extrabold text-4xl @md:text-5xl @lg:text-7xl`}>{stat.value}</span>
                         </motion.div>
                     ))}
                     
                     <motion.div variants={fadeUp} className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition cursor-pointer p-5 @md:p-8`} onClick={() => window.location.href = `mailto:${userEmail}`}>
-                        <span className="acid-text font-bold text-[9px] md:text-xs uppercase tracking-widest acid-body">Hire Me</span>
+                        <span className="acid-text font-bold text-[9px] @md:text-xs uppercase tracking-widest acid-body">Hire Me</span>
                         <motion.span whileHover={{ scale: 1.1, rotate: 5 }} className={`acid-heading font-extrabold flex items-center text-4xl @md:text-5xl @lg:text-7xl`}>
                             <i className="fas fa-envelope"></i>
                         </motion.span>
@@ -241,13 +245,13 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
             </section>
 
             {/* PROJECTS SECTION */}
-            <section id="work" className="pt-10 pb-20 md:pb-32">
+            <section id="work" className="pt-10 pb-20 @md:pb-32">
                 <motion.div 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.5 }} variants={fadeUp}
-                    className="px-6 md:px-12 mb-10 flex justify-between items-end border-b-2 border-zinc-800 pb-6"
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
+                    className="px-6 @md:px-12 mb-10 flex justify-between items-end border-b-2 border-zinc-800 pb-6"
                 >
-                    <h2 className={`acid-heading font-extrabold uppercase tracking-tighter text-4xl @md:text-[clamp(3rem,6vw,5rem)]`}>PROJECT<br />INDEX</h2>
-                    <span className="acid-text font-bold text-xs md:text-sm uppercase tracking-widest acid-body">Hover to Reveal</span>
+                    <h2 className={`acid-heading font-extrabold uppercase tracking-tighter text-4xl @md:text-[clamp(3rem,6cqi,5rem)]`}>PROJECT<br />INDEX</h2>
+                    <span className="acid-text font-bold text-xs @md:text-sm uppercase tracking-widest acid-body">Hover to Reveal</span>
                 </motion.div>
 
                 <div className="flex flex-col relative w-full">
@@ -255,13 +259,14 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
                         const isVideo = p.projectType === 'video';
                         return (
                             <motion.a 
-                                initial="hidden" whileInView="visible" viewport={{ once: false, margin: "50px" }} variants={fadeUp}
-                                href={p.projectUrl || p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} 
+                                key={`proj-${p.id || i}`}
+                                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, margin: "50px" }} variants={fadeUp}
+                                href={p.projectUrl || p.mediaUrl || '#'} target="_blank" rel="noreferrer"
                                 className={`project-item relative w-full flex justify-between cursor-pointer flex-col py-6 px-6 @md:flex-row @md:items-center @md:py-12 @md:px-12`}
                             >
                                 <div className="flex flex-col relative z-10 pointer-events-none">
-                                    <span className="font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] mb-2 opacity-70 acid-body">0{i + 1} / {p.projectType}</span>
-                                    <h3 className={`acid-heading font-extrabold uppercase tracking-tighter line-clamp-1 text-3xl @md:text-[clamp(2rem,4vw,4rem)]`}>{p.title}</h3>
+                                    <span className="font-bold text-[10px] @md:text-xs uppercase tracking-[0.2em] mb-2 opacity-70 acid-body">0{i + 1} / {p.projectType}</span>
+                                    <h3 className={`acid-heading font-extrabold uppercase tracking-tighter line-clamp-1 text-3xl @md:text-[clamp(2rem,4cqi,4rem)]`}>{p.title}</h3>
                                 </div>
                                 <div className={`font-bold uppercase tracking-widest opacity-70 acid-body relative z-10 pointer-events-none mt-3 text-[10px] @md:mt-0 @md:text-sm`}>
                                     {p.description || 'View details'} • {new Date(p.createdAt).getFullYear()}
@@ -280,13 +285,13 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
 
                 {/* Tombol Gallery Utama */}
                 <motion.div 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.5 }} variants={fadeUp}
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                     className={`w-full mt-8 mb-12 @md:mt-20 @md:mb-24 border-y-2 border-zinc-800`}
                 >
                     <Link href={`/${subdomain}/gallery`} scroll={false} className="group block w-full no-underline relative overflow-hidden bg-[#09090b] hover:bg-zinc-900 transition-colors duration-300">
                         <div className={`flex items-center justify-between px-6 py-6 @md:px-12 @md:py-12 @lg:py-16`}>
                             <div className="flex flex-col relative z-10">
-                                <span className="acid-text font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] acid-body mb-2 md:mb-4 flex items-center gap-2">
+                                <span className="acid-text font-bold text-[10px] @md:text-xs uppercase tracking-[0.2em] acid-body mb-2 @md:mb-4 flex items-center gap-2">
                                     <span className="w-2 h-2 rounded-none animate-pulse" style={{ backgroundColor: themeColor }}></span> System: Access_Granted
                                 </span>
                                 <h3 className={`acid-heading font-extrabold uppercase tracking-tighter text-[#fafafa] group-hover:text-[var(--theme-color)] transition-colors duration-300 leading-none text-3xl @md:text-5xl @lg:text-[5.5rem]`} style={{ '--theme-color': themeColor } as any}>
@@ -307,11 +312,11 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
             </section>
 
             {/* AWARDS SECTION */}
-            <section className="acid-bg text-[#09090b] py-20 md:py-24" id="awards">
-                <div className="max-w-6xl mx-auto px-6 md:px-12">
+            <section className="acid-bg text-[#09090b] py-20 @md:py-24" id="awards">
+                <div className="max-w-6xl mx-auto px-6 @md:px-12">
                     <motion.h2 
-                        initial="hidden" whileInView="visible" viewport={{ once: false }} variants={fadeUp}
-                        className={`acid-heading font-extrabold uppercase tracking-tighter mb-12 text-4xl @md:text-[clamp(3rem,6vw,5rem)]`}
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: false }} variants={fadeUp}
+                        className={`acid-heading font-extrabold uppercase tracking-tighter mb-12 text-4xl @md:text-[clamp(3rem,6cqi,5rem)]`}
                     >
                         RECOGNITION
                     </motion.h2>
@@ -321,22 +326,23 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
                             const isOpen = openAward === award.id;
                             return (
                                 <motion.div 
-                                    initial="hidden" whileInView="visible" viewport={{ once: false, margin: "50px" }} variants={fadeUp}
-                                    key={i} className="border-b-4 border-[#09090b] group"
+                                    key={`award-${award.id || i}`}
+                                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, margin: "50px" }} variants={fadeUp}
+                                    className="border-b-4 border-[#09090b] group"
                                 >
-                                    <div className={`award-row flex justify-between items-center cursor-pointer hover:bg-[#09090b] hover:text-[var(--theme-color)] transition-colors px-2 md:px-4 py-5 @md:py-6`} style={{ '--theme-color': themeColor } as any} onClick={() => setOpenAward(isOpen ? null : award.id)}>
-                                        <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto">
+                                    <div className={`award-row flex justify-between items-center cursor-pointer hover:bg-[#09090b] hover:text-[var(--theme-color)] transition-colors px-2 @md:px-4 py-5 @md:py-6`} style={{ '--theme-color': themeColor } as any} onClick={() => setOpenAward(isOpen ? null : award.id)}>
+                                        <div className="flex items-center gap-4 @md:gap-6 w-full @md:w-auto">
                                             <span className={`font-bold acid-body shrink-0 text-lg w-12 @md:text-2xl @md:w-16`}>{award.year || new Date(award.createdAt).getFullYear()}</span>
                                             <h3 className={`acid-heading font-extrabold uppercase tracking-tighter line-clamp-1 text-xl @md:text-2xl @lg:text-4xl`}>{award.title}</h3>
                                         </div>
                                         <motion.i 
                                             animate={{ rotate: isOpen ? 45 : 0 }} transition={{ duration: 0.3 }}
-                                            className={`fas fa-plus text-xl md:text-2xl shrink-0 ml-4 ${isOpen ? 'text-white' : ''}`}
+                                            className={`fas fa-plus text-xl @md:text-2xl shrink-0 ml-4 ${isOpen ? 'text-white' : ''}`}
                                         ></motion.i>
                                     </div>
 
                                     <div className={`overflow-hidden transition-all duration-400 ease-in-out ${isOpen ? 'max-h-[600px]' : 'max-h-0'}`}>
-                                        <div className={`px-2 md:px-4 pb-8 pt-4 flex items-start gap-6 border-t border-[#09090b]/20 mt-2 md:mt-4 flex-col @md:flex-row`}>
+                                        <div className={`px-2 @md:px-4 pb-8 pt-4 flex items-start gap-6 border-t border-[#09090b]/20 mt-2 @md:mt-4 flex-col @md:flex-row`}>
                                             <div className={`shrink-0 bg-[#000] border-2 border-[#09090b] flex items-center justify-center p-1 w-48 h-32`}>
                                                 <LazyImage src={award.mediaUrl || "https://via.placeholder.com/600"} className="w-full h-full object-contain p-2 grayscale" alt="Certificate" />
                                             </div>
@@ -355,12 +361,12 @@ export default function AcidTheme({ data, theme, isMobileView = false }: { data:
 
             {/* FOOTER */}
             <motion.footer 
-                initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }} variants={staggerContainer}
-                className="pt-24 md:pt-32 pb-12 px-6 md:px-12 text-center bg-[#09090b]"
+                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerContainer}
+                className="pt-24 @md:pt-32 pb-12 px-6 @md:px-12 text-center bg-[#09090b]"
             >
-                <motion.p variants={fadeUp} className="acid-text font-bold uppercase tracking-[0.3em] mb-6 acid-body text-[10px] md:text-xs">Drop a Line</motion.p>
-                <motion.a variants={fadeUp} href={`mailto:${userEmail}`} className={`block acid-heading font-extrabold uppercase tracking-tighter leading-[0.8] transition-colors duration-300 mb-16 md:mb-20 hover:text-[var(--theme-color)]`} style={{ '--theme-color': themeColor } as any}>
-                    <span className={`block w-full break-words text-5xl @md:text-[clamp(5rem,15vw,10rem)]`}>CONTACT</span>
+                <motion.p variants={fadeUp} className="acid-text font-bold uppercase tracking-[0.3em] mb-6 acid-body text-[10px] @md:text-xs">Drop a Line</motion.p>
+                <motion.a variants={fadeUp} href={`mailto:${userEmail}`} className={`block acid-heading font-extrabold uppercase tracking-tighter leading-[0.8] transition-colors duration-300 mb-16 @md:mb-20 hover:text-[var(--theme-color)]`} style={{ '--theme-color': themeColor } as any}>
+                    <span className={`block w-full break-words text-5xl @md:text-[clamp(5rem,15cqi,10rem)]`}>CONTACT</span>
                 </motion.a>
 
                 <motion.div variants={fadeUp} className={`flex justify-between items-center border-t border-zinc-800 pt-8 font-bold uppercase tracking-widest text-zinc-500 acid-body flex-col gap-4 text-[9px] @md:flex-row @md:text-xs`}>

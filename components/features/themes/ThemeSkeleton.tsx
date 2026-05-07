@@ -21,16 +21,25 @@ export function ThemeSkeleton() {
           <div className="w-40 h-14 shimmer rounded-full hidden md:block"></div>
         </div>
 
-        {/* Grid Skeleton (Immersive Style) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-24">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-slate-100 rounded-[2.5rem] border border-slate-200 h-[450px] relative overflow-hidden shadow-sm">
-              <div className="absolute inset-0 shimmer"></div>
-              <div className="absolute inset-x-3 bottom-3 h-[180px] bg-white/40 backdrop-blur-md rounded-[2rem] p-5 flex flex-col justify-end gap-3 border border-white/40">
-                 <div className="w-2/3 h-6 bg-slate-300/50 rounded-md"></div>
-                 <div className="w-full h-3 bg-slate-300/50 rounded-md"></div>
-                 <div className="w-4/5 h-3 bg-slate-300/50 rounded-md mb-3"></div>
-                 <div className="w-full h-12 bg-slate-300/50 rounded-2xl"></div>
+        {/* Grid Skeleton (Dribbble Style) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="flex flex-col gap-3">
+              {/* Visual Card 4:3 */}
+              <div className="relative w-full aspect-[4/3] bg-slate-100 rounded-xl border border-slate-200 overflow-hidden">
+                <div className="absolute inset-0 shimmer opacity-50"></div>
+              </div>
+              
+              {/* Footer Metadata */}
+              <div className="flex justify-between items-center px-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 shimmer rounded-full"></div>
+                  <div className="w-24 h-4 shimmer rounded-md"></div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="w-8 h-3 shimmer rounded-md"></div>
+                  <div className="w-8 h-3 shimmer rounded-md"></div>
+                </div>
               </div>
             </div>
           ))}

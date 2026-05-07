@@ -56,8 +56,14 @@ const getStaggerContainer = (delayStart = 0, staggerGap = 0.15) => ({
   }
 });
 
-export default function MinimalistTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+export default function MinimalistTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
   const [openAward, setOpenAward] = useState<string | null>(null);
+
+  // --- ANIMASI STABILISASI ---
+  // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
+  // Tapi tetap gunakan whileInView untuk live site agar ada efek scroll reveal.
+  const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+
 
   const fullName = data?.profile?.fullName || data?.fullName || "Jamal Arifin";
   const profession = data?.profile?.profession || data?.profession || "Director & Editor";
@@ -87,19 +93,18 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
   const bodyFont = getFontFamily(theme?.fontBody);
 
   return (
-    <div className={`flex w-full min-h-screen bg-white text-black relative min-body flex-col @lg:flex-row`}>
+    <div className={`flex w-full min-h-screen bg-white text-black relative min-body flex-col @lg:flex-row min-theme`}>
 
       <style dangerouslySetInnerHTML={{
         __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap');
         .min-heading { font-family: ${headingFont} !important; }
         .min-body { font-family: ${bodyFont} !important; }
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
-        * { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
-        ::selection { background: #000000; color: #ffffff; }
+        .min-theme ::-webkit-scrollbar { width: 5px; height: 5px; }
+        .min-theme ::-webkit-scrollbar-track { background: transparent; }
+        .min-theme ::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .min-theme ::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+        .min-theme * { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+        .min-theme ::selection { background: #000000; color: #ffffff; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}} />
@@ -169,7 +174,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
 
         {/* STATS SECTION */}
         <motion.section
-          initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
+          initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
           variants={getStaggerContainer(0.8, 0.2)} className="border-b border-gray-200"
         >
           <div className="grid grid-cols-2 border-b border-gray-200">
@@ -187,7 +192,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
         {/* PROJECTS SECTION */}
         <section className={`p-8 @lg:p-12`}>
           <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true }}
+            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }}
             variants={cinematicBlurUp} custom={1.2}
             className="flex justify-between items-end mb-10 border-b border-gray-100 pb-6"
           >
@@ -196,7 +201,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
           </motion.div>
 
           <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }}
+            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
             variants={getStaggerContainer(1.4, 0.25)}
             className={`grid grid-cols-1 gap-8 @md:grid-cols-2`}
           >
@@ -226,20 +231,20 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
           {/* --- MINIMALIST EXPLORE BUTTON --- */}
           <motion.div
             initial="hidden"
-            whileInView="visible"
+            {...{ [animationTrigger]: "visible" }}
             viewport={{ once: true }}
             variants={cinematicBlurUp}
             custom={0.3}
             className="w-full flex justify-center mt-16 mb-20 relative z-10"
           >
-            <Link href={`/${subdomain}/gallery`} scroll={false} className="group inline-flex items-center gap-4 md:gap-6 no-underline p-2">
-              <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500 relative">
+            <Link href={`/${subdomain}/gallery`} scroll={false} className="group inline-flex items-center gap-4 @md:gap-6 no-underline p-2">
+              <span className="text-[10px] @md:text-xs font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500 relative">
                 EXPLORE ARCHIVE
                 <span className="absolute -bottom-2 left-0 w-0 h-px bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
               </span>
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-200 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-black group-hover:border-black shadow-sm group-hover:shadow-md overflow-hidden relative">
-                <i className="fas fa-arrow-right absolute transform -translate-x-[150%] text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 text-[10px] md:text-xs"></i>
-                <i className="fas fa-arrow-right absolute transform translate-x-0 text-gray-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%] opacity-100 group-hover:opacity-0 text-[10px] md:text-xs"></i>
+              <div className="w-10 h-10 @md:w-12 @md:h-12 rounded-full border border-gray-200 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-black group-hover:border-black shadow-sm group-hover:shadow-md overflow-hidden relative">
+                <i className="fas fa-arrow-right absolute transform -translate-x-[150%] text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 text-[10px] @md:text-xs"></i>
+                <i className="fas fa-arrow-right absolute transform translate-x-0 text-gray-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%] opacity-100 group-hover:opacity-0 text-[10px] @md:text-xs"></i>
               </div>
             </Link>
           </motion.div>
@@ -247,19 +252,19 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
 
         {/* AWARDS SECTION */}
         <section className="border-t border-gray-200 bg-gray-50/30 overflow-hidden">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cinematicBlurUp} custom={0.2} className={`p-8 @lg:p-12 pb-6`}>
+          <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={cinematicBlurUp} custom={0.2} className={`p-8 @lg:p-12 pb-6`}>
             <h2 className="text-2xl font-black uppercase tracking-tighter min-heading">Honors & Awards</h2>
           </motion.div>
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={getStaggerContainer(0.4, 0.2)} className="border-t border-gray-200">
+          <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={getStaggerContainer(0.4, 0.2)} className="border-t border-gray-200">
             {awardItems.length > 0 ? awardItems.map((award: any, i: number) => {
               const isOpen = openAward === award.id;
               return (
                 <motion.div variants={cinematicBlurUp} key={i} className="border-b border-gray-200 group">
                   <div className={`px-8 @lg:px-12 py-6 flex justify-between items-center cursor-pointer transition-colors duration-500 hover:bg-gray-100 ${isOpen ? 'bg-gray-100' : 'bg-transparent'}`} onClick={() => setOpenAward(isOpen ? null : award.id)}>
-                    <div className="flex items-center gap-4 md:gap-8 w-2/3">
+                    <div className="flex items-center gap-4 @md:gap-8 w-2/3">
                       <span className={`font-mono text-[10px] text-gray-400 group-hover:text-black transition-colors @md:block`}>{award.year || new Date(award.createdAt).getFullYear()}</span>
-                      <h3 className="text-sm md:text-lg font-bold tracking-tight min-heading group-hover:translate-x-2 transition-transform duration-500 ease-out">{award.title}</h3>
+                      <h3 className="text-sm @md:text-lg font-bold tracking-tight min-heading group-hover:translate-x-2 transition-transform duration-500 ease-out">{award.title}</h3>
                     </div>
                     <div className="flex items-center justify-end gap-6 w-1/3">
                       <span className={`text-[10px] font-bold uppercase tracking-widest text-gray-500 @md:block text-right truncate`}>{award.issuer}</span>
@@ -295,7 +300,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false }: {
         </section>
 
         {/* FOOTER */}
-        <motion.footer initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cinematicBlurUp} custom={0.2} className={`p-8 text-center flex gap-4 bg-gray-100 border-t border-gray-200 min-body flex-col @md:flex-row @md:text-left justify-between @lg:p-12`}>
+        <motion.footer initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={cinematicBlurUp} custom={0.2} className={`p-8 text-center flex gap-4 bg-gray-100 border-t border-gray-200 min-body flex-col @md:flex-row @md:text-left justify-between @lg:p-12`}>
           <p className="text-[10px] font-mono text-gray-500">© 2026 {fullName}. All Rights Reserved.</p>
           <span className="text-[10px] font-bold uppercase tracking-widest text-black min-heading">portfo.be/{subdomain}</span>
         </motion.footer>

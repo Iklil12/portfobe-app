@@ -26,12 +26,31 @@ export function useDashboardOverview() {
     const subdomain = layout.subdomain || '';
     const userPlan = layout.plan || 'FREE';
 
-    let tName = "Neo Brutalism";
     const currentTheme = layout.siteAppearance?.themeTemplate;
-    if (currentTheme === 'minimalist') tName = "Minimalist Clean";
-    if (currentTheme === 'elegant') tName = "Elegant Serif";
-    if (currentTheme === 'cinematic') tName = "Cinematic Dark";
-    if (currentTheme === 'acid') tName = "Acid Punk";
+    
+    // Map ID tema ke nama aslinya
+    const themeMap: Record<string, string> = {
+      'brutalism': 'Neo Brutalism',
+      'minimalist': 'Minimalist Clean',
+      'cinematic': 'Cinematic Dark',
+      'acid': 'Acid Punk',
+      'bentogrid': 'Bento Grid',
+      'viewfinder': 'Viewfinder',
+      'spatial': 'Spatial',
+      'monolith': 'Monolith',
+      'split': 'Split Screen',
+      'editorial': 'Editorial',
+      'midnight-emulsion': 'Midnight Emulsion',
+      'aura-kinetic': 'Aura Kinetic',
+      'absolute-noir': 'Absolute Noir',
+    };
+
+    let tName = "Belum Dipilih";
+    if (currentTheme && themeMap[currentTheme]) {
+        tName = themeMap[currentTheme];
+    } else if (currentTheme) {
+        tName = currentTheme.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
 
     // --- CALCULATE PORTFOLIO STRENGTH ---
     let score = 0;

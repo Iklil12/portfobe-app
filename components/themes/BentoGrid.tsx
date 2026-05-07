@@ -13,12 +13,19 @@ const getYouTubeThumbnail = (url: string) => {
     return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
-export default function BentoTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+export default function BentoTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+
+  // --- ANIMASI STABILISASI ---
+  // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
+  // Tapi tetap gunakan whileInView untuk live site agar ada efek scroll reveal.
+  const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+
     const [currentTime, setCurrentTime] = useState("");
 
     // Update Jam Real-Time
     useEffect(() => {
+        if (isCardPreview || isEditor) return; // Skip interval di card preview untuk mencegah re-render terus menerus
         const updateTime = () => {
             const now = new Date();
             setCurrentTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
@@ -26,7 +33,7 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
         updateTime();
         const interval = setInterval(updateTime, 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, [isCardPreview]);
 
     // Data Parsing
     const fullName = data?.profile?.fullName || data?.fullName || "Budi Arsitek";
@@ -76,13 +83,18 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
         { icon: 'fa-git-alt', name: 'Git', color: '#f34f29' },
     ];
 
+    const hexToRgb = (hex: string) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '255, 0, 85';
+    };
+
     return (
-        <main className={`min-h-screen bg-[#09090b] text-slate-200 font-sans selection:bg-white/20 overflow-hidden p-4 @md:p-6 @lg:p-8`}>
+        <main className={`min-h-screen bg-[#09090b] text-slate-200 font-sans selection:bg-white/20 overflow-hidden p-4 @md:p-6 @lg:p-8 bento-theme @container`}>
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .bento-theme { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .bento-theme *:not(i) { font-family: 'Plus Jakarta Sans', sans-serif; }
         
         .bento-card {
           background-color: #121214;
@@ -109,7 +121,7 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
           transform: translateY(-4px) scale(1.02);
           box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 20px 40px rgba(var(--hl-rgb), 0.4);
         }
-
+ 
         .scroller {
           max-width: 100%;
           overflow: hidden;
@@ -119,7 +131,7 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
         .scroller__inner {
           display: flex;
           width: max-content;
-          animation: scroll 25s linear infinite;
+          animation: ${isCardPreview ? 'none' : 'scroll 25s linear infinite'};
         }
         .scroller__inner:hover { animation-play-state: paused; }
         @keyframes scroll { to { transform: translateX(-50%); } }
@@ -127,12 +139,12 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
 
             <div 
                 className={`w-full max-w-[1800px] mx-auto grid auto-rows-[minmax(120px,auto)] gap-4 @lg:gap-6 grid-cols-1 @md:grid-cols-2 @lg:grid-cols-4`} 
-                style={{ '--hl': highlightColor } as React.CSSProperties}
+                style={{ '--hl': highlightColor, '--hl-rgb': hexToRgb(highlightColor) } as React.CSSProperties}
             >
 
                 {/* HERO SECTION - MOBILE RESPONSIVE FIX */}
                 <motion.div 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
                     className={`bento-card flex flex-col justify-between p-8 @lg:p-12 @lg:col-span-3 @lg:row-span-3`}
                 >
                     <div className="absolute top-[-20%] right-[-10%] w-[80%] h-[80%] blur-[120px] rounded-full mix-blend-screen pointer-events-none opacity-30 @container" style={{ backgroundColor: highlightColor }}></div>
@@ -140,7 +152,7 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
                     
 
                     {/* Identitas Atas */}
-                    <div className="relative z-10 flex flex-col mt-2 lg:mt-8">
+                    <div className="relative z-10 flex flex-col mt-2 @lg:mt-8">
                         <h1 className={`font-black tracking-tighter text-white uppercase text-[5rem] @md:text-[8rem] @lg:text-[10rem] leading-[0.8] mb-2`}>
                             {firstName}
                         </h1>
@@ -155,7 +167,7 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
                     {/* Interaksi Bawah (Telah diperbaiki untuk Mobile) */}
                     <div className={`relative z-10 flex w-full flex-row gap-4 mt-16`}>
                         
-                        <div onClick={handleCopyEmail} className={`flex-1 bg-[#1a1a1d] hover:bg-[#222226] border border-white/5 flex items-center gap-3 md:gap-4 cursor-pointer transition-colors group shadow-lg rounded-full p-2 pr-6`}>
+                        <div onClick={handleCopyEmail} className={`flex-1 bg-[#1a1a1d] hover:bg-[#222226] border border-white/5 flex items-center gap-3 @md:gap-4 cursor-pointer transition-colors group shadow-lg rounded-full p-2 pr-6`}>
                             <div className={`rounded-full bg-black/50 flex shrink-0 items-center justify-center group-hover:bg-[var(--hl)] group-hover:text-black transition-colors w-12 h-12`}>
                                 <i className={`fas ${isCopied ? 'fa-check' : 'fa-paper-plane'} text-lg`}></i>
                             </div>
@@ -182,7 +194,7 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
 
                 {/* AVATAR BOX */}
                 <motion.div 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
                     className={`bento-card p-2 relative group @lg:col-span-1 @lg:row-span-3`}
                 >
                     <div className="w-full h-full rounded-[24px] overflow-hidden relative bg-[#1a1a1d]">
@@ -193,7 +205,7 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
 
                 {/* STATS BOX */}
                 <motion.div 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
                     className={`bento-card flex flex-col items-start justify-center p-8 group @lg:col-span-1 @lg:row-span-1`}
                 >
                     <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">Total Archive</span>
@@ -202,7 +214,7 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
 
                 {/* SOCIAL BOX */}
                 <motion.div 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
                     className={`bento-card flex flex-row p-3 gap-3 @lg:col-span-1 @lg:row-span-1`}
                 >
                     <a href={githubLink?.url || '#'} target="_blank" rel="noreferrer" className="flex-1 rounded-[24px] bg-[#1a1a1d] border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors group cursor-pointer text-slate-400 min-h-[100px]">
@@ -216,12 +228,12 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
                 {/* COLORED CTA BOX */}
                 <Link href={`/${subdomain}/gallery`} scroll={false} className={`@lg:col-span-2 @lg:row-span-1`}>
                     <motion.div 
-                        initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
                         className="bento-card bento-card-colored w-full h-full p-8 flex items-center justify-between group cursor-pointer"
                     >
                         <div className="flex flex-col">
                             <span className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70">Complete Portfolio</span>
-                            <h3 className="text-2xl md:text-3xl font-black tracking-tight">View All Works</h3>
+                            <h3 className="text-2xl @md:text-3xl font-black tracking-tight">View All Works</h3>
                         </div>
                         <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all duration-300">
                             <i className="fas fa-arrow-right -rotate-45 text-xl group-hover:rotate-0 transition-transform duration-300"></i>
@@ -231,8 +243,8 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
 
                 {/* TECH STACK MARQUEE */}
                 <motion.div 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
-                    className={`bento-card flex items-center p-6 md:p-8 gap-6 overflow-hidden @lg:col-span-4 @lg:row-span-1 flex-row`}
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                    className={`bento-card flex items-center p-6 @md:p-8 gap-6 overflow-hidden @lg:col-span-4 @lg:row-span-1 flex-row`}
                 >
                     <div className="shrink-0">
                         <p className="text-slate-500 text-[10px] font-bold tracking-widest uppercase mb-1">Tech Stack</p>
@@ -259,21 +271,21 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
                     return (
                         <motion.a
                             href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
-                            initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1, margin: "-50px" }} variants={bentoAnim}
-                            className={`bento-card p-2 md:p-3 group relative overflow-hidden flex flex-col justify-end ${spanClass}`}
+                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim}
+                            className={`bento-card p-2 @md:p-3 group relative overflow-hidden flex flex-col justify-end ${spanClass}`}
                         >
                             <div className="w-full h-full rounded-[1.25rem] overflow-hidden relative">
                                 <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="absolute inset-0 w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#000] via-[#000]/40 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-700"></div>
 
-                                <div className="absolute bottom-0 left-0 w-full p-6 lg:p-8 flex flex-col gap-2 z-10 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                                <div className="absolute bottom-0 left-0 w-full p-6 @lg:p-8 flex flex-col gap-2 z-10 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                                     <div className="flex justify-between items-center w-full mb-1">
                                         <span className="text-[10px] font-bold uppercase tracking-widest text-white bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/20">{p.projectType}</span>
                                         <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                             <i className="fas fa-arrow-right -rotate-45"></i>
                                         </div>
                                     </div>
-                                    <h3 className="text-2xl md:text-3xl font-black text-white line-clamp-2 leading-tight">{p.title}</h3>
+                                    <h3 className="text-2xl @md:text-3xl font-black text-white line-clamp-2 leading-tight">{p.title}</h3>
                                 </div>
                             </div>
                         </motion.a>
@@ -283,10 +295,10 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
                 {/* AWARDS SECTION */}
                 {awardItems.length > 0 && (
                     <motion.div 
-                        initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
-                        className={`bento-card flex flex-col p-6 lg:p-10 @lg:col-span-4 @lg:row-span-auto`}
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                        className={`bento-card flex flex-col p-6 @lg:p-10 @lg:col-span-4 @lg:row-span-auto`}
                     >
-                        <h3 className="text-xl md:text-2xl font-black text-white mb-6 flex items-center gap-3">
+                        <h3 className="text-xl @md:text-2xl font-black text-white mb-6 flex items-center gap-3">
                             <i className="fas fa-award text-[var(--hl)]"></i> Honors & Awards
                         </h3>
                         <div className={`grid gap-4 grid-cols-2 @lg:grid-cols-4`}>
@@ -307,17 +319,17 @@ export default function BentoTheme({ data, theme, isMobileView = false }: { data
 
                 {/* FOOTER */}
                 <motion.footer 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
-                    className={`bento-card flex flex-col md:flex-row justify-between items-center gap-6 p-8 lg:p-10 @lg:col-span-4 @lg:row-span-1`}
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                    className={`bento-card flex flex-col @md:flex-row justify-between items-center gap-6 p-8 @lg:p-10 @lg:col-span-4 @lg:row-span-1`}
                 >
-                    <div className="flex flex-col text-center md:text-left">
-                        <h3 className="text-xl md:text-2xl font-black text-white mb-1">Ready to build?</h3>
+                    <div className="flex flex-col text-center @md:text-left">
+                        <h3 className="text-xl @md:text-2xl font-black text-white mb-1">Ready to build?</h3>
                         <a href={`mailto:${userEmail}`} className="text-slate-400 hover:text-white transition-colors text-sm font-medium">
                             {userEmail}
                         </a>
                     </div>
                     
-                    <div className="flex flex-col items-center md:items-end gap-4">
+                    <div className="flex flex-col items-center @md:items-end gap-4">
                         <div className="flex items-center gap-4 text-[10px] font-bold tracking-widest uppercase text-slate-500">
                             <span>© {new Date().getFullYear()} {fullName}</span>
                             <Link href={`/${subdomain}`} className="hover:text-[var(--hl)] transition-colors">PORTFO.BE</Link>

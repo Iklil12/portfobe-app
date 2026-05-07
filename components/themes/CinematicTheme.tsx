@@ -13,8 +13,14 @@ const getYouTubeThumbnail = (url: string) => {
     return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
-export default function CinematicTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+export default function CinematicTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [openAward, setOpenAward] = useState<string | null>(null);
+
+  // --- ANIMASI STABILISASI ---
+  // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
+  // Tapi tetap gunakan whileInView untuk live site agar ada efek scroll reveal.
+  const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+
 
     // --- IDENTITAS ---
     const fullName = data?.profile?.fullName || data?.fullName || "Jamal Arifin";
@@ -54,11 +60,10 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
     const radiusClass = cardStyle === 'soft' || cardStyle === 'soft-shadow' ? 'rounded-2xl' : 'rounded-none';
 
     return (
-        <div className={`w-full min-h-screen bg-[#0a0a0a] text-white selection:bg-white selection:text-black relative text-sm`}>
+        <div className={`w-full min-h-screen bg-[#0a0a0a] text-white selection:bg-white selection:text-black relative text-sm cinematic-theme`}>
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap');
         .cine-heading { font-family: ${customHeadingFont} !important; }
         .cine-body { font-family: ${customBodyFont} !important; }
         .cine-accent { color: ${themeColor} !important; }
@@ -69,9 +74,9 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
         .project-row:hover { background-color: #111; padding-left: 1rem; padding-right: 1rem; border-color: ${themeColor}; }
         .award-row { transition: all 0.3s ease; }
         .award-row:hover { color: ${themeColor}; border-color: ${themeColor}; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background: #333; }
+        .cinematic-theme ::-webkit-scrollbar { width: 4px; }
+        .cinematic-theme ::-webkit-scrollbar-track { background: #0a0a0a; }
+        .cinematic-theme ::-webkit-scrollbar-thumb { background: #333; }
       `}} />
 
             {/* NAVBAR */}
@@ -84,13 +89,13 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
             </nav>
 
             {/* HERO SECTION */}
-            <header className="relative min-h-[90vh] flex flex-col justify-end pb-16 px-6 md:px-12 overflow-hidden pt-32">
+            <header className="relative min-h-[90vh] flex flex-col justify-end pb-16 px-6 @md:px-12 overflow-hidden pt-32">
                 <div className="absolute inset-0 z-0 @container">
                     <LazyImage src={displayAvatar} alt="Hero Background" className="w-full h-full object-cover grayscale opacity-30 scale-105 animate-[pulse_10s_ease-in-out_infinite]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
                 </div>
 
-                {/* PERBAIKAN: Ubah md: menjadi lg: agar bio di tablet tetap di bawah nama */}
+                {/* PERBAIKAN: Ubah @md: menjadi @lg: agar bio di tablet tetap di bawah nama */}
                 <div className={`relative z-10 w-full flex justify-between gap-6 flex-col @lg:flex-row @lg:items-end @lg:gap-10`}>
                     <div className="flex-1 w-full min-w-0">
                         <p className={`text-gray-400 font-bold uppercase tracking-[0.3em] mb-4 flex items-center gap-3 cine-body text-xs @md:text-sm`}>
@@ -100,7 +105,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
 
                         {/* PERBAIKAN: Penggunaan text-[clamp()] agar font membesar/mengecil bagai karet */}
                         <h1 className={`font-black leading-[0.85] tracking-tighter uppercase cine-heading break-words w-full
-                      text-[clamp(4rem,10vw,10rem)]
+                      text-[clamp(4rem,10cqi,10rem)]
                   `}>
                             {firstName}<br />
                             <span className="text-transparent break-words w-full block" style={{ WebkitTextStroke: `2px ${themeColor === '#000000' ? '#ffffff' : themeColor}` }}>
@@ -140,19 +145,19 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                 <div className={`grid divide-[#1f1f1f] grid-cols-2 @md:grid-cols-4 divide-x divide-y @md:divide-y-0`}>
                     <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 p-8 @md:p-16`}>
                         <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>{archiveItems.length}</span>
-                        <span className="text-[9px] md:text-xs uppercase tracking-widest font-bold cine-body">Projects</span>
+                        <span className="text-[9px] @md:text-xs uppercase tracking-widest font-bold cine-body">Projects</span>
                     </div>
                     <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 p-8 @md:p-16`}>
                         <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>{awardItems.length}</span>
-                        <span className="text-[9px] md:text-xs uppercase tracking-widest font-bold cine-body">Awards</span>
+                        <span className="text-[9px] @md:text-xs uppercase tracking-widest font-bold cine-body">Awards</span>
                     </div>
                     <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 p-8 @md:p-16`}>
                         <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>{links.length}</span>
-                        <span className="text-[9px] md:text-xs uppercase tracking-widest font-bold cine-body">Links</span>
+                        <span className="text-[9px] @md:text-xs uppercase tracking-widest font-bold cine-body">Links</span>
                     </div>
                     <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 group cursor-pointer p-8 @md:p-16`} onClick={() => window.location.href = `mailto:${userEmail}`}>
                         <span className={`font-black mb-2 tracking-tighter cine-heading text-4xl @md:text-6xl`}><i className="fas fa-envelope group-hover:scale-110 transition-transform"></i></span>
-                        <span className="text-[9px] md:text-xs uppercase tracking-widest font-bold cine-body mt-1">Hire Me</span>
+                        <span className="text-[9px] @md:text-xs uppercase tracking-widest font-bold cine-body mt-1">Hire Me</span>
                     </div>
                 </div>
             </section>
@@ -160,7 +165,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
             {/* PROJECTS SECTION */}
             <section className={`py-20 @md:py-24 px-6 @md:px-12`} id="work">
                 <div className="flex justify-between items-end mb-12">
-                    <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8vw,5rem)]`}>Selected<br />Works <span className="text-gray-600 text-xl md:text-2xl">({archiveItems.length})</span></h2>
+                    <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8cqi,5rem)]`}>Selected<br />Works <span className="text-gray-600 text-xl @md:text-2xl">({archiveItems.length})</span></h2>
                 </div>
 
                 <div className="flex flex-col border-t border-[#1f1f1f]">
@@ -170,11 +175,11 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                             <a href={p.projectUrl || p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} className={`project-row relative group flex justify-between cursor-pointer cine-border-accent flex-col @md:flex-row @md:items-center py-8 @md:py-14`}>
                                 <div className={`flex relative z-10 pointer-events-none flex-col @md:flex-row @md:items-center gap-4 @md:gap-20`}>
                                     <span className="text-gray-600 font-mono text-sm @md:text-lg hidden @md:block">0{i + 1}</span>
-                                    <h3 className={`font-black tracking-tighter uppercase group-hover:cine-accent text-gray-300 transition-colors cine-heading line-clamp-1 text-[clamp(1.5rem,5vw,4rem)]`}>{p.title}</h3>
+                                    <h3 className={`font-black tracking-tighter uppercase group-hover:cine-accent text-gray-300 transition-colors cine-heading line-clamp-1 text-[clamp(1.5rem,5cqi,4rem)]`}>{p.title}</h3>
                                 </div>
                                 <div className={`flex flex-col relative z-10 pointer-events-none cine-body mt-4 @md:mt-0 @md:text-right`}>
-                                    <span className="text-[10px] md:text-sm font-bold uppercase tracking-widest text-white">{p.projectType}</span>
-                                    <span className="text-gray-500 mt-1 text-[10px] md:text-sm truncate max-w-[200px]">{p.description || 'View Project'}</span>
+                                    <span className="text-[10px] @md:text-sm font-bold uppercase tracking-widest text-white">{p.projectType}</span>
+                                    <span className="text-gray-500 mt-1 text-[10px] @md:text-sm truncate max-w-[200px]">{p.description || 'View Project'}</span>
                                 </div>
 
                                 {/* Mobile Inline Image */}
@@ -183,7 +188,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                                 </div>
 
                                 {/* Desktop Absolute Hover Image */}
-                                <div className={`hidden @md:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vh] z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden ${radiusClass}`}>
+                                <div className={`hidden @md:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40cqi] h-[40vh] z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden ${radiusClass}`}>
                                     <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale opacity-50" />
                                 </div>
                             </a>
@@ -224,7 +229,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
             <section className={`bg-[#050505] border-t border-[#1f1f1f] py-20 @md:py-24 px-6 @md:px-12`}>
                 <div className={`grid gap-10 @md:grid-cols-12 @md:gap-12`}>
                     <div className={`@md:col-span-4`}>
-                        <div className="md:sticky md:top-24">
+                        <div className="@md:sticky @md:top-24">
                             <h2 className={`font-black uppercase tracking-tighter mb-3 cine-heading text-3xl @md:text-5xl`}>Recognition</h2>
                             <p className={`text-gray-500 max-w-xs cine-body text-sm`}>Acknowledged by the industry for exceptional visual storytelling.</p>
                         </div>
@@ -234,7 +239,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                         {awardItems.length > 0 ? awardItems.map((award: any, i: number) => {
                             const isOpen = openAward === award.id;
                             return (
-                                <div key={i} className="border-b border-[#1f1f1f]">
+                                <div key={i} className="border-b border-[#1f1f1f] @container">
                                     <div className={`award-row flex justify-between items-center cursor-pointer text-gray-400 py-6 @md:py-8 flex-wrap @md:flex-nowrap`} onClick={() => setOpenAward(isOpen ? null : award.id)}>
 
                                         <div className={`flex justify-between items-center w-full @md:w-auto mb-2 @md:mb-0`}>
@@ -258,7 +263,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
                                             </div>
                                             <div className="flex flex-col justify-center cine-body">
                                                 <p className="text-white font-bold mb-1 text-[11px] uppercase tracking-wider">{award.status || 'Verified'}</p>
-                                                <p className="text-gray-500 text-[11px] md:text-sm max-w-md leading-relaxed mb-4">{award.description || 'Awarded for excellence in the respective category.'}</p>
+                                                <p className="text-gray-500 text-[11px] @md:text-sm max-w-md leading-relaxed mb-4">{award.description || 'Awarded for excellence in the respective category.'}</p>
                                                 <a href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" className="text-[10px] font-bold uppercase tracking-widest text-white hover:text-gray-400 transition flex items-center gap-2">View Certificate <i className="fas fa-external-link-alt text-[8px]"></i></a>
                                             </div>
                                         </div>
@@ -274,7 +279,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false }: { 
             <footer className={`bg-white text-black text-center relative overflow-hidden group py-24 @md:py-32 px-6 @md:px-12`}>
                 <a href={`mailto:${userEmail}`} className="relative z-10 block cursor-pointer">
                     <p className={`font-bold uppercase tracking-[0.3em] text-gray-500 mb-4 group-hover:text-black transition cine-body text-xs @md:text-sm`}>Got a project?</p>
-                    <h2 className={`font-black uppercase tracking-tighter leading-none group-hover:-translate-y-2 transition-transform duration-500 cine-heading text-[clamp(3rem,10vw,8rem)]`}>
+                    <h2 className={`font-black uppercase tracking-tighter leading-none group-hover:-translate-y-2 transition-transform duration-500 cine-heading text-[clamp(3rem,10cqi,8rem)]`}>
                         Let's Talk
                     </h2>
                 </a>

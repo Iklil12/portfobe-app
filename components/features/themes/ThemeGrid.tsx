@@ -1,122 +1,234 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useRef, useCallback } from 'react';
 import { LazyImage } from '@/components/ui/LazyImage';
+import PortfolioView from '@/components/PortfolioView';
+import useSWR from 'swr';
+import { motion, AnimatePresence } from 'framer-motion'; // Tambahkan framer-motion
+
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export function ThemeGrid({ themes, state, actions }: { themes: any[], state: any, actions: any }) {
-  const { currentTheme, favorites = [] } = state;
-  const { handleUseTheme, toggleFavorite } = actions;
+    const { currentTheme, favorites = [] } = state;
+    const { handleUseTheme, toggleFavorite } = actions;
+    const [hoveredThemeId, setHoveredThemeId] = useState<string | null>(null);
+    // Debounce ref agar hover tidak flicker saat mouse gerak di atas child elements
+    const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-24">
-      {themes.map((theme, index) => {
-          const isActive = currentTheme === theme.id;
-          const isFavorite = favorites.includes(theme.id);
+    const handleMouseEnter = useCallback((id: string) => {
+        if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+        hoverTimerRef.current = setTimeout(() => setHoveredThemeId(id), 80);
+    }, []);
 
-          return (
-            <div 
-              key={theme.id} 
-              className={`animate-enter group relative rounded-[2.5rem] overflow-hidden transition-all duration-500 h-[450px] bg-slate-100
-                ${isActive ? 'border-2 border-slate-900 shadow-[0_20px_50px_rgba(0,0,0,0.12)] scale-[1.02] ring-4 ring-slate-900/5 z-10' : 
-                theme.isAvailable ? 'border border-slate-200/60 shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2' : 
-                'border border-slate-200/60 opacity-90'} 
-              `}
-              style={{ animationDelay: `${(index + 1) * 150}ms` }}
-            >
-                <div className="absolute inset-0 bg-slate-100">
-                    {theme.img ? (
-                        <LazyImage 
-                          src={theme.img} 
-                          className={`w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105 ${!theme.isAvailable && 'blur-[2px] grayscale'}`} 
-                          alt={theme.name} 
-                        />
-                    ) : (
-                        theme.content
-                    )}
-                </div>
+    const handleMouseLeave = useCallback(() => {
+        if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+        hoverTimerRef.current = setTimeout(() => setHoveredThemeId(null), 80);
+    }, []);
 
-                <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/20 to-black/90 opacity-70 group-hover:opacity-80 transition-opacity duration-500 z-10"></div>
-                
-                {/* FAVORITE BUTTON */}
-                <button
-                  onClick={(e) => { e.stopPropagation(); toggleFavorite(theme.id); }}
-                  className={`absolute top-4 right-4 z-30 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border
-                    ${isFavorite
-                      ? 'bg-rose-500 border-rose-400 text-white scale-110 shadow-lg shadow-rose-500/30'
-                      : 'bg-black/60 border-white/10 text-white/50 hover:bg-rose-500/80 hover:border-rose-400 hover:text-white opacity-0 group-hover:opacity-100'
-                    }`}
-                  title={isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit'}
-                >
-                  <i className={`${isFavorite ? 'fas' : 'far'} fa-heart text-[11px]`}></i>
-                </button>
-                
-                <div className="absolute top-5 left-5 z-30 flex flex-col gap-2">
-                  {isActive ? (
-                    <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-900 bg-white px-3 py-1.5 rounded-xl shadow-lg border border-white/20">
-                      <i className="fas fa-check-circle text-emerald-500"></i> Dipakai
-                    </span>
-                  ) : !theme.isAvailable && (
-                    <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-white bg-slate-900/80 px-3 py-1.5 rounded-xl border border-white/10">
-                      <i className="fas fa-lock"></i> Segera
-                    </span>
-                  )}
-                  
-                  {theme.isPro && (
-                    <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-white bg-slate-900 px-3 py-1.5 rounded-xl shadow-xl border border-white/10">
-                      <i className="fas fa-crown text-[#ff9e00]"></i> PRO
-                    </span>
-                  )}
-                </div>
+    // Ambil data lengkap untuk Live Preview (hanya nge-fetch sekali berkat SWR cache)
+    const { data: fullProfileData } = useSWR('/api/appearance', fetcher, {
+        revalidateOnFocus: false,
+        dedupingInterval: 60000
+    });
 
-                <div className="absolute inset-x-3 bottom-3 bg-slate-900/80 border border-white/10 rounded-[2rem] p-5 sm:p-6 flex flex-col transform transition-all duration-500 z-20">
-                    
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className={`font-extrabold text-xl sm:text-2xl tracking-tight text-white drop-shadow-sm`}>
-                        {theme.name}
-                      </h4>
-                      {!isActive && theme.isAvailable && (
-                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 shrink-0">
-                          <i className="fas fa-arrow-right text-[10px] -rotate-45"></i>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <p className="text-[11px] sm:text-xs font-medium text-slate-300 leading-relaxed mb-6">
-                      {theme.desc}
-                    </p>
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-24">
+            {themes.map((theme, index) => {
+                const isActive = currentTheme === theme.id;
+                const isFavorite = favorites.includes(theme.id);
+                const isHovered = hoveredThemeId === theme.id;
 
-                    <button 
-                        onClick={() => handleUseTheme(theme.id, theme.name)}
-                        disabled={!theme.isAvailable && !isActive}
-                        className={`w-full py-3.5 rounded-xl text-[11px] font-extrabold tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 border
-                          ${isActive 
-                            ? 'bg-white text-slate-900 border-white shadow-md hover:bg-slate-100' 
-                            : theme.isAvailable 
-                              ? 'bg-slate-800/80 text-white border-slate-700 hover:bg-white hover:text-slate-900' 
-                              : 'bg-slate-800/50 text-slate-500 border-slate-700/50 cursor-not-allowed opacity-60'
-                          }
-                        `}
+                return (
+                    <div
+                        key={theme.id}
+                        onMouseEnter={() => handleMouseEnter(theme.id)}
+                        onMouseLeave={handleMouseLeave}
+                        className="group flex flex-col gap-3 animate-enter"
+                        style={{ animationDelay: `${(index + 1) * 150}ms` }}
                     >
-                        {theme.isAvailable ? (
-                          isActive ? (
-                            <> <i className="fas fa-cog"></i> Kustomisasi </>
-                          ) : (
-                            <> <i className="fas fa-magic"></i> Gunakan </>
-                          )
-                        ) : (
-                          <> <i className="fas fa-clock"></i> Tahap Desain </>
-                        )}
-                    </button>
+                        {/* 1. IMAGE CONTAINER (Dribbble Style 4:3 Aspect Ratio) */}
+                        <div className={`relative w-full aspect-[4/3] rounded-xl overflow-hidden transition-all duration-500
+                    ${isActive ? 'border-[3px] border-slate-900 shadow-md scale-[1.02] ring-4 ring-slate-900/5 z-10' :
+                                theme.isAvailable ? 'border border-slate-200/80 shadow-sm hover:shadow-xl hover:-translate-y-1 z-0 hover:z-10' :
+                                    'border border-slate-200/60 opacity-80 z-0'} 
+                `}>
+
+                            {/* BACKGROUND / CROSSFADE LIVE PREVIEW VS STATIC IMAGE */}
+                            <div className="absolute inset-0 bg-slate-50 overflow-hidden">
+
+                                {/* AnimatePresence mode=sync: crossfade tanpa blank frame */}
+                                <AnimatePresence mode="sync">
+                                    {isHovered && fullProfileData && theme.isAvailable ? (
+                                        // LIVE PREVIEW STATE
+                                        <motion.div
+                                            key="live-preview"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                            className="absolute inset-0 z-10 origin-top-left pointer-events-none"
+                                            style={{ width: '400%', height: '400%', transform: 'scale(0.25)' }}
+                                        >
+                                            <PortfolioView
+                                                data={fullProfileData}
+                                                theme={{
+                                                    themeTemplate: theme.id,
+                                                    themeColor: fullProfileData.siteAppearance?.themeColor || '#000000',
+                                                    fontHeading: fullProfileData.siteAppearance?.fontHeading || 'Space Mono',
+                                                    fontBody: fullProfileData.siteAppearance?.fontBody || 'Inter',
+                                                    buttonShape: fullProfileData.siteAppearance?.buttonShape || 'hard',
+                                                    cardStyle: fullProfileData.siteAppearance?.cardStyle || 'hard-shadow',
+                                                    splashScreen: false
+                                                }}
+                                                isCardPreview={true}
+                                            />
+                                        </motion.div>
+                                    ) : (
+                                        // STATIC IMAGE STATE
+                                        <motion.div
+                                            key="static-image"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                            className="absolute inset-0 z-0"
+                                        >
+                                            {theme.img ? (
+                                                <LazyImage
+                                                    src={theme.img}
+                                                    className={`w-full h-full object-cover transition-transform duration-[10s] ease-linear group-hover:scale-110 ${!theme.isAvailable && 'blur-[2px] grayscale'}`}
+                                                    alt={theme.name}
+                                                />
+                                            ) : (
+                                                theme.content
+                                            )}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
+                            {/* HOVER OVERLAY (Gradient & Buttons) */}
+                            {/* PERUBAHAN: opacity-100 di mobile agar tombol selalu terlihat, md:opacity-0 untuk efek hover di desktop */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-between p-4 pointer-events-none">
+
+                                {/* TOP SECTION: FAVORITE BUTTON */}
+                                <div className="flex justify-end pointer-events-auto">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); toggleFavorite(theme.id); }}
+                                        className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm
+                                    ${isFavorite
+                                                ? 'bg-white text-rose-500 scale-110'
+                                                : 'bg-white/90 text-slate-400 hover:text-slate-900 hover:bg-white'
+                                            }`}
+                                        title={isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit'}
+                                    >
+                                        <i className={`${isFavorite ? 'fas' : 'far'} fa-heart text-[13px]`}></i>
+                                    </button>
+                                </div>
+
+                                {/* BOTTOM SECTION: TITLE & ACTION BUTTON */}
+                                {/* PERUBAHAN: translate-y-0 di mobile agar tidak tertutup, md:translate-y-4 untuk efek slide up di desktop */}
+                                <div className="flex justify-between items-end transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto">
+                                    <span className="text-white font-bold truncate pr-4 text-sm drop-shadow-md">
+                                        {theme.name}
+                                    </span>
+
+                                    <button
+                                        onClick={() => handleUseTheme(theme.id, theme.name)}
+                                        disabled={!theme.isAvailable && !isActive}
+                                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 flex items-center gap-2 active:scale-95 shadow-lg
+                                ${isActive
+                                                ? 'bg-slate-900 text-white hover:bg-black border border-slate-700'
+                                                : theme.isAvailable
+                                                    ? 'bg-white text-slate-900 hover:bg-slate-100 border border-slate-200'
+                                                    : 'bg-slate-800/80 text-white/50 cursor-not-allowed border border-slate-700/50'
+                                            }
+                                `}
+                                    >
+                                        {theme.isAvailable ? (
+                                            isActive ? (
+                                                <> <i className="fas fa-cog"></i> Kustomisasi </>
+                                            ) : (
+                                                <> <i className="fas fa-magic"></i> Gunakan </>
+                                            )
+                                        ) : (
+                                            <span className="text-white/40 italic">Coming Soon</span>
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Coming Soon Badge Overlay (Center) */}
+                            {!theme.isAvailable && isHovered && (
+                                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                                    <div className="bg-black/80 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 shadow-2xl transform scale-110">
+                                        <span className="text-white font-black text-xs uppercase tracking-[0.3em] flex items-center gap-3">
+                                            <i className="fas fa-lock text-[#FFD700]"></i>
+                                            Coming Soon
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 2. OUTSIDE FOOTER (Dribbble Style Meta Data) */}
+                        <div className="flex justify-between items-center px-1">
+                            <div className="flex items-center gap-2 min-w-0">
+                                {/* Creator Avatar / Initial */}
+                                <div className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[8px] font-black shrink-0">
+                                    <i className="fas fa-paint-brush"></i>
+                                </div>
+
+                                {/* Theme Name */}
+                                <span className="text-xs sm:text-sm font-bold text-slate-800 truncate">
+                                    {theme.name}
+                                </span>
+
+                                {/* Badges */}
+                                {theme.isPro && (
+                                    <span className="bg-slate-950 text-[#FFD700] border border-[#FFD700]/30 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-widest shrink-0 shadow-sm">
+                                        Pro
+                                    </span>
+                                )}
+                                {isActive && (
+                                    <span className="bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-widest shrink-0 shadow-sm">
+                                        Aktif
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Stats */}
+                            <div className="flex items-center gap-3 text-slate-400 text-[11px] font-semibold shrink-0">
+                                <span className="flex items-center gap-1 cursor-default hover:text-rose-500 transition-colors">
+                                    <i className="fas fa-heart text-slate-300"></i> {isFavorite ? '1' : '0'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })}
+
+            {/* 3. PLACEHOLDER / SKELETON: Tema Lainnya (Dribbble Style) */}
+            <div
+                className="group flex flex-col gap-3 animate-enter"
+                style={{ animationDelay: '600ms' }}
+            >
+                <div className="relative w-full aspect-[4/3] border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center bg-slate-50/50 hover:bg-white hover:border-slate-300 hover:shadow-lg transition-all duration-500 group cursor-default">
+                    <div className="w-12 h-12 bg-white border border-slate-200 rounded-2xl flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 group-hover:bg-slate-900">
+                        <i className="fas fa-paint-brush text-slate-400 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center px-6">Lagi Dimasak Oleh<br />Desainer</p>
+                </div>
+
+                <div className="flex justify-between items-center px-1">
+                    <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[8px] text-slate-400">
+                            <i className="fas fa-clock"></i>
+                        </div>
+                        <span className="text-xs sm:text-sm font-bold text-slate-300">Tema Lainnya...</span>
+                    </div>
                 </div>
             </div>
-          );
-      })}
-
-      <div className="animate-enter border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center p-8 bg-slate-50/50 hover:bg-white hover:border-slate-300 hover:shadow-lg transition-all duration-500 group cursor-default" style={{ animationDelay: '600ms' }}>
-          <div className="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center shadow-sm mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 group-hover:bg-slate-900">
-              <i className="fas fa-paint-brush text-slate-400 group-hover:text-white transition-colors"></i>
-          </div>
-          <h4 className="font-extrabold text-slate-700 text-lg mb-1 group-hover:text-slate-900 transition-colors">Tema Lainnya</h4>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Sedang dirancang oleh desainer.</p>
-      </div>
-    </div>
-  );
+        </div>
+    );
 }

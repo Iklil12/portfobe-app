@@ -16,6 +16,9 @@ import SpatialControls from '@/components/editor-controls/SpatialControls';
 import MonolithControls from '@/components/editor-controls/MonolithControls';
 import SplitControls from '@/components/editor-controls/SplitControls';
 import EditorialControls from '@/components/editor-controls/EditorialControls';
+import MidnightEmulsionControls from '@/components/editor-controls/MidnightEmulsionControls';
+import AuraKineticControls from '@/components/editor-controls/AuraKineticControls';
+import AbsoluteNoirControls from '@/components/editor-controls/AbsoluteNoirControls';
 
 export function EditorPanel({ state, actions }: { state: any, actions: any }) {
   const {
@@ -163,7 +166,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                 <div className="relative p-5 rounded-3xl border border-white/60 bg-gradient-to-br from-white to-slate-50/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 group-hover:-translate-y-1">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 shadow-inner flex items-center justify-center text-white transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
-                      <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : activeTheme === 'spatial' ? 'fa-star' : activeTheme === 'monolith' ? 'fa-cubes' : activeTheme === 'split' ? 'fa-columns' : activeTheme === 'editorial' ? 'fa-newspaper' : 'fa-cube'} text-lg drop-shadow-md`}></i>
+                      <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : activeTheme === 'spatial' ? 'fa-star' : activeTheme === 'monolith' ? 'fa-cubes' : activeTheme === 'split' ? 'fa-columns' : activeTheme === 'editorial' ? 'fa-newspaper' : activeTheme === 'midnight-emulsion' ? 'fa-moon' : activeTheme === 'aura-kinetic' ? 'fa-water' : activeTheme === 'absolute-noir' ? 'fa-square' : 'fa-cube'} text-lg drop-shadow-md`}></i>
                     </div>
                     <div className="flex flex-col">
                       <span className="font-black text-slate-900 text-base tracking-tight group-hover:text-slate-600 transition-colors">
@@ -175,7 +178,10 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                                   activeTheme === 'monolith' ? 'Monolith Vanguard' :
                                     activeTheme === 'split' ? 'Nexus Split' :
                                       activeTheme === 'editorial' ? 'Editorial Clean' :
-                                        'Neo Brutalism'}
+                                        activeTheme === 'midnight-emulsion' ? 'Midnight Emulsion' :
+                                          activeTheme === 'aura-kinetic' ? 'Aura Kinetic' :
+                                            activeTheme === 'absolute-noir' ? 'Absolute Noir' :
+                                              'Neo Brutalism'}
                       </span>
                       <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1 flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -226,6 +232,18 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
             )}
             {activeTheme === 'editorial' && (
               <EditorialControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} buttonShape={buttonShape} setButtonShape={setButtonShape} />
+            )}
+            {activeTheme === 'midnight-emulsion' && (
+              <MidnightEmulsionControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} buttonShape={buttonShape} setButtonShape={setButtonShape} />
+            )}
+            {activeTheme === 'aura-kinetic' && (
+              <AuraKineticControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} buttonShape={buttonShape} setButtonShape={setButtonShape} />
+            )}
+            {activeTheme === 'absolute-noir' && (
+              <AbsoluteNoirControls theme={{ fontHeading, fontBody }} updateTheme={(key: string, value: any) => {
+                if (key === 'fontHeading') setFontHeading(value);
+                if (key === 'fontBody') setFontBody(value);
+              }} />
             )}
           </div>
 

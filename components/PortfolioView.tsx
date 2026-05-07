@@ -16,6 +16,9 @@ import SpatialTheme from './themes/SpatialTheme';
 import MonolithTheme from './themes/MonolithTheme';
 import SplitTheme from './themes/SplitTheme';
 import EditorialTheme from './themes/EditorialTheme';
+import MidnightEmulsionTheme from './themes/MidnightEmulsionTheme';
+import AuraKineticTheme from './themes/AuraKineticTheme';
+import AbsoluteNoirTheme from './themes/AbsoluteNoirTheme';
 
 // 2. DAFTARKAN TEMA KE DALAM "THEME REGISTRY"
 const THEME_MAP: Record<string, React.FC<any>> = {
@@ -29,20 +32,23 @@ const THEME_MAP: Record<string, React.FC<any>> = {
   'monolith': MonolithTheme,
   'split': SplitTheme,
   'editorial': EditorialTheme,
+  'midnight-emulsion': MidnightEmulsionTheme,
+  'aura-kinetic': AuraKineticTheme,
+  'absolute-noir': AbsoluteNoirTheme,
   
   // Nanti tinggal tambah: 'elegant': ElegantTheme, dst...
 };
 
-export default function PortfolioView({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+export default function PortfolioView({ data, theme, isMobileView = false, isCardPreview = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean }) {
   const pathname = usePathname();
   const isEditor = pathname?.includes('/dashboard');
   
   // PENYESUAIAN BARU: Ambil subdomain dari dalam objek profile
   const subdomain = data?.profile?.subdomain || data?.subdomain || "";
 
-  // 3. CEK TEMA APA YANG SEDANG DIPILIH USER DI DATABASE
-  // Jika tidak ada data, kita jadikan brutalism sebagai default/fallback
-  const activeThemeName = theme?.themeTemplate || 'brutalism';
+  // 3. CEK TEMA APA YANG SEDANG DIPILIH USER DI DATABASE ATAU REGISTRY
+  // Jika dari registry (di ThemeGrid), gunakan theme.id. Jika dari DB, gunakan theme.themeTemplate.
+  const activeThemeName = theme?.themeTemplate || theme?.id || 'brutalism';
   
   // 4. PILIH KOMPONEN YANG SESUAI DARI REGISTRY
   const SelectedThemeComponent = THEME_MAP[activeThemeName] || THEME_MAP['brutalism'];
@@ -50,7 +56,7 @@ export default function PortfolioView({ data, theme, isMobileView = false }: { d
   return (
     <div className="relative w-full h-full" style={{ containerType: 'inline-size' }}>
       {/* RENDER TEMA YANG DIPILIH SECARA DINAMIS */}
-      <SelectedThemeComponent data={data} theme={theme} isMobileView={isMobileView} />
+      <SelectedThemeComponent data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor} />
     </div>
   );
 }

@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
-import PortfolioView from '@/components/PortfolioView';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const iframeReady = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [mobileScale, setMobileScale] = useState(1);
 
   const {
     isEditorCollapsed,
@@ -17,8 +20,65 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
 
   const { setIsEditorCollapsed, saveDesign } = actions;
 
+  // Kirim data ke iframe setiap kali livePreviewData atau livePreviewTheme berubah
+  const sendDataToIframe = useCallback(() => {
+    if (iframeRef.current?.contentWindow && iframeReady.current) {
+      iframeRef.current.contentWindow.postMessage({
+        type: 'PREVIEW_UPDATE',
+        data: livePreviewData,
+        theme: livePreviewTheme,
+        isMobileView: previewMode === 'mobile'
+      }, window.location.origin);
+    }
+  }, [livePreviewData, livePreviewTheme, previewMode]);
+
+  // Listener untuk sinyal PREVIEW_READY dari iframe
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'PREVIEW_READY') {
+        iframeReady.current = true;
+        // Kirim data pertama kali begitu iframe siap
+        sendDataToIframe();
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [sendDataToIframe]);
+
+  // Kirim update setiap kali data berubah
+  useEffect(() => {
+    sendDataToIframe();
+  }, [sendDataToIframe]);
+
+  // Kalkulasi scale untuk mobile mockup agar tidak kotak/terpotong
+  useEffect(() => {
+    const calculateScale = () => {
+      if (previewMode === 'mobile' && containerRef.current) {
+        // Lebar asli mockup mobile + border
+        const targetWidth = 454;
+        const targetHeight = 932;
+        // Ruang tersedia (kurangi padding untuk top bar dan bottom bar)
+        // Kita kurangi 180px agar ada margin atas 90px dan margin bawah 90px
+        const availableHeight = containerRef.current.clientHeight - 180;
+        const availableWidth = containerRef.current.clientWidth - 80;
+        
+        const scaleH = availableHeight / targetHeight;
+        const scaleW = availableWidth / targetWidth;
+        
+        // Pilih scale terkecil, maksimal 1
+        setMobileScale(Math.min(1, scaleH, scaleW));
+      } else {
+        setMobileScale(1);
+      }
+    };
+
+    calculateScale();
+    window.addEventListener('resize', calculateScale);
+    return () => window.removeEventListener('resize', calculateScale);
+  }, [previewMode]);
+
   return (
-    <div className="flex-1 h-full relative flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] z-10">
+    <div ref={containerRef} className="flex-1 h-full relative flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] z-10">
 
       {/* Tombol Re-open Panel Editor */}
       <div className={`absolute top-1/2 left-0 -translate-y-1/2 z-40 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isEditorCollapsed ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -50,9 +110,16 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
       </div>
 
       {/* CONTAINER MOCKUP DEVICE */}
-      <div className={`relative z-10 flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden shrink-0 mt-12 shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-slate-200/80
-        ${previewMode === 'desktop' ? 'bg-white w-full max-w-6xl h-full max-h-[85vh] rounded-2xl sm:rounded-[2rem]' : 'bg-black w-[360px] h-[750px] max-h-[85vh] border-[12px] border-slate-900 rounded-[3rem]'}
-      `}>
+      <div 
+        className={`relative z-10 flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden shrink-0 mt-12 shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-slate-200/80
+          ${previewMode === 'desktop' ? 'bg-white w-full max-w-6xl h-full max-h-[85vh] rounded-2xl sm:rounded-[2rem]' : 'bg-black border-[12px] border-slate-900 rounded-[3rem] origin-center'}
+        `}
+        style={previewMode === 'mobile' ? {
+          width: '454px',
+          height: '932px',
+          transform: `scale(${mobileScale})`
+        } : undefined}
+      >
         <div className="shrink-0 transition-all duration-700 z-20">
           {previewMode === 'desktop' ? (
             <div className="h-12 flex items-center px-4 gap-3 bg-slate-50/80 backdrop-blur-sm border-b border-slate-100">
@@ -66,15 +133,15 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
           )}
         </div>
 
+        {/* IFRAME PREVIEW - Rendering 100% identik dengan live site */}
         <div className={`flex-1 relative z-0 transition-all duration-700 overflow-hidden ${previewMode === 'desktop' ? 'bg-white' : 'bg-transparent'}`}>
-          <div
-            className={`transition-all duration-700 ${previewMode === 'desktop' ? 'origin-top-left' : ''}`}
-            style={previewMode === 'desktop' ? { width: '140%', height: '140%', transform: 'scale(0.71428)' } : { transform: 'translateZ(0)', width: '100%', height: '100%' }}
-          >
-            <div className="w-full h-full overflow-y-auto overflow-x-hidden custom-scrollbar @container">
-              <PortfolioView data={livePreviewData} theme={livePreviewTheme} isMobileView={previewMode === 'mobile'} />
-            </div>
-          </div>
+          <iframe
+            ref={iframeRef}
+            src="/preview"
+            className="w-full h-full border-0"
+            title="Portfolio Preview"
+            sandbox="allow-scripts allow-same-origin allow-popups"
+          />
         </div>
       </div>
 

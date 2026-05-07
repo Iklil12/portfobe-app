@@ -13,8 +13,14 @@ const getYouTubeThumbnail = (url: string) => {
     return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
-export default function EditorialTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+export default function EditorialTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+
+  // --- ANIMASI STABILISASI ---
+  // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
+  // Tapi tetap gunakan whileInView untuk live site agar ada efek scroll reveal.
+  const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+
     const [currentTime, setCurrentTime] = useState("");
     
     // Ref untuk Slider Project
@@ -22,6 +28,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
 
     // Waktu Real-Time
     useEffect(() => {
+        if (isCardPreview || isEditor) return; // Skip interval di card preview
         const updateTime = () => {
             const now = new Date();
             setCurrentTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
@@ -29,7 +36,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
         updateTime();
         const interval = setInterval(updateTime, 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, [isCardPreview]);
 
     // Ekstraksi Data
     const fullName = data?.profile?.fullName || data?.fullName || "Budi Arsitek";
@@ -92,14 +99,12 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
     };
 
     return (
-        <main className="w-full bg-[#050505] text-[#f4f4f5] selection:bg-[var(--hl)] selection:text-white overflow-x-hidden @container" style={{ '--hl': highlightColor } as React.CSSProperties}>
+        <main className="w-full bg-[#050505] text-[#f4f4f5] selection:bg-[var(--hl)] selection:text-white overflow-x-hidden @container monolith-theme" style={{ '--hl': highlightColor } as React.CSSProperties}>
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        .font-serif { font-family: 'Playfair Display', serif; }
-        .font-sans { font-family: 'Inter', sans-serif; }
+        .monolith-theme .font-serif { font-family: 'Playfair Display', serif; }
+        .monolith-theme .font-sans { font-family: 'Inter', sans-serif; }
 
         @keyframes marquee {
             0% { transform: translateX(0); }
@@ -123,7 +128,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
       `}} />
 
             {/* FLOATING NAVBAR */}
-            <nav className={`fixed top-0 left-0 w-full z-50 mix-blend-difference flex justify-between items-center pointer-events-none px-6 py-6 @md:px-12`}>
+            <nav className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} top-0 left-0 w-full z-50 mix-blend-difference flex justify-between items-center pointer-events-none px-6 py-6 @md:px-12`}>
                 <div className="font-sans font-bold tracking-widest uppercase text-sm pointer-events-auto">
                     {firstName}<span className="text-[var(--hl)]">.</span>
                 </div>
@@ -135,7 +140,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
             </nav>
 
             {/* FLOATING ACTION BUTTON */}
-            <a href={`mailto:${userEmail}`} className={`fixed z-50 bg-[var(--hl)] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform duration-300 cursor-pointer group bottom-4 right-4 w-12 h-12 @md:bottom-12 @md:right-12 @md:w-24 @md:h-24`}>
+            <a href={`mailto:${userEmail}`} className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} z-50 bg-[var(--hl)] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform duration-300 cursor-pointer group bottom-4 right-4 w-12 h-12 @md:bottom-12 @md:right-12 @md:w-24 @md:h-24`}>
                 <span className={`font-sans font-bold text-black uppercase tracking-widest text-center leading-tight text-[7px] @md:text-[10px]`}>Let's<br/>Talk</span>
                 <span className="absolute inset-0 rounded-full bg-[var(--hl)] animate-ping opacity-20 pointer-events-none"></span>
             </a>
@@ -146,18 +151,18 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-[#050505]/70"></div>
 
                 <motion.div 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={staggerContainer}
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerContainer}
                     className={`relative z-10 flex flex-col justify-between h-full p-6 @md:p-12`}
                 >
                     <motion.div variants={fadeUp} className={`flex justify-between items-start mt-12`}>
                         <div className="flex flex-col gap-1">
-                            <span className="font-sans text-[9px] md:text-xs font-bold uppercase tracking-[0.2em] text-[var(--hl)]">Based in {location}</span>
-                            <span className="font-sans text-[10px] md:text-sm font-medium text-slate-300">{currentTime}</span>
+                            <span className="font-sans text-[9px] @md:text-xs font-bold uppercase tracking-[0.2em] text-[var(--hl)]">Based in {location}</span>
+                            <span className="font-sans text-[10px] @md:text-sm font-medium text-slate-300">{currentTime}</span>
                         </div>
                     </motion.div>
 
-                    <motion.div variants={fadeUp} className={`mb-16 md:mb-20`}>
-                        <h1 className={`font-serif leading-[0.85] tracking-tight text-5xl @md:text-7xl @lg:text-[9vw]`}>
+                    <motion.div variants={fadeUp} className={`mb-16 @md:mb-20`}>
+                        <h1 className={`font-serif leading-[0.85] tracking-tight text-5xl @md:text-7xl @lg:text-[9cqi]`}>
                             {firstName} <br />
                             <span className="italic text-outline">{lastName || 'PORTFOLIO'}</span>
                         </h1>
@@ -166,24 +171,24 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
             </section>
 
             {/* SECTION 2: EDITORIAL BIO (Warna Putih) */}
-            <section id="about" className={`relative z-10 w-full bg-white text-black mt-[-20px] rounded-t-[30px] md:rounded-t-[50px] shadow-[0_-20px_50px_rgba(0,0,0,0.8)] pt-16 pb-20 px-6 @md:pt-32 @md:pb-40 @md:px-12`}>
+            <section id="about" className={`relative z-10 w-full bg-white text-black mt-[-20px] rounded-t-[30px] @md:rounded-t-[50px] shadow-[0_-20px_50px_rgba(0,0,0,0.8)] pt-16 pb-20 px-6 @md:pt-32 @md:pb-40 @md:px-12`}>
                 <div className={`flex justify-between items-start mx-auto max-w-[1800px] flex-col gap-8 @md:flex-row @md:gap-20`}>
                     <div className={`w-full @md:w-2/3`}>
                         <motion.h2 
-                            initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp}
-                            className={`font-serif leading-tight text-3xl @md:text-5xl @lg:text-[3.5vw]`}
+                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
+                            className={`font-serif leading-tight text-3xl @md:text-5xl @lg:text-[3.5cqi]`}
                         >
                             {bio}
                         </motion.h2>
                     </div>
                     
-                    <div className={`w-full flex flex-col gap-6 md:gap-8 @md:w-1/3`}>
-                        <motion.p initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} className={`font-sans font-medium text-slate-600 leading-relaxed border-l-2 border-black text-sm pl-4 @md:text-xl @md:pl-6`}>
+                    <div className={`w-full flex flex-col gap-6 @md:gap-8 @md:w-1/3`}>
+                        <motion.p initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className={`font-sans font-medium text-slate-600 leading-relaxed border-l-2 border-black text-sm pl-4 @md:text-xl @md:pl-6`}>
                             I am a <strong className="text-black">{profession}</strong> specializing in pushing the boundaries of digital and visual aesthetics.
                         </motion.p>
                         
-                        <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} className={`flex flex-col gap-3 mt-4 @md:mt-8`}>
-                            <span className="font-sans text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400">Connect</span>
+                        <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className={`flex flex-col gap-3 mt-4 @md:mt-8`}>
+                            <span className="font-sans text-[10px] @md:text-xs font-bold uppercase tracking-widest text-slate-400">Connect</span>
                             <div className="flex flex-wrap gap-3">
                                 {links.map((l: any, i: number) => (
                                     <a key={i} href={l.url} target="_blank" rel="noreferrer" className={`rounded-full border border-black hover:bg-black hover:text-white transition-colors font-sans font-bold uppercase tracking-wider px-4 py-2 text-[10px] @md:px-6 @md:py-3 @md:text-sm`}>
@@ -208,15 +213,15 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
             </section>
 
             {/* SECTION 3: PROJECT SLIDER (INTERACTIVE CAROUSEL) */}
-            <section id="work" className="relative z-20 w-full bg-[#050505] py-20 md:py-32">
+            <section id="work" className="relative z-20 w-full bg-[#050505] py-20 @md:py-32">
                 {/* Header Portofolio & Tombol Kontrol */}
-                <div className={`flex justify-between items-end mb-12 md:mb-20 px-6 @md:px-12`}>
-                    <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} className={`font-serif leading-none text-white text-4xl @md:text-5xl @lg:text-[5vw]`}>
+                <div className={`flex justify-between items-end mb-12 @md:mb-20 px-6 @md:px-12`}>
+                    <motion.h2 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className={`font-serif leading-none text-white text-4xl @md:text-5xl @lg:text-[5cqi]`}>
                         Selected<br/><span className="italic text-[var(--hl)]">Archives</span>
                     </motion.h2>
                     
                     {/* Navigation Buttons */}
-                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} className={`flex gap-3 @md:gap-4`}>
+                    <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className={`flex gap-3 @md:gap-4`}>
                         <button onClick={scrollLeft} className={`rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all duration-300 w-10 h-10 @md:w-14 @md:h-14`}>
                             <i className="fas fa-arrow-left"></i>
                         </button>
@@ -229,7 +234,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                 {/* SLIDER CONTAINER */}
                 <div 
                     ref={sliderRef} 
-                    className={`flex overflow-x-auto hide-scrollbar gap-4 md:gap-8 pb-10 px-6 @md:px-12`}
+                    className={`flex overflow-x-auto hide-scrollbar gap-4 @md:gap-8 pb-10 px-6 @md:px-12`}
                 >
                     {archiveItems.map((p: any, i: number) => {
                         const isVideo = p.projectType === 'video';
@@ -237,9 +242,9 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                         return (
                             <motion.a
                                 href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
-                                initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1, margin: "50px" }} variants={fadeUp}
-                                className={`snap-item shrink-0 relative overflow-hidden rounded-[24px] md:rounded-[40px] group cursor-pointer border border-white/10 hover:border-white/30 transition-colors duration-500
-                                w-[85vw] max-w-[320px] aspect-[4/5] @md:max-w-none @md:aspect-auto @md:w-[65vw] @md:h-[75vh]`}
+                                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "50px" }} variants={fadeUp}
+                                className={`snap-item shrink-0 relative overflow-hidden rounded-[24px] @md:rounded-[40px] group cursor-pointer border border-white/10 hover:border-white/30 transition-colors duration-500
+                                w-[85cqi] max-w-[320px] aspect-[4/5] @md:max-w-none @md:aspect-auto @md:w-[65cqi] @md:h-[75vh]`}
                             >
                                 <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100 opacity-60 group-hover:opacity-90" />
                                 <div className={`absolute bottom-0 left-0 w-full h-[70%] bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent @md:h-full @md:inset-0 @md:from-black @md:via-black/30`}></div>
@@ -251,7 +256,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                                             <span className={`font-sans font-bold uppercase tracking-widest text-white border border-white/30 backdrop-blur-md rounded-full text-[9px] px-3 py-1 @md:text-xs @md:px-4 @md:py-1`}>0{i + 1}</span>
                                             <span className={`font-sans font-bold uppercase tracking-widest text-[var(--hl)] text-[9px] @md:text-xs`}>{p.projectType}</span>
                                         </div>
-                                        <h3 className={`font-serif text-white leading-[1.1] line-clamp-2 text-3xl @md:text-6xl @lg:text-[5vw]`}>{p.title}</h3>
+                                        <h3 className={`font-serif text-white leading-[1.1] line-clamp-2 text-3xl @md:text-6xl @lg:text-[5cqi]`}>{p.title}</h3>
                                     </div>
 
                                     <div className={`flex justify-between items-end flex-row w-full @md:flex-col @md:w-1/3 gap-4 @md:gap-6`}>
@@ -283,7 +288,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
             {/* SECTION 4: AWARDS (KEMBALI KE PUTIH) */}
             {awardItems.length > 0 && (
                 <section id="awards" className={`relative z-[100] w-full bg-[#f4f4f5] text-black mt-[-20px] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] rounded-t-[30px] @md:rounded-t-[40px] py-16 px-6 @md:py-24 @md:py-32 @md:px-12`}>
-                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} className="mb-10 md:mb-16">
+                    <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="mb-10 @md:mb-16">
                         <h2 className={`font-serif font-bold text-4xl @md:text-7xl`}>Honors & <br/><span className="italic text-slate-400">Recognitions</span></h2>
                     </motion.div>
 
@@ -291,7 +296,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                         {awardItems.map((award: any, i: number) => (
                             <motion.a 
                                 href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
-                                initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp}
+                                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                 className={`w-full border-b border-black flex justify-between group hover:bg-black hover:text-white transition-all duration-500 rounded-xl @md:rounded-2xl flex-col gap-4 py-6 px-4 -mx-4 @md:flex-row @md:items-center @md:gap-6 @md:py-8 @md:py-12 @md:px-8 @md:-mx-8`}
                             >
                                 <div className={`flex w-full flex-col gap-1 @md:flex-row @md:items-center @md:gap-6 @md:gap-12 @md:w-1/2`}>
@@ -318,7 +323,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false }: { 
                     <span className={`font-sans font-bold uppercase tracking-[0.3em] text-[var(--hl)] text-xs mb-8`}>Got a project in mind?</span>
                     
                     <div onClick={handleCopyEmail} className="cursor-pointer group relative">
-                        <h2 className={`font-serif leading-[0.8] text-white transition-colors duration-500 text-5xl @md:text-7xl @lg:text-[10vw]`}>
+                        <h2 className={`font-serif leading-[0.8] text-white transition-colors duration-500 text-5xl @md:text-7xl @lg:text-[10cqi]`}>
                             Let's <span className="italic text-outline group-hover:text-[var(--hl)] group-hover:-webkit-text-stroke-0 transition-all duration-500">Create</span>
                         </h2>
                         <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[var(--hl)] text-black rounded-full font-sans font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300 shadow-2xl pointer-events-none px-4 py-2 text-[9px] @md:px-6 @md:py-3 @md:text-sm`}>

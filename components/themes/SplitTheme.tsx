@@ -13,13 +13,20 @@ const getYouTubeThumbnail = (url: string) => {
     return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
-export default function NexusTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+export default function NexusTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+
+  // --- ANIMASI STABILISASI ---
+  // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
+  // Tapi tetap gunakan whileInView untuk live site agar ada efek scroll reveal.
+  const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+
     const [currentTime, setCurrentTime] = useState("");
     const [hoveredProject, setHoveredProject] = useState<number | null>(null);
 
     // Update Jam Real-Time
     useEffect(() => {
+        if (isCardPreview || isEditor) return; // Skip interval di card preview
         const updateTime = () => {
             const now = new Date();
             setCurrentTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
@@ -27,7 +34,7 @@ export default function NexusTheme({ data, theme, isMobileView = false }: { data
         updateTime();
         const interval = setInterval(updateTime, 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, [isCardPreview]);
 
     // Data Parsing
     const fullName = data?.profile?.fullName || data?.fullName || "Budi Arsitek";
@@ -75,22 +82,18 @@ export default function NexusTheme({ data, theme, isMobileView = false }: { data
     };
 
     return (
-        <main className="w-full bg-[#050505] text-[#f4f4f5] selection:bg-[var(--hl)] selection:text-white font-sans overflow-x-hidden @container" style={{ '--hl': highlightColor } as React.CSSProperties}>
+        <main className="w-full bg-[#050505] text-[#f4f4f5] selection:bg-[var(--hl)] selection:text-white font-sans overflow-x-hidden @container nexus-theme" style={{ '--hl': highlightColor } as React.CSSProperties}>
             
             <style dangerouslySetInnerHTML={{
                 __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600;1,700&display=swap');
-        @import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,700,400,900&display=swap');
+        .nexus-theme .font-display { font-family: '${fontHeading}', sans-serif; }
+        .nexus-theme .font-sans { font-family: '${fontBody}', sans-serif; }
         
-        .font-display { font-family: '${fontHeading}', sans-serif; }
-        .font-sans { font-family: '${fontBody}', sans-serif; }
-        
-        /* Hilangkan Scrollbar untuk tampilan bersih */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--hl); }
+        /* Hilangkan Scrollbar untuk tampilan bersih — scoped ke nexus-theme */
+        .nexus-theme ::-webkit-scrollbar { width: 6px; }
+        .nexus-theme ::-webkit-scrollbar-track { background: #050505; }
+        .nexus-theme ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+        .nexus-theme ::-webkit-scrollbar-thumb:hover { background: var(--hl); }
 
         .nexus-border { border-color: rgba(255, 255, 255, 0.08); }
         .nexus-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(12px); }
@@ -171,13 +174,13 @@ export default function NexusTheme({ data, theme, isMobileView = false }: { data
                 <div className={`flex flex-col w-full @md:w-[60%] @lg:w-[65%] @md:min-h-screen`}>
                     
                     {/* Floating Gradient for ambience */}
-                    <div className="fixed top-0 right-0 w-[40vw] h-[40vw] rounded-full blur-[150px] opacity-10 pointer-events-none mix-blend-screen z-0" style={{ backgroundColor: highlightColor }}></div>
+                    <div className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} top-0 right-0 w-[40cqi] h-[40cqi] rounded-full blur-[150px] opacity-10 pointer-events-none mix-blend-screen z-0`} style={{ backgroundColor: highlightColor }}></div>
 
                     <div className="relative z-10 w-full flex flex-col">
                         
                         {/* SECTION: STATS STRIPE */}
                         <motion.section 
-                            initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={staggerContainer}
+                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerContainer}
                             className={`grid grid-cols-2 @lg:grid-cols-4 border-b nexus-border `}
                         >
                             {[
@@ -195,9 +198,9 @@ export default function NexusTheme({ data, theme, isMobileView = false }: { data
 
                         {/* SECTION: SELECTED WORKS (Interactive List) */}
                         <section id="work" className="flex flex-col pt-16 @lg:pt-24 pb-10 border-b nexus-border">
-                            <motion.div initial="hidden" whileInView="visible" viewport={{ once: false }} variants={fadeUp} className={`flex justify-between items-end mb-10 px-6 @md:px-12`}>
+                            <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className={`flex justify-between items-end mb-10 px-6 @md:px-12`}>
                                 <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white">Selected Works</h2>
-                                <span className="font-sans text-xs font-medium text-[var(--hl)] hidden sm:block">Explore the archive</span>
+                                <span className="font-sans text-xs font-medium text-[var(--hl)] hidden @sm:block">Explore the archive</span>
                             </motion.div>
 
                             <div className="flex flex-col w-full">
@@ -208,7 +211,7 @@ export default function NexusTheme({ data, theme, isMobileView = false }: { data
                                     return (
                                         <motion.div 
                                             key={i}
-                                            initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp}
+                                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                             onMouseEnter={() => setHoveredProject(i)}
                                             onMouseLeave={() => setHoveredProject(null)}
                                             className={`relative w-full border-t nexus-border group cursor-pointer px-6 py-6 @md:px-12 @md:py-10`}
@@ -263,7 +266,7 @@ export default function NexusTheme({ data, theme, isMobileView = false }: { data
                                 })}
                             </div>
 
-                            <motion.div initial="hidden" whileInView="visible" viewport={{ once: false }} variants={fadeUp} className={`w-full flex mt-12 px-6 @md:px-12`}>
+                            <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className={`w-full flex mt-12 px-6 @md:px-12`}>
                                 <Link href={`/${subdomain}/gallery`} scroll={false} className="inline-flex items-center gap-3 font-sans font-bold text-sm uppercase tracking-widest text-white hover:text-[var(--hl)] transition-colors group">
                                     View Full Archive <i className="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
                                 </Link>
@@ -273,7 +276,7 @@ export default function NexusTheme({ data, theme, isMobileView = false }: { data
                         {/* SECTION: RECOGNITION */}
                         {awardItems.length > 0 && (
                             <section id="awards" className="flex flex-col pt-16 @lg:pt-24 pb-16 border-b nexus-border">
-                                <motion.div initial="hidden" whileInView="visible" viewport={{ once: false }} variants={fadeUp} className={`mb-10 px-6 @md:px-12`}>
+                                <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className={`mb-10 px-6 @md:px-12`}>
                                     <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white">Recognition</h2>
                                 </motion.div>
 
@@ -281,7 +284,7 @@ export default function NexusTheme({ data, theme, isMobileView = false }: { data
                                     {awardItems.map((award: any, i: number) => (
                                         <motion.a 
                                             href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
-                                            initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={fadeUp}
+                                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                             className={`w-full border-t nexus-border flex flex-col @md:flex-row @md:items-center justify-between group cursor-pointer hover:bg-white/5 transition-colors px-6 py-6 gap-4 @md:px-12 @md:py-8`}
                                         >
                                             <div className={`flex flex-col gap-1 @md:items-center @md:gap-10 @md:w-1/2`}>
@@ -308,9 +311,9 @@ export default function NexusTheme({ data, theme, isMobileView = false }: { data
 
                         {/* SECTION: FOOTER / CTA */}
                         <footer className={`flex flex-col pt-24 pb-12 px-6 @md:px-12`}>
-                            <motion.div initial="hidden" whileInView="visible" viewport={{ once: false }} variants={fadeUp} className="flex flex-col items-start mb-20">
+                            <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className="flex flex-col items-start mb-20">
                                 <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-[var(--hl)] mb-4">What's Next?</span>
-                                <h2 className="font-display font-extrabold text-5xl @md:text-7xl @lg:text-[6vw] text-white leading-[0.9] mb-8">
+                                <h2 className="font-display font-extrabold text-5xl @md:text-7xl @lg:text-[6cqi] text-white leading-[0.9] mb-8">
                                     Let's build<br/>the future.
                                 </h2>
                                 <a href={`mailto:${userEmail}`} className="px-8 py-4 bg-white text-black hover:bg-[var(--hl)] hover:text-white ${radiusClass} font-sans font-bold text-sm uppercase tracking-widest transition-colors duration-300">

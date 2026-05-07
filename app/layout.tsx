@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers"; 
+import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "Portfo.be - Professional Portfolio",
   description: "Build your creative presence",
   icons: {
-    icon: 'icon.svg', 
+    icon: 'icon.svg',
   },
 };
 
@@ -38,9 +38,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-full flex flex-col text-gray-900 bg-white transition-colors duration-300">
-          <Providers>
-            {children}
-          </Providers>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

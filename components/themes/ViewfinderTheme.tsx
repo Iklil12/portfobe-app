@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useTransform, animate } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
 
-export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
-    const profile = data?.profile || {};
+export default function ViewfinderTheme({ data, theme, isMobileView, isCardPreview = false, isEditor = false }: any) {
+    const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+    
+    const profile = data?.profile || data || {};
     const projects = data?.projects || data?.user?.projects || [];
-    const certificates = data?.certificates || [];
-    const links = data?.links || [];
+    const certificates = data?.certificates || data?.certificates || [];
+    const links = data?.links || data?.links || [];
 
     const fullName = profile.fullName || "JAMAL ARIFIN";
     const profession = profile.profession || "Cinematographer & Editor";
@@ -24,8 +26,8 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
         return p.mediaUrl || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800&auto=format&fit=crop';
     };
 
-    const totalProjects = projects.length > 0 ? projects.length : 120;
-    const totalHonors = certificates.length > 0 ? certificates.length : 15;
+    const totalProjects = projects.length;
+    const totalHonors = certificates.length;
 
     const primaryColor = theme?.themeColor || '#FF0033';
 
@@ -57,106 +59,106 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
     return (
         <div
             style={{ '--primary': primaryColor } as React.CSSProperties}
-            className="viewfinder-theme antialiased bg-[#050505] text-[#F3F3F1] relative w-full h-full overflow-hidden"
+            className="viewfinder-theme antialiased bg-[#050505] text-[#F3F3F1] relative w-full h-full overflow-hidden @container"
         >
             <style dangerouslySetInnerHTML={{
                 __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+            @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+            @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
 
-        .viewfinder-theme { font-family: 'Space Mono', monospace; }
-        .viewfinder-theme ::selection { background-color: var(--primary); color: #fff; }
-        .font-cinema { font-family: 'Bebas Neue', sans-serif; }
+            .viewfinder-theme { font-family: 'Space Mono', monospace; }
+            .viewfinder-theme ::selection { background-color: var(--primary); color: #fff; }
+            .viewfinder-theme .font-cinema { font-family: 'Bebas Neue', sans-serif; }
 
-        .film-strip::-webkit-scrollbar { display: none; }
-        .film-strip { -ms-overflow-style: none; scrollbar-width: none; scroll-snap-type: x mandatory; }
-        .film-frame { scroll-snap-align: center; }
+            .viewfinder-theme .film-strip::-webkit-scrollbar { display: none; }
+            .viewfinder-theme .film-strip { -ms-overflow-style: none; scrollbar-width: none; scroll-snap-type: x mandatory; }
+            .viewfinder-theme .film-frame { scroll-snap-align: center; }
 
-        .viewfinder-tl { border-top: 2px solid #F3F3F1; border-left: 2px solid #F3F3F1; }
-        .viewfinder-tr { border-top: 2px solid #F3F3F1; border-right: 2px solid #F3F3F1; }
-        .viewfinder-bl { border-bottom: 2px solid #F3F3F1; border-left: 2px solid #F3F3F1; }
-        .viewfinder-br { border-bottom: 2px solid #F3F3F1; border-right: 2px solid #F3F3F1; }
+            .viewfinder-theme .viewfinder-tl { border-top: 2px solid #F3F3F1; border-left: 2px solid #F3F3F1; }
+            .viewfinder-theme .viewfinder-tr { border-top: 2px solid #F3F3F1; border-right: 2px solid #F3F3F1; }
+            .viewfinder-theme .viewfinder-bl { border-bottom: 2px solid #F3F3F1; border-left: 2px solid #F3F3F1; }
+            .viewfinder-theme .viewfinder-br { border-bottom: 2px solid #F3F3F1; border-right: 2px solid #F3F3F1; }
 
-        .cine-img { transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        .cine-img:hover { transform: scale(1.05); }
+            .viewfinder-theme .cine-img { transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+            .viewfinder-theme .cine-img:hover { transform: scale(1.05); }
 
-        .vf-crosshair::before, .vf-crosshair::after {
-            content: ''; position: absolute; background: rgba(255,255,255,0.15);
-            top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
-        }
-        .vf-crosshair::before { width: 100%; height: 1px; }
-        .vf-crosshair::after { width: 1px; height: 100%; }
+            .viewfinder-theme .vf-crosshair::before, .viewfinder-theme .vf-crosshair::after {
+                content: ''; position: absolute; background: rgba(255,255,255,0.15);
+                top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
+            }
+            .viewfinder-theme .vf-crosshair::before { width: 100%; height: 1px; }
+            .viewfinder-theme .vf-crosshair::after { width: 1px; height: 100%; }
 
-        .vf-scroll::-webkit-scrollbar { width: 6px; }
-        .vf-scroll::-webkit-scrollbar-track { background: #050505; }
-        .vf-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-        .vf-scroll::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+            .viewfinder-theme .vf-scroll::-webkit-scrollbar { width: 6px; }
+            .viewfinder-theme .vf-scroll::-webkit-scrollbar-track { background: #050505; }
+            .viewfinder-theme .vf-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+            .viewfinder-theme .vf-scroll::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        .vf-scanline {
-            width: 100%; height: 100px; z-index: 10; pointer-events: none;
-            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.03), transparent);
-            position: absolute; left: 0; top: -100px;
-            animation: scanline 8s linear infinite;
-        }
-        @keyframes scanline {
-            0% { top: -100px; }
-            100% { top: 100%; }
-        }
+            .viewfinder-theme .vf-scanline {
+                width: 100%; height: 100px; z-index: 10; pointer-events: none;
+                background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.03), transparent);
+                position: absolute; left: 0; top: -100px;
+                animation: scanline 8s linear infinite;
+            }
+            @keyframes scanline {
+                0% { top: -100px; }
+                100% { top: 100%; }
+            }
 
-        .hero-reveal { clip-path: inset(100% 0 0 0); animation: revealUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes revealUp { to { clip-path: inset(0 0 0 0); } }
+            .viewfinder-theme .hero-reveal { clip-path: inset(100% 0 0 0); animation: revealUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+            @keyframes revealUp { to { clip-path: inset(0 0 0 0); } }
 
-        /* --- Refined Sizing to match reference --- */
-        .vf-hud-text { font-size: 10px; }
-        .vf-hero-title { font-size: clamp(48px, 18cqw, 72px); line-height: 1; }
-        .vf-hero-sub { font-size: 12px; }
-        .vf-section-title { font-size: 36px; }
-        .vf-reel-card { width: 60cqw; }
-        .vf-reel-title { font-size: 24px; }
-        .vf-log-stat-label { font-size: 9px; }
-        .vf-log-stat-value { font-size: 48px; }
-        .vf-footer-title { font-size: 32px; }
-        .vf-hud-padding { padding: 1rem; }
-        .vf-hud-brackets { inset: 1.5rem; }
-        .vf-cert-title { font-size: 18px; }
-        .vf-cert-arrow { font-size: 14px; }
+            /* --- Refined Sizing to match reference --- */
+            .viewfinder-theme .vf-hud-text { font-size: 10px; }
+            .viewfinder-theme .vf-hero-title { font-size: clamp(48px, 18cqw, 72px); line-height: 1; }
+            .viewfinder-theme .vf-hero-sub { font-size: 12px; }
+            .viewfinder-theme .vf-section-title { font-size: 36px; }
+            .viewfinder-theme .vf-reel-card { width: 60cqw; }
+            .viewfinder-theme .vf-reel-title { font-size: 24px; }
+            .viewfinder-theme .vf-log-stat-label { font-size: 9px; }
+            .viewfinder-theme .vf-log-stat-value { font-size: 48px; }
+            .viewfinder-theme .vf-footer-title { font-size: 32px; }
+            .viewfinder-theme .vf-hud-padding { padding: 1rem; }
+            .viewfinder-theme .vf-hud-brackets { inset: 1.5rem; }
+            .viewfinder-theme .vf-cert-title { font-size: 18px; }
+            .viewfinder-theme .vf-cert-arrow { font-size: 14px; }
 
-        /* Container-based responsive logic */
-        .vf-hero-container { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; max-width: 56rem; margin: 0 auto; }
-        .vf-social-row { display: flex; justify-content: center; gap: 1.25rem; margin-top: 1.5rem; font-size: 1.125rem; color: #6b7280; }
-        
-        .vf-reel-header { display: flex; flex-direction: column; gap: 1.5rem; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; padding: 0 1rem; }
-        .vf-button-group { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; align-items: flex-start; }
-        .vf-nav-btns { display: flex; gap: 0.5rem; width: 100%; }
-        .vf-nav-btn { flex: 1; text-align: center; }
-
-        @container (min-width: 600px) {
-            .vf-hud-text { font-size: 14px; }
-            .vf-hero-title { font-size: clamp(80px, 16cqw, 192px); }
-            .vf-hero-sub { font-size: 16px; }
-            .vf-section-title { font-size: 72px; }
-            .vf-reel-card { width: 45cqw; }
-            .vf-reel-title { font-size: 50px; }
-            .vf-log-stat-label { font-size: 12px; }
-            .vf-log-stat-value { font-size: 72px; }
-            .vf-footer-title { font-size: 96px; }
-            .vf-hud-padding { padding: 3rem; }
-            .vf-hud-brackets { inset: 10rem; }
-            .vf-cert-title { font-size: 24px; }
-            .vf-cert-arrow { font-size: 20px; }
+            /* Container-based responsive logic */
+            .viewfinder-theme .vf-hero-container { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; max-width: 56rem; margin: 0 auto; }
+            .viewfinder-theme .vf-social-row { display: flex; justify-content: center; gap: 1.25rem; margin-top: 1.5rem; font-size: 1.125rem; color: #6b7280; }
             
-            .vf-reel-header { flex-direction: row; align-items: flex-end; }
-            .vf-button-group { width: auto; align-items: flex-end; }
-            .vf-nav-btns { width: auto; }
-            .vf-nav-btn { flex: none; }
-        }
-        `}} />
+            .viewfinder-theme .vf-reel-header { display: flex; flex-direction: column; gap: 1.5rem; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; padding: 0 1rem; }
+            .viewfinder-theme .vf-button-group { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; align-items: flex-start; }
+            .viewfinder-theme .vf-nav-btns { display: flex; gap: 0.5rem; width: 100%; }
+            .viewfinder-theme .vf-nav-btn { flex: 1; text-align: center; }
+
+            @container (min-width: 600px) {
+                .viewfinder-theme .vf-hud-text { font-size: 14px; }
+                .viewfinder-theme .vf-hero-title { font-size: clamp(80px, 16cqw, 192px); }
+                .viewfinder-theme .vf-hero-sub { font-size: 16px; }
+                .viewfinder-theme .vf-section-title { font-size: 72px; }
+                .viewfinder-theme .vf-reel-card { width: 45cqw; }
+                .viewfinder-theme .vf-reel-title { font-size: 50px; }
+                .viewfinder-theme .vf-log-stat-label { font-size: 12px; }
+                .viewfinder-theme .vf-log-stat-value { font-size: 72px; }
+                .viewfinder-theme .vf-footer-title { font-size: 96px; }
+                .viewfinder-theme .vf-hud-padding { padding: 3rem; }
+                .viewfinder-theme .vf-hud-brackets { inset: 10rem; }
+                .viewfinder-theme .vf-cert-title { font-size: 24px; }
+                .viewfinder-theme .vf-cert-arrow { font-size: 20px; }
+                
+                .viewfinder-theme .vf-reel-header { flex-direction: row; align-items: flex-end; }
+                .viewfinder-theme .vf-button-group { width: auto; align-items: flex-end; }
+                .viewfinder-theme .vf-nav-btns { width: auto; }
+                .viewfinder-theme .vf-nav-btn { flex: none; }
+            }
+            `}} />
 
 
 
 
             {/* ===== STICKY HUD OVERLAY ===== */}
-            <div className="fixed inset-0 z-50 pointer-events-none vf-hud-padding flex flex-col justify-between @container" style={{ mixBlendMode: 'difference' }}>
+            <div className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} inset-0 z-50 pointer-events-none vf-hud-padding flex flex-col justify-between @container`} style={{ mixBlendMode: 'difference' }}>
                 {/* Top */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.5, delay: 0.5, ease: cinematicEase }}
@@ -221,8 +223,8 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                         <motion.div
                             // PERUBAHAN: Gunakan whileInView dan once: false agar berulang saat di-scroll naik/turun
                             initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: false, amount: 0.3 }}
+                            {...{ [animationTrigger]: "visible" }}
+                            viewport={{ once: true, amount: 0 }}
                             variants={{
                                 hidden: { opacity: 0, scale: 0.95 },
                                 visible: {
@@ -290,7 +292,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                 {/* ===== REEL SECTION ===== */}
                 <section id="reel" className="relative z-20 py-20 bg-[#050505] border-y border-white/10 overflow-hidden">
                     <motion.div
-                        initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }}
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
                         variants={fadeUpVariants}
                         className="vf-reel-header pointer-events-auto"
                     >
@@ -301,7 +303,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                                     whileHover={{ x: -8, backgroundColor: "#F3F3F1", color: "#050505" }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={scrollLeft}
-                                    className="vf-nav-btn text-[10px] sm:text-sm border border-white/20 px-4 sm:px-6 py-2 transition-colors uppercase tracking-[0.1em] sm:tracking-[0.2em] font-bold bg-transparent text-white"
+                                    className="vf-nav-btn text-[10px] @sm:text-sm border border-white/20 px-4 @sm:px-6 py-2 transition-colors uppercase tracking-[0.1em] @sm:tracking-[0.2em] font-bold bg-transparent text-white"
                                 >
                                     <i className="fas fa-chevron-left mr-2"></i> PREV
                                 </motion.button>
@@ -309,7 +311,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                                     whileHover={{ x: 8, backgroundColor: "#F3F3F1", color: "#050505" }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={scrollRight}
-                                    className="vf-nav-btn text-[10px] sm:text-sm border border-white/20 px-4 sm:px-6 py-2 transition-colors uppercase tracking-[0.1em] sm:tracking-[0.2em] font-bold bg-transparent text-white"
+                                    className="vf-nav-btn text-[10px] @sm:text-sm border border-white/20 px-4 @sm:px-6 py-2 transition-colors uppercase tracking-[0.1em] @sm:tracking-[0.2em] font-bold bg-transparent text-white"
                                 >
                                     NEXT <i className="fas fa-chevron-right ml-2"></i>
                                 </motion.button>
@@ -323,7 +325,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                                 // PERBAIKAN: Hapus x: 50, gunakan scale, dan set once: true
                                 initial={{ opacity: 0, scale: 0.95, filter: "blur(5px)" }}
                                 whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                                viewport={{ once: false, amount: 0.15 }} // Akan animate lagi jika discroll up/down
+                                viewport={{ once: true, amount: 0 }}
                                 transition={{ duration: 0.8, delay: (idx % 3) * 0.1, ease: cinematicEase }}
                                 whileHover={{ y: -5 }}
                                 href={p.url || p.mediaUrl || p.projectUrl || '#'}
@@ -355,7 +357,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                     </div>
 
                     <motion.div
-                        initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.5 }}
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
                         variants={fadeUpVariants}
                         className="mt-12 flex justify-center"
                     >
@@ -363,7 +365,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                             <motion.div
                                 whileHover="hover"
                                 initial="initial"
-                                className="group flex items-center gap-3 px-8 py-3 border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-black transition-all duration-300 cursor-pointer uppercase font-black tracking-[0.3em] text-[10px] sm:text-xs"
+                                className="group flex items-center gap-3 px-8 py-3 border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-black transition-all duration-300 cursor-pointer uppercase font-black tracking-[0.3em] text-[10px] @sm:text-xs"
                             >
                                 <span>EXPLORE ALL</span>
                                 <motion.i
@@ -382,7 +384,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                 <section id="log" className="relative z-20 py-24 px-6 bg-[#F3F3F1] text-[#050505]">
                     <div className="max-w-3xl mx-auto">
                         <motion.div
-                            initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }}
+                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
                             variants={fadeUpVariants}
                             className="border-b-2 border-[#050505] pb-3 mb-6 flex justify-between items-end"
                         >
@@ -391,7 +393,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                         </motion.div>
 
                         <motion.div
-                            initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }}
+                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
                             variants={{
                                 hidden: { opacity: 0 },
                                 visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
@@ -412,7 +414,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                         </motion.div>
 
                         <motion.h3
-                            initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.5 }} variants={fadeUpVariants}
+                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}
                             className="text-[10px] font-bold uppercase tracking-widest mb-3 bg-[#050505] text-[#F3F3F1] inline-block px-3 py-1"
                         >
                             FESTIVALS & RECOGNITION
@@ -423,7 +425,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                                 <motion.div
                                     initial={{ opacity: 0, x: -30 }}
                                     whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: false, amount: 0.2 }}
+                                    viewport={{ once: true, amount: 0 }}
                                     transition={{ duration: 0.6, delay: idx * 0.05, ease: cinematicEase }}
                                     key={cert.id} className="border-b border-gray-300 overflow-hidden"
                                 >
@@ -448,15 +450,15 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
                                                 transition={{ duration: 0.5, ease: cinematicEase }}
                                                 className="bg-white/50"
                                             >
-                                                <div className="p-6 flex flex-col md:flex-row gap-8 items-start">
+                                                <div className="p-6 flex flex-col @md:flex-row gap-8 items-start">
                                                     {cert.mediaUrl && (
-                                                        <div className="w-full md:w-64 aspect-video overflow-hidden bg-gray-200 border border-gray-300 shrink-0">
+                                                        <div className="w-full @md:w-64 aspect-video overflow-hidden bg-gray-200 border border-gray-300 shrink-0">
                                                             <LazyImage src={cert.mediaUrl} alt={cert.title} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
                                                         </div>
                                                     )}
                                                     <div className="flex-1">
                                                         <div className="text-[10px] text-gray-400 mb-2 uppercase tracking-widest">ISSUER: {cert.issuer}</div>
-                                                        <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-4 border-l-2 pl-4 border-gray-300 italic">
+                                                        <p className="text-gray-600 text-xs @sm:text-sm leading-relaxed mb-4 border-l-2 pl-4 border-gray-300 italic">
                                                             {cert.description || "Verification details and festival recognition summary."}
                                                         </p>
                                                         {cert.url && (
@@ -483,7 +485,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView }: any) {
 
                 {/* ===== FOOTER ===== */}
                 <motion.footer
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.3 }}
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
                     variants={fadeUpVariants}
                     className="relative z-20 py-24 bg-[#050505] text-center border-t border-white/5"
                 >

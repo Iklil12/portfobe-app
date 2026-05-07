@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -12,28 +14,24 @@ const getYouTubeThumbnail = (url: string) => {
   return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
-export default function BrutalismTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+export default function BrutalismTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
   const [openAward, setOpenAward] = useState<string | null>(null);
   const [isContactOpen, setIsContactOpen] = useState(false);
 
   const pathname = usePathname();
-  const isEditor = pathname?.includes('/dashboard');
-
-  const res = (classes: string) => classes.replace(/\bmd:/g, '@md:').replace(/\blg:/g, '@lg:');
-
+  
+  // Utilitas Responsif Tailwind
+  // Data Parsing & Konfigurasi Tema
   const rawThemeColor = theme?.themeColor || "#000000";
-  const themeColor = isValidHexColor(rawThemeColor) ? rawThemeColor : "#ff9e00";
+  const themeColor = isValidHexColor(rawThemeColor) ? rawThemeColor : "#ff3300"; // Default warna neon orange/merah khas brutalism
   const fontHeading = theme?.fontHeading || "Space Mono";
-  const fontBody = theme?.fontBody || "Inter";
-  const cardStyle = theme?.cardStyle || "hard-shadow";
-  const buttonShape = theme?.buttonShape || "hard";
+  const fontBody = theme?.fontBody || "Space Mono"; // Brutalism sering menggunakan Mono untuk body juga
 
-  const fullName = data?.profile?.fullName || data?.fullName || "Nama Anda";
-  const profession = data?.profile?.profession || data?.profession || "Visual Architect";
-  const bio = data?.profile?.bio || data?.bio || "Telling stories through motion. Based in Indonesia, operating globally.";
+  const fullName = data?.profile?.fullName || data?.fullName || "JOHN DOE";
+  const profession = data?.profile?.profession || data?.profession || "SYSTEM ARCHITECT";
+  const bio = data?.profile?.bio || data?.bio || "Executing raw logic into brutal visual experiences. Unapologetic design systems.";
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
-
-  const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
+  const userEmail = data?.email || data?.user?.email || `connect@${subdomain}.net`;
 
   const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
   const awardItems = data?.certificates || data?.user?.certificates || [];
@@ -43,343 +41,397 @@ export default function BrutalismTheme({ data, theme, isMobileView = false }: { 
   const cleanAvatar = rawAvatar.replace(/"/g, '').trim();
   const displayAvatar = (cleanAvatar !== "" && cleanAvatar !== "null") ? cleanAvatar : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(fullName)}&backgroundColor=000000&textColor=ffffff`;
 
-  const isBrutal = cardStyle === 'hard-shadow';
+  const cardStyle = theme?.cardStyle || 'hard-shadow';
+  const buttonShape = theme?.buttonShape || 'hard';
 
-  const getCardClass = () => {
-    if (isBrutal) return `border-[2px] ${res('md:border-[3px]')} border-black preview-hard-shadow-sm bg-white`;
-    if (cardStyle === 'flat') return 'border border-slate-200 bg-white overflow-hidden';
-    return 'shadow-[0_10px_30px_rgba(0,0,0,0.08)] bg-white border border-transparent overflow-hidden';
-  };
+  // Memaksa Brutalism Style (Border Tebal)
+  const strokeWidth = "border-[3px] border-black";
 
-  const getRadiusClass = (isLarge = false) => {
-    if (buttonShape === 'hard') return 'rounded-none';
-    if (buttonShape === 'rounded') return isLarge ? `rounded-2xl ${res('md:rounded-3xl')}` : 'rounded-lg';
-    return isLarge ? `rounded-[2rem] ${res('md:rounded-[3rem]')}` : 'rounded-full';
-  };
+  // Dynamic Shadows based on cardStyle
+  const hardShadow = cardStyle === 'flat' ? 'shadow-none' :
+    (cardStyle === 'soft-shadow' || cardStyle === 'soft') ? 'shadow-xl' :
+      'shadow-[6px_6px_0px_0px_#000]';
+
+  const hardShadowHover = cardStyle === 'flat' ? 'hover:bg-black hover:text-white transition-colors' :
+    (cardStyle === 'soft-shadow' || cardStyle === 'soft') ? 'hover:shadow-2xl hover:-translate-y-1 transition-all' :
+      'hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[4px] hover:translate-y-[4px] transition-all';
+
+  // Dynamic Border Radius based on buttonShape
+  const radiusClass = buttonShape === 'pill' ? 'rounded-full' :
+    buttonShape === 'rounded' ? 'rounded-2xl' :
+      'rounded-none';
 
   const getFontFamily = (fontName: string) => {
-    if (fontName === 'Space Mono') return "'Space Mono', monospace";
-    if (fontName === 'serif' || fontName === 'Elegant Serif') return "'Playfair Display', serif";
-    return "'Inter', sans-serif";
+    if (fontName === 'sans-serif' || fontName === 'Inter') return "'Inter', sans-serif";
+    return "'Space Mono', monospace";
   };
 
   const customHeadingFont = getFontFamily(fontHeading);
   const customBodyFont = getFontFamily(fontBody);
 
-  // --- KONFIGURASI ANIMASI FRAMER MOTION ---
-  const brutalEase = [0.22, 1, 0.36, 1] as any; // Sesuai dengan kurva bezier bawaan agar natural
-  
-  const fadeUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: brutalEase } }
-  };
-  
-  const brutalReveal = {
-    hidden: { opacity: 0, clipPath: 'inset(100% 0 0 0)', y: 20 },
-    visible: { opacity: 1, clipPath: 'inset(0 0 0 0)', y: 0, transition: { duration: 1, ease: brutalEase } }
+  // Animasi Brutal: Kaku, Cepat, Tanpa Elasticity
+  const brutalEase = [0, 0, 0, 1] as any; // Step-like feel
+
+  // --- ANIMASI STABILISASI ---
+  // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
+  // Tapi tetap gunakan whileInView untuk live site agar ada efek scroll reveal.
+  const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+
+  const starkReveal = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { duration: 0.5, ease: brutalEase } 
+    }
   };
 
-  const scalePop = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: brutalEase } }
+  const slideInHard = {
+    hidden: { x: -40, opacity: 0 },
+    visible: { 
+      x: 0, 
+      opacity: 1, 
+      transition: { duration: 0.4, ease: brutalEase } 
+    }
   };
 
   const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+    hidden: { opacity: 1 },
+    visible: { 
+      opacity: 1, 
+      transition: { staggerChildren: 0.12 } 
+    }
   };
 
   return (
-    <div className={`w-full md:w-[98%] max-w-none mx-auto bg-white text-slate-900 relative z-10 flex flex-col min-h-screen ${res('sm:min-h-0')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] animate-in fade-in slide-in-from-bottom-8 duration-1000
-      ${isBrutal ? `border-x-0 border-y-0 border-black ${res('sm:border-x-[3px] sm:border-y-[3px] sm:preview-hard-shadow')}` : `border-x-0 border-slate-200 ${res(`sm:border-x ${cardStyle === 'soft-shadow' ? 'sm:shadow-[0_20px_50px_rgba(0,0,0,0.1)]' : ''} sm:${getRadiusClass(true)}`)}`}
-    `}>
+    // Container Utama: Latar warna putih mentah, border tebal
+    <main className={`relative w-full min-h-screen bg-[#f4f4f0] text-black font-sans selection:bg-black selection:text-white @container overflow-x-hidden brutal-theme ${isCardPreview ? '' : 'p-4 @sm:p-6'}`} style={{ '--hl': themeColor } as React.CSSProperties}>
 
       <style dangerouslySetInnerHTML={{
         __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap');
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+        .brutal-theme .custom-heading { font-family: ${customHeadingFont} !important; }
+        .brutal-theme .custom-body { font-family: ${customBodyFont} !important; }
+        .brutal-theme *:not(i) { font-family: inherit; }
         
-        .custom-heading { font-family: ${customHeadingFont} !important; }
-        .custom-body { font-family: ${customBodyFont} !important; }
-        
-        .preview-border { border-color: ${themeColor} !important; transition: border-color 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
-        .preview-hard-shadow { box-shadow: 10px 10px 0px 0px ${themeColor}; transition: box-shadow 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
-        .preview-hard-shadow-sm { box-shadow: 4px 4px 0px 0px ${themeColor}; transition: box-shadow 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+        .brutal-theme::-webkit-scrollbar { width: 10px; border-left: 3px solid black; }
+        .brutal-theme::-webkit-scrollbar-track { background: #f4f4f0; }
+        .brutal-theme::-webkit-scrollbar-thumb { background: black; }
+
+        /* Ticker Marquee untuk Header */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .brutal-theme .animate-marquee { animation: ${isCardPreview ? 'none' : 'marquee 15s linear infinite'}; }
+
+        .brutal-theme .brutal-hover-invert:hover {
+            background-color: black !important;
+            color: white !important;
+        }
       `}} />
 
-      {/* HEADER NAVBAR */}
-      <motion.header 
-        initial={{ y: -50, opacity: 0 }} 
-        animate={{ y: 0, opacity: 1 }} 
-        transition={{ duration: 0.8, ease: brutalEase }}
-        className={`relative flex text-[10px] ${res('md:text-xs')} uppercase font-bold sticky top-0 z-[100] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] bg-white/95 backdrop-blur-md
-        ${isBrutal ? 'border-b-[3px] border-black divide-x-[3px] divide-black font-mono' : `border-b border-slate-100 shadow-sm ${res(`sm:${getRadiusClass(true)} sm:rounded-b-none`)}`}
-      `}>
-        <div className={`p-4 ${res('md:p-5')} flex-1 flex justify-between items-center transition-colors duration-700 ${isBrutal ? 'bg-black text-white' : 'text-slate-900'}`}>
-          <span className={`transition-all duration-700 custom-heading`}>{fullName}( )</span>
-          <span className="animate-pulse transition-colors duration-700" style={{ color: isBrutal ? '#fff' : themeColor }}>● REC</span>
-        </div>
-        <div className={`hidden ${res('sm:flex')} p-4 md:p-5 w-24 md:w-32 items-center justify-center text-center hover:bg-gray-100 transition-colors duration-300 custom-body text-slate-900`}>
-          <a href="#archive">Archive</a>
-        </div>
+      {/* KOTAK KONTEN UTAMA */}
+      <div className={`w-full max-w-[1400px] mx-auto bg-white ${strokeWidth} ${hardShadow} relative z-10 flex flex-col`}>
 
-        <button onClick={() => setIsContactOpen(!isContactOpen)} className={`p-4 ${res('md:p-5 w-28 md:w-40')} text-center cursor-pointer flex items-center justify-center gap-2 transition-all duration-700 ease-out custom-body outline-none ${isBrutal ? 'bg-gray-100 text-black hover:bg-black hover:text-white' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-md'} ${buttonShape !== 'hard' && !isBrutal ? getRadiusClass(false) + res(' mx-3 my-2') : ''}`}>
-          Contact <i className={`fas fa-chevron-down transition-transform duration-300 ${isContactOpen ? 'rotate-180' : ''}`}></i>
-        </button>
+        {/* DEKORASI SUDUT TANDA SILANG (+) */}
+        <div className="absolute -top-3 -left-3 text-xl font-bold font-mono">+</div>
+        <div className="absolute -top-3 -right-3 text-xl font-bold font-mono">+</div>
+        <div className="absolute -bottom-3 -left-3 text-xl font-bold font-mono">+</div>
+        <div className="absolute -bottom-3 -right-3 text-xl font-bold font-mono">+</div>
 
-        <div className={`absolute top-[100%] right-0 w-full sm:w-[320px] bg-white flex flex-col transition-all duration-300 origin-top shadow-2xl ${isContactOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 pointer-events-none'} ${isBrutal ? 'border-b-[3px] sm:border-l-[3px] border-black font-mono' : 'sm:rounded-bl-3xl border border-slate-100 font-sans'}`}>
-          <div className={`p-6 ${res('md:p-8')} ${isBrutal ? 'border-b-[2px] border-black bg-gray-100' : 'border-b border-slate-100 bg-slate-50'}`}>
-            <p className="text-[9px] text-gray-500 mb-2 font-bold tracking-widest uppercase">Direct Email</p>
-            <a href={`mailto:${userEmail}`} className={`text-sm ${res('md:text-base')} font-black truncate block hover:text-[#ff9e00] transition-colors custom-heading ${isBrutal ? 'text-black' : 'text-slate-800'}`}>
-              {userEmail}
-            </a>
-          </div>
-          <div className={`p-6 ${res('md:p-8')} flex flex-col gap-4`}>
-            <p className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">Social & Links</p>
-            {links.length > 0 ? links.map((l: any, i: number) => (
-              <a key={i} href={l.url} target="_blank" rel="noreferrer" className={`group flex justify-between items-center text-xs ${res('md:text-sm')} font-bold uppercase tracking-wide transition-colors ${isBrutal ? 'text-slate-900 hover:text-[#ff9e00]' : 'text-slate-900 hover:text-blue-600'}`}>
-                <span>{l.platform}</span>
-                <i className="fas fa-arrow-right opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all -rotate-45"></i>
-              </a>
-            )) : (
-              <p className="text-xs text-gray-400 lowercase italic">No external links found.</p>
-            )}
-          </div>
-        </div>
-      </motion.header>
-
-      {/* HERO SECTION DENGAN SCROLL TRIGGER BERULANG */}
-      <motion.section 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.3 }} // Akan trigger ulang saat scroll naik/turun
-        variants={staggerContainer}
-        className={`grid grid-cols-1 ${res('md:grid-cols-12')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${!isBrutal ? `mt-2 ${res('md:mt-8')}` : ''}`}
-      >
-        {/* Desktop Hero */}
-        <div className={`hidden ${res('md:flex')} flex-col col-span-1 ${res('md:col-span-7')} p-6 ${res('sm:p-8 md:p-12 lg:p-16')} justify-center relative overflow-hidden transition-all duration-700
-            ${isBrutal ? `${res('md:border-r-[3px]')} border-black bg-slate-50` : 'bg-white'}
-          `}>
-          {isBrutal && <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none @container"></div>}
-          
-          {isBrutal && (
-            <motion.div variants={fadeUp} className={`inline-block text-slate-900 border-[2px] border-black px-3 py-1 mb-0 ${res('md:mb-8')} w-max font-mono text-[9px] ${res('md:text-[10px]')} font-bold uppercase bg-white preview-hard-shadow-sm relative z-10 transition-all duration-700 ${getRadiusClass(false)}`}>
-              ID: {subdomain?.toUpperCase() || 'USER'}-V1
-            </motion.div>
-          )}
-
-          <motion.h1 variants={brutalReveal} className={`text-slate-900 text-4xl ${res('sm:text-5xl md:text-6xl lg:text-7xl')} font-black uppercase leading-[0.9] tracking-tighter mb-4 ${res('md:mb-6')} relative z-10 transition-all duration-700 custom-heading`}>
-            {profession ? profession.split(' ').map((w: any, i: any) => <React.Fragment key={i}>{w}<br /></React.Fragment>) : 'Visual Architect'}
-          </motion.h1>
-
-          <motion.p variants={fadeUp} className={`text-sm max-w-[280px] ${res('sm:max-w-xs md:max-w-md')} opacity-80 relative z-10 leading-relaxed transition-all duration-700 custom-body ${isBrutal ? 'font-bold text-slate-900' : 'text-slate-500'}`}>
-            {bio}
-          </motion.p>
-        </div>
-
-        {/* Hero Image */}
-        <motion.div variants={scalePop} className={`col-span-1 ${res('md:col-span-5')} p-8 ${res('md:p-12')} flex items-center justify-center relative transition-colors duration-700 ${isBrutal ? 'bg-gray-100' : 'bg-white'}`}>
-          {isBrutal && (
-            <div className={`hidden ${res('md:block')} absolute inset-0 pointer-events-none`}>
-              <div className="absolute top-4 left-4 w-3 h-3 border-t-[2px] border-l-[2px] border-black"></div>
-              <div className="absolute top-4 right-4 w-3 h-3 border-t-[2px] border-r-[2px] border-black"></div>
-              <div className="absolute bottom-4 left-4 w-3 h-3 border-b-[2px] border-l-[2px] border-black"></div>
-              <div className="absolute bottom-4 right-4 w-3 h-3 border-b-[2px] border-r-[2px] border-black"></div>
-            </div>
-          )}
-
-          <div className="w-full md:max-w-[420px] aspect-[3/4] mx-auto relative group">
-            <div className={`w-full h-full overflow-hidden transition-all duration-700 ${isBrutal ? `border-[2px] md:border-[3px] border-black preview-hard-shadow-sm p-1.5 md:p-2 bg-white ${getRadiusClass(true)}` : getCardClass() + ' ' + getRadiusClass(true)}`}>
-              <LazyImage src={displayAvatar} className={`w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0 hover:scale-105 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Profile" />
-            </div>
-            {(data?.plan === 'PRO' || data?.userPlan === 'PRO') && (
-              <motion.div 
-                initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.8, type: "spring" }}
-                className="absolute -bottom-2 -right-2 w-9 h-9 bg-blue-500 rounded-full border-[3px] border-black flex items-center justify-center text-white text-[11px] shadow-lg z-20"
-              >
-                <i className="fas fa-check"></i>
-              </motion.div>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Mobile Title & Bio */}
-        <div className={`col-span-1 flex ${res('md:hidden')} p-6 ${res('sm:p-8')} flex-col justify-center relative overflow-hidden transition-all duration-700 ${isBrutal ? 'border-b-[3px] border-black bg-slate-50' : 'bg-white'}`}>
-          {isBrutal && <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>}
-
-          <motion.h1 variants={brutalReveal} className={`text-slate-900 text-3xl font-black uppercase leading-[0.9] tracking-tighter mb-4 relative z-10 transition-all duration-700 custom-heading`}>
-            {profession ? profession.split(' ').map((w: any, i: any) => <React.Fragment key={i}>{w}<br /></React.Fragment>) : 'Visual Architect'}
-          </motion.h1>
-
-          <motion.p variants={fadeUp} className={`text-sm opacity-80 relative z-10 leading-relaxed transition-all duration-700 custom-body ${isBrutal ? 'font-bold text-slate-900' : 'text-slate-500'}`}>
-            {bio}
-          </motion.p>
-        </div>
-      </motion.section>
-
-      {/* --- BLOK STATISTIK BRUTALISM --- */}
-      <motion.section 
-        initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.5 }} variants={staggerContainer}
-        className={`transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] border-b-[3px] border-black bg-black p-[3px] pb-0`}
-      >
-        <div className={`grid grid-cols-2 gap-[3px]`}>
-          <motion.div variants={fadeUp} className={`p-4 ${res('md:p-5')} flex flex-col justify-center transition-colors duration-700 bg-black text-white`}>
-            <p className="text-[10px] font-bold uppercase tracking-widest mb-1 custom-heading text-white opacity-80">Projects</p>
-            <p className={`text-2xl ${res('md:text-3xl')} font-black tracking-tighter custom-heading text-white`}>{archiveItems.length}</p>
-          </motion.div>
-          <motion.div variants={fadeUp} className={`p-4 ${res('md:p-5')} flex flex-col justify-center transition-colors duration-700 bg-white`}>
-            <p className="text-[10px] font-bold uppercase tracking-widest mb-1 custom-heading text-black opacity-80">Awards</p>
-            <p className={`text-2xl ${res('md:text-3xl')} font-black tracking-tighter custom-heading text-black`}>{awardItems.length}</p>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* ARCHIVE SECTION */}
-      <section id="archive" className={!isBrutal ? `mb-8 ${res('md:mb-14')}` : ''}>
-        <motion.div 
-          initial="hidden" whileInView="visible" viewport={{ once: false }} variants={fadeUp}
-          className={`p-4 ${res('md:p-6')} font-bold uppercase flex justify-between transition-all duration-700 ${isBrutal ? `border-b-[3px] border-black bg-gray-100 text-slate-900 font-mono text-[10px] ${res('md:text-xs')}` : `bg-white custom-body text-xs ${res('md:text-sm')} text-slate-800 px-6 ${res('sm:px-8')} mt-4`}`}
+        {/* ================= HEADER / NAVBAR ================= */}
+        {/* PERUBAHAN: once: false agar di-trigger ulang saat scroll */}
+        <motion.header
+          initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal}
+          className={`w-full ${strokeWidth} border-t-0 border-x-0 bg-white ${!(isCardPreview || isEditor) ? 'sticky top-0 z-[100]' : 'relative z-10'}`}
         >
-          <span>{isBrutal ? '[ Selected Archive ]' : 'Selected Archive'}</span>
-          {isBrutal && <span>Vol. 1</span>}
-        </motion.div>
-
-        <div className={`grid grid-cols-1 ${res('md:grid-cols-2')} transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isBrutal ? `border-b-[3px] border-black overflow-hidden` : `gap-4 ${res('sm:gap-6')} p-4 ${res('sm:p-8')} bg-slate-50 border-b border-slate-100`}`}>
-          {archiveItems.length > 0 ? archiveItems.map((p: any, i: number) => {
-            const linkTarget = p.projectUrl || p.url || p.mediaUrl || '#';
-            const isVideo = p.projectType === 'video';
-
-            return (
-              <motion.a 
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: false, margin: "50px" }} // Trigger sedikit lebih awal
-                variants={fadeUp}
-                whileHover={isBrutal ? { x: -4, y: -4, boxShadow: `6px 6px 0px 0px ${themeColor}`, transition: { duration: 0.2 } } : { y: -5, scale: 1.02, transition: { duration: 0.2 } }}
-                href={linkTarget} target={linkTarget !== '#' ? "_blank" : "_self"} key={i} 
-                className={`group cursor-pointer overflow-hidden transition-all duration-700 block ${isBrutal ? `border-b-[3px] border-black last:border-b-0 ${res('md:border-b-0 md:border-r-[3px] md:[&:nth-child(even)]:border-r-0 md:[&:nth-last-child(-n+2)]:border-b-0')} ` : getCardClass() + ' ' + getRadiusClass(true)}`}
-              >
-                <div className={`p-3 ${res('md:p-5')} flex justify-between font-bold transition-all duration-700 ${isBrutal ? `border-b-[2px] border-black bg-white group-hover:bg-black text-slate-900 group-hover:text-white font-mono text-[9px] ${res('md:text-[10px]')}` : `bg-slate-50 text-slate-500 custom-body text-[10px] ${res('md:text-xs')} border-b border-slate-100`}`}>
-                  <span style={{ color: !isBrutal ? themeColor : '' }}>{p.projectType?.toUpperCase() || 'PROJECT'}</span>
-                  <span>0{i + 1}</span>
-                </div>
-
-                <div className={`aspect-video bg-gray-200 relative overflow-hidden transition-all duration-700 ${isBrutal ? 'border-b-[2px] border-black' : ''}`}>
-                  <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800x600?text=No+Image")} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" alt={p.title} />
-
-                  {isVideo && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className={`w-12 h-12 flex items-center justify-center ${isBrutal ? 'bg-[#ff9e00] border-2 border-black rounded-none' : 'bg-white rounded-full shadow-lg'} text-black`}>
-                        <i className="fas fa-play ml-1"></i>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className={`p-5 ${res('md:p-8')} bg-white transition-all duration-700`}>
-                  <h3 className={`text-lg text-slate-900 ${res('md:text-2xl')} font-black tracking-tighter mb-1 truncate custom-heading group-hover:underline decoration-2 underline-offset-4`}>{p.title}</h3>
-                  <p className={`transition-all duration-700 text-gray-500 truncate custom-body text-[10px] ${res('md:text-xs')} ${isBrutal && 'uppercase'}`}>{p.description || 'View Details'}</p>
-                </div>
-              </motion.a>
-            );
-          }) : <div className={`p-10 ${res('md:p-16')} text-center col-span-2 text-slate-900 opacity-30 font-mono text-[10px] ${res('md:text-[11px]')} uppercase`}>NO ARCHIVE DATA FOUND.</div>}
-        </div>
-
-        {/* Tombol Gallery Utama */}
-        <motion.div 
-          initial="hidden" whileInView="visible" viewport={{ once: false }} variants={fadeUp}
-          className="w-full flex justify-center mt-12 mb-12"
-        >
-          <Link href={`/${subdomain}/gallery`} scroll={false} className="block no-underline">
-            <motion.button
-              whileHover={{ x: -4, y: -4, boxShadow: `8px 8px 0px 0px ${isBrutal ? themeColor : '#000'}` }}
-              whileTap={{ x: 0, y: 0, boxShadow: '0px 0px 0px 0px #000' }}
-              className={`px-12 py-5 font-black uppercase tracking-widest text-sm transition-all duration-200 flex items-center gap-4 ${isBrutal ? 'border-[3px] border-black bg-white text-black' : 'bg-black text-white rounded-xl shadow-xl'}`}
-              style={{ fontFamily: customHeadingFont }}
-            >
-              <i className="fas fa-images"></i> EXPLORE ALL_INDEX
-            </motion.button>
-          </Link>
-        </motion.div>
-      </section>
-
-      {/* AWARDS SECTION */}
-      <motion.div 
-        initial="hidden" whileInView="visible" viewport={{ once: false }} variants={fadeUp}
-        className={`p-4 ${res('md:p-6')} font-bold uppercase transition-all duration-700 ${isBrutal ? `border-b-[3px] border-black bg-black text-white font-mono text-[10px] ${res('md:text-xs')}` : `bg-white custom-body text-xs ${res('md:text-sm')} text-slate-800 px-6 ${res('sm:px-8')} mt-8 mb-4`}`}
-      >
-        {isBrutal ? '[ Honors_And_Awards.sys ]' : 'Honors & Awards'}
-      </motion.div>
-      
-      <div className={`transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isBrutal ? 'bg-white' : `px-4 ${res('sm:px-8')} pb-8 bg-white`}`}>
-        {awardItems.length > 0 ? awardItems.map((award: any, idx: number) => (
-          <motion.div 
-            key={award.id} 
-            initial="hidden" whileInView="visible" viewport={{ once: false, margin: "50px" }} 
-            variants={{
-              hidden: { opacity: 0, x: -20 },
-              visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay: (idx % 4) * 0.1, ease: brutalEase } }
-            }}
-            className={`flex flex-col transition-all duration-700 overflow-hidden ${isBrutal ? 'border-b-[3px] border-black text-slate-900' : `mb-3 ${res('sm:mb-4')} ` + getCardClass() + ' ' + getRadiusClass(true)}`}
-          >
-            <div className={`p-4 ${res('sm:p-5 md:p-6')} flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors duration-300 ${!isBrutal && openAward === award.id ? 'border-b border-slate-100' : ''}`} onClick={() => setOpenAward(openAward === award.id ? null : award.id)}>
-              <div className={`flex items-center gap-3 ${res('sm:gap-4 md:gap-6')} overflow-hidden`}>
-                <motion.span 
-                  animate={{ rotate: openAward === award.id ? 90 : 0 }}
-                  className={`font-bold w-6 ${res('sm:w-8 md:w-12')} shrink-0 whitespace-nowrap text-center transition-all duration-700 custom-heading text-xs ${res('md:text-sm')} ${!isBrutal ? 'text-slate-400' : 'text-slate-900'}`}
-                >
-                  {openAward === award.id ? '[ - ]' : '[ + ]'}
-                </motion.span>
-                <h3 className={`text-sm text-slate-900 ${res('sm:text-base md:text-xl lg:text-2xl')} font-black tracking-tighter truncate max-w-[150px] ${res('sm:max-w-[250px] md:max-w-[400px]')} transition-all duration-700 custom-heading ${isBrutal && 'uppercase'}`}>{award.title}</h3>
-              </div>
-
-              <span className={`text-[8px] ${res('sm:text-[9px] md:text-[10px]')} font-bold uppercase text-right shrink-0 whitespace-nowrap ml-2 ${res('md:ml-4')} transition-all duration-700 custom-body ${!isBrutal ? 'text-slate-400' : 'text-slate-900'}`}>
-                {award.issuer || 'CERTIFICATE'} <br className={res('sm:hidden')} /> <span className={`hidden ${res('sm:inline')}`}>/</span> {award.year || new Date(award.createdAt).getFullYear()}
+          {/* Ticker Tape Atas */}
+          <div className={`w-full border-b-[3px] border-black overflow-hidden py-1 flex bg-[var(--hl)] text-black font-mono text-[10px] font-black uppercase tracking-widest`}>
+            <div className="w-[200%] flex animate-marquee whitespace-nowrap">
+              <span className="w-1/2 flex justify-around">
+                <span>SYSTEM: ONLINE</span>
+                <span>[ DATA STREAM ACTIVE ]</span>
+                <span>RAW OUTPUT</span>
+                <span>{profession}</span>
+              </span>
+              <span className="w-1/2 flex justify-around">
+                <span>SYSTEM: ONLINE</span>
+                <span>[ DATA STREAM ACTIVE ]</span>
+                <span>RAW OUTPUT</span>
+                <span>{profession}</span>
               </span>
             </div>
-            
-            <div className={`overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] bg-gray-50 ${openAward === award.id ? `max-h-[600px] ${res('md:max-h-[800px]')}` : 'max-h-0'}`}>
-              <div className={`p-4 ${res('sm:p-5 md:p-8')} flex flex-col ${res('sm:flex-row')} gap-4 ${res('sm:gap-6 md:gap-8')} transition-all duration-700 ${isBrutal ? 'border-t-[3px] border-black' : ''}`}>
+          </div>
 
-                <div className={`w-full ${res('sm:w-48 md:w-64')} shrink-0 bg-white p-1.5 ${res('sm:p-2')} transition-all duration-700 ${isBrutal ? `border-[2px] border-black preview-hard-shadow-sm ${getRadiusClass(false)}` : `rounded-xl shadow-sm border border-slate-200 overflow-hidden ${getRadiusClass(false)}`}`}>
-                  <LazyImage src={award.mediaUrl || "https://via.placeholder.com/400x300?text=Certificate"} className={`w-full h-auto object-contain grayscale transition-all duration-700 hover:grayscale-0 ${isBrutal ? getRadiusClass(false) : ''}`} alt="Certificate" />
+          {/* Nav Bar Utama */}
+          <div className="flex justify-between items-stretch">
+            <div className={`flex-1 border-r-[3px] border-black flex items-center bg-white ${'p-4 @sm:p-6'}`}>
+              <h2 className={"custom-heading text-lg @sm:text-2xl font-black uppercase tracking-tighter leading-none"}>
+                {fullName.split(' ')[0]} <br /> {fullName.split(' ').slice(1).join(' ')}
+              </h2>
+            </div>
+
+            <div className={`hidden ${'@md:flex'} font-mono text-xs font-bold uppercase`}>
+              <a href="#work" className="px-8 border-r-[3px] border-black flex items-center justify-center brutal-hover-invert transition-none">
+                [ WORK_LOG ]
+              </a>
+              <a href="#awards" className="px-8 border-r-[3px] border-black flex items-center justify-center brutal-hover-invert transition-none">
+                [ CERTS ]
+              </a>
+            </div>
+
+            <button
+              onClick={() => setIsContactOpen(!isContactOpen)}
+              className={`bg-black text-white font-mono text-xs @sm:text-sm font-bold uppercase flex items-center justify-center hover:bg-[var(--hl)] hover:text-black transition-none focus:outline-none px-6 @sm:px-10 ${radiusClass}`}
+            >
+              {isContactOpen ? 'CLOSE_X' : 'COMMUNICATE'}
+            </button>
+          </div>
+
+          {/* Dropdown Menu Kontak (Gaya Kertas Turun) */}
+          <div className={`w-full border-t-[3px] border-black bg-[#f4f4f0] font-mono transition-all duration-300 origin-top overflow-hidden ${isContactOpen ? 'max-h-[500px]' : 'max-h-0 border-t-0'}`}>
+            <div className={`p-6 ${'@sm:p-10'} flex flex-col ${'@md:flex-row'} gap-10`}>
+              <div className="flex-1">
+                <span className="text-[10px] font-bold bg-black text-white px-2 py-1 uppercase tracking-widest inline-block mb-4">DIRECT_LINE</span>
+                <a href={`mailto:${userEmail}`} className={"block text-2xl @sm:text-4xl font-black custom-heading hover:text-[var(--hl)] hover:underline decoration-[3px] underline-offset-4 break-words"}>
+                  {userEmail}
+                </a>
+              </div>
+              <div className="flex-1">
+                <span className="text-[10px] font-bold bg-black text-white px-2 py-1 uppercase tracking-widest inline-block mb-4">NETWORK_LINKS</span>
+                <div className="flex flex-col gap-2">
+                  {links.length > 0 ? links.map((l: any, i: number) => (
+                    <a key={i} href={l.url} target="_blank" rel="noreferrer" className="text-sm @sm:text-base font-bold uppercase hover:bg-black hover:text-white w-max px-2 transition-none">
+                      -&gt; {l.platform}
+                    </a>
+                  )) : <span className="text-xs text-gray-500">NO EXTERNAL NODES.</span>}
                 </div>
-
-                <div className={`flex flex-col justify-center text-[10px] ${res('md:text-xs')} mt-2 ${res('sm:mt-0')} transition-all duration-700 custom-body`}>
-                  <p className={`font-bold uppercase mb-1.5 ${res('md:mb-2')} transition-colors duration-700 ${isBrutal ? 'text-black' : 'text-slate-500'}`}>&gt; STATUS: {award.status || 'VERIFIED'}</p>
-                  <p className={`text-gray-600 leading-relaxed line-clamp-4 ${res('sm:line-clamp-3 md:line-clamp-none')} max-w-xl mb-4`}>{award.description || 'Sertifikasi dan pencapaian terverifikasi.'}</p>
-
-                  <a href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-colors w-max relative group/btn ${isBrutal ? 'text-white bg-black px-4 py-2 hover:bg-[#ff9e00] hover:text-black border-2 border-black' : 'text-black hover:text-gray-500'}`}>
-                    Lihat Lampiran <i className="fas fa-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
-                    {!isBrutal && <span className="absolute bottom-[-4px] left-0 w-0 h-px bg-black transition-all duration-300 group-hover/btn:w-full"></span>}
-                  </a>
-                </div>
-
               </div>
             </div>
-          </motion.div>
-        )) : <div className={`p-8 ${res('md:p-12')} text-center font-bold text-gray-400 text-[10px] ${res('md:text-[11px]')} uppercase transition-all duration-700 ${isBrutal ? 'font-mono border-b-[3px] border-black text-slate-900' : 'font-sans'}`}>NO AWARDS RECORDED.</div>}
-      </div>
+          </div>
+        </motion.header>
 
-      {/* FOOTER */}
-      <motion.footer 
-        initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.5 }} variants={fadeUp}
-        className={`p-5 ${res('sm:p-6 md:p-8')} font-bold uppercase flex flex-col ${res('sm:flex-row')} justify-between items-center gap-3 ${res('sm:gap-4')} transition-all duration-700 custom-body ${isBrutal ? `bg-gray-100 text-slate-900 font-mono text-[9px] ${res('md:text-[10px]')}` : `bg-slate-900 text-white text-[9px] ${res('md:text-[10px]')} mt-4 ${res('sm:mt-6 sm:' + getRadiusClass(true) + ' sm:rounded-t-none')}`}`}
-      >
-        <div className={`flex gap-3 ${res('sm:gap-4')} flex-wrap justify-center`}>
-          {links.length > 0 ? links.map((l: any, i: number) => {
-            const isDarkAccent = themeColor === '#000000' || themeColor === '#0f172a';
-            const linkColor = isBrutal ? '' : (isDarkAccent ? '#ffffff' : themeColor);
-            return (
-              <React.Fragment key={i}>
-                <motion.a whileHover={{ y: -2 }} href={l.url} target="_blank" rel="noreferrer" className="cursor-pointer hover:underline transition-colors duration-300" style={{ color: linkColor }}>{l.platform}</motion.a>
-                {i !== links.length - 1 && <span className="opacity-50">/</span>}
-              </React.Fragment>
-            );
-          }) : <span>NO LINKS ADDED</span>}
-        </div>
-        <span className="opacity-80">© 2026 {fullName}.SYS</span>
-      </motion.footer>
-    </div>
+        {/* ================= HERO SECTION (NEWSPAPER GRID) ================= */}
+        {/* PERUBAHAN: once: false agar di-trigger ulang saat scroll */}
+        <motion.section
+          initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerContainer}
+          className={`w-full grid grid-cols-1 ${'@md:grid-cols-12'} border-b-[3px] border-black`}
+        >
+          {/* Kiri: Avatar & Tagline */}
+          <div className={`col-span-1 @md:col-span-4 border-b-[3px] border-black @md:border-b-0 @md:border-r-[3px] flex flex-col`}>
+            <motion.div variants={starkReveal} className={"w-full aspect-square border-b-[3px] border-black bg-gray-200 relative overflow-hidden group p-4 @sm:p-8 bg-[#f4f4f0]"}>
+              {/* Background Raster Dot Pattern */}
+              <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #000 2px, transparent 2.5px)', backgroundSize: '15px 15px' }}></div>
+
+              <LazyImage
+                src={displayAvatar}
+                className={`w-full h-full object-cover grayscale contrast-150 border-[3px] border-black ${hardShadow} ${radiusClass} transition-transform duration-300 group-hover:scale-[1.02] bg-white`}
+                alt="Profile"
+              />
+            </motion.div>
+            <div className="p-6 bg-[var(--hl)] text-black font-mono flex-1">
+              <motion.p variants={slideInHard} className={"text-xl @sm:text-2xl font-black uppercase leading-tight custom-heading"}>
+                {profession}
+              </motion.p>
+            </div>
+          </div>
+
+          {/* Kanan: Bio Raksasa */}
+          <div className={`col-span-1 @md:col-span-8 p-4 @sm:p-12 @lg:p-20 flex flex-col justify-center bg-white`}>
+            <motion.div variants={starkReveal} className={"mb-4 font-mono text-[9px] @sm:text-xs font-bold uppercase border-l-[3px] border-black pl-4"}>
+              ID // {subdomain.toUpperCase()} <br />
+              STATUS // OPERATIONAL
+            </motion.div>
+
+            <motion.h1 variants={starkReveal} className={"custom-heading text-sm @sm:text-lg @md:text-[1.1cqi] font-bold uppercase leading-normal tracking-tight mb-8 break-words text-left"}>
+              {/* Memecah bio menjadi teks raksasa */}
+              {bio}
+            </motion.h1>
+
+            <motion.div variants={starkReveal} className="flex flex-wrap gap-4">
+              <button onClick={() => setIsContactOpen(true)} className={`flex-1 @sm:flex-none font-mono text-xs @sm:text-sm font-bold bg-black text-white px-8 py-4 border-[3px] border-black ${hardShadow} ${hardShadowHover} ${radiusClass}`}>
+                INITIATE
+              </button>
+              <a href="#work" className={`flex-1 @sm:flex-none font-mono text-xs @sm:text-sm font-bold bg-white text-black px-8 py-4 border-[3px] border-black ${hardShadow} ${hardShadowHover} text-center flex items-center justify-center ${radiusClass}`}>
+                SCROLL ↓
+              </a>
+            </motion.div>
+          </div>
+        </motion.section>
+
+        {/* ================= DATA BAR (STATS) ================= */}
+        {/* PERUBAHAN: once: false agar di-trigger ulang saat scroll */}
+        <motion.div
+          initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal}
+          className={`w-full grid grid-cols-2 border-b-[3px] border-black font-mono uppercase bg-black text-white divide-x-[3px] divide-black`}
+        >
+          <div className={"p-3 @sm:p-6 flex flex-col @sm:flex-row justify-between items-center bg-white text-black brutal-hover-invert transition-none text-center @sm:text-left"}>
+            <span className={"text-[10px] @sm:text-xs font-bold"}>PROJECTS</span>
+            <span className={"text-xl @sm:text-4xl font-black custom-heading"}>{archiveItems.length}</span>
+          </div>
+          <div className={"p-3 @sm:p-6 flex flex-col @sm:flex-row justify-between items-center bg-[var(--hl)] text-black brutal-hover-invert transition-none text-center @sm:text-left"}>
+            <span className={"text-[10px] @sm:text-xs font-bold"}>AWARDS</span>
+            <span className={"text-xl @sm:text-4xl font-black custom-heading"}>{awardItems.length}</span>
+          </div>
+        </motion.div>
+
+        {/* ================= ARCHIVE SECTION ================= */}
+        <section id="work" className="w-full flex flex-col border-b-[3px] border-black bg-[#f4f4f0]">
+          {/* PERUBAHAN: once: false agar di-trigger ulang saat scroll */}
+          <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className={"p-6 border-b-[3px] border-black bg-white"}>
+            <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}>INDEX_OF_WORK</h2>
+          </motion.div>
+
+          <motion.div
+            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerContainer}
+            className={`grid grid-cols-1 ${'@md:grid-cols-2'}`}
+          >
+            {archiveItems.length > 0 ? archiveItems.map((p: any, i: number) => {
+              const isVideo = p.projectType === 'video';
+              const isOdd = i % 2 !== 0;
+
+              return (
+                <motion.a
+                  variants={starkReveal}
+                  href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
+                  className={`group flex flex-col bg-white border-b-[3px] border-black ${!isOdd ? '@md:border-r-[3px]' : ''} cursor-pointer brutal-theme-item brutal-hover-invert transition-none`}
+                >
+                  {/* Header Kartu */}
+                  <div className={"flex justify-between items-center p-4 border-b-[3px] border-black font-mono text-[10px] @sm:text-xs font-bold uppercase bg-[#f4f4f0] group-hover:bg-black group-hover:text-white transition-none group-hover:border-white"}>
+                    <span className="bg-black text-white group-hover:bg-white group-hover:text-black px-2 py-1">FILE_0{i + 1}</span>
+                    <span>[{p.projectType}]</span>
+                  </div>
+
+                  {/* Gambar */}
+                  <div className={"w-full aspect-video border-b-[3px] border-black bg-gray-200 relative overflow-hidden group-hover:border-white transition-none p-4 @sm:p-6 bg-[#f4f4f0]"}>
+                    <div className={`w-full h-full border-[3px] border-black bg-white overflow-hidden relative group-hover:border-white ${hardShadow} ${radiusClass}`}>
+                      <LazyImage
+                        src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl}
+                        className="w-full h-full object-cover grayscale contrast-125 mix-blend-multiply opacity-80 group-hover:grayscale-0 group-hover:mix-blend-normal group-hover:opacity-100 transition-all duration-300"
+                        alt={p.title}
+                      />
+                      {isVideo && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="bg-[var(--hl)] text-black border-[3px] border-black px-6 py-2 font-mono font-bold text-xs shadow-[4px_4px_0px_0px_#000]">PLAY_VIDEO</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Deskripsi */}
+                  <div className="p-6 flex flex-col justify-between flex-1">
+                    <h3 className={"custom-heading text-2xl @sm:text-3xl @md:text-4xl font-black uppercase tracking-tighter mb-4 leading-none"}>{p.title}</h3>
+                    <p className={"custom-body font-mono text-xs @sm:text-sm font-bold uppercase leading-relaxed line-clamp-3"}>
+                      &gt; {p.description || 'NO ADDITIONAL DATA PROVIDED FOR THIS RECORD.'}
+                    </p>
+                  </div>
+                </motion.a>
+              );
+            }) : (
+              <div className={`col-span-2 p-12 text-center font-mono text-sm font-bold uppercase bg-black text-white`}>
+                [ NULL ] NO ARCHIVE DATA FOUND IN DATABASE.
+              </div>
+            )}
+          </motion.div>
+
+          {/* Tombol Gallery */}
+          {/* PERUBAHAN: once: false agar di-trigger ulang saat scroll */}
+          <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className={"p-6 @sm:p-12 flex justify-center bg-white border-t-[3px] border-black"}>
+            <Link href={`/${subdomain}/gallery`} scroll={false}>
+              <button className={`bg-[var(--hl)] text-black border-[3px] border-black font-mono font-black uppercase px-8 @sm:px-16 py-4 @sm:py-6 text-sm @sm:text-lg ${hardShadow} ${hardShadowHover} ${radiusClass}`}>
+                ACCESS FULL DATABASE
+              </button>
+            </Link>
+          </motion.div>
+        </section>
+
+        {/* ================= AWARDS SECTION ================= */}
+        {awardItems.length > 0 && (
+          <section id="awards" className="w-full bg-white border-b-[3px] border-black">
+            {/* PERUBAHAN: once: false agar di-trigger ulang saat scroll */}
+            <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className="p-6 border-b-[3px] border-black bg-black text-white">
+              <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}>VERIFIED_RECORDS</h2>
+            </motion.div>
+
+            <motion.div
+              initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerContainer}
+              className="flex flex-col"
+            >
+              {awardItems.map((award: any, idx: number) => (
+                <motion.div
+                  variants={starkReveal}
+                  key={award.id}
+                  className={`flex flex-col border-b-[3px] border-black last:border-b-0`}
+                >
+                  {/* List Baris */}
+                  <div
+                    className={"p-4 @sm:p-6 flex flex-col @sm:flex-row justify-between items-start @sm:items-center cursor-pointer brutal-hover-invert transition-none"}
+                    onClick={() => setOpenAward(openAward === award.id ? null : award.id)}
+                  >
+                    <div className={"flex items-center gap-4 @sm:gap-8 w-full @sm:w-auto"}>
+                      <span className={"font-mono text-lg @sm:text-2xl font-black"}>
+                        {openAward === award.id ? '[-]' : '[+]'}
+                      </span>
+                      <span className={"font-mono text-xs @sm:text-sm font-bold px-2 py-1 bg-gray-200 text-black hidden @sm:block"}>
+                        {award.year || new Date(award.createdAt).getFullYear()}
+                      </span>
+                      <h3 className={"custom-heading text-xl @sm:text-3xl @md:text-4xl font-black uppercase tracking-tighter truncate max-w-[200px] @sm:max-w-[400px]"}>
+                        {award.title}
+                      </h3>
+                    </div>
+                    <div className={"mt-2 @sm:mt-0 pl-12 @sm:pl-0 font-mono text-[10px] @sm:text-xs font-bold uppercase text-left @sm:text-right"}>
+                      {award.issuer || 'ISSUER UNKNOWN'} <br />
+                      <span className="bg-black text-white px-2 py-1 mt-1 inline-block">{award.status || 'VALID'}</span>
+                    </div>
+                  </div>
+
+                  {/* Konten Expand */}
+                  <div className={`overflow-hidden transition-all duration-300 font-mono bg-[#f4f4f0] ${openAward === award.id ? 'max-h-[800px] border-t-[3px] border-black' : 'max-h-0'}`}>
+                    <div className={"p-6 @sm:p-10 flex flex-col @md:flex-row gap-6 @sm:gap-10"}>
+                      <div className={`w-full @md:w-1/3 aspect-[4/3] bg-white border-[3px] border-black p-2 ${hardShadow} ${radiusClass}`}>
+                        <LazyImage src={award.mediaUrl || "https://via.placeholder.com/400x300?text=NO+IMAGE"} className={`w-full h-full object-cover grayscale contrast-125 ${radiusClass}`} alt="Certificate" />
+                      </div>
+                      <div className={"w-full @md:w-2/3 flex flex-col justify-center"}>
+                        <p className={`text-xs @sm:text-sm font-bold uppercase mb-6 leading-relaxed bg-white border-[3px] border-black p-4 ${radiusClass}`}>
+                          &gt; {award.description || 'Details of the certification are secured in the main databank.'}
+                        </p>
+                        <a href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" className={`w-max bg-black text-white font-bold text-xs @sm:text-sm px-6 py-3 border-[3px] border-transparent hover:bg-white hover:text-black hover:border-black transition-none ${radiusClass}`}>
+                          ACCESS ATTACHMENT_
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </section>
+        )}
+
+        {/* ================= FOOTER TERMINAL ================= */}
+        {/* PERUBAHAN: once: false agar di-trigger ulang saat scroll */}
+        <motion.footer initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className="w-full flex flex-col">
+          <div className={"p-12 @sm:p-20 flex flex-col items-center justify-center text-center border-b-[3px] border-black bg-[var(--hl)]"}>
+            <h2 className={"custom-heading text-5xl @sm:text-7xl @md:text-[8cqi] font-black uppercase tracking-tighter leading-[0.8] mb-8"}>
+              END OF <br /> TRANSMISSION
+            </h2>
+            <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`bg-black text-white font-mono font-bold uppercase px-8 py-4 text-xs @sm:text-sm border-[3px] border-black ${hardShadow} ${hardShadowHover} ${radiusClass}`}>
+              RETURN TO TOP ^
+            </button>
+          </div>
+
+          <div className={"p-6 bg-white font-mono text-[10px] @sm:text-xs font-bold uppercase flex flex-col @sm:flex-row justify-between items-center gap-4"}>
+            <span>© {new Date().getFullYear()} {fullName}.SYS</span>
+            <div className={"flex gap-4 @sm:gap-6 flex-wrap justify-center"}>
+              {links.length > 0 ? links.map((l: any, i: number) => (
+                <a key={i} href={l.url} target="_blank" rel="noreferrer" className="hover:bg-black hover:text-white px-2 py-1 transition-none">
+                  [{l.platform}]
+                </a>
+              )) : <span>[NO_LINKS]</span>}
+            </div>
+          </div>
+        </motion.footer>
+
+      </div>
+    </main>
   );
 }

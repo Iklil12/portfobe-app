@@ -1,3 +1,4 @@
+//components/themes/SpatialTheme.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -13,12 +14,19 @@ const getYouTubeThumbnail = (url: string) => {
     return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
 };
 
-export default function AuraTheme({ data, theme, isMobileView = false }: { data: any, theme: any, isMobileView?: boolean }) {
+export default function AuraTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+
+    // --- ANIMASI STABILISASI ---
+    // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
+    // Tapi tetap gunakan whileInView untuk live site agar ada efek scroll reveal.
+    const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+
     const [currentTime, setCurrentTime] = useState("");
 
-    // Update Jam Real-Time
+    // Update Jam Real-Time — skip di card preview untuk hindari re-render tiap detik
     useEffect(() => {
+        if (isCardPreview || isEditor) return;
         const updateTime = () => {
             const now = new Date();
             setCurrentTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
@@ -26,7 +34,7 @@ export default function AuraTheme({ data, theme, isMobileView = false }: { data:
         updateTime();
         const interval = setInterval(updateTime, 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, [isCardPreview]);
 
     // Data Parsing
     const fullName = data?.profile?.fullName || data?.fullName || "Budi Arsitek";
@@ -59,23 +67,24 @@ export default function AuraTheme({ data, theme, isMobileView = false }: { data:
 
     const firstName = fullName.split(' ')[0];
 
-    // Animasi Elegan (Lebih halus dan melayang)
-    const auraAnim = {
-        hidden: { opacity: 0, y: 40, filter: "blur(10px)" },
-        visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } }
-    };
-    const staggerContainer = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
-    };
+    // Animasi Elegan — di card preview langsung visible (skip animasi agar tidak flicker)
+    const auraAnim = isCardPreview
+        ? { hidden: { opacity: 1, y: 0, filter: "blur(0px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)" } }
+        : { hidden: { opacity: 0, y: 40, filter: "blur(10px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } } };
+    const staggerContainer = isCardPreview
+        ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+        : { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.2 } } };
+    // Gunakan animate langsung di preview (bukan whileInView) agar tidak re-trigger
+    const viewAnim = isCardPreview
+        ? { initial: "visible" as const, animate: "visible" as const }
+        : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 } };
 
     return (
-        <main className={`min-h-screen bg-[#020202] text-slate-200 font-sans selection:bg-[var(--hl)] selection:text-white relative overflow-hidden pb-20`} style={{ '--hl': highlightColor } as React.CSSProperties}>
+        <main className={`min-h-screen bg-[#020202] text-slate-200 font-sans selection:bg-[var(--hl)] selection:text-white relative overflow-hidden pb-20 spatial-theme`} style={{ '--hl': highlightColor } as React.CSSProperties}>
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        * { font-family: 'Inter', sans-serif; }
+        .spatial-theme * { font-family: 'Inter', sans-serif; }
         
         /* Glassmorphism Mewah */
         .glass-panel {
@@ -117,33 +126,34 @@ export default function AuraTheme({ data, theme, isMobileView = false }: { data:
       `}} />
 
             {/* DYNAMIC AURA BACKGROUND */}
-            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#020202] @container">
-                <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full blur-[120px] mix-blend-screen aura-1" style={{ background: `radial-gradient(circle, ${highlightColor}40 0%, transparent 70%)` }}></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full blur-[150px] mix-blend-screen aura-2" style={{ background: `radial-gradient(circle, ${highlightColor}30 0%, transparent 70%)` }}></div>
+            <div className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} inset-0 pointer-events-none z-0 overflow-hidden bg-[#020202] @container`}>
+                {/* Gunakan % bukan vw agar tidak glitch di card preview scale */}
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[120px] mix-blend-screen aura-1" style={{ background: `radial-gradient(circle, ${highlightColor}40 0%, transparent 70%)` }}></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full blur-[150px] mix-blend-screen aura-2" style={{ background: `radial-gradient(circle, ${highlightColor}30 0%, transparent 70%)` }}></div>
                 {/* Noise Overlay for texture */}
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
             </div>
 
             {/* FLOATING NAVBAR */}
-            <motion.nav 
+            <motion.nav
                 initial={{ y: -100 }} animate={{ y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as any }}
-                className="fixed top-0 left-0 w-full z-50 glass-nav flex justify-center py-4 px-6"
+                className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} top-0 left-0 w-full z-50 glass-nav flex justify-center py-4 px-6`}
             >
                 <div className="w-full max-w-6xl flex justify-between items-center">
                     <span className="font-semibold tracking-tight text-white">{firstName} <span className="opacity-40">Portfolio</span></span>
                     <div className="flex items-center gap-6 text-sm font-medium text-slate-400">
                         <a href="#projects" className="hover:text-white transition-colors">Projects</a>
-                        <a href="#awards" className="hover:text-white transition-colors hidden md:block">Awards</a>
+                        <a href="#awards" className="hover:text-white transition-colors hidden @md:block">Awards</a>
                         <a href={`mailto:${userEmail}`} className="text-white hover:opacity-80 transition-opacity">Contact</a>
                     </div>
                 </div>
             </motion.nav>
 
-            <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col pt-32 md:pt-40">
+            <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col pt-32 @md:pt-40">
 
                 {/* HERO SECTION (Centered, Elegant) */}
-                <motion.div 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={staggerContainer}
+                <motion.div
+                    {...viewAnim} variants={staggerContainer}
                     className={`flex flex-col items-center text-center px-8`}
                 >
                     {/* Status Pill */}
@@ -166,7 +176,7 @@ export default function AuraTheme({ data, theme, isMobileView = false }: { data:
 
                     {/* Action Row & Avatar */}
                     <motion.div variants={auraAnim} className={`flex items-center justify-center gap-4 mt-12 w-full flex-row`}>
-                        
+
                         {/* Avatar Capsule */}
                         <div className="glass-panel p-1.5 pr-6 rounded-full flex items-center gap-4 hover:scale-105 transition-transform duration-500">
                             <div className="w-12 h-12 rounded-full overflow-hidden relative">
@@ -191,25 +201,31 @@ export default function AuraTheme({ data, theme, isMobileView = false }: { data:
                 </motion.div>
 
                 {/* DIVIDER */}
-                <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: false }} transition={{ duration: 1.5, ease: "easeInOut" }} className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent my-24 md:my-32"></motion.div>
+                <motion.div
+                    initial={isCardPreview ? { scaleX: 1 } : { scaleX: 0 }}
+                    whileInView={isCardPreview ? undefined : { scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.5, ease: "easeInOut" }}
+                    className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent my-24 @md:my-32"
+                ></motion.div>
 
                 {/* PROJECTS SECTION (Asymmetrical Layout) */}
                 <div id="projects" className={`flex flex-col w-full px-8 gap-12`}>
-                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={auraAnim} className="flex justify-between items-end mb-4">
+                    <motion.div {...viewAnim} variants={auraAnim} className="flex justify-between items-end mb-4">
                         <h2 className={`font-medium tracking-tight text-white text-4xl`}>Selected Works</h2>
                         <span className="text-slate-500 font-medium">({archiveItems.length})</span>
                     </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
+                    <div className="grid grid-cols-1 @md:grid-cols-12 gap-6 @md:gap-8">
                         {archiveItems.map((p: any, i: number) => {
                             // Logic Asimetris: Proyek 1 besar (8 col), Proyek 2 kecil (4 col), dst dibalik.
                             const colSpan = 'col-span-1 ' + (i % 4 === 0 || i % 4 === 3 ? '@md:col-span-7' : '@md:col-span-5');
                             const isVideo = p.projectType === 'video';
-                            
+
                             return (
                                 <motion.a
                                     href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
-                                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={auraAnim}
+                                    {...viewAnim} variants={auraAnim}
                                     className={`group flex flex-col gap-4 cursor-pointer ${colSpan}`}
                                 >
                                     {/* Image Container with deep shadow and glow on hover */}
@@ -239,7 +255,7 @@ export default function AuraTheme({ data, theme, isMobileView = false }: { data:
                     </div>
 
                     {/* Explore More Button */}
-                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: false }} variants={auraAnim} className="w-full flex justify-center mt-8">
+                    <motion.div {...viewAnim} variants={auraAnim} className="w-full flex justify-center mt-8">
                         <Link href={`/${subdomain}/gallery`} scroll={false} className="glass-panel px-8 py-4 rounded-full flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group">
                             <span className="font-medium text-white">Explore Full Archive</span>
                             <i className="fas fa-arrow-right text-sm text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all"></i>
@@ -249,28 +265,28 @@ export default function AuraTheme({ data, theme, isMobileView = false }: { data:
 
                 {/* AWARDS SECTION (Sleek List View) */}
                 {awardItems.length > 0 && (
-                    <div id="awards" className={`flex flex-col w-full mt-24 md:mt-32 px-8`}>
-                        <motion.div initial="hidden" whileInView="visible" viewport={{ once: false }} variants={auraAnim} className="mb-8">
+                    <div id="awards" className={`flex flex-col w-full mt-24 @md:mt-32 px-8`}>
+                        <motion.div {...viewAnim} variants={auraAnim} className="mb-8">
                             <h2 className={`font-medium tracking-tight text-white text-4xl`}>Recognitions</h2>
                         </motion.div>
 
                         <div className="flex flex-col border-t border-white/10">
                             {awardItems.slice(0, 5).map((award: any, i: number) => (
-                                <motion.a 
+                                <motion.a
                                     href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
-                                    initial="hidden" whileInView="visible" viewport={{ once: false }} variants={auraAnim}
+                                    {...viewAnim} variants={auraAnim}
                                     className={`flex items-center justify-between py-6 border-b border-white/5 group cursor-pointer flex-row`}
                                 >
-                                    <div className="flex items-center gap-6 w-full md:w-auto">
+                                    <div className="flex items-center gap-6 w-full @md:w-auto">
                                         <span className="text-sm font-mono text-slate-500 w-12">{award.year || new Date(award.createdAt).getFullYear()}</span>
                                         <div className="flex flex-col">
-                                            <h4 className="text-lg md:text-xl font-medium text-white group-hover:text-[var(--hl)] transition-colors">{award.title}</h4>
+                                            <h4 className="text-lg @md:text-xl font-medium text-white group-hover:text-[var(--hl)] transition-colors">{award.title}</h4>
                                             <span className="text-xs text-slate-400 mt-1">{award.issuer}</span>
                                         </div>
                                     </div>
-                                    <div className={`flex items-center justify-between w-full md:w-auto pl-16 @md:pl-0`}>
-                                        <p className="text-sm text-slate-500 line-clamp-1 max-w-xs hidden lg:block">{award.description}</p>
-                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all ml-0 md:ml-8">
+                                    <div className={`flex items-center justify-between w-full @md:w-auto pl-16 @md:pl-0`}>
+                                        <p className="text-sm text-slate-500 line-clamp-1 max-w-xs hidden @lg:block">{award.description}</p>
+                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all ml-0 @md:ml-8">
                                             <i className="fas fa-arrow-right -rotate-45 text-slate-400 group-hover:text-white transition-colors"></i>
                                         </div>
                                     </div>
@@ -281,23 +297,23 @@ export default function AuraTheme({ data, theme, isMobileView = false }: { data:
                 )}
 
                 {/* FOOTER (Massive CTA) */}
-                <motion.footer 
-                    initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={auraAnim} 
-                    className={`mt-24 md:mt-40 mb-10 glass-panel rounded-[40px] flex flex-col items-center text-center relative overflow-hidden mx-8 p-20`}
+                <motion.footer
+                    {...viewAnim} variants={auraAnim}
+                    className={`mt-24 @md:mt-40 mb-10 glass-panel rounded-[40px] flex flex-col items-center text-center relative overflow-hidden mx-8 p-20`}
                 >
                     {/* Inner Glow */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full blur-[100px] opacity-20 pointer-events-none" style={{ backgroundColor: highlightColor }}></div>
-                    
+
                     <h2 className={`font-semibold tracking-tight text-white relative z-10 text-6xl @md:text-7xl`}>
-                        Let's build something <br className="hidden md:block" />
+                        Let's build something <br className="hidden @md:block" />
                         <span className="text-slate-400">extraordinary.</span>
                     </h2>
-                    
+
                     <a href={`mailto:${userEmail}`} className="mt-10 px-8 py-4 bg-white text-black rounded-full font-semibold text-lg hover:scale-105 transition-transform duration-300 relative z-10 shadow-[0_0_30px_rgba(255,255,255,0.3)]">
                         Get in touch
                     </a>
 
-                    <div className="w-full mt-20 pt-8 border-t border-white/10 flex justify-between items-center relative z-10 flex-col md:flex-row gap-6">
+                    <div className="w-full mt-20 pt-8 border-t border-white/10 flex justify-between items-center relative z-10 flex-col @md:flex-row gap-6">
                         <div className="flex items-center gap-2 text-sm text-slate-400">
                             <div className="w-2 h-2 rounded-full bg-[var(--hl)]"></div>
                             <span>© {new Date().getFullYear()} {fullName}. All rights reserved.</span>
