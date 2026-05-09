@@ -1,20 +1,19 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
-const getYouTubeThumbnail = (url: string) => {
-    if (!url) return '';
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-    return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
-
-export default function EditorialTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
+export default function MonolithTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+    const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+    useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
 
   // --- ANIMASI STABILISASI ---
   // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
@@ -238,23 +237,36 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                 >
                     {archiveItems.map((p: any, i: number) => {
                         const isVideo = p.projectType === 'video';
-                        // Mobile = Kotak (aspect-square), Desktop = Persegi Panjang Vertikal/Landscape
                         return (
-                            <motion.a
-                                href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
+                            <motion.div
+                                key={i}
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "50px" }} variants={fadeUp}
+                                onClick={() => {
+                                    if (isVideo || p.projectType === 'photo') {
+                                        setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                                    } else if (p.mediaUrl) {
+                                        window.open(p.mediaUrl, '_blank');
+                                    }
+                                }}
                                 className={`snap-item shrink-0 relative overflow-hidden rounded-[24px] @md:rounded-[40px] group cursor-pointer border border-white/10 hover:border-white/30 transition-colors duration-500
                                 w-[85cqi] max-w-[320px] aspect-[4/5] @md:max-w-none @md:aspect-auto @md:w-[65cqi] @md:h-[75vh]`}
                             >
-                                <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100 opacity-60 group-hover:opacity-90" />
+                                <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100 opacity-60 group-hover:opacity-90" />
                                 <div className={`absolute bottom-0 left-0 w-full h-[70%] bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent @md:h-full @md:inset-0 @md:from-black @md:via-black/30`}></div>
 
-                                {/* Konten Text di Dalam Kartu */}
+                                {isVideo && (
+                                    <div className="absolute inset-0 flex items-center justify-center z-20">
+                                        <div className="w-24 h-24 rounded-full bg-[var(--hl)] text-black flex items-center justify-center transform scale-90 group-hover:scale-100 transition-all duration-500 shadow-[0_0_50px_rgba(var(--hl),0.5)]">
+                                            <i className="fas fa-play text-2xl ml-1"></i>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className={`absolute bottom-0 w-full flex flex-col justify-end transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 z-10 p-5 gap-2 @md:p-12 @md:gap-3 @md:flex-row @md:items-end @md:justify-between`}>
                                     <div className="flex flex-col gap-2">
                                         <div className="flex items-center gap-3 mb-1">
                                             <span className={`font-sans font-bold uppercase tracking-widest text-white border border-white/30 backdrop-blur-md rounded-full text-[9px] px-3 py-1 @md:text-xs @md:px-4 @md:py-1`}>0{i + 1}</span>
-                                            <span className={`font-sans font-bold uppercase tracking-widest text-[var(--hl)] text-[9px] @md:text-xs`}>{p.projectType}</span>
+                                            <span className={`font-sans font-bold uppercase tracking-widest text-[var(--hl)] text-[9px] @md:text-xs uppercase`}>{p.projectType}</span>
                                         </div>
                                         <h3 className={`font-serif text-white leading-[1.1] line-clamp-2 text-3xl @md:text-6xl @lg:text-[5cqi]`}>{p.title}</h3>
                                     </div>
@@ -268,7 +280,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                                         </div>
                                     </div>
                                 </div>
-                            </motion.a>
+                            </motion.div>
                         );
                     })}
                     {/* Spacer Kosong agar kartu terakhir bisa di-scroll sampai ke tengah dengan rapi */}
@@ -347,6 +359,60 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                 </div>
             </footer>
 
+            <AnimatePresence>
+                {selectedMedia && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-0 @md:p-12"
+                    >
+                        <div className="absolute inset-0 bg-[#050505]/95 backdrop-blur-xl" onClick={() => setSelectedMedia(null)}></div>
+                        
+                        <motion.div 
+                            initial={{ y: 100, opacity: 0, scale: 0.9 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 100, opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.6, ease: cinematicEase }}
+                            className={`relative w-full max-w-7xl bg-black shadow-[0_50px_100px_rgba(0,0,0,0.8)] border border-white/5 flex flex-col overflow-hidden @md:rounded-[40px]`}
+                        >
+                            {/* Cinematic Header */}
+                            <div className="flex justify-between items-center px-6 py-3 @md:px-10 border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent">
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--hl)]">Monolith_Vault</span>
+                                    <h3 className="font-serif text-xl @md:text-2xl text-white italic">{selectedMedia.title}</h3>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedMedia(null)} 
+                                    className="w-10 h-10 @md:w-12 @md:h-12 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all duration-500 shrink-0"
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            {/* Center Content */}
+                            <div 
+                                className="w-full bg-black relative"
+                                style={{ aspectRatio: selectedMedia.type !== 'video' ? undefined : '16/9' }}
+                            >
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] pointer-events-none"></div>
+                                {selectedMedia.type === 'video' ? (
+                                    <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                                ) : (
+                                    <div className="w-full flex items-center justify-center p-4 @md:p-12">
+                                        <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[70vh] object-contain shadow-2xl rounded-2xl border border-white/10" />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Modernist Footer */}
+                            <div className="px-6 py-3 @md:px-8 flex justify-between items-center bg-black/50 border-t border-white/5 font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                                <div className="flex items-center gap-8">
+                                    <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[var(--hl)]"></span> Cinematic_Feed</span>
+                                    <span className="hidden @md:inline">Aspect: Widescreen</span>
+                                </div>
+                                <button onClick={() => setSelectedMedia(null)} className="text-white hover:text-[var(--hl)] transition-colors tracking-[0.5em]">/ TERMINATE_VIEW</button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </main>
     );
 }

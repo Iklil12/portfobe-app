@@ -4,14 +4,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
-
-const getYouTubeThumbnail = (url: string) => {
-  if (!url) return '';
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-  return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
 
 // --- VARIANTS ANIMASI LEVEL DEWA (Dengan Koreografi Delay) ---
 const premiumEase = [0.16, 1, 0.3, 1] as const;
@@ -58,6 +55,7 @@ const getStaggerContainer = (delayStart = 0, staggerGap = 0.15) => ({
 
 export default function MinimalistTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
   const [openAward, setOpenAward] = useState<string | null>(null);
+  const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
 
   // --- ANIMASI STABILISASI ---
   // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
@@ -205,28 +203,46 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
             variants={getStaggerContainer(1.4, 0.25)}
             className={`grid grid-cols-1 gap-8 @md:grid-cols-2`}
           >
-            {archiveItems.map((p: any, i: number) => (
-              <motion.a
-                variants={cinematicBlurUp} whileHover={{ y: -8 }} transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} className="group cursor-pointer block"
-              >
-                <div className="w-full aspect-[4/3] bg-gray-100 mb-4 border border-gray-200 overflow-hidden relative">
-                  <LazyImage src={p.projectType === 'video' ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] grayscale group-hover:grayscale-0 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-black/30 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-center">
-                    <div className="w-14 h-14 bg-white flex items-center justify-center rounded-full shadow-2xl scale-50 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 delay-100 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
-                      <i className={`fas ${p.projectType === 'video' ? 'fa-play ml-1' : 'fa-arrow-right -rotate-45'} text-black`}></i>
+            {archiveItems.map((p: any, i: number) => {
+              const isVideo = p.projectType === 'video';
+              return (
+                <motion.div
+                  variants={cinematicBlurUp} whileHover={{ y: -8 }} transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                  key={i} className="group cursor-pointer block"
+                  onClick={() => {
+                    if (isVideo || p.projectType === 'photo') {
+                      setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                    } else if (p.mediaUrl) {
+                      window.open(p.mediaUrl, '_blank');
+                    }
+                  }}
+                >
+                  <div className="w-full aspect-[4/3] bg-gray-100 mb-4 border border-gray-200 overflow-hidden relative">
+                    <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] grayscale group-hover:grayscale-0 group-hover:scale-110" />
+                    <div className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
+                      ${isVideo 
+                        ? 'bg-transparent opacity-100' 
+                        : 'bg-black/30 backdrop-blur-sm opacity-0 group-hover:opacity-100'
+                      }`}>
+                      <div className={`flex items-center justify-center rounded-full shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+                        ${isVideo 
+                          ? 'w-12 h-12 bg-white/90 text-black opacity-100 scale-100 group-hover:scale-110' 
+                          : 'w-14 h-14 bg-white text-black opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 delay-100'
+                        }`}>
+                        <i className={`fas ${isVideo ? 'fa-play ml-1' : 'fa-arrow-right -rotate-45'}`}></i>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex justify-between items-start mt-4">
-                  <div>
-                    <h3 className="text-base font-bold tracking-tight mb-1 min-heading group-hover:text-gray-600 transition-colors">{p.title}</h3>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{p.projectType}</p>
+                  <div className="flex justify-between items-start mt-4">
+                    <div>
+                      <h3 className="text-base font-bold tracking-tight mb-1 min-heading group-hover:text-gray-600 transition-colors">{p.title}</h3>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{p.projectType}</p>
+                    </div>
+                    <span className="text-[10px] font-mono text-gray-400 pt-1 group-hover:text-black transition-colors">0{i + 1}</span>
                   </div>
-                  <span className="text-[10px] font-mono text-gray-400 pt-1 group-hover:text-black transition-colors">0{i + 1}</span>
-                </div>
-              </motion.a>
-            ))}
+                </motion.div>
+              );
+            })}
           </motion.div>
           {/* --- MINIMALIST EXPLORE BUTTON --- */}
           <motion.div
@@ -304,8 +320,56 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
           <p className="text-[10px] font-mono text-gray-500">© 2026 {fullName}. All Rights Reserved.</p>
           <span className="text-[10px] font-bold uppercase tracking-widest text-black min-heading">portfo.be/{subdomain}</span>
         </motion.footer>
-
       </main>
+
+      {/* --- MEDIA PLAYER MODAL --- */}
+      <AnimatePresence>
+        {selectedMedia && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] bg-white/95 backdrop-blur-xl flex items-center justify-center p-4 @md:p-10"
+          >
+            <div className="max-w-5xl w-full flex flex-col gap-6">
+              <div className="flex justify-between items-center px-2">
+                <div>
+                  <h3 className="text-xl font-black tracking-tighter uppercase min-heading">{selectedMedia.title}</h3>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-1">
+                    {selectedMedia.type === 'video' ? 'Cinematic Presentation' : 'Visual Showcase'}
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setSelectedMedia(null)}
+                  className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:scale-110 transition-transform active:scale-95 shadow-lg"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+
+              <motion.div 
+                initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
+                className={`w-full ${selectedMedia.type === 'video' ? 'aspect-video bg-black' : 'max-h-[70vh] overflow-hidden bg-gray-50'} shadow-2xl rounded-sm relative flex items-center justify-center border border-gray-100`}
+              >
+                {selectedMedia.type === 'video' ? (
+                  <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center p-2 sm:p-4">
+                    <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[65vh] object-contain shadow-sm" />
+                  </div>
+                )}
+              </motion.div>
+
+              <div className="flex justify-center mt-4">
+                <button 
+                  onClick={() => setSelectedMedia(null)}
+                  className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 hover:text-black transition-colors"
+                >
+                  [ CLOSE {selectedMedia.type === 'video' ? 'PLAYER' : 'PREVIEW'} ]
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

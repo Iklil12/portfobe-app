@@ -4,17 +4,16 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
-const getYouTubeThumbnail = (url: string) => {
-    if (!url) return '';
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-    return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
-
 export default function AcidTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [openAward, setOpenAward] = useState<string | null>(null);
+    const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+    useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
 
   // --- ANIMASI STABILISASI ---
   // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
@@ -258,11 +257,17 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                     {archiveItems.length > 0 ? archiveItems.map((p: any, i: number) => {
                         const isVideo = p.projectType === 'video';
                         return (
-                            <motion.a 
+                            <motion.div 
                                 key={`proj-${p.id || i}`}
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, margin: "50px" }} variants={fadeUp}
-                                href={p.projectUrl || p.mediaUrl || '#'} target="_blank" rel="noreferrer"
                                 className={`project-item relative w-full flex justify-between cursor-pointer flex-col py-6 px-6 @md:flex-row @md:items-center @md:py-12 @md:px-12`}
+                                onClick={() => {
+                                    if (isVideo || p.projectType === 'photo') {
+                                        setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                                    } else if (p.mediaUrl) {
+                                        window.open(p.mediaUrl, '_blank');
+                                    }
+                                }}
                             >
                                 <div className="flex flex-col relative z-10 pointer-events-none">
                                     <span className="font-bold text-[10px] @md:text-xs uppercase tracking-[0.2em] mb-2 opacity-70 acid-body">0{i + 1} / {p.projectType}</span>
@@ -271,14 +276,32 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                                 <div className={`font-bold uppercase tracking-widest opacity-70 acid-body relative z-10 pointer-events-none mt-3 text-[10px] @md:mt-0 @md:text-sm`}>
                                     {p.description || 'View details'} • {new Date(p.createdAt).getFullYear()}
                                 </div>
+
+                                {/* Video Indicator (Neon Clear Play) */}
+                                {isVideo && (
+                                    <div className="absolute right-[20%] top-1/2 -translate-y-1/2 hidden @md:flex items-center gap-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <div className="w-12 h-12 flex items-center justify-center border-2 border-current" style={{ color: themeColor }}>
+                                            <i className="fas fa-play"></i>
+                                        </div>
+                                        <span className="font-bold text-xs tracking-widest uppercase acid-body">Play_Preview</span>
+                                    </div>
+                                )}
+
                                 {/* Mobile Inline Image */}
                                 <div className={`block @md:hidden mt-6 w-full aspect-[16/9] relative z-10 overflow-hidden border-2 border-zinc-800`}>
-                                    <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale" />
+                                    <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale" />
+                                    {isVideo && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                            <div className="w-12 h-12 flex items-center justify-center border-2 border-white text-white">
+                                                <i className="fas fa-play"></i>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Desktop Hover Image */}
-                                <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className={`hover-img hidden @md:block grayscale object-cover`} />
-                            </motion.a>
+                                <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className={`hover-img hidden @md:block grayscale object-cover`} />
+                            </motion.div>
                         )
                     }) : <div className="py-20 text-center text-zinc-600 font-bold text-xs uppercase tracking-widest acid-body">SYSTEM: NO_DATA_FOUND</div>}
                 </div>
@@ -382,6 +405,70 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                 </motion.div>
             </motion.footer>
 
+            {/* ACID MEDIA MODAL */}
+            <AnimatePresence>
+                {selectedMedia && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 @md:p-10"
+                    >
+                        {/* High Contrast Backdrop */}
+                        <div className="absolute inset-0 bg-[#09090b]/95" onClick={() => setSelectedMedia(null)}>
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--theme-color)] to-transparent opacity-50" style={{ '--theme-color': themeColor } as any}></div>
+                        </div>
+
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0, x: -20 }} animate={{ scale: 1, opacity: 1, x: 0 }} exit={{ scale: 1.1, opacity: 0, x: 20 }}
+                            className={`relative w-full max-w-5xl bg-[#09090b] border-4 border-white shadow-[10px_10px_0px_var(--theme-color)] flex flex-col overflow-hidden`}
+                            style={{ '--theme-color': themeColor } as any}
+                        >
+                            {/* Neon Header */}
+                            <div className="flex justify-between items-center p-4 @md:p-8 bg-white text-[#09090b] relative z-10">
+                                <div className="flex flex-col">
+                                    <span className="font-bold uppercase tracking-[0.3em] acid-body text-[10px] mb-1">SYSTEM://MEDIA_PLAYER</span>
+                                    <h3 className="acid-heading font-extrabold uppercase tracking-tighter text-2xl @md:text-4xl">{selectedMedia.title}</h3>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedMedia(null)}
+                                    className="w-12 h-12 bg-[#09090b] text-white flex items-center justify-center hover:bg-[var(--theme-color)] hover:text-black transition-colors transform -skew-x-12"
+                                    style={{ '--theme-color': themeColor } as any}
+                                >
+                                    <i className="fas fa-times text-xl"></i>
+                                </button>
+                            </div>
+
+                            {/* Player Area */}
+                            <motion.div 
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                                className={`relative w-full ${selectedMedia.type === 'video' ? 'aspect-video' : 'max-h-[60vh]'} bg-zinc-900 border-y-4 border-white flex items-center justify-center p-2 @md:p-4`}
+                            >
+                                {selectedMedia.type === 'video' ? (
+                                    <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-black/40">
+                                        <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[55vh] object-contain grayscale hover:grayscale-0 transition-all duration-500" />
+                                    </div>
+                                )}
+                            </motion.div>
+
+                            {/* Neon Footer */}
+                            <div className="p-4 flex justify-between items-center bg-[#09090b] px-6 @md:px-10">
+                                <div className="flex items-center gap-4 hidden @md:flex">
+                                    <div className="w-3 h-3 acid-bg animate-ping"></div>
+                                    <span className="acid-body text-[10px] font-bold uppercase tracking-widest text-white/40">Live_Stream_Active</span>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedMedia(null)}
+                                    className="acid-body text-[10px] font-bold uppercase tracking-[0.5em] text-white hover:text-[var(--theme-color)] transition-colors"
+                                    style={{ '--theme-color': themeColor } as any}
+                                >
+                                    TERMINATE_PREVIEW [ESC]
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

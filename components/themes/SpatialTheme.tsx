@@ -5,17 +5,16 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
-const getYouTubeThumbnail = (url: string) => {
-    if (!url) return '';
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-    return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
-
 export default function AuraTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+    const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+    useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
 
     // --- ANIMASI STABILISASI ---
     // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
@@ -84,7 +83,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        .spatial-theme * { font-family: 'Inter', sans-serif; }
+        .spatial-theme *:not(i):not(.fa):not(.fas):not(.far):not(.fab) { font-family: 'Inter', sans-serif !important; }
         
         /* Glassmorphism Mewah */
         .glass-panel {
@@ -218,24 +217,39 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
 
                     <div className="grid grid-cols-1 @md:grid-cols-12 gap-6 @md:gap-8">
                         {archiveItems.map((p: any, i: number) => {
-                            // Logic Asimetris: Proyek 1 besar (8 col), Proyek 2 kecil (4 col), dst dibalik.
                             const colSpan = 'col-span-1 ' + (i % 4 === 0 || i % 4 === 3 ? '@md:col-span-7' : '@md:col-span-5');
                             const isVideo = p.projectType === 'video';
 
                             return (
-                                <motion.a
-                                    href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
+                                <motion.div
+                                    key={i}
                                     {...viewAnim} variants={auraAnim}
                                     className={`group flex flex-col gap-4 cursor-pointer ${colSpan}`}
+                                    onClick={() => {
+                                        if (isVideo || p.projectType === 'photo') {
+                                            setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                                        } else if (p.mediaUrl) {
+                                            window.open(p.mediaUrl, '_blank');
+                                        }
+                                    }}
                                 >
                                     {/* Image Container with deep shadow and glow on hover */}
                                     <div className="w-full aspect-[4/3] rounded-[24px] overflow-hidden relative glass-panel p-2 transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(var(--hl-rgb),0.15)] group-hover:border-[var(--hl)]/30">
                                         <div className="w-full h-full rounded-[16px] overflow-hidden relative bg-[#0a0a0a]">
-                                            <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" />
-                                            {/* Hover Overlay */}
-                                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-[2px]">
-                                                <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                                                    <i className="fas fa-arrow-right -rotate-45 text-white"></i>
+                                            <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" />
+                                            
+                                            {/* Hover Overlay adapted for Spatial (Clear for video, Blur for photo) */}
+                                            <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500
+                                                ${isVideo 
+                                                    ? 'bg-transparent opacity-100' 
+                                                    : 'bg-black/20 backdrop-blur-[2px] opacity-0 group-hover:opacity-100'
+                                                }`}>
+                                                <div className={`rounded-full flex items-center justify-center border transition-all duration-500
+                                                    ${isVideo
+                                                        ? 'w-12 h-12 bg-white/10 backdrop-blur-md border-white/20 scale-100 group-hover:scale-110 group-hover:bg-white/20'
+                                                        : 'w-14 h-14 bg-white/10 backdrop-blur-md border-white/20 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100'
+                                                    }`}>
+                                                    <i className={`fas ${isVideo ? 'fa-play ml-1' : 'fa-arrow-right -rotate-45'} text-white`}></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -249,7 +263,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                         </div>
                                         <p className="text-sm text-slate-400 line-clamp-2 mt-2 leading-relaxed">{p.description || 'View detailed case study of this project.'}</p>
                                     </div>
-                                </motion.a>
+                                </motion.div>
                             );
                         })}
                     </div>
@@ -328,6 +342,65 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                     </div>
                 </motion.footer>
 
+                {/* --- SPATIAL MEDIA MODAL --- */}
+                <AnimatePresence>
+                    {selectedMedia && (
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[100] flex items-center justify-center p-4 @md:p-10"
+                        >
+                            {/* Backdrop with Aura Glow */}
+                            <div className="absolute inset-0 bg-[#020202]/90 backdrop-blur-2xl" onClick={() => setSelectedMedia(null)}>
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full blur-[180px] opacity-20 pointer-events-none" style={{ background: `radial-gradient(circle, ${highlightColor} 0%, transparent 70%)` }}></div>
+                            </div>
+
+                            <motion.div 
+                                initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                                className="relative w-full max-w-5xl glass-panel p-4 @md:p-8 rounded-[32px] border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.5)] flex flex-col gap-6 overflow-hidden"
+                                style={{ border: `1px solid ${highlightColor}20` } as any}
+                            >
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-[1px] opacity-50" style={{ background: `linear-gradient(90deg, transparent, ${highlightColor}, transparent)` }}></div>
+                                <div className="flex justify-between items-center relative z-10 px-2">
+                                    <div className="flex flex-col text-left">
+                                        <h3 className="text-2xl font-semibold tracking-tight text-white">{selectedMedia.title}</h3>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--hl)]"></div>
+                                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 text-left">
+                                                {selectedMedia.type === 'video' ? 'Spatial Video Stream' : 'Visual Masterpiece'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => setSelectedMedia(null)}
+                                        className="w-12 h-12 rounded-full glass-panel flex items-center justify-center hover:bg-white/10 transition-colors group"
+                                    >
+                                        <i className="fas fa-times text-slate-400 group-hover:text-white transition-colors"></i>
+                                    </button>
+                                </div>
+                                <motion.div 
+                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                                    className={`relative w-full ${selectedMedia.type === 'video' ? 'aspect-video' : 'max-h-[60vh]'} rounded-2xl overflow-hidden bg-black/40 border border-white/5 flex items-center justify-center`}
+                                >
+                                    {selectedMedia.type === 'video' ? (
+                                        <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center p-2">
+                                            <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[55vh] object-contain rounded-lg" />
+                                        </div>
+                                    )}
+                                </motion.div>
+                                <div className="flex justify-center relative z-10 pb-2">
+                                    <button 
+                                        onClick={() => setSelectedMedia(null)}
+                                        className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-500 hover:text-[var(--hl)] transition-colors"
+                                    >
+                                        CLOSE ESCAPE
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </main>
     );

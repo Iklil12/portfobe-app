@@ -13,6 +13,10 @@ export const LazyImage = ({ src, alt, className }: { src: string, alt: string, c
         alt={alt}
         loading="lazy"
         onLoad={() => setIsLoaded(true)}
+        onError={(e) => {
+          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop";
+          setIsLoaded(true);
+        }}
         className={`
           ${className || ''} 
           ${!className?.includes('absolute') && !className?.includes('fixed') ? 'relative' : ''} 

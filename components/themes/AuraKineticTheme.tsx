@@ -1,20 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
-const getYouTubeThumbnail = (url: string) => {
-    if (!url) return '';
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-    return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
-
 export default function AuraKineticTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+    const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+    useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
 
   // --- ANIMASI STABILISASI ---
   // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
@@ -195,54 +194,59 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                     Selected Works
                 </motion.h2>
 
-                {/* Grid Masonry-style yang responsif */}
                 <div className="grid grid-cols-1 @md:grid-cols-2 gap-6 @md:gap-10">
                     {archiveItems.map((p: any, i: number) => {
                         const isVideo = p.projectType === 'video';
-                        // Membesarkan kartu pertama dan keempat untuk kesan asimetris
                         const isLarge = i === 0 || i === 3;
 
                         return (
-                            <motion.a
-                                href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
+                            <motion.div
+                                key={i}
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
-                                className={`group relative block w-full ${isLarge ? '@md:col-span-2' : '@md:col-span-1'}`}
+                                className={`group relative block w-full cursor-pointer ${isLarge ? '@md:col-span-2' : '@md:col-span-1'}`}
+                                onClick={() => {
+                                    if (isVideo || p.projectType === 'photo') {
+                                        setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                                    } else if (p.mediaUrl) {
+                                        window.open(p.mediaUrl, '_blank');
+                                    }
+                                }}
                             >
-                                {/* Card Glassmorphism */}
                                 <div className={`relative w-full ${isLarge ? 'aspect-video @md:aspect-[21/9]' : 'aspect-video @md:aspect-[4/3]'} ${radiusClass} overflow-hidden bg-white/5 border border-white/10 backdrop-blur-xl p-2 transition-all duration-500 hover:border-white/20 hover:bg-white/10`}>
-
-                                    {/* Inner Image Container */}
                                     <div className={`relative w-full h-full ${radiusClass} overflow-hidden bg-[#0a0a0c]`}>
                                         <LazyImage
-                                            src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl}
+                                            src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl}
                                             alt={p.title}
-                                            // Efek Hover Gambar: scale up & brightness naik
                                             className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-[1.05] transition-all duration-700 ease-out"
                                         />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:opacity-40 transition-opacity duration-500"></div>
 
-                                        {/* Overlay Gradient (menghilang saat dihover) */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:opacity-0 transition-opacity duration-500"></div>
+                                        {isVideo && (
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-white/20 transition-all duration-500">
+                                                    <i className="fas fa-play text-white ml-1"></i>
+                                                </div>
+                                            </div>
+                                        )}
 
-                                        {/* Text Info (Slide up saat hover) */}
                                         <div className="absolute bottom-0 left-0 w-full p-6 @md:p-8 flex justify-between items-end transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
                                             <div className="flex flex-col">
                                                 <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-[var(--hl)] mb-2 drop-shadow-md">{p.projectType}</span>
                                                 <h3 className="font-serif text-2xl @md:text-4xl font-bold text-white drop-shadow-lg">{p.title}</h3>
                                             </div>
-
-                                            {/* Circular Button Interaktif */}
-                                            <div className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transform rotate-[-45deg] group-hover:rotate-0 transition-all duration-500 ease-out shadow-xl">
-                                                <i className="fas fa-arrow-right"></i>
-                                            </div>
+                                            {!isVideo && (
+                                                <div className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transform rotate-[-45deg] group-hover:rotate-0 transition-all duration-500 ease-out shadow-xl">
+                                                    <i className="fas fa-arrow-right"></i>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
-                            </motion.a>
+                            </motion.div>
                         );
                     })}
                 </div>
 
-                {/* Explore Full Gallery Button */}
                 <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="mt-16 flex justify-center">
                     <Link href={`/${subdomain}/gallery`} scroll={false} className={`group relative inline-flex items-center justify-center gap-4 px-8 py-4 bg-white/5 border border-white/10 hover:border-[var(--hl)] backdrop-blur-md transition-all duration-300 ${radiusClass} overflow-hidden shadow-lg`}>
                         <div className="absolute inset-0 bg-[var(--hl)] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
@@ -341,6 +345,62 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                     </div>
                 </div>
             </footer>
+
+            {/* ================= KINETIC MEDIA MODAL ================= */}
+            <AnimatePresence>
+                {selectedMedia && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 @md:p-10"
+                    >
+                        <motion.div 
+                            initial={{ backdropFilter: "blur(0px)" }} animate={{ backdropFilter: "blur(20px)" }}
+                            className="absolute inset-0 bg-black/80" onClick={() => setSelectedMedia(null)}
+                        ></motion.div>
+
+                        <motion.div 
+                            initial={{ scale: 0.8, opacity: 0, rotateX: 20 }} animate={{ scale: 1, opacity: 1, rotateX: 0 }} exit={{ scale: 0.8, opacity: 0, rotateX: 20 }}
+                            transition={{ type: "spring", stiffness: 150, damping: 20 }}
+                            className={`relative w-full max-w-5xl bg-[#121214] border border-white/10 shadow-[0_32px_64px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden ${radiusClass}`}
+                        >
+                            <div className="flex justify-between items-center p-6 @md:p-8 border-b border-white/5 relative z-10">
+                                <div className="flex flex-col text-left">
+                                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-1">Aura Kinetic Player</span>
+                                    <h3 className="font-serif text-2xl @md:text-3xl font-bold text-white">{selectedMedia.title}</h3>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedMedia(null)}
+                                    className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors group"
+                                >
+                                    <i className="fas fa-times text-white group-hover:rotate-90 transition-transform duration-300"></i>
+                                </button>
+                            </div>
+
+                            <motion.div 
+                                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                                className={`relative w-full ${selectedMedia.type === 'video' ? 'aspect-video' : 'max-h-[60vh]'} bg-black/50 flex items-center justify-center p-4`}
+                            >
+                                {selectedMedia.type === 'video' ? (
+                                    <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[55vh] object-contain rounded-lg shadow-2xl" />
+                                    </div>
+                                )}
+                            </motion.div>
+
+                            <div className="p-4 flex justify-center bg-white/[0.02]">
+                                <button 
+                                    onClick={() => setSelectedMedia(null)}
+                                    className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-white/30 hover:text-[var(--hl)] transition-colors"
+                                >
+                                    CLOSE KINETIC
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </main>
     );
 }

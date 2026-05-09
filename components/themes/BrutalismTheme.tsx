@@ -5,17 +5,16 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
-const getYouTubeThumbnail = (url: string) => {
-  if (!url) return '';
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-  return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
-
 export default function BrutalismTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
   const [openAward, setOpenAward] = useState<string | null>(null);
+  const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+  useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
   const [isContactOpen, setIsContactOpen] = useState(false);
 
   const pathname = usePathname();
@@ -291,9 +290,16 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
               const isOdd = i % 2 !== 0;
 
               return (
-                <motion.a
+                <motion.div
                   variants={starkReveal}
-                  href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
+                  key={i}
+                  onClick={() => {
+                    if (isVideo || p.projectType === 'photo') {
+                      setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                    } else if (p.mediaUrl) {
+                      window.open(p.mediaUrl, '_blank');
+                    }
+                  }}
                   className={`group flex flex-col bg-white border-b-[3px] border-black ${!isOdd ? '@md:border-r-[3px]' : ''} cursor-pointer brutal-theme-item brutal-hover-invert transition-none`}
                 >
                   {/* Header Kartu */}
@@ -306,13 +312,13 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
                   <div className={"w-full aspect-video border-b-[3px] border-black bg-gray-200 relative overflow-hidden group-hover:border-white transition-none p-4 @sm:p-6 bg-[#f4f4f0]"}>
                     <div className={`w-full h-full border-[3px] border-black bg-white overflow-hidden relative group-hover:border-white ${hardShadow} ${radiusClass}`}>
                       <LazyImage
-                        src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl}
+                        src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl}
                         className="w-full h-full object-cover grayscale contrast-125 mix-blend-multiply opacity-80 group-hover:grayscale-0 group-hover:mix-blend-normal group-hover:opacity-100 transition-all duration-300"
                         alt={p.title}
                       />
                       {isVideo && (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="bg-[var(--hl)] text-black border-[3px] border-black px-6 py-2 font-mono font-bold text-xs shadow-[4px_4px_0px_0px_#000]">PLAY_VIDEO</div>
+                          <div className="bg-[var(--hl)] text-black border-[3px] border-black px-6 py-2 font-mono font-bold text-xs shadow-[4px_4px_0px_0px_#000] group-hover:bg-white transition-colors">PLAY_PREVIEW</div>
                         </div>
                       )}
                     </div>
@@ -325,7 +331,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
                       &gt; {p.description || 'NO ADDITIONAL DATA PROVIDED FOR THIS RECORD.'}
                     </p>
                   </div>
-                </motion.a>
+                </motion.div>
               );
             }) : (
               <div className={`col-span-2 p-12 text-center font-mono text-sm font-bold uppercase bg-black text-white`}>
@@ -432,6 +438,71 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
         </motion.footer>
 
       </div>
+      {/* BRUTAL MEDIA MODAL */}
+      <AnimatePresence>
+        {selectedMedia && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center p-4 @md:p-10"
+          >
+            {/* Raw Backdrop */}
+            <div className="absolute inset-0 bg-[#f4f4f0]/90 backdrop-blur-sm" onClick={() => setSelectedMedia(null)}></div>
+
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, rotate: -1 }} animate={{ scale: 1, opacity: 1, rotate: 0 }} exit={{ scale: 0.9, opacity: 0, rotate: 1 }}
+              className={`relative w-full max-w-5xl bg-white border-[4px] border-black shadow-[12px_12px_0px_0px_#000] flex flex-col overflow-hidden ${radiusClass}`}
+            >
+              {/* Industrial Header */}
+              <div className="flex justify-between items-center p-4 @md:p-8 border-b-[4px] border-black bg-[var(--hl)] text-black relative z-10">
+                <div className="flex flex-col">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] bg-black text-white px-2 py-0.5 w-max mb-2">RECORD_VIEWER</span>
+                  <h3 className="custom-heading font-black uppercase tracking-tighter text-2xl @md:text-4xl">{selectedMedia.title}</h3>
+                </div>
+                <button 
+                  onClick={() => setSelectedMedia(null)}
+                  className="w-14 h-14 bg-black text-white flex items-center justify-center hover:bg-white hover:text-black border-l-[4px] border-black transition-none group"
+                >
+                  <i className="fas fa-times text-xl group-hover:rotate-90 transition-transform duration-200"></i>
+                </button>
+              </div>
+
+              {/* Player / Content */}
+              <motion.div 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+                className={`relative w-full ${selectedMedia.type === 'video' ? 'aspect-video' : 'max-h-[60vh]'} bg-gray-100 flex items-center justify-center p-4 border-b-[4px] border-black`}
+              >
+                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #000 2px, transparent 2.5px)', backgroundSize: '20px 20px' }}></div>
+                
+                {selectedMedia.type === 'video' ? (
+                  <div className={`w-full h-full border-[4px] border-black ${hardShadow} bg-black`}>
+                    <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                  </div>
+                ) : (
+                  <div className={`w-full h-full flex items-center justify-center bg-white border-[4px] border-black ${hardShadow}`}>
+                    <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[50vh] object-contain grayscale hover:grayscale-0 transition-all duration-500 p-2" />
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Bottom Info Bar */}
+              <div className="p-4 flex justify-between items-center bg-white px-6 @md:px-10 font-mono">
+                <div className="flex items-center gap-4 hidden @md:flex">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-black/40">BUFFERING_READY</span>
+                  <div className="w-20 h-2 bg-gray-200 border border-black">
+                    <div className="w-3/4 h-full bg-black"></div>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setSelectedMedia(null)}
+                  className="text-[10px] font-bold uppercase tracking-[0.5em] text-black hover:bg-black hover:text-white px-4 py-2 transition-none border-2 border-transparent hover:border-black"
+                >
+                  DISCONNECT_X
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

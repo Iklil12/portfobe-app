@@ -4,17 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
-const getYouTubeThumbnail = (url: string) => {
-    if (!url) return '';
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-    return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
-
-export default function NexusTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
+export default function SplitTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+    const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+    useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
 
   // --- ANIMASI STABILISASI ---
   // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
@@ -214,10 +213,16 @@ export default function NexusTheme({ data, theme, isMobileView = false, isCardPr
                                             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                             onMouseEnter={() => setHoveredProject(i)}
                                             onMouseLeave={() => setHoveredProject(null)}
+                                            onClick={() => {
+                                                if (isVideo || p.projectType === 'photo') {
+                                                    setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                                                } else if (p.mediaUrl) {
+                                                    window.open(p.mediaUrl, '_blank');
+                                                }
+                                            }}
                                             className={`relative w-full border-t nexus-border group cursor-pointer px-6 py-6 @md:px-12 @md:py-10`}
                                         >
-                                            <a href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" className="flex flex-col w-full relative z-10">
-                                                
+                                            <div className="flex flex-col w-full relative z-10">
                                                 <div className="flex justify-between items-start w-full">
                                                     <div className="flex flex-col gap-2">
                                                         <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500 group-hover:text-[var(--hl)] transition-colors">
@@ -235,32 +240,41 @@ export default function NexusTheme({ data, theme, isMobileView = false, isCardPr
                                                 </div>
 
                                                 {/* Mobile Image Reveal (Inline) */}
-                                                { (
-                                                    <div className="w-full aspect-[16/9] rounded-xl overflow-hidden mt-6 border nexus-border @md:hidden">
-                                                        <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover" />
-                                                    </div>
-                                                )}
-
-                                            </a>
+                                                <div className="w-full aspect-[16/9] rounded-xl overflow-hidden mt-6 border nexus-border @md:hidden relative">
+                                                    <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover" />
+                                                    {isVideo && (
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                                            <div className="w-12 h-12 rounded-full bg-[var(--hl)] flex items-center justify-center text-white">
+                                                                <i className="fas fa-play text-xs ml-0.5"></i>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
 
                                             {/* Desktop Image Reveal (Floating) */}
-                                            { (
-                                                <AnimatePresence>
-                                                    <div className="hidden @md:block">
+                                            <AnimatePresence>
+                                                <div className="hidden @md:block">
                                                     {isHovered && (
                                                         <motion.div 
-                                                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                                                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                                                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                                            initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
                                                             transition={{ duration: 0.3 }}
                                                             className="absolute right-[15%] top-1/2 -translate-y-1/2 w-[320px] aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl z-0 pointer-events-none border border-white/20"
                                                         >
-                                                            <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover" />
+                                                            <div className="relative w-full h-full">
+                                                                <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover" />
+                                                                {isVideo && (
+                                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                                                                        <div className="w-14 h-14 rounded-full border-2 border-white/30 backdrop-blur-sm flex items-center justify-center text-white">
+                                                                            <i className="fas fa-play text-lg ml-1"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                         </motion.div>
                                                     )}
                                                 </div>
-                                                </AnimatePresence>
-                                            )}
+                                            </AnimatePresence>
                                         </motion.div>
                                     );
                                 })}
@@ -342,6 +356,62 @@ export default function NexusTheme({ data, theme, isMobileView = false, isCardPr
                     </div>
                 </div>
             </div>
+            <AnimatePresence>
+                {selectedMedia && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 @md:p-12"
+                    >
+                        <div className="absolute inset-0 bg-[#050505]/95 backdrop-blur-md" onClick={() => setSelectedMedia(null)}></div>
+                        
+                        <motion.div 
+                            initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }}
+                            className={`relative w-full max-w-6xl bg-[#0a0a0a] border nexus-border shadow-2xl flex flex-col overflow-hidden ${radiusClass}`}
+                        >
+                            {/* Blueprint Header */}
+                            <div className="flex justify-between items-center px-5 py-3 @md:px-8 border-b nexus-border bg-white/5">
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-[var(--hl)]">Technical_Overlay // 0.1</span>
+                                    <h3 className="font-display font-bold text-xl @md:text-2xl text-white uppercase tracking-tight">{selectedMedia.title}</h3>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedMedia(null)} 
+                                    className="w-10 h-10 flex items-center justify-center border nexus-border text-white hover:bg-white hover:text-black transition-all duration-300 shrink-0"
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            {/* Main Content Area */}
+                            <div 
+                                className="w-full bg-black relative overflow-hidden"
+                                style={{ aspectRatio: selectedMedia.type !== 'video' ? undefined : '16/9' }}
+                            >
+                                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+                                {selectedMedia.type === 'video' ? (
+                                    <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                                ) : (
+                                    <div className="w-full flex items-center justify-center p-4 @md:p-12">
+                                        <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[70vh] object-contain shadow-2xl border nexus-border" />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Industrial Footer */}
+                            <div className="px-4 py-3 @md:px-6 flex justify-between items-center bg-white/5 border-t nexus-border font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                                <div className="flex items-center gap-10">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-[var(--hl)] shadow-[0_0_10px_var(--hl)]"></div>
+                                        <span>System_Active</span>
+                                    </div>
+                                    <span className="hidden @md:inline opacity-40">Blueprint_Ref: #{Math.floor(Math.random() * 90000) + 10000}</span>
+                                </div>
+                                <button onClick={() => setSelectedMedia(null)} className="text-white hover:text-[var(--hl)] transition-colors">/ Close_Stream</button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </main>
     );
 }

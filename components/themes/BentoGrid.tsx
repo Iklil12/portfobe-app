@@ -1,20 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
-const getYouTubeThumbnail = (url: string) => {
-    if (!url) return '';
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-    return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
-
 export default function BentoTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+    const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+    useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
 
   // --- ANIMASI STABILISASI ---
   // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
@@ -269,14 +268,29 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                     const isVideo = p.projectType === 'video';
                     
                     return (
-                        <motion.a
-                            href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
+                        <motion.div
+                            key={i}
                             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim}
-                            className={`bento-card p-2 @md:p-3 group relative overflow-hidden flex flex-col justify-end ${spanClass}`}
+                            onClick={() => {
+                                if (isVideo || p.projectType === 'photo') {
+                                    setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                                } else if (p.mediaUrl) {
+                                    window.open(p.mediaUrl, '_blank');
+                                }
+                            }}
+                            className={`bento-card p-2 @md:p-3 group relative overflow-hidden flex flex-col justify-end cursor-pointer ${spanClass}`}
                         >
                             <div className="w-full h-full rounded-[1.25rem] overflow-hidden relative">
-                                <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="absolute inset-0 w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]" />
+                                <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="absolute inset-0 w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#000] via-[#000]/40 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-700"></div>
+
+                                {isVideo && (
+                                    <div className="absolute inset-0 flex items-center justify-center z-20">
+                                        <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-[var(--hl)] group-hover:border-transparent transition-all duration-500">
+                                            <i className="fas fa-play text-white text-lg ml-1"></i>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="absolute bottom-0 left-0 w-full p-6 @lg:p-8 flex flex-col gap-2 z-10 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                                     <div className="flex justify-between items-center w-full mb-1">
@@ -288,7 +302,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                                     <h3 className="text-2xl @md:text-3xl font-black text-white line-clamp-2 leading-tight">{p.title}</h3>
                                 </div>
                             </div>
-                        </motion.a>
+                        </motion.div>
                     );
                 })}
 
@@ -303,7 +317,11 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                         </h3>
                         <div className={`grid gap-4 grid-cols-2 @lg:grid-cols-4`}>
                             {awardItems.slice(0, 4).map((award: any, i: number) => (
-                                <a href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} className="bg-[#1a1a1d] border border-white/5 rounded-[24px] flex flex-col gap-4 p-4 hover:bg-white/5 transition-colors group cursor-pointer overflow-hidden">
+                                <div
+                                    key={i}
+                                    onClick={() => award.mediaUrl && setSelectedMedia({ url: award.mediaUrl, title: award.title, type: 'certificate' })}
+                                    className="bg-[#1a1a1d] border border-white/5 rounded-[24px] flex flex-col gap-4 p-4 hover:bg-white/5 transition-colors group cursor-pointer overflow-hidden"
+                                >
                                     <div className="w-full aspect-video rounded-xl overflow-hidden bg-black relative border border-white/5">
                                         <LazyImage src={award.mediaUrl} alt={award.title} className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110" />
                                     </div>
@@ -311,7 +329,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                                         <h4 className="text-sm font-bold text-white line-clamp-2 leading-snug group-hover:text-[var(--hl)] transition-colors">{award.title}</h4>
                                         <p className="text-[10px] text-slate-500 mt-2 uppercase tracking-widest font-bold">{award.issuer}</p>
                                     </div>
-                                </a>
+                                </div>
                             ))}
                         </div>
                     </motion.div>
@@ -338,6 +356,44 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                 </motion.footer>
 
             </div>
+
+            <AnimatePresence>
+                {selectedMedia && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 @md:p-10"
+                    >
+                        <div className="absolute inset-0 bg-[#09090b]/90 backdrop-blur-xl" onClick={() => setSelectedMedia(null)}></div>
+                        <motion.div
+                            initial={{ y: 30, opacity: 0, scale: 0.95 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 30, opacity: 0, scale: 0.95 }}
+                            transition={{ type: 'spring', stiffness: 90, damping: 20 }}
+                            className="relative w-full max-w-6xl bento-card flex flex-col overflow-hidden rounded-[32px]"
+                        >
+                            <div className="flex justify-between items-center px-5 py-3 @md:px-8 border-b border-white/5 bg-[#121214]">
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--hl)]">Now Playing</span>
+                                    <h3 className="text-lg @md:text-xl font-black text-white leading-tight">{selectedMedia.title}</h3>
+                                </div>
+                                <button onClick={() => setSelectedMedia(null)} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all duration-300 shrink-0">
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div 
+                                className="w-full bg-black"
+                                style={{ aspectRatio: selectedMedia.type !== 'video' ? undefined : '16/9' }}
+                            >
+                                {selectedMedia.type === 'video' ? (
+                                    <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                                ) : (
+                                    <div className="w-full flex items-center justify-center p-4 @md:p-10">
+                                        <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[70vh] object-contain rounded-2xl shadow-2xl" />
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </main>
     );
 }

@@ -4,10 +4,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { LazyImage } from '@/components/ui/LazyImage';
 
-const getYouTubeThumbnail = (url: string) => {
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-  return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
+import { getVideoThumbnail } from '@/lib/videoUtils';
 
 // Komponen card yang animasinya dipicu IntersectionObserver
 function AnimatedCard({ children, delay }: { children: React.ReactNode, delay: number }) {
@@ -107,7 +104,7 @@ export function ProjectList({ state, actions }: { state: any, actions: any }) {
             <div className="group bg-white rounded-[1.5rem] sm:rounded-[2rem] p-2.5 border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:-translate-y-1.5 transition-all duration-500 flex flex-col relative h-full">
               <div className="relative aspect-[4/3] rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100/50">
                 <LazyImage
-                  src={item.projectType === 'video' ? getYouTubeThumbnail(item.mediaUrl) : item.mediaUrl}
+                  src={item.projectType === 'video' ? getVideoThumbnail(item.mediaUrl) : item.mediaUrl}
                   alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />

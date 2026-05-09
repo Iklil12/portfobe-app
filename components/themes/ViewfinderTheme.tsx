@@ -4,9 +4,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useTransform, animate } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 export default function ViewfinderTheme({ data, theme, isMobileView, isCardPreview = false, isEditor = false }: any) {
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+    const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+    useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
     
     const profile = data?.profile || data || {};
     const projects = data?.projects || data?.user?.projects || [];
@@ -18,13 +23,6 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
     const bio = profile.bio || `"Weaving light, shadow, and sound to capture the human experience. Specializing in high-end commercial and narrative films."`;
     const location = profile.location || "JAKARTA, IDN";
     const email = data?.email || "hello@example.com";
-
-    const getYouTubeThumbnail = (p: any) => {
-        const urlToCheck = p.mediaUrl || p.url || p.projectUrl || "";
-        const match = urlToCheck.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-        if (match) return `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg`;
-        return p.mediaUrl || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800&auto=format&fit=crop';
-    };
 
     const totalProjects = projects.length;
     const totalHonors = certificates.length;
@@ -320,34 +318,51 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                     </motion.div>
 
                     <div ref={scrollRef} className="film-strip flex gap-4 overflow-x-auto px-4 pb-8 pt-2 pointer-events-auto">
-                        {projects.length > 0 ? projects.map((p: any, idx: number) => (
-                            <motion.a
-                                // PERBAIKAN: Hapus x: 50, gunakan scale, dan set once: true
-                                initial={{ opacity: 0, scale: 0.95, filter: "blur(5px)" }}
-                                whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                                viewport={{ once: true, amount: 0 }}
-                                transition={{ duration: 0.8, delay: (idx % 3) * 0.1, ease: cinematicEase }}
-                                whileHover={{ y: -5 }}
-                                href={p.url || p.mediaUrl || p.projectUrl || '#'}
-                                key={p.id} target="_blank" rel="noreferrer"
-                                className="film-frame flex-none block vf-reel-card group"
-                            >
-                                <div className="w-full aspect-video overflow-hidden bg-gray-900 border border-white/20 relative">
-                                    <LazyImage src={getYouTubeThumbnail(p)} alt={p.title} className="w-full h-full object-cover opacity-80 cine-img group-hover:scale-110 group-hover:opacity-100 transition-all duration-1000" />
-                                </div>
-                                <div className="mt-4 overflow-hidden">
-                                    <h3 className="font-cinema tracking-wide text-[#F3F3F1] vf-reel-title group-hover:text-[var(--primary)] transition-colors duration-500">
-                                        {p.title}
-                                    </h3>
-                                    <p className="uppercase tracking-widest mt-1 vf-hud-text opacity-60" style={{ color: 'var(--primary)' }}>{p.projectType}</p>
-                                </div>
-                            </motion.a>
-                        )) : (
+                        {projects.length > 0 ? projects.map((p: any, idx: number) => {
+                            const isVideo = p.projectType === 'video';
+                            return (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95, filter: "blur(5px)" }}
+                                    whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                                    viewport={{ once: true, amount: 0 }}
+                                    transition={{ duration: 0.8, delay: (idx % 3) * 0.1, ease: cinematicEase }}
+                                    whileHover={{ y: -5 }}
+                                    key={p.id || idx}
+                                    onClick={() => {
+                                        if (isVideo || p.projectType === 'photo') {
+                                            setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                                        } else if (p.mediaUrl) {
+                                            window.open(p.mediaUrl, '_blank');
+                                        }
+                                    }}
+                                    className="film-frame flex-none block vf-reel-card group cursor-pointer"
+                                >
+                                    <div className="w-full aspect-video overflow-hidden bg-gray-900 border border-white/20 relative">
+                                        <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover opacity-80 cine-img group-hover:scale-110 group-hover:opacity-100 transition-all duration-1000" />
+                                        
+                                        {/* Cinematic Play Overlay */}
+                                        {isVideo && (
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <div className="w-14 h-14 rounded-full border border-white/40 flex items-center justify-center backdrop-blur-sm group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500">
+                                                    <i className="fas fa-play text-white text-xs ml-1"></i>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="mt-4 overflow-hidden text-left">
+                                        <h3 className="font-cinema tracking-wide text-[#F3F3F1] vf-reel-title group-hover:text-[var(--primary)] transition-colors duration-500">
+                                            {p.title}
+                                        </h3>
+                                        <p className="uppercase tracking-widest mt-1 vf-hud-text opacity-60" style={{ color: 'var(--primary)' }}>{p.projectType}</p>
+                                    </div>
+                                </motion.div>
+                            );
+                        }) : (
                             <div className="film-frame flex-none vf-reel-card group">
                                 <div className="w-full aspect-[21/9] overflow-hidden bg-gray-900 border border-white/20">
                                     <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" />
                                 </div>
-                                <div className="mt-3">
+                                <div className="mt-3 text-left">
                                     <h3 className="font-cinema tracking-wide text-[#F3F3F1] vf-reel-title">NIKE - THE RUN</h3>
                                     <p className="uppercase tracking-widest mt-0.5 vf-hud-text" style={{ color: 'var(--primary)' }}>Commercial</p>
                                 </div>
@@ -515,6 +530,75 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                 </motion.footer>
 
             </div>
+            {/* VIEW_FINDER MEDIA MODAL */}
+            <AnimatePresence>
+                {selectedMedia && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-0 @md:p-10"
+                    >
+                        {/* Immersive Blackout */}
+                        <div className="absolute inset-0 bg-black/95" onClick={() => setSelectedMedia(null)}></div>
+
+                        <motion.div 
+                            initial={{ scale: 1.1, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0 }}
+                            className="relative w-full max-w-6xl bg-black flex flex-col overflow-hidden border-white/10 @md:border shadow-2xl"
+                        >
+                            {/* Compact top bar */}
+                            <div className="flex justify-between items-center px-4 py-2 @md:px-6 bg-[#111] border-b border-white/10">
+                                <span className="font-cinema tracking-widest text-[13px] text-white/50 uppercase">{selectedMedia.title}</span>
+                                <button 
+                                    onClick={() => setSelectedMedia(null)}
+                                    className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-white text-white hover:text-black transition-all shrink-0"
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            {/* Content Player with HUD */}
+                            <div 
+                                className="w-full bg-black relative"
+                                style={{ aspectRatio: selectedMedia.type !== 'video' ? undefined : '16/9' }}
+                            >
+                                {/* MODAL HUD OVERLAY */}
+                                <div className="absolute inset-0 z-20 pointer-events-none p-5 flex flex-col justify-between opacity-60">
+                                    <div className="flex justify-between items-start vf-hud-text font-bold">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></div>
+                                                <span>PLAYBACK</span>
+                                            </div>
+                                            <span>TC 00:00:00:00</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <span>4K RAW | 24FPS</span>
+                                            <br /><span>LOG-C3</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-end vf-hud-text font-bold">
+                                        <span>CH1 [||||||||--]</span>
+                                        <span>BAT 88%</span>
+                                    </div>
+                                </div>
+
+                                {selectedMedia.type === 'video' ? (
+                                    <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                                ) : (
+                                    <div className="w-full flex items-center justify-center p-4 @md:p-12">
+                                        <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[70vh] object-contain" />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Footer Status */}
+                            <div className="bg-[#111] py-2.5 px-4 @md:px-6 flex justify-between items-center border-t border-white/10">
+                                <span className="font-cinema tracking-widest text-[12px] text-white/40">{selectedMedia.title.toUpperCase()}</span>
+                                <button onClick={() => setSelectedMedia(null)} className="vf-hud-text font-bold text-[var(--primary)] hover:opacity-70 transition">/ EXIT_VIEW</button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

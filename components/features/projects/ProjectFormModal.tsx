@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { CldUploadWidget } from 'next-cloudinary';
 import { motion, AnimatePresence } from 'framer-motion';
 import { showToast } from '@/lib/customToast';
@@ -22,6 +22,12 @@ const cardItem = {
 };
 
 export function ProjectFormModal({ state, actions }: { state: any, actions: any }) {
+  const [videoMethod, setVideoMethod] = useState<'link' | 'upload'>('link');
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const {
     isModalOpen,
     editingId,
@@ -32,7 +38,8 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     certIssuer,
     certYear,
     certStatus,
-    isSubmitting
+    isSubmitting,
+    userPlan
   } = state;
 
   const {
@@ -48,6 +55,80 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
   } = actions;
 
   const cloudinaryPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "paperions_preset";
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 500 * 1024 * 1024) {
+      showToast({ message: "Ukuran video maksimal 500MB", id: "err-video-size", icon: "fa-exclamation-triangle" });
+      return;
+    }
+
+    if (userPlan !== 'PRO') {
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    setIsUploadingVideo(true);
+    setUploadProgress(0);
+
+    try {
+      // 1. Get GUID & API Key dari server (hanya PRO)
+      const createRes = await fetch('/api/bunny/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: projectTitle || file.name })
+      });
+
+      if (!createRes.ok) {
+        throw new Error('Gagal inisialisasi upload ke Bunny Stream');
+      }
+
+      const { guid, libraryId, apiKey } = await createRes.json();
+
+      if (!guid || !libraryId || !apiKey) {
+         throw new Error('Konfigurasi server tidak lengkap');
+      }
+
+      // 2. Lakukan PUT request menggunakan XMLHttpRequest agar bisa melacak progress
+      const uploadUrl = `https://video.bunnycdn.com/library/${libraryId}/videos/${guid}`;
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', uploadUrl, true);
+      xhr.setRequestHeader('AccessKey', apiKey);
+      xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+      
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percentComplete);
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          setMediaUrl(guid); // Simpan GUID sebagai referensi di database kita
+          showToast({ message: "Video berhasil diunggah!", id: "upload-success", icon: "fa-check-circle" });
+        } else {
+          showToast({ message: "Gagal mengunggah video.", id: "upload-fail", icon: "fa-times-circle" });
+        }
+        setIsUploadingVideo(false);
+      };
+
+      xhr.onerror = () => {
+        showToast({ message: "Terjadi kesalahan jaringan saat mengunggah.", id: "upload-error", icon: "fa-wifi" });
+        setIsUploadingVideo(false);
+      };
+
+      xhr.send(file);
+
+    } catch (error: any) {
+      console.error(error);
+      showToast({ message: error.message || "Gagal memproses video", id: "upload-exception", icon: "fa-exclamation-triangle" });
+      setIsUploadingVideo(false);
+    }
+  };
 
   if (!isModalOpen) return null;
 
@@ -184,10 +265,67 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                           {projectType === 'video' ? 'Tautan Video (YouTube)' : 'Unggah File Gambar'} <span className="text-rose-500">*</span>
                         </label>
                         {projectType === 'video' ? (
-                          <input
-                            type="text" value={mediaUrl} onChange={(e) => setMediaUrl(e.target.value)} placeholder="https://youtube.com/..."
-                            className="w-full px-5 py-3.5 rounded-full border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 hover:border-slate-300"
-                          />
+                          <div className="flex flex-col gap-4">
+                            <div className="flex gap-2 p-1 bg-slate-100 rounded-full w-full sm:max-w-[280px]">
+                              <button
+                                type="button"
+                                onClick={() => setVideoMethod('link')}
+                                className={`flex-1 py-2.5 text-[11px] font-bold rounded-full transition-all ${videoMethod === 'link' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                              >
+                                Link (YouTube/Vimeo)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setVideoMethod('upload')}
+                                className={`flex-1 py-2.5 text-[11px] font-bold rounded-full transition-all flex items-center justify-center gap-1.5 ${videoMethod === 'upload' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                              >
+                                Unggah <i className="fas fa-crown text-amber-500"></i>
+                              </button>
+                            </div>
+
+                            {videoMethod === 'link' ? (
+                              <input
+                                type="text" value={mediaUrl} onChange={(e) => setMediaUrl(e.target.value)} placeholder="https://youtube.com/..."
+                                className="w-full px-5 py-3.5 rounded-full border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 hover:border-slate-300"
+                              />
+                            ) : (
+                              <div className="w-full">
+                                <input type="file" accept="video/mp4,video/x-m4v,video/*" className="hidden" ref={fileInputRef} onChange={handleVideoUpload} />
+                                <div 
+                                  onClick={() => {
+                                    if(userPlan !== 'PRO') setShowUpgradeModal(true); 
+                                    else fileInputRef.current?.click();
+                                  }}
+                                  className="cursor-pointer border-2 border-dashed border-slate-200 hover:border-slate-900 hover:bg-slate-50 transition-all duration-300 rounded-[20px] flex flex-col items-center justify-center overflow-hidden relative min-h-[160px] w-full group/upload"
+                                >
+                                  {isUploadingVideo ? (
+                                    <div className="w-full px-8 flex flex-col items-center">
+                                      <div className="w-full bg-slate-200 rounded-full h-2 mb-3 overflow-hidden border border-slate-300">
+                                        <div className="bg-[#ff9e00] h-full rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(255,158,0,0.5)]" style={{ width: `${uploadProgress}%` }}></div>
+                                      </div>
+                                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Mengunggah... {uploadProgress}%</span>
+                                    </div>
+                                  ) : mediaUrl && !mediaUrl.includes('youtube') && !mediaUrl.includes('vimeo') && mediaUrl.length === 36 ? (
+                                    <div className="py-8 flex flex-col items-center text-center px-4">
+                                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-500 mb-3 border border-green-200">
+                                        <i className="fas fa-check text-lg"></i>
+                                      </div>
+                                      <span className="text-sm font-bold text-slate-900">Video Berhasil Diunggah</span>
+                                      <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Klik untuk mengganti</span>
+                                    </div>
+                                  ) : (
+                                    <div className="py-8 flex flex-col items-center text-center px-4">
+                                      <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-3 group-hover/upload:bg-[#ff9e00] group-hover/upload:text-white transition-all duration-300 group-hover/upload:shadow-md group-hover/upload:-translate-y-1">
+                                        <i className="fas fa-cloud-upload-alt text-lg"></i>
+                                      </div>
+                                      <span className="text-sm font-bold text-slate-900 flex items-center gap-2">Unggah Video Langsung <i className="fas fa-crown text-amber-500 text-xs"></i></span>
+                                      <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Maksimal 500MB (MP4, WEBM)</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         ) : (
                           <CldUploadWidget
                             uploadPreset={cloudinaryPreset}
@@ -270,6 +408,51 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
           </div>
         </div>
       </motion.div>
+
+      {/* MODAL UPGRADE PRO */}
+      <AnimatePresence>
+        {showUpgradeModal && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              onClick={() => setShowUpgradeModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white rounded-[32px] p-8 max-w-sm w-full relative z-10 shadow-2xl flex flex-col items-center text-center"
+            >
+              <button 
+                onClick={() => setShowUpgradeModal(false)}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-slate-100 text-slate-500 hover:text-slate-900 rounded-full transition-colors"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+              
+              <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/30 mb-6">
+                <i className="fas fa-rocket text-4xl text-white"></i>
+              </div>
+              
+              <h3 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">Upgrade ke PRO</h3>
+              <p className="text-sm font-medium text-slate-500 mb-8 leading-relaxed">
+                Nikmati fitur unggah video langsung ke server super cepat (bebas iklan YouTube), ukuran hingga 500MB, dan kustomisasi tanpa batas.
+              </p>
+              
+              <button className="w-full py-4 rounded-full bg-slate-900 text-white font-bold text-sm shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                Lihat Paket PRO
+              </button>
+              <button 
+                onClick={() => setShowUpgradeModal(false)}
+                className="w-full mt-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors"
+              >
+                Nanti Saja
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

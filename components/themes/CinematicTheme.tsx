@@ -2,19 +2,18 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
-const getYouTubeThumbnail = (url: string) => {
-    if (!url) return '';
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-    return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
-
 export default function CinematicTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [openAward, setOpenAward] = useState<string | null>(null);
+    const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+    useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
 
   // --- ANIMASI STABILISASI ---
   // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
@@ -172,11 +171,32 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                     {archiveItems.length > 0 ? archiveItems.map((p: any, i: number) => {
                         const isVideo = p.projectType === 'video';
                         return (
-                            <a href={p.projectUrl || p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i} className={`project-row relative group flex justify-between cursor-pointer cine-border-accent flex-col @md:flex-row @md:items-center py-8 @md:py-14`}>
+                            <div 
+                                key={i} 
+                                onClick={() => {
+                                    if (isVideo || p.projectType === 'photo') {
+                                        setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                                    } else if (p.mediaUrl) {
+                                        window.open(p.mediaUrl, '_blank');
+                                    }
+                                }}
+                                className={`project-row relative group flex justify-between cursor-pointer cine-border-accent flex-col @md:flex-row @md:items-center py-8 @md:py-14`}
+                            >
                                 <div className={`flex relative z-10 pointer-events-none flex-col @md:flex-row @md:items-center gap-4 @md:gap-20`}>
                                     <span className="text-gray-600 font-mono text-sm @md:text-lg hidden @md:block">0{i + 1}</span>
                                     <h3 className={`font-black tracking-tighter uppercase group-hover:cine-accent text-gray-300 transition-colors cine-heading line-clamp-1 text-[clamp(1.5rem,5cqi,4rem)]`}>{p.title}</h3>
                                 </div>
+                                
+                                {/* Video Play Indicator */}
+                                {isVideo && (
+                                    <div className="absolute left-[40%] top-1/2 -translate-y-1/2 hidden @md:flex items-center gap-4 z-10 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 group-hover:translate-x-0">
+                                        <div className="w-12 h-12 rounded-full border border-white flex items-center justify-center">
+                                            <i className="fas fa-play text-[10px] ml-1"></i>
+                                        </div>
+                                        <span className="font-bold text-[10px] uppercase tracking-[0.3em] cine-body">Watch_Now</span>
+                                    </div>
+                                )}
+
                                 <div className={`flex flex-col relative z-10 pointer-events-none cine-body mt-4 @md:mt-0 @md:text-right`}>
                                     <span className="text-[10px] @md:text-sm font-bold uppercase tracking-widest text-white">{p.projectType}</span>
                                     <span className="text-gray-500 mt-1 text-[10px] @md:text-sm truncate max-w-[200px]">{p.description || 'View Project'}</span>
@@ -184,14 +204,21 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
 
                                 {/* Mobile Inline Image */}
                                 <div className={`block @md:hidden mt-5 w-full aspect-video relative z-10 overflow-hidden ${radiusClass}`}>
-                                    <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale" />
+                                    <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale" />
+                                    {isVideo && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                                            <div className="w-12 h-12 rounded-full border border-white flex items-center justify-center">
+                                                <i className="fas fa-play text-xs ml-0.5"></i>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Desktop Absolute Hover Image */}
                                 <div className={`hidden @md:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40cqi] h-[40vh] z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden ${radiusClass}`}>
-                                    <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale opacity-50" />
+                                    <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale opacity-50" />
                                 </div>
-                            </a>
+                            </div>
                         )
                     }) : <div className="py-20 text-center text-gray-600 font-mono text-xs uppercase tracking-widest">No projects available.</div>}
                 </div>
@@ -292,6 +319,65 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                 </div>
             </footer>
 
+            {/* CINEMATIC MEDIA MODAL */}
+            <AnimatePresence>
+                {selectedMedia && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-0 @md:p-10"
+                    >
+                        {/* Immersive Blackout */}
+                        <div className="absolute inset-0 bg-black/98" onClick={() => setSelectedMedia(null)}></div>
+
+                        <motion.div 
+                            initial={{ scale: 1.05, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.05, opacity: 0 }}
+                            className={`relative w-full max-w-6xl bg-black border-y @md:border border-white/10 flex flex-col overflow-hidden ${radiusClass}`}
+                        >
+                            {/* Theater Header */}
+                            <div className="flex justify-between items-center p-6 @md:p-8 border-b border-white/5 relative z-10 bg-black">
+                                <div className="flex flex-col">
+                                    <span className="font-mono text-[9px] font-bold uppercase tracking-[0.5em] text-gray-500 mb-2">Cinematic Preview</span>
+                                    <h3 className="cine-heading font-black uppercase tracking-tighter text-2xl @md:text-4xl text-white">{selectedMedia.title}</h3>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedMedia(null)}
+                                    className="w-12 h-12 flex items-center justify-center bg-white text-black hover:bg-gray-200 transition-colors"
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            {/* Widescreen Player */}
+                            <motion.div 
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                                className={`relative w-full ${selectedMedia.type === 'video' ? 'aspect-video' : 'max-h-[60vh]'} bg-black flex items-center justify-center`}
+                            >
+                                {selectedMedia.type === 'video' ? (
+                                    <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center p-4">
+                                        <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[55vh] object-contain shadow-[0_0_50px_rgba(255,255,255,0.1)]" />
+                                    </div>
+                                )}
+                            </motion.div>
+
+                            {/* Minimal Bottom Bar */}
+                            <div className="p-4 flex justify-between items-center bg-black px-8">
+                                <div className="flex items-center gap-2 opacity-30">
+                                    <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></div>
+                                    <span className="font-mono text-[9px] uppercase tracking-widest text-white">Playback_Active</span>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedMedia(null)}
+                                    className="cine-body text-[9px] font-bold uppercase tracking-[0.5em] text-white/40 hover:text-white transition-colors"
+                                >
+                                    CLOSE_THEATER
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

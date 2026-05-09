@@ -1,20 +1,19 @@
 "use client";
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
+import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
-const getYouTubeThumbnail = (url: string) => {
-    if (!url) return '';
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-    return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
-
 export default function EditorialTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
+    const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+    useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
 
   // --- ANIMASI STABILISASI ---
   // Kita gunakan animate="visible" untuk editor agar langsung tampil tanpa pemicu scroll (yang sering rusak di preview)
@@ -181,18 +180,33 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                 <div className={`grid grid-cols-1 @md:grid-cols-2 gap-8 @md:gap-16 @lg:gap-24`}>
                     {archiveItems.map((p: any, i: number) => {
                         const isVideo = p.projectType === 'video';
-                        // Logika Staggered: Kolom genap (kanan) diturunkan margin atasnya di mode desktop
                         const isEven = i % 2 !== 0;
 
                         return (
-                            <motion.a
-                                href={p.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
+                            <motion.div
+                                key={i}
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                 className={`flex flex-col group cursor-pointer w-full ${isEven ? '@md:mt-32' : ''}`}
+                                onClick={() => {
+                                    if (isVideo || p.projectType === 'photo') {
+                                        setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
+                                    } else if (p.mediaUrl) {
+                                        window.open(p.mediaUrl, '_blank');
+                                    }
+                                }}
                             >
                                 {/* Image Box */}
                                 <div className={`w-full aspect-[4/5] @md:aspect-[3/4] bg-subtle ${radiusClass} overflow-hidden relative mb-6 @md:mb-8 border border-subtle group-hover:shadow-hover transition-all duration-700`}>
-                                    <LazyImage src={isVideo ? getYouTubeThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />
+                                    <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />
+
+                                    {/* Video Play Indicator (Elegant Editorial) */}
+                                    {isVideo && (
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center group-hover:scale-110 group-hover:bg-white/40 transition-all duration-500">
+                                                <i className="fas fa-play text-white/80 text-lg ml-1"></i>
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Hover Reveal Arrow */}
                                     <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
@@ -212,7 +226,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                                         {p.description || 'View detailed case study of this project.'}
                                     </p>
                                 </div>
-                            </motion.a>
+                            </motion.div>
                         );
                     })}
                 </div>
@@ -310,6 +324,65 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
 
             </footer>
 
+            {/* EDITORIAL MEDIA MODAL */}
+            <AnimatePresence>
+                {selectedMedia && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 @md:p-10"
+                    >
+                        {/* Soft Canvas Backdrop */}
+                        <motion.div 
+                            initial={{ backdropFilter: "blur(0px)" }} animate={{ backdropFilter: "blur(10px)" }}
+                            className="absolute inset-0 bg-[#fdfdfc]/80" onClick={() => setSelectedMedia(null)}
+                        ></motion.div>
+
+                        <motion.div 
+                            initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}
+                            transition={{ duration: 0.6, ease: canvasEase }}
+                            className={`relative w-full max-w-5xl bg-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden border border-subtle ${radiusClass}`}
+                        >
+                            {/* Museum-style Header */}
+                            <div className="flex justify-between items-center p-6 @md:p-10 border-b border-subtle relative z-10">
+                                <div className="flex flex-col">
+                                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 mb-2">Editorial Exhibition</span>
+                                    <h3 className="font-serif italic text-3xl @md:text-5xl text-[#111]">{selectedMedia.title}</h3>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedMedia(null)}
+                                    className="w-12 h-12 rounded-full border border-subtle flex items-center justify-center hover:bg-[#111] hover:text-white transition-all duration-300"
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            {/* Presentation Area */}
+                            <motion.div 
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+                                className={`relative w-full ${selectedMedia.type === 'video' ? 'aspect-video' : 'max-h-[65vh]'} bg-[#f8f8f6] flex items-center justify-center p-2 @md:p-8`}
+                            >
+                                {selectedMedia.type === 'video' ? (
+                                    <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <img src={selectedMedia.url} alt={selectedMedia.title} className="max-w-full max-h-[55vh] object-contain shadow-2xl border-4 border-white" />
+                                    </div>
+                                )}
+                            </motion.div>
+
+                            {/* Minimal Footer */}
+                            <div className="p-6 flex justify-center border-t border-subtle bg-white">
+                                <button 
+                                    onClick={() => setSelectedMedia(null)}
+                                    className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-slate-400 hover:text-[var(--hl)] transition-colors"
+                                >
+                                    DISMISS EXHIBITION
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </main>
     );
 }
