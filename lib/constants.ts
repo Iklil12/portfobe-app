@@ -1,12 +1,12 @@
 export const TEMPLATE_LIST = [
-  { id: 1, image: "/showcase/contoh1.png", category: "Bento Grid", title: "The Minimalist" },
-  { id: 2, image: "/showcase/contoh2.png", category: "Dark Mode", title: "The Director" },
-  { id: 3, image: "/showcase/contoh3.png", category: "Earth Tones", title: "The Boutique" },
-  { id: 4, image: "/showcase/contoh4.png", category: "High Contrast", title: "The Rebel" },
-  { id: 5, image: "/showcase/contoh5.png", category: "Swiss Grid", title: "The Architect" },
-  { id: 6, image: "/showcase/contoh6.png", category: "Glassmorphism", title: "The Visionary" },
-  { id: 7, image: "/showcase/contoh7.png", category: "Cinematic View", title: "The Viewfinder" },
-  { id: 8, image: "/showcase/contoh8.png", category: "Fine Art Style", title: "The Gallery" }
+  { id: 1, image: "/themes/spatial.jpg", category: "Spatial & Glass", title: "Aura Spatial" },
+  { id: 2, image: "/themes/viewfinder.jpg", category: "Cinematic", title: "Viewfinder" },
+  { id: 3, image: "/themes/monolith.jpg", category: "Brutalist", title: "Monolith Vanguard" },
+  { id: 4, image: "/themes/acid.jpg", category: "Cyberpunk", title: "Acid Tech" },
+  { id: 5, image: "/themes/aura-kinetic.jpg", category: "Dynamic", title: "Aura Kinetic" },
+  { id: 6, image: "/themes/midnight-emulsion.jpg", category: "Noir", title: "Midnight Emulsion" },
+  { id: 7, image: "/themes/split.jpg", category: "Modern Split", title: "Nexus Split" },
+  { id: 8, image: "/themes/editorial.jpg", category: "Clean Editorial", title: "Editorial Clean" }
 ];
 
 export const FEATURE_LIST = [

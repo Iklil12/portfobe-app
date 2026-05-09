@@ -89,7 +89,7 @@ export const THEMES_DATA = [
       preview: 'bg-[#0a0a0a]',
       isAvailable: true, 
       isPro: true,
-      img: '/themes/cinematicDark.jpg'
+      img: '/themes/cinematicdark.jpg'
   },
   {
       id: 'acid',

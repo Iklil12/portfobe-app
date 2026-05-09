@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 import { Resend } from 'resend'; 
 
 // Inisialisasi Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key');
 
 declare module "next-auth" {
   interface Session {
