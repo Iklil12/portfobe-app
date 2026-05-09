@@ -3,12 +3,12 @@ import prisma from "@/lib/prisma";
 import { Resend } from "resend";
 import crypto from "crypto";
 
-const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
     const { email } = await req.json();
-    
+
     // 1. Cari user di database
     const user = await prisma.user.findUnique({ where: { email } });
 
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
     // 2. Buat Token unik & set kadaluarsa (1 jam dari sekarang)
     const token = crypto.randomBytes(32).toString("hex");
-    const expires = new Date(Date.now() + 3600000); 
+    const expires = new Date(Date.now() + 3600000);
 
     // 3. Hapus token lama (jika user minta berkali-kali) lalu simpan yang baru
     await prisma.passwordResetToken.deleteMany({ where: { email } });

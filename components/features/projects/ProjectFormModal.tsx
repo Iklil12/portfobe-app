@@ -47,7 +47,6 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     handleSubmit
   } = actions;
 
-  const cloudinaryCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "";
   const cloudinaryPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "paperions_preset";
 
   if (!isModalOpen) return null;
@@ -191,7 +190,6 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                           />
                         ) : (
                           <CldUploadWidget
-                            cloudName={cloudinaryCloudName}
                             uploadPreset={cloudinaryPreset}
                             options={{ maxFiles: 1, resourceType: "image", sources: ["local", "url"] }}
                             onSuccess={(result: any) => {

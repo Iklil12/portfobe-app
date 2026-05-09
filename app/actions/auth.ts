@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 import crypto from "crypto";
 
 // <-- 2. INISIALISASI RESEND (Di luar function agar hemat memori server)
-const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function registerUser(formData: FormData) {
   const fullName = formData.get("fullName") as string;
@@ -18,7 +18,7 @@ export async function registerUser(formData: FormData) {
     // --- 0. RATE LIMITING (IP-BASED) ---
     const headersList = await headers();
     const ip = headersList.get("x-forwarded-for") || headersList.get("x-real-ip") || "unknown";
-    
+
     // Cek berapa banyak akun yang dibuat IP ini dalam 1 jam terakhir
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const recentRegistrations = await prisma.registerAttempt.findFirst({
@@ -33,7 +33,7 @@ export async function registerUser(formData: FormData) {
 
     // --- 0.5 VERIFIKASI CAPTCHA KE GOOGLE ---
     const captchaToken = formData.get("captchaToken") as string;
-    
+
     // Hanya lakukan validasi jika admin sudah menyetel Secret Key
     if (process.env.RECAPTCHA_SECRET_KEY) {
       if (!captchaToken) {
@@ -45,7 +45,7 @@ export async function registerUser(formData: FormData) {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captchaToken}`,
       });
-      
+
       const verifyData = await verifyRes.json();
 
       if (!verifyData.success) {
@@ -56,10 +56,10 @@ export async function registerUser(formData: FormData) {
     // -----------------------------------------
 
     // 1. Cek apakah user sudah ada
-    const existingUser = await prisma.user.findUnique({ 
-      where: { email: email } 
+    const existingUser = await prisma.user.findUnique({
+      where: { email: email }
     });
-    
+
     if (existingUser) {
       return { error: "Email sudah terdaftar." };
     }
@@ -72,7 +72,7 @@ export async function registerUser(formData: FormData) {
     // --- 2.5 GENERATE VERIFICATION TOKEN ---
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const tokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 jam
-    
+
     // 3. Simpan data ke MySQL Hostinger dengan Skema Baru (Terpisah)
     const newUser = await prisma.user.create({
       data: {
@@ -81,7 +81,7 @@ export async function registerUser(formData: FormData) {
         password: hashedPassword,
         plan: "FREE",
         avatar: defaultAvatar,
-        
+
         // Data khusus tabel Profile (Prisma akan otomatis membuatkannya)
         profile: {
           create: {
@@ -152,7 +152,7 @@ export async function registerUser(formData: FormData) {
     }
 
     return { success: true };
-    
+
   } catch (e) {
     // Jika ada error (koneksi database, dll), akan muncul di terminal
     console.error("🚨 DATABASE ERROR:", e);
@@ -183,7 +183,7 @@ export async function resendVerificationEmail(email: string) {
       const timeRemainingMs = existingToken.expires.getTime() - Date.now();
       const twentyFourHoursMs = 24 * 60 * 60 * 1000;
       const fiveMinutesMs = 5 * 60 * 1000;
-      
+
       if (timeRemainingMs > (twentyFourHoursMs - fiveMinutesMs)) {
         return { error: "Tunggu sekitar 5 menit sebelum Anda dapat mengirim ulang email verifikasi." };
       }

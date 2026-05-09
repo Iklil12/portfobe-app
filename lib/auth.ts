@@ -5,10 +5,10 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 import jwt from "jsonwebtoken";
-import { Resend } from 'resend'; 
+import { Resend } from 'resend';
 
 // Inisialisasi Resend
-const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 declare module "next-auth" {
   interface Session {
@@ -40,7 +40,7 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
-    
+
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -103,18 +103,18 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Terlalu banyak percobaan gagal. Silakan coba lagi dalam 15 menit.');
         }
         // ----------------------------------------
-        
+
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
           include: { profile: true, siteAppearance: true, accounts: true }
         });
 
         if (!user || !user.password || user.password === "GOOGLE_LOGIN_NO_PASSWORD") {
-            throw new Error("Email tidak ditemukan atau gunakan Login Google.");
+          throw new Error("Email tidak ditemukan atau gunakan Login Google.");
         }
 
         const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
-        
+
         if (!isPasswordValid) {
           // --- Pencatatan Gagal ---
           if (attemptRecord) {
@@ -147,9 +147,9 @@ export const authOptions: NextAuthOptions = {
           id: userData.id,
           name: user.profile?.fullName || userData.name || "User",
           email: userData.email,
-          image: user.profile?.avatarUrl || userData.avatar || userData.image, 
-          avatar: userData.avatar, 
-          plan: userData.plan, 
+          image: user.profile?.avatarUrl || userData.avatar || userData.image,
+          avatar: userData.avatar,
+          plan: userData.plan,
           profession: user.profile?.profession,
           bio: user.profile?.bio,
           subdomain: user.profile?.subdomain,
@@ -176,7 +176,7 @@ export const authOptions: NextAuthOptions = {
         try {
           const existingUser = await prisma.user.findUnique({
             where: { email: user.email },
-            include: { profile: true ,siteAppearance: true} 
+            include: { profile: true, siteAppearance: true }
           });
 
           if (!existingUser) {
@@ -184,28 +184,28 @@ export const authOptions: NextAuthOptions = {
             await prisma.user.create({
               data: {
                 email: user.email,
-                password: "GOOGLE_LOGIN_NO_PASSWORD", 
-                avatar: user.image || "", 
+                password: "GOOGLE_LOGIN_NO_PASSWORD",
+                avatar: user.image || "",
                 emailVerified: new Date(),
-                
+
                 profile: {
-                    create: {
-                        fullName: user.name || "Pengguna Baru", 
-                        avatarUrl: user.image || "",
-                    }
+                  create: {
+                    fullName: user.name || "Pengguna Baru",
+                    avatarUrl: user.image || "",
+                  }
                 },
                 siteAppearance: {
-                    create: {}
-                  },
-                
+                  create: {}
+                },
+
                 accounts: {
-                    create: {
-                        type: account.type,
-                        provider: account.provider,
-                        providerAccountId: account.providerAccountId,
-                        access_token: account.access_token,
-                        id_token: account.id_token,
-                    }
+                  create: {
+                    type: account.type,
+                    provider: account.provider,
+                    providerAccountId: account.providerAccountId,
+                    access_token: account.access_token,
+                    id_token: account.id_token,
+                  }
                 }
               },
             });
@@ -216,7 +216,7 @@ export const authOptions: NextAuthOptions = {
             resend.emails.send({
               from: 'Portfobe <hellocreator@mail.ritions.com>',
               to: user.email,
-              replyTo: 'ikliluluyun@ritions.com', 
+              replyTo: 'ikliluluyun@ritions.com',
               subject: 'Welcome to Portfobe!',
               html: `
                 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
@@ -235,53 +235,53 @@ export const authOptions: NextAuthOptions = {
             // ==============================================================
 
           } else {
-             // USER LAMA LOGIN
-             
-             // --- AUTO VERIFY GOOGLE OAUTH ---
-             // Jika user sebelumnya mendaftar manual dan belum terverifikasi, Google yang akan memverifikasinya
-             if (!existingUser.emailVerified) {
-               await prisma.user.update({
-                 where: { id: existingUser.id },
-                 data: {
-                   emailVerified: new Date()
-                 }
-               });
-             }
+            // USER LAMA LOGIN
 
-             if (!existingUser.profile) {
-                 await prisma.profile.create({
-                     data: {
-                         userId: existingUser.id,
-                         fullName: user.name || "Pengguna Setia",
-                         avatarUrl: user.image || "",
-                     }
-                 });
-             }
-             
-             const existingAccount = await prisma.account.findFirst({
-                 where: { provider: account.provider, providerAccountId: account.providerAccountId }
-             });
-             
-             if (!existingAccount) {
-                 await prisma.account.create({
-                     data: {
-                         userId: existingUser.id,
-                         type: account.type,
-                         provider: account.provider,
-                         providerAccountId: account.providerAccountId,
-                         access_token: account.access_token,
-                         id_token: account.id_token,
-                     }
-                 });
-             }
+            // --- AUTO VERIFY GOOGLE OAUTH ---
+            // Jika user sebelumnya mendaftar manual dan belum terverifikasi, Google yang akan memverifikasinya
+            if (!existingUser.emailVerified) {
+              await prisma.user.update({
+                where: { id: existingUser.id },
+                data: {
+                  emailVerified: new Date()
+                }
+              });
+            }
+
+            if (!existingUser.profile) {
+              await prisma.profile.create({
+                data: {
+                  userId: existingUser.id,
+                  fullName: user.name || "Pengguna Setia",
+                  avatarUrl: user.image || "",
+                }
+              });
+            }
+
+            const existingAccount = await prisma.account.findFirst({
+              where: { provider: account.provider, providerAccountId: account.providerAccountId }
+            });
+
+            if (!existingAccount) {
+              await prisma.account.create({
+                data: {
+                  userId: existingUser.id,
+                  type: account.type,
+                  provider: account.provider,
+                  providerAccountId: account.providerAccountId,
+                  access_token: account.access_token,
+                  id_token: account.id_token,
+                }
+              });
+            }
           }
-          return true; 
+          return true;
         } catch (error) {
           console.error("Gagal Auto-Register Google:", error);
-          return false; 
+          return false;
         }
       }
-      return true; 
+      return true;
     },
 
     // 2. JWT CALLBACK: Sinkronisasi Akurat Tanpa Spam Database
@@ -347,12 +347,12 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    
+
     // 3. SESSION CALLBACK: Oper status ke Frontend dengan instan
     async session({ session, token }: any) {
       if (session.user) {
-        session.user.id = token.id as string; 
-        session.user.plan = token.plan as string; 
+        session.user.id = token.id as string;
+        session.user.plan = token.plan as string;
         session.user.profession = token.profession as string;
         session.user.bio = token.bio as string;
         session.user.avatar = token.avatar as string;
@@ -366,10 +366,10 @@ export const authOptions: NextAuthOptions = {
       return session;
     }
   },
-  
+
   secret: process.env.NEXTAUTH_SECRET,
-  pages: { 
+  pages: {
     signIn: "/login",
-    error: "/login" 
+    error: "/login"
   }
 };

@@ -19,7 +19,6 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
 
   const fullName = session?.user?.name || "User Portfo";
   const email = session?.user?.email || "user@example.com";
-  const cloudinaryCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "";
   const cloudinaryPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "paperions_preset";
 
   // Deteksi status PRO
@@ -52,7 +51,6 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
         {/* Avatar & Info Area */}
         <div className="flex flex-col items-center sm:items-start w-full sm:w-auto">
           <CldUploadWidget
-            cloudName={cloudinaryCloudName}
             uploadPreset={cloudinaryPreset}
             options={{ maxFiles: 1, resourceType: "image", clientAllowedFormats: ["jpg", "png", "webp"], sources: ["local", "camera", "url"], showPoweredBy: false }}
             onSuccess={(result) => {

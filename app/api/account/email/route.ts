@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import { Resend } from 'resend';
 
 // Mengambil API Key dari .env yang baru saja Anda buat
-const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function PATCH(req: Request) {
   try {
@@ -51,7 +51,7 @@ export async function PATCH(req: Request) {
 
     // Generate Token & Waktu Kadaluarsa (15 Menit)
     const token = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 15 * 60 * 1000); 
+    const expires = new Date(Date.now() + 15 * 60 * 1000);
 
     // Simpan ke Ruang Tunggu di Database
     await prisma.user.update({
@@ -78,7 +78,7 @@ export async function PATCH(req: Request) {
 
     // Kirim Email via Resend pakai Subdomain Baru Anda!
     await resend.emails.send({
-      from: 'Portfo Security <portfosecure@mail.ritions.com>', 
+      from: 'Portfo Security <portfosecure@mail.ritions.com>',
       to: newEmail,
       subject: '🔐 Konfirmasi Perubahan Email - Portfo.be',
       html: `
