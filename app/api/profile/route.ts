@@ -17,7 +17,8 @@ export async function GET() {
         plan: true, // Penting agar UI Profil tahu kalau user sudah PRO
         isLive: true,
         profile: true,
-        siteAppearance: true 
+        siteAppearance: true,
+        integrations: true
       } 
     });
 

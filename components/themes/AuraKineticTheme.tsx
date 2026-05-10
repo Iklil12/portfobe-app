@@ -7,6 +7,7 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { GithubStats } from './widgets/GithubStats';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -255,6 +256,13 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                     </Link>
                 </motion.div>
             </section>
+
+            {/* ================= GITHUB STATS ================= */}
+            {data?.id && (
+                <section className="relative z-10 w-full max-w-[1000px] mx-auto px-6">
+                    <GithubStats userId={data.id} variant="aura" themeColor={highlightColor} />
+                </section>
+            )}
 
             {/* ================= INTERACTIVE AWARDS LIST ================= */}
             {awardItems.length > 0 && (

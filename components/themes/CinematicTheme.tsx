@@ -7,6 +7,7 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -251,6 +252,13 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                     </Link>
                 </div>
             </section>
+
+            {/* GITHUB STATS SECTION */}
+            {data?.id && (
+                <div className="w-full bg-[#0a0a0a]">
+                    <GithubStats userId={data.id} variant="cinematic" themeColor={themeColor} />
+                </div>
+            )}
 
             {/* AWARDS SECTION */}
             <section className={`bg-[#050505] border-t border-[#1f1f1f] py-20 @md:py-24 px-6 @md:px-12`}>

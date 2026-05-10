@@ -7,6 +7,7 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -239,6 +240,13 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                 </motion.div>
 
             </section>
+
+            {/* GITHUB STATS SECTION */}
+            {data?.id && (
+                <div className="w-full bg-[#fdfdfc]">
+                    <GithubStats userId={data.id} variant="editorial" themeColor={highlightColor} />
+                </div>
+            )}
 
             {/* AWARDS / RECOGNITION (Minimalist List) */}
             {awardItems.length > 0 && (

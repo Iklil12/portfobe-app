@@ -8,6 +8,7 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -350,6 +351,13 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
             </Link>
           </motion.div>
         </section>
+
+        {/* ================= GITHUB STATS ================= */}
+        {data?.id && (
+          <section className="w-full bg-white border-b-[3px] border-black">
+            <GithubStats userId={data.id} variant="brutalism" themeColor={themeColor} />
+          </section>
+        )}
 
         {/* ================= AWARDS SECTION ================= */}
         {awardItems.length > 0 && (

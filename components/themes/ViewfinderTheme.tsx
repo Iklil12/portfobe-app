@@ -7,6 +7,7 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
 
 export default function ViewfinderTheme({ data, theme, isMobileView, isCardPreview = false, isEditor = false }: any) {
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
@@ -427,6 +428,10 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                 </motion.div>
                             ))}
                         </motion.div>
+
+                        {data?.id && (
+                            <GithubStats userId={data.id} variant="viewfinder" themeColor={primaryColor} />
+                        )}
 
                         <motion.h3
                             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}

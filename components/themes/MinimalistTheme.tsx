@@ -7,6 +7,8 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
+
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -89,6 +91,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
 
   const headingFont = getFontFamily(theme?.fontHeading);
   const bodyFont = getFontFamily(theme?.fontBody);
+  const themeColor = isValidHexColor(theme?.themeColor) ? theme?.themeColor : undefined;
 
   return (
     <div className={`flex w-full min-h-screen bg-white text-black relative min-body flex-col @lg:flex-row min-theme`}>
@@ -265,6 +268,9 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
             </Link>
           </motion.div>
         </section>
+
+        {/* OPEN SOURCE SECTION (GITHUB) */}
+        <GithubStats userId={data?.userId || data?.user?.id || data?.id || ""} variant="monochrome" themeColor={themeColor} />
 
         {/* AWARDS SECTION */}
         <section className="border-t border-gray-200 bg-gray-50/30 overflow-hidden">

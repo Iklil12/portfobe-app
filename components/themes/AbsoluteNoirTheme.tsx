@@ -7,6 +7,7 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
 
 export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
@@ -210,6 +211,13 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
                     </Link>
                 </motion.div>
             </motion.section>
+
+            {/* GITHUB STATS */}
+            {data?.id && (
+                <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerGrid} className="w-full">
+                    <GithubStats userId={data.id} variant="noir" />
+                </motion.div>
+            )}
 
             {awardItems.length > 0 && (
                 <motion.section initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerGrid} id="awards" className="w-full">

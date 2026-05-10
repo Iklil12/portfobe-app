@@ -7,6 +7,7 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -150,6 +151,11 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
                         );
                     })}
                 </div>
+
+                {/* GITHUB STATS SECTION */}
+                {data?.id && (
+                    <GithubStats userId={data.id} variant="midnight" themeColor={highlightColor} />
+                )}
 
                 {awardItems.length > 0 && (
                     <div id="awards" className="p-6 @md:p-12 @lg:p-20 flex flex-col border-t border-white/5 bg-[#030508]/50 shrink-0">

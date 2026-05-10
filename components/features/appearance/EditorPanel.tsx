@@ -207,7 +207,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               <BrutalismControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} cardStyle={cardStyle} setCardStyle={setCardStyle} buttonShape={buttonShape} setButtonShape={setButtonShape} />
             )}
             {activeTheme === 'minimalist' && (
-              <MinimalistControls fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} />
+              <MinimalistControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} />
             )}
             {activeTheme === 'cinematic' && (
               <CinematicControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} cardStyle={cardStyle} setCardStyle={setCardStyle} buttonShape={buttonShape} setButtonShape={setButtonShape} />

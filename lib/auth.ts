@@ -7,6 +7,8 @@ import { NextAuthOptions } from "next-auth";
 import jwt from "jsonwebtoken";
 import { Resend } from 'resend';
 
+import GithubProvider from "next-auth/providers/github";
+
 // Inisialisasi Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -39,6 +41,11 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
+
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     }),
 
     CredentialsProvider({
@@ -171,7 +178,44 @@ export const authOptions: NextAuthOptions = {
     },
 
     // 1. SIGN IN CALLBACK: Auto-Register Google & Pengisian Tabel Account
-    async signIn({ user, account }: any) {
+    async signIn({ user, account, profile }: any) {
+      if (account?.provider === "github") {
+        try {
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email },
+          });
+
+          if (!existingUser) {
+            return "/login?error=Silakan login dengan Email atau Google terlebih dahulu untuk menghubungkan GitHub.";
+          }
+
+          const githubUsername = profile?.login;
+
+          if (githubUsername) {
+            await prisma.integration.upsert({
+              where: {
+                userId_provider: {
+                  userId: existingUser.id,
+                  provider: "GITHUB",
+                }
+              },
+              update: {
+                providerId: githubUsername,
+              },
+              create: {
+                userId: existingUser.id,
+                provider: "GITHUB",
+                providerId: githubUsername,
+              }
+            });
+          }
+          return true;
+        } catch (error) {
+          console.error("Gagal menghubungkan GitHub:", error);
+          return false;
+        }
+      }
+
       if (account?.provider === "google") {
         try {
           const existingUser = await prisma.user.findUnique({
@@ -311,8 +355,8 @@ export const authOptions: NextAuthOptions = {
           return token;
         }
 
-        // Jika login via Google, tarik datanya pakai SELECT agar sangat ringan
-        if (account?.provider === "google") {
+        // Jika login via OAuth (Google, GitHub, dll), tarik datanya pakai SELECT agar sangat ringan
+        if (account?.provider && account.provider !== "credentials") {
           const dbUser = await prisma.user.findUnique({
             where: { email: user.email },
             select: {

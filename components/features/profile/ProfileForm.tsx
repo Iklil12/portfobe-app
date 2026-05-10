@@ -1,4 +1,5 @@
 import React from 'react';
+import { signIn } from 'next-auth/react';
 import { showToast } from '@/lib/customToast';
 
 interface ProfileFormProps {
@@ -7,8 +8,8 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ state, actions }: ProfileFormProps) {
-  const { firstName, lastName, profession, bio, isSaving, isFormValid, subdomain, subdomainStatus, session } = state;
-  const { setFirstName, setLastName, setProfession, setBio, handleSave, setSubdomain } = actions;
+  const { firstName, lastName, profession, bio, isSaving, isFormValid, subdomain, subdomainStatus, session, githubUsername } = state;
+  const { setFirstName, setLastName, setProfession, setBio, handleSave, setSubdomain, handleDisconnectGithub } = actions;
   
   const email = session?.user?.email || "user@example.com";
   const defaultUsername = session?.user?.email?.split('@')[0] || "user";
@@ -143,6 +144,65 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             placeholder="Tuliskan bio singkat Anda di sini..."
             className="w-full px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-orange-500 focus:ring-[3px] focus:ring-orange-500/10 outline-none transition-all text-[13px] font-medium leading-relaxed text-slate-900 resize-none" 
           />
+        </div>
+      </div>
+
+      {/* SECTION: INTEGRATIONS */}
+      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6 border-b border-slate-100 pb-6 sm:pb-8 pt-2">
+        <div className="w-full sm:w-1/3 shrink-0 pt-2">
+          <label className="block text-sm font-extrabold text-slate-900 mb-1">Integrations</label>
+          <p className="text-[11px] font-medium text-slate-500">Hubungkan profil Anda.</p>
+        </div>
+        <div className="w-full">
+          {githubUsername ? (
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-5 py-3 rounded-xl border border-emerald-200 bg-emerald-50 w-full sm:w-max shadow-sm">
+              <div className="flex items-center gap-3 flex-1">
+                <i className="fab fa-github text-xl text-emerald-700"></i>
+                <div className="flex flex-col">
+                  <span className="text-[13px] font-bold text-emerald-800 leading-tight">Connected</span>
+                  <span className="text-[11px] font-medium text-emerald-600">@{githubUsername}</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 mt-2 sm:mt-0 sm:ml-8">
+                {state.isConfirmingDisconnect ? (
+                  <>
+                    <button 
+                      type="button" 
+                      onClick={() => actions.setIsConfirmingDisconnect(false)}
+                      className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={handleDisconnectGithub}
+                      className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-sm animate-pulse"
+                    >
+                      Yes, Disconnect
+                    </button>
+                  </>
+                ) : (
+                  <button 
+                    type="button" 
+                    onClick={() => actions.setIsConfirmingDisconnect(true)}
+                    className="w-full sm:w-auto px-3 py-1.5 rounded-lg text-[11px] font-bold text-rose-600 bg-rose-100 hover:bg-rose-200 transition-colors"
+                  >
+                    Disconnect
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <button 
+              type="button" 
+              onClick={() => signIn('github', { callbackUrl: '/dashboard/profile' })}
+              className="flex items-center justify-center sm:justify-start gap-3 px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all group w-full sm:w-auto shadow-sm"
+            >
+              <i className="fab fa-github text-lg text-slate-700 group-hover:text-black transition-colors"></i>
+              <span className="text-[13px] font-bold text-slate-700 group-hover:text-black transition-colors">Integrate with GitHub</span>
+            </button>
+          )}
         </div>
       </div>
       

@@ -7,6 +7,7 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { GithubStats } from './widgets/GithubStats';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -333,6 +334,13 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                     </Link>
                 </motion.div>
             </section>
+
+            {/* GITHUB STATS */}
+            {data?.id && (
+                <div className="px-6 @md:px-12 mb-10">
+                    <GithubStats userId={data.id} variant="acid" themeColor={themeColor} />
+                </div>
+            )}
 
             {/* AWARDS SECTION */}
             <section className="acid-bg text-[#09090b] py-20 @md:py-24" id="awards">

@@ -16,6 +16,7 @@ export function useProfile() {
   const [profession, setProfession] = useState("");
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [githubUsername, setGithubUsername] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   const isFormValid = firstName.trim() !== "" && profession.trim() !== "" && subdomainStatus !== 'taken';
@@ -46,6 +47,9 @@ export function useProfile() {
 
     const avatar = profileData.avatarUrl || profileData.avatar || profileData.profile?.avatarUrl;
     setAvatarUrl(avatar || (session?.user as any)?.avatar || session?.user?.image || "");
+
+    const githubIntegration = profileData.integrations?.find((i: any) => i.provider === 'GITHUB');
+    setGithubUsername(githubIntegration ? githubIntegration.providerId : null);
   }, [profileData]); // ← HANYA bereaksi ke data, bukan session object
 
   useEffect(() => {
@@ -148,6 +152,38 @@ export function useProfile() {
     }
   };
 
+  const [isConfirmingDisconnect, setIsConfirmingDisconnect] = useState(false);
+
+  const handleDisconnectGithub = async () => {
+    const toastId = toast.loading('Memutuskan koneksi GitHub...', {
+      style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+    });
+
+    try {
+      const response = await fetch('/api/settings/integrations/disconnect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: 'GITHUB' }),
+      });
+
+      if (response.ok) {
+        setGithubUsername(null);
+        setIsConfirmingDisconnect(false); // Reset confirmation state
+        toast.success("GitHub berhasil diputuskan!", {
+          id: toastId,
+          style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' },
+          iconTheme: { primary: '#ef4444', secondary: '#0a0a0a' }
+        });
+        mutate('/api/profile');
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || "Gagal memutuskan koneksi.", { id: toastId });
+      }
+    } catch (error) {
+      toast.error("Kesalahan jaringan.", { id: toastId });
+    }
+  };
+
   return {
     state: {
       session,
@@ -159,9 +195,11 @@ export function useProfile() {
       profession,
       bio,
       avatarUrl,
+      githubUsername,
       isSaving,
       isLoadingData,
-      isFormValid
+      isFormValid,
+      isConfirmingDisconnect
     },
     actions: {
       setFirstName,
@@ -171,7 +209,9 @@ export function useProfile() {
       setBio,
       setAvatarUrl,
       handleRemoveAvatar,
-      handleSave
+      handleSave,
+      handleDisconnectGithub,
+      setIsConfirmingDisconnect
     }
   };
 }

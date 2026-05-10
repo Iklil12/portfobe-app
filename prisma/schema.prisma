@@ -31,6 +31,7 @@ model User {
   projects               Project[]
   siteAppearance         SiteAppearance?
   transactions           Transaction[]
+  integrations           Integration[]
 }
 
 model PasswordResetToken {
@@ -260,4 +261,17 @@ enum PlanType {
 enum Role {
   USER
   ADMIN
+}
+
+model Integration {
+  id         String   @id @default(uuid())
+  userId     String
+  provider   String
+  providerId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+  @@index([userId])
 }
