@@ -39,7 +39,7 @@ export async function GET(req: Request) {
 
     const response = await fetch(
       `https://api.github.com/users/${username}/events/public?per_page=15`,
-      { headers, next: { revalidate: 900 } } // Cache 15 menit agar sinkron dengan UI pengaturan
+      { headers, next: { revalidate: 60 } } // Cache 1 menit untuk testing/real-time
     );
 
     if (!response.ok) {
@@ -63,8 +63,12 @@ export async function GET(req: Request) {
         
         switch (event.type) {
           case 'PushEvent':
-            const commitCount = event.payload.commits?.length || 0;
-            description = `Pushed ${commitCount} commit${commitCount > 1 ? 's' : ''} to`;
+            const commitCount = event.payload.size || event.payload.commits?.length || 0;
+            if (commitCount === 0) {
+              description = "Made a push to";
+            } else {
+              description = `Pushed ${commitCount} commit${commitCount > 1 ? 's' : ''} to`;
+            }
             break;
           case 'CreateEvent':
             description = `Created ${event.payload.ref_type || 'repository'}`;
@@ -82,11 +86,16 @@ export async function GET(req: Request) {
             description = `Interacted with`;
         }
 
+        const commitMessage = event.type === 'PushEvent' 
+          ? (event.payload.commits?.[0]?.message?.split('\n')[0] || '') 
+          : '';
+
         return {
           id: event.id,
           type: event.type,
           repo: event.repo.name,
           description: description,
+          commitMessage: commitMessage,
           createdAt: event.created_at,
           link: `https://github.com/${event.repo.name}`
         };

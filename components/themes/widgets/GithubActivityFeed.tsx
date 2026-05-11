@@ -8,6 +8,7 @@ interface Activity {
   type: 'PushEvent' | 'CreateEvent';
   repo: string;
   description: string;
+  commitMessage?: string;
   createdAt: string;
   link: string;
 }
@@ -120,6 +121,11 @@ export function GithubActivityFeed({ userId, themeColor }: GithubActivityFeedPro
                     {activity.repo}
                   </a>
                 </p>
+                {activity.commitMessage && (
+                  <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-0.5 italic truncate max-w-[200px] @sm:max-w-xs">
+                    "{activity.commitMessage}"
+                  </p>
+                )}
                 <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 shrink-0">
                   {formatRelativeTime(activity.createdAt)}
                 </span>

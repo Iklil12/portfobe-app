@@ -21,18 +21,18 @@ function hexToRgb(hex: string) {
   return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 57, g: 211, b: 83 };
 }
 
-export function GithubCalendarWidget({ 
-  username, 
+export function GithubCalendarWidget({
+  username,
   variant = 'monochrome',
   colorScheme = 'light',
   themeColor,
   year: initialYear = new Date().getFullYear()
 }: GithubCalendarWidgetProps) {
-  
+
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState<number | 'last'>(initialYear);
   const [isReady, setIsReady] = useState(false);
-  const [hoveredData, setHoveredData] = useState<{ count: number, date: string, x: number, y: number } | null>(null);
+  const [hoveredData, setHoveredData] = useState<{ count: number, date: string, x: number, y: number, progress: number } | null>(null);
 
   const years = [currentYear, currentYear - 1, currentYear - 2];
 
@@ -45,7 +45,7 @@ export function GithubCalendarWidget({
   };
 
   const getTitleColor = () => {
-    if (themeColor) return themeColor; 
+    if (themeColor) return themeColor;
     switch (variant) {
       case 'acid': return '#a3e635';
       case 'aura': return '#a78bfa';
@@ -70,7 +70,7 @@ export function GithubCalendarWidget({
         <span className="text-[10px] font-bold uppercase tracking-widest block opacity-70" style={{ color: getTitleColor() }}>
           Contributions ({selectedYear === 'last' ? 'Last Year' : selectedYear})
         </span>
-        
+
         <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-lg">
           {years.map((y) => (
             <button key={y} onClick={() => setSelectedYear(y)} className={`px-3 py-1 text-[9px] font-bold uppercase transition-all rounded-md ${selectedYear === y ? 'bg-white dark:bg-slate-800 shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 hover:text-slate-600'}`}>{y}</button>
@@ -78,9 +78,9 @@ export function GithubCalendarWidget({
           <button onClick={() => setSelectedYear('last')} className={`px-3 py-1 text-[9px] font-bold uppercase transition-all rounded-md ${selectedYear === 'last' ? 'bg-white dark:bg-slate-800 shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 hover:text-slate-600'}`}>Last Year</button>
         </div>
       </div>
-      
-      <div className="w-full overflow-x-auto hide-scrollbar pb-2 relative min-h-[150px]">
-        <div className="min-w-max relative">
+
+      <div className="w-full overflow-x-auto hide-scrollbar pb-2 relative">
+        <div className="min-w-max relative pt-12 pb-4">
           <AnimatePresence mode="wait">
             {!isReady ? (
               <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full flex items-center justify-center py-12">
@@ -88,7 +88,7 @@ export function GithubCalendarWidget({
               </motion.div>
             ) : (
               <motion.div key="calendar" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                <GitHubCalendar 
+                <GitHubCalendar
                   username={username}
                   year={selectedYear}
                   colorScheme={colorScheme}
@@ -100,14 +100,20 @@ export function GithubCalendarWidget({
                     React.cloneElement(block as React.ReactElement<any>, {
                       onMouseEnter: (e: React.MouseEvent) => {
                         const rect = e.currentTarget.getBoundingClientRect();
-                        const container = e.currentTarget.closest('.hide-scrollbar');
+                        const container = e.currentTarget.closest('.min-w-max.relative');
                         const containerRect = container?.getBoundingClientRect();
-                        setHoveredData({
-                          count: activity.count,
-                          date: activity.date,
-                          x: rect.left - (containerRect?.left || 0) + rect.width / 2,
-                          y: rect.top - (containerRect?.top || 0) - 10
-                        });
+                        
+                        if (containerRect) {
+                          const x = rect.left - containerRect.left + rect.width / 2;
+                          const progress = x / containerRect.width;
+                          setHoveredData({
+                            count: activity.count,
+                            date: activity.date,
+                            x: Math.round(x),
+                            y: Math.round(rect.top - containerRect.top),
+                            progress: progress
+                          });
+                        }
                       },
                       onMouseLeave: () => setHoveredData(null),
                       style: { cursor: 'pointer', transition: 'all 0.2s' }
@@ -122,14 +128,25 @@ export function GithubCalendarWidget({
           <AnimatePresence>
             {hoveredData && (
               <motion.div
-                initial={{ opacity: 0, y: 5, x: '-50%' }}
-                animate={{ opacity: 1, y: 0, x: '-50%' }}
-                exit={{ opacity: 0, y: 5, x: '-50%' }}
-                style={{ position: 'absolute', left: hoveredData.x, top: hoveredData.y, pointerEvents: 'none', zIndex: 100 }}
+                initial={{ opacity: 0, y: '-95%', scale: 0.9 }}
+                animate={{ opacity: 1, y: '-100%', scale: 1 }}
+                exit={{ opacity: 0, y: '-95%', scale: 0.9 }}
+                transition={{ duration: 0.1 }}
+                style={{ 
+                  position: 'absolute', 
+                  left: hoveredData.x, 
+                  top: (hoveredData.y || 0) - 10,
+                  x: `${-hoveredData.progress * 100}%`,
+                  pointerEvents: 'none', 
+                  zIndex: 999 
+                }}
                 className="bg-slate-900 text-white text-[10px] font-bold py-1.5 px-3 rounded shadow-xl whitespace-nowrap border border-slate-700"
               >
                 {hoveredData.count} contributions on {new Date(hoveredData.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[4px] border-t-slate-900"></div>
+                <div 
+                  className="absolute top-full w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[4px] border-t-slate-900 -translate-x-1/2"
+                  style={{ left: `${hoveredData.progress * 100}%` }}
+                ></div>
               </motion.div>
             )}
           </AnimatePresence>
