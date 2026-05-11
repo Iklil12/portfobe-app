@@ -109,24 +109,26 @@ export function GithubActivityFeed({ userId, themeColor }: GithubActivityFeedPro
             </div>
 
             <div className="flex-1">
-              <div className="flex flex-col @sm:flex-row @sm:items-center justify-between gap-1">
-                <p className="text-[11px] font-medium text-slate-600 dark:text-slate-400 leading-relaxed">
-                  <span className="opacity-70">{activity.description}</span>{' '}
-                  <a 
-                    href={activity.link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-slate-900 dark:text-slate-200 font-bold hover:underline decoration-slate-400 underline-offset-2"
-                  >
-                    {activity.repo}
-                  </a>
-                </p>
-                {activity.commitMessage && (
-                  <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-0.5 italic truncate max-w-[200px] @sm:max-w-xs">
-                    "{activity.commitMessage}"
+              <div className="flex flex-col @sm:flex-row @sm:items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] font-medium text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <span className="opacity-70">{activity.description}</span>{' '}
+                    <a 
+                      href={activity.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-slate-900 dark:text-slate-200 font-bold hover:underline decoration-slate-400 underline-offset-2"
+                    >
+                      {activity.repo}
+                    </a>
                   </p>
-                )}
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 shrink-0">
+                  {activity.commitMessage && (
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 italic truncate max-w-full">
+                      "{activity.commitMessage}"
+                    </p>
+                  )}
+                </div>
+                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 shrink-0 mt-1">
                   {formatRelativeTime(activity.createdAt)}
                 </span>
               </div>

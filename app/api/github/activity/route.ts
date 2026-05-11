@@ -39,7 +39,7 @@ export async function GET(req: Request) {
 
     const response = await fetch(
       `https://api.github.com/users/${username}/events/public?per_page=15`,
-      { headers, next: { revalidate: 60 } } // Cache 1 menit untuk testing/real-time
+      { headers, next: { revalidate: 900 } } // Revert ke 15 menit
     );
 
     if (!response.ok) {
@@ -60,14 +60,20 @@ export async function GET(req: Request) {
       .slice(0, 5)
       .map((event: any) => {
         let description = '';
+        let commitMessage = '';
+        
+        // Ekstrak commit message sesuai permintaan user
+        if (event.type === 'PushEvent' && event.payload?.commits?.length > 0) {
+          commitMessage = event.payload.commits[0].message.split('\n')[0];
+        }
         
         switch (event.type) {
           case 'PushEvent':
-            const commitCount = event.payload.size || event.payload.commits?.length || 0;
-            if (commitCount === 0) {
-              description = "Made a push to";
+            const size = event.payload.size || event.payload.commits?.length || 0;
+            if (size > 0) {
+              description = `Pushed ${size} commit${size > 1 ? 's' : ''} to`;
             } else {
-              description = `Pushed ${commitCount} commit${commitCount > 1 ? 's' : ''} to`;
+              description = "Made a push to";
             }
             break;
           case 'CreateEvent':
@@ -85,10 +91,6 @@ export async function GET(req: Request) {
           default:
             description = `Interacted with`;
         }
-
-        const commitMessage = event.type === 'PushEvent' 
-          ? (event.payload.commits?.[0]?.message?.split('\n')[0] || '') 
-          : '';
 
         return {
           id: event.id,
