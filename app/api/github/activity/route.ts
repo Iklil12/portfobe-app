@@ -60,13 +60,6 @@ export async function GET(req: Request) {
       .slice(0, 5)
       .map((event: any) => {
         let description = '';
-        let commitMessage = '';
-        
-        // Ekstrak commit message sesuai permintaan user
-        if (event.type === 'PushEvent' && event.payload?.commits?.length > 0) {
-          commitMessage = event.payload.commits[0].message.split('\n')[0];
-        }
-        
         switch (event.type) {
           case 'PushEvent':
             const size = event.payload.size || event.payload.commits?.length || 0;
@@ -97,7 +90,6 @@ export async function GET(req: Request) {
           type: event.type,
           repo: event.repo.name,
           description: description,
-          commitMessage: commitMessage,
           createdAt: event.created_at,
           link: `https://github.com/${event.repo.name}`
         };

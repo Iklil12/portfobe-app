@@ -25,35 +25,26 @@ const GITHUB_COLORS: Record<string, string> = {
   Dart: '#00B4AB',
   Vue: '#41b883',
   Svelte: '#ff3e00',
+  React: '#61dafb',
+  Shell: '#89e051',
+  'Objective-C': '#438eff',
+  Other: '#8b949e'
 };
 
 function getLanguageColor(language: string) {
   return GITHUB_COLORS[language] || '#8b949e';
 }
 
-function buildStatsFromRepos(repos: any[], username: string) {
-  const languageSizes: Record<string, number> = {};
-  let totalSize = 0;
-
-  // Filter fork, ambil repo asli. Jika semua fork, ambil semua.
+function buildStatsFromRepos(repos: any[], username: string, detailedLanguages: any[]) {
+  // Ambil 3 repo teratas: urutkan berdasarkan stars (desc), jika sama pakai push date (desc)
   const filteredRepos = repos.filter(repo => !repo.fork);
   const displayRepos = filteredRepos.length > 0 ? filteredRepos : repos;
 
-  for (const repo of displayRepos) {
-    if (repo.language && repo.size) {
-      languageSizes[repo.language] = (languageSizes[repo.language] || 0) + repo.size;
-      totalSize += repo.size;
-    }
-  }
-
-  // Ambil 3 repo teratas: urutkan berdasarkan stars (desc), jika sama pakai push date (desc)
-  // displayRepos sudah diurutkan by pushed dari GitHub API, jadi urutan push sudah benar
   const topRepos = [...displayRepos]
     .sort((a, b) => {
       if (b.stargazers_count !== a.stargazers_count) {
         return b.stargazers_count - a.stargazers_count;
       }
-      // Jika stars sama, yang paling baru di-push duluan (sudah sorted by GitHub)
       return 0;
     })
     .slice(0, 3)
@@ -68,20 +59,11 @@ function buildStatsFromRepos(repos: any[], username: string) {
       url: repo.html_url || '#'
     }));
 
-  const languages = Object.entries(languageSizes)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 5)
-    .map(([name, size]) => ({
-      name,
-      percentage: totalSize > 0 ? Math.round((size / totalSize) * 100) : 0,
-      color: getLanguageColor(name)
-    }));
-
   return {
     username,
-    languages,
-    topRepo: topRepos[0] || null,   // Backward compat: tetap ada topRepo
-    topRepos,                        // Baru: array sampai 3 repo
+    languages: detailedLanguages,
+    topRepo: topRepos[0] || null,
+    topRepos,
   };
 }
 
@@ -89,14 +71,12 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
-    // Parameter opsional: ?bust=1 untuk paksa refresh cache (misal dari dashboard settings)
     const bustCache = searchParams.get('bust') === '1';
 
     if (!userId) {
       return NextResponse.json({ error: 'UserId is required' }, { status: 400 });
     }
 
-    // Ambil data integrasi GitHub untuk user ini
     const integration = await prisma.integration.findUnique({
       where: { userId_provider: { userId, provider: 'GITHUB' } }
     });
@@ -107,8 +87,6 @@ export async function GET(req: Request) {
 
     const now = new Date();
 
-    // === PERIKSA CACHE DATABASE ===
-    // 1. Jika ini permintaan refresh (bustCache), berikan rate limit 1 menit untuk keamanan
     if (bustCache && integration.updatedAt) {
       const lastUpdate = new Date(integration.updatedAt).getTime();
       const secondsSinceLastUpdate = Math.floor((now.getTime() - lastUpdate) / 1000);
@@ -121,7 +99,6 @@ export async function GET(req: Request) {
       }
     }
 
-    // 2. Jika cache masih valid dan tidak ada permintaan bust, langsung kembalikan data dari DB
     if (
       !bustCache &&
       integration.cachedData &&
@@ -134,15 +111,13 @@ export async function GET(req: Request) {
       });
     }
 
-    // === CACHE KEDALUWARSA / KOSONG → AMBIL DARI GITHUB ===
     const username = integration.providerId;
-
-    // Autentikasi Basic → kuota 5.000 req/jam (vs 60 tanpa auth)
     const clientId = process.env.GITHUB_CLIENT_ID;
     const clientSecret = process.env.GITHUB_CLIENT_SECRET;
     
     const headers: Record<string, string> = {
       'Accept': 'application/vnd.github.v3+json',
+      'User-Agent': 'Portfobe-App'
     };
 
     if (clientId && clientSecret) {
@@ -155,14 +130,12 @@ export async function GET(req: Request) {
     });
 
     if (!res.ok) {
-      // Jika GitHub error, kembalikan cache lama (jika ada) daripada error kosong
       if (integration.cachedData) {
         return NextResponse.json(JSON.parse(integration.cachedData), {
           headers: { 'Cache-Control': 'public, s-maxage=60' }
         });
       }
       if (res.status === 404) return NextResponse.json({ error: 'GitHub user not found' }, { status: 404 });
-      if (res.status === 403) return NextResponse.json({ error: 'GitHub API rate limit exceeded' }, { status: 429 });
       throw new Error(`GitHub API error: ${res.status}`);
     }
 
@@ -175,11 +148,50 @@ export async function GET(req: Request) {
       });
     }
 
-    // Bangun data stats
-    const statsData = buildStatsFromRepos(repos, username);
+    // --- Ambil Detail Bahasa dari Top 15 Repo (untuk akurasi tanpa merusak rate limit) ---
+    const topReposForLangs = repos.filter((r: any) => !r.fork).slice(0, 15);
+    const languageAggr: Record<string, number> = {};
+    let totalBytes = 0;
 
-    // === SIMPAN KE DATABASE CACHE ===
-    // Set expiry 15 menit ke depan
+    await Promise.all(topReposForLangs.map(async (repo: any) => {
+      try {
+        const langRes = await fetch(repo.languages_url, { headers, next: { revalidate: 3600 } });
+        if (langRes.ok) {
+          const langs = await langRes.json();
+          for (const [name, bytes] of Object.entries(langs)) {
+            languageAggr[name] = (languageAggr[name] || 0) + (bytes as number);
+            totalBytes += (bytes as number);
+          }
+        }
+      } catch (e) {
+        console.error('Error fetching languages for repo:', repo.name);
+      }
+    }));
+
+    // Proses Bahasa: Ambil Top 3 + Gabungkan Sisanya ke "Other"
+    const sortedLangs = Object.entries(languageAggr)
+      .sort(([, a], [, b]) => b - a);
+      
+    const top3 = sortedLangs.slice(0, 3);
+    const rest = sortedLangs.slice(3);
+    
+    let detailedLanguages = top3.map(([name, bytes]) => ({
+      name,
+      percent: totalBytes > 0 ? parseFloat(((bytes / totalBytes) * 100).toFixed(1)) : 0,
+      color: getLanguageColor(name)
+    }));
+    
+    if (rest.length > 0) {
+      const otherBytes = rest.reduce((acc, [, bytes]) => acc + bytes, 0);
+      detailedLanguages.push({
+        name: 'Other',
+        percent: totalBytes > 0 ? parseFloat(((otherBytes / totalBytes) * 100).toFixed(1)) : 0,
+        color: getLanguageColor('Other')
+      });
+    }
+
+    const statsData = buildStatsFromRepos(repos, username, detailedLanguages);
+
     const expiresAt = new Date(now.getTime() + CACHE_TTL_MINUTES * 60 * 1000);
     await prisma.integration.update({
       where: { userId_provider: { userId, provider: 'GITHUB' } },

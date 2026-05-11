@@ -321,25 +321,36 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
                 <span className={`${s.label} mb-4`} style={dynamicTextStyle}>
                   Top Languages
                 </span>
-                <div className="flex flex-col gap-4">
-                  {data.languages.map((lang: any) => (
-                    <div key={lang.name} className="flex flex-col gap-1.5">
-                      <div className="flex justify-between items-center text-xs">
-                        <span className={`font-bold ${s.textPrimary}`}>
+                <div className="flex flex-col">
+                  {/* Multi-segment Progress Bar */}
+                  <div className={`w-full h-2.5 flex rounded-full overflow-hidden mb-6 ${s.progressBg}`}>
+                    {data.languages.map((lang: any, idx: number) => (
+                      <div 
+                        key={`bar-${lang.name}`}
+                        style={{ 
+                          width: `${lang.percent}%`, 
+                          backgroundColor: lang.color 
+                        }}
+                        className="h-full transition-all duration-1000 ease-out"
+                        title={`${lang.name}: ${lang.percent}%`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Language Legend */}
+                  <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+                    {data.languages.map((lang: any) => (
+                      <div key={lang.name} className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: lang.color }}></span>
+                        <span className={`text-xs font-bold truncate ${s.textPrimary}`}>
                           {lang.name}
                         </span>
-                        <span className={`font-mono text-[10px] ${s.textSecondary}`}>
-                          {lang.percentage}%
+                        <span className={`text-[10px] font-mono ml-auto ${s.textSecondary}`}>
+                          {lang.percent}%
                         </span>
                       </div>
-                      <div className={`w-full h-[1px] ${s.progressBg}`}>
-                        <div 
-                          className={`h-full transition-all duration-1000 ease-out ${s.progressFill}`}
-                          style={{ width: `${lang.percentage}%`, ...dynamicBgStyle }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             )}

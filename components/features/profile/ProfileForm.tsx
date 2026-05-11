@@ -154,55 +154,84 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
           <p className="text-[11px] font-medium text-slate-500">Hubungkan profil Anda.</p>
         </div>
         <div className="w-full">
-          {githubUsername ? (
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-5 py-3 rounded-xl border border-emerald-200 bg-emerald-50 w-full sm:w-max shadow-sm">
-              <div className="flex items-center gap-3 flex-1">
-                <i className="fab fa-github text-xl text-emerald-700"></i>
+          <div className="flex flex-col gap-3">
+            {githubUsername ? (
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-5 py-3 rounded-xl border border-emerald-200 bg-emerald-50 w-full sm:w-max shadow-sm transition-all hover:shadow-md">
+                <div className="flex items-center gap-3 flex-1">
+                  <i className="fab fa-github text-xl text-emerald-700"></i>
+                  <div className="flex flex-col">
+                    <span className="text-[13px] font-bold text-emerald-800 leading-tight">Connected</span>
+                    <span className="text-[11px] font-medium text-emerald-600">@{githubUsername}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2 mt-2 sm:mt-0 sm:ml-8">
+                  {state.isConfirmingDisconnect ? (
+                    <>
+                      <button 
+                        type="button" 
+                        onClick={() => actions.setIsConfirmingDisconnect(false)}
+                        className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={handleDisconnectGithub}
+                        className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-sm animate-pulse"
+                      >
+                        Yes, Disconnect
+                      </button>
+                    </>
+                  ) : (
+                    <button 
+                      type="button" 
+                      onClick={() => actions.setIsConfirmingDisconnect(true)}
+                      className="w-full sm:w-auto px-3 py-1.5 rounded-lg text-[11px] font-bold text-rose-600 bg-rose-100 hover:bg-rose-200 transition-colors"
+                    >
+                      Disconnect
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <button 
+                type="button" 
+                onClick={() => signIn('github', { callbackUrl: '/dashboard/profile' })}
+                className="flex items-center justify-center sm:justify-start gap-3 px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all group w-full sm:w-auto shadow-sm"
+              >
+                <i className="fab fa-github text-lg text-slate-700 group-hover:text-black transition-colors"></i>
+                <span className="text-[13px] font-bold text-slate-700 group-hover:text-black transition-colors">Integrate with GitHub</span>
+              </button>
+            )}
+
+            {/* PENPOT INTEGRATION (COMING SOON) */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-5 py-3 rounded-xl border border-slate-100 bg-slate-50/50 w-full sm:w-max opacity-80 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
+              <div className="flex items-center gap-3 flex-1 sm:pr-8">
+                <div className="w-5 h-5 flex items-center justify-center">
+                  <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-slate-700">
+                    <path d="M22 0L44 11V33L22 44L0 33V11L22 0Z" fill="currentColor" fillOpacity="0.1" />
+                    <path d="M22 4.5L37.5 12.25V31.75L22 39.5L6.5 31.75V12.25L22 4.5Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M22 39.5V22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M37.5 12.25L22 22L6.5 12.25" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M14 12V6M22 15V4M30 12V6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
                 <div className="flex flex-col">
-                  <span className="text-[13px] font-bold text-emerald-800 leading-tight">Connected</span>
-                  <span className="text-[11px] font-medium text-emerald-600">@{githubUsername}</span>
+                  <span className="text-[13px] font-bold text-slate-700 leading-tight">Penpot</span>
+                  <span className="text-[11px] font-medium text-slate-400">Coming soon</span>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 mt-2 sm:mt-0 sm:ml-8">
-                {state.isConfirmingDisconnect ? (
-                  <>
-                    <button 
-                      type="button" 
-                      onClick={() => actions.setIsConfirmingDisconnect(false)}
-                      className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button 
-                      type="button" 
-                      onClick={handleDisconnectGithub}
-                      className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-sm animate-pulse"
-                    >
-                      Yes, Disconnect
-                    </button>
-                  </>
-                ) : (
-                  <button 
-                    type="button" 
-                    onClick={() => actions.setIsConfirmingDisconnect(true)}
-                    className="w-full sm:w-auto px-3 py-1.5 rounded-lg text-[11px] font-bold text-rose-600 bg-rose-100 hover:bg-rose-200 transition-colors"
-                  >
-                    Disconnect
-                  </button>
-                )}
-              </div>
+              <button 
+                type="button" 
+                onClick={() => showToast({ message: "Integrasi Penpot akan segera hadir!", id: "penpot-soon", icon: "fa-palette", type: "info" })}
+                className="w-full sm:w-auto px-4 py-1.5 rounded-lg text-[11px] font-black text-slate-400 bg-white border border-slate-200 cursor-not-allowed"
+              >
+                Connect
+              </button>
             </div>
-          ) : (
-            <button 
-              type="button" 
-              onClick={() => signIn('github', { callbackUrl: '/dashboard/profile' })}
-              className="flex items-center justify-center sm:justify-start gap-3 px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all group w-full sm:w-auto shadow-sm"
-            >
-              <i className="fab fa-github text-lg text-slate-700 group-hover:text-black transition-colors"></i>
-              <span className="text-[13px] font-bold text-slate-700 group-hover:text-black transition-colors">Integrate with GitHub</span>
-            </button>
-          )}
+          </div>
         </div>
       </div>
       
