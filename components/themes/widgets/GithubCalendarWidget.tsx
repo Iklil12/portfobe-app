@@ -1,7 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { GitHubCalendar } from 'react-github-calendar';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export type CalendarThemeVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist';
 
@@ -9,55 +10,42 @@ interface GithubCalendarWidgetProps {
   username: string;
   variant?: CalendarThemeVariant;
   colorScheme?: 'light' | 'dark';
-  themeColor?: string; // Menambahkan prop warna dinamis
+  themeColor?: string;
+  year?: number | 'last';
 }
 
-// Utility: Konversi HEX ke RGB
 function hexToRgb(hex: string) {
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
   hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : { r: 0, g: 0, b: 0 };
-}
-
-// Generator 5 level warna untuk kalender berdasarkan 1 warna utama
-function generateDynamicTheme(baseColor: string | undefined, colorScheme: 'light' | 'dark') {
-  // Jika tidak ada baseColor, gunakan hijau classic GitHub sebagai fallback
-  const { r, g, b } = baseColor ? hexToRgb(baseColor) : { r: 57, g: 211, b: 83 }; 
-  
-  const level0 = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
-  
-  const palette = [
-    level0,
-    `rgba(${r}, ${g}, ${b}, 0.4)`,
-    `rgba(${r}, ${g}, ${b}, 0.6)`,
-    `rgba(${r}, ${g}, ${b}, 0.8)`,
-    `rgba(${r}, ${g}, ${b}, 1)`
-  ];
-
-  return {
-    light: palette,
-    dark: palette,
-  };
+  return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 57, g: 211, b: 83 };
 }
 
 export function GithubCalendarWidget({ 
   username, 
   variant = 'monochrome',
   colorScheme = 'light',
-  themeColor
+  themeColor,
+  year: initialYear = new Date().getFullYear()
 }: GithubCalendarWidgetProps) {
   
-  // Hasilkan palet dinamis!
-  const dynamicTheme = generateDynamicTheme(themeColor, colorScheme);
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState<number | 'last'>(initialYear);
+  const [isReady, setIsReady] = useState(false);
+  const [hoveredData, setHoveredData] = useState<{ count: number, date: string, x: number, y: number } | null>(null);
 
-  // Sesuaikan warna teks judul
+  const years = [currentYear, currentYear - 1, currentYear - 2];
+
+  // Gunakan skema warna GitHub standar untuk stabilitas
+  const { r, g, b } = hexToRgb(themeColor || "");
+  const baseColor = colorScheme === 'dark' ? '#161b22' : '#ebedf0';
+  const calendarTheme = {
+    light: [baseColor, `rgba(${r},${g},${b},0.25)`, `rgba(${r},${g},${b},0.5)`, `rgba(${r},${g},${b},0.75)`, `rgba(${r},${g},${b},1)`],
+    dark: [baseColor, `rgba(${r},${g},${b},0.25)`, `rgba(${r},${g},${b},0.5)`, `rgba(${r},${g},${b},0.75)`, `rgba(${r},${g},${b},1)`]
+  };
+
   const getTitleColor = () => {
-    if (themeColor) return themeColor; // Gunakan warna tema jika ada
+    if (themeColor) return themeColor; 
     switch (variant) {
       case 'acid': return '#a3e635';
       case 'aura': return '#a78bfa';
@@ -67,38 +55,84 @@ export function GithubCalendarWidget({
     }
   };
 
+  // Reset & Re-mount setiap ganti tahun untuk menghindari error library
+  useEffect(() => {
+    setIsReady(false);
+    const timer = setTimeout(() => setIsReady(true), 500);
+    return () => clearTimeout(timer);
+  }, [username, selectedYear]);
+
+  if (!username) return null;
+
   return (
     <div className="w-full font-sans relative">
-      <div className="flex justify-between items-center mb-6">
-        <span 
-          className="text-[10px] font-bold uppercase tracking-widest block"
-          style={{ color: getTitleColor() }}
-        >
-          Contributions
+      <div className="flex flex-col @sm:flex-row justify-between items-start @sm:items-center gap-4 mb-6">
+        <span className="text-[10px] font-bold uppercase tracking-widest block opacity-70" style={{ color: getTitleColor() }}>
+          Contributions ({selectedYear === 'last' ? 'Last Year' : selectedYear})
         </span>
         
-        {/* Indikator Swipe (Hanya muncul di layar kecil) */}
-        <div className="flex md:hidden items-center gap-1.5 opacity-60 animate-pulse">
-          <span className="text-[8px] font-bold uppercase tracking-widest" style={{ color: getTitleColor() }}>
-            Swipe
-          </span>
-          <i className="fas fa-arrow-right text-[8px]" style={{ color: getTitleColor() }}></i>
+        <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-lg">
+          {years.map((y) => (
+            <button key={y} onClick={() => setSelectedYear(y)} className={`px-3 py-1 text-[9px] font-bold uppercase transition-all rounded-md ${selectedYear === y ? 'bg-white dark:bg-slate-800 shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 hover:text-slate-600'}`}>{y}</button>
+          ))}
+          <button onClick={() => setSelectedYear('last')} className={`px-3 py-1 text-[9px] font-bold uppercase transition-all rounded-md ${selectedYear === 'last' ? 'bg-white dark:bg-slate-800 shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 hover:text-slate-600'}`}>Last Year</button>
         </div>
       </div>
       
-      <div className="w-full overflow-x-auto hide-scrollbar pb-2 relative group cursor-grab active:cursor-grabbing">
-        <div className="min-w-max">
-          <GitHubCalendar 
-            username={username} 
-            theme={dynamicTheme}
-            colorScheme={colorScheme}
-            blockSize={11}
-            blockMargin={4}
-            fontSize={11}
-            labels={{
-              totalCount: '{{count}} contributions in the last year',
-            }}
-          />
+      <div className="w-full overflow-x-auto hide-scrollbar pb-2 relative min-h-[150px]">
+        <div className="min-w-max relative">
+          <AnimatePresence mode="wait">
+            {!isReady ? (
+              <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full flex items-center justify-center py-12">
+                <div className="w-6 h-6 border-2 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+              </motion.div>
+            ) : (
+              <motion.div key="calendar" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <GitHubCalendar 
+                  username={username}
+                  year={selectedYear}
+                  colorScheme={colorScheme}
+                  theme={calendarTheme}
+                  blockSize={11}
+                  blockMargin={4}
+                  fontSize={11}
+                  renderBlock={(block, activity) => (
+                    React.cloneElement(block as React.ReactElement<any>, {
+                      onMouseEnter: (e: React.MouseEvent) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const container = e.currentTarget.closest('.hide-scrollbar');
+                        const containerRect = container?.getBoundingClientRect();
+                        setHoveredData({
+                          count: activity.count,
+                          date: activity.date,
+                          x: rect.left - (containerRect?.left || 0) + rect.width / 2,
+                          y: rect.top - (containerRect?.top || 0) - 10
+                        });
+                      },
+                      onMouseLeave: () => setHoveredData(null),
+                      style: { cursor: 'pointer', transition: 'all 0.2s' }
+                    })
+                  )}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Tooltip Floating */}
+          <AnimatePresence>
+            {hoveredData && (
+              <motion.div
+                initial={{ opacity: 0, y: 5, x: '-50%' }}
+                animate={{ opacity: 1, y: 0, x: '-50%' }}
+                exit={{ opacity: 0, y: 5, x: '-50%' }}
+                style={{ position: 'absolute', left: hoveredData.x, top: hoveredData.y, pointerEvents: 'none', zIndex: 100 }}
+                className="bg-slate-900 text-white text-[10px] font-bold py-1.5 px-3 rounded shadow-xl whitespace-nowrap border border-slate-700"
+              >
+                {hoveredData.count} contributions on {new Date(hoveredData.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[4px] border-t-slate-900"></div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

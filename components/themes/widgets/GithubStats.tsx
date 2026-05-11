@@ -3,6 +3,7 @@
 import React from 'react';
 import useSWR from 'swr';
 import { GithubCalendarWidget, CalendarThemeVariant } from './GithubCalendarWidget';
+import { GithubActivityFeed } from './GithubActivityFeed';
 
 export type StatsVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist';
 
@@ -20,6 +21,9 @@ const fetcher = (url: string) => fetch(url).then((res) => {
 export function GithubStats({ userId, variant = 'monochrome', themeColor }: GithubStatsProps) {
   const { data, error, isLoading } = useSWR(`/api/github/stats?userId=${userId}`, fetcher, {
     revalidateOnFocus: false,
+    revalidateOnMount: true,       // Selalu ambil data baru saat komponen muncul
+    revalidateIfStale: true,       // Paksa ambil ulang jika data sudah lama
+    dedupingInterval: 10000,       // Cegah double-fetch dalam 10 detik saja (bukan default 2 menit)
   });
 
   if (error) return null;
@@ -258,42 +262,56 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             
-            {/* Featured Repository */}
-            {data.topRepo && (
-              <div className="flex flex-col">
-                <span className={`${s.label} mb-3`} style={dynamicTextStyle}>
-                  Featured Repository
+            {/* Repositories List */}
+            {(data.topRepos || data.topRepo) && (
+              <div className="flex flex-col gap-6">
+                <span className={`${s.label} mb-1`} style={dynamicTextStyle}>
+                  Top Repositories
                 </span>
-                <a 
-                  href={data.topRepo.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <i className={`fab fa-github text-base group-hover:opacity-70 transition-opacity ${s.icon}`} style={dynamicTextStyle}></i>
-                    <h4 className={`text-base font-bold transition-all ${s.textPrimary}`}>
-                      {data.topRepo.name}
-                    </h4>
-                  </div>
-                  <p className={`text-sm leading-relaxed line-clamp-2 ${s.textSecondary}`}>
-                    {data.topRepo.description}
-                  </p>
-                  <div className="flex items-center gap-4 mt-4">
-                    <div className={`flex items-center gap-1.5 text-xs font-medium ${s.textSecondary}`}>
-                      <i className="fas fa-star text-[10px]"></i>
-                      {data.topRepo.stars}
+                <div className="flex flex-col gap-8">
+                  {(data.topRepos || [data.topRepo]).map((repo: any, index: number) => (
+                    <div key={repo.name || index} className="flex flex-col">
+                      <a 
+                        href={repo.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="group"
+                      >
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <i className={`fab fa-github text-sm group-hover:opacity-70 transition-opacity ${s.icon}`} style={dynamicTextStyle}></i>
+                          <h4 className={`text-base font-bold transition-all ${s.textPrimary}`}>
+                            {repo.name}
+                          </h4>
+                        </div>
+                        {repo.description && (
+                          <p className={`text-xs leading-relaxed line-clamp-2 mb-3 ${s.textSecondary}`}>
+                            {repo.description}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-4">
+                          <div className={`flex items-center gap-1.5 text-[10px] font-bold ${s.textSecondary}`}>
+                            <i className="fas fa-star text-[9px]"></i>
+                            {repo.stars}
+                          </div>
+                          <div className={`flex items-center gap-1.5 text-[10px] font-bold ${s.textSecondary}`}>
+                            <i className="fas fa-eye text-[9px]"></i>
+                            {repo.watchers}
+                          </div>
+                          <div className={`flex items-center gap-1.5 text-[10px] font-bold ${s.textSecondary}`}>
+                            <i className="fas fa-code-branch text-[9px]"></i>
+                            {repo.forks}
+                          </div>
+                          {repo.language && (
+                            <div className={`flex items-center gap-1.5 text-[10px] font-bold ${s.textSecondary}`}>
+                              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: repo.languageColor }}></span>
+                              {repo.language}
+                            </div>
+                          )}
+                        </div>
+                      </a>
                     </div>
-                    <div className={`flex items-center gap-1.5 text-xs font-medium ${s.textSecondary}`}>
-                      <i className="fas fa-eye text-[10px]"></i>
-                      {data.topRepo.watchers ?? 0}
-                    </div>
-                    <div className={`flex items-center gap-1.5 text-xs font-medium ${s.textSecondary}`}>
-                      <i className="fas fa-code-branch text-[10px]"></i>
-                      {data.topRepo.forks}
-                    </div>
-                  </div>
-                </a>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -337,6 +355,10 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
               variant={variant as CalendarThemeVariant} 
               colorScheme={s.calendarColorScheme}
               themeColor={themeColor}
+            />
+            <GithubActivityFeed 
+              userId={userId} 
+              themeColor={themeColor} 
             />
           </div>
         )}

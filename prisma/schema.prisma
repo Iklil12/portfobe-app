@@ -264,13 +264,15 @@ enum Role {
 }
 
 model Integration {
-  id         String   @id @default(uuid())
-  userId     String
-  provider   String
-  providerId String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String   @id @default(uuid())
+  userId          String
+  provider        String
+  providerId      String
+  cachedData      String?  @db.LongText  // JSON data yang dicache dari GitHub API
+  cacheExpiresAt  DateTime?              // Kapan cache ini kedaluwarsa
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, provider])
   @@index([userId])
