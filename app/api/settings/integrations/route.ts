@@ -18,6 +18,7 @@ export async function GET() {
             id: true,
             provider: true,
             providerId: true,
+            settings: true,
             cacheExpiresAt: true,
             updatedAt: true,
           }

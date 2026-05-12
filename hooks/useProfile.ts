@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import useSWR, { mutate } from 'swr';
-import toast from 'react-hot-toast';
 import { showToast } from '@/lib/customToast';
+import toast from 'react-hot-toast';
 
 export function useProfile() {
   const { data: session, status, update } = useSession();
@@ -152,38 +152,6 @@ export function useProfile() {
     }
   };
 
-  const [isConfirmingDisconnect, setIsConfirmingDisconnect] = useState(false);
-
-  const handleDisconnectGithub = async () => {
-    const toastId = toast.loading('Memutuskan koneksi GitHub...', {
-      style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
-    });
-
-    try {
-      const response = await fetch('/api/settings/integrations/disconnect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider: 'GITHUB' }),
-      });
-
-      if (response.ok) {
-        setGithubUsername(null);
-        setIsConfirmingDisconnect(false); // Reset confirmation state
-        toast.success("GitHub berhasil diputuskan!", {
-          id: toastId,
-          style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' },
-          iconTheme: { primary: '#ef4444', secondary: '#0a0a0a' }
-        });
-        mutate('/api/profile');
-      } else {
-        const errorData = await response.json();
-        toast.error(errorData.error || "Gagal memutuskan koneksi.", { id: toastId });
-      }
-    } catch (error) {
-      toast.error("Kesalahan jaringan.", { id: toastId });
-    }
-  };
-
   return {
     state: {
       session,
@@ -199,7 +167,6 @@ export function useProfile() {
       isSaving,
       isLoadingData,
       isFormValid,
-      isConfirmingDisconnect
     },
     actions: {
       setFirstName,
@@ -210,8 +177,6 @@ export function useProfile() {
       setAvatarUrl,
       handleRemoveAvatar,
       handleSave,
-      handleDisconnectGithub,
-      setIsConfirmingDisconnect
     }
   };
 }

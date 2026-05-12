@@ -25,6 +25,12 @@ export async function PATCH(
     const currentLink = await prisma.link.findUnique({ where: { id: id } });
     if (!currentLink) return NextResponse.json({ error: "Link tidak ditemukan" }, { status: 404 });
 
+    // --- IDOR PROTECTION ---
+    if (currentLink.userId !== (session.user as any).id) {
+      return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
+    }
+    // -----------------------
+
     // 3. Validasi Limit 4 Link Aktif
     if (body.isActive === true && currentLink.isActive === false) {
       const activeCount = await prisma.link.count({
@@ -71,6 +77,12 @@ export async function DELETE(
     // Cari dulu data link sebelum dihapus untuk mendapatkan informasi userId dan platform
     const link = await prisma.link.findUnique({ where: { id: id } });
     if (!link) return NextResponse.json({ error: "Link tidak ditemukan" }, { status: 404 });
+
+    // --- IDOR PROTECTION ---
+    if (link.userId !== (session.user as any).id) {
+      return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
+    }
+    // -----------------------
 
     await prisma.link.delete({ where: { id: id } });
 

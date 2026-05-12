@@ -8,6 +8,8 @@ import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
+import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
+import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 
 export default function ViewfinderTheme({ data, theme, isMobileView, isCardPreview = false, isEditor = false }: any) {
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
@@ -428,6 +430,11 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                 </motion.div>
                             ))}
                         </motion.div>
+
+                        <div className="mb-10">
+                            <PenpotShowcase userId={data.id} variant="viewfinder" />
+                            <CanvaShowcase userId={data.id} variant="viewfinder" />
+                        </div>
 
                         {data?.id && (
                             <GithubStats userId={data.id} variant="viewfinder" themeColor={primaryColor} />

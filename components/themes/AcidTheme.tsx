@@ -8,6 +8,8 @@ import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from './widgets/GithubStats';
+import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
+import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -334,6 +336,14 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                     </Link>
                 </motion.div>
             </section>
+
+            {/* INTEGRATIONS */}
+            {data?.id && (
+                <div className="px-6 @md:px-12 mb-10">
+                    <PenpotShowcase userId={data.id} variant="acid" themeColor={themeColor} />
+                    <CanvaShowcase userId={data.id} variant="acid" themeColor={themeColor} />
+                </div>
+            )}
 
             {/* GITHUB STATS */}
             {data?.id && (

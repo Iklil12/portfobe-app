@@ -8,6 +8,8 @@ import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
+import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
+import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -306,6 +308,17 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                         </motion.div>
                     );
                 })}
+
+                {/* INTEGRATIONS */}
+                {data?.id && (
+                    <motion.div 
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                        className={`bento-card p-0 @lg:col-span-4 @lg:row-span-auto mb-6`}
+                    >
+                        <PenpotShowcase userId={data.id} variant="bento" themeColor={highlightColor} />
+                        <CanvaShowcase userId={data.id} variant="bento" themeColor={highlightColor} />
+                    </motion.div>
+                )}
 
                 {/* GITHUB STATS */}
                 {data?.id && (

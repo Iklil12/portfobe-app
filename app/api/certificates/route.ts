@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { logActivity } from "@/lib/activity"; // <-- IMPORT SISTEM HISTORY DITAMBAHKAN
+import { logActivity } from "@/lib/activity";
 
 // MENGAMBIL SERTIFIKAT USER DENGAN PAGINATION
 export async function GET(req: Request) {
@@ -74,7 +74,6 @@ export async function POST(req: Request) {
         }, { status: 403 });
       }
     }
-    // -----------------------------------------
 
     const body = await req.json();
     const { title, description, mediaUrl, issuer, year, status } = body;
@@ -113,7 +112,6 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Ambil data user agar kita punya user.id untuk logActivity
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     });
@@ -124,6 +122,14 @@ export async function PATCH(req: Request) {
 
     if (!id) {
       return NextResponse.json({ error: "ID Sertifikat tidak ditemukan." }, { status: 400 });
+    }
+
+    const existingCert = await prisma.certificate.findUnique({ where: { id } });
+    if (!existingCert) return NextResponse.json({ error: "Sertifikat tidak ditemukan." }, { status: 404 });
+
+    // --- IDOR PROTECTION ---
+    if (existingCert.userId !== user.id) {
+      return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
     }
 
     const updatedCertificate = await prisma.certificate.update({
@@ -156,7 +162,6 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Ambil data user agar kita punya user.id untuk logActivity
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     });
@@ -169,9 +174,13 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "ID Sertifikat wajib disertakan." }, { status: 400 });
     }
 
-    // Cari datanya dulu untuk mengambil nama judulnya
     const existingCert = await prisma.certificate.findUnique({ where: { id } });
     if (!existingCert) return NextResponse.json({ error: "Sertifikat tidak ditemukan." }, { status: 404 });
+
+    // --- IDOR PROTECTION ---
+    if (existingCert.userId !== user.id) {
+      return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
+    }
 
     await prisma.certificate.delete({
       where: { id }

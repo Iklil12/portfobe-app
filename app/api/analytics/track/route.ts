@@ -31,8 +31,38 @@ export async function POST(req: Request) {
     }
 
     const headersList = await headers();
-    const ip = headersList.get("x-forwarded-for")?.split(',')[0] || "unknown";
+    // Gunakan logika IP yang lebih aman dari spoofing
+    const forwardedFor = headersList.get("x-forwarded-for");
+    const realIp = headersList.get("x-real-ip");
+    let ip = "unknown";
+    if (realIp) {
+      ip = realIp;
+    } else if (forwardedFor) {
+      const ips = forwardedFor.split(",").map(i => i.trim());
+      ip = ips[ips.length - 1]; // Ambil IP terakhir dari proxy terluar
+    }
     const userAgent = headersList.get("user-agent") || "unknown";
+
+    // --- RATE LIMITING (ANTI SPAM) ---
+    // Mencegah penyerang mengirimkan jutaan view/click palsu untuk userId tertentu
+    const trackTypes = ["VIEW", "CLICK", "PROJECT_OPEN"];
+    if (trackTypes.includes(type) || !type) {
+      const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
+      const recentViews = await prisma.analytics.count({
+        where: {
+          userId,
+          type: type || "VIEW",
+          ipAddress: ip,
+          createdAt: { gte: oneMinuteAgo }
+        }
+      });
+
+      if (recentViews >= 15) {
+        console.warn(`[TRACK API] Rate limit hit for IP: ${ip} targeting User: ${userId} Type: ${type}`);
+        return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429 });
+      }
+    }
+    // ---------------------------------
     
     // Gunakan document.referrer dari sisi client
     // Jika tidak ada, cek header referer

@@ -8,6 +8,8 @@ import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
+import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
+import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
@@ -268,6 +270,10 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
             </Link>
           </motion.div>
         </section>
+
+        {/* PENPOT SHOWCASE SECTION */}
+        <PenpotShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="monochrome" themeColor={themeColor} />
+        <CanvaShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="monochrome" themeColor={themeColor} />
 
         {/* OPEN SOURCE SECTION (GITHUB) */}
         <GithubStats userId={data?.userId || data?.user?.id || data?.id || ""} variant="monochrome" themeColor={themeColor} />

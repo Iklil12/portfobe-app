@@ -8,7 +8,7 @@ import { PortfolioStatusCard } from '@/components/features/settings/PortfolioSta
 import { EmailCredentialCard } from '@/components/features/settings/EmailCredentialCard';
 import { SecurityCard } from '@/components/features/settings/SecurityCard';
 import { DangerZoneCard } from '@/components/features/settings/DangerZoneCard';
-import { GitHubIntegrationCard } from '@/components/features/settings/GitHubIntegrationCard';
+
 import { DeleteAccountModal } from '@/components/features/settings/DeleteAccountModal';
 import { UpdateEmailModal } from '@/components/features/settings/UpdateEmailModal';
 import { UpdatePasswordModal } from '@/components/features/settings/UpdatePasswordModal';
@@ -45,7 +45,6 @@ export default function SettingsPage() {
 
         <div className="space-y-5 sm:space-y-6">
           <PortfolioStatusCard state={state} actions={actions} />
-          <GitHubIntegrationCard />
           <EmailCredentialCard state={state} actions={actions} />
           <SecurityCard state={state} actions={actions} />
           <DangerZoneCard state={state} actions={actions} />

@@ -17,7 +17,18 @@ export async function registerUser(formData: FormData) {
   try {
     // --- 0. RATE LIMITING (IP-BASED) ---
     const headersList = await headers();
-    const ip = headersList.get("x-forwarded-for") || headersList.get("x-real-ip") || "unknown";
+    const forwardedFor = headersList.get("x-forwarded-for");
+    const realIp = headersList.get("x-real-ip");
+    
+    // Mencegah IP Spoofing dengan memprioritaskan x-real-ip (diset oleh server) 
+    // atau mengambil elemen terakhir dari x-forwarded-for (IP dari proxy terluar yang terpercaya)
+    let ip = "unknown";
+    if (realIp) {
+      ip = realIp;
+    } else if (forwardedFor) {
+      const ips = forwardedFor.split(",").map(i => i.trim());
+      ip = ips[ips.length - 1];
+    }
 
     // Cek berapa banyak akun yang dibuat IP ini dalam 1 jam terakhir
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);

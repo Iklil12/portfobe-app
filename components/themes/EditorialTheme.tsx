@@ -8,6 +8,8 @@ import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
+import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
+import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -240,6 +242,14 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                 </motion.div>
 
             </section>
+
+            {/* PENPOT & CANVA SHOWCASE SECTION */}
+            {data?.id && (
+                <div className="w-full bg-[#fdfdfc]">
+                    <PenpotShowcase userId={data.id} variant="editorial" themeColor={highlightColor} />
+                    <CanvaShowcase userId={data.id} variant="editorial" themeColor={highlightColor} />
+                </div>
+            )}
 
             {/* GITHUB STATS SECTION */}
             {data?.id && (

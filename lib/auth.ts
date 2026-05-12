@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
         impersonateToken: { label: "Impersonate Token", type: "text" }
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         // 1. FLOW IMPERSONATION (Jika menggunakan impersonateToken)
         if (credentials?.impersonateToken) {
           try {
@@ -100,9 +100,21 @@ export const authOptions: NextAuthOptions = {
 
         // --- Pengecekan Awal (Rate Limiting) ---
         // Catatan: Menggunakan field 'count' dan 'updatedAt' sesuai skema LoginAttempt saat ini
+        
+        // Mencegah IP Spoofing dan memastikan IP tersedia
+        const forwardedFor = req?.headers?.["x-forwarded-for"];
+        const realIp = req?.headers?.["x-real-ip"];
+        let ip = "unknown";
+        if (realIp) {
+          ip = Array.isArray(realIp) ? realIp[0] : realIp;
+        } else if (forwardedFor) {
+          const ips = (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor).split(",").map((i: string) => i.trim());
+          ip = ips[ips.length - 1];
+        }
+
         const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
         const attemptRecord = await prisma.loginAttempt.findFirst({
-          where: { email: credentials.email },
+          where: { email: credentials.email, ip: ip },
           orderBy: { updatedAt: 'desc' }
         });
 
@@ -135,7 +147,7 @@ export const authOptions: NextAuthOptions = {
             await prisma.loginAttempt.create({
               data: {
                 email: credentials.email,
-                ip: "unknown", // Req.ip tidak tersedia di scope ini
+                ip: ip,
                 count: 1
               }
             });

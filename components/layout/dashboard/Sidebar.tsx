@@ -140,6 +140,14 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen }: SidebarProps) {
                 </Link>
                 {shouldCollapse && <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Profil</div>}
               </div>
+
+              <div className="relative group/tooltip">
+                <Link href="/dashboard/integrations" className={`w-full flex items-center py-3.5 rounded-2xl transition-all duration-300 group px-4 gap-4 ${isActive('/dashboard/integrations') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${shouldCollapse ? 'md:px-5 md:gap-0' : ''}`}>
+                  <i className={`fas fa-plug text-center transition-all duration-300 text-lg w-6 ${isActive('/dashboard/integrations') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'} ${shouldCollapse ? 'md:text-xl' : ''}`}></i> 
+                  <span className={`font-extrabold text-[13px] tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden max-w-[200px] opacity-100 ${shouldCollapse ? 'md:max-w-0 md:opacity-0' : ''}`}>Integrasi</span>
+                </Link>
+                {shouldCollapse && <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Integrasi</div>}
+              </div>
               
               <div className="relative group/tooltip">
                 <Link href="/support" className={`w-full flex items-center py-3.5 rounded-2xl transition-all duration-300 group px-4 gap-4 ${isActive('/support') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${shouldCollapse ? 'md:px-5 md:gap-0' : ''}`}>

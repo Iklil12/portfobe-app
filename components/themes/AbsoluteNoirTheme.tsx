@@ -8,6 +8,8 @@ import { getVideoThumbnail } from '@/lib/videoUtils';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
+import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
+import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 
 export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
@@ -211,6 +213,14 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
                     </Link>
                 </motion.div>
             </motion.section>
+
+            {/* INTEGRATIONS */}
+            {data?.id && (
+                <div className="w-full">
+                    <PenpotShowcase userId={data.id} variant="noir" />
+                    <CanvaShowcase userId={data.id} variant="noir" />
+                </div>
+            )}
 
             {/* GITHUB STATS */}
             {data?.id && (
