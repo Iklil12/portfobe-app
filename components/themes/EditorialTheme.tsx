@@ -31,7 +31,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
     const location = data?.profile?.location || data?.location || "Indonesia";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
-    const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 6);
+    const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
     const awardItems = data?.certificates || data?.user?.certificates || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 

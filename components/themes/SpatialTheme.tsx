@@ -305,18 +305,18 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                 <motion.a
                                     href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
                                     {...viewAnim} variants={auraAnim}
-                                    className={`flex items-center justify-between py-6 border-b border-white/5 group cursor-pointer flex-row`}
+                                    className={`flex flex-col @md:flex-row @md:items-center justify-between py-6 border-b border-white/5 group cursor-pointer gap-4 @md:gap-0`}
                                 >
-                                    <div className="flex items-center gap-6 w-full @md:w-auto">
-                                        <span className="text-sm font-mono text-slate-500 w-12">{award.year || new Date(award.createdAt).getFullYear()}</span>
+                                    <div className="flex items-center gap-4 @md:gap-6 w-full @md:w-auto">
+                                        <span className="text-xs font-mono text-slate-500 w-10 shrink-0">{award.year || new Date(award.createdAt).getFullYear()}</span>
                                         <div className="flex flex-col">
                                             <h4 className="text-lg @md:text-xl font-medium text-white group-hover:text-[var(--hl)] transition-colors">{award.title}</h4>
                                             <span className="text-xs text-slate-400 mt-1">{award.issuer}</span>
                                         </div>
                                     </div>
-                                    <div className={`flex items-center justify-between w-full @md:w-auto pl-16 @md:pl-0`}>
+                                    <div className={`flex items-center justify-between @md:justify-end w-full @md:w-auto`}>
                                         <p className="text-sm text-slate-500 line-clamp-1 max-w-xs hidden @lg:block">{award.description}</p>
-                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all ml-0 @md:ml-8">
+                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all @md:ml-8">
                                             <i className="fas fa-arrow-right -rotate-45 text-slate-400 group-hover:text-white transition-colors"></i>
                                         </div>
                                     </div>
@@ -329,12 +329,12 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                 {/* FOOTER (Massive CTA) */}
                 <motion.footer
                     {...viewAnim} variants={auraAnim}
-                    className={`mt-24 @md:mt-40 mb-10 glass-panel rounded-[40px] flex flex-col items-center text-center relative overflow-hidden mx-8 p-20`}
+                    className={`mt-24 @md:mt-40 mb-10 glass-panel rounded-[40px] flex flex-col items-center text-center relative overflow-hidden mx-8 p-10 @md:p-20`}
                 >
                     {/* Inner Glow */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full blur-[100px] opacity-20 pointer-events-none" style={{ backgroundColor: highlightColor }}></div>
 
-                    <h2 className={`font-semibold tracking-tight text-white relative z-10 text-6xl @md:text-7xl`}>
+                    <h2 className={`font-semibold tracking-tight text-white relative z-10 text-4xl @md:text-7xl`}>
                         Let's build something <br className="hidden @md:block" />
                         <span className="text-slate-400">extraordinary.</span>
                     </h2>

@@ -22,11 +22,11 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
 
   const styles = {
     monochrome: {
-      section: 'p-8 @lg:p-12 border-t border-gray-100 bg-white text-slate-900',
+      section: 'p-8 @lg:p-12 border-t border-gray-100 text-slate-900',
       heading: 'text-2xl font-black uppercase tracking-tighter text-slate-900',
       label: 'text-[10px] font-mono text-gray-400 uppercase',
       border: 'border-gray-100',
-      cardBg: 'bg-gray-50 border-gray-100',
+      cardBg: 'bg-transparent border-gray-100',
       icon: 'text-slate-900',
       textPrimary: 'text-slate-900',
       textSecondary: 'text-slate-500',
@@ -35,11 +35,11 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       calendarColorScheme: 'light' as const
     },
     classic: {
-      section: 'p-8 @lg:p-12 border-t border-slate-800 bg-[#0d1117] text-slate-300',
+      section: 'p-8 @lg:p-12 border-t border-slate-800 text-slate-300',
       heading: 'text-2xl font-bold tracking-tight text-slate-100',
       label: 'text-[10px] font-mono text-slate-500 uppercase',
       border: 'border-slate-800',
-      cardBg: 'bg-[#161b22] border-slate-800',
+      cardBg: 'bg-transparent border-slate-800',
       icon: 'text-slate-100',
       textPrimary: 'text-slate-100',
       textSecondary: 'text-slate-400',
@@ -48,11 +48,11 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       calendarColorScheme: 'dark' as const
     },
     acid: {
-      section: 'p-8 @lg:p-12 border-t-2 border-[#1a1a1a] bg-[#09090b] text-[#fafafa] acid-theme',
+      section: 'p-8 @lg:p-12 border-t-2 border-[#1a1a1a] text-[#fafafa] acid-theme',
       heading: 'text-3xl font-extrabold uppercase tracking-tighter text-[#fafafa] acid-heading',
       label: 'text-[10px] font-bold text-[#a3e635] uppercase tracking-[0.2em] acid-body',
       border: 'border-[#1a1a1a]',
-      cardBg: 'bg-[#09090b] border-[#1a1a1a]',
+      cardBg: 'bg-transparent border-[#1a1a1a]',
       icon: 'text-[#a3e635]',
       textPrimary: 'text-[#fafafa]',
       textSecondary: 'text-zinc-500',
@@ -65,7 +65,7 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       heading: 'text-2xl font-medium tracking-tight text-white',
       label: 'text-[10px] font-bold text-violet-300 uppercase tracking-widest',
       border: 'border-white/10',
-      cardBg: 'bg-white/5 border-white/10',
+      cardBg: 'bg-transparent border-white/10',
       icon: 'text-white',
       textPrimary: 'text-white',
       textSecondary: 'text-violet-200/60',
@@ -74,11 +74,11 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       calendarColorScheme: 'dark' as const
     },
     noir: {
-      section: 'p-8 @md:p-12 border-t border-white/10 bg-[#050505] text-white wire-border-b',
+      section: 'p-8 @md:p-12 border-t border-white/10 text-white wire-border-b',
       heading: 'font-sans font-black text-3xl @md:text-5xl tracking-tighter uppercase',
       label: 'font-mono text-[10px] uppercase tracking-[0.2em] text-white/50',
       border: 'border-white/10',
-      cardBg: 'bg-[#0a0a0a] ',
+      cardBg: 'bg-transparent',
       icon: 'text-white',
       textPrimary: 'text-white font-black',
       textSecondary: 'text-white/60 font-mono',
@@ -87,11 +87,11 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       calendarColorScheme: 'dark' as const
     },
     bento: {
-      section: 'bento-card flex flex-col p-6 @lg:p-10 @lg:col-span-4 w-full h-full',
+      section: 'flex flex-col p-6 @lg:p-10 @lg:col-span-4 w-full h-full',
       heading: 'text-xl @md:text-2xl font-black text-white',
       label: 'text-[10px] text-slate-500 font-bold uppercase tracking-widest',
       border: 'border-white/5',
-      cardBg: 'bg-[#1a1a1d] border-white/5',
+      cardBg: 'bg-transparent border-white/5',
       icon: 'text-white',
       textPrimary: 'text-white font-bold',
       textSecondary: 'text-slate-400 font-medium',
@@ -100,11 +100,11 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       calendarColorScheme: 'dark' as const
     },
     brutalism: {
-      section: 'p-6 @sm:p-12 border-b-[3px] border-black bg-[#f4f4f0] flex flex-col w-full font-mono text-black',
+      section: 'p-6 @sm:p-12 border-b-[3px] border-black flex flex-col w-full font-mono text-black',
       heading: 'text-4xl @sm:text-5xl font-black uppercase tracking-tighter mb-8 font-sans',
       label: 'text-[10px] font-bold uppercase tracking-widest bg-black text-white px-2 py-1 w-max',
       border: 'border-[3px] border-black',
-      cardBg: 'bg-white border-[3px] border-black shadow-[6px_6px_0px_0px_#000] rounded-none',
+      cardBg: 'bg-transparent border-[3px] border-black shadow-[6px_6px_0px_0px_#000] rounded-none',
       icon: 'text-black',
       textPrimary: 'text-black font-black uppercase',
       textSecondary: 'text-black font-bold uppercase',
@@ -130,33 +130,33 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       heading: 'font-sans font-semibold tracking-tight text-[#111] text-4xl @md:text-5xl mb-8',
       label: 'font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1 rounded-full w-max mb-4',
       border: 'border-[rgba(0,0,0,0.08)]',
-      cardBg: 'bg-white border border-[rgba(0,0,0,0.08)] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] rounded-[2rem]',
+      cardBg: 'bg-transparent border-none shadow-none rounded-[2rem]',
       icon: 'text-[#111]',
-      textPrimary: 'font-serif italic text-3xl @md:text-4xl text-[#111]',
+      textPrimary: 'font-serif text-lg @md:text-xl text-[#111]',
       textSecondary: 'font-sans text-sm text-slate-500 font-medium',
       progressBg: 'bg-slate-100 rounded-full',
       progressFill: 'bg-[#111] rounded-full',
       calendarColorScheme: 'light' as const
     },
     midnight: {
-      section: 'p-6 @md:p-12 @lg:p-20 flex flex-col border-t border-white/5 bg-[#030508]/50 shrink-0 w-full',
+      section: 'p-6 @md:p-12 @lg:p-20 flex flex-col border-t border-white/5 shrink-0 w-full',
       heading: 'font-serif text-3xl @md:text-5xl text-white mb-8',
       label: 'font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-white mb-2 block',
       border: 'border-white/10',
-      cardBg: 'bg-[#05070a] border border-white/10 shadow-2xl rounded-xl',
+      cardBg: 'bg-transparent border border-white/10 shadow-2xl rounded-xl',
       icon: 'text-white',
-      textPrimary: 'font-serif text-2xl @md:text-4xl text-white',
+      textPrimary: 'font-serif text-xl @md:text-2xl text-white',
       textSecondary: 'font-sans text-xs text-slate-400 font-medium uppercase tracking-widest',
       progressBg: 'bg-white/10',
       progressFill: 'bg-white',
       calendarColorScheme: 'dark' as const
     },
     monolith: {
-      section: 'relative z-20 w-full bg-[#050505] px-6 @md:px-12 pb-20 @md:pb-32 flex flex-col',
+      section: 'relative z-20 w-full px-6 @md:px-12 pb-20 @md:pb-32 flex flex-col',
       heading: 'font-serif leading-none text-white text-4xl @md:text-5xl @lg:text-[5cqi] mb-12',
       label: 'font-sans font-bold uppercase tracking-widest text-[var(--hl)] text-[10px] @md:text-xs mb-2 block',
       border: 'border-white/10',
-      cardBg: 'bg-black border border-white/10 rounded-[24px] @md:rounded-[40px] shadow-2xl',
+      cardBg: 'bg-transparent border border-white/10 rounded-[24px] @md:rounded-[40px] shadow-2xl',
       icon: 'text-white',
       textPrimary: 'font-serif leading-none text-white text-3xl @md:text-5xl',
       textSecondary: 'font-sans font-medium text-slate-400 text-[10px] @md:text-sm',
@@ -182,7 +182,7 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       heading: 'font-serif font-extrabold text-4xl @lg:text-6xl text-white mb-10 px-6 @md:px-12',
       label: 'font-sans text-[10px] font-bold uppercase tracking-widest text-[var(--hl)] mb-2 block px-6 @md:px-12',
       border: 'border-white/10',
-      cardBg: 'bg-white/5 backdrop-blur-md border border-white/10 rounded-xl mx-6 @md:mx-12 p-6 @md:p-8',
+      cardBg: 'bg-transparent border border-white/10 rounded-xl mx-6 @md:mx-12 p-6 @md:p-8',
       icon: 'text-white',
       textPrimary: 'font-serif font-bold text-3xl @md:text-5xl text-white',
       textSecondary: 'font-sans font-medium text-slate-400 text-sm mt-2',
@@ -204,11 +204,11 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       calendarColorScheme: 'light' as const
     },
     minimalist: {
-      section: 'border-t border-gray-200 bg-gray-50/30 overflow-hidden w-full pb-8',
+      section: 'border-t border-gray-200 overflow-hidden w-full pb-8',
       heading: 'text-2xl font-black uppercase tracking-tighter text-black px-8 @lg:px-12 pt-8 pb-2',
       label: 'text-[10px] font-bold uppercase tracking-widest text-gray-400 px-8 @lg:px-12 mb-6 block',
       border: 'border-gray-200',
-      cardBg: 'bg-white border-y border-gray-200 py-8 px-8 @lg:px-12',
+      cardBg: 'bg-transparent border-y border-gray-200 py-8 px-8 @lg:px-12',
       icon: 'text-black',
       textPrimary: 'text-2xl font-black tracking-tighter text-black',
       textSecondary: 'text-xs font-medium text-gray-500 mt-2',
@@ -224,7 +224,7 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
 
   return (
     <section ref={sectionRef} className={s.section}>
-      <div className={`flex justify-between items-end mb-10 pb-6 border-b ${s.border}`}>
+      <div className={`flex justify-between items-baseline mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-6 border-b'} ${s.border}`}>
         <h2 className={s.heading}>Canva Showcase</h2>
         <div className={`flex items-center gap-2 ${s.label}`} style={dynamicTextStyle}>
           <span>Canva</span>
@@ -233,7 +233,7 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
 
       <div className="w-full font-sans">
         {isLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 @lg:grid-cols-2 gap-10">
             {[1, 2].map((i) => (
               <div key={i} className={`animate-pulse rounded-3xl p-6 ${s.cardBg}`}>
                 <div className={`h-4 ${s.textPrimary} bg-current opacity-20 rounded w-1/3 mb-6`}></div>
@@ -242,7 +242,7 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 @lg:grid-cols-2 gap-10">
             {projects.map((project: any) => {
               let src = project.embedLink;
               if (src.includes('<iframe') || src.includes('<div')) {

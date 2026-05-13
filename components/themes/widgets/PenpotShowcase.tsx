@@ -38,8 +38,8 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
 
   const styles = {
     monochrome: {
-      section: 'p-8 @lg:p-12 border-t border-gray-100 bg-white text-slate-900',
-      heading: 'text-2xl font-black uppercase tracking-tighter text-slate-900',
+      section: 'p-8 @lg:py-10 @lg:px-12 border-t border-gray-100 bg-white text-slate-900',
+      heading: 'text-xl font-black uppercase tracking-tighter text-slate-900',
       label: 'text-[10px] font-mono text-gray-400 uppercase',
       border: 'border-gray-100',
       cardBg: 'bg-gray-50 border-gray-100',
@@ -146,9 +146,9 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       heading: 'font-sans font-semibold tracking-tight text-[#111] text-4xl @md:text-5xl mb-8',
       label: 'font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1 rounded-full w-max mb-4',
       border: 'border-[rgba(0,0,0,0.08)]',
-      cardBg: 'bg-white border border-[rgba(0,0,0,0.08)] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] rounded-[2rem]',
+      cardBg: 'bg-white border border-[rgba(0,0,0,0.08)] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] rounded-[2rem] transition-all duration-500 hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.12)] hover:-translate-y-2 hover:border-[var(--hl)]/20',
       icon: 'text-[#111]',
-      textPrimary: 'font-serif italic text-3xl @md:text-4xl text-[#111]',
+      textPrimary: 'font-serif text-lg @md:text-xl text-[#111]',
       textSecondary: 'font-sans text-sm text-slate-500 font-medium',
       progressBg: 'bg-slate-100 rounded-full',
       progressFill: 'bg-[#111] rounded-full',
@@ -161,7 +161,7 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       border: 'border-white/10',
       cardBg: 'bg-[#05070a] border border-white/10 shadow-2xl rounded-xl',
       icon: 'text-white',
-      textPrimary: 'font-serif text-2xl @md:text-4xl text-white',
+      textPrimary: 'font-serif text-xl @md:text-2xl text-white',
       textSecondary: 'font-sans text-xs text-slate-400 font-medium uppercase tracking-widest',
       progressBg: 'bg-white/10',
       progressFill: 'bg-white',
@@ -185,10 +185,10 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       heading: 'font-medium tracking-tight text-white text-4xl mb-8',
       label: 'inline-flex items-center gap-3 px-4 py-2 rounded-full glass-panel mb-4 text-xs font-medium text-slate-300 w-max',
       border: 'border-white/10',
-      cardBg: 'glass-panel p-6 @md:p-8 rounded-[24px]',
+      cardBg: 'glass-panel p-5 @md:p-6 rounded-[24px]',
       icon: 'text-white',
-      textPrimary: 'font-medium tracking-tight text-white text-2xl @md:text-4xl',
-      textSecondary: 'text-sm text-slate-400 mt-2',
+      textPrimary: 'font-medium tracking-tight text-white text-lg @md:text-xl',
+      textSecondary: 'text-[10px] text-slate-400 mt-1',
       progressBg: 'bg-white/10 rounded-full',
       progressFill: 'bg-[var(--hl)] rounded-full',
       calendarColorScheme: 'dark' as const
@@ -249,7 +249,7 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
 
   return (
     <section ref={sectionRef} className={s.section}>
-      <div className={`flex justify-between items-end mb-10 pb-6 border-b ${s.border}`}>
+      <div className={`flex justify-between items-baseline mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-6 border-b'} ${s.border}`}>
         <h2 className={s.heading}>Design Index</h2>
         <div className={`flex items-center gap-2 ${s.label}`} style={dynamicTextStyle}>
           <PenpotIcon className="w-4 h-4" />
@@ -271,28 +271,28 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={`grid grid-cols-1 gap-6 ${variant === 'midnight' ? '@xl:grid-cols-2' : '@md:grid-cols-2 @xl:grid-cols-3'}`}>
             {data.projects.map((project: any, index: number) => (
               <a 
                 key={index} 
                 href={project.url}
                 target="_blank"
                 rel="noreferrer"
-                className={`flex items-center gap-4 p-5 rounded-2xl cursor-pointer group ${s.cardBg}`}
+                className={`flex items-center ${variant === 'midnight' ? 'gap-2 p-3' : 'gap-3 p-4'} rounded-xl cursor-pointer group ${s.cardBg}`}
               >
-                <div className="w-12 h-12 shrink-0 rounded-xl bg-emerald-50/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300 shadow-sm relative overflow-hidden">
-                  <PenpotIcon className="w-6 h-6" />
+                <div className={`${variant === 'midnight' ? 'w-8 h-8' : 'w-10 h-10'} shrink-0 rounded-lg bg-emerald-50/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300 shadow-sm relative overflow-hidden`}>
+                  <PenpotIcon className={variant === 'midnight' ? 'w-4 h-4' : 'w-5 h-5'} />
                 </div>
                 
                 <div className="flex flex-col flex-1 min-w-0">
-                  <h4 className={`${s.textPrimary} truncate mb-1`}>{project.title || 'Untitled Design'}</h4>
-                  <span className={`${s.textSecondary} flex items-center gap-2`}>
+                  <h4 className={`${s.textPrimary} mb-0.5 uppercase tracking-tight`}>{project.title || 'Untitled Design'}</h4>
+                  <span className={`${s.textSecondary} flex items-center gap-2 text-[10px]`}>
                     <i className="fas fa-external-link-alt text-[9px]"></i>
-                    View on Penpot
+                    {variant === 'midnight' ? 'View' : 'View on Penpot'}
                   </span>
                 </div>
                 
-                <div className="w-8 h-8 rounded-full border border-current flex items-center justify-center opacity-50 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
+                <div className={`${variant === 'midnight' ? 'w-6 h-6' : 'w-8 h-8'} rounded-full border border-current flex items-center justify-center opacity-50 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0`}>
                   <i className="fas fa-arrow-right -rotate-45 text-[10px]"></i>
                 </div>
               </a>

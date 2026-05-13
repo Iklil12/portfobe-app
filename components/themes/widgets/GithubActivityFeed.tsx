@@ -109,7 +109,14 @@ export function GithubActivityFeed({ userId, themeColor }: GithubActivityFeedPro
         Recent Activity
       </motion.h5>
       
-      <div className="space-y-6 relative before:absolute before:left-[3.5px] before:top-2 before:bottom-2 before:w-[1px] before:bg-slate-100 dark:before:bg-slate-800">
+      <div className="space-y-6 relative">
+        {/* Animated Vertical Line */}
+        <motion.div 
+          className="absolute left-[3.5px] top-2 bottom-[-15px] w-[1px] bg-slate-100 dark:bg-slate-800 origin-top"
+          initial={{ scaleY: 0 }}
+          animate={isVisible ? { scaleY: 1 } : { scaleY: 0 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+        />
         {activities.map((activity, index) => (
           <motion.div 
             key={activity.id}
@@ -120,7 +127,7 @@ export function GithubActivityFeed({ userId, themeColor }: GithubActivityFeedPro
             }
             transition={{ 
               duration: 0.7, 
-              delay: 0.2 + index * 0.15, // 150ms gap between each item
+              delay: 0.5 + index * 0.15, // Muncul setelah garis mulai berjalan
               ease: [0.22, 1, 0.36, 1] 
             }}
             className="flex gap-5 group relative"

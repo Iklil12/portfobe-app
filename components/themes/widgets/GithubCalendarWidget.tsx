@@ -40,7 +40,13 @@ export function GithubCalendarWidget({
 
   // Gunakan skema warna GitHub standar untuk stabilitas
   const { r, g, b } = hexToRgb(themeColor || "");
-  const baseColor = colorScheme === 'dark' ? '#161b22' : '#ebedf0';
+  let baseColor = colorScheme === 'dark' ? '#161b22' : '#ebedf0';
+  
+  // Brighten empty squares for noir & aura variant as it's often too dark on true black
+  if ((variant === 'noir' || variant === 'aura') && colorScheme === 'dark') {
+    baseColor = '#30363d';
+  }
+
   const calendarTheme = {
     light: [baseColor, `rgba(${r},${g},${b},0.25)`, `rgba(${r},${g},${b},0.5)`, `rgba(${r},${g},${b},0.75)`, `rgba(${r},${g},${b},1)`],
     dark: [baseColor, `rgba(${r},${g},${b},0.25)`, `rgba(${r},${g},${b},0.5)`, `rgba(${r},${g},${b},0.75)`, `rgba(${r},${g},${b},1)`]

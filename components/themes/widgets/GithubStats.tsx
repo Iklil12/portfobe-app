@@ -172,7 +172,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       border: 'border-[rgba(0,0,0,0.08)]',
       cardBg: 'bg-white border border-[rgba(0,0,0,0.08)] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] rounded-[2rem]',
       icon: 'text-[#111]',
-      textPrimary: 'font-serif italic text-3xl @md:text-4xl text-[#111]',
+      textPrimary: 'font-serif text-3xl @md:text-4xl text-[#111]',
       textSecondary: 'font-sans text-sm text-slate-500 font-medium',
       progressBg: 'bg-slate-100 rounded-full',
       progressFill: 'bg-[#111] rounded-full',
@@ -185,7 +185,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       border: 'border-white/10',
       cardBg: 'bg-[#05070a] border border-white/10 shadow-2xl rounded-xl',
       icon: 'text-white',
-      textPrimary: 'font-serif text-2xl @md:text-4xl text-white',
+      textPrimary: 'font-serif text-xl @md:text-2xl text-white',
       textSecondary: 'font-sans text-xs text-slate-400 font-medium uppercase tracking-widest',
       progressBg: 'bg-white/10',
       progressFill: 'bg-white',
@@ -268,7 +268,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
 
   return (
     <section ref={sectionRef} className={s.section}>
-      <div ref={headingRef} className={`flex justify-between items-end mb-10 pb-6 border-b ${s.border}`}>
+      <div ref={headingRef} className={`flex justify-between items-baseline mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-6 border-b'} ${s.border}`}>
         <h2 className={s.heading}>Open Source</h2>
         <span className={s.label} style={dynamicTextStyle}>GitHub</span>
       </div>
@@ -289,7 +289,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
             <p className={`text-[10px] uppercase tracking-widest mt-1 opacity-50 ${s.textSecondary}`}>Repositories are private or empty</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          <div className="grid grid-cols-1 @md:grid-cols-2 gap-8 md:gap-12">
             
             {/* Repositories List */}
             {(data.topRepos || data.topRepo) && (
@@ -368,11 +368,11 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
                   </div>
 
                   {/* Language Legend */}
-                  <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+                  <div className={`grid gap-y-3 gap-x-4 ${variant === 'midnight' ? 'grid-cols-1 @xl:grid-cols-2' : 'grid-cols-2'}`}>
                     {data.languages.map((lang: any) => (
                       <div key={lang.name} className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: lang.color }}></span>
-                        <span className={`text-xs font-bold truncate ${s.textPrimary}`}>
+                        <span className={`text-xs font-bold ${s.textPrimary}`}>
                           {lang.name}
                         </span>
                         <span className={`text-[10px] font-mono ml-auto ${s.textSecondary}`}>
