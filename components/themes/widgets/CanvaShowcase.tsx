@@ -2,6 +2,7 @@
 
 import React from 'react';
 import useSWR from 'swr';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -12,6 +13,7 @@ interface CanvaShowcaseProps {
 }
 
 export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: CanvaShowcaseProps) {
+  const sectionRef = useScrollReveal<HTMLElement>();
   const { data, isLoading } = useSWR(`/api/canva/projects?userId=${userId}`, fetcher);
 
   const projects = data?.projects || [];
@@ -76,7 +78,7 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       heading: 'font-sans font-black text-3xl @md:text-5xl tracking-tighter uppercase',
       label: 'font-mono text-[10px] uppercase tracking-[0.2em] text-white/50',
       border: 'border-white/10',
-      cardBg: 'bg-[#0a0a0a] border-white/10',
+      cardBg: 'bg-[#0a0a0a] ',
       icon: 'text-white',
       textPrimary: 'text-white font-black',
       textSecondary: 'text-white/60 font-mono',
@@ -221,11 +223,10 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
   const dynamicTextStyle = isDynamic && themeColor ? { color: themeColor } : {};
 
   return (
-    <section className={s.section}>
+    <section ref={sectionRef} className={s.section}>
       <div className={`flex justify-between items-end mb-10 pb-6 border-b ${s.border}`}>
         <h2 className={s.heading}>Canva Showcase</h2>
         <div className={`flex items-center gap-2 ${s.label}`} style={dynamicTextStyle}>
-          <i className="fas fa-palette"></i>
           <span>Canva</span>
         </div>
       </div>
@@ -263,9 +264,9 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
                     <span className="w-2 h-2 rounded-full bg-[var(--hl, #2563eb)]"></span>
                     {project.title}
                   </h3>
-                  
+
                   <div className="relative w-full aspect-video overflow-hidden bg-slate-50/10 border border-current opacity-90 shadow-inner rounded-xl">
-                    <iframe 
+                    <iframe
                       src={src}
                       className="absolute inset-0 w-full h-full border-0"
                       allowFullScreen

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GitHubCalendar } from 'react-github-calendar';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -33,6 +33,8 @@ export function GithubCalendarWidget({
   const [selectedYear, setSelectedYear] = useState<number | 'last'>(initialYear);
   const [isReady, setIsReady] = useState(false);
   const [hoveredData, setHoveredData] = useState<{ count: number, date: string, x: number, y: number, progress: number } | null>(null);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+  const calendarContainerRef = useRef<HTMLDivElement>(null);
 
   const years = [currentYear, currentYear - 1, currentYear - 2];
 
@@ -58,9 +60,27 @@ export function GithubCalendarWidget({
   // Reset & Re-mount setiap ganti tahun untuk menghindari error library
   useEffect(() => {
     setIsReady(false);
+    setIsCalendarVisible(false);
     const timer = setTimeout(() => setIsReady(true), 500);
     return () => clearTimeout(timer);
   }, [username, selectedYear]);
+
+  // Scroll-triggered: animasi kotak hanya mulai saat kalender terlihat di viewport
+  useEffect(() => {
+    const el = calendarContainerRef.current;
+    if (!el || !isReady) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setIsCalendarVisible(true), 400);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isReady]);
 
   if (!username) return null;
 
@@ -79,7 +99,7 @@ export function GithubCalendarWidget({
         </div>
       </div>
 
-      <div className="w-full overflow-x-auto hide-scrollbar pb-2 relative">
+      <div ref={calendarContainerRef} className="w-full overflow-x-auto hide-scrollbar pb-2 relative">
         <div className="min-w-max relative pt-12 pb-4">
           <AnimatePresence mode="wait">
             {!isReady ? (
@@ -96,29 +116,46 @@ export function GithubCalendarWidget({
                   blockSize={11}
                   blockMargin={4}
                   fontSize={11}
-                  renderBlock={(block, activity) => (
-                    React.cloneElement(block as React.ReactElement<any>, {
-                      onMouseEnter: (e: React.MouseEvent) => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const container = e.currentTarget.closest('.min-w-max.relative');
-                        const containerRect = container?.getBoundingClientRect();
-                        
-                        if (containerRect) {
-                          const x = rect.left - containerRect.left + rect.width / 2;
-                          const progress = x / containerRect.width;
-                          setHoveredData({
-                            count: activity.count,
-                            date: activity.date,
-                            x: Math.round(x),
-                            y: Math.round(rect.top - containerRect.top),
-                            progress: progress
-                          });
-                        }
-                      },
-                      onMouseLeave: () => setHoveredData(null),
-                      style: { cursor: 'pointer', transition: 'all 0.2s' }
-                    })
-                  )}
+                  renderBlock={(block, activity) => {
+                    const date = new Date(activity.date);
+                    const startDate = selectedYear === 'last' 
+                      ? new Date().getTime() - 365 * 24 * 60 * 60 * 1000 
+                      : new Date(Number(selectedYear), 0, 1).getTime();
+                    const dayIndex = Math.max(0, Math.floor((date.getTime() - startDate) / 86400000));
+
+                    return (
+                      <motion.rect
+                        {...(block.props as any)}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={isCalendarVisible ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 200,
+                          damping: 18,
+                          delay: isCalendarVisible ? dayIndex * 0.004 : 0,
+                        }}
+                        onMouseEnter={(e: React.MouseEvent) => {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const container = e.currentTarget.closest('.min-w-max.relative');
+                          const containerRect = container?.getBoundingClientRect();
+                          
+                          if (containerRect) {
+                            const x = rect.left - containerRect.left + rect.width / 2;
+                            const progress = x / containerRect.width;
+                            setHoveredData({
+                              count: activity.count,
+                              date: activity.date,
+                              x: Math.round(x),
+                              y: Math.round(rect.top - containerRect.top),
+                              progress: progress
+                            });
+                          }
+                        }}
+                        onMouseLeave={() => setHoveredData(null)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    );
+                  }}
                 />
               </motion.div>
             )}

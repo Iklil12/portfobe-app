@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 interface Activity {
@@ -33,6 +33,8 @@ function formatRelativeTime(dateString: string) {
 export function GithubActivityFeed({ userId, themeColor }: GithubActivityFeedProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
+  const feedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -51,6 +53,23 @@ export function GithubActivityFeed({ userId, themeColor }: GithubActivityFeedPro
 
     if (userId) fetchActivity();
   }, [userId]);
+
+  // Scroll-triggered visibility
+  useEffect(() => {
+    const el = feedRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [activities]);
 
   if (loading) {
     return (
@@ -79,21 +98,31 @@ export function GithubActivityFeed({ userId, themeColor }: GithubActivityFeedPro
   }
 
   return (
-    <div className="mt-10">
-      <h5 
+    <div ref={feedRef} className="mt-10">
+      <motion.h5 
         className="text-[10px] font-bold uppercase tracking-widest mb-6 opacity-50"
         style={{ color: themeColor }}
+        initial={{ opacity: 0, y: 8 }}
+        animate={isVisible ? { opacity: 0.5, y: 0 } : { opacity: 0, y: 8 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
         Recent Activity
-      </h5>
+      </motion.h5>
       
       <div className="space-y-6 relative before:absolute before:left-[3.5px] before:top-2 before:bottom-2 before:w-[1px] before:bg-slate-100 dark:before:bg-slate-800">
         {activities.map((activity, index) => (
           <motion.div 
             key={activity.id}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
+            initial={{ opacity: 0, x: -16, filter: 'blur(4px)' }}
+            animate={isVisible 
+              ? { opacity: 1, x: 0, filter: 'blur(0px)' } 
+              : { opacity: 0, x: -16, filter: 'blur(4px)' }
+            }
+            transition={{ 
+              duration: 0.7, 
+              delay: 0.2 + index * 0.15, // 150ms gap between each item
+              ease: [0.22, 1, 0.36, 1] 
+            }}
             className="flex gap-5 group relative"
           >
             {/* Dot / Icon Container */}
@@ -131,3 +160,4 @@ export function GithubActivityFeed({ userId, themeColor }: GithubActivityFeedPro
     </div>
   );
 }
+

@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import useSWR from 'swr';
 import { GithubCalendarWidget, CalendarThemeVariant } from './GithubCalendarWidget';
 import { GithubActivityFeed } from './GithubActivityFeed';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 export type StatsVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist';
 
@@ -19,12 +20,40 @@ const fetcher = (url: string) => fetch(url).then((res) => {
 });
 
 export function GithubStats({ userId, variant = 'monochrome', themeColor }: GithubStatsProps) {
+  const sectionRef = useScrollReveal<HTMLElement>(0);
+  const headingRef = useScrollReveal<HTMLDivElement>(100);
+  const reposRef = useScrollReveal<HTMLDivElement>(200);
+  const langsRef = useScrollReveal<HTMLDivElement>(300);
+  const calendarRef = useScrollReveal<HTMLDivElement>(400);
+
   const { data, error, isLoading } = useSWR(`/api/github/stats?userId=${userId}`, fetcher, {
     revalidateOnFocus: false,
-    revalidateOnMount: true,       // Selalu ambil data baru saat komponen muncul
-    revalidateIfStale: true,       // Paksa ambil ulang jika data sudah lama
-    dedupingInterval: 10000,       // Cegah double-fetch dalam 10 detik saja (bukan default 2 menit)
+    revalidateOnMount: true,
+    revalidateIfStale: true,
+    dedupingInterval: 10000,
   });
+
+  // State untuk animasi bar — reset tiap kali data baru masuk, baru aktif saat scroll
+  const [barAnimated, setBarAnimated] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setBarAnimated(false);
+    const el = barRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setBarAnimated(true), 150);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [data]);
+
 
   if (error) return null;
 
@@ -238,8 +267,8 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
   const dynamicBgStyle = isDynamic && themeColor ? { backgroundColor: themeColor } : {};
 
   return (
-    <section className={s.section}>
-      <div className={`flex justify-between items-end mb-10 pb-6 border-b ${s.border}`}>
+    <section ref={sectionRef} className={s.section}>
+      <div ref={headingRef} className={`flex justify-between items-end mb-10 pb-6 border-b ${s.border}`}>
         <h2 className={s.heading}>Open Source</h2>
         <span className={s.label} style={dynamicTextStyle}>GitHub</span>
       </div>
@@ -264,7 +293,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
             
             {/* Repositories List */}
             {(data.topRepos || data.topRepo) && (
-              <div className="flex flex-col gap-6">
+              <div ref={reposRef} className="flex flex-col gap-6">
                 <span className={`${s.label} mb-1`} style={dynamicTextStyle}>
                   Top Repositories
                 </span>
@@ -317,21 +346,22 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
 
             {/* Top Languages */}
             {data.languages && data.languages.length > 0 && (
-              <div className="flex flex-col">
+              <div ref={langsRef} className="flex flex-col">
                 <span className={`${s.label} mb-4`} style={dynamicTextStyle}>
                   Top Languages
                 </span>
                 <div className="flex flex-col">
                   {/* Multi-segment Progress Bar */}
-                  <div className={`w-full h-2.5 flex rounded-full overflow-hidden mb-6 ${s.progressBg}`}>
+                  <div ref={barRef} className={`w-full h-2.5 flex rounded-full overflow-hidden mb-6 ${s.progressBg}`}>
                     {data.languages.map((lang: any, idx: number) => (
                       <div 
                         key={`bar-${lang.name}`}
                         style={{ 
-                          width: `${lang.percent}%`, 
-                          backgroundColor: lang.color 
+                          width: barAnimated ? `${lang.percent}%` : '0%', 
+                          backgroundColor: lang.color,
+                          transitionDelay: barAnimated ? `${idx * 80}ms` : '0ms'
                         }}
-                        className="h-full transition-all duration-1000 ease-out"
+                        className="h-full transition-[width] duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
                         title={`${lang.name}: ${lang.percent}%`}
                       />
                     ))}
@@ -360,7 +390,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
 
         {/* Contribution Calendar */}
         {!isLoading && !hasNoPublicRepos && data?.username && (
-          <div className={`mt-12 pt-8 border-t ${s.border}`}>
+          <div ref={calendarRef} className={`mt-12 pt-8 border-t ${s.border}`}>
             <GithubCalendarWidget 
               username={data.username} 
               variant={variant as CalendarThemeVariant} 

@@ -13,6 +13,7 @@ export function ManualPenpotManager() {
   const [isSaving, setIsSaving] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+  const [activeMenu, setActiveMenu] = useState<number | null>(null);
   
   const hasInitialized = useRef(false);
 
@@ -135,28 +136,29 @@ export function ManualPenpotManager() {
                   key="view"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex items-center justify-between p-5 rounded-2xl border border-slate-50 bg-slate-50/30 hover:bg-white hover:border-slate-200 hover:shadow-md transition-all group"
+                  onClick={() => setActiveMenu(activeMenu === idx ? null : idx)}
+                  className="flex items-center justify-between p-4 sm:p-5 rounded-2xl border border-slate-50 bg-slate-50/30 hover:bg-white hover:border-slate-200 hover:shadow-md transition-all group cursor-pointer sm:cursor-default"
                 >
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-slate-900 text-xs font-black">
+                  <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0 pr-2">
+                    <div className="w-10 h-10 shrink-0 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-slate-900 text-xs font-black">
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-black text-slate-900 tracking-tight truncate">{p.title || 'Untitled Project'}</p>
-                      <p className="text-[10px] text-slate-400 font-medium truncate max-w-[250px] sm:max-w-md">{p.url}</p>
+                      <p className="text-[10px] text-slate-400 font-medium truncate">{p.url}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
-                    <button type="button" onClick={() => setEditingIndex(idx)} className="w-9 h-9 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-slate-900 hover:border-slate-300 flex items-center justify-center transition-all shadow-sm">
+                  <div className={`flex items-center gap-2 transition-all ${activeMenu === idx ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2 sm:group-hover:opacity-100 sm:group-hover:translate-x-0'}`}>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setEditingIndex(idx); }} className="w-9 h-9 shrink-0 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-slate-900 hover:border-slate-300 flex items-center justify-center transition-all shadow-sm">
                       <i className="fas fa-pencil-alt text-[10px]"></i>
                     </button>
                     {deleteConfirm === idx ? (
                       <div className="flex items-center gap-1">
-                         <button type="button" onClick={(e) => handleRemove(idx, e)} className="px-3 py-2 rounded-lg bg-rose-500 text-white text-[9px] font-black uppercase tracking-widest shadow-lg">Ya, Hapus</button>
-                         <button type="button" onClick={() => setDeleteConfirm(null)} className="p-2 text-slate-400 hover:text-slate-900"><i className="fas fa-times"></i></button>
+                         <button type="button" onClick={(e) => { e.stopPropagation(); handleRemove(idx, e); }} className="px-3 py-2 rounded-lg bg-rose-500 text-white text-[9px] font-black uppercase tracking-widest shadow-lg">Ya, Hapus</button>
+                         <button type="button" onClick={(e) => { e.stopPropagation(); setDeleteConfirm(null); }} className="p-2 text-slate-400 hover:text-slate-900"><i className="fas fa-times"></i></button>
                       </div>
                     ) : (
-                      <button type="button" onClick={() => setDeleteConfirm(idx)} className="w-9 h-9 rounded-xl bg-white border border-slate-100 text-slate-300 hover:text-rose-500 hover:border-rose-100 flex items-center justify-center transition-all shadow-sm">
+                      <button type="button" onClick={(e) => { e.stopPropagation(); setDeleteConfirm(idx); }} className="w-9 h-9 shrink-0 rounded-xl bg-white border border-slate-100 text-slate-300 hover:text-rose-500 hover:border-rose-100 flex items-center justify-center transition-all shadow-sm">
                         <i className="fas fa-trash-alt text-[10px]"></i>
                       </button>
                     )}

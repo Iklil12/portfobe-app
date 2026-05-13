@@ -2,6 +2,7 @@
 
 import React from 'react';
 import useSWR from 'swr';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 export type StatsVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist';
 
@@ -27,6 +28,7 @@ const fetcher = (url: string) => fetch(url).then(async (res) => {
 });
 
 export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: PenpotShowcaseProps) {
+  const sectionRef = useScrollReveal<HTMLElement>();
   const { data, error, isLoading } = useSWR(`/api/penpot/manual?userId=${userId}`, fetcher, {
     revalidateOnFocus: false,
     dedupingInterval: 60000,
@@ -92,7 +94,7 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       heading: 'font-sans font-black text-3xl @md:text-5xl tracking-tighter uppercase',
       label: 'font-mono text-[10px] uppercase tracking-[0.2em] text-white/50',
       border: 'border-white/10',
-      cardBg: 'bg-[#0a0a0a] border-white/10',
+      cardBg: 'bg-[#0a0a0a] border border-white/20 transition-all duration-500 hover:-translate-y-2 hover:border-white/50 hover:bg-[#111]',
       icon: 'text-white',
       textPrimary: 'text-white font-black',
       textSecondary: 'text-white/60 font-mono',
@@ -246,7 +248,7 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
   );
 
   return (
-    <section className={s.section}>
+    <section ref={sectionRef} className={s.section}>
       <div className={`flex justify-between items-end mb-10 pb-6 border-b ${s.border}`}>
         <h2 className={s.heading}>Design Index</h2>
         <div className={`flex items-center gap-2 ${s.label}`} style={dynamicTextStyle}>
