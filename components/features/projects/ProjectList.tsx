@@ -2,9 +2,12 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
+import Script from 'next/script';
 import { LazyImage } from '@/components/ui/LazyImage';
 
 import { getVideoThumbnail } from '@/lib/videoUtils';
+
+const ModelViewer = 'model-viewer' as any;
 
 // Komponen card yang animasinya dipicu IntersectionObserver
 function AnimatedCard({ children, delay }: { children: React.ReactNode, delay: number }) {
@@ -40,6 +43,45 @@ function AnimatedCard({ children, delay }: { children: React.ReactNode, delay: n
       }}
     >
       {children}
+    </div>
+  );
+}
+
+// Komponen card 3D: static 1 frame → hover untuk auto-rotate (tanpa interaksi user)
+function ModelViewerCard({ src }: { src: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseEnter = () => {
+    const mv = containerRef.current?.querySelector('model-viewer') as any;
+    if (mv) mv.setAttribute('auto-rotate', '');
+  };
+
+  const handleMouseLeave = () => {
+    const mv = containerRef.current?.querySelector('model-viewer') as any;
+    if (mv) mv.removeAttribute('auto-rotate');
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="w-full h-full relative"
+    >
+      <ModelViewer
+        src={src}
+        shadow-intensity="1"
+        environment-image="neutral"
+        exposure="1"
+        loading="lazy"
+        interaction-prompt="none"
+        style={{ width: '100%', height: '100%', backgroundColor: '#f8fafc', pointerEvents: 'none', '--poster-color': 'transparent' } as any}
+      >
+        <div slot="poster" className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200/60 text-slate-400 gap-3">
+          <i className="fas fa-circle-notch animate-spin text-xl opacity-50"></i>
+          <span className="text-[9px] font-extrabold uppercase tracking-widest">Memuat 3D...</span>
+        </div>
+      </ModelViewer>
     </div>
   );
 }
@@ -90,12 +132,14 @@ export function ProjectList({ state, actions }: { state: any, actions: any }) {
 
   return (
     <>
+      <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js" />
       <style>{`
         @keyframes projectCardEnter {
           0%   { opacity: 0; transform: translateY(28px) scale(0.97); filter: blur(4px); }
           100% { opacity: 1; transform: translateY(0)    scale(1);    filter: blur(0);   }
         }
       `}</style>
+      <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js" />
 
       {/* key={activeTab} → remount saat tab ganti agar observer reset */}
       <div key={activeTab} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
@@ -103,14 +147,18 @@ export function ProjectList({ state, actions }: { state: any, actions: any }) {
           <AnimatedCard key={item.id} delay={index * 60}>
             <div className="group bg-white rounded-[1.5rem] sm:rounded-[2rem] p-2.5 border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:-translate-y-1.5 transition-all duration-500 flex flex-col relative h-full">
               <div className="relative aspect-[4/3] rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100/50">
-                <LazyImage
-                  src={item.projectType === 'video' ? getVideoThumbnail(item.mediaUrl) : item.mediaUrl}
-                  alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-lg shadow-sm text-[8px] sm:text-[9px] font-extrabold uppercase tracking-widest text-slate-700 flex items-center gap-1.5">
-                  <i className={`fas ${item.itemType === 'certificate' ? 'fa-award text-slate-500' : item.projectType === 'video' ? 'fa-play text-slate-500' : 'fa-image text-slate-500'}`}></i>
+                {item.projectType === '3d' ? (
+                  <ModelViewerCard src={item.mediaUrl} />
+                ) : (
+                  <LazyImage
+                    src={item.projectType === 'video' ? getVideoThumbnail(item.mediaUrl) : item.mediaUrl}
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-lg shadow-sm text-[8px] sm:text-[9px] font-extrabold uppercase tracking-widest text-slate-700 flex items-center gap-1.5 pointer-events-none">
+                  <i className={`fas ${item.itemType === 'certificate' ? 'fa-award text-slate-500' : item.projectType === '3d' ? 'fa-cube text-slate-500' : item.projectType === 'video' ? 'fa-play text-slate-500' : 'fa-image text-slate-500'}`}></i>
                   {item.itemType === 'certificate' ? 'Sertifikat' : item.projectType}
                 </div>
               </div>

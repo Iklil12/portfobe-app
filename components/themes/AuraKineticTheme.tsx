@@ -10,6 +10,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from './widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -48,7 +49,9 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
     const bio = data?.profile?.bio || data?.bio || "Creating clean, functional, and visually striking digital experiences with extreme attention to detail.";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
-    const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
+    const allProjects = data?.projects || data?.user?.projects || [];
+    const items3D = allProjects.filter((p: any) => p.projectType === '3d');
+    const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const awardItems = data?.certificates || data?.user?.certificates || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -258,6 +261,41 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                     </Link>
                 </motion.div>
             </section>
+
+            {/* ================= 3D SHOWCASE SECTION ================= */}
+            {items3D.length > 0 && (
+                <section className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-24 @md:py-32 border-t border-white/5">
+                    <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="text-center mb-16">
+                        <h2 className="font-serif text-4xl @md:text-5xl font-bold">Interactive Models</h2>
+                        <p className="font-sans text-white/50 mt-4 text-sm">Explore spatial design in 3D.</p>
+                    </motion.div>
+
+                    <div className="flex flex-col gap-10 @md:gap-16">
+                        {items3D.map((p: any, i: number) => (
+                            <motion.div
+                                key={i}
+                                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
+                                className={`group relative block w-full`}
+                            >
+                                <div className={`relative w-full aspect-[4/3] @md:aspect-video ${radiusClass} overflow-hidden bg-white/5 border border-white/10 backdrop-blur-xl p-2 @md:p-3 transition-all duration-500 hover:border-[var(--hl)] hover:bg-white/10`}>
+                                    <div className={`relative w-full h-full ${radiusClass} overflow-hidden bg-[#0a0a0c]`}>
+                                        <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0c" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none opacity-80 group-hover:opacity-40 transition-opacity duration-500"></div>
+
+                                        <div className="absolute bottom-0 left-0 w-full p-8 @md:p-12 flex justify-between items-end transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out pointer-events-none">
+                                            <div className="flex flex-col">
+                                                <span className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--hl)] mb-3 drop-shadow-md">Aura Asset 0{i+1}</span>
+                                                <h3 className="font-serif text-3xl @md:text-6xl font-bold text-white drop-shadow-lg leading-none">{p.title}</h3>
+                                                {p.description && <p className="text-white/60 text-sm @md:text-base max-w-xl mt-4 font-sans line-clamp-2">{p.description}</p>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* INTEGRATIONS */}
             {data?.id && (

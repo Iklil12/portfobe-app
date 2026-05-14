@@ -10,6 +10,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -31,7 +32,9 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
     const location = data?.profile?.location || data?.location || "Indonesia";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
-    const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
+    const allProjects = data?.projects || data?.user?.projects || [];
+    const items3D = allProjects.filter((p: any) => p.projectType === '3d');
+    const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const awardItems = data?.certificates || data?.user?.certificates || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -242,6 +245,45 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                 </motion.div>
 
             </section>
+
+            {/* 3D SHOWCASE (Editorial Layout) */}
+            {items3D.length > 0 && (
+                <section className={`w-full max-w-[1600px] mx-auto flex flex-col px-6 py-12 @md:px-12 @lg:px-20 @md:py-24 border-t border-subtle`}>
+                    <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="flex flex-col @md:flex-row justify-between items-start @md:items-end mb-16 @md:mb-24 gap-6">
+                        <h2 className={`font-sans font-semibold tracking-tight text-[#111] text-4xl @md:text-5xl @lg:text-6xl`}>
+                            Spatial <span className="font-serif italic text-slate-400">Models</span>
+                        </h2>
+                        <p className="font-sans text-sm @md:text-base font-medium text-slate-500 max-w-xs">
+                            Interactive 3D environments and digital objects.
+                        </p>
+                    </motion.div>
+
+                    <div className={`grid grid-cols-1 @md:grid-cols-2 gap-8 @md:gap-16 @lg:gap-24`}>
+                        {items3D.map((p: any, i: number) => {
+                            const isEven = i % 2 !== 0;
+
+                            return (
+                                <motion.div
+                                    key={i}
+                                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
+                                    className={`flex flex-col group w-full ${isEven ? '@md:mt-32' : ''}`}
+                                >
+                                    <div className={`w-full aspect-square bg-subtle ${radiusClass} overflow-hidden relative mb-6 @md:mb-8 border border-subtle shadow-soft transition-all duration-700`}>
+                                        <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#fdfdfc" />
+                                    </div>
+
+                                    <div className="flex flex-col px-2">
+                                        <div className="flex justify-between items-start mb-3">
+                                            <h3 className="font-sans text-2xl @md:text-3xl font-semibold text-[#111]">{p.title}</h3>
+                                            <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1 rounded-full">3D Asset</span>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                </section>
+            )}
 
             {/* PENPOT & CANVA SHOWCASE SECTION */}
             {data?.id && (

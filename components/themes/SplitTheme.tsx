@@ -10,6 +10,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -45,7 +46,9 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
     const location = data?.profile?.location || data?.location || "Indonesia";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
-    const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 6);
+    const allProjects = data?.projects || data?.user?.projects || [];
+    const items3D = allProjects.filter((p: any) => p.projectType === '3d');
+    const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 6);
     const awardItems = data?.certificates || data?.user?.certificates || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -289,6 +292,44 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                                 </Link>
                             </motion.div>
                         </section>
+
+                        {/* SECTION: 3D SHOWCASE */}
+                        {items3D.length > 0 && (
+                            <section className="flex flex-col pt-16 @lg:pt-24 pb-10 border-b nexus-border">
+                                <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className={`flex justify-between items-end mb-10 px-6 @md:px-12`}>
+                                    <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white">3D Models</h2>
+                                    <span className="font-sans text-xs font-medium text-[var(--hl)] hidden @sm:block">({items3D.length}) Items</span>
+                                </motion.div>
+
+                                <div className="flex flex-col gap-10 px-6 @md:px-12">
+                                    {items3D.map((p: any, i: number) => {
+                                        return (
+                                            <motion.div 
+                                                key={i}
+                                                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
+                                                className={`relative w-full border nexus-border group overflow-hidden ${radiusClass}`}
+                                            >
+                                                <div className="flex flex-col w-full relative z-10 p-8 @md:p-12 bg-gradient-to-b from-white/10 to-transparent">
+                                                    <div className="flex flex-col gap-3">
+                                                        <span className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-slate-500 group-hover:text-[var(--hl)] transition-colors">
+                                                            Spatial_Data_0{i + 1}
+                                                        </span>
+                                                        <h3 className={`font-display font-bold text-white transition-colors duration-300 text-4xl @md:text-7xl leading-none`}>
+                                                            {p.title}
+                                                        </h3>
+                                                        {p.description && <p className="text-slate-400 text-sm @md:text-lg max-w-2xl mt-6 leading-relaxed">{p.description}</p>}
+                                                    </div>
+                                                </div>
+
+                                                <div className="w-full aspect-video bg-[#0a0a0a] border-t nexus-border relative">
+                                                    <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0a" />
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </div>
+                            </section>
+                        )}
 
                         {/* INTEGRATIONS SECTION */}
                         {data?.id && (

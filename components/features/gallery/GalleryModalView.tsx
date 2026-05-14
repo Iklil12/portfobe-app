@@ -4,18 +4,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { CloseModalButton } from '@/components/ui/CloseModalButton';
 import { LazyImage } from '@/components/ui/LazyImage';
+import { getVideoThumbnail } from '@/lib/videoUtils';
 
 interface GalleryModalViewProps {
   projects: any[];
   subdomain: string;
 }
-
-// --- FUNGSI FIX: Menarik Thumbnail YouTube ---
-const getYouTubeThumbnail = (url: string) => {
-  if (!url) return '';
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/\s]{11})/);
-  return match ? `https://res.cloudinary.com/deobqjna7/image/youtube/${match[1]}.jpg` : url;
-};
 
 // --- VARIANTS ANIMASI ---
 const premiumEase = [0.16, 1, 0.3, 1] as const;
@@ -100,12 +94,12 @@ export default function GalleryModalView({ projects, subdomain }: GalleryModalVi
             variants={staggerGrid}
             initial="hidden"
             animate="visible"
-            className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6 max-w-[1800px] mx-auto"
+            className="columns-1 sm:columns-2 lg:columns-3 gap-6 max-w-[1600px] mx-auto w-full"
           >
             {projects.map((project) => {
               // DETEKSI GAMBAR ATAU VIDEO UNTUK THUMBNAIL
               const displayMedia = project.projectType === 'video' 
-                ? getYouTubeThumbnail(project.mediaUrl) 
+                ? getVideoThumbnail(project.mediaUrl) 
                 : (project.mediaUrl || "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=800&auto=format&fit=crop");
 
               return (
@@ -117,7 +111,7 @@ export default function GalleryModalView({ projects, subdomain }: GalleryModalVi
                   <motion.div 
                     initial="initial"
                     whileHover="hover"
-                    className="group relative overflow-hidden rounded-xl bg-white/5 border border-white/5 cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
+                    className="group relative overflow-hidden rounded-xl bg-white/5 border border-white/5 cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.5)] w-full block"
                   >
                     {/* IMPLEMENTASI THUMBNAIL YANG SUDAH DIPERBAIKI */}
                     <LazyImage 
@@ -126,14 +120,14 @@ export default function GalleryModalView({ projects, subdomain }: GalleryModalVi
                       className="w-full h-auto object-cover transition-all duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:opacity-80"
                     />
                     
-                    {/* Glassmorphism Hover Overlay */}
+                    {/* Glassmorphism Hover Overlay tanpa Blur */}
                     <motion.div 
                       variants={{
                         initial: { opacity: 0 },
                         hover: { opacity: 1 }
                       }}
                       transition={{ duration: 0.4 }}
-                      className="absolute inset-0 bg-black/20 backdrop-blur-md flex flex-col justify-end p-6 border-[0.5px] border-white/10"
+                      className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6 border-[0.5px] border-white/10"
                     >
                       <motion.div variants={textHoverVariants}>
                         <h3 className="text-white text-base md:text-lg font-black uppercase tracking-tight leading-tight mb-2">

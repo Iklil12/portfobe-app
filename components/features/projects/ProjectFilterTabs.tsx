@@ -14,13 +14,15 @@ export function ProjectFilterTabs({ state, actions }: { state: any, actions: any
     video: items.filter((p: any) => p.projectType === 'video').length,
     photo: items.filter((p: any) => p.projectType === 'photo').length,
     certificate: items.filter((p: any) => p.projectType === 'certificate').length,
+    '3d': items.filter((p: any) => p.projectType === '3d').length,
   };
 
   const tabs = [
     { id: 'all', label: 'All Data', icon: 'fa-border-all' },
     { id: 'video', label: 'Video', icon: 'fa-play' },
     { id: 'photo', label: 'Foto', icon: 'fa-image' },
-    { id: 'certificate', label: 'Sertifikat', icon: 'fa-award' }
+    { id: 'certificate', label: 'Sertifikat', icon: 'fa-award' },
+    { id: '3d', label: '3D Model', icon: 'fa-cube' }
   ] as const;
 
   return (

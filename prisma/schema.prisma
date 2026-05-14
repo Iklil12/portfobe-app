@@ -123,9 +123,18 @@ model Project {
   userId      String
   createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  detail3D    Project3DDetail?
 
   @@index([createdAt])
   @@index([userId], map: "Project_userId_fkey")
+}
+
+model Project3DDetail {
+  id          String   @id @default(cuid())
+  projectId   String   @unique
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fileSize    Int
+  storagePath String   // Nama/path file di Bunny.net untuk keperluan delete
 }
 
 model Activity {

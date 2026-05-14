@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Script from 'next/script';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
@@ -10,6 +11,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
@@ -72,7 +74,9 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
   const bio = data?.profile?.bio || data?.bio || "A visual storyteller based in Jakarta. I craft meticulous, high-end visual narratives for commercial brands and independent films.";
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
   const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
-  const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
+  const allProjects = data?.projects || data?.user?.projects || [];
+  const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
+  const items3D = allProjects.filter((p: any) => p.projectType === '3d');
   const awardItems = data?.certificates || data?.user?.certificates || [];
   const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -97,6 +101,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
 
   return (
     <div className={`flex w-full min-h-screen bg-white text-black relative min-body flex-col @lg:flex-row min-theme`}>
+      <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js" />
 
       <style dangerouslySetInnerHTML={{
         __html: `
@@ -110,6 +115,49 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
         .min-theme ::selection { background: #000000; color: #ffffff; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 3D LOADING ANIMATION */
+        @keyframes mv3d-spin { 0% { transform: rotateX(35deg) rotateY(0deg); } 100% { transform: rotateX(35deg) rotateY(360deg); } }
+        @keyframes mv3d-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        @keyframes mv3d-dash { 0% { stroke-dashoffset: 200; } 100% { stroke-dashoffset: 0; } }
+        .mv3d-loader {
+          position: absolute; inset: 0; display: flex; flex-direction: column;
+          align-items: center; justify-content: center; gap: 16px;
+          background: linear-gradient(135deg, #fafafa 0%, #f4f4f5 50%, #fafafa 100%);
+          z-index: 10;
+        }
+        .mv3d-cube {
+          width: 56px; height: 56px; perspective: 200px;
+        }
+        .mv3d-cube-inner {
+          width: 100%; height: 100%; position: relative;
+          transform-style: preserve-3d;
+          animation: mv3d-spin 3s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+        }
+        .mv3d-face {
+          position: absolute; width: 100%; height: 100%;
+          border: 2px solid #d4d4d8; background: rgba(0,0,0,0.02);
+          border-radius: 4px;
+        }
+        .mv3d-face:nth-child(1) { transform: rotateY(0deg) translateZ(28px); }
+        .mv3d-face:nth-child(2) { transform: rotateY(90deg) translateZ(28px); }
+        .mv3d-face:nth-child(3) { transform: rotateY(180deg) translateZ(28px); }
+        .mv3d-face:nth-child(4) { transform: rotateY(270deg) translateZ(28px); }
+        .mv3d-face:nth-child(5) { transform: rotateX(90deg) translateZ(28px); }
+        .mv3d-face:nth-child(6) { transform: rotateX(-90deg) translateZ(28px); }
+        .mv3d-label {
+          font-size: 9px; font-weight: 700; letter-spacing: 0.25em;
+          text-transform: uppercase; color: #a1a1aa;
+          animation: mv3d-pulse 2s ease-in-out infinite;
+        }
+        .mv3d-bar {
+          width: 80px; height: 2px; background: #e4e4e7; border-radius: 2px; overflow: hidden;
+        }
+        .mv3d-bar-fill {
+          width: 100%; height: 100%; background: #71717a; border-radius: 2px;
+          animation: mv3d-dash 1.8s ease-in-out infinite alternate;
+          transform-origin: left;
+        }
       `}} />
 
       {/* --- KIRI: SIDEBAR (Mulai Animasi di Detik 0.1) --- */}
@@ -183,7 +231,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
           <div className="grid grid-cols-2 border-b border-gray-200">
             <motion.div variants={cinematicBlurUp} className="p-8 border-r border-gray-200 flex flex-col justify-center">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Projects</p>
-              <motion.p className={`text-3xl @md:text-4xl font-black tracking-tighter min-heading`}>{archiveItems.length} Total</motion.p>
+              <motion.p className={`text-3xl @md:text-4xl font-black tracking-tighter min-heading`}>{(data?.projects || data?.user?.projects || []).length} Total</motion.p>
             </motion.div>
             <motion.div variants={cinematicBlurUp} className="p-8 flex flex-col justify-center">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Recognition</p>
@@ -225,13 +273,13 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
                   <div className="w-full aspect-[4/3] bg-gray-100 mb-4 border border-gray-200 overflow-hidden relative">
                     <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] grayscale group-hover:grayscale-0 group-hover:scale-110" />
                     <div className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
-                      ${isVideo 
-                        ? 'bg-transparent opacity-100' 
+                      ${isVideo
+                        ? 'bg-transparent opacity-100'
                         : 'bg-black/30 backdrop-blur-sm opacity-0 group-hover:opacity-100'
                       }`}>
                       <div className={`flex items-center justify-center rounded-full shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-                        ${isVideo 
-                          ? 'w-12 h-12 bg-white/90 text-black opacity-100 scale-100 group-hover:scale-110' 
+                        ${isVideo
+                          ? 'w-12 h-12 bg-white/90 text-black opacity-100 scale-100 group-hover:scale-110'
                           : 'w-14 h-14 bg-white text-black opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 delay-100'
                         }`}>
                         <i className={`fas ${isVideo ? 'fa-play ml-1' : 'fa-arrow-right -rotate-45'}`}></i>
@@ -270,6 +318,44 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
             </Link>
           </motion.div>
         </section>
+
+        {/* 3D SHOWCASE SECTION */}
+        {items3D.length > 0 && (
+          <section className="border-t border-gray-200 bg-zinc-50/50">
+            <motion.div
+              initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }}
+              variants={cinematicBlurUp} custom={0.2}
+              className="p-8 @lg:p-12 pb-6 flex justify-between items-end"
+            >
+              <div>
+                <h2 className="text-2xl font-black uppercase tracking-tighter min-heading">3D Showcase</h2>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-1">Interactive Models</p>
+              </div>
+              <span className="text-[10px] font-mono text-gray-400 uppercase"><i className="fas fa-cube mr-1"></i> {items3D.length} Model{items3D.length > 1 ? 's' : ''}</span>
+            </motion.div>
+
+            <motion.div
+              initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
+              variants={getStaggerContainer(0.4, 0.3)}
+              className="px-8 @lg:px-12 pb-12 grid grid-cols-1 gap-8"
+            >
+              {items3D.map((p: any, i: number) => (
+                <motion.div key={p.id || i} variants={cinematicBlurUp} className="group w-full">
+                  <div className="w-full border border-gray-200 overflow-hidden relative rounded-sm shadow-sm hover:shadow-md transition-shadow">
+                    <Interactive3DViewer mediaUrl={p.mediaUrl} />
+                  </div>
+                  <div className="flex justify-between items-start mt-4">
+                    <div>
+                      <h3 className="text-lg font-bold tracking-tight mb-1 min-heading">{p.title}</h3>
+                      {p.description && <p className="text-xs text-gray-500 max-w-lg">{p.description}</p>}
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 bg-gray-100 px-3 py-1.5 border border-gray-200 shrink-0">3D Model</span>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </section>
+        )}
 
         {/* PENPOT SHOWCASE SECTION */}
         <PenpotShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="monochrome" themeColor={themeColor} />
@@ -349,7 +435,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
                     {selectedMedia.type === 'video' ? 'Cinematic Presentation' : 'Visual Showcase'}
                   </p>
                 </div>
-                <button 
+                <button
                   onClick={() => setSelectedMedia(null)}
                   className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:scale-110 transition-transform active:scale-95 shadow-lg"
                 >
@@ -357,7 +443,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
                 </button>
               </div>
 
-              <motion.div 
+              <motion.div
                 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
                 className={`w-full ${selectedMedia.type === 'video' ? 'aspect-video bg-black' : 'max-h-[70vh] overflow-hidden bg-gray-50'} shadow-2xl rounded-sm relative flex items-center justify-center border border-gray-100`}
               >
@@ -371,7 +457,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
               </motion.div>
 
               <div className="flex justify-center mt-4">
-                <button 
+                <button
                   onClick={() => setSelectedMedia(null)}
                   className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 hover:text-black transition-colors"
                 >

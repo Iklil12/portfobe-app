@@ -10,6 +10,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 
 export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
@@ -24,7 +25,8 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
     const allProjects = data?.projects || data?.user?.projects || [];
-    const archiveItems = allProjects.slice(0, 4);
+    const items3D = allProjects.filter((p: any) => p.projectType === '3d');
+    const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const awardItems = data?.certificates || data?.user?.certificates || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -213,6 +215,44 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
                     </Link>
                 </motion.div>
             </motion.section>
+
+            {/* 3D SHOWCASE SECTION */}
+            {items3D.length > 0 && (
+                <section className="p-8 @md:p-12 border-t border-white/10 bg-[#050505] text-white wire-border-b">
+                    <motion.div
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }}
+                        variants={wireframeReveal}
+                        className="mb-10 flex justify-between items-end"
+                    >
+                        <div>
+                            <h2 className="font-sans font-black text-3xl @md:text-5xl tracking-tighter uppercase mb-2">3D <span className="text-white/40">Models</span></h2>
+                            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50">Interactive Viewer</span>
+                        </div>
+                        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50 bg-white/5 px-2 py-1 border border-white/10">{items3D.length} ASSETS</span>
+                    </motion.div>
+
+                    <motion.div
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
+                        variants={staggerGrid}
+                        className="grid grid-cols-1 gap-12"
+                    >
+                        {items3D.map((p: any, i: number) => (
+                            <motion.div key={p.id || i} variants={wireframeReveal} className="group flex flex-col gap-4">
+                                <div className="w-full border border-white/20 bg-[#0a0a0a] overflow-hidden transition-all duration-500 hover:border-white/50 p-1">
+                                    <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0a" />
+                                </div>
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <h3 className="text-lg @md:text-xl font-black uppercase tracking-tight text-white mb-1">{p.title}</h3>
+                                        {p.description && <p className="text-xs text-white/60 font-mono max-w-lg">{p.description}</p>}
+                                    </div>
+                                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/50 bg-white/5 px-2 py-1 border border-white/10 shrink-0">OBJ</span>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </section>
+            )}
 
             {/* INTEGRATIONS */}
             {data?.id && (

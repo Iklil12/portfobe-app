@@ -24,9 +24,16 @@ const cardItem = {
 export function ProjectFormModal({ state, actions }: { state: any, actions: any }) {
   const [videoMethod, setVideoMethod] = useState<'link' | 'upload'>('link');
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // Saat edit video yang sudah diupload (GUID Bunny), otomatis pindah ke tab 'upload'
+  const isBunnyGuid = (url: string) => url && !url.includes('youtube') && !url.includes('vimeo') && !url.includes('http') && url.length === 36 && url.includes('-');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [file3d, setFile3d] = useState<File | null>(null);
+  const file3dInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading3D, setIsUploading3D] = useState(false);
+  const [upload3DProgress, setUpload3DProgress] = useState(0);
 
   const {
     isModalOpen,
@@ -192,17 +199,27 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                     {[
                       { id: 'video', icon: 'fa-video', label: 'Video', desc: 'YouTube / Vimeo' },
                       { id: 'photo', icon: 'fa-image', label: 'Foto / Desain', desc: 'Portofolio Visual' },
-                      { id: 'certificate', icon: 'fa-certificate', label: 'Sertifikat', desc: 'Lisensi & Pencapaian' }
+                      { id: 'certificate', icon: 'fa-certificate', label: 'Sertifikat', desc: 'Lisensi & Pencapaian' },
+                      { id: '3d', icon: 'fa-cube', label: '3D Model', desc: 'FORMAT .GLB', isPro: true }
                     ].map((opt) => (
                       <motion.button
                         key={opt.id}
                         variants={cardItem}
                         whileHover={{ y: -5, scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => setProjectType(opt.id as ProjectType)}
+                        onClick={() => {
+                          if (opt.isPro && userPlan !== 'PRO') {
+                             setShowUpgradeModal(true);
+                             return;
+                          }
+                          setProjectType(opt.id as ProjectType)
+                        }}
                         className="group relative p-6 rounded-[20px] border border-slate-200 bg-white hover:border-slate-900 hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all text-center overflow-hidden"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        {opt.isPro && (
+                           <span className="absolute top-3 right-3 bg-slate-900 text-amber-400 text-[9px] font-black px-2 py-0.5 rounded-sm shadow-sm z-20">PRO</span>
+                        )}
                         <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-slate-900 transition-colors duration-300 relative z-10 shadow-sm">
                           <i className={`fas ${opt.icon} text-xl text-slate-400 group-hover:text-white transition-colors duration-300 group-hover:scale-110`}></i>
                         </div>
@@ -219,7 +236,68 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.4, ease: smoothEase }}
-                    onSubmit={handleSubmit}
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (projectType === '3d') {
+                        // Jika edit (sudah ada mediaUrl) dan tidak upload file baru, gunakan PATCH biasa
+                        if (editingId && !file3d) {
+                          handleSubmit(e);
+                          return;
+                        }
+                        if (!projectTitle || !file3d) {
+                           showToast({ message: 'Judul dan File 3D wajib diisi!', id: 'err-3d-req', icon: 'fa-exclamation' });
+                           return;
+                        }
+                        setIsUploading3D(true);
+                        setUpload3DProgress(0);
+                        
+                        try {
+                          const formData = new FormData();
+                          formData.append('title', projectTitle);
+                          formData.append('file', file3d);
+                          if (projectDescription) formData.append('description', projectDescription);
+
+                          // Gunakan XMLHttpRequest untuk tracking progress
+                          const xhr = new XMLHttpRequest();
+                          xhr.open('POST', '/api/projects/upload-3d', true);
+
+                          xhr.upload.onprogress = (event) => {
+                            if (event.lengthComputable) {
+                              const pct = Math.round((event.loaded / event.total) * 100);
+                              setUpload3DProgress(pct);
+                            }
+                          };
+
+                          xhr.onload = () => {
+                            if (xhr.status >= 200 && xhr.status < 300) {
+                              showToast({ message: '3D Model berhasil diunggah!', id: 'succ-3d', icon: 'fa-check-circle' });
+                              handleCloseModal();
+                              window.location.reload();
+                            } else {
+                              try {
+                                const err = JSON.parse(xhr.responseText);
+                                showToast({ message: err.error || 'Gagal mengunggah', id: 'err-3d-api', icon: 'fa-times-circle' });
+                              } catch {
+                                showToast({ message: 'Gagal mengunggah 3D model', id: 'err-3d-api', icon: 'fa-times-circle' });
+                              }
+                            }
+                            setIsUploading3D(false);
+                          };
+
+                          xhr.onerror = () => {
+                            showToast({ message: 'Gagal terhubung ke server', id: 'err-net', icon: 'fa-wifi' });
+                            setIsUploading3D(false);
+                          };
+
+                          xhr.send(formData);
+                        } catch (err) {
+                           showToast({ message: 'Gagal terhubung server', id: 'err-net', icon: 'fa-wifi' });
+                           setIsUploading3D(false);
+                        }
+                      } else {
+                        handleSubmit(e);
+                      }
+                    }}
                     className="space-y-6"
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -262,28 +340,71 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                       {/* INPUT MEDIA */}
                       <div className="md:col-span-2">
                         <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-3">
-                          {projectType === 'video' ? 'Tautan Video (YouTube)' : 'Unggah File Gambar'} <span className="text-rose-500">*</span>
+                          {projectType === 'video' ? 'Tautan Video (YouTube)' : projectType === '3d' ? 'Unggah File 3D (.GLB)' : 'Unggah File Gambar'} <span className="text-rose-500">*</span>
                         </label>
-                        {projectType === 'video' ? (
+                        {projectType === '3d' ? (
+                          <div className="w-full">
+                            <input type="file" accept=".glb,.gltf" className="hidden" ref={file3dInputRef} onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) {
+                                if (f.size > 50 * 1024 * 1024) {
+                                   showToast({ message: "Maksimal 50MB", id: "err-3d", icon: "fa-exclamation" });
+                                   return;
+                                }
+                                setFile3d(f);
+                              }
+                            }} />
+                            <div 
+                              onClick={() => file3dInputRef.current?.click()}
+                              className="cursor-pointer border-2 border-dashed border-slate-200 hover:border-slate-900 hover:bg-slate-50 transition-all duration-300 rounded-[20px] flex flex-col items-center justify-center overflow-hidden relative min-h-[160px] w-full group/upload"
+                            >
+                              {file3d ? (
+                                <div className="py-8 flex flex-col items-center text-center px-4">
+                                  <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-500 mb-3 border border-indigo-200">
+                                    <i className="fas fa-cube text-lg"></i>
+                                  </div>
+                                  <span className="text-sm font-bold text-slate-900">{file3d.name}</span>
+                                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Klik untuk mengganti</span>
+                                </div>
+                              ) : editingId && mediaUrl ? (
+                                <div className="py-8 flex flex-col items-center text-center px-4">
+                                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-500 mb-3 border border-green-200">
+                                    <i className="fas fa-check text-lg"></i>
+                                  </div>
+                                  <span className="text-sm font-bold text-slate-900">File 3D Sudah Terlampir</span>
+                                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Klik untuk mengganti file</span>
+                                </div>
+                              ) : (
+                                <div className="py-8 flex flex-col items-center text-center px-4">
+                                  <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-3 group-hover/upload:bg-slate-900 group-hover/upload:text-white transition-all duration-300 group-hover/upload:shadow-md group-hover/upload:-translate-y-1">
+                                    <i className="fas fa-cloud-upload-alt text-lg"></i>
+                                  </div>
+                                  <span className="text-sm font-bold text-slate-900 flex items-center gap-2">Pilih File 3D (.GLB/.GLTF)</span>
+                                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Maksimal 50MB</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ) : projectType === 'video' ? (
                           <div className="flex flex-col gap-4">
                             <div className="flex gap-2 p-1 bg-slate-100 rounded-full w-full sm:max-w-[280px]">
                               <button
                                 type="button"
                                 onClick={() => setVideoMethod('link')}
-                                className={`flex-1 py-2.5 text-[11px] font-bold rounded-full transition-all ${videoMethod === 'link' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                                className={`flex-1 py-2.5 text-[11px] font-bold rounded-full transition-all ${(isBunnyGuid(mediaUrl) ? 'upload' : videoMethod) === 'link' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
                               >
                                 Link (YouTube/Vimeo)
                               </button>
                               <button
                                 type="button"
                                 onClick={() => setVideoMethod('upload')}
-                                className={`flex-1 py-2.5 text-[11px] font-bold rounded-full transition-all flex items-center justify-center gap-1.5 ${videoMethod === 'upload' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                                className={`flex-1 py-2.5 text-[11px] font-bold rounded-full transition-all flex items-center justify-center gap-1.5 ${(isBunnyGuid(mediaUrl) ? 'upload' : videoMethod) === 'upload' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
                               >
                                 Unggah <i className="fas fa-crown text-amber-500"></i>
                               </button>
                             </div>
 
-                            {videoMethod === 'link' ? (
+                            {(isBunnyGuid(mediaUrl) ? 'upload' : videoMethod) === 'link' ? (
                               <input
                                 type="text" value={mediaUrl} onChange={(e) => setMediaUrl(e.target.value)} placeholder="https://youtube.com/..."
                                 className="w-full px-5 py-3.5 rounded-full border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-semibold text-slate-900 transition-all duration-300 hover:border-slate-300"
@@ -393,11 +514,11 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isUploading3D}
                         className="w-full sm:flex-1 py-3.5 rounded-full bg-[#ff9e00] text-white font-bold text-sm shadow-[0_8px_20px_rgba(255,158,0,0.3)] hover:bg-[#ff9e00]/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        {isSubmitting && <i className="fas fa-circle-notch animate-spin text-white/70"></i>}
-                        {isSubmitting ? 'Memproses...' : 'Simpan ke Portofolio'}
+                        {(isSubmitting || isUploading3D) && <i className="fas fa-circle-notch animate-spin text-white/70"></i>}
+                        {isUploading3D ? `Mengunggah 3D... ${upload3DProgress}%` : isSubmitting ? 'Memproses...' : 'Simpan ke Portofolio'}
                       </motion.button>
                     </div>
                   </motion.form>

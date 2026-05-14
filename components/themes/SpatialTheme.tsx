@@ -11,6 +11,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -45,7 +46,9 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
     const location = data?.profile?.location || data?.location || "Indonesia";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
-    const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
+    const allProjects = data?.projects || data?.user?.projects || [];
+    const items3D = allProjects.filter((p: any) => p.projectType === '3d');
+    const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const awardItems = data?.certificates || data?.user?.certificates || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -279,6 +282,48 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                         </Link>
                     </motion.div>
                 </div>
+
+                {/* 3D SHOWCASE SECTION */}
+                {items3D.length > 0 && (
+                    <div className={`flex flex-col w-full px-8 gap-12 mt-24 @md:mt-32`}>
+                        <motion.div {...viewAnim} variants={auraAnim} className="flex justify-between items-end mb-4">
+                            <h2 className={`font-medium tracking-tight text-white text-4xl`}>Spatial Assets</h2>
+                            <span className="text-slate-500 font-medium">({items3D.length})</span>
+                        </motion.div>
+
+                        <div className="flex flex-col gap-12 @md:gap-20">
+                            {items3D.map((p: any, i: number) => (
+                                <motion.div
+                                    key={i}
+                                    {...viewAnim} variants={auraAnim}
+                                    className="group flex flex-col gap-6"
+                                >
+                                    <div className="w-full aspect-[4/3] @md:aspect-video rounded-[32px] @md:rounded-[48px] overflow-hidden relative glass-panel p-2 @md:p-3 transition-all duration-700 group-hover:shadow-[0_0_60px_rgba(var(--hl-rgb),0.2)] group-hover:border-[var(--hl)]/30">
+                                        <div className="w-full h-full rounded-[24px] @md:rounded-[36px] overflow-hidden relative bg-[#0a0a0a]">
+                                            <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0a" />
+                                            {/* Hover Overlay */}
+                                            <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center pointer-events-none">
+                                                <div className="w-20 h-20 bg-white/10 backdrop-blur-md border-white/20 rounded-full flex items-center justify-center transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100 transition-all duration-500 shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+                                                    <i className="fas fa-cube text-white text-2xl"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col px-4">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--hl)] font-bold mb-1 opacity-60">Spatial Model 0{i+1}</span>
+                                                <h3 className="text-3xl @md:text-5xl font-medium text-white group-hover:text-[var(--hl)] transition-colors">{p.title}</h3>
+                                            </div>
+                                            <span className="text-[10px] uppercase tracking-widest text-slate-500 border border-slate-800 px-4 py-2 rounded-full">3D Asset</span>
+                                        </div>
+                                        {p.description && <p className="text-slate-400 text-sm @md:text-base max-w-2xl mt-2 leading-relaxed">{p.description}</p>}
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* INTEGRATIONS SECTION */}
                 {data?.id && (

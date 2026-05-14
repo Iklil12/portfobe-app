@@ -10,6 +10,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 
 export default function ViewfinderTheme({ data, theme, isMobileView, isCardPreview = false, isEditor = false }: any) {
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
@@ -18,6 +19,8 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
     
     const profile = data?.profile || data || {};
     const projects = data?.projects || data?.user?.projects || [];
+    const items3D = projects.filter((p: any) => p.projectType === '3d');
+    const archiveItems = projects.filter((p: any) => p.projectType !== '3d');
     const certificates = data?.certificates || data?.certificates || [];
     const links = data?.links || data?.links || [];
 
@@ -27,7 +30,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
     const location = profile.location || "JAKARTA, IDN";
     const email = data?.email || "hello@example.com";
 
-    const totalProjects = projects.length;
+    const totalProjects = archiveItems.length;
     const totalHonors = certificates.length;
 
     const primaryColor = theme?.themeColor || '#FF0033';
@@ -321,7 +324,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                     </motion.div>
 
                     <div ref={scrollRef} className="film-strip flex gap-4 overflow-x-auto px-4 pb-8 pt-2 pointer-events-auto">
-                        {projects.length > 0 ? projects.map((p: any, idx: number) => {
+                        {archiveItems.length > 0 ? archiveItems.map((p: any, idx: number) => {
                             const isVideo = p.projectType === 'video';
                             return (
                                 <motion.div
@@ -397,6 +400,57 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                         </Link>
                     </motion.div>
                 </section>
+
+                {/* ===== 3D MODELS SECTION ===== */}
+                {items3D.length > 0 && (
+                    <section className="relative z-20 py-20 bg-[#050505] border-y border-white/10 overflow-hidden">
+                        <motion.div
+                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
+                            variants={fadeUpVariants}
+                            className="vf-reel-header pointer-events-auto"
+                        >
+                            <h2 className="font-cinema tracking-wide text-[#F3F3F1] vf-section-title">3D MODELS <span style={{ color: 'var(--primary)' }}>.</span></h2>
+                        </motion.div>
+                        <div className="flex flex-col gap-16 @md:gap-32 px-6 @md:px-12 pb-20">
+                            {items3D.map((p: any, idx: number) => {
+                                return (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95, filter: "blur(5px)" }}
+                                        whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                                        viewport={{ once: true, amount: 0 }}
+                                        transition={{ duration: 1.2, delay: (idx % 3) * 0.1, ease: cinematicEase }}
+                                        key={idx}
+                                        className="relative block w-full group"
+                                    >
+                                        <div className="w-full aspect-video overflow-hidden bg-gray-900 border border-white/10 relative shadow-[0_0_100px_rgba(0,0,0,0.5)]">
+                                            <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#050505" />
+                                            {/* HUD Overlay for Cinematic Feel */}
+                                            <div className="absolute top-8 left-8 flex flex-col gap-2 pointer-events-none z-20">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></div>
+                                                    <span className="font-cinema text-[10px] tracking-[0.4em] text-white opacity-40 uppercase">Rendering Asset_{idx+1}</span>
+                                                </div>
+                                            </div>
+                                            <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/10 transition-colors duration-700 pointer-events-none"></div>
+                                        </div>
+                                        <div className="mt-8 flex flex-col @md:flex-row justify-between items-start @md:items-end gap-6">
+                                            <div className="flex flex-col gap-2">
+                                                <h3 className="font-cinema tracking-wide text-[#F3F3F1] text-4xl @md:text-8xl group-hover:text-[var(--primary)] transition-colors duration-500 leading-none">
+                                                    {p.title}
+                                                </h3>
+                                                {p.description && <p className="vf-hud-text text-sm @md:text-base opacity-40 max-w-xl mt-4 leading-relaxed uppercase tracking-widest">{p.description}</p>}
+                                            </div>
+                                            <div className="flex flex-col items-end gap-1 shrink-0">
+                                                <p className="uppercase tracking-[0.5em] vf-hud-text text-[10px] opacity-60" style={{ color: 'var(--primary)' }}>Cine_Asset_Metadata</p>
+                                                <div className="h-px w-24 bg-[var(--primary)] opacity-20 mt-1"></div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
 
                 {/* ===== PRODUCTION LOG ===== */}
                 <section id="log" className="relative z-20 py-24 px-6 bg-[#F3F3F1] text-[#050505]">

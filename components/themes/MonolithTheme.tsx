@@ -10,6 +10,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -47,7 +48,9 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
     const location = data?.profile?.location || data?.location || "Indonesia";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
-    const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 5);
+    const allProjects = data?.projects || data?.user?.projects || [];
+    const items3D = allProjects.filter((p: any) => p.projectType === '3d');
+    const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 5);
     const awardItems = data?.certificates || data?.user?.certificates || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -299,6 +302,39 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
                     </Link>
                 </div>
             </section>
+
+            {/* SECTION 3.5: 3D SHOWCASE */}
+            {items3D.length > 0 && (
+                <section className="relative z-20 w-full bg-[#050505] py-20 @md:py-32 border-t border-white/5">
+                    <div className="flex justify-between items-end mb-12 @md:mb-20 px-6 @md:px-12">
+                        <motion.h2 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="font-serif leading-none text-white text-4xl @md:text-5xl @lg:text-[5cqi]">
+                            Interactive<br/><span className="italic text-[var(--hl)]">Models</span>
+                        </motion.h2>
+                    </div>
+                    <div className="flex flex-col gap-12 @md:gap-20 px-6 @md:px-12 pb-20">
+                        {items3D.map((p: any, i: number) => (
+                            <motion.div
+                                key={i}
+                                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "50px" }} variants={fadeUp}
+                                className="snap-item relative overflow-hidden rounded-[24px] @md:rounded-[48px] group border border-white/10 hover:border-white/30 transition-colors duration-500 w-full aspect-[4/5] @md:aspect-video"
+                            >
+                                <div className="absolute inset-0 bg-[#050505]"></div>
+                                <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#050505" />
+                                <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#050505] via-[#050505]/20 to-transparent opacity-80 group-hover:opacity-40 transition-opacity"></div>
+                                <div className="absolute bottom-0 w-full flex flex-col justify-end p-8 gap-4 @md:p-16 @md:gap-6 pointer-events-none">
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <span className="font-sans font-bold uppercase tracking-[0.4em] text-[var(--hl)] text-[10px] @md:text-xs">Spatial Asset 0{i+1}</span>
+                                        </div>
+                                        <h3 className="font-serif text-white leading-[1.1] line-clamp-2 text-4xl @md:text-7xl @lg:text-[6cqi]">{p.title}</h3>
+                                        {p.description && <p className="font-sans text-white/50 text-sm @md:text-lg max-w-2xl mt-4">{p.description}</p>}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* INTEGRATIONS SECTION */}
             {data?.id && (

@@ -10,6 +10,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { GithubStats } from './widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -32,7 +33,9 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
 
     // --- RELASI ---
-    const archiveItems = (data?.projects || data?.user?.projects || []).slice(0, 4);
+    const allProjects = data?.projects || data?.user?.projects || [];
+    const items3D = allProjects.filter((p: any) => p.projectType === '3d');
+    const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const awardItems = data?.certificates || data?.user?.certificates || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
@@ -336,6 +339,44 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                     </Link>
                 </motion.div>
             </section>
+
+            {/* 3D SHOWCASE SECTION */}
+            {items3D.length > 0 && (
+                <section className="p-8 @lg:p-12 border-t-2 border-zinc-800 bg-[#09090b]">
+                    <motion.div
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }}
+                        variants={fadeUp} custom={0.2}
+                        className="mb-10 flex justify-between items-end"
+                    >
+                        <h2 className="text-3xl font-extrabold uppercase tracking-tighter text-[#fafafa] acid-heading flex items-center gap-4">
+                            <span className="text-4xl" style={{ color: themeColor }}>3D</span>
+                            <span className="text-[#fafafa]">OBJECTS</span>
+                        </h2>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] acid-body" style={{ color: themeColor }}>{items3D.length} FILES</span>
+                    </motion.div>
+
+                    <motion.div
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
+                        variants={staggerContainer}
+                        className="grid grid-cols-1 gap-8"
+                    >
+                        {items3D.map((p: any, i: number) => (
+                            <motion.div key={p.id || i} variants={fadeUp} className="group">
+                                <div className="w-full border-2 border-zinc-800 bg-[#0a0a0a] overflow-hidden transition-all duration-300" style={{ ':hover': { borderColor: themeColor } } as any}>
+                                    <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0a" />
+                                </div>
+                                <div className="flex justify-between items-start mt-4">
+                                    <div>
+                                        <h3 className="text-base font-extrabold uppercase tracking-tight text-[#fafafa] acid-heading">{p.title}</h3>
+                                        {p.description && <p className="text-xs text-zinc-500 mt-1 acid-body">{p.description}</p>}
+                                    </div>
+                                    <span className="text-[9px] font-bold uppercase tracking-widest text-[#09090b] px-2 py-1 shrink-0 acid-body" style={{ backgroundColor: themeColor }}>3D</span>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </section>
+            )}
 
             {/* INTEGRATIONS */}
             {data?.id && (

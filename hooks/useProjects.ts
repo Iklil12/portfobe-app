@@ -3,7 +3,7 @@ import useSWR from 'swr';
 import toast from 'react-hot-toast';
 import { showToast } from '@/lib/customToast';
 
-export type ProjectType = 'video' | 'photo' | 'certificate' | null;
+export type ProjectType = 'video' | 'photo' | 'certificate' | '3d' | null;
 
 export function useProjects() {
   // Baca plan dari cache SWR yang sudah ada — TANPA network request baru
@@ -15,7 +15,7 @@ export function useProjects() {
   const [mounted, setMounted] = useState(false);
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'all' | 'video' | 'photo' | 'certificate'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'video' | 'photo' | 'certificate' | '3d'>('all');
   
   const [projectCount, setProjectCount] = useState(0);
   const [certCount, setCertCount] = useState(0);
