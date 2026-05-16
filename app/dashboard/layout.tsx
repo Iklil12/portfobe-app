@@ -26,6 +26,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     userEmail,
     userPlan,
     userAvatar,
+    userSubdomain,
     isSubdomainEmpty,
     notifications,
     topBanner,
@@ -90,6 +91,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             userEmail={userEmail}
             userPlan={userPlan}
             userAvatar={userAvatar}
+            userSubdomain={userSubdomain}
             alertCount={notifications.length}
             notifications={notifications}
             onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}

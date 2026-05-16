@@ -54,12 +54,17 @@ export function useDashboardOverview() {
 
     // --- CALCULATE PORTFOLIO STRENGTH ---
     let score = 0;
-    if (layout.bio) score += 15;
-    if (layout.avatar) score += 15;
-    if (layout.profession) score += 10;
-    if (overview.projectsCount > 0) score += 20;
-    if (overview.linksCount > 0) score += 20;
-    if (overview.certificatesCount > 0) score += 20;
+    const strengthBreakdown = [
+      { id: 'avatar', label: 'Foto Profil', done: !!layout.avatar, weight: 15 },
+      { id: 'bio', label: 'Bio & Profesi', done: !!layout.bio && !!layout.profession, weight: 25 },
+      { id: 'projects', label: 'Tambah Proyek', done: overview.projectsCount > 0, weight: 20 },
+      { id: 'links', label: 'Tautan Sosial', done: overview.linksCount > 0, weight: 20 },
+      { id: 'certificates', label: 'Sertifikat', done: overview.certificatesCount > 0, weight: 20 }
+    ];
+
+    strengthBreakdown.forEach(item => {
+      if (item.done) score += item.weight;
+    });
 
     return {
       stats: {
@@ -67,12 +72,14 @@ export function useDashboardOverview() {
         awards: overview.certificatesCount,
         links: overview.linksCount,
         themeName: tName,
-        strength: score
+        strength: score,
+        strengthBreakdown
       },
       activities: overview.activities,
       subdomain,
       userPlan,
-      analytics: analyticsData
+      analytics: analyticsData,
+      avatarUrl: layout.avatar || ''
     };
   }, [dashboardSyncData]);
 

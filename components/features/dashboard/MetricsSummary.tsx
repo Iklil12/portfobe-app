@@ -34,10 +34,11 @@ function AnimatedCounter({ value, duration = 1500 }: { value: number, duration?:
 interface MetricsSummaryProps {
   analytics: any;
   strength: number;
+  breakdown?: { id: string; label: string; done: boolean; weight: number }[];
   isLoading: boolean;
 }
 
-export function MetricsSummary({ analytics, strength, isLoading }: MetricsSummaryProps) {
+export function MetricsSummary({ analytics, strength, breakdown = [], isLoading }: MetricsSummaryProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [animatedStrength, setAnimatedStrength] = useState(0);
   
@@ -146,8 +147,10 @@ export function MetricsSummary({ analytics, strength, isLoading }: MetricsSummar
 
       {/* CARD 3: PORTFOLIO STRENGTH */}
       <AnimateOnScroll delay={160} className="col-span-2 md:col-span-1">
-      <div className="h-full bg-white border border-slate-100 p-5 md:p-7 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
-        <div className="flex flex-col h-full justify-between relative z-10">
+      <div className="h-full bg-white border border-slate-100 p-5 md:p-7 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-md transition-all group overflow-hidden relative cursor-help">
+        
+        {/* Main Content */}
+        <div className="flex flex-col h-full justify-between relative z-10 transition-all duration-300 group-hover:blur-[4px] group-hover:scale-[0.95] group-hover:opacity-0">
             <div>
                 <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 flex justify-between items-center">
                     <span>Portfolio Strength</span>
@@ -171,6 +174,35 @@ export function MetricsSummary({ analytics, strength, isLoading }: MetricsSummar
                </div>
             </div>
         </div>
+
+        {/* Premium Hover Breakdown Overlay */}
+        <div className="absolute inset-0 bg-white/95 backdrop-blur-md p-4 md:p-5 opacity-0 pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 transition-all duration-300 z-20 flex flex-col justify-center rounded-[2rem] md:rounded-[2.5rem] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.05)]">
+            <h4 className="text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-slate-800 mb-2.5 md:mb-3 flex items-center gap-2 shrink-0">
+              <i className="fas fa-bullseye text-indigo-500"></i> Kelengkapan Profil
+            </h4>
+            <div className="space-y-1.5 md:space-y-2 overflow-y-auto pr-1 pb-1" style={{ scrollbarWidth: 'none' }}>
+              {breakdown.map((item, index) => (
+                <div 
+                  key={item.id} 
+                  className="flex items-center justify-between group/item translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500"
+                  style={{ transitionDelay: `${index * 40}ms` }}
+                >
+                  <div className="flex items-center gap-2 md:gap-2.5">
+                    <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center transition-colors ${item.done ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-300'}`}>
+                      <i className={`fas ${item.done ? 'fa-check' : 'fa-minus'} text-[8px] md:text-[9px]`}></i>
+                    </div>
+                    <span className={`text-[10px] md:text-xs font-bold transition-colors ${item.done ? 'text-slate-700' : 'text-slate-400'}`}>
+                      {item.label}
+                    </span>
+                  </div>
+                  <span className={`text-[9px] font-black px-1.5 md:px-2 py-0.5 rounded-md transition-colors ${item.done ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-50 text-slate-400 border border-slate-100'}`}>
+                    +{item.weight}%
+                  </span>
+                </div>
+              ))}
+            </div>
+        </div>
+
       </div>
       </AnimateOnScroll>
 

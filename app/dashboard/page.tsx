@@ -12,6 +12,7 @@ export default function DashboardOverview() {
     stats,
     activities,
     subdomain,
+    avatarUrl,
     analytics,
     isLoadingStats,
     isLoadingActivities,
@@ -24,11 +25,12 @@ export default function DashboardOverview() {
 
       {/* KONTEN UTAMA */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 relative z-10">
-        <OverviewHeader subdomain={subdomain} />
+        <OverviewHeader subdomain={subdomain} avatarUrl={avatarUrl} />
         
         <MetricsSummary 
           analytics={analytics} 
           strength={stats.strength || 0} 
+          breakdown={stats.strengthBreakdown || []}
           isLoading={isLoadingAnalytics} 
         />
 

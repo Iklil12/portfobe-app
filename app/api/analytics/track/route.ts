@@ -4,7 +4,15 @@ import { headers } from "next/headers";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    // sendBeacon kirim sebagai Blob application/json, tapi kadang text/plain
+    // Parsing aman untuk kedua kasus
+    let body: any = {};
+    try {
+      const text = await req.text();
+      body = JSON.parse(text);
+    } catch {
+      return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+    }
     const { userId, type, pagePath, url, analyticsId, sessionId, referrer: clientReferrer } = body;
 
     // 1. LOGIKA HEARTBEAT (Update durasi, sangat ringan)
@@ -114,12 +122,6 @@ export async function POST(req: Request) {
         }
       }
     }
-
-    console.log("[TRACK API DEBUG] UserAgent:", userAgent);
-    console.log("[TRACK API DEBUG] URL:", url);
-    console.log("[TRACK API DEBUG] Client Referrer:", clientReferrer);
-    console.log("[TRACK API DEBUG] Header Referrer:", headersList.get("referer"));
-    console.log("[TRACK API DEBUG] Final Referrer:", finalReferrer);
 
     const newLog = await prisma.analytics.create({
       data: {

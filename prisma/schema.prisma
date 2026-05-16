@@ -33,6 +33,7 @@ model User {
   transactions           Transaction[]
   integrations           Integration[]
   canvaProjects          CanvaProject[]
+  themeFavorites         ThemeFavorite[]
 }
 
 model PasswordResetToken {
@@ -102,6 +103,18 @@ model SiteAppearance {
   user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model ThemeFavorite {
+  id        String   @id @default(uuid())
+  userId    String
+  themeId   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, themeId])
+  @@index([themeId])
+  @@index([userId])
+}
+
 model Link {
   id       String  @id @default(uuid())
   userId   String
@@ -120,6 +133,7 @@ model Project {
   description String?
   mediaUrl    String?
   projectType String   @default("photo")
+  tags        String   @default("[]") @db.Text
   userId      String
   createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)

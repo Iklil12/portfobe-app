@@ -31,6 +31,12 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
         dedupingInterval: 60000
     });
 
+    // Ambil total like dari semua user (aggregate stats)
+    const { data: themeStats } = useSWR<Record<string, number>>('/api/themes/stats', fetcher, {
+        revalidateOnFocus: false,
+        dedupingInterval: 30000 // refresh setiap 30 detik
+    });
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-24">
             {themes.map((theme, index) => {
@@ -197,10 +203,17 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
                                 )}
                             </div>
 
-                            {/* Stats */}
+                            {/* Stats: Total like dari semua user */}
                             <div className="flex items-center gap-3 text-slate-400 text-[11px] font-semibold shrink-0">
-                                <span className="flex items-center gap-1 cursor-default hover:text-rose-500 transition-colors">
-                                    <i className="fas fa-heart text-slate-300"></i> {isFavorite ? '1' : '0'}
+                                <span
+                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(theme.id); }}
+                                    className={`flex items-center gap-1 cursor-pointer transition-colors ${
+                                        isFavorite ? 'text-rose-500 hover:text-rose-400' : 'hover:text-rose-400'
+                                    }`}
+                                    title={isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit'}
+                                >
+                                    <i className={`${isFavorite ? 'fas' : 'far'} fa-heart`}></i>
+                                    <span>{(themeStats?.[theme.id] ?? 0).toLocaleString('id-ID')}</span>
                                 </span>
                             </div>
                         </div>

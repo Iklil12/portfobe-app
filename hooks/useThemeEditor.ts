@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { mutate } from 'swr';
 import { useSearchParams } from 'next/navigation';
 import { showToast } from '@/lib/customToast';
+import { safeParseJson } from '@/lib/safeJson';
 
 export function useThemeEditor() {
   const searchParams = useSearchParams();
@@ -76,21 +77,25 @@ export function useThemeEditor() {
                 setSplashScreen(sa.splashScreen);
               }
 
-              if (sa.favoriteThemes) {
-                try {
-                  const parsed = typeof sa.favoriteThemes === 'string' 
-                    ? JSON.parse(sa.favoriteThemes) 
-                    : sa.favoriteThemes;
-                  setFavorites(Array.isArray(parsed) ? parsed : []);
-                } catch (e) {
-                  setFavorites([]);
-                }
+              if (sa.favoriteThemes !== undefined) {
+                // Ambil dari ThemeFavorite table langsung
               }
             }
           }
         }
 
         setDbData(appData);
+
+        // Ambil favorit dari tabel ThemeFavorite
+        try {
+          const favRes = await fetch('/api/themes/favorite');
+          if (favRes.ok) {
+            const favData = await favRes.json();
+            setFavorites(Array.isArray(favData.favorites) ? favData.favorites : []);
+          }
+        } catch {
+          setFavorites([]);
+        }
 
       } catch (error) {
         console.error("Gagal memuat data:", error);
@@ -104,24 +109,25 @@ export function useThemeEditor() {
     fetchData();
   }, [previewTheme]); // Re-run jika previewTheme berubah
 
-  // Sync favorites to DB
-  useEffect(() => {
-    if (!dataLoaded.current) return;
-
-    const timer = setTimeout(async () => {
-      try {
-        await fetch('/api/appearance', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ favoriteThemes: favorites })
-        });
-      } catch (error) {
-        console.error("Gagal sinkronisasi favorit");
-      }
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [favorites]);
+  // Toggle favorit via API baru (ThemeFavorite table) + optimistic update
+  const toggleFavorite = async (themeId: string) => {
+    const isFav = favorites.includes(themeId);
+    const updated = isFav ? favorites.filter(id => id !== themeId) : [...favorites, themeId];
+    setFavorites(updated);
+    toast(isFav ? 'Dihapus dari favorit' : 'Ditambahkan ke favorit ❤️', {
+      id: `fav-${themeId}`,
+      style: { borderRadius: '10px', background: '#333', color: '#fff', fontSize: '12px' }
+    });
+    try {
+      await fetch('/api/themes/favorite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ themeId }),
+      });
+    } catch {
+      setFavorites(favorites); // rollback
+    }
+  };
 
   const saveDesign = async () => {
     setIsSaving(true);
@@ -164,19 +170,7 @@ export function useThemeEditor() {
     }
   };
 
-  const toggleFavorite = (themeId: string) => {
-    const isFav = favorites.includes(themeId);
-    const updatedFavorites = isFav
-      ? favorites.filter(id => id !== themeId)
-      : [...favorites, themeId];
-    
-    setFavorites(updatedFavorites);
-    
-    toast(isFav ? 'Dihapus dari favorit' : 'Ditambahkan ke favorit ❤️', {
-      id: `fav-${themeId}`,
-      style: { borderRadius: '10px', background: '#333', color: '#fff', fontSize: '12px' }
-    });
-  };
+
 
   // Persiapan data untuk Live Preview
   const livePreviewData = {

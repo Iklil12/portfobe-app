@@ -67,7 +67,7 @@ export async function POST(req: Request) {
     // -----------------------------------------
 
     const body = await req.json();
-    const { title, description, mediaUrl, projectType } = body;
+    const { title, description, mediaUrl, projectType, tags } = body;
 
     if (!title || !mediaUrl) {
       return NextResponse.json({ error: "Judul dan Media wajib diisi" }, { status: 400 });
@@ -79,6 +79,7 @@ export async function POST(req: Request) {
         description: description || null,
         mediaUrl: mediaUrl,
         projectType: projectType || "photo",
+        tags: Array.isArray(tags) ? JSON.stringify(tags) : "[]",
         userId: user.id
       }
     });
@@ -106,7 +107,7 @@ export async function PATCH(req: Request) {
     if (!user) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
 
     const body = await req.json();
-    const { id, title, description, mediaUrl, projectType } = body;
+    const { id, title, description, mediaUrl, projectType, tags } = body;
 
     if (!id || !title || !mediaUrl) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
@@ -123,7 +124,8 @@ export async function PATCH(req: Request) {
         title,
         description: description || null,
         mediaUrl,
-        projectType
+        projectType,
+        tags: Array.isArray(tags) ? JSON.stringify(tags) : (existingProject.tags ?? "[]")
       }
     });
 

@@ -15,7 +15,7 @@ export function useProjects() {
   const [mounted, setMounted] = useState(false);
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'all' | 'video' | 'photo' | 'certificate' | '3d'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'video' | 'photo' | 'certificate' | '3d' | string>('all');
   
   const [projectCount, setProjectCount] = useState(0);
   const [certCount, setCertCount] = useState(0);
@@ -27,7 +27,8 @@ export function useProjects() {
   
   const [certIssuer, setCertIssuer] = useState("");
   const [certYear, setCertYear] = useState("");
-  const [certStatus, setCertStatus] = useState(""); 
+  const [certStatus, setCertStatus] = useState("");
+  const [projectTags, setProjectTags] = useState<string[]>([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{id: string, title: string, type: string} | null>(null);
@@ -79,11 +80,18 @@ export function useProjects() {
       if (item.itemType === 'certificate') {
         setCertIssuer(item.issuer || "");
         setCertYear(item.year || "");
-        setCertStatus(item.status || ""); 
+        setCertStatus(item.status || "");
+        setProjectTags([]);
       } else {
         setCertIssuer("");
         setCertYear("");
         setCertStatus("");
+        // Parse tags dari JSON string
+        try {
+          setProjectTags(Array.isArray(item.tags) ? item.tags : JSON.parse(item.tags || "[]"));
+        } catch {
+          setProjectTags([]);
+        }
       }
     } else {
       setEditingId(null);
@@ -94,6 +102,7 @@ export function useProjects() {
       setCertIssuer("");
       setCertYear("");
       setCertStatus("");
+      setProjectTags([]);
     }
     setIsModalOpen(true);
     document.body.style.overflow = 'hidden'; 
@@ -130,7 +139,7 @@ export function useProjects() {
 
     const payload = projectType === 'certificate' 
       ? { id: editingId, title: projectTitle, description: projectDescription, mediaUrl, issuer: certIssuer, year: certYear, status: certStatus }
-      : { id: editingId, title: projectTitle, description: projectDescription, mediaUrl, projectType };
+      : { id: editingId, title: projectTitle, description: projectDescription, mediaUrl, projectType, tags: projectTags };
     
     try {
       const response = await fetch(endpoint, {
@@ -190,7 +199,19 @@ export function useProjects() {
     }
   };
 
-  const filteredItems = items.filter(p => activeTab === 'all' || p.projectType === activeTab);
+  const filteredItems = items.filter(p => {
+    if (activeTab === 'all') return true;
+    // Filter by tag
+    if (activeTab.startsWith('tag:')) {
+      const tag = activeTab.slice(4);
+      try {
+        const tags = Array.isArray(p.tags) ? p.tags : JSON.parse(p.tags || '[]');
+        return tags.includes(tag);
+      } catch { return false; }
+    }
+    // Filter by projectType
+    return p.projectType === activeTab;
+  });
 
   return {
     state: {
@@ -207,6 +228,7 @@ export function useProjects() {
       certIssuer,
       certYear,
       certStatus,
+      projectTags,
       isSubmitting,
       itemToDelete,
       isDeleting,
@@ -224,6 +246,7 @@ export function useProjects() {
       setCertIssuer,
       setCertYear,
       setCertStatus,
+      setProjectTags,
       handleOpenModal,
       handleCloseModal,
       handleSubmit,

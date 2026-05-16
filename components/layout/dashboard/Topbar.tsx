@@ -13,6 +13,7 @@ interface TopbarProps {
   userEmail: string;
   userPlan: string;
   userAvatar: string;
+  userSubdomain?: string;
   alertCount: number;
   notifications: NotificationItem[];
   onToggleSidebar: () => void;
@@ -24,6 +25,7 @@ export function Topbar({
   userEmail,
   userPlan,
   userAvatar,
+  userSubdomain,
   alertCount,
   notifications,
   onToggleSidebar
@@ -151,6 +153,25 @@ export function Topbar({
 
                 {/* Menu Items */}
                 <div className="flex flex-col px-2">
+                  {/* Lihat Web */}
+                  {userSubdomain ? (
+                    <a
+                      href={`/${userSubdomain}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                    >
+                      <i className="fas fa-external-link-alt text-slate-400 group-hover:text-[#ff9e00] transition-colors w-4 text-center"></i>
+                      <span className="flex-1">Lihat Web</span>
+                    </a>
+                  ) : (
+                    <div className="px-3 py-2.5 text-[13px] font-semibold text-slate-300 rounded-lg flex items-center gap-3 cursor-not-allowed" title="Atur subdomain terlebih dahulu">
+                      <i className="fas fa-external-link-alt w-4 text-center"></i>
+                      <span className="flex-1">Lihat Web</span>
+                    </div>
+                  )}
+                  <div className="h-px bg-slate-100 my-1 mx-2"></div>
                   <Link href="/dashboard/profile" className="px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
                     <i className="fas fa-user text-slate-400 w-4 text-center"></i> 
                     <span className="flex-1">Edit Profil</span>

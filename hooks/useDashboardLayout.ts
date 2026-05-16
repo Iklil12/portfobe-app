@@ -104,6 +104,7 @@ export function useDashboardLayout() {
     userEmail,
     userPlan,
     userAvatar,
+    userSubdomain,
     isSubdomainEmpty,
     notifications,
     topBanner,

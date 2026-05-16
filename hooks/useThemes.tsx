@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { THEMES_DATA } from '@/lib/themes';
+import { safeParseJson } from '@/lib/safeJson';
 
 export function useThemes() {
   const router = useRouter();
@@ -27,14 +28,15 @@ export function useThemes() {
             if (data.profile?.subdomain) setSubdomain(data.profile.subdomain);
             if (data.plan) setUserPlan(data.plan.toUpperCase());
             
-            // Ambil favorit dari DB
-            if (data.siteAppearance?.favoriteThemes) {
-                try {
-                    const parsed = JSON.parse(data.siteAppearance.favoriteThemes);
-                    setFavorites(Array.isArray(parsed) ? parsed : []);
-                } catch (e) {
-                    setFavorites([]);
-                }
+            // Ambil favorit dari tabel ThemeFavorite
+            try {
+              const favRes = await fetch('/api/themes/favorite');
+              if (favRes.ok) {
+                const favData = await favRes.json();
+                setFavorites(Array.isArray(favData.favorites) ? favData.favorites : []);
+              }
+            } catch {
+              setFavorites([]);
             }
           }
         }
@@ -52,29 +54,27 @@ export function useThemes() {
     fetchCurrentTheme();
   }, []);
 
-  // DEBOUNCE SYNC: Kirim ke database hanya setelah user berhenti klik selama 1 detik
-  useEffect(() => {
-    // JANGAN SIMPAN jika data awal belum selesai dimuat
-    if (!dataLoaded.current) return;
+  // Toggle favorit via API baru (ThemeFavorite table)
+  const toggleFavorite = async (themeId: string) => {
+    // Optimistic update
+    const isFav = favorites.includes(themeId);
+    const updatedFavorites = isFav
+      ? favorites.filter((id) => id !== themeId)
+      : [...favorites, themeId];
+    setFavorites(updatedFavorites);
+    toast(isFav ? 'Dihapus dari favorit' : 'Ditambahkan ke favorit ❤️', { id: `fav-${themeId}` });
 
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch('/api/appearance', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ favoriteThemes: favorites })
-        });
-        
-        if (!res.ok) {
-            console.error("Gagal menyimpan favorit");
-        }
-      } catch (error) {
-        console.error("Gagal menyimpan favorit ke DB:", error);
-      }
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [favorites]);
+    try {
+      await fetch('/api/themes/favorite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ themeId }),
+      });
+    } catch {
+      // Rollback jika gagal
+      setFavorites(favorites);
+    }
+  }; 
 
   const handleUseTheme = async (themeId: string, themeName: string) => {
     const theme = THEMES_DATA.find(t => t.id === themeId);
@@ -137,20 +137,7 @@ export function useThemes() {
     });
   };
 
-  const toggleFavorite = (themeId: string) => {
-    const isFav = favorites.includes(themeId);
-    const updatedFavorites = isFav
-      ? favorites.filter(id => id !== themeId)
-      : [...favorites, themeId];
-    
-    // Update local state instan untuk UX cepat
-    setFavorites(updatedFavorites);
-    
-    // Tampilkan toast
-    toast(isFav ? 'Dihapus dari favorit' : 'Ditambahkan ke favorit ❤️', {
-      id: `fav-${themeId}`,
-    });
-  };
+
 
   const allThemes = THEMES_DATA;
   const themes = THEMES_DATA;

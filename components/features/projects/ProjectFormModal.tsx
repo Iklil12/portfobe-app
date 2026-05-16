@@ -45,6 +45,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     certIssuer,
     certYear,
     certStatus,
+    projectTags,
     isSubmitting,
     userPlan
   } = state;
@@ -58,6 +59,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     setCertIssuer,
     setCertYear,
     setCertStatus,
+    setProjectTags,
     handleSubmit
   } = actions;
 
@@ -496,6 +498,52 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                           className="w-full px-5 py-4 rounded-[24px] border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 focus:shadow-md outline-none text-sm font-medium text-slate-900 resize-none transition-all duration-300 placeholder:text-slate-400 hover:border-slate-300 custom-scrollbar"
                         />
                       </div>
+
+                      {/* INPUT TAGS — hanya untuk project (bukan sertifikat) */}
+                      {projectType !== 'certificate' && (
+                        <div className="md:col-span-2">
+                          <label className="block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-2 ml-3">
+                            Tags <span className="normal-case font-medium text-slate-400">(Opsional)</span>
+                          </label>
+                          {/* Chips yang sudah ditambah */}
+                          {projectTags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {projectTags.map((tag: string) => (
+                                <span
+                                  key={tag}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-900 text-white text-[10px] font-bold rounded-full"
+                                >
+                                  {tag}
+                                  <button
+                                    type="button"
+                                    onClick={() => setProjectTags(projectTags.filter((t: string) => t !== tag))}
+                                    className="w-3.5 h-3.5 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-colors leading-none"
+                                  >
+                                    <i className="fas fa-times text-[7px]"></i>
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          <input
+                            type="text"
+                            placeholder={projectTags.length >= 5 ? 'Maksimal 5 tag' : 'Ketik tag lalu tekan Enter atau koma...'}
+                            disabled={projectTags.length >= 5}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ',') {
+                                e.preventDefault();
+                                const val = (e.target as HTMLInputElement).value.trim().replace(/,/g, '');
+                                if (val && !projectTags.includes(val) && projectTags.length < 5) {
+                                  setProjectTags([...projectTags, val]);
+                                  (e.target as HTMLInputElement).value = '';
+                                }
+                              }
+                            }}
+                            className="w-full px-5 py-3.5 rounded-full border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 outline-none text-sm font-semibold text-slate-900 transition-all duration-300 placeholder:text-slate-400 disabled:opacity-40 disabled:cursor-not-allowed"
+                          />
+                          <p className="text-[10px] font-medium text-slate-400 mt-2 ml-3">Contoh: UI/UX, Branding, React — Maks. 5 tag</p>
+                        </div>
+                      )}
                     </div>
                     {/* AKSI BUTTONS */}
                     <div className="pt-2 flex flex-col-reverse sm:flex-row gap-3 border-t border-slate-100 mt-6">

@@ -177,6 +177,20 @@ export function ProjectList({ state, actions }: { state: any, actions: any }) {
                   {item.description || "Tidak ada rincian deskripsi tambahan untuk karya ini."}
                 </p>
 
+                {/* Tag chips */}
+                {item.itemType !== 'certificate' && (() => {
+                  let tags: string[] = [];
+                  try { tags = Array.isArray(item.tags) ? item.tags : JSON.parse(item.tags || '[]'); } catch {}
+                  return tags.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5 mt-2.5">
+                      {tags.map((tag: string) => (
+                        <span key={tag} className="inline-flex items-center px-2.5 py-1 bg-slate-100 text-slate-600 text-[9px] font-extrabold uppercase tracking-wider rounded-full border border-slate-200/80">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null;
+                })()}
                 <div className="mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-slate-100 flex items-center justify-between">
                   <div>
                     <p className="text-[8px] sm:text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-0.5">Tahun</p>

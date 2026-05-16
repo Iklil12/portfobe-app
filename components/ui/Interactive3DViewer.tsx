@@ -5,9 +5,14 @@ import Script from 'next/script';
 
 const ModelViewer = 'model-viewer' as any;
 
-export function Interactive3DViewer({ mediaUrl, bgColor }: { mediaUrl: string, bgColor?: string }) {
+export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: { mediaUrl: string, bgColor?: string, alwaysShowControls?: boolean }) {
   const [exposure, setExposure] = useState(1.0);
   const [autoRotate, setAutoRotate] = useState(true);
+
+  // Controls are always visible on mobile/touch OR when explicitly requested
+  const controlsClass = alwaysShowControls
+    ? "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 p-1 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full z-30 mv3d-controls-mobile"
+    : "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 p-1 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full opacity-0 group-hover/mv:opacity-100 [@media(hover:none)]:opacity-100 transition-all duration-500 translate-y-3 group-hover/mv:translate-y-0 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:mv3d-controls-mobile z-30";
 
   return (
     <div className="w-full aspect-video min-h-[300px] @md:min-h-[400px] relative group/mv" style={bgColor ? { backgroundColor: bgColor } : {}}>
@@ -45,29 +50,25 @@ export function Interactive3DViewer({ mediaUrl, bgColor }: { mediaUrl: string, b
         </div>
 
         {/* Minimalist Floating Controls */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 p-2 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full opacity-0 group-hover/mv:opacity-100 transition-all duration-500 translate-y-4 group-hover/mv:translate-y-0 z-30">
+        <div className={controlsClass}>
           {/* Exposure Slider */}
-          <div className="flex items-center gap-3 px-3 border-r border-white/10">
-            <i className="fas fa-sun text-[10px] text-white/50"></i>
+          <div className="flex items-center gap-2 px-2 border-r border-white/10">
+            <i className="fas fa-sun text-[8px] text-white/50"></i>
             <input 
               type="range" min="0.5" max="2" step="0.1" 
               value={exposure} 
               onChange={(e) => setExposure(parseFloat(e.target.value))}
-              className="w-20 @md:w-32 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-white"
+              className="w-14 @md:w-24 h-[3px] bg-white/20 rounded-lg appearance-none cursor-pointer accent-white"
             />
           </div>
           {/* Auto Rotate Toggle */}
           <button 
             onClick={() => setAutoRotate(!autoRotate)}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${autoRotate ? 'bg-white text-black' : 'bg-white/10 text-white hover:bg-white/20'}`}
+            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${autoRotate ? 'bg-white text-black' : 'bg-white/10 text-white hover:bg-white/20'}`}
             title="Toggle Auto-Rotate"
           >
-            <i className={`fas fa-sync-alt text-[10px] ${autoRotate ? 'animate-spin-slow' : ''}`}></i>
+            <i className={`fas fa-sync-alt text-[8px] ${autoRotate ? 'animate-spin-slow' : ''}`}></i>
           </button>
-          {/* Interaction Info */}
-          <div className="px-3 py-1 hidden @md:block">
-            <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Drag to Orbit</span>
-          </div>
         </div>
       </ModelViewer>
 

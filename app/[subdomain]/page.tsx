@@ -28,6 +28,7 @@ export default function PublicPortfolioPage() {
   useEffect(() => {
     return () => {
       if (heartbeatRef.current) clearInterval(heartbeatRef.current);
+      if ((heartbeatRef as any)._cleanup) (heartbeatRef as any)._cleanup();
     };
   }, []);
 
@@ -66,6 +67,10 @@ export default function PublicPortfolioPage() {
               const trackData = await trackRes.json();
               const analyticsId = trackData.id;
               if (analyticsId) {
+                // Simpan di sessionStorage supaya bisa diakses saat flush pagehide
+                sessionStorage.setItem('_pfAnalyticsId', analyticsId);
+
+                // Heartbeat tiap 15 detik agar sesi pendek pun tertangkap
                 if (heartbeatRef.current) clearInterval(heartbeatRef.current);
                 heartbeatRef.current = setInterval(() => {
                   fetch('/api/analytics/track', {
@@ -73,7 +78,33 @@ export default function PublicPortfolioPage() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: 'HEARTBEAT', analyticsId })
                   }).catch(() => null);
-                }, 60000); // 60 Detik (Lebih Ringan)
+                }, 15000); // 15 detik
+
+                // Flush durasi saat user pindah tab / close tab / navigasi keluar
+                const flushDuration = () => {
+                  const id = sessionStorage.getItem('_pfAnalyticsId');
+                  if (!id) return;
+                  // sendBeacon tidak dibatalkan browser saat halaman unload
+                  const blob = new Blob(
+                    [JSON.stringify({ type: 'HEARTBEAT', analyticsId: id })],
+                    { type: 'application/json' }
+                  );
+                  navigator.sendBeacon('/api/analytics/track', blob);
+                };
+
+                const handleVisibility = () => {
+                  if (document.visibilityState === 'hidden') flushDuration();
+                };
+
+                document.addEventListener('visibilitychange', handleVisibility);
+                window.addEventListener('pagehide', flushDuration);
+
+                // Simpan cleanup ke ref agar bisa dibersihkan di useEffect cleanup
+                (heartbeatRef as any)._cleanup = () => {
+                  document.removeEventListener('visibilitychange', handleVisibility);
+                  window.removeEventListener('pagehide', flushDuration);
+                  sessionStorage.removeItem('_pfAnalyticsId');
+                };
               }
             }
           }

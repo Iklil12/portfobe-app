@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
+import { safeStringifyJson } from "@/lib/safeJson";
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
@@ -62,7 +63,6 @@ export async function PATCH(req: Request) {
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     const body = await req.json();
-    console.log("PATCH Appearance Body:", body);
     
     // TANGKAP DATA DARI FRONTEND
     const { 
@@ -106,7 +106,7 @@ export async function PATCH(req: Request) {
         buttonShape, 
         cardStyle,
         splashScreen,
-        favoriteThemes: favoriteThemes ? JSON.stringify(favoriteThemes) : undefined
+        favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : undefined
       },
       create: {
         userId: user.id,
@@ -117,7 +117,7 @@ export async function PATCH(req: Request) {
         buttonShape, 
         cardStyle,
         splashScreen,
-        favoriteThemes: favoriteThemes ? JSON.stringify(favoriteThemes) : "[]"
+        favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : "[]"
       }
     });
 
