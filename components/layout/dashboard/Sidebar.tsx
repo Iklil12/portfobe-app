@@ -30,7 +30,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen }: SidebarProps) {
     localStorage.setItem('sidebar-collapsed', String(newState));
   };
   
-  const isDesignRoute = pathname === '/dashboard/projects' || pathname === '/dashboard/themes' || pathname === '/dashboard/links';
+  const isDesignRoute = pathname === '/dashboard/projects' || pathname === '/dashboard/themes' || pathname === '/dashboard/links' || pathname === '/dashboard/testimonials';
   const [isDesignMenuOpen, setIsDesignMenuOpen] = useState(isDesignRoute);
   
   const isActive = (path: string) => pathname === path;
@@ -99,12 +99,13 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen }: SidebarProps) {
                       <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Proyek & Karya</Link>
                       <Link href="/dashboard/themes" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/themes') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Koleksi Tema</Link>
                       <Link href="/dashboard/links" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/links') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Tautan (Links)</Link>
+                      <Link href="/dashboard/testimonials" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/testimonials') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Testimoni</Link>
                     </div>
                   </div>
                 )}
                 
                 {/* Submenu Inline (Saat Dibuka Lebar) */}
-                <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${isDesignMenuOpen ? 'max-h-40 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 pointer-events-none'} ${shouldCollapse ? 'md:max-h-0 md:py-0 md:opacity-0 md:pointer-events-none' : ''}`}>
+                <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${isDesignMenuOpen ? 'max-h-60 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 pointer-events-none'} ${shouldCollapse ? 'md:max-h-0 md:py-0 md:opacity-0 md:pointer-events-none' : ''}`}>
                   <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
                     {isActive('/dashboard/projects') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} Proyek & Karya
                   </Link>
@@ -113,6 +114,9 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen }: SidebarProps) {
                   </Link>
                   <Link href="/dashboard/links" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/links') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
                     {isActive('/dashboard/links') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} Tautan (Links)
+                  </Link>
+                  <Link href="/dashboard/testimonials" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/testimonials') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
+                    {isActive('/dashboard/testimonials') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} Testimoni
                   </Link>
                 </div>
               </div>

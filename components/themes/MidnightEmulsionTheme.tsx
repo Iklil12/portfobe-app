@@ -30,6 +30,7 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
     const items3D = allProjects.filter((p: any) => p.projectType === '3d');
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const awardItems = data?.certificates || data?.user?.certificates || [];
+    const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
     const nameParts = fullName.trim().split(' ');
@@ -211,6 +212,49 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
                 {/* GITHUB STATS SECTION */}
                 {data?.id && (
                     <GithubStats userId={data.id} variant="midnight" themeColor={highlightColor} />
+                )}
+
+                {testimonials.length > 0 && (
+                    <div className="p-6 @md:p-12 @lg:p-20 flex flex-col border-t border-white/5 bg-[#030508]/50 shrink-0">
+                        <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="mb-12">
+                            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2 block">Client Experience</span>
+                            <h2 className="font-serif text-3xl @md:text-5xl text-white">Endorsements</h2>
+                        </motion.div>
+                        <div className="grid grid-cols-1 @md:grid-cols-2 gap-8 @md:gap-12">
+                            {testimonials.map((t: any, i: number) => (
+                                <motion.div
+                                    key={t.id}
+                                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
+                                    className="group flex flex-col p-8 border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 rounded-2xl relative overflow-hidden"
+                                >
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-[var(--hl)] transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-top z-0"></div>
+                                    <p className="font-serif italic text-lg @md:text-xl text-slate-300 leading-relaxed mb-8 relative z-10">
+                                        "{t.content}"
+                                    </p>
+                                    <div className="flex items-center gap-4 relative z-10 mt-auto border-t border-white/10 pt-6">
+                                        <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-white/20">
+                                            {t.avatarUrl ? (
+                                                <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 group-hover:grayscale-0 transition-all" />
+                                            ) : (
+                                                <div className="w-full h-full bg-white/10 flex items-center justify-center font-sans font-bold text-white text-lg">
+                                                    {t.clientName.charAt(0)}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <h4 className="font-sans font-medium text-white group-hover:text-[var(--hl)] transition-colors">{t.clientName}</h4>
+                                            {t.company && <p className="font-sans text-[10px] uppercase tracking-widest text-slate-500">{t.company}</p>}
+                                        </div>
+                                        <div className="ml-auto flex gap-1">
+                                            {[...Array(5)].map((_, idx) => (
+                                                <i key={idx} className={`text-[10px] ${idx < t.rating ? 'fas fa-star text-[var(--hl)]' : 'far fa-star text-white/20'}`}></i>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
                 )}
 
                 {awardItems.length > 0 && (

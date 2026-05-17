@@ -12,6 +12,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { TestimonialSection } from '@/components/features/testimonials/TestimonialSection';
 
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
@@ -79,6 +80,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
   const items3D = allProjects.filter((p: any) => p.projectType === '3d');
   const awardItems = data?.certificates || data?.user?.certificates || [];
   const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+  const testimonials = data?.testimonials || data?.user?.testimonials || [];
 
   const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
   const cleanAvatar = rawAvatar.replace(/"/g, '').trim();
@@ -412,6 +414,15 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
             }) : <div className="px-8 py-10 text-gray-400 text-sm font-mono border-b border-gray-200 text-center">No awards recorded.</div>}
           </motion.div>
         </section>
+
+        {/* TESTIMONIALS SECTION */}
+        {testimonials.length > 0 && (
+          <section className="border-t border-gray-200 bg-white">
+            <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={cinematicBlurUp} custom={0.2} className="p-8 @lg:p-12 pb-6">
+              <TestimonialSection testimonials={testimonials} variant="grid" />
+            </motion.div>
+          </section>
+        )}
 
         {/* FOOTER */}
         <motion.footer initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={cinematicBlurUp} custom={0.2} className={`p-8 text-center flex gap-4 bg-gray-100 border-t border-gray-200 min-body flex-col @md:flex-row @md:text-left justify-between @lg:p-12`}>

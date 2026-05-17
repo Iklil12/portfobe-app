@@ -31,6 +31,10 @@ export async function GET(
         },
         certificates: { 
           orderBy: { createdAt: 'desc' }
+        },
+        testimonials: {
+          where: { isVisible: true },
+          orderBy: { order: 'asc' }
         }
       }
     });
@@ -46,6 +50,7 @@ export async function GET(
     const publicProjects     = isFree ? userData.projects.slice(0, 5)     : userData.projects;
     const publicLinks        = isFree ? userData.links.slice(0, 1)        : userData.links;
     const publicCertificates = isFree ? userData.certificates.slice(0, 2) : userData.certificates;
+    const publicTestimonials = isFree ? userData.testimonials.slice(0, 2) : userData.testimonials;
 
     // 6. Susun Ulang Data
     const responseData = {
@@ -53,6 +58,7 @@ export async function GET(
       projects:     publicProjects,
       links:        publicLinks,
       certificates: publicCertificates,
+      testimonials: publicTestimonials,
       name:      userData.profile.fullName || userSubdomain,
       subdomain: userData.profile.subdomain
     };

@@ -21,8 +21,9 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
     const projects = data?.projects || data?.user?.projects || [];
     const items3D = projects.filter((p: any) => p.projectType === '3d');
     const archiveItems = projects.filter((p: any) => p.projectType !== '3d');
-    const certificates = data?.certificates || data?.certificates || [];
-    const links = data?.links || data?.links || [];
+    const certificates = data?.certificates || data?.user?.certificates || [];
+    const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
+    const links = data?.links || data?.user?.links || [];
 
     const fullName = profile.fullName || "JAMAL ARIFIN";
     const profession = profile.profession || "Cinematographer & Editor";
@@ -491,7 +492,54 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                         </div>
 
                         {data?.id && (
-                            <GithubStats userId={data.id} variant="viewfinder" themeColor={primaryColor} />
+                            <div className="mb-10">
+                                <GithubStats userId={data.id} variant="viewfinder" themeColor={primaryColor} />
+                            </div>
+                        )}
+
+                        {/* ENDORSEMENTS */}
+                        {testimonials.length > 0 && (
+                            <div className="mb-12">
+                                <motion.h3
+                                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}
+                                    className="text-[10px] font-bold uppercase tracking-widest mb-4 bg-[#050505] text-[#F3F3F1] inline-block px-3 py-1"
+                                >
+                                    CLIENT REVIEWS
+                                </motion.h3>
+                                <div className="grid grid-cols-1 @md:grid-cols-2 gap-4">
+                                    {testimonials.map((t: any, i: number) => (
+                                        <motion.div
+                                            key={t.id}
+                                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}
+                                            className="p-6 border-2 border-[#050505] bg-white flex flex-col relative"
+                                        >
+                                            <div className="absolute top-2 right-2 flex gap-0.5">
+                                                {[...Array(5)].map((_, idx) => (
+                                                    <i key={idx} className={`text-[8px] ${idx < t.rating ? 'fas fa-star text-[var(--primary)]' : 'far fa-star text-gray-300'}`}></i>
+                                                ))}
+                                            </div>
+                                            <p className="font-sans text-xs @md:text-sm text-gray-600 italic mb-6 leading-relaxed relative z-10">
+                                                "{t.content}"
+                                            </p>
+                                            <div className="flex items-center gap-3 mt-auto">
+                                                <div className="w-8 h-8 border border-[#050505] overflow-hidden shrink-0">
+                                                    {t.avatarUrl ? (
+                                                        <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover grayscale" />
+                                                    ) : (
+                                                        <div className="w-full h-full bg-[#050505] flex items-center justify-center font-bold text-white text-[10px]">
+                                                            {t.clientName.charAt(0)}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <h4 className="font-bold text-[10px] text-[#050505] uppercase tracking-widest">{t.clientName}</h4>
+                                                    {t.company && <p className="font-sans text-[8px] uppercase tracking-[0.2em] text-[var(--primary)]">{t.company}</p>}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
                         )}
 
                         <motion.h3

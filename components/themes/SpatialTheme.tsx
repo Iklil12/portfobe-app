@@ -50,6 +50,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
     const items3D = allProjects.filter((p: any) => p.projectType === '3d');
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const awardItems = data?.certificates || data?.user?.certificates || [];
+    const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
     const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
@@ -336,6 +337,50 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                 {/* GITHUB STATS SECTION */}
                 {data?.id && (
                     <GithubStats userId={data.id} variant="spatial" themeColor={highlightColor} />
+                )}
+
+                {/* TESTIMONIALS SECTION */}
+                {testimonials.length > 0 && (
+                    <div className={`flex flex-col w-full mt-24 @md:mt-32 px-8`}>
+                        <motion.div {...viewAnim} variants={auraAnim} className="mb-8">
+                            <h2 className={`font-medium tracking-tight text-white text-4xl`}>Client Voices</h2>
+                        </motion.div>
+
+                        <div className="grid grid-cols-1 @md:grid-cols-2 gap-8">
+                            {testimonials.map((t: any, i: number) => (
+                                <motion.div
+                                    key={t.id}
+                                    {...viewAnim} variants={auraAnim}
+                                    className="glass-panel p-8 rounded-[32px] flex flex-col gap-6 relative overflow-hidden group hover:border-[var(--hl)]/30 transition-colors"
+                                >
+                                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-[var(--hl)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <p className="text-slate-300 italic text-base @md:text-lg leading-relaxed font-light">
+                                        "{t.content}"
+                                    </p>
+                                    <div className="flex items-center gap-4 mt-auto pt-6 border-t border-white/5">
+                                        <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-white/10">
+                                            {t.avatarUrl ? (
+                                                <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full bg-white/5 flex items-center justify-center font-bold text-white text-lg">
+                                                    {t.clientName.charAt(0)}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <h4 className="font-semibold text-white group-hover:text-[var(--hl)] transition-colors">{t.clientName}</h4>
+                                            {t.company && <p className="text-[10px] uppercase tracking-widest text-slate-500 mt-1">{t.company}</p>}
+                                        </div>
+                                        <div className="ml-auto flex gap-1">
+                                            {[...Array(5)].map((_, idx) => (
+                                                <i key={idx} className={`text-[10px] ${idx < t.rating ? 'fas fa-star text-[var(--hl)]' : 'far fa-star text-white/20'}`}></i>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
                 )}
 
                 {/* AWARDS SECTION (Sleek List View) */}

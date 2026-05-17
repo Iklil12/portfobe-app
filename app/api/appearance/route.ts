@@ -41,7 +41,8 @@ export async function GET(req: Request) {
         siteAppearance: true,
         links: { orderBy: { order: 'asc' } },
         projects: { orderBy: { createdAt: 'desc' } },
-        certificates: { orderBy: { createdAt: 'desc' } }
+        certificates: { orderBy: { createdAt: 'desc' } },
+        testimonials: { orderBy: { order: 'asc' } }
       }
     });
 

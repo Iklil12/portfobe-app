@@ -37,6 +37,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
     const items3D = allProjects.filter((p: any) => p.projectType === '3d');
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const awardItems = data?.certificates || data?.user?.certificates || [];
+    const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
     const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
@@ -348,6 +349,45 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                     </div>
                 </div>
             </section>
+
+            {/* TESTIMONIALS SECTION */}
+            {testimonials.length > 0 && (
+                <section className="bg-[#050505] border-t border-[#1f1f1f] py-20 @md:py-24 px-6 @md:px-12">
+                    <div className="flex justify-between items-end mb-12">
+                        <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8cqi,5rem)]`}>Client<br />Reviews <span className="text-gray-600 text-xl @md:text-2xl">({testimonials.length})</span></h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 @md:grid-cols-2 gap-8 @md:gap-12">
+                        {testimonials.map((t: any, i: number) => (
+                            <div key={t.id} className="group border border-[#1f1f1f] hover:border-white/30 transition-colors duration-700 bg-black p-8 @md:p-12">
+                                <div className="flex items-center gap-6 mb-8 border-b border-[#1f1f1f] pb-6 group-hover:border-white/20 transition-colors">
+                                    <div className="w-16 h-16 shrink-0 bg-[#111] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+                                        {t.avatarUrl ? (
+                                            <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center font-bold text-xl text-white cine-heading">
+                                                {t.clientName.charAt(0)}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <h4 className="font-black text-white text-xl uppercase tracking-tight cine-heading">{t.clientName}</h4>
+                                        <span className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-1 cine-body">{t.company || 'CLIENT'}</span>
+                                    </div>
+                                </div>
+                                <p className="text-sm @md:text-lg text-gray-400 italic leading-relaxed mb-8 group-hover:text-white transition-colors duration-500">
+                                    "{t.content}"
+                                </p>
+                                <div className="flex gap-2 text-xs">
+                                    {[...Array(5)].map((_, idx) => (
+                                        <i key={idx} className={`${idx < t.rating ? 'fas fa-star text-white' : 'far fa-star text-white/20'}`}></i>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* FOOTER CTA */}
             <footer className={`bg-white text-black text-center relative overflow-hidden group py-24 @md:py-32 px-6 @md:px-12`}>

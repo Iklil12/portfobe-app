@@ -50,6 +50,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
     const items3D = allProjects.filter((p: any) => p.projectType === '3d');
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 6);
     const awardItems = data?.certificates || data?.user?.certificates || [];
+    const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
     const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
@@ -342,6 +343,48 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                         {/* GITHUB STATS SECTION */}
                         {data?.id && (
                             <GithubStats userId={data.id} variant="split" themeColor={highlightColor} />
+                        )}
+
+                        {/* SECTION: TESTIMONIALS */}
+                        {testimonials.length > 0 && (
+                            <section className="flex flex-col pt-16 @lg:pt-24 pb-16 border-b nexus-border">
+                                <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className={`mb-10 px-6 @md:px-12`}>
+                                    <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white">Client Feedback</h2>
+                                </motion.div>
+                                <div className="flex flex-col w-full px-6 @md:px-12 gap-6">
+                                    {testimonials.map((t: any, i: number) => (
+                                        <motion.div
+                                            key={t.id}
+                                            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
+                                            className={`p-8 border nexus-border flex flex-col gap-6 bg-white/[0.02] hover:bg-white/[0.04] transition-colors rounded-[24px]`}
+                                        >
+                                            <p className="font-sans text-sm @md:text-lg text-slate-300 leading-relaxed font-medium">
+                                                "{t.content}"
+                                            </p>
+                                            <div className="flex items-center gap-4 mt-2">
+                                                <div className="w-12 h-12 rounded-full overflow-hidden border border-white/20 shrink-0">
+                                                    {t.avatarUrl ? (
+                                                        <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover grayscale opacity-80" />
+                                                    ) : (
+                                                        <div className="w-full h-full bg-white/10 flex items-center justify-center font-bold text-white">
+                                                            {t.clientName.charAt(0)}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <h4 className="font-display font-bold text-white uppercase tracking-wider">{t.clientName}</h4>
+                                                    {t.company && <span className="font-sans text-[10px] uppercase tracking-widest text-[var(--hl)]">{t.company}</span>}
+                                                </div>
+                                                <div className="ml-auto flex gap-1">
+                                                    {[...Array(5)].map((_, idx) => (
+                                                        <i key={idx} className={`text-xs ${idx < t.rating ? 'fas fa-star text-[var(--hl)]' : 'far fa-star text-white/20'}`}></i>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </section>
                         )}
 
                         {/* SECTION: RECOGNITION */}

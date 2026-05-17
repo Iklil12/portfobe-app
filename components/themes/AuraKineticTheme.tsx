@@ -53,6 +53,7 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
     const items3D = allProjects.filter((p: any) => p.projectType === '3d');
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const awardItems = data?.certificates || data?.user?.certificates || [];
+    const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
     const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
@@ -345,6 +346,53 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                                     <motion.i whileHover={{ x: 5, color: highlightColor }} className="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-500 text-white/30 group-hover:text-white"></motion.i>
                                 </div>
                             </motion.a>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* ================= TESTIMONIALS AURA ================= */}
+            {testimonials.length > 0 && (
+                <section id="testimonials" className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-24 @md:py-32">
+                    <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="text-center mb-16">
+                        <h2 className="font-serif text-4xl @md:text-5xl font-bold">Client Feedback</h2>
+                        <p className="font-sans text-white/50 mt-4 text-sm">Voices of collaboration and impact.</p>
+                    </motion.div>
+
+                    <div className="grid grid-cols-1 @md:grid-cols-2 @lg:grid-cols-3 gap-6 @md:gap-8">
+                        {testimonials.map((t: any, i: number) => (
+                            <motion.div
+                                key={t.id}
+                                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
+                                className={`group relative p-8 bg-white/5 border border-white/10 hover:border-[var(--hl)]/50 backdrop-blur-md hover:bg-white/10 transition-all duration-500 ${radiusClass} overflow-hidden flex flex-col justify-between`}
+                            >
+                                <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--hl)] opacity-0 group-hover:opacity-10 blur-[50px] transition-opacity duration-500 rounded-full"></div>
+                                
+                                <div>
+                                    <div className="flex items-center gap-4 mb-6">
+                                        {t.avatarUrl ? (
+                                            <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-12 h-12 rounded-full object-cover border border-white/20" />
+                                        ) : (
+                                            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center font-bold text-lg border border-white/20 text-[var(--hl)]">
+                                                {t.clientName.charAt(0)}
+                                            </div>
+                                        )}
+                                        <div>
+                                            <h4 className="font-sans font-bold text-white group-hover:text-[var(--hl)] transition-colors">{t.clientName}</h4>
+                                            {t.company && <p className="font-sans text-[10px] uppercase tracking-widest text-white/40">{t.company}</p>}
+                                        </div>
+                                    </div>
+                                    <p className="font-sans text-sm @md:text-base leading-relaxed text-white/70 mb-8 italic relative z-10">
+                                        "{t.content}"
+                                    </p>
+                                </div>
+
+                                <div className="flex gap-1 relative z-10 mt-auto">
+                                    {[...Array(5)].map((_, idx) => (
+                                        <i key={idx} className={`text-xs ${idx < t.rating ? 'fas fa-star text-[var(--hl)]' : 'far fa-star text-white/20'}`}></i>
+                                    ))}
+                                </div>
+                            </motion.div>
                         ))}
                     </div>
                 </section>

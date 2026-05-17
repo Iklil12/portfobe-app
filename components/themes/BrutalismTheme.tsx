@@ -12,6 +12,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { TestimonialSection } from '@/components/features/testimonials/TestimonialSection';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -41,6 +42,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
   const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
   const awardItems = data?.certificates || data?.user?.certificates || [];
   const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+  const testimonials = data?.testimonials || data?.user?.testimonials || [];
 
   const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.avatar || "";
   const cleanAvatar = rawAvatar.replace(/"/g, '').trim();
@@ -461,6 +463,18 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
                 </motion.div>
               ))}
             </motion.div>
+          </section>
+        )}
+
+        {/* ================= TESTIMONIALS ================= */}
+        {testimonials.length > 0 && (
+          <section className="w-full bg-white border-b-[3px] border-black">
+            <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className="p-6 border-b-[3px] border-black bg-[var(--hl)] text-black">
+              <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}>CLIENT_RECORDS</h2>
+            </motion.div>
+            <div className="p-8 @lg:p-12">
+              <TestimonialSection testimonials={testimonials} variant="grid" />
+            </div>
           </section>
         )}
 
