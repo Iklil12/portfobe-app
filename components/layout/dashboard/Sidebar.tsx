@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LazyImage } from '@/components/ui/LazyImage';
@@ -9,206 +9,292 @@ interface SidebarProps {
   isLoading: boolean;
   userPlan: string;
   isSidebarOpen: boolean;
+  projectsCount?: number;
+  linksCount?: number;
+  testimonialsCount?: number;
 }
 
-export function Sidebar({ isLoading, userPlan, isSidebarOpen }: SidebarProps) {
+export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0, linksCount = 0, testimonialsCount = 0 }: SidebarProps) {
   const pathname = usePathname();
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); // Default: Tertutup (Collapsed)
-  
-  // Efek untuk memuat preferensi user dari localStorage
-  useEffect(() => {
-    const savedState = localStorage.getItem('sidebar-collapsed');
-    if (savedState !== null) {
-      setIsSidebarCollapsed(savedState === 'true');
-    }
-  }, []);
-
-  // Fungsi wrapper untuk menyimpan ke localStorage
-  const toggleSidebar = () => {
-    const newState = !isSidebarCollapsed;
-    setIsSidebarCollapsed(newState);
-    localStorage.setItem('sidebar-collapsed', String(newState));
-  };
-  
-  const isDesignRoute = pathname === '/dashboard/projects' || pathname === '/dashboard/themes' || pathname === '/dashboard/links' || pathname === '/dashboard/testimonials';
-  const [isDesignMenuOpen, setIsDesignMenuOpen] = useState(isDesignRoute);
   
   const isActive = (path: string) => pathname === path;
-
-  // LOGIK KRUSIAL: Jika isSidebarOpen (mobile) sedang aktif, maka JANGAN di-collapse.
-  // Sidebar mengecil HANYA berlaku di desktop.
-  const shouldCollapse = isSidebarCollapsed;
+  
+  // Deteksi apakah sedang di rute desain
+  const isDesignRoute = pathname.includes('/dashboard/projects') || 
+                        pathname.includes('/dashboard/themes') || 
+                        pathname.includes('/dashboard/links') || 
+                        pathname.includes('/dashboard/testimonials') ||
+                        pathname.includes('/dashboard/build-with-ai');
+  
+  const [isMobileDesignMenuOpen, setIsMobileDesignMenuOpen] = useState(isDesignRoute);
 
   return (
-    <aside className={`animate-page-load fixed inset-y-0 left-0 z-50 bg-white border-r border-slate-100 flex flex-col transition-all duration-300 ease-in-out
-      ${isSidebarOpen ? 'translate-x-0 shadow-2xl w-72' : '-translate-x-full md:relative md:translate-x-0'} 
-      ${shouldCollapse ? 'md:w-[88px]' : 'md:w-72'} 
-    `}>
-      <div className="flex flex-col h-full w-full">
-        <div className="h-[88px] shrink-0 flex items-center justify-center border-b border-transparent px-6 transition-all relative">
-          {isLoading ? (
-            <div className="h-8 w-28 skeleton-premium rounded-lg"></div>
-          ) : (
-            <Link href="/" className="flex items-center group cursor-pointer w-full relative h-full">
-               <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-in-out opacity-0 scale-75 pointer-events-none ${shouldCollapse ? 'md:opacity-100 md:scale-100' : ''}`}>
-                 <LazyImage src="/portfobe.png" alt="Logo" className="w-10 h-10 object-contain  transition-transform" />
+    <div className={`fixed inset-y-0 left-0 z-50 flex transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0 md:relative md:shadow-none'}`}>
+      
+      {/* ============================================================== */}
+      {/* DESKTOP SIDEBAR (TWO-PANE LAYOUT)                              */}
+      {/* ============================================================== */}
+      <div className="hidden md:flex h-full">
+        {/* PRIMARY SIDEBAR (NAVIGATION RAIL) */}
+        <aside className="w-[90px] bg-white border-r border-slate-100 flex flex-col h-full flex-shrink-0 z-20 shadow-[2px_0_10px_rgba(0,0,0,0.02)]">
+          <div className="h-[88px] shrink-0 flex items-center justify-center relative">
+            {isLoading ? (
+               <div className="w-10 h-10 skeleton-premium rounded-xl"></div>
+            ) : (
+              <Link href="/dashboard" className="flex items-center justify-center w-full h-full cursor-pointer hover:scale-105 transition-transform">
+                 <LazyImage src="/portfobe.png" alt="Logo" className="w-9 h-9 object-contain" />
+              </Link>
+            )}
+          </div>
+
+          <nav className="flex-1 flex flex-col gap-1 py-4 px-2 overflow-y-auto hide-scrollbar">
+            {isLoading ? (
+               <div className="flex flex-col gap-3 px-1">
+                  {[1,2,3,4,5,6].map(i => <div key={i} className="w-full h-16 skeleton-premium rounded-2xl"></div>)}
+               </div>
+            ) : (
+               <>
+                  <RailItem href="/dashboard" icon="fas fa-layer-group" label="Overview" active={isActive('/dashboard')} />
+                  <RailItem href="/dashboard/projects" icon="fas fa-paint-roller" label="Desain" active={isDesignRoute} />
+                  <RailItem href="/dashboard/explore" icon="fas fa-compass" label="Explore" active={isActive('/dashboard/explore')} />
+                  <RailItem href="/dashboard/analytics" icon="fas fa-chart-pie" label="Metrics" active={isActive('/dashboard/analytics')} />
+                  <RailItem href="/dashboard/profile" icon="fas fa-user-circle" label="Profil" active={isActive('/dashboard/profile')} />
+                  <RailItem href="/dashboard/integrations" icon="fas fa-plug" label="Integrasi" active={isActive('/dashboard/integrations')} />
+                  <RailItem href="/support" icon="fas fa-headset" label="Bantuan" active={isActive('/support')} />
+                  <RailItem href="/dashboard/settings" icon="fas fa-cog" label="Akun" active={isActive('/dashboard/settings')} />
+               </>
+            )}
+          </nav>
+          
+          {/* User Plan Indicator in Rail */}
+          <div className="shrink-0 pb-6 pt-2 flex justify-center border-t border-slate-50 mt-auto">
+             {isLoading ? (
+                <div className="w-12 h-12 skeleton-premium rounded-2xl mt-4"></div>
+             ) : userPlan === 'FREE' ? (
+               <Link href="/pricing" className="w-12 h-12 mt-4 bg-[#0a0a0a] rounded-2xl flex items-center justify-center relative group shadow-sm border border-slate-800" title="Upgrade to PRO">
+                  <i className="fas fa-crown text-[#ff9e00] text-lg group-hover:scale-110 transition-transform"></i>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
+               </Link>
+             ) : (
+               <div className="w-12 h-12 mt-4 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-200" title="Pro Creator">
+                  <i className="fas fa-gem text-[#ff9e00] text-lg"></i>
+               </div>
+             )}
+          </div>
+        </aside>
+
+        {/* SECONDARY SIDEBAR (KHUSUS UNTUK DESAIN) */}
+        <aside className={`bg-white border-r border-slate-100 flex flex-col h-full flex-shrink-0 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden z-10
+          ${isDesignRoute ? 'w-[240px] opacity-100 border-r' : 'w-0 opacity-0 border-r-0'}
+        `}>
+          {isDesignRoute && (
+             <div className="flex flex-col h-full w-[240px]">
+               <div className="h-[88px] shrink-0 flex flex-col justify-center px-6">
+                 {isLoading ? (
+                   <>
+                     <div className="w-16 h-3 skeleton-premium rounded-md mb-2"></div>
+                     <div className="w-32 h-5 skeleton-premium rounded-md"></div>
+                   </>
+                 ) : (
+                   <>
+                     <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Sub Menu</p>
+                     <h2 className="font-extrabold text-[15px] text-slate-900 tracking-tight">Desain Portofolio</h2>
+                   </>
+                 )}
                </div>
                
-               <div className={`absolute inset-0 flex items-center justify-start transition-all duration-300 ease-in-out opacity-100 scale-100 ${shouldCollapse ? 'md:opacity-0 md:scale-75 md:pointer-events-none' : ''}`}>
-                 <LazyImage src="/portfo.be.png" alt="Portfo.be Logo" className={`h-13 w-auto object-contain transition-transform duration-300`} />
+               <nav className="flex-1 py-2 px-3 space-y-1 overflow-y-auto hide-scrollbar">
+                 {isLoading ? (
+                   <div className="flex flex-col gap-2">
+                     {[1, 2, 3, 4].map(i => <div key={i} className="w-full h-11 skeleton-premium rounded-xl"></div>)}
+                   </div>
+                 ) : (
+                   <>
+                   <SecondaryNavItem href="/dashboard/projects" icon="fas fa-folder-open" label="Proyek & Karya" active={isActive('/dashboard/projects')} count={projectsCount} />
+                   <SecondaryNavItem href="/dashboard/themes" icon="fas fa-palette" label="Koleksi Tema" active={isActive('/dashboard/themes')} />
+                   <SecondaryNavItem href="/dashboard/build-with-ai" icon="fas fa-wand-magic-sparkles" label="Build with AI" active={isActive('/dashboard/build-with-ai')} highlightText="Segera" />
+                   <SecondaryNavItem href="/dashboard/links" icon="fas fa-link" label="Tautan (Links)" active={isActive('/dashboard/links')} count={linksCount} />
+                   <SecondaryNavItem href="/dashboard/testimonials" icon="fas fa-comment-dots" label="Testimoni" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
+                 </>
+                 )}
+               </nav>
+               
+               <div className="p-5 mt-auto">
+                 {isLoading ? (
+                   <div className="w-full h-24 skeleton-premium rounded-2xl"></div>
+                 ) : (
+                   <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 w-16 h-16 bg-[#ff9e00]/10 blur-xl rounded-full translate-x-1/2 -translate-y-1/2 group-hover:bg-[#ff9e00]/20 transition-colors"></div>
+                      <i className="fas fa-lightbulb text-[#ff9e00] mb-2 text-lg"></i>
+                      <p className="text-[11px] text-slate-600 font-medium leading-relaxed">Atur karya dan koleksi tema sesuai gayamu untuk menarik lebih banyak klien.</p>
+                   </div>
+                 )}
                </div>
-            </Link>
+             </div>
           )}
-        </div>
+        </aside>
+      </div>
 
-        <nav className={`flex-1 space-y-1 mt-4 transition-all duration-300 overflow-y-auto hide-scrollbar px-4 ${shouldCollapse ? 'md:overflow-visible md:px-3' : ''}`}>
-          {isLoading ? (
-            <div className="space-y-3 py-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-11 w-full skeleton-premium rounded-2xl"></div>
-              ))}
-            </div>
-          ) : (
-            <>
-              {/* Menu Overview */}
-              <div className="relative group/tooltip">
-                <Link href="/dashboard" className={`w-full flex items-center py-3.5 rounded-2xl transition-all duration-300 group px-4 gap-4 ${isActive('/dashboard') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${shouldCollapse ? 'md:px-5 md:gap-0' : ''}`}>
-                  <i className={`fas fa-layer-group text-center transition-all duration-300 text-lg w-6 ${isActive('/dashboard') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'} ${shouldCollapse ? 'md:text-xl' : ''}`}></i> 
-                  <span className={`font-extrabold text-[13px] tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden max-w-[200px] opacity-100 ${shouldCollapse ? 'md:max-w-0 md:opacity-0' : ''}`}>Overview</span>
-                </Link>
-                {shouldCollapse && <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Overview</div>}
-              </div>
-              
-              {/* Menu Desain (Dengan Submenu) */}
-              <div className="pt-2 relative group/design">
-                <button onClick={() => setIsDesignMenuOpen(!isDesignMenuOpen)} className={`w-full flex items-center transition-all duration-300 group py-3.5 rounded-2xl px-4 justify-between ${isDesignRoute ? 'text-slate-900' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${shouldCollapse ? 'md:px-5 md:gap-0 md:cursor-default' : ''} ${isDesignRoute && shouldCollapse ? 'md:bg-slate-100' : ''}`}>
-                  <div className={`flex items-center transition-all duration-300 gap-4 ${shouldCollapse ? 'md:gap-0' : ''}`}>
-                    <i className={`fas fa-paint-roller text-center transition-all duration-300 text-lg w-6 ${isDesignRoute ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'} ${shouldCollapse ? 'md:text-xl' : ''}`}></i> 
-                    <span className={`font-extrabold text-[13px] tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden max-w-[200px] opacity-100 ${shouldCollapse ? 'md:max-w-0 md:opacity-0' : ''}`}>Desain</span>
-                  </div>
-                  <i className={`fas fa-chevron-down text-[10px] text-slate-400 transition-all duration-300 ease-in-out overflow-hidden ${isDesignMenuOpen ? 'rotate-180' : ''} max-w-[20px] opacity-100 ${shouldCollapse ? 'md:max-w-0 md:opacity-0' : ''}`}></i>
-                </button>
 
-                {/* Submenu Melayang (Saat Collapsed) */}
-                {shouldCollapse && (
-                  <div className="hidden md:block absolute left-full top-0 w-56 pl-3 opacity-0 pointer-events-none group-hover/design:opacity-100 group-hover/design:pointer-events-auto transition-all duration-300 z-[100] -translate-x-2 group-hover/design:translate-x-0">
-                    <div className="bg-white border border-slate-200 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-2 px-1">
-                      <div className="px-4 py-2 border-b border-slate-100 mb-1">
-                        <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Menu Desain</p>
-                      </div>
-                      <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Proyek & Karya</Link>
-                      <Link href="/dashboard/themes" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/themes') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Koleksi Tema</Link>
-                      <Link href="/dashboard/links" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/links') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Tautan (Links)</Link>
-                      <Link href="/dashboard/testimonials" className={`w-full flex items-center px-4 py-3 rounded-xl font-bold text-[13px] transition-all ${isActive('/dashboard/testimonials') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>Testimoni</Link>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Submenu Inline (Saat Dibuka Lebar) */}
-                <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${isDesignMenuOpen ? 'max-h-60 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 pointer-events-none'} ${shouldCollapse ? 'md:max-h-0 md:py-0 md:opacity-0 md:pointer-events-none' : ''}`}>
-                  <Link href="/dashboard/projects" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/projects') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
-                    {isActive('/dashboard/projects') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} Proyek & Karya
-                  </Link>
-                  <Link href="/dashboard/themes" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/themes') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
-                    {isActive('/dashboard/themes') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} Koleksi Tema
-                  </Link>
-                  <Link href="/dashboard/links" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/links') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
-                    {isActive('/dashboard/links') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} Tautan (Links)
-                  </Link>
-                  <Link href="/dashboard/testimonials" className={`w-full flex items-center px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${isActive('/dashboard/testimonials') ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
-                    {isActive('/dashboard/testimonials') && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} Testimoni
-                  </Link>
-                </div>
-              </div>
-
-              {/* Menu Lainnya */}
-              <div className="relative group/tooltip">
-                <Link href="/dashboard/analytics" className={`w-full flex items-center py-3.5 rounded-2xl transition-all duration-300 group mt-2 px-4 gap-4 ${isActive('/dashboard/analytics') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${shouldCollapse ? 'md:px-5 md:gap-0' : ''}`}>
-                  <i className={`fas fa-chart-pie text-center transition-all duration-300 text-lg w-6 ${isActive('/dashboard/analytics') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'} ${shouldCollapse ? 'md:text-xl' : ''}`}></i> 
-                  <span className={`font-extrabold text-[13px] tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden max-w-[200px] opacity-100 ${shouldCollapse ? 'md:max-w-0 md:opacity-0' : ''}`}>Metrics</span>
-                </Link>
-                {shouldCollapse && <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Metrics</div>}
-              </div>
-
-              <div className={`px-5 transition-all duration-300 ease-in-out overflow-hidden max-h-[50px] opacity-100 pt-8 pb-3 ${shouldCollapse ? 'md:max-h-0 md:opacity-0 md:pt-0 md:pb-0' : ''}`}>
-                <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest whitespace-nowrap">Pengaturan</p>
-              </div>
-              <div className={`w-full flex justify-center transition-all duration-300 ease-in-out overflow-hidden max-h-0 opacity-0 pt-0 pb-0 ${shouldCollapse ? 'md:max-h-[50px] md:opacity-100 md:pt-6 md:pb-2' : ''}`}>
-                <div className="w-6 h-[2px] bg-slate-100 rounded-full"></div>
-              </div>
-
-              <div className="relative group/tooltip">
-                <Link href="/dashboard/profile" className={`w-full flex items-center py-3.5 rounded-2xl transition-all duration-300 group px-4 gap-4 ${isActive('/dashboard/profile') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${shouldCollapse ? 'md:px-5 md:gap-0' : ''}`}>
-                  <i className={`fas fa-user-circle text-center transition-all duration-300 text-lg w-6 ${isActive('/dashboard/profile') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'} ${shouldCollapse ? 'md:text-xl' : ''}`}></i> 
-                  <span className={`font-extrabold text-[13px] tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden max-w-[200px] opacity-100 ${shouldCollapse ? 'md:max-w-0 md:opacity-0' : ''}`}>Profil & Bio</span>
-                </Link>
-                {shouldCollapse && <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Profil</div>}
-              </div>
-
-              <div className="relative group/tooltip">
-                <Link href="/dashboard/integrations" className={`w-full flex items-center py-3.5 rounded-2xl transition-all duration-300 group px-4 gap-4 ${isActive('/dashboard/integrations') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${shouldCollapse ? 'md:px-5 md:gap-0' : ''}`}>
-                  <i className={`fas fa-plug text-center transition-all duration-300 text-lg w-6 ${isActive('/dashboard/integrations') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'} ${shouldCollapse ? 'md:text-xl' : ''}`}></i> 
-                  <span className={`font-extrabold text-[13px] tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden max-w-[200px] opacity-100 ${shouldCollapse ? 'md:max-w-0 md:opacity-0' : ''}`}>Integrasi</span>
-                </Link>
-                {shouldCollapse && <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Integrasi</div>}
-              </div>
-              
-              <div className="relative group/tooltip">
-                <Link href="/support" className={`w-full flex items-center py-3.5 rounded-2xl transition-all duration-300 group px-4 gap-4 ${isActive('/support') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${shouldCollapse ? 'md:px-5 md:gap-0' : ''}`}>
-                  <i className={`fas fa-headset text-center transition-all duration-300 text-lg w-6 ${isActive('/support') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'} ${shouldCollapse ? 'md:text-xl' : ''}`}></i> 
-                  <span className={`font-extrabold text-[13px] tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden max-w-[200px] opacity-100 ${shouldCollapse ? 'md:max-w-0 md:opacity-0' : ''}`}>Bantuan</span>
-                </Link>
-                {shouldCollapse && <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Bantuan</div>}
-              </div>
-
-              <div className="relative group/tooltip">
-                <Link href="/dashboard/settings" className={`w-full flex items-center py-3.5 rounded-2xl transition-all duration-300 group px-4 gap-4 ${isActive('/dashboard/settings') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${shouldCollapse ? 'md:px-5 md:gap-0' : ''}`}>
-                  <i className={`fas fa-cog text-center transition-all duration-300 text-lg w-6 ${isActive('/dashboard/settings') ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'} ${shouldCollapse ? 'md:text-xl' : ''}`}></i> 
-                  <span className={`font-extrabold text-[13px] tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden max-w-[200px] opacity-100 ${shouldCollapse ? 'md:max-w-0 md:opacity-0' : ''}`}>Akun</span>
-                </Link>
-                {shouldCollapse && <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold uppercase rounded-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 z-[100] whitespace-nowrap shadow-xl border border-slate-700 translate-x-2 group-hover/tooltip:translate-x-0">Pengaturan Akun</div>}
-              </div>
-            </>
-          )}
-        </nav>
-        
-        <div className={`shrink-0 border-t border-slate-100 bg-white z-10 p-4 transition-all duration-300 ease-in-out`}>
-          <div className={`w-full transition-all duration-300 ease-in-out overflow-hidden max-h-[300px] opacity-100 mb-4 ${shouldCollapse ? 'md:max-h-0 md:opacity-0 md:mb-0' : ''}`}>
+      {/* ============================================================== */}
+      {/* MOBILE SIDEBAR (SINGLE PANE LAYOUT WITH ACCORDION)             */}
+      {/* ============================================================== */}
+      <div className="flex md:hidden h-full w-[280px]">
+        <aside className="w-full bg-white border-r border-slate-100 flex flex-col h-full">
+          <div className="h-[88px] shrink-0 flex items-center justify-between px-6 border-b border-transparent">
             {isLoading ? (
-               <div className="h-32 w-full skeleton-premium rounded-3xl"></div>
+              <div className="h-8 w-28 skeleton-premium rounded-lg"></div>
+            ) : (
+              <Link href="/" className="flex items-center group cursor-pointer">
+                 <LazyImage src="/portfo.be.png" alt="Portfo.be Logo" className="h-10 w-auto object-contain transition-transform" />
+              </Link>
+            )}
+          </div>
+
+          <nav className="flex-1 space-y-1 mt-4 overflow-y-auto hide-scrollbar px-4">
+            {isLoading ? (
+              <div className="space-y-3 py-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="h-11 w-full skeleton-premium rounded-2xl"></div>
+                ))}
+              </div>
+            ) : (
+              <>
+                {/* Menu Overview */}
+                <MobileNavItem href="/dashboard" icon="fas fa-layer-group" label="Overview" active={isActive('/dashboard')} />
+                
+                {/* Menu Desain (Dengan Submenu Accordion) */}
+                <div className="pt-2">
+                  <button onClick={() => setIsMobileDesignMenuOpen(!isMobileDesignMenuOpen)} className={`w-full flex items-center transition-all duration-300 group py-3.5 rounded-2xl px-4 justify-between ${isDesignRoute ? 'text-slate-900' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
+                    <div className="flex items-center gap-4">
+                      <i className={`fas fa-paint-roller text-center text-lg w-6 ${isDesignRoute ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
+                      <span className="font-extrabold text-[13px] tracking-wide">Desain</span>
+                    </div>
+                    <i className={`fas fa-chevron-down text-[10px] text-slate-400 transition-transform duration-300 ${isMobileDesignMenuOpen ? 'rotate-180' : ''}`}></i>
+                  </button>
+
+                  {/* Submenu Inline (Accordion) */}
+                  <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${isMobileDesignMenuOpen ? 'max-h-60 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 pointer-events-none'}`}>
+                    <MobileSubNavItem href="/dashboard/projects" label="Proyek & Karya" active={isActive('/dashboard/projects')} count={projectsCount} />
+                    <MobileSubNavItem href="/dashboard/themes" label="Koleksi Tema" active={isActive('/dashboard/themes')} />
+                    <MobileSubNavItem href="/dashboard/build-with-ai" label="Build with AI" active={isActive('/dashboard/build-with-ai')} highlightText="Segera" />
+                    <MobileSubNavItem href="/dashboard/links" label="Tautan (Links)" active={isActive('/dashboard/links')} count={linksCount} />
+                    <MobileSubNavItem href="/dashboard/testimonials" label="Testimoni" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
+                  </div>
+                </div>
+
+                {/* Menu Lainnya */}
+                <MobileNavItem href="/dashboard/explore" icon="fas fa-compass" label="Explore" active={isActive('/dashboard/explore')} className="mt-2" />
+                <MobileNavItem href="/dashboard/analytics" icon="fas fa-chart-pie" label="Metrics" active={isActive('/dashboard/analytics')} />
+
+                <div className="px-5 pt-6 pb-2">
+                  <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Pengaturan</p>
+                </div>
+
+                <MobileNavItem href="/dashboard/profile" icon="fas fa-user-circle" label="Profil & Bio" active={isActive('/dashboard/profile')} />
+                <MobileNavItem href="/dashboard/integrations" icon="fas fa-plug" label="Integrasi" active={isActive('/dashboard/integrations')} />
+                <MobileNavItem href="/support" icon="fas fa-headset" label="Bantuan" active={isActive('/support')} />
+                <MobileNavItem href="/dashboard/settings" icon="fas fa-cog" label="Akun" active={isActive('/dashboard/settings')} />
+              </>
+            )}
+          </nav>
+          
+          <div className="shrink-0 border-t border-slate-100 bg-white z-10 p-4">
+            {isLoading ? (
+               <div className="h-28 w-full skeleton-premium rounded-3xl"></div>
             ) : userPlan === 'FREE' ? (
-              <div className="relative overflow-hidden bg-[#0a0a0a] p-5 rounded-3xl shadow-sm border border-white/10 group hover:border-white/20 transition-colors">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9e00]/10 blur-[50px] group-hover:bg-[#ff9e00]/20 transition-colors duration-500"></div>
-                <i className="fas fa-gem absolute -bottom-4 -right-3 text-7xl text-white opacity-[0.02] transform rotate-12 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 pointer-events-none"></i>
+              <div className="relative overflow-hidden bg-[#0a0a0a] p-4 rounded-3xl shadow-sm border border-slate-800">
+                <i className="fas fa-gem absolute -bottom-4 -right-3 text-6xl text-white opacity-[0.02] transform rotate-12"></i>
                 <div className="relative z-10">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[9px] font-extrabold uppercase tracking-widest text-[#ff9e00] mb-3">
                     <i className="fas fa-crown"></i> PRO
                   </div>
-                  <p className="text-xs font-bold text-white mb-4 leading-snug whitespace-nowrap">Metrik mendalam.</p>
-                  <Link href="/pricing" className="block w-full text-center bg-white text-slate-900 text-[10px] font-extrabold tracking-widest uppercase py-3 px-2 rounded-xl shadow-lg hover:bg-slate-200 active:scale-95 transition-all">
+                  <Link href="/pricing" className="block w-full text-center bg-white text-slate-900 text-[10px] font-extrabold tracking-widest uppercase py-2.5 px-2 rounded-xl shadow-lg hover:bg-slate-200">
                     Upgrade
                   </Link>
                 </div>
               </div>
             ) : (
-              <div className="relative overflow-hidden bg-slate-50 border border-slate-200 p-5 rounded-3xl group">
-                <i className="fas fa-check-circle absolute -bottom-4 -right-3 text-7xl text-[#ff9e00] opacity-[0.05] transform -rotate-12 transition-transform duration-500 group-hover:scale-110 pointer-events-none"></i>
-                <div className="relative z-10">
-                  <p className="text-[9px] font-extrabold tracking-widest text-[#ff9e00] mb-2 uppercase whitespace-nowrap">Status Akun</p>
-                  <p className="text-sm font-extrabold text-slate-900 mb-1 leading-snug whitespace-nowrap">Pro Creator</p>
-                  <p className="text-[10px] text-slate-500 font-medium whitespace-nowrap">Fitur terbuka.</p>
+              <div className="relative overflow-hidden bg-slate-50 border border-slate-200 p-4 rounded-3xl group">
+                <div className="relative z-10 flex items-center justify-between">
+                  <div>
+                    <p className="text-[9px] font-extrabold tracking-widest text-[#ff9e00] uppercase mb-1">Status</p>
+                    <p className="text-sm font-extrabold text-slate-900">Pro Creator</p>
+                  </div>
+                  <i className="fas fa-check-circle text-2xl text-[#ff9e00]"></i>
                 </div>
               </div>
             )}
           </div>
-
-          <div className="w-full relative h-10 transition-all duration-300 ease-in-out">
-            <button onClick={toggleSidebar} className={`absolute top-0 transition-all duration-300 ease-in-out hidden md:flex w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 items-center justify-center active:scale-90 group shadow-sm ${shouldCollapse ? 'right-[8px]' : 'right-0'}`} title={shouldCollapse ? "Perbesar Sidebar" : "Perkecil Sidebar"}>
-              <i className={`fas fa-chevron-left text-[12px] transition-transform duration-300 ease-in-out ${shouldCollapse ? 'rotate-180' : ''}`}></i>
-            </button>
-          </div>
-        </div>
+        </aside>
       </div>
-    </aside>
+
+    </div>
+  );
+}
+
+// --------------------------------------------------------
+// DESKTOP COMPONENTS
+// --------------------------------------------------------
+function RailItem({ href, icon, label, active }: { href: string, icon: string, label: string, active: boolean }) {
+  return (
+    <Link href={href} className={`flex flex-col items-center justify-center py-3 rounded-2xl transition-all duration-200 group relative ${active ? 'bg-slate-50' : 'hover:bg-slate-50'}`}>
+      {active && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-8 bg-[#ff9e00] rounded-r-full shadow-[1px_0_5px_rgba(255,158,0,0.5)]"></div>}
+      <i className={`${icon} text-lg mb-1.5 transition-transform duration-200 ${active ? 'text-[#ff9e00] scale-110' : 'text-slate-400 group-hover:text-slate-600 group-hover:scale-110'}`}></i>
+      <span className={`text-[10px] font-bold tracking-wide transition-colors ${active ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-700'}`}>{label}</span>
+    </Link>
+  );
+}
+
+// Komponen Item untuk Secondary Sidebar
+function SecondaryNavItem({ href, icon, label, active, count, highlightText }: { href: string, icon: string, label: string, active: boolean, count?: number, highlightText?: string }) {
+  return (
+    <Link href={href} className={`flex items-center justify-between px-4 py-3 rounded-xl font-bold text-[13px] transition-all duration-200 group relative ${active ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>
+      <div className="flex items-center">
+        <i className={`${icon} w-6 text-center text-[15px] mr-3 transition-colors ${active ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i>
+        {label}
+      </div>
+      {highlightText ? (
+        <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-extrabold uppercase tracking-wide ${active ? 'bg-[#ff9e00] text-slate-900' : 'bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20'}`}>
+          {highlightText}
+        </span>
+      ) : count !== undefined ? (
+        <span className={`text-[10px] px-1.5 py-0.5 rounded-md transition-colors ${active ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'}`}>
+          {count}
+        </span>
+      ) : null}
+    </Link>
+  );
+}
+
+// --------------------------------------------------------
+// MOBILE COMPONENTS
+// --------------------------------------------------------
+function MobileNavItem({ href, icon, label, active, className = "" }: { href: string, icon: string, label: string, active: boolean, className?: string }) {
+  return (
+    <Link href={href} className={`w-full flex items-center py-3.5 rounded-2xl transition-all duration-300 group px-4 gap-4 ${active ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${className}`}>
+      <i className={`${icon} text-center text-lg w-6 ${active ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
+      <span className="font-extrabold text-[13px] tracking-wide">{label}</span>
+    </Link>
+  );
+}
+
+function MobileSubNavItem({ href, label, active, count, highlightText }: { href: string, label: string, active: boolean, count?: number, highlightText?: string }) {
+  return (
+    <Link href={href} className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all relative ${active ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}>
+      <div className="flex items-center">
+        {active && <div className="absolute left-0 w-1 h-1/2 bg-[#ff9e00] rounded-r-full"></div>} 
+        <span className={active ? '' : 'pl-1'}>{label}</span>
+      </div>
+      {highlightText ? (
+        <span className="text-[9px] px-1.5 py-0.5 rounded-md font-extrabold uppercase tracking-wide bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20">
+          {highlightText}
+        </span>
+      ) : count !== undefined ? (
+        <span className={`text-[10px] px-1.5 py-0.5 rounded-md transition-colors ${active ? 'bg-slate-200 text-slate-700' : 'bg-slate-100 text-slate-500'}`}>
+          {count}
+        </span>
+      ) : null}
+    </Link>
   );
 }

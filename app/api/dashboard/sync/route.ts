@@ -30,7 +30,7 @@ export async function GET(req: Request) {
     startOfToday.setHours(0, 0, 0, 0);
 
     // 2. PARALLEL EXECUTION: OPTIMASI SUPER RINGAN
-    const [user, announcements, historicalStats, todayLogs, projectsCount, certificatesCount, linksCount, activities] = await Promise.all([
+    const [user, announcements, historicalStats, todayLogs, projectsCount, certificatesCount, linksCount, testimonialsCount, activities] = await Promise.all([
       // A. Layout & Appearance
       prisma.user.findUnique({
         where: { email: userEmail },
@@ -59,7 +59,9 @@ export async function GET(req: Request) {
       prisma.certificate.count({ where: { userId } }),
       // G. Links (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
       prisma.link.count({ where: { userId } }),
-      // H. Activities (Dibatasi take: 5 agar ringan)
+      // H. Testimonials (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
+      prisma.testimonial.count({ where: { userId } }),
+      // I. Activities (Dibatasi take: 5 agar ringan)
       prisma.activity.findMany({
         where: { userId },
         orderBy: { createdAt: 'desc' },
@@ -175,6 +177,7 @@ export async function GET(req: Request) {
         projectsCount: projectsCount, // LANGSUNG MENGGUNAKAN HASIL COUNT (Angka murni)
         certificatesCount: certificatesCount, // LANGSUNG MENGGUNAKAN HASIL COUNT
         linksCount: linksCount, // LANGSUNG MENGGUNAKAN HASIL COUNT
+        testimonialsCount: testimonialsCount,
         activities
       }
     });

@@ -36,6 +36,7 @@ export function useDashboardLayout() {
   // Destructure data agar UI tidak error
   const syncData = dashboardSyncData?.layout;
   const announcementsData = dashboardSyncData?.announcements;
+  const overviewData = dashboardSyncData?.overview;
 
   const isLoading = status === "loading" || (status === "authenticated" && !syncData && !syncError);
   
@@ -109,5 +110,9 @@ export function useDashboardLayout() {
     notifications,
     topBanner,
     announcementsData, // expose for banner component
+    projectsCount: overviewData?.projectsCount || 0,
+    certificatesCount: overviewData?.certificatesCount || 0,
+    linksCount: overviewData?.linksCount || 0,
+    testimonialsCount: overviewData?.testimonialsCount || 0,
   };
 }

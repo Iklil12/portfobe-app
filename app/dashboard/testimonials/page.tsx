@@ -155,6 +155,12 @@ export default function TestimonialsPage() {
           0% { opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(3px); }
           100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
+        .skeleton-premium {
+          background: linear-gradient(110deg, #f1f5f9 8%, #e2e8f0 18%, #f1f5f9 33%);
+          background-size: 200% 100%;
+          animation: 1.5s shine linear infinite;
+        }
+        @keyframes shine { to { background-position-x: -200%; } }
       `}} />
 
       <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-10 relative z-10">
@@ -210,26 +216,65 @@ export default function TestimonialsPage() {
           document.body
         )}
 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-          <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-              <i className="fas fa-comment-quote text-orange-500"></i>
-              Testimonials
-            </h1>
-            <p className="text-sm font-medium text-slate-500 mt-2">Bangun kredibilitas portofoliomu dengan ulasan klien.</p>
+        {isLoading ? (
+          /* ─── FULL PAGE SKELETON ─── */
+          <div className="space-y-4 animate-enter">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+              <div className="space-y-2.5">
+                <div className="h-9 w-52 skeleton-premium rounded-2xl"></div>
+                <div className="h-4 w-72 skeleton-premium rounded-lg"></div>
+              </div>
+              <div className="h-10 w-44 skeleton-premium rounded-xl"></div>
+            </div>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] flex flex-col sm:flex-row gap-5">
+                <div className="flex-shrink-0">
+                  <div className="w-14 h-14 rounded-full skeleton-premium"></div>
+                </div>
+                <div className="flex-1 space-y-3 py-1">
+                  <div className="flex items-center gap-2">
+                    <div className="h-5 skeleton-premium rounded-lg w-36"></div>
+                    <div className="h-4 skeleton-premium rounded-md w-24"></div>
+                  </div>
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, j) => <div key={j} className="w-3.5 h-3.5 skeleton-premium rounded-sm"></div>)}
+                  </div>
+                  <div className="space-y-2 pt-1">
+                    <div className="h-3.5 skeleton-premium rounded-md w-full"></div>
+                    <div className="h-3.5 skeleton-premium rounded-md w-4/5"></div>
+                    <div className="h-3.5 skeleton-premium rounded-md w-3/5"></div>
+                  </div>
+                </div>
+                <div className="hidden sm:flex flex-col gap-2 border-l border-slate-50 pl-5 w-[130px] shrink-0">
+                  <div className="h-9 skeleton-premium rounded-xl w-full"></div>
+                  <div className="h-9 skeleton-premium rounded-xl w-full"></div>
+                  <div className="h-9 skeleton-premium rounded-xl w-full"></div>
+                </div>
+              </div>
+            ))}
           </div>
-          
-          <button 
-            onClick={() => { if (isFormOpen) resetForm(); else setIsFormOpen(true); }}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600 text-slate-700 text-sm font-bold shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all active:scale-95"
-          >
-            <i className={`fas ${isFormOpen ? 'fa-times text-slate-400' : 'fa-plus text-orange-500'}`}></i>
-            {isFormOpen ? 'Batal' : 'Tambah Testimoni'}
-          </button>
-        </div>
+        ) : (
+          /* ─── REAL CONTENT ─── */
+          <>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 animate-enter">
+              <div>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                  <i className="fas fa-comment-quote text-orange-500"></i>
+                  Testimonials
+                </h1>
+                <p className="text-sm font-medium text-slate-500 mt-2">Bangun kredibilitas portofoliomu dengan ulasan klien.</p>
+              </div>
+              <button
+                onClick={() => { if (isFormOpen) resetForm(); else setIsFormOpen(true); }}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600 text-slate-700 text-sm font-bold shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all active:scale-95"
+              >
+                <i className={`fas ${isFormOpen ? 'fa-times text-slate-400' : 'fa-plus text-orange-500'}`}></i>
+                {isFormOpen ? 'Batal' : 'Tambah Testimoni'}
+              </button>
+            </div>
 
-        {/* FORM TAMBAH / EDIT */}
-        {isFormOpen && (
+            {/* FORM TAMBAH / EDIT */}
+            {isFormOpen && (
           <div className="bg-white p-6 sm:p-8 md:p-10 rounded-[2rem] border border-slate-100 shadow-[0_15px_40px_rgba(0,0,0,0.04)] mb-10 animate-enter">
             <h2 className="font-bold text-xl text-slate-900 mb-6 flex items-center gap-2">
               <i className="fas fa-pen-nib text-orange-400"></i> {editingId ? 'Edit Ulasan' : 'Tulis Ulasan'}
@@ -318,112 +363,72 @@ export default function TestimonialsPage() {
         )}
 
         {/* LIST TESTIMONI */}
-        <div className="space-y-4">
-          {isLoading ? (
             <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] flex flex-col sm:flex-row gap-5">
-                  <div className="flex-shrink-0">
-                    <div className="w-14 h-14 rounded-full bg-slate-100 animate-pulse"></div>
+              {testimonials.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 border-dashed animate-enter">
+                  <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                    <i className="fas fa-comment-slash text-2xl text-slate-300"></i>
                   </div>
-                  <div className="flex-1 space-y-3 py-1">
-                    <div className="flex items-center gap-2">
-                      <div className="h-5 bg-slate-100 rounded-lg w-32 animate-pulse"></div>
-                      <div className="h-4 bg-slate-50 rounded-md w-20 animate-pulse"></div>
-                    </div>
-                    <div className="flex gap-1">
-                      {[...Array(5)].map((_, j) => <div key={j} className="w-3 h-3 bg-slate-100 rounded-sm animate-pulse"></div>)}
-                    </div>
-                    <div className="space-y-2 pt-1">
-                      <div className="h-3.5 bg-slate-100 rounded-md w-full animate-pulse"></div>
-                      <div className="h-3.5 bg-slate-100 rounded-md w-4/5 animate-pulse"></div>
-                    </div>
-                  </div>
-                  <div className="hidden sm:flex flex-col gap-2 border-l border-slate-50 pl-5 w-[130px] shrink-0">
-                    <div className="h-8 bg-slate-100 rounded-xl w-full animate-pulse"></div>
-                    <div className="h-8 bg-slate-100 rounded-xl w-full animate-pulse"></div>
-                    <div className="h-8 bg-red-50 rounded-xl w-full animate-pulse"></div>
-                  </div>
+                  <h3 className="font-bold text-slate-900 mb-1">Belum ada testimoni</h3>
+                  <p className="text-slate-500 text-sm max-w-xs mx-auto mb-6">Kamu belum memiliki ulasan dari klien. Tambahkan sekarang untuk meningkatkan kepercayaan.</p>
+                  <button onClick={() => setIsFormOpen(true)} className="text-sm font-bold text-orange-500 hover:text-orange-600">
+                    + Tambah Testimoni Pertama
+                  </button>
                 </div>
-              ))}
+              ) : (
+                testimonials.map((t, index) => (
+                  <div key={t.id} className={`bg-white p-5 sm:p-6 rounded-3xl border transition-all duration-300 ${t.isVisible ? 'border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:border-slate-200' : 'border-slate-200 opacity-60 bg-slate-50'} flex flex-col sm:flex-row gap-5 animate-enter`} style={{animationDelay: `${index * 100}ms`}}>
+                    
+                    <div className="flex-shrink-0 flex sm:flex-col items-center justify-between sm:justify-start gap-4 sm:gap-2">
+                      <div className="flex flex-col gap-1 sm:hidden mr-2">
+                        <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="text-slate-300 hover:text-orange-500 disabled:opacity-30"><i className="fas fa-chevron-up text-xs"></i></button>
+                        <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="text-slate-300 hover:text-orange-500 disabled:opacity-30"><i className="fas fa-chevron-down text-xs"></i></button>
+                      </div>
+                      {t.avatarUrl ? (
+                        <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-14 h-14 rounded-full object-cover border border-slate-200" />
+                      ) : (
+                        <div className="w-14 h-14 rounded-full bg-orange-100 text-orange-600 border border-orange-200 flex items-center justify-center font-black text-xl">
+                          {t.clientName.charAt(0)}
+                        </div>
+                      )}
+                      <div className="flex sm:hidden gap-2">
+                        <button onClick={() => handleEditClick(t)} className="w-9 h-9 flex items-center justify-center bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-100 transition-all"><i className="fas fa-edit text-xs"></i></button>
+                        <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-50 ${t.isVisible ? 'bg-slate-100 text-slate-500 hover:bg-slate-200' : 'bg-slate-800 text-white'}`}>
+                          {processingId === t.id ? <i className="fas fa-spinner fa-spin text-xs"></i> : <i className={`fas ${t.isVisible ? 'fa-eye' : 'fa-eye-slash'} text-xs`}></i>}
+                        </button>
+                        <button onClick={() => handleDeleteClick(t.id)} className="w-9 h-9 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all"><i className="fas fa-trash text-xs"></i></button>
+                      </div>
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col justify-center">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2">
+                        <h3 className="font-black text-slate-900 text-lg">{t.clientName}</h3>
+                        {t.company && <span className="text-xs font-bold uppercase tracking-widest text-slate-400 px-2 py-0.5 bg-slate-100 rounded-md">{t.company}</span>}
+                      </div>
+                      <div className="flex mb-3">
+                        {[...Array(5)].map((_, i) => <i key={i} className={`${i < t.rating ? 'fas text-amber-400' : 'far text-slate-200'} fa-star text-xs mr-0.5`}></i>)}
+                      </div>
+                      <p className="text-sm font-medium text-slate-600 leading-relaxed max-w-2xl italic">"{t.content}"</p>
+                    </div>
+                    
+                    <div className="hidden sm:flex flex-col justify-between items-center px-2">
+                      <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="p-1 text-slate-300 hover:text-orange-500 disabled:opacity-30 transition-colors"><i className="fas fa-chevron-up text-lg"></i></button>
+                      <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="p-1 text-slate-300 hover:text-orange-500 disabled:opacity-30 transition-colors"><i className="fas fa-chevron-down text-lg"></i></button>
+                    </div>
+                    
+                    <div className="hidden sm:flex flex-col gap-2 justify-start border-l border-slate-100 pl-5 w-[130px] shrink-0">
+                      <button onClick={() => handleEditClick(t)} className="px-3 py-2 flex items-center justify-center gap-2 rounded-xl transition-all text-xs font-bold w-full bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100"><i className="fas fa-edit"></i> Edit</button>
+                      <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`px-3 py-2 flex items-center justify-center gap-2 rounded-xl transition-all text-xs font-bold w-full disabled:opacity-50 ${t.isVisible ? 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200' : 'bg-slate-800 text-white hover:bg-slate-900 shadow-md'}`}>
+                        {processingId === t.id ? <i className="fas fa-spinner fa-spin"></i> : <i className={`fas ${t.isVisible ? 'fa-eye' : 'fa-eye-slash'}`}></i>} {t.isVisible ? 'Sembunyikan' : 'Tampilkan'}
+                      </button>
+                      <button onClick={() => handleDeleteClick(t.id)} className="px-3 py-2 flex items-center justify-center gap-2 rounded-xl transition-all text-xs font-bold w-full bg-red-50 text-red-600 hover:bg-red-100 border border-red-100"><i className="fas fa-trash"></i> Hapus</button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
-          ) : testimonials.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 border-dashed">
-              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
-                <i className="fas fa-comment-slash text-2xl text-slate-300"></i>
-              </div>
-              <h3 className="font-bold text-slate-900 mb-1">Belum ada testimoni</h3>
-              <p className="text-slate-500 text-sm max-w-xs mx-auto mb-6">Kamu belum memiliki ulasan dari klien. Tambahkan sekarang untuk meningkatkan kepercayaan.</p>
-              <button onClick={() => setIsFormOpen(true)} className="text-sm font-bold text-orange-500 hover:text-orange-600">
-                + Tambah Testimoni Pertama
-              </button>
-            </div>
-          ) : (
-            testimonials.map((t, index) => (
-              <div key={t.id} className={`bg-white p-5 sm:p-6 rounded-3xl border transition-all duration-300 ${t.isVisible ? 'border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:border-slate-200' : 'border-slate-200 opacity-60 bg-slate-50'} flex flex-col sm:flex-row gap-5 animate-enter`} style={{animationDelay: `${index * 100}ms`}}>
-                
-                <div className="flex-shrink-0 flex sm:flex-col items-center justify-between sm:justify-start gap-4 sm:gap-2">
-                  <div className="flex flex-col gap-1 sm:hidden mr-2">
-                    <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="text-slate-300 hover:text-orange-500 disabled:opacity-30"><i className="fas fa-chevron-up text-xs"></i></button>
-                    <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="text-slate-300 hover:text-orange-500 disabled:opacity-30"><i className="fas fa-chevron-down text-xs"></i></button>
-                  </div>
-                  {t.avatarUrl ? (
-                    <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-14 h-14 rounded-full object-cover border border-slate-200" />
-                  ) : (
-                    <div className="w-14 h-14 rounded-full bg-orange-100 text-orange-600 border border-orange-200 flex items-center justify-center font-black text-xl">
-                      {t.clientName.charAt(0)}
-                    </div>
-                  )}
-                  {/* Action Buttons (Mobile: di Kanan, Desktop: di Bawah Foto) */}
-                  <div className="flex sm:hidden gap-2">
-                    <button onClick={() => handleEditClick(t)} className="w-9 h-9 flex items-center justify-center bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-100 transition-all">
-                      <i className="fas fa-edit text-xs"></i>
-                    </button>
-                    <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-50 ${t.isVisible ? 'bg-slate-100 text-slate-500 hover:bg-slate-200' : 'bg-slate-800 text-white'}`}>
-                      {processingId === t.id ? <i className="fas fa-spinner fa-spin text-xs"></i> : <i className={`fas ${t.isVisible ? 'fa-eye' : 'fa-eye-slash'} text-xs`}></i>}
-                    </button>
-                    <button onClick={() => handleDeleteClick(t.id)} className="w-9 h-9 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all">
-                      <i className="fas fa-trash text-xs"></i>
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="flex-1 flex flex-col justify-center">
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2">
-                    <h3 className="font-black text-slate-900 text-lg">{t.clientName}</h3>
-                    {t.company && <span className="text-xs font-bold uppercase tracking-widest text-slate-400 px-2 py-0.5 bg-slate-100 rounded-md">{t.company}</span>}
-                  </div>
-                  <div className="flex mb-3">
-                    {[...Array(5)].map((_, i) => <i key={i} className={`${i < t.rating ? 'fas text-amber-400' : 'far text-slate-200'} fa-star text-xs mr-0.5`}></i>)}
-                  </div>
-                  <p className="text-sm font-medium text-slate-600 leading-relaxed max-w-2xl italic">"{t.content}"</p>
-                </div>
-                
-                <div className="hidden sm:flex flex-col justify-between items-center px-2">
-                  <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="p-1 text-slate-300 hover:text-orange-500 disabled:opacity-30 transition-colors">
-                    <i className="fas fa-chevron-up text-lg"></i>
-                  </button>
-                  <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="p-1 text-slate-300 hover:text-orange-500 disabled:opacity-30 transition-colors">
-                    <i className="fas fa-chevron-down text-lg"></i>
-                  </button>
-                </div>
-                
-                <div className="hidden sm:flex flex-col gap-2 justify-start border-l border-slate-100 pl-5 w-[130px] shrink-0">
-                  <button onClick={() => handleEditClick(t)} className="px-3 py-2 flex items-center justify-center gap-2 rounded-xl transition-all text-xs font-bold w-full bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100">
-                    <i className="fas fa-edit"></i> Edit
-                  </button>
-                  <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`px-3 py-2 flex items-center justify-center gap-2 rounded-xl transition-all text-xs font-bold w-full disabled:opacity-50 ${t.isVisible ? 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200' : 'bg-slate-800 text-white hover:bg-slate-900 shadow-md'}`}>
-                    {processingId === t.id ? <i className="fas fa-spinner fa-spin"></i> : <i className={`fas ${t.isVisible ? 'fa-eye' : 'fa-eye-slash'}`}></i>} {t.isVisible ? 'Sembunyikan' : 'Tampilkan'}
-                  </button>
-                  <button onClick={() => handleDeleteClick(t.id)} className="px-3 py-2 flex items-center justify-center gap-2 rounded-xl transition-all text-xs font-bold w-full bg-red-50 text-red-600 hover:bg-red-100 border border-red-100">
-                    <i className="fas fa-trash"></i> Hapus
-                  </button>
-                </div>
-
-              </div>
-            ))
-          )}
-        </div>
+          </>
+        )}
 
       </div>
     </main>

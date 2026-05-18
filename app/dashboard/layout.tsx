@@ -30,7 +30,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     isSubdomainEmpty,
     notifications,
     topBanner,
-    announcementsData
+    announcementsData,
+    projectsCount,
+    certificatesCount,
+    linksCount,
+    testimonialsCount
   } = useDashboardLayout();
 
   useEffect(() => {
@@ -42,6 +46,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       document.head.appendChild(link);
     }
   }, []);
+
+  // Gabungkan jumlah proyek dan sertifikat untuk menu "Proyek & Karya"
+  const totalProjectsAndCertificates = (projectsCount || 0) + (certificatesCount || 0);
 
   const isDashboardRoot = pathname === '/dashboard';
   const isEditorPage = pathname === '/dashboard/appearance';
@@ -72,7 +79,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         .delay-300 { animation-delay: 300ms; }
       `}} />
 
-      <Sidebar isLoading={isLoading} userPlan={userPlan} isSidebarOpen={isSidebarOpen} />
+      <Sidebar 
+        isLoading={isLoading} 
+        userPlan={userPlan} 
+        isSidebarOpen={isSidebarOpen} 
+        projectsCount={totalProjectsAndCertificates}
+        linksCount={linksCount}
+        testimonialsCount={testimonialsCount}
+      />
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
         
