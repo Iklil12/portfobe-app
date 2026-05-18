@@ -1,6 +1,8 @@
 "use client";
 
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import useSWR from 'swr';
 
 export interface NotificationItem {
@@ -17,28 +19,40 @@ export interface NotificationItem {
   border: string;
 }
 
-const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then((res) => {
-  if (!res.ok) throw new Error("API Error");
+const fetcher = async (url: string) => {
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) {
+    const error: any = new Error("API Error");
+    error.status = res.status;
+    throw error;
+  }
   return res.json();
-});
+};
 
 export function useDashboardLayout() {
   const { data: session, status } = useSession(); 
+  const router = useRouter();
 
   // Gunakan BFF API: Gabungan dari Layout, Announcements, dan Stats
-  const { data: dashboardSyncData, error: syncError, isLoading: isSyncLoading } = useSWR('/api/dashboard/sync', fetcher, {
+  const { data: dashboardSyncData, error: syncError, isLoading: isSyncLoading } = useSWR(status === "authenticated" ? '/api/dashboard/sync' : null, fetcher, {
     revalidateOnFocus: true, 
     revalidateOnReconnect: true,
     dedupingInterval: 10000,
     focusThrottleInterval: 10000,
   });
 
+  useEffect(() => {
+    if (status === "unauthenticated" || syncError?.status === 401) {
+      router.push("/login");
+    }
+  }, [status, syncError, router]);
+
   // Destructure data agar UI tidak error
   const syncData = dashboardSyncData?.layout;
   const announcementsData = dashboardSyncData?.announcements;
   const overviewData = dashboardSyncData?.overview;
 
-  const isLoading = status === "loading" || (status === "authenticated" && !syncData && !syncError);
+  const isLoading = status === "loading" || status === "unauthenticated" || syncError?.status === 401 || (status === "authenticated" && !syncData && !syncError);
   
   const userName = syncData?.fullName || session?.user?.name || "Creator";
   const userEmail = session?.user?.email || "user@portfo.be";

@@ -4,448 +4,441 @@ import React, { useState, useEffect } from 'react';
 import { showToast } from '@/lib/customToast';
 import useSWR from 'swr';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  AreaChart,
-  Area
+  AreaChart, Area, BarChart, Bar,
+  XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, Cell
 } from 'recharts';
-import { motion, AnimatePresence } from 'framer-motion';
-import { createPortal } from 'react-dom';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
-// Smooth Counter Component
-function AnimatedCounter({ value, duration = 1500 }: { value: number | string, duration?: number }) {
+function AnimatedCounter({ value, duration = 1200 }: { value: number | string, duration?: number }) {
   const [count, setCount] = useState(typeof value === 'number' ? 0 : value);
-
   useEffect(() => {
-    if (typeof value !== 'number') return;
-    let startTime: number | null = null;
-    let animationFrame: number;
-
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-
-      const easeOut = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      setCount(Math.round(easeOut * value));
-
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
-      }
+    if (typeof value !== 'number') { setCount(value); return; }
+    let start: number | null = null;
+    let raf: number;
+    const animate = (ts: number) => {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      const ease = 1 - Math.pow(2, -10 * p);
+      setCount(Math.round(ease * value));
+      if (p < 1) raf = requestAnimationFrame(animate);
     };
-
-    animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
   }, [value, duration]);
-
   return <>{typeof count === 'number' ? count.toLocaleString() : count}</>;
 }
 
-// Info Tooltip Component — Portal-based, posisi di-clamp agar tidak keluar viewport
+const SOURCE_ICONS: Record<string, string> = {
+  Instagram: 'fab fa-instagram text-pink-500',
+  Google: 'fab fa-google text-blue-500',
+  WhatsApp: 'fab fa-whatsapp text-emerald-500',
+  Facebook: 'fab fa-facebook text-blue-600',
+  'Twitter / X': 'fab fa-x-twitter text-slate-800',
+  LinkedIn: 'fab fa-linkedin text-blue-700',
+  TikTok: 'fab fa-tiktok text-slate-900',
+  YouTube: 'fab fa-youtube text-red-500',
+  Direct: 'fas fa-link text-slate-500',
+};
 
-function InfoTooltip({ content, children }: { content: string, children: React.ReactNode }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [coords, setCoords] = useState({ top: 0, left: 0, caretOffset: 0 });
-  const triggerRef = React.useRef<HTMLDivElement>(null);
-
-  const TOOLTIP_W = 200; // px — sesuai class w-[200px]
-  const EDGE_GAP  = 8;   // jarak minimal dari tepi layar
-
-  const updateCoords = () => {
-    if (!triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    const vw = window.innerWidth;
-
-    // Posisi ideal: center trigger
-    const idealLeft = rect.left + rect.width / 2;
-
-    // Batas aman agar tooltip tidak keluar layar
-    const minLeft = TOOLTIP_W / 2 + EDGE_GAP;
-    const maxLeft = vw - TOOLTIP_W / 2 - EDGE_GAP;
-    const clampedLeft = Math.max(minLeft, Math.min(idealLeft, maxLeft));
-
-    // Offset ekor (caret) relatif terhadap center tooltip, agar tetap menunjuk ke ikon
-    const caretOffset = idealLeft - clampedLeft;
-
-    setCoords({
-      top: rect.top - 12,
-      left: clampedLeft,
-      caretOffset,
-    });
-  };
-
-  const show = () => { updateCoords(); setIsVisible(true); };
-  const hide = () => setIsVisible(false);
-
-  // Tutup tooltip saat user scroll agar tidak "melayang" di posisi salah
-  useEffect(() => {
-    if (!isVisible) return;
-    const handleScroll = () => hide();
-    window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
-    return () => window.removeEventListener('scroll', handleScroll, { capture: true });
-  }, [isVisible]);
-
-  return (
-    <>
-      <div
-        ref={triggerRef}
-        className="inline-flex cursor-help"
-        onMouseEnter={show}
-        onMouseLeave={hide}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (isVisible) { hide(); } else { show(); }
-        }}
-      >
-        {children}
-      </div>
-
-      {typeof window !== 'undefined' && createPortal(
-        <div
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            position: 'fixed',
-            top: coords.top,
-            left: coords.left,
-            transform: 'translate(-50%, -100%)',
-            zIndex: 99999,
-            pointerEvents: 'none',
-            opacity: isVisible ? 1 : 0,
-            visibility: isVisible ? 'visible' : 'hidden',
-            transition: 'opacity 0.15s ease',
-          }}
-          className="w-[200px] px-4 py-3 bg-black shadow-2xl text-white text-[10px] font-normal leading-relaxed rounded-xl text-center"
-        >
-          {content}
-          {/* Ekor digeser sesuai caret offset agar selalu menunjuk ke ikon */}
-          <span
-            className="absolute top-full border-[6px] border-transparent border-t-black"
-            style={{ left: `calc(50% + ${coords.caretOffset}px)`, transform: 'translateX(-50%)' }}
-          />
-        </div>,
-        document.body
-      )}
-    </>
-  );
+function SkeletonBlock({ className = '' }: { className?: string }) {
+  return <div className={`shimmer rounded-2xl ${className}`} />;
 }
 
-export default function AnalyticsPage() {
-  const [isAnimationReady, setIsAnimationReady] = useState(false);
-  const [range, setRange] = useState('1d');
-  const { data, isLoading, error } = useSWR(`/api/analytics/stats?range=${range}`, fetcher, {
-    refreshInterval: 30000 // Refresh every 30s
-  });
-
-  const { data: userData, isLoading: isUserLoading } = useSWR('/api/layout-sync', fetcher);
-  const userPlan = userData?.plan || 'FREE';
-
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isLoading && !isUserLoading && isMounted) {
-      const timer = setTimeout(() => setIsAnimationReady(true), 150);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading, isUserLoading, isMounted]);
-
-  const handleProFeature = () => {
-    showToast({
-      message: userPlan === 'FREE' ? "Upgrade ke PRO untuk membuka metrik ini!" : "Fitur Heatmaps & Demografis sedang dikembangkan!",
-      id: "analytics-pro-toast",
-      icon: "fa-crown"
-    });
-  };
-
-  if (isLoading || isUserLoading || !isMounted) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="w-10 h-10 border-[3px] border-slate-200 border-t-slate-900 rounded-full animate-spin mb-4"></div>
-        <p className="text-slate-400 text-[10px] font-bold tracking-widest animate-pulse">Menghitung data audience...</p>
+const CustomAreaTooltip = ({ active, payload, label, isHourly }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-white border border-slate-100 rounded-2xl shadow-xl px-4 py-3 min-w-[140px]">
+      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">
+        {isHourly ? `Pukul ${label}` : label}
+      </p>
+      <div className="space-y-1.5">
+        {payload.map((entry: any, i: number) => (
+          <div key={i} className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span className="text-xs font-bold text-slate-600 capitalize">{entry.name}</span>
+            </div>
+            <span className="text-sm font-black text-slate-900">{entry.value.toLocaleString()}</span>
+          </div>
+        ))}
       </div>
-    );
-  }
+    </div>
+  );
+};
 
-  const statsData: { totalViews: number; uniqueVisitors: number; avgTime: string; bounceRate: string } = data?.stats || { totalViews: 0, uniqueVisitors: 0, avgTime: '0s', bounceRate: '0%' };
-  const chartData: { day: string; views: number }[] = data?.chartData || [];
+export default function AnalyticsPage() {
+  const [range, setRange] = useState('7d');
+  const [isMounted, setIsMounted] = useState(false);
+  const [animReady, setAnimReady] = useState(false);
+
+  const { data, isLoading } = useSWR(`/api/analytics/stats?range=${range}`, fetcher, { refreshInterval: 30000 });
+  const { data: userData, isLoading: isUserLoading } = useSWR('/api/layout-sync', fetcher);
+  // Default ke undefined dulu (bukan 'FREE') sampai data plan benar-benar loaded
+  const userPlan = userData?.plan ?? undefined;
+
+  useEffect(() => { setIsMounted(true); }, []);
+  useEffect(() => {
+    if (!isLoading && isMounted) {
+      const t = setTimeout(() => setAnimReady(true), 200);
+      return () => clearTimeout(t);
+    }
+  }, [isLoading, isMounted]);
+
+  const stats = data?.stats || { totalViews: 0, uniqueVisitors: 0, avgTime: '0s', bounceRate: '0%' };
+  const chartData: { day: string; date: string; views: number }[] = data?.chartData || [];
   const sources: { name: string; count: number; percentage: number }[] = data?.sources || [];
 
+  // derived metrics
+  const peakEntry = chartData.reduce((a, b) => (b.views > a.views ? b : a), { day: '-', date: '', views: 0 });
+  const totalPeriod = chartData.reduce((s, d) => s + d.views, 0);
+  const avgDaily = chartData.length > 0 ? Math.round(totalPeriod / chartData.length) : 0;
+  const growth = chartData.length >= 2
+    ? chartData[chartData.length - 2].views === 0 ? 0
+      : Math.round(((chartData[chartData.length - 1].views - chartData[chartData.length - 2].views) / chartData[chartData.length - 2].views) * 100)
+    : 0;
+
+  // Device split
+  const deviceData = [
+    { name: 'Desktop', pct: stats.devices?.desktop || 0, color: '#0f172a' },
+    { name: 'Mobile', pct: stats.devices?.mobile || 0, color: '#6366f1' },
+    { name: 'Tablet', pct: stats.devices?.tablet || 0, color: '#e2e8f0' },
+  ];
+
+  const handleLocked = () => showToast({ message: "Upgrade PRO untuk data historis lebih dari 7 hari!", id: "range-lock", icon: "fa-lock" });
+
+  const RANGES = [
+    { id: '1d', label: 'Hari Ini', pro: false },
+    { id: '7d', label: '7 Hari', pro: false },
+    { id: '30d', label: '30 Hari', pro: true },
+    { id: 'all', label: 'Semua', pro: true },
+  ];
+
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-10 font-sans selection:bg-slate-200 selection:text-slate-900 pb-32">
-
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;700&display=swap');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        .animate-enter { 
-            opacity: 0; 
-            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
-        }
-        @keyframes slideUpFade {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Hapus focus outline bawaan browser pada elemen Recharts */
-        .recharts-wrapper,
-        .recharts-surface,
-        .recharts-wrapper svg,
-        .recharts-layer {
-          outline: none !important;
-        }
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 pb-32 font-sans selection:bg-slate-200">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes slideUp { from { opacity:0;transform:translateY(20px) } to { opacity:1;transform:translateY(0) } }
+        .animate-enter { animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+        .recharts-wrapper,.recharts-surface,.recharts-wrapper svg,.recharts-layer { outline:none!important; }
       `}} />
 
-      {/* HEADER SECTION */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 animate-enter gap-6">
-        <div className="text-center md:text-left">
-          <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
-              Audience <span className="font-light text-slate-400">Metrics.</span>
-            </h1>
-            {userPlan === 'PRO' ? (
-              <span className="bg-slate-900 text-white text-[9px] font-black px-2.5 py-1 rounded-md tracking-widest flex items-center gap-1.5 shadow-sm">
-                <i className="fas fa-crown text-[8px] text-[#ff9e00]"></i> Pro
-              </span>
-            ) : (
-              <span className="bg-slate-100 text-slate-500 text-[9px] font-black px-2.5 py-1 rounded-md tracking-widest border border-slate-200">Free</span>
-            )}
-          </div>
-          <p className="text-sm font-medium text-slate-500">Pantau performa, jangkauan, dan interaksi portofolio Anda.</p>
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 animate-enter">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 mb-1.5">
+            Metrics.
+          </h1>
+          <p className="text-sm font-medium text-slate-500">Analisis mendalam performa dan trafik portofolio Anda.</p>
         </div>
-
-        {/* RANGE SELECTOR */}
-        <div className="flex bg-slate-100 p-1 rounded-2xl self-center md:self-auto border border-slate-200/50 overflow-x-auto max-w-full">
-          {[
-            { id: '1d', label: 'Hari Ini', pro: false },
-            { id: '7d', label: '7 Hari', pro: false },
-            { id: '30d', label: '30 Hari', pro: true },
-            { id: 'all', label: 'Semua', pro: true }
-          ].map((item) => {
-            const isLocked = item.pro && userPlan === 'FREE';
+        <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200/50 self-start md:self-auto">
+          {RANGES.map(r => {
+            // Jangan lock jika plan belum loaded (undefined) — tunggu konfirmasi dulu
+            const locked = r.pro && userPlan === 'FREE';
             return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  if (isLocked) {
-                    showToast({ message: "Upgrade PRO untuk melihat data historis lebih dari 7 hari!", id: "range-pro", icon: "fa-lock" });
-                    return;
-                  }
-                  setRange(item.id);
-                }}
-                className={`px-4 sm:px-6 py-2.5 rounded-xl text-[10px] font-black tracking-widest transition-all flex items-center gap-2 whitespace-nowrap ${range === item.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+              <button key={r.id}
+                onClick={() => locked ? handleLocked() : setRange(r.id)}
+                className={`px-4 py-2.5 rounded-xl text-[10px] font-black tracking-widest transition-all flex items-center gap-1.5 whitespace-nowrap ${range === r.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
               >
-                {item.label}
-                {isLocked && <i className="fas fa-lock text-[8px] opacity-40"></i>}
+                {r.label}
+                {locked && <i className="fas fa-lock text-[8px] opacity-40" />}
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* STATS OVERVIEW */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
-        {[
-          { label: 'Total Views', val: statsData.totalViews, icon: 'fa-eye', pro: false, desc: "Total akumulasi berapa kali halaman portofolio Anda telah dilihat." },
-          { label: 'Unique Visitors', val: statsData.uniqueVisitors, icon: 'fa-user', pro: false, desc: "Jumlah individu unik yang mengunjungi portofolio Anda." },
-          { label: 'Avg. Time', val: statsData.avgTime, icon: 'fa-clock', pro: true, desc: "Rata-rata waktu yang dihabiskan pengunjung di website Anda." },
-          { label: 'Bounce Rate', val: statsData.bounceRate, icon: 'fa-sign-out-alt', pro: true, desc: "Persentase pengunjung yang keluar setelah hanya melihat satu halaman." },
-        ].map((stat, i) => {
-          const isLocked = stat.pro && userPlan === 'FREE';
-          return (
-            <div key={i} className={`bg-white p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 animate-enter flex flex-col justify-between min-h-[120px] md:min-h-[140px] group relative ${isLocked ? 'cursor-pointer overflow-hidden' : ''}`} style={{ animationDelay: `${i * 100}ms` }} onClick={isLocked ? handleProFeature : undefined}>
-              {isLocked && (
-                <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center transition-all group-hover:backdrop-blur-[1px] group-hover:bg-white/30">
-                  <div className="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs shadow-lg mb-2">
-                    <i className="fas fa-lock"></i>
-                  </div>
-                  <span className="text-[9px] font-black tracking-tighter text-slate-900">Pro Only</span>
+      {/* TOP KPI CARDS */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 mb-8">
+        {/* Tampilkan skeleton jika analytics ATAU plan user belum loaded */}
+        {(isLoading || isUserLoading || userPlan === undefined) ? [1,2,3,4].map(i => <SkeletonBlock key={i} className="h-[120px] md:h-[140px]" />) : [
+          { label: 'Total Views', val: stats.totalViews, icon: 'fa-eye', badge: `${growth > 0 ? '+' : ''}${growth}%`, badgeColor: growth >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500', locked: false },
+          { label: 'Unique Visitors', val: stats.uniqueVisitors, icon: 'fa-user', badge: 'Est.', badgeColor: 'bg-slate-50 text-slate-500', locked: false },
+          { label: 'Avg. Time', val: stats.avgTime, icon: 'fa-clock', badge: 'PRO', badgeColor: 'bg-slate-900 text-white', locked: userPlan === 'FREE' },
+          { label: 'Bounce Rate', val: stats.bounceRate, icon: 'fa-sign-out-alt', badge: 'PRO', badgeColor: 'bg-slate-900 text-white', locked: userPlan === 'FREE' },
+        ].map((card, i) => (
+          <div key={i} onClick={card.locked ? handleLocked : undefined}
+            className={`bg-white border border-slate-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-enter flex flex-col justify-between relative overflow-hidden ${card.locked ? 'cursor-pointer' : ''}`}
+            style={{ animationDelay: `${i * 60}ms` }}
+          >
+            {card.locked && (
+              <div className="absolute inset-0 bg-white/60 backdrop-blur-[3px] z-10 flex flex-col items-center justify-center">
+                <div className="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs mb-1.5">
+                  <i className="fas fa-lock" />
+                </div>
+                <span className="text-[9px] font-black text-slate-900 tracking-widest">PRO ONLY</span>
+              </div>
+            )}
+            <div className="flex justify-between items-start mb-4">
+              <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">{card.label}</p>
+              <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md ${card.badgeColor}`}>{card.badge}</span>
+            </div>
+            <h3 className={`text-2xl md:text-3xl font-black text-slate-900 tracking-tighter leading-none ${card.locked ? 'blur-sm opacity-30' : ''}`}>
+              <AnimatedCounter value={card.val} duration={1000 + i * 150} />
+            </h3>
+          </div>
+        ))}
+      </div>
+
+      {/* SECONDARY METRIC STRIP */}
+      <div className="grid grid-cols-3 gap-3 md:gap-5 mb-8">
+        {isLoading ? [1,2,3].map(i => <SkeletonBlock key={i} className="h-20" />) : [
+          { label: 'Rata-rata Harian', val: avgDaily, suffix: 'views/hari', icon: 'fa-chart-bar' },
+          { label: 'Puncak Kunjungan', val: peakEntry.views, suffix: peakEntry.day, icon: 'fa-trophy' },
+          { label: 'Total Periode', val: totalPeriod, suffix: `dalam ${chartData.length} hari`, icon: 'fa-calendar' },
+        ].map((m, i) => (
+          <div key={i} className="bg-white border border-slate-100 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-5 shadow-sm animate-enter flex items-center gap-3 md:gap-4" style={{ animationDelay: `${250 + i * 50}ms` }}>
+            <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+              <i className={`fas ${m.icon} text-sm`} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest truncate">{m.label}</p>
+              <p className="text-lg md:text-xl font-black text-slate-900 tracking-tighter leading-tight">
+                <AnimatedCounter value={m.val} />
+              </p>
+              <p className="text-[9px] font-bold text-slate-400">{m.suffix}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* MAIN CHARTS GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
+
+        {/* TRAFFIC AREA CHART — spans 2 cols */}
+        {isLoading ? (
+          <div className="lg:col-span-2 rounded-[2.5rem] shimmer h-[400px]" />
+        ) : (
+        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm animate-enter" style={{ animationDelay: '300ms' }}>
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">Traffic Overview</h3>
+              <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">
+                {range === '1d' ? 'Per jam — hari ini' : range === '7d' ? '7 hari terakhir' : range === '30d' ? '30 hari terakhir' : 'Semua waktu'}
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-900 inline-block" /> Page Views
+              </span>
+              <span className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" /> Uniq. Visitors
+              </span>
+            </div>
+          </div>
+
+          {false ? <SkeletonBlock className="h-[280px]" /> : (
+            <div className="h-[280px]" onMouseDown={e => e.preventDefault()}>
+              {isMounted && chartData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="viewsGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#0f172a" stopOpacity={0.12} />
+                        <stop offset="95%" stopColor="#0f172a" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 800, fill: '#94a3b8' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 800, fill: '#94a3b8' }} />
+                    <Tooltip content={<CustomAreaTooltip isHourly={range === '1d'} />} cursor={{ stroke: '#e2e8f0', strokeWidth: 1 }} />
+                    <Area type="monotone" dataKey="views" name="Page Views" stroke="#0f172a" strokeWidth={2.5} fill="url(#viewsGrad)" dot={false} activeDot={{ r: 5, fill: '#0f172a', stroke: '#fff', strokeWidth: 2 }} animationDuration={1500} />
+                    <Area type="monotone" dataKey="visitors" name="Uniq. Visitors" stroke="#3b82f6" strokeWidth={2.5} fill="transparent" dot={false} activeDot={{ r: 5, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }} animationDuration={1500} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-slate-300">
+                  <i className="fas fa-chart-area text-3xl mb-3" />
+                  <p className="text-[10px] font-bold tracking-widest">Belum ada data traffic</p>
                 </div>
               )}
-              <div className="flex justify-between items-start mb-4 md:mb-6">
-                <div className="text-[10px] font-extrabold text-slate-400 tracking-widest mt-1">
-                  {stat.label}
-                </div>
+            </div>
+          )}
+        </div>
+        )}
 
-                {/* TOOLTIP DITEMPELKAN KE IKON */}
-                <InfoTooltip content={stat.desc}>
-                  <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-slate-100 group-hover:text-slate-600 transition-colors shrink-0">
-                    <i className={`fas ${stat.icon} text-[10px]`}></i>
+        {/* DEVICE BREAKDOWN */}
+        {isLoading ? (
+          <div className="rounded-[2.5rem] shimmer h-[400px]" />
+        ) : (
+        <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm animate-enter flex flex-col" style={{ animationDelay: '350ms' }}>
+          <div className="mb-6">
+            <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">Perangkat</h3>
+            <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Distribusi per device</p>
+          </div>
+          {false ? <SkeletonBlock className="flex-1 min-h-[200px]" /> : (
+            <div className="space-y-5 flex-1">
+              {deviceData.map((d, i) => (
+                <div key={d.name} className="group">
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-2 h-2 rounded-full shrink-0" style={{ background: d.color }} />
+                      <span className="text-xs font-bold text-slate-700">{d.name}</span>
+                    </div>
+                    <span className="text-xs font-black text-slate-900">{d.pct}%</span>
                   </div>
-                </InfoTooltip>
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full transition-all duration-[1200ms] ease-out"
+                      style={{ width: animReady ? `${d.pct}%` : '0%', background: d.color, transitionDelay: `${i * 100}ms` }}
+                    />
+                  </div>
+                </div>
+              ))}
 
-              </div>
-              <div className="flex items-end justify-between mt-auto">
-                <h3 className={`text-3xl md:text-[2.5rem] font-black text-slate-900 tracking-tighter leading-none ${isLocked ? 'blur-sm grayscale opacity-30' : ''}`}>
-                  <AnimatedCounter value={stat.val} duration={1200 + (i * 200)} />
-                </h3>
+              <div className="pt-4 mt-4 border-t border-slate-50">
+                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-3">Estimasi berdasarkan User Agent</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {deviceData.map(d => (
+                    <div key={d.name} className="bg-slate-50 rounded-xl p-2.5 text-center border border-slate-100">
+                      <p className="text-sm font-black text-slate-900">{d.pct}%</p>
+                      <p className="text-[8px] font-bold text-slate-400">{d.name}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          );
-        })}
+          )}
+        </div>
+        )}
       </div>
 
-      {/* CHARTS GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 mb-16">
-
-        {/* TRAFFIC CHART (RECHARTS) */}
-        <div className="bg-white p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] transition-all animate-enter flex flex-col h-[450px]" style={{ animationDelay: '400ms' }}>
-          <div className="flex justify-between items-start mb-10">
-            <div>
-              <h4 className="font-extrabold text-lg text-slate-900 tracking-tight mb-1">
-                Traffic Overview
-              </h4>
-              <p className="text-[10px] font-extrabold text-slate-400 tracking-widest">Aktivitas harian</p>
-            </div>
-
-            {/* TOOLTIP DITEMPELKAN KE IKON */}
-            <InfoTooltip content="Grafik aktivitas kunjungan harian untuk melihat tren pertumbuhan traffic Anda.">
-              <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 shrink-0 hover:bg-slate-100 hover:text-slate-600 transition-colors">
-                <i className="fas fa-chart-line text-sm"></i>
-              </div>
-            </InfoTooltip>
-
-          </div>
-
-          <div className="flex-1 w-full min-h-[300px] mt-auto" onMouseDown={(e) => e.preventDefault()}>
-            {isMounted && (
-              <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis
-                    dataKey="day"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 9, fontWeight: 800, fill: '#94a3b8' }}
-                    dy={15}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 9, fontWeight: 800, fill: '#94a3b8' }}
-                  />
-                  <Tooltip
-                    cursor={{ fill: '#f8fafc', radius: 10, stroke: 'none' }}
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', fontSize: '11px', fontWeight: 'bold' }}
-                  />
-                  <Bar
-                    dataKey="views"
-                    fill="#0f172a"
-                    radius={[10, 10, 0, 0]}
-                    barSize={32}
-                    animationDuration={1500}
-                  >
-                    {chartData.map((entry: any, index: number) => (
-                      <Cell key={`cell-${index}`} fill={index === chartData.length - 1 ? '#0f172a' : '#e2e8f0'} className="hover:fill-[#ff9e00] transition-colors" />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </div>
+      {/* BOTTOM ROW: Top Sources + Bar Chart */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
 
         {/* TOP SOURCES */}
-        <div className="bg-white p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] transition-all animate-enter flex flex-col h-[450px]" style={{ animationDelay: '500ms' }}>
-          <div className="flex justify-between items-start mb-10">
+        {isLoading ? (
+          <div className="rounded-[2.5rem] shimmer h-[340px]" />
+        ) : (
+        <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm animate-enter" style={{ animationDelay: '400ms' }}>
+          <div className="flex justify-between items-start mb-6">
             <div>
-              <h4 className="font-extrabold text-lg text-slate-900 tracking-tight mb-1">
-                Top Sources
-              </h4>
-              <p className="text-[10px] font-extrabold text-slate-400 tracking-widest">Dari mana klien berasal</p>
+              <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">Top Sources</h3>
+              <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Dari mana trafik berasal</p>
             </div>
-
-            {/* TOOLTIP DITEMPELKAN KE IKON */}
-            <InfoTooltip content="Daftar platform asal yang mendatangkan pengunjung ke portofolio Anda.">
-              <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 shrink-0 hover:bg-slate-100 hover:text-slate-600 transition-colors">
-                <i className="fas fa-bullseye text-sm"></i>
-              </div>
-            </InfoTooltip>
-
+            <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+              <i className="fas fa-bullseye text-sm" />
+            </div>
           </div>
-
-          <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar">
-            {sources.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 opacity-30">
-                <i className="fas fa-ghost text-4xl mb-4"></i>
-                <p className="text-[10px] font-bold tracking-widest">Belum ada data traffic</p>
-              </div>
-            ) : sources.map((src, i) => (
-              <div key={i} className="group/src cursor-default">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-sm font-bold flex items-center gap-3 text-slate-700 group-hover/src:text-slate-900 transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover/src:bg-white group-hover/src:border-slate-200 group-hover/src:text-slate-900 transition-all shrink-0">
-                      <i className={`fas ${src.name === 'Instagram' ? 'fab fa-instagram' : src.name === 'Google' ? 'fab fa-google' : src.name === 'WhatsApp' ? 'fab fa-whatsapp' : 'fa-link'} text-xs`}></i>
+          {false ? (
+            <div className="space-y-4">{[1,2,3,4].map(i => <SkeletonBlock key={i} className="h-12" />)}</div>
+          ) : sources.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-slate-300">
+              <i className="fas fa-ghost text-3xl mb-3" />
+              <p className="text-[10px] font-bold tracking-widest">Belum ada data sources</p>
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {sources.map((src, i) => (
+                <div key={i} className="group/src">
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                        <i className={`${SOURCE_ICONS[src.name] || 'fas fa-link text-slate-500'} text-xs`} />
+                      </div>
+                      <span className="text-sm font-bold text-slate-700">{src.name}</span>
                     </div>
-                    {src.name}
-                  </span>
-                  <div className="flex flex-col items-end">
-                    <span className="text-xs font-black text-slate-900"><AnimatedCounter value={src.percentage} duration={1500} />%</span>
-                    <span className="text-[9px] font-bold text-slate-400"><AnimatedCounter value={src.count} duration={1300} /> Hits</span>
+                    <div className="text-right">
+                      <p className="text-xs font-black text-slate-900">{src.percentage}%</p>
+                      <p className="text-[9px] font-bold text-slate-400">{src.count} hits</p>
+                    </div>
+                  </div>
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-slate-900 rounded-full group-hover/src:bg-[#ff9e00] transition-colors duration-300"
+                      style={{ width: animReady ? `${src.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
+                    />
                   </div>
                 </div>
-                <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                  <div
-                    className="bg-slate-900 h-full rounded-full transition-all ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/src:bg-[#ff9e00]"
-                    style={{
-                      width: isAnimationReady ? `${src.percentage}%` : '0%',
-                      transitionDuration: '1.5s',
-                      transitionDelay: `${i * 150}ms`
-                    }}
-                  ></div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
+        )}
+
+        {/* DAILY BAR CHART */}
+        {isLoading ? (
+          <div className="rounded-[2.5rem] shimmer h-[340px]" />
+        ) : (
+        <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm animate-enter flex flex-col" style={{ animationDelay: '450ms' }}>
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">Volume Harian</h3>
+              <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Distribusi per hari</p>
+            </div>
+            <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+              <i className="fas fa-chart-bar text-sm" />
+            </div>
+          </div>
+          {isLoading ? <SkeletonBlock className="flex-1 min-h-[240px]" /> : (
+            <div className="flex-1 min-h-[240px]" onMouseDown={e => e.preventDefault()}>
+              {isMounted && chartData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 800, fill: '#94a3b8' }} dy={8} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 800, fill: '#94a3b8' }} />
+                    <Tooltip cursor={{ fill: '#f8fafc', radius: 8, stroke: 'none' }}
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', fontSize: '11px', fontWeight: 'bold' }} />
+                    <Bar dataKey="views" radius={[8, 8, 0, 0]} barSize={28} animationDuration={1400}>
+                      {chartData.map((entry, idx) => (
+                        <Cell key={`c-${idx}`}
+                          fill={entry.date === peakEntry.date ? '#ff9e00' : idx === chartData.length - 1 ? '#0f172a' : '#e2e8f0'}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-slate-300">
+                  <i className="fas fa-chart-bar text-3xl mb-3" />
+                  <p className="text-[10px] font-bold tracking-widest">Belum ada data</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Legenda */}
+          {!isLoading && chartData.length > 0 && (
+            <div className="flex gap-4 mt-4 pt-4 border-t border-slate-50">
+              <span className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400">
+                <span className="w-2.5 h-2.5 rounded-sm bg-[#ff9e00] inline-block" /> Puncak
+              </span>
+              <span className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400">
+                <span className="w-2.5 h-2.5 rounded-sm bg-slate-900 inline-block" /> Hari Ini
+              </span>
+              <span className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400">
+                <span className="w-2.5 h-2.5 rounded-sm bg-slate-200 inline-block" /> Lainnya
+              </span>
+            </div>
+          )}
+        </div>
+        )}
       </div>
 
-      {/* SECTION COMING SOON - PRO CREATOR */}
-      <div
-        onClick={handleProFeature}
-        className="relative overflow-hidden bg-[#050505] p-8 md:p-16 rounded-[2rem] md:rounded-[2.5rem] border border-slate-800 cursor-pointer group shadow-2xl animate-enter hover:border-slate-700 transition-all duration-500"
-        style={{ animationDelay: '600ms' }}
+      {/* PRO BANNER */}
+      <div onClick={handleLocked}
+        className="relative overflow-hidden bg-[#050505] p-8 md:p-14 rounded-[2.5rem] border border-slate-800 cursor-pointer group shadow-2xl animate-enter hover:border-slate-700 transition-all duration-500"
+        style={{ animationDelay: '500ms' }}
       >
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/noise-pattern-with-subtle-cross-lines.png')] opacity-[0.03] pointer-events-none"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg h-[200px] bg-[#ff9e00]/5 blur-[100px] rounded-full group-hover:bg-[#ff9e00]/10 transition-colors duration-700 pointer-events-none"></div>
-
-        <div className="absolute top-0 right-10 p-8 opacity-[0.02] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-700 pointer-events-none">
-          <i className="fas fa-chart-pie text-[15rem]"></i>
-        </div>
-
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[200px] bg-[#ff9e00]/5 blur-[80px] rounded-full group-hover:bg-[#ff9e00]/10 transition-all duration-700" />
         <div className="relative z-10 flex flex-col items-center text-center max-w-xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-bold tracking-[0.2em] text-slate-400 mb-8 group-hover:text-white transition-colors">
-            <i className="fas fa-crown text-[#ff9e00]"></i> Pro Feature
-          </div>
-
-          <h4 className="text-2xl md:text-5xl font-extrabold text-white mb-4 tracking-tight flex items-center justify-center gap-4 flex-wrap">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-bold tracking-widest text-slate-400 mb-6">
+            <i className="fas fa-crown text-[#ff9e00]" /> Pro Feature
+          </span>
+          <h4 className="text-2xl md:text-4xl font-extrabold text-white mb-3 tracking-tight">
             Advanced <span className="font-light text-slate-500">Insights.</span>
           </h4>
-
-          <p className="text-slate-400 text-sm md:text-base font-medium leading-relaxed mb-10">
-            Pahami audiens Anda lebih dalam. Dapatkan data geografis, peta panas (Heatmaps) dari pengunjung, dan pelacakan interaksi secara real-time.
+          <p className="text-slate-400 text-sm font-medium leading-relaxed mb-8">
+            Dapatkan data geografis, peta panas klik pengunjung, demographic detail, dan pelacakan konversi secara real-time.
           </p>
-
-          <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-10">
-            {['Real-time Tracking', 'Visitor Demographics', 'Click Heatmaps', 'Conversion Funnel'].map((tag, i) => (
-              <span key={tag} className="px-4 md:px-5 py-1.5 md:py-2 bg-[#111] text-slate-400 text-[8px] md:text-[10px] font-bold rounded-full tracking-widest border border-white/5 hover:bg-white/10 hover:text-white transition-colors cursor-default">
-                {tag}
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {['Real-time Tracking','Visitor Demographics','Click Heatmaps','Conversion Funnel','Geo Analytics'].map(t => (
+              <span key={t} className="px-4 py-1.5 bg-white/5 text-slate-400 text-[9px] font-bold rounded-full tracking-widest border border-white/5">
+                {t}
               </span>
             ))}
           </div>
-
-          <div className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-slate-900 rounded-full text-xs font-extrabold tracking-widest shadow-lg group-hover:bg-slate-200 transition-all duration-300 active:scale-95">
-            <i className="fas fa-lock text-slate-500"></i> Tersedia Segera
+          <div className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-slate-900 rounded-full text-[10px] font-black tracking-widest shadow-lg group-hover:bg-slate-100 transition-all">
+            <i className="fas fa-lock text-slate-500" /> Tersedia Segera
           </div>
         </div>
       </div>

@@ -35,6 +35,8 @@ model User {
   canvaProjects          CanvaProject[]
   themeFavorites         ThemeFavorite[]
   testimonials           Testimonial[]
+  visitorSessions        VisitorSession[]
+  hourlyStats            HourlyStats[]
 }
 
 model PasswordResetToken {
@@ -211,20 +213,77 @@ model AdminLog {
 model Analytics {
   id        String   @id @default(uuid())
   userId    String
-  sessionId String?
-  type      String   @default("VIEW")
+  sessionId String?  // Optional for backward compatibility with old logs
+  session   VisitorSession? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  type      String   @default("VIEW") // e.g., VIEW, CLICK, SCROLL, DOWNLOAD
+  action    String?  // Spesifik aksi (e.g., "clicked_resume")
+  targetId  String?  // ID dari elemen UI yang diinteraksikan
+  metadata  Json?    // Data fleksibel, e.g., { scrollDepth: 80, timeSpent: 30 }
+  
   ipAddress String?
   userAgent String?  @db.Text
   referrer  String?  @db.Text
   pagePath  String?
-  duration  Int      @default(0)
+  duration  Int      @default(0) // Hanya relevan untuk VIEW
+  
+  // Geolocation & Device (Extracted)
+  country   String?
+  city      String?
+  deviceType String? // Mobile, Desktop, Tablet
+  os        String?
+  browser   String?
+  
+  // Marketing UTM
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([type])
+  @@index([sessionId])
   @@index([userId], map: "Analytics_userId_fkey")
+}
+
+model VisitorSession {
+  id          String   @id @default(uuid())
+  userId      String
+  visitorId   String   // Cookie-based unique ID
+  
+  // Traffic Origin
+  referrer    String?  @db.Text
+  source      String?  // parsed: Instagram, Direct, Google, dll
+  
+  // Aggregated Session Data
+  duration    Int      @default(0)
+  isBounced   Boolean  @default(true) // Menjadi false jika duration > 10s atau pageview > 1
+  
+  // First touch Geolocation & Device
+  country     String?
+  city        String?
+  deviceType  String?
+  os          String?
+  browser     String?
+  ipAddress   String?
+
+  // First touch UTM
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs        Analytics[]
+
+  @@index([userId])
+  @@index([visitorId])
+  @@index([createdAt])
 }
 
 model Transaction {
@@ -252,6 +311,21 @@ model DailyStats {
 
   @@unique([userId, date])
   @@index([date])
+  @@index([userId])
+}
+
+model HourlyStats {
+  id        String   @id @default(uuid())
+  userId    String
+  dateHour  DateTime // "2026-05-18T14:00:00Z"
+  views     Int      @default(0)
+  visitors  Int      @default(0) // Unique visitors di jam tersebut
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dateHour])
+  @@index([dateHour])
   @@index([userId])
 }
 

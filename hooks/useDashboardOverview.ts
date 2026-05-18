@@ -10,19 +10,26 @@ const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then((res) =>
 });
 
 export function useDashboardOverview() {
-  // HANYA 1 API CALL UNTUK SELURUH HALAMAN DASBOR (Mega BFF)
+  // 1. Sync: layout, announcements, overview counts, activities
   const { data: dashboardSyncData, isLoading: isLoadingSync } = useSWR('/api/dashboard/sync', fetcher, {
     revalidateOnFocus: true,
     dedupingInterval: 10000,
     focusThrottleInterval: 10000,
   });
 
+  // 2. Analytics: SATU sumber kebenaran yang sama dengan halaman Metrics
+  const { data: analyticsData, isLoading: isLoadingAnalytics } = useSWR(
+    '/api/analytics/stats?range=7d',
+    fetcher,
+    { refreshInterval: 30000, dedupingInterval: 15000 }
+  );
+
   const processedData = useMemo(() => {
     // Destructure data dari payload gabungan
     const layout = dashboardSyncData?.layout || {};
-    const overview = dashboardSyncData?.overview || { projectsCount: 0, certificatesCount: 0, linksCount: 0, activities: [] };
-    const analyticsData = dashboardSyncData?.stats || null;
-
+    const overview = dashboardSyncData?.overview || { projectsCount: 0, certificatesCount: 0, linksCount: 0, testimonialsCount: 0, activities: [] };
+    // JANGAN shadow variabel analyticsData dari SWR!
+    // Kita hapus const analyticsData = dashboardSyncData?.stats || null;
     const subdomain = layout.subdomain || '';
     const userPlan = layout.plan || 'FREE';
 
@@ -71,6 +78,7 @@ export function useDashboardOverview() {
         projects: overview.projectsCount,
         awards: overview.certificatesCount,
         links: overview.linksCount,
+        testimonials: overview.testimonialsCount || 0,
         themeName: tName,
         strength: score,
         strengthBreakdown
@@ -78,15 +86,17 @@ export function useDashboardOverview() {
       activities: overview.activities,
       subdomain,
       userPlan,
-      analytics: analyticsData,
+      // Gunakan data dari /api/analytics/stats (sumber tunggal)
+      analytics: analyticsData || null,
       avatarUrl: layout.avatar || ''
     };
-  }, [dashboardSyncData]);
+  }, [dashboardSyncData, analyticsData]);
 
   return {
     ...processedData,
     isLoadingStats: isLoadingSync,
     isLoadingActivities: isLoadingSync,
-    isLoadingAnalytics: isLoadingSync
+    // Analytics loading terpisah dari layout loading
+    isLoadingAnalytics: isLoadingAnalytics,
   };
 }

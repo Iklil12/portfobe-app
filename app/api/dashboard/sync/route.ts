@@ -21,13 +21,16 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const range = searchParams.get("range") || "7d";
 
-    let startDate = new Date();
-    if (range === "7d") startDate.setDate(startDate.getDate() - 7);
-    else if (range === "30d") startDate.setDate(startDate.getDate() - 30);
-    else startDate = new Date(0);
+    // Konsisten dengan analytics/stats: gunakan UTC midnight
+    const now = new Date();
+    const startOfToday = new Date(now);
+    startOfToday.setUTCHours(0, 0, 0, 0);
 
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
+    let startDate = new Date(startOfToday);
+    if (range === "7d") startDate.setUTCDate(startDate.getUTCDate() - 6);      // 7 hari termasuk hari ini
+    else if (range === "30d") startDate.setUTCDate(startDate.getUTCDate() - 29); // 30 hari termasuk hari ini
+    else if (range === "1d") { /* startDate = startOfToday, sudah benar */ }
+    else startDate = new Date(0); // all
 
     // 2. PARALLEL EXECUTION: OPTIMASI SUPER RINGAN
     const [user, announcements, historicalStats, todayLogs, projectsCount, certificatesCount, linksCount, testimonialsCount, activities] = await Promise.all([
@@ -43,15 +46,15 @@ export async function GET(req: Request) {
         WHERE isActive = true 
         ORDER BY createdAt DESC
       `,
-      // C. Historical Stats
+      // C. Historical Stats (hari sebelum hari ini)
       prisma.dailyStats.findMany({
         where: { userId, date: { gte: startDate, lt: startOfToday } },
         orderBy: { date: 'asc' }
       }),
-      // D. Today Logs
+      // D. Raw logs dalam FULL RANGE (bukan hanya hari ini)
       prisma.analytics.findMany({
-        where: { userId, createdAt: { gte: startOfToday } },
-        select: { id: true, type: true, ipAddress: true, duration: true, sessionId: true, referrer: true }
+        where: { userId, createdAt: { gte: startDate } },
+        select: { id: true, type: true, ipAddress: true, duration: true, sessionId: true, referrer: true, createdAt: true }
       }),
       // E. Projects (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
       prisma.project.count({ where: { userId } }),
@@ -104,27 +107,38 @@ export async function GET(req: Request) {
     };
 
     if (totalViews > 0) {
-      const todayUnique = new Set(todayLogs.map((log: any) => log.ipAddress)).size;
-      const uniqueVisitors = todayUnique + Math.round(historicalViews * 0.7);
+      // Unique visitors: IP unik dari raw logs + estimasi historis
+      const uniqueIPs = new Set(todayLogs.map((log: any) => log.ipAddress).filter(Boolean));
+      const uniqueVisitors = uniqueIPs.size + Math.round(historicalViews * 0.7);
 
+      // Avg. Time: dari semua rawLogs dalam range (bukan hanya hari ini)
       const logsWithDuration = todayLogs.filter((l: any) => l.duration > 0);
       const totalDuration = logsWithDuration.reduce((acc: number, curr: any) => acc + curr.duration, 0);
-      const avgDurationSeconds = logsWithDuration.length > 0 ? Math.round(totalDuration / logsWithDuration.length) : 0;
+      const avgSec = logsWithDuration.length > 0 ? Math.round(totalDuration / logsWithDuration.length) : 0;
+      const avgTimeStr = avgSec >= 60 ? `${Math.floor(avgSec / 60)}m ${avgSec % 60}s` : `${avgSec}s`;
 
-      const minutes = Math.floor(avgDurationSeconds / 60);
-      const seconds = avgDurationSeconds % 60;
-      const avgTimeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+      // Bounce Rate: berdasarkan sessionId dalam range
+      const sessionsMap: Record<string, number> = {};
+      todayLogs.filter((l: any) => l.type === 'VIEW' && l.sessionId).forEach((l: any) => {
+        sessionsMap[l.sessionId] = (sessionsMap[l.sessionId] || 0) + 1;
+      });
+      const totalSessions = Object.keys(sessionsMap).length;
+      const bouncedSessions = Object.values(sessionsMap).filter((v: number) => v === 1).length;
+      const rawViewCount = todayLogs.filter((l: any) => l.type === 'VIEW').length;
+      const bounceRate = totalSessions > 0
+        ? Math.round((bouncedSessions / totalSessions) * 100)
+        : rawViewCount > 0
+        ? Math.round((todayLogs.filter((l: any) => l.duration > 0 && l.duration < 10).length / rawViewCount) * 100)
+        : 0;
 
-      const totalSessions = new Set(todayLogs.filter((l: any) => l.sessionId).map((l: any) => l.sessionId)).size || todayViews;
-      const bouncedSessions = new Set(todayLogs.filter((l: any) => l.duration < 10).map((l: any) => l.sessionId || l.id)).size;
-      const bounceRate = totalSessions > 0 ? Math.round((bouncedSessions / totalSessions) * 100) : 0;
-
+      // Sources: dari semua raw logs dalam range
       const sourcesMap: Record<string, number> = {};
-      todayLogs.forEach((log: any) => {
+      todayLogs.filter((l: any) => l.type === 'VIEW').forEach((log: any) => {
         let ref = "Direct";
         if (log.referrer && log.referrer !== "Direct") {
           const r = log.referrer.toLowerCase();
-          if (r.includes("instagram")) ref = "Instagram";
+          if (r.includes("portfo.be") || r.includes("localhost")) ref = "Direct";
+          else if (r.includes("instagram")) ref = "Instagram";
           else if (r.includes("t.co") || r.includes("twitter")) ref = "Twitter / X";
           else if (r.includes("facebook")) ref = "Facebook";
           else if (r.includes("google")) ref = "Google";
@@ -132,32 +146,41 @@ export async function GET(req: Request) {
           else if (r.includes("linkedin")) ref = "LinkedIn";
           else {
             try { ref = new URL(log.referrer).hostname.replace('www.', ''); }
-            catch (e) { ref = "Other"; }
+            catch { ref = "Other"; }
           }
         }
         sourcesMap[ref] = (sourcesMap[ref] || 0) + 1;
       });
 
+      const totalRefViews = Object.values(sourcesMap).reduce((s: number, v: number) => s + v, 0);
       const sources = Object.entries(sourcesMap)
-        .map(([name, count]) => ({
-          name, count, percentage: Math.round((count / (todayViews || 1)) * 100)
-        }))
+        .map(([name, count]) => ({ name, count, percentage: Math.round((count / (totalRefViews || 1)) * 100) }))
         .sort((a, b) => b.count - a.count);
 
-      const chartDataMap: Record<string, number> = {};
+      // Chart Data: gunakan TANGGAL (YYYY-MM-DD) sebagai key, bukan nama hari
+      const dailyMap: Record<string, number> = {};
       historicalStats.forEach((stat: any) => {
-        const label = new Date(stat.date).toLocaleDateString('id-ID', { weekday: 'short' }).toUpperCase();
-        chartDataMap[label] = stat.views;
+        const key = stat.date.toISOString().split('T')[0];
+        dailyMap[key] = (dailyMap[key] || 0) + stat.views;
       });
-      const todayLabel = new Date().toLocaleDateString('id-ID', { weekday: 'short' }).toUpperCase();
-      chartDataMap[todayLabel] = (chartDataMap[todayLabel] || 0) + todayViews;
+      todayLogs.filter((l: any) => l.type === 'VIEW').forEach((l: any) => {
+        const key = l.createdAt.toISOString().split('T')[0];
+        dailyMap[key] = (dailyMap[key] || 0) + 1;
+      });
 
       const chartData: any[] = [];
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const label = d.toLocaleDateString('id-ID', { weekday: 'short' }).toUpperCase();
-        chartData.push({ day: label, views: chartDataMap[label] || 0 });
+      const cursor = new Date(startDate);
+      cursor.setUTCHours(0, 0, 0, 0);
+      const endDay = new Date(startOfToday);
+      let count = 0;
+      while (cursor <= endDay && count < 90) {
+        const key = cursor.toISOString().split('T')[0];
+        const label = range === '7d'
+          ? cursor.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' })
+          : cursor.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        chartData.push({ day: label, date: key, views: dailyMap[key] || 0 });
+        cursor.setUTCDate(cursor.getUTCDate() + 1);
+        count++;
       }
 
       statsResult = {
