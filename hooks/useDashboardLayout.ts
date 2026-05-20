@@ -62,6 +62,7 @@ export function useDashboardLayout() {
   const userProfession = syncData ? syncData.profession : (session?.user as any)?.profession;
   const userBio = syncData ? syncData.bio : (session?.user as any)?.bio;
   const userAvatar = syncData ? syncData.avatar : ((session?.user as any)?.avatar || session?.user?.image);
+  const canClaimTrial = syncData?.canClaimTrial === true;
 
   const isSubdomainEmpty = !userSubdomain || String(userSubdomain).trim() === '' || String(userSubdomain) === 'null';
   const isProfessionEmpty = !userProfession || String(userProfession).trim() === '' || String(userProfession) === 'null';
@@ -77,7 +78,11 @@ export function useDashboardLayout() {
   if (isProfessionEmpty) notifications.push({ id: 'profession', type: 'info', icon: 'fa-briefcase', title: 'Profesi Belum Diisi', desc: 'Tambahkan profesi atau keahlian utama Anda.', link: '/dashboard/profile', btnText: 'Isi Profesi', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' });
   if (isBioEmpty) notifications.push({ id: 'bio-empty', type: 'info', icon: 'fa-align-left', title: 'Bio Masih Kosong', desc: 'Ceritakan sedikit tentang perjalanan karir Anda kepada pengunjung.', link: '/dashboard/profile', btnText: 'Tulis Bio', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' });
   else if (isBioShort) notifications.push({ id: 'bio-short', type: 'info', icon: 'fa-pen-to-square', title: 'Bio Terlalu Singkat', desc: 'Bio yang lebih detail (min. 30 karakter) akan terlihat lebih profesional.', link: '/dashboard/profile', btnText: 'Perpanjang', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' });
-  if (userPlan === 'FREE') notifications.push({ id: 'promo', type: 'promo', icon: 'fa-crown', title: 'Upgrade ke Pro', desc: 'Dapatkan analitik mendalam dan kustom domain sesukamu.', link: '/pricing', color: 'text-[#ff9e00]', bg: 'bg-[#ff9e00]/10', border: 'border-[#ff9e00]/20' });
+  if (canClaimTrial) {
+    notifications.push({ id: 'trial-promo', type: 'promo', icon: 'fa-gift', title: 'Klaim Trial PRO Gratis', desc: 'Nikmati semua fitur PRO selama 14 hari secara gratis! Tanpa kartu kredit.', link: '/dashboard/billing', color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', btnText: 'Klaim Trial' });
+  } else if (userPlan === 'FREE') {
+    notifications.push({ id: 'promo', type: 'promo', icon: 'fa-crown', title: 'Upgrade ke Pro', desc: 'Dapatkan analitik mendalam dan kustom domain sesukamu.', link: '/pricing', color: 'text-[#ff9e00]', bg: 'bg-[#ff9e00]/10', border: 'border-[#ff9e00]/20' });
+  }
   
   // Sisipkan pengumuman dari Superadmin ke lonceng (hanya yang channel BELL atau BOTH)
   if (Array.isArray(announcementsData)) {
@@ -121,6 +126,7 @@ export function useDashboardLayout() {
     userAvatar,
     userSubdomain,
     isSubdomainEmpty,
+    canClaimTrial,
     notifications,
     topBanner,
     announcementsData, // expose for banner component

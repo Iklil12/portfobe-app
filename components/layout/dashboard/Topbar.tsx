@@ -14,6 +14,7 @@ interface TopbarProps {
   userPlan: string;
   userAvatar: string;
   userSubdomain?: string;
+  canClaimTrial?: boolean;
   alertCount: number;
   notifications: NotificationItem[];
   onToggleSidebar: () => void;
@@ -26,6 +27,7 @@ export function Topbar({
   userPlan,
   userAvatar,
   userSubdomain,
+  canClaimTrial,
   alertCount,
   notifications,
   onToggleSidebar
@@ -70,11 +72,19 @@ export function Topbar({
         
         <div className="flex items-center gap-4 sm:gap-6">
           {!isLoading && (
-            <div className="relative" ref={notifRef}>
-              <button onClick={() => setIsNotifOpen(!isNotifOpen)} className="relative w-11 h-11 rounded-full border border-slate-200 bg-white text-slate-400 hover:text-slate-900 hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center shadow-sm">
-                <i className="fas fa-bell"></i>
-                {alertCount > 0 && <span className="absolute top-2.5 right-3 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>}
-              </button>
+            <>
+              {canClaimTrial && (
+                <Link href="/dashboard/billing" className="flex items-center justify-center gap-2 w-11 h-11 sm:w-auto sm:h-auto sm:px-4 sm:py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full text-[11px] font-black tracking-wide shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105 active:scale-95 transition-all" title="Klaim Trial 14 Hari">
+                  <i className="fas fa-gift animate-bounce" style={{ animationDuration: '2s' }}></i>
+                  <span className="hidden sm:inline">KLAIM TRIAL 14 HARI</span>
+                </Link>
+              )}
+
+              <div className="relative" ref={notifRef}>
+                <button onClick={() => setIsNotifOpen(!isNotifOpen)} className="relative w-11 h-11 rounded-full border border-slate-200 bg-white text-slate-400 hover:text-slate-900 hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center shadow-sm">
+                  <i className="fas fa-bell"></i>
+                  {alertCount > 0 && <span className="absolute top-2.5 right-3 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>}
+                </button>
 
               {isNotifOpen && (
                 <div className="absolute top-[calc(100%+12px)] right-[-60px] md:right-0 w-[320px] bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] border border-slate-200 py-2 animate-dropdown z-50">
@@ -105,6 +115,7 @@ export function Topbar({
                 </div>
               )}
             </div>
+            </>
           )}
 
           <div className="relative" ref={profileMenuRef}>

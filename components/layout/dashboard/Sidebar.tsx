@@ -58,6 +58,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                   <RailItem href="/dashboard/projects" icon="fas fa-paint-roller" label="Desain" active={isDesignRoute} />
                   <RailItem href="/dashboard/explore" icon="fas fa-compass" label="Explore" active={isActive('/dashboard/explore')} />
                   <RailItem href="/dashboard/analytics" icon="fas fa-chart-pie" label="Metrics" active={isActive('/dashboard/analytics')} />
+                  <RailItem href="/dashboard/billing" icon="fas fa-credit-card" label="Billing" active={isActive('/dashboard/billing')} />
                   <RailItem href="/dashboard/profile" icon="fas fa-user-circle" label="Profil" active={isActive('/dashboard/profile')} />
                   <RailItem href="/dashboard/integrations" icon="fas fa-plug" label="Integrasi" active={isActive('/dashboard/integrations')} />
                   <RailItem href="/support" icon="fas fa-headset" label="Bantuan" active={isActive('/support')} />
@@ -186,6 +187,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                 {/* Menu Lainnya */}
                 <MobileNavItem href="/dashboard/explore" icon="fas fa-compass" label="Explore" active={isActive('/dashboard/explore')} className="mt-2" />
                 <MobileNavItem href="/dashboard/analytics" icon="fas fa-chart-pie" label="Metrics" active={isActive('/dashboard/analytics')} />
+                <MobileNavItem href="/dashboard/billing" icon="fas fa-credit-card" label="Billing & Plan" active={isActive('/dashboard/billing')} />
 
                 <div className="px-5 pt-6 pb-2">
                   <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Pengaturan</p>

@@ -37,7 +37,15 @@ export async function GET(req: Request) {
       // A. Layout & Appearance
       prisma.user.findUnique({
         where: { email: userEmail },
-        include: { profile: true, siteAppearance: true }
+        include: { 
+          profile: true, 
+          siteAppearance: true,
+          transactions: {
+            where: { gateway: 'trial' },
+            take: 1,
+            select: { id: true }
+          }
+        }
       }),
       // B. Announcements
       prisma.$queryRaw`
@@ -86,6 +94,7 @@ export async function GET(req: Request) {
       fullName: user.profile?.fullName,
       email: user.email,
       siteAppearance: user.siteAppearance,
+      canClaimTrial: user.plan !== "PRO" && user.transactions && user.transactions.length === 0,
     };
 
     // --- 4. Format Data Announcements ---

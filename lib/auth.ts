@@ -355,6 +355,7 @@ export const authOptions: NextAuthOptions = {
           token.name = user.name;
           token.email = user.email;
           token.plan = user.plan;
+          token.planExpiredAt = (user as any).planExpiredAt || null;
           token.profession = user.profession;
           token.bio = user.bio;
           token.avatar = user.avatar;
@@ -375,6 +376,7 @@ export const authOptions: NextAuthOptions = {
               id: true,
               email: true,
               plan: true,
+              planExpiredAt: true,
               avatar: true,
               password: true,
               isLive: true,
@@ -389,6 +391,7 @@ export const authOptions: NextAuthOptions = {
             token.name = dbUser.profile?.fullName || user.name || "User";
             token.email = dbUser.email;
             token.plan = dbUser.plan;
+            token.planExpiredAt = dbUser.planExpiredAt;
             token.profession = dbUser.profile?.profession;
             token.bio = dbUser.profile?.bio;
             token.avatar = dbUser.avatar;
@@ -401,6 +404,26 @@ export const authOptions: NextAuthOptions = {
           }
         }
       }
+
+      // RE-CHECK PLAN DARI DB UNTUK USER PRO (mencegah stale JWT)
+      // Hanya jalan jika: token sudah ada (bukan login pertama), user adalah PRO,
+      // dan planExpiredAt ada (artinya bukan lifetime)
+      if (!user && token.id && token.plan === "PRO" && token.planExpiredAt) {
+        const expiredAt = new Date(token.planExpiredAt);
+        const now = new Date();
+        // Jika planExpiredAt sudah lewat → sync dari DB untuk memastikan
+        if (expiredAt <= now) {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { plan: true, planExpiredAt: true },
+          });
+          if (dbUser) {
+            token.plan = dbUser.plan;
+            token.planExpiredAt = dbUser.planExpiredAt;
+          }
+        }
+      }
+
       return token;
     },
 

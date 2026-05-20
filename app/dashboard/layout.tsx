@@ -28,6 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     userAvatar,
     userSubdomain,
     isSubdomainEmpty,
+    canClaimTrial,
     notifications,
     topBanner,
     announcementsData,
@@ -106,6 +107,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             userPlan={userPlan}
             userAvatar={userAvatar}
             userSubdomain={userSubdomain}
+            canClaimTrial={canClaimTrial}
             alertCount={notifications.length}
             notifications={notifications}
             onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -130,6 +132,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <WelcomeBannerModal 
           userName={userName} 
           userPlan={userPlan}
+          canClaimTrial={canClaimTrial}
           adminData={{
             isActive: false,
             type: "promo",

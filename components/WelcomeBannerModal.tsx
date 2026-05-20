@@ -17,9 +17,9 @@ interface WelcomeBannerModalProps {
   userName: string;
   userPlan?: string; 
   adminData?: AdminPromoData | null; 
+  canClaimTrial?: boolean;
 }
-
-export default function WelcomeBannerModal({ userName, userPlan = "FREE", adminData }: WelcomeBannerModalProps) {
+export default function WelcomeBannerModal({ userName, userPlan = "FREE", adminData, canClaimTrial = false }: WelcomeBannerModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [greeting, setGreeting] = useState({ text: "Halo", icon: "👋", color: "from-blue-500 to-indigo-600" });
 
@@ -66,10 +66,17 @@ export default function WelcomeBannerModal({ userName, userPlan = "FREE", adminD
     displayTitle = adminData.title;
     displayDesc = adminData.desc;
     displayBg = adminData.type === 'promo' ? "from-rose-500 to-pink-600" : "from-emerald-500 to-teal-500";
-    displayIcon = adminData.type === 'promo' ? <i className="fas fa-ticket-alt text-5xl sm:text-6xl"></i> : <i className="fas fa-bullhorn text-5xl sm:text-6xl"></i>;
     btnText = adminData.btnText || "Lihat Detail";
     btnLink = adminData.btnLink || "#";
     badgeLabel = adminData.type === 'promo' ? '🔥 Penawaran Spesial' : '💡 Informasi Penting';
+  } else if (canClaimTrial) {
+    displayTitle = "Klaim Trial PRO 14 Hari! 🎁";
+    displayDesc = `Halo ${firstName}! Kesempatan emas untukmu! Buka akses seluruh fitur premium tanpa batas. 100% Gratis, tanpa kartu kredit.`;
+    displayBg = "from-amber-500 to-orange-600";
+    displayIcon = <i className="fas fa-gift text-5xl sm:text-7xl text-white animate-bounce"></i>;
+    btnText = "Klaim Trial Sekarang";
+    btnLink = "/dashboard/billing";
+    badgeLabel = "🔥 Penawaran Spesial";
   } else if (userPlan === "FREE") {
     displayTitle = "Waktunya Naik Level! 🚀";
     displayDesc = `Halo ${firstName}! Saat ini kamu pakai paket FREE. Upgrade ke PRO untuk custom domain & fitur eksklusif lainnya.`;

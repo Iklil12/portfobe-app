@@ -21,6 +21,7 @@ model User {
   emailVerified          DateTime?
   pendingEmail           String?
   planExpiredAt          DateTime?
+  subscriptions          Subscription[]
   accounts               Account[]
   activities             Activity[]
   analytics              Analytics[]
@@ -287,13 +288,17 @@ model VisitorSession {
 }
 
 model Transaction {
-  id        String   @id @default(cuid())
-  userId    String
-  amount    Int
-  status    String
-  plan      PlanType
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String   @id @default(cuid())
+  userId         String
+  amount         Int
+  status         String   // "PENDING", "SUCCESS", "FAILED", "REFUNDED"
+  plan           PlanType
+  durationDays   Int      @default(30)   // Durasi plan yang dibeli/diberikan
+  gateway        String?                 // "admin_grant", nanti: "midtrans", "xendit"
+  subscriptionId String?                 // Link ke Subscription yang dibuat
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([userId], map: "Transaction_userId_fkey")
@@ -357,9 +362,38 @@ enum PlanType {
   PRO
 }
 
+enum SubscriptionStatus {
+  ACTIVE     // Aktif dan valid
+  EXPIRED    // Sudah kedaluwarsa
+  CANCELLED  // Dibatalkan admin sebelum expired
+}
+
 enum Role {
   USER
   ADMIN
+}
+
+model Subscription {
+  id          String             @id @default(cuid())
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan        PlanType           // PRO atau FREE
+  status      SubscriptionStatus @default(ACTIVE)
+
+  startedAt   DateTime           @default(now())  // Kapan mulai aktif
+  expiredAt   DateTime?                            // null = lifetime/permanen
+
+  // Metadata admin
+  grantedBy   String?                              // Email admin yang grant
+  notes       String?  @db.Text                   // Catatan, misal: "Pembayaran manual via BCA"
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([expiredAt])  // Penting untuk cron query
 }
 
 model Integration {
