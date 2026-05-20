@@ -72,7 +72,7 @@ export default function GlobalSearch() {
     // Gabungkan dengan hasil Database
     const remoteResults = dbResults && Array.isArray(dbResults) ? dbResults : [];
     
-    return [...fuseResults, ...remoteResults];
+    return [...remoteResults, ...fuseResults];
   }, [query, dbResults, fuse]);
 
   // Loading state (User sedang ngetik atau API sedang fetch)
@@ -159,7 +159,7 @@ export default function GlobalSearch() {
       <div className="hidden md:flex relative group max-w-md w-full cursor-pointer" onClick={() => setIsOpen(true)}>
         <div className="relative flex items-center w-full transition-all duration-300 bg-slate-100/40 border border-slate-200/40 rounded-2xl px-4 py-2.5 group-hover:bg-white group-hover:border-[#ff9e00]/40 group-hover:shadow-[0_0_15px_rgba(255,158,0,0.1)]">
           <i className="fas fa-search text-xs text-slate-400 group-hover:text-[#ff9e00]"></i>
-          <div className="flex-1 text-[13px] font-bold text-slate-400/80 px-3 text-left truncate">Cari pengaturan, proyek, metrik...</div>
+          <div className="flex-1 text-[13px] font-bold text-slate-400/80 px-3 text-left truncate">Cari proyek, fitur, metrik...</div>
           <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white border border-slate-200 text-[10px] font-black text-slate-400">
             <span>⌘</span><span>K</span>
           </div>
@@ -188,7 +188,7 @@ export default function GlobalSearch() {
               <input 
                 ref={inputRef}
                 type="text" 
-                placeholder="Apa yang ingin Anda lakukan?" 
+                placeholder="Cari proyek, tautan, sertifikat, fitur..." 
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="flex-1 bg-transparent border-none outline-none px-4 text-lg font-bold text-slate-800 placeholder:text-slate-300"
@@ -208,7 +208,19 @@ export default function GlobalSearch() {
                   <p className="text-xs text-slate-400 mt-1">Gunakan kata kunci atau jalankan perintah cepat.</p>
                 </div>
               ) : (
-                Object.entries(groupedResults).map(([groupName, items]: [string, any]) => (
+                <>
+                  {!query && (
+                    <div className="p-4 mb-4 mx-2 mt-2 bg-blue-50/50 border border-blue-100 rounded-2xl">
+                      <p className="text-xs font-bold text-blue-800 mb-2"><i className="fas fa-info-circle mr-1"></i> Apa yang bisa dicari di sini?</p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="px-2 py-1 bg-white border border-blue-200 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-wider"><i className="fas fa-paint-roller mr-1"></i> Proyek & Karya</span>
+                        <span className="px-2 py-1 bg-white border border-blue-200 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-wider"><i className="fas fa-link mr-1"></i> Tautan / Links</span>
+                        <span className="px-2 py-1 bg-white border border-blue-200 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-wider"><i className="fas fa-certificate mr-1"></i> Sertifikat</span>
+                        <span className="px-2 py-1 bg-white border border-blue-200 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-wider"><i className="fas fa-layer-group mr-1"></i> Menu Sistem</span>
+                      </div>
+                    </div>
+                  )}
+                  {Object.entries(groupedResults).map(([groupName, items]: [string, any]) => (
                   <div key={groupName} className="mb-4 last:mb-0">
                     <div className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] flex items-center gap-3">
                       {groupName} <div className="h-px bg-slate-200 flex-1"></div>
@@ -245,7 +257,8 @@ export default function GlobalSearch() {
                       })}
                     </div>
                   </div>
-                ))
+                ))}
+                </>
               )}
             </div>
 

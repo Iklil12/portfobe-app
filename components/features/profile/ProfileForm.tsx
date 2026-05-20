@@ -147,11 +147,11 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
         </div>
       </div>
 
-      {/* SECTION: INTEGRATIONS REDIRECT */}
+      {/* SECTION: CONNECTED WORKS REDIRECT */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b border-slate-100 pb-6 sm:pb-8 pt-2">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-sm font-extrabold text-slate-900 mb-1">Integrations</label>
-          <p className="text-[11px] font-medium text-slate-500">Kelola koneksi layanan Anda.</p>
+          <label className="block text-sm font-extrabold text-slate-900 mb-1">Connected Works</label>
+          <p className="text-[11px] font-medium text-slate-500">Tampilkan karya dari platform lain.</p>
         </div>
         <div className="w-full">
           <Link
@@ -162,7 +162,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
               <i className="fas fa-plug text-xs"></i>
             </div>
             <div className="flex flex-col flex-1">
-              <span className="text-[13px] font-bold text-slate-700 group-hover:text-slate-900 transition-colors leading-tight">Kelola Integrasi</span>
+              <span className="text-[13px] font-bold text-slate-700 group-hover:text-slate-900 transition-colors leading-tight">Kelola Connected Works</span>
               <span className="text-[11px] font-medium text-slate-400">GitHub, Penpot, dan lainnya</span>
             </div>
             <i className="fas fa-arrow-right text-xs text-slate-400 group-hover:text-slate-700 group-hover:translate-x-1 transition-all"></i>

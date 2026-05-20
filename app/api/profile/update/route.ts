@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth"; 
 import { logActivity } from "@/lib/activity"; 
+import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
 
 export async function PATCH(req: Request) {
   try {
@@ -22,8 +23,13 @@ export async function PATCH(req: Request) {
 
     if (!currentUser) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
 
-    // VALIDASI SUBDOMAIN: Cek apakah subdomain sudah dipakai user lain
+    // VALIDASI SUBDOMAIN: Cek kata cadangan dan apakah sudah dipakai user lain
     if (subdomain && subdomain !== currentUser.profile?.subdomain) {
+      const forbiddenCheck = isForbiddenUsername(subdomain);
+      if (forbiddenCheck.forbidden) {
+        return NextResponse.json({ error: forbiddenCheck.reason }, { status: 400 });
+      }
+
       const existingSubdomain = await prisma.profile.findUnique({
         where: { subdomain: subdomain }
       });

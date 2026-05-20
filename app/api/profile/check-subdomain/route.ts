@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
 
 export async function GET(req: Request) {
   try {
@@ -8,6 +9,11 @@ export async function GET(req: Request) {
 
     if (!subdomain) {
       return NextResponse.json({ error: "Subdomain wajib diisi" }, { status: 400 });
+    }
+
+    const forbiddenCheck = isForbiddenUsername(subdomain);
+    if (forbiddenCheck.forbidden) {
+      return NextResponse.json({ available: false, error: forbiddenCheck.reason });
     }
 
     // Cari apakah ada yang pakai subdomain ini di tabel profile

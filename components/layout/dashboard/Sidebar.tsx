@@ -24,7 +24,8 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                         pathname.includes('/dashboard/themes') || 
                         pathname.includes('/dashboard/links') || 
                         pathname.includes('/dashboard/testimonials') ||
-                        pathname.includes('/dashboard/build-with-ai');
+                        pathname.includes('/dashboard/build-with-ai') ||
+                        pathname.includes('/dashboard/integrations');
   
   const [isMobileDesignMenuOpen, setIsMobileDesignMenuOpen] = useState(isDesignRoute);
 
@@ -58,11 +59,9 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                   <RailItem href="/dashboard/projects" icon="fas fa-paint-roller" label="Desain" active={isDesignRoute} />
                   <RailItem href="/dashboard/explore" icon="fas fa-compass" label="Explore" active={isActive('/dashboard/explore')} />
                   <RailItem href="/dashboard/analytics" icon="fas fa-chart-pie" label="Metrics" active={isActive('/dashboard/analytics')} />
-                  <RailItem href="/dashboard/billing" icon="fas fa-credit-card" label="Billing" active={isActive('/dashboard/billing')} />
                   <RailItem href="/dashboard/profile" icon="fas fa-user-circle" label="Profil" active={isActive('/dashboard/profile')} />
-                  <RailItem href="/dashboard/integrations" icon="fas fa-plug" label="Integrasi" active={isActive('/dashboard/integrations')} />
                   <RailItem href="/support" icon="fas fa-headset" label="Bantuan" active={isActive('/support')} />
-                  <RailItem href="/dashboard/settings" icon="fas fa-cog" label="Akun" active={isActive('/dashboard/settings')} />
+                  <RailItem href="/dashboard/settings" icon="fas fa-cog" label="Settings" active={isActive('/dashboard/settings')} />
                </>
             )}
           </nav>
@@ -111,12 +110,32 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                    </div>
                  ) : (
                    <>
-                   <SecondaryNavItem href="/dashboard/projects" icon="fas fa-folder-open" label="Proyek & Karya" active={isActive('/dashboard/projects')} count={projectsCount} />
-                   <SecondaryNavItem href="/dashboard/themes" icon="fas fa-palette" label="Koleksi Tema" active={isActive('/dashboard/themes')} />
-                   <SecondaryNavItem href="/dashboard/build-with-ai" icon="fas fa-wand-magic-sparkles" label="Build with AI" active={isActive('/dashboard/build-with-ai')} highlightText="Segera" />
-                   <SecondaryNavItem href="/dashboard/links" icon="fas fa-link" label="Tautan (Links)" active={isActive('/dashboard/links')} count={linksCount} />
-                   <SecondaryNavItem href="/dashboard/testimonials" icon="fas fa-comment-dots" label="Testimoni" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
-                 </>
+                     {/* KONTEN */}
+                     <div className="mb-4 space-y-0.5">
+                       <p className="px-3 text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Konten</p>
+                       <SecondaryNavItem href="/dashboard/projects" icon="fas fa-folder-open" label="Proyek & Karya" active={isActive('/dashboard/projects')} count={projectsCount} />
+                       <SecondaryNavItem href="/dashboard/links" icon="fas fa-link" label="Tautan (Links)" active={isActive('/dashboard/links')} count={linksCount} />
+                       <SecondaryNavItem href="/dashboard/testimonials" icon="fas fa-comment-dots" label="Testimoni" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
+                     </div>
+
+                     {/* TAMPILAN */}
+                     <div className="mb-4 space-y-0.5">
+                       <p className="px-3 text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Tampilan</p>
+                       <SecondaryNavItem href="/dashboard/themes" icon="fas fa-palette" label="Koleksi Tema" active={isActive('/dashboard/themes')} />
+                     </div>
+
+                     {/* EKSTENSI */}
+                     <div className="mb-4 space-y-0.5">
+                       <p className="px-3 text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Ekstensi</p>
+                       <SecondaryNavItem href="/dashboard/integrations" icon="fas fa-plug" label="Connected Works" active={isActive('/dashboard/integrations')} />
+                     </div>
+
+                     {/* EKSPERIMEN */}
+                     <div className="mb-2 space-y-0.5">
+                       <p className="px-3 text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Eksperimen</p>
+                       <SecondaryNavItem href="/dashboard/build-with-ai" icon="fas fa-wand-magic-sparkles" label="Build with AI" active={isActive('/dashboard/build-with-ai')} highlightText="Segera" />
+                     </div>
+                   </>
                  )}
                </nav>
                
@@ -124,10 +143,10 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                  {isLoading ? (
                    <div className="w-full h-24 skeleton-premium rounded-2xl"></div>
                  ) : (
-                   <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 relative overflow-hidden group">
-                      <div className="absolute top-0 right-0 w-16 h-16 bg-[#ff9e00]/10 blur-xl rounded-full translate-x-1/2 -translate-y-1/2 group-hover:bg-[#ff9e00]/20 transition-colors"></div>
-                      <i className="fas fa-lightbulb text-[#ff9e00] mb-2 text-lg"></i>
-                      <p className="text-[11px] text-slate-600 font-medium leading-relaxed">Atur karya dan koleksi tema sesuai gayamu untuk menarik lebih banyak klien.</p>
+                   <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-100/50 relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]">
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-[#ff9e00]/10 blur-2xl rounded-full translate-x-1/3 -translate-y-1/3 group-hover:bg-[#ff9e00]/20 transition-all duration-500"></div>
+                      <i className="fas fa-lightbulb text-[#ff9e00] mb-2.5 text-lg relative z-10 drop-shadow-sm"></i>
+                      <p className="text-[11px] text-slate-600 font-bold leading-relaxed relative z-10">Atur karya dan koleksi tema sesuai gayamu untuk menarik lebih banyak klien.</p>
                    </div>
                  )}
                </div>
@@ -175,28 +194,27 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                   </button>
 
                   {/* Submenu Inline (Accordion) */}
-                  <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${isMobileDesignMenuOpen ? 'max-h-60 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 pointer-events-none'}`}>
+                  <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${isMobileDesignMenuOpen ? 'max-h-80 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 pointer-events-none'}`}>
                     <MobileSubNavItem href="/dashboard/projects" label="Proyek & Karya" active={isActive('/dashboard/projects')} count={projectsCount} />
                     <MobileSubNavItem href="/dashboard/themes" label="Koleksi Tema" active={isActive('/dashboard/themes')} />
                     <MobileSubNavItem href="/dashboard/build-with-ai" label="Build with AI" active={isActive('/dashboard/build-with-ai')} highlightText="Segera" />
                     <MobileSubNavItem href="/dashboard/links" label="Tautan (Links)" active={isActive('/dashboard/links')} count={linksCount} />
                     <MobileSubNavItem href="/dashboard/testimonials" label="Testimoni" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
+                    <MobileSubNavItem href="/dashboard/integrations" label="Connected Works" active={isActive('/dashboard/integrations')} />
                   </div>
                 </div>
 
                 {/* Menu Lainnya */}
                 <MobileNavItem href="/dashboard/explore" icon="fas fa-compass" label="Explore" active={isActive('/dashboard/explore')} className="mt-2" />
                 <MobileNavItem href="/dashboard/analytics" icon="fas fa-chart-pie" label="Metrics" active={isActive('/dashboard/analytics')} />
-                <MobileNavItem href="/dashboard/billing" icon="fas fa-credit-card" label="Billing & Plan" active={isActive('/dashboard/billing')} />
 
                 <div className="px-5 pt-6 pb-2">
                   <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Pengaturan</p>
                 </div>
 
                 <MobileNavItem href="/dashboard/profile" icon="fas fa-user-circle" label="Profil & Bio" active={isActive('/dashboard/profile')} />
-                <MobileNavItem href="/dashboard/integrations" icon="fas fa-plug" label="Integrasi" active={isActive('/dashboard/integrations')} />
                 <MobileNavItem href="/support" icon="fas fa-headset" label="Bantuan" active={isActive('/support')} />
-                <MobileNavItem href="/dashboard/settings" icon="fas fa-cog" label="Akun" active={isActive('/dashboard/settings')} />
+                <MobileNavItem href="/dashboard/settings" icon="fas fa-cog" label="Settings" active={isActive('/dashboard/settings')} />
               </>
             )}
           </nav>
@@ -251,20 +269,26 @@ function RailItem({ href, icon, label, active }: { href: string, icon: string, l
 // Komponen Item untuk Secondary Sidebar
 function SecondaryNavItem({ href, icon, label, active, count, highlightText }: { href: string, icon: string, label: string, active: boolean, count?: number, highlightText?: string }) {
   return (
-    <Link href={href} className={`flex items-center justify-between px-4 py-3 rounded-xl font-bold text-[13px] transition-all duration-200 group relative ${active ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>
-      <div className="flex items-center">
-        <i className={`${icon} w-6 text-center text-[15px] mr-3 transition-colors ${active ? 'text-[#ff9e00]' : 'text-slate-400 group-hover:text-slate-600'}`}></i>
-        {label}
+    <Link href={href} className={`flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-200 group relative ${active ? 'bg-slate-100/80 text-slate-900' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
+      
+      {active && <div className="absolute left-0 top-1/2 -translate-y-1/2 h-2/3 w-[3px] bg-[#ff9e00] rounded-r-md"></div>}
+
+      <div className="flex items-center transition-transform duration-200 group-hover:translate-x-1">
+        <i className={`${icon} w-6 text-center text-[15px] mr-2.5 transition-colors ${active ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-500'}`}></i>
+        <span className={active ? 'font-extrabold' : 'font-bold'}>{label}</span>
       </div>
-      {highlightText ? (
-        <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-extrabold uppercase tracking-wide ${active ? 'bg-[#ff9e00] text-slate-900' : 'bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20'}`}>
-          {highlightText}
-        </span>
-      ) : count !== undefined ? (
-        <span className={`text-[10px] px-1.5 py-0.5 rounded-md transition-colors ${active ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'}`}>
-          {count}
-        </span>
-      ) : null}
+      
+      <div className="transition-transform duration-200 group-hover:-translate-x-0.5 shrink-0 ml-2">
+        {highlightText ? (
+          <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-extrabold uppercase tracking-wide ${active ? 'bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20' : 'bg-slate-100 text-slate-500 border border-slate-200/50'}`}>
+            {highlightText}
+          </span>
+        ) : count !== undefined ? (
+          <span className={`text-[10px] px-1.5 py-0.5 rounded-md transition-colors ${active ? 'bg-white text-slate-700 shadow-sm border border-slate-200/50' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'}`}>
+            {count}
+          </span>
+        ) : null}
+      </div>
     </Link>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import { motion } from 'framer-motion';
 
@@ -21,17 +21,21 @@ const PenpotIcon = ({ className }: { className?: string }) => (
 );
 
 const Skeleton = () => (
-  <div className="animate-pulse space-y-12">
+  <div className="space-y-12 animate-billing-fade">
+    <style dangerouslySetInnerHTML={{__html: `
+      @keyframes billingFadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+      .animate-billing-fade { opacity: 0; animation: billingFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    `}} />
     {[1, 2, 3].map(i => (
       <div key={i} className="space-y-4">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-zinc-100" />
+          <div className="w-10 h-10 rounded-xl skeleton-premium" />
           <div className="space-y-2">
-            <div className="h-4 w-32 bg-zinc-100 rounded" />
-            <div className="h-3 w-48 bg-zinc-100 rounded" />
+            <div className="h-4 w-32 skeleton-premium rounded-md" />
+            <div className="h-3 w-48 skeleton-premium rounded-md" />
           </div>
         </div>
-        <div className="h-40 rounded-[2rem] bg-zinc-50 border border-zinc-100" />
+        <div className="h-40 rounded-[2rem] skeleton-premium" />
       </div>
     ))}
   </div>
@@ -39,6 +43,12 @@ const Skeleton = () => (
 
 export default function IntegrationsPage() {
   const { isLoading } = useSWR('/api/settings/integrations', fetcher);
+  const [isMinimumLoadTimeMet, setIsMinimumLoadTimeMet] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setIsMinimumLoadTimeMet(true), 1200);
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <main className="min-h-screen relative pb-24 z-10">
@@ -51,14 +61,14 @@ export default function IntegrationsPage() {
           className="mb-16"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-500 text-[10px] font-bold uppercase tracking-wider mb-6">
-            <i className="fas fa-plug text-[9px]"></i> Connections
+            <i className="fas fa-plug text-[9px]"></i> Connected Works
           </div>
-          <h1 className="text-4xl font-black text-zinc-900 tracking-tight mb-3">Integrations</h1>
-          <p className="text-base text-zinc-500 font-medium max-w-xl leading-relaxed">Connect your favorite design tools and platforms to automate your portfolio workflow.</p>
+          <h1 className="text-4xl font-black text-zinc-900 tracking-tight mb-3">Connected Works</h1>
+          <p className="text-base text-zinc-500 font-medium max-w-xl leading-relaxed">Hubungkan platform favoritmu dan tampilkan karya langsung di portofolio.</p>
         </motion.div>
 
         {/* Sections */}
-        {isLoading ? <Skeleton /> : (
+        {(isLoading || !isMinimumLoadTimeMet) ? <Skeleton /> : (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -128,8 +138,8 @@ export default function IntegrationsPage() {
                 <i className="fas fa-plus text-xl"></i>
               </div>
               <div>
-                <p className="text-base font-bold text-zinc-800 tracking-tight">More integrations coming soon</p>
-                <p className="text-sm text-zinc-400 mt-0.5 font-medium leading-relaxed">Figma, Behance, Dribbble, and more are currently in development.</p>
+                <p className="text-base font-bold text-zinc-800 tracking-tight">More connected works coming soon</p>
+                <p className="text-sm text-zinc-400 mt-0.5 font-medium leading-relaxed">Figma, Behance, Dribbble, dan lainnya sedang dalam pengembangan.</p>
               </div>
             </div>
 

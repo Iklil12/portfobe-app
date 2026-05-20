@@ -237,12 +237,101 @@ export async function GET(req: Request) {
       }
     }
 
+    // 6. Win-back Emails (H+3 & H+7 Setelah Downgrade)
+    // Karena downgrade dilakukan di H+3 (setelah grace period berakhir),
+    // maka H+3 setelah downgrade = 6 hari dari expiredAt (daysSinceExpiry === 6)
+    // dan H+7 setelah downgrade = 10 hari dari expiredAt (daysSinceExpiry === 10)
+    const winbackSubs = await prisma.subscription.findMany({
+      where: {
+        status: "EXPIRED",
+        plan: "PRO",
+      },
+      include: {
+        user: {
+          include: { profile: true },
+        },
+      },
+    });
+
+    let winbackEmailsSent = 0;
+
+    for (const sub of winbackSubs) {
+      // Jika user sudah langganan lagi (plan-nya PRO), lewati.
+      if (sub.user.plan === "PRO") continue;
+
+      const daysSinceExpiry = Math.floor(
+        (now.getTime() - sub.expiredAt!.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      const userName = sub.user.profile?.fullName || "Pengguna";
+      const userEmail = sub.user.email;
+
+      // H+3 Setelah Downgrade
+      if (daysSinceExpiry === 6 && userEmail) {
+        resend.emails.send({
+          from: "Portfobe <hellocreator@mail.ritions.com>",
+          to: userEmail,
+          replyTo: "ikliluluyun@ritions.com",
+          subject: "Kami Rindu Karya Hebatmu! Diskon 30% untuk Kembali ke PRO 🎁",
+          html: `
+          <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
+            <div style="background: #0f172a; padding: 24px 32px; border-radius: 12px 12px 0 0;">
+              <h1 style="color: white; margin: 0; font-size: 20px; font-weight: 800;">portfobe</h1>
+            </div>
+            <div style="padding: 32px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px;">
+              <p style="font-size: 16px; margin-top: 0;">Hei, <strong>${userName}</strong>!</p>
+              <p style="font-size: 16px;">Sudah beberapa hari sejak paket PRO kamu berakhir. Kami sangat merindukan portofolio menawan yang kamu buat menggunakan fitur premium kami.</p>
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
+                <h3 style="margin: 0 0 10px 0; color: #065f46; font-size: 18px;">Penawaran Spesial Kembalinya Kreator!</h3>
+                <p style="margin: 0; font-size: 15px; color: #047857;">Gunakan kode promo <strong>COMEBACK30</strong> untuk mendapatkan diskon 30% perpanjangan Paket PRO hari ini.</p>
+              </div>
+              <p style="font-size: 16px;">Tingkatkan kembali karir profesionalmu dan dapatkan analitik mendalam serta custom domain sekarang juga.</p>
+              <br/>
+              <p style="font-size: 14px; color: #64748b;">Salam hangat,<br/>Tim Portfobe</p>
+            </div>
+          </div>
+          `,
+        }).catch(err => console.error(`Gagal kirim win-back H+3 ke ${userEmail}:`, err));
+        winbackEmailsSent++;
+      }
+      
+      // H+7 Setelah Downgrade
+      else if (daysSinceExpiry === 10 && userEmail) {
+        resend.emails.send({
+          from: "Portfobe <hellocreator@mail.ritions.com>",
+          to: userEmail,
+          replyTo: "ikliluluyun@ritions.com",
+          subject: "Kesempatan Terakhir: Diskon 50% Khusus Untukmu! 🔥",
+          html: `
+          <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
+            <div style="background: #0f172a; padding: 24px 32px; border-radius: 12px 12px 0 0;">
+              <h1 style="color: white; margin: 0; font-size: 20px; font-weight: 800;">portfobe</h1>
+            </div>
+            <div style="padding: 32px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px;">
+              <p style="font-size: 16px; margin-top: 0;">Hei, <strong>${userName}</strong>!</p>
+              <p style="font-size: 16px;">Ini adalah penawaran terbesar kami dan eksklusif hanya untukmu. Kami ingin melihatmu berkembang bersama Portfobe PRO.</p>
+              <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
+                <h3 style="margin: 0 0 10px 0; color: #b45309; font-size: 18px;">Diskon 50% Selamanya!</h3>
+                <p style="margin: 0; font-size: 15px; color: #d97706;">Gunakan kode promo <strong>MISSYOU50</strong> saat checkout. Kupon ini hanya berlaku selama 24 jam ke depan.</p>
+              </div>
+              <p style="font-size: 16px;">Jangan biarkan karya hebatmu tidak terlihat. Kembali jadi PRO sekarang.</p>
+              <br/>
+              <p style="font-size: 14px; color: #64748b;">Salam hangat,<br/>Tim Portfobe</p>
+            </div>
+          </div>
+          `,
+        }).catch(err => console.error(`Gagal kirim win-back H+7 ke ${userEmail}:`, err));
+        winbackEmailsSent++;
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: `Berhasil memproses ${expiredSubscriptions.length} subscription expired.`,
       downgraded: downgradedUsers.length,
       downgradedUsers,
       remindersChecked: expiringSoonSubs.length,
+      winbackSent: winbackEmailsSent,
     });
   } catch (error) {
     console.error("[Cron] Plan Expiry Error:", error);
