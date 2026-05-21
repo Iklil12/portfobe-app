@@ -42,6 +42,18 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
     const displayAvatar = (cleanAvatar !== "" && cleanAvatar !== "null") ? cleanAvatar : `https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop`;
 
     const radiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';
+    const cardStyle = theme?.cardStyle || 'glassmorphism';
+    const fontHeading = theme?.fontHeading || 'Cormorant Garamond';
+    const fontBody = theme?.fontBody || 'Inter';
+
+    const getFontFamily = (f: string) => {
+        if (f?.toLowerCase().includes('mono') || f?.toLowerCase().includes('space')) return "'Space Mono', monospace";
+        if (f?.toLowerCase().includes('serif') || f?.toLowerCase().includes('playfair') || f?.toLowerCase().includes('cormorant')) return `'${f}', serif`;
+        return "'Inter', sans-serif";
+    };
+    const customHeadingFont = getFontFamily(fontHeading);
+    const customBodyFont = getFontFamily(fontBody);
+
     const rawHighlightColor = theme?.themeColor || '#4fd1c5';
     const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#4fd1c5';
 
@@ -62,8 +74,8 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
         <main className="relative min-h-screen bg-[#030508] text-[#e2e8f0] font-sans selection:bg-[var(--hl)] selection:text-[#030508] @container flex flex-col @lg:flex-row midnight-theme" style={{ '--hl': highlightColor } as React.CSSProperties}>
             <style dangerouslySetInnerHTML={{
                     __html: `
-            .midnight-theme .font-serif { font-family: 'Cormorant Garamond', serif; }
-            .midnight-theme .font-sans { font-family: 'Inter', sans-serif; }
+            .midnight-theme .font-serif { font-family: ${customHeadingFont}; }
+            .midnight-theme .font-sans { font-family: ${customBodyFont}; }
             .film-grain { background-image: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.05; }
             .text-stroke { -webkit-text-stroke: 1px rgba(255,255,255,0.2); color: transparent; }
             .text-stroke-hover:hover { -webkit-text-stroke: 1px var(--hl); }

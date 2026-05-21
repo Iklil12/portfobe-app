@@ -15,7 +15,7 @@ export const SYSTEM_RESERVED = [
 
   // 5. Kategori Transaksi & Monetisasi
   "checkout", "invoice", "payment", "cart", "store", "shop", "premium", 
-  "enterprise", "downgrade", "plans",
+  "enterprise", "downgrade", "plans","system",
 
   "www", "mail", "ftp", "localhost", "cdn", "media", "webhook", "oauth", "socket", "ws",
   "inbox", "messages", "notifications", "security", "trust", "abuse", "report", 

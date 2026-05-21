@@ -40,7 +40,7 @@ export function useThemeEditor() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resApp = await fetch('/api/appearance');
+        const resApp = await fetch('/api/appearance', { cache: 'no-store' });
         let appData: any = {};
 
         if (resApp.ok) {

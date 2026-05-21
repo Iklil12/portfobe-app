@@ -48,19 +48,32 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
     const themeColor = isValidHexColor(rawThemeColor) ? rawThemeColor : "#ff9e00";
     const fontHeading = theme?.fontHeading || "Syne";
     const fontBody = theme?.fontBody || "Space Grotesk";
+    const cardStyle = theme?.cardStyle || 'hard-shadow';
+    const buttonShape = theme?.buttonShape || 'hard';
+    const radiusClass = buttonShape === 'pill' ? 'rounded-full' : buttonShape === 'rounded' ? 'rounded-2xl' : 'rounded-none';
 
     const nameParts = fullName.split(' ');
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' ');
 
     const getHeadingFont = (fontName: string) => {
-        if (fontName?.toLowerCase().includes('space mono')) return "'Space Mono', monospace";
+        if (!fontName) return "'Syne', sans-serif";
+        if (fontName.toLowerCase().includes('space') || fontName.toLowerCase().includes('mono')) return "'Space Mono', monospace";
+        if (fontName.toLowerCase().includes('serif') || fontName.toLowerCase().includes('elegant') || fontName.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+        if (fontName.toLowerCase().includes('inter')) return "'Inter', sans-serif";
         return "'Syne', sans-serif";
     };
     const getBodyFont = (fontName: string) => {
-        if (fontName?.toLowerCase().includes('inter')) return "'Inter', sans-serif";
+        if (!fontName) return "'Space Grotesk', sans-serif";
+        if (fontName.toLowerCase().includes('space') || fontName.toLowerCase().includes('mono')) return "'Space Mono', monospace";
+        if (fontName.toLowerCase().includes('serif') || fontName.toLowerCase().includes('elegant') || fontName.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+        if (fontName.toLowerCase().includes('inter')) return "'Inter', sans-serif";
         return "'Space Grotesk', sans-serif";
     };
+
+    const cardRadiusClass = buttonShape === 'pill' ? 'rounded-2xl' : buttonShape === 'rounded' ? 'rounded-lg' : 'rounded-none';
+    const cardStyleClassDark = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#18181b] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-transparent' : cardStyle === 'flat' ? 'bg-[#09090b] border-2 border-zinc-800' : 'bg-[#09090b] border-2 border-zinc-800 hover:shadow-[8px_8px_0_0_var(--theme-color)]';
+    const testimonialStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#18181b] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-transparent' : cardStyle === 'flat' ? 'bg-[#09090b] border-4 border-[#09090b]' : 'bg-[#09090b] border-4 border-[#09090b] hover:shadow-[10px_10px_0px_var(--theme-color)]';
 
     // --- KONFIGURASI ANIMASI ACID ---
     const acidEase = [0.22, 1, 0.36, 1] as any; // Agresif di awal, super smooth di akhir
@@ -97,8 +110,8 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { animation: marquee 10s linear infinite; }
         
-        .project-item { transition: all 0.3s ease; border-bottom: 2px solid #27272a; }
-        .project-item:hover { background-color: ${themeColor}; color: #09090b; padding-left: 2rem; border-color: ${themeColor}; }
+        .project-item { transition: all 0.3s ease; }
+        .project-item:hover { background-color: ${themeColor} !important; color: #09090b !important; transform: translateX(10px); border-color: ${themeColor} !important; }
         
         .hover-img { position: absolute; right: 10%; top: 50%; transform: translateY(-50%) scale(0.8) rotate(5deg); opacity: 0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; z-index: 20; width: 300px; aspect-ratio: 16/9; object-fit: cover; border: 4px solid #000; box-shadow: 10px 10px 0px rgba(0,0,0,0.5); }
         .project-item:hover .hover-img { opacity: 1; transform: translateY(-50%) scale(1) rotate(-2deg); }
@@ -156,7 +169,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                     <motion.div variants={scaleUp} className={`flex @lg:hidden mt-8 mb-10 w-full justify-center relative z-30 group`}>
                         <div className="w-[85%] max-w-[280px] aspect-[4/5] relative">
                             <div className="absolute inset-0 acid-bg transform translate-x-3 translate-y-3 -z-10"></div>
-                            <div className="w-full h-full overflow-hidden border-2 border-zinc-800 relative grayscale transition-all duration-700 hover:grayscale-0">
+                            <div className={`w-full h-full overflow-hidden ${cardStyleClassDark} ${cardRadiusClass} relative grayscale transition-all duration-700 hover:grayscale-0`}>
                                 <LazyImage src={displayAvatar} alt="Hero" className="w-full h-full object-cover" />
                             </div>
                         </div>
@@ -192,14 +205,14 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                         className="hidden @lg:block absolute top-1/4 right-12 w-72 h-[450px] transition duration-700 z-30 group"
                     >
                         <div className="absolute inset-0 acid-bg transform translate-x-4 translate-y-4 -z-10 transition-transform group-hover:translate-x-6 group-hover:translate-y-6"></div>
-                        <div className="w-full h-full overflow-hidden border-2 border-zinc-800 relative grayscale hover:grayscale-0 transition-all duration-700">
+                        <div className={`w-full h-full overflow-hidden ${cardStyleClassDark} ${cardRadiusClass} relative grayscale hover:grayscale-0 transition-all duration-700`}>
                             <LazyImage src={displayAvatar} alt="Hero" className="w-full h-full object-cover" />
                         </div>
                         {/* Verified Badge */}
                         {(data?.plan === 'PRO' || data?.userPlan === 'PRO') && (
                             <motion.div 
                                 initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.5, type: "spring" }}
-                                className="absolute -bottom-4 -right-4 w-12 h-12 bg-blue-500 rounded-full border-4 border-black flex items-center justify-center text-white text-[14px] shadow-[5px_5px_0px_rgba(0,0,0,1)] z-40"
+                                className={`absolute -bottom-4 -right-4 w-12 h-12 bg-blue-500 ${radiusClass} border-4 border-black flex items-center justify-center text-white text-[14px] shadow-[5px_5px_0px_rgba(0,0,0,1)] z-40`}
                             >
                                 <i className="fas fa-check"></i>
                             </motion.div>
@@ -235,13 +248,13 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                         { label: "Awards", value: awardItems.length },
                         { label: "Links", value: links.length }
                     ].map((stat, idx) => (
-                        <motion.div key={idx} variants={fadeUp} className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition p-5 @md:p-8`}>
+                        <motion.div key={idx} variants={fadeUp} className={`flex flex-col justify-between aspect-square hover:-translate-y-2 transition-all p-5 @md:p-8 ${cardStyleClassDark} ${cardRadiusClass}`}>
                             <span className="acid-text font-bold text-[9px] @md:text-xs uppercase tracking-widest acid-body">{stat.label}</span>
                             <span className={`acid-heading font-extrabold text-4xl @md:text-5xl @lg:text-7xl`}>{stat.value}</span>
                         </motion.div>
                     ))}
                     
-                    <motion.div variants={fadeUp} className={`bg-zinc-900 flex flex-col justify-between aspect-square hover:bg-zinc-800 transition cursor-pointer p-5 @md:p-8`} onClick={() => window.location.href = `mailto:${userEmail}`}>
+                    <motion.div variants={fadeUp} className={`flex flex-col justify-between aspect-square hover:-translate-y-2 transition-all cursor-pointer p-5 @md:p-8 ${cardStyleClassDark} ${cardRadiusClass}`} onClick={() => window.location.href = `mailto:${userEmail}`}>
                         <span className="acid-text font-bold text-[9px] @md:text-xs uppercase tracking-widest acid-body">Hire Me</span>
                         <motion.span whileHover={{ scale: 1.1, rotate: 5 }} className={`acid-heading font-extrabold flex items-center text-4xl @md:text-5xl @lg:text-7xl`}>
                             <i className="fas fa-envelope"></i>
@@ -267,7 +280,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                             <motion.div 
                                 key={`proj-${p.id || i}`}
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, margin: "50px" }} variants={fadeUp}
-                                className={`project-item relative w-full flex justify-between cursor-pointer flex-col py-6 px-6 @md:flex-row @md:items-center @md:py-12 @md:px-12`}
+                                className={`project-item relative w-full flex justify-between cursor-pointer flex-col py-6 px-6 @md:flex-row @md:items-center @md:py-10 @md:px-10 mb-4 ${cardStyleClassDark} ${cardRadiusClass}`}
                                 onClick={() => {
                                     if (isVideo || p.projectType === 'photo') {
                                         setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
@@ -295,7 +308,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                                 )}
 
                                 {/* Mobile Inline Image */}
-                                <div className={`block @md:hidden mt-6 w-full aspect-[16/9] relative z-10 overflow-hidden border-2 border-zinc-800`}>
+                                <div className={`block @md:hidden mt-6 w-full aspect-[16/9] relative z-10 overflow-hidden ${cardStyleClassDark} ${cardRadiusClass}`}>
                                     <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : (p.mediaUrl || "https://via.placeholder.com/800")} alt={p.title} className="w-full h-full object-cover grayscale" />
                                     {isVideo && (
                                         <div className="absolute inset-0 flex items-center justify-center bg-black/20">
@@ -363,7 +376,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                     >
                         {items3D.map((p: any, i: number) => (
                             <motion.div key={p.id || i} variants={fadeUp} className="group">
-                                <div className="w-full border-2 border-zinc-800 bg-[#0a0a0a] overflow-hidden transition-all duration-300" style={{ ':hover': { borderColor: themeColor } } as any}>
+                                <div className={`w-full ${cardStyleClassDark} ${cardRadiusClass} overflow-hidden transition-all duration-300`} style={{ ':hover': { borderColor: themeColor } } as any}>
                                     <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0a" />
                                 </div>
                                 <div className="flex justify-between items-start mt-4">
@@ -458,7 +471,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                                 <motion.div 
                                     key={t.id}
                                     initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, margin: "50px" }} variants={fadeUp}
-                                    className="bg-[#09090b] border-4 border-[#09090b] p-6 @md:p-10 hover:-translate-y-2 hover:shadow-[10px_10px_0px_var(--theme-color)] transition-all duration-300"
+                                    className={`${testimonialStyleClass} ${cardRadiusClass} p-6 @md:p-10 hover:-translate-y-2 transition-all duration-300`}
                                     style={{ '--theme-color': themeColor } as any}
                                 >
                                     <p className="font-medium text-lg @md:text-2xl leading-relaxed text-[#fafafa] italic mb-8 acid-body">
@@ -466,7 +479,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                                     </p>
                                     <div className="flex items-center gap-4 pt-6 border-t-2 border-zinc-800">
                                         {t.avatarUrl ? (
-                                            <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-14 h-14 rounded-none border-2 border-zinc-600 grayscale object-cover" />
+                                            <LazyImage src={t.avatarUrl} alt={t.clientName} className={`w-14 h-14 ${radiusClass} border-2 border-zinc-600 grayscale object-cover`} />
                                         ) : (
                                             <div className="w-14 h-14 bg-zinc-800 border-2 border-zinc-600 flex items-center justify-center font-bold text-xl uppercase acid-heading text-white">
                                                 {t.clientName.charAt(0)}

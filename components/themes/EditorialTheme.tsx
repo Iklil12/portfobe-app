@@ -47,6 +47,20 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
     const fontHeading = theme?.fontHeading || 'Newsreader';
     const fontBody = theme?.fontBody || 'Instrument Sans';
     const radiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-[2rem]';
+    const cardStyle = theme?.cardStyle || 'soft';
+
+    const cardRadiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[3rem]' : 'rounded-2xl';
+    const cardStyleClassLight = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-white shadow-[0_30px_60px_rgba(0,0,0,0.08)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-white border-2 border-[#111] shadow-[8px_8px_0_0_#111]' : 'bg-[#fdfdfc] border border-[rgba(0,0,0,0.08)] shadow-sm';
+
+    const getFontFamily = (f: string) => {
+        if (!f) return "'Newsreader', serif";
+        if (f.toLowerCase().includes('mono') || f.toLowerCase().includes('space')) return "'Space Mono', monospace";
+        if (f.toLowerCase().includes('serif') || f.toLowerCase().includes('playfair') || f.toLowerCase().includes('newsreader') || f.toLowerCase().includes('elegant')) return "'Playfair Display', serif";
+        if (f.toLowerCase().includes('inter')) return "'Inter', sans-serif";
+        return `'${f}', sans-serif`;
+    };
+    const customHeadingFont = getFontFamily(fontHeading);
+    const customBodyFont = getFontFamily(fontBody);
 
     const rawHighlightColor = theme?.themeColor || '#2563eb';
     const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#2563eb';
@@ -80,8 +94,8 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        .editorial-theme .font-sans { font-family: '${fontBody}', sans-serif; }
-        .editorial-theme .font-serif { font-family: '${fontHeading}', serif; }
+        .editorial-theme .font-sans { font-family: ${customBodyFont}; }
+        .editorial-theme .font-serif { font-family: ${customHeadingFont}; }
 
         /* Custom Scrollbar — scoped ke editorial-theme */
         .editorial-theme ::-webkit-scrollbar { width: 6px; }
@@ -203,7 +217,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                                 }}
                             >
                                 {/* Image Box */}
-                                <div className={`w-full aspect-[4/5] @md:aspect-[3/4] bg-subtle ${radiusClass} overflow-hidden relative mb-6 @md:mb-8 border border-subtle group-hover:shadow-hover transition-all duration-700`}>
+                                <div className={`w-full aspect-[4/5] @md:aspect-[3/4] ${cardRadiusClass} overflow-hidden relative mb-6 @md:mb-8 ${cardStyleClassLight} group-hover:-translate-y-2 transition-all duration-700`}>
                                     <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />
 
                                     {/* Video Play Indicator (Elegant Editorial) */}
@@ -269,7 +283,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                                     initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                     className={`flex flex-col group w-full ${isEven ? '@md:mt-32' : ''}`}
                                 >
-                                    <div className={`w-full aspect-square bg-subtle ${radiusClass} overflow-hidden relative mb-6 @md:mb-8 border border-subtle shadow-soft transition-all duration-700`}>
+                                    <div className={`w-full aspect-square ${cardRadiusClass} overflow-hidden relative mb-6 @md:mb-8 ${cardStyleClassLight} group-hover:-translate-y-2 transition-all duration-700`}>
                                         <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#fdfdfc" />
                                     </div>
 
@@ -449,7 +463,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                         <motion.div 
                             initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}
                             transition={{ duration: 0.6, ease: canvasEase }}
-                            className={`relative w-full max-w-5xl bg-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden border border-subtle ${radiusClass}`}
+                            className={`relative w-full max-w-5xl flex flex-col overflow-hidden ${cardStyleClassLight} ${cardRadiusClass}`}
                         >
                             {/* Museum-style Header */}
                             <div className="flex justify-between items-center p-6 @md:p-10 border-b border-subtle relative z-10">

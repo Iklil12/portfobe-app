@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { logActivity } from "@/lib/activity";
+import { logActivity } from "@/lib/activity"; 
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // AMBIL SEMUA LINK USER
 export async function GET(req: Request) {
@@ -38,13 +39,15 @@ export async function GET(req: Request) {
 
 // TAMBAH LINK BARU
 export async function POST() {
+  const rateLimitResponse = await checkRateLimit();
+  if (rateLimitResponse) return rateLimitResponse;
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const user = await prisma.user.findUnique({ where: { email: session.user.email } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-  // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
   if (user.plan === 'FREE') {
     const linkCount = await prisma.link.count({ where: { userId: user.id } });
     if (linkCount >= 1) {

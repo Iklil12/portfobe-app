@@ -140,10 +140,12 @@ model Project {
   tags        String   @default("[]") @db.Text
   userId      String
   createdAt   DateTime @default(now())
+  deletedAt   DateTime?                    // null = aktif, ada nilai = di trash
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   detail3D    Project3DDetail?
 
   @@index([createdAt])
+  @@index([deletedAt])
   @@index([userId], map: "Project_userId_fkey")
 }
 
@@ -177,9 +179,11 @@ model Certificate {
   mediaUrl    String?
   userId      String
   createdAt   DateTime @default(now())
+  deletedAt   DateTime?                    // null = aktif, ada nilai = di trash
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "Certificate_userId_fkey")
+  @@index([deletedAt])
 }
 
 model Announcement {

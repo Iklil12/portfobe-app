@@ -27,9 +27,11 @@ export async function GET(
           orderBy: { order: 'asc' } 
         },
         projects: { 
+          where: { deletedAt: null },   // FIX K2: exclude item di trash
           orderBy: { createdAt: 'desc' } 
         },
         certificates: { 
+          where: { deletedAt: null },   // FIX K2: exclude item di trash
           orderBy: { createdAt: 'desc' }
         },
         testimonials: {

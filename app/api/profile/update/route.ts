@@ -3,10 +3,14 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth"; 
 import { logActivity } from "@/lib/activity"; 
+import { checkRateLimit } from "@/lib/rate-limit";
 import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
 
 export async function PATCH(req: Request) {
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Tidak diizinkan" }, { status: 401 });

@@ -25,7 +25,8 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                         pathname.includes('/dashboard/links') || 
                         pathname.includes('/dashboard/testimonials') ||
                         pathname.includes('/dashboard/build-with-ai') ||
-                        pathname.includes('/dashboard/integrations');
+                        pathname.includes('/dashboard/integrations') ||
+                        pathname.includes('/dashboard/trash');
   
   const [isMobileDesignMenuOpen, setIsMobileDesignMenuOpen] = useState(isDesignRoute);
 
@@ -135,6 +136,12 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                        <p className="px-3 text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Eksperimen</p>
                        <SecondaryNavItem href="/dashboard/build-with-ai" icon="fas fa-wand-magic-sparkles" label="Build with AI" active={isActive('/dashboard/build-with-ai')} highlightText="Segera" />
                      </div>
+
+                     {/* DIVIDER + TRASH */}
+                     <div className="pt-1 pb-0.5">
+                       <div className="h-px bg-slate-100 mx-2 mb-3" />
+                       <SecondaryNavItem href="/dashboard/trash" icon="fas fa-trash-alt" label="Trash" active={isActive('/dashboard/trash')} />
+                     </div>
                    </>
                  )}
                </nav>
@@ -201,6 +208,8 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                     <MobileSubNavItem href="/dashboard/links" label="Tautan (Links)" active={isActive('/dashboard/links')} count={linksCount} />
                     <MobileSubNavItem href="/dashboard/testimonials" label="Testimoni" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
                     <MobileSubNavItem href="/dashboard/integrations" label="Connected Works" active={isActive('/dashboard/integrations')} />
+                    <div className="h-px bg-slate-100 my-1" />
+                    <MobileSubNavItem href="/dashboard/trash" label="Trash" active={isActive('/dashboard/trash')} />
                   </div>
                 </div>
 

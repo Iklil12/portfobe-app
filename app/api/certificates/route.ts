@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // MENGAMBIL SERTIFIKAT USER DENGAN PAGINATION
 export async function GET(req: Request) {
@@ -26,13 +27,13 @@ export async function GET(req: Request) {
 
     const [certificates, total] = await Promise.all([
       prisma.certificate.findMany({
-        where: { userId: user.id },
+        where: { userId: user.id, deletedAt: null },
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip: skip,
       }),
       prisma.certificate.count({
-        where: { userId: user.id },
+        where: { userId: user.id, deletedAt: null },
       })
     ]);
 
@@ -53,6 +54,9 @@ export async function GET(req: Request) {
 // MENAMBAH SERTIFIKAT BARU
 export async function POST(req: Request) {
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -66,7 +70,7 @@ export async function POST(req: Request) {
 
     // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
     if (user.plan === 'FREE') {
-      const certCount = await prisma.certificate.count({ where: { userId: user.id } });
+      const certCount = await prisma.certificate.count({ where: { userId: user.id, deletedAt: null } });
       if (certCount >= 2) {
         return NextResponse.json({ 
           error: "Kuota FREE maksimal 2 sertifikat. Silakan upgrade ke PRO.",
@@ -107,6 +111,9 @@ export async function POST(req: Request) {
 // MENGEDIT SERTIFIKAT YANG ADA
 export async function PATCH(req: Request) {
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -157,6 +164,9 @@ export async function PATCH(req: Request) {
 // MENGHAPUS SERTIFIKAT
 export async function DELETE(req: Request) {
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -182,14 +192,15 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
     }
 
-    await prisma.certificate.delete({
-      where: { id }
+    await prisma.certificate.update({
+      where: { id },
+      data: { deletedAt: new Date() }
     });
 
     // REKAM AKTIVITAS KE HISTORY
-    await logActivity(user.id, "DELETE_CERTIFICATE", `Menghapus sertifikat: "${existingCert.title}"`);
+    await logActivity(user.id, "DELETE_CERTIFICATE", `Memindahkan ke trash: "${existingCert.title}"`);
 
-    return NextResponse.json({ message: "Sertifikat berhasil dihapus." });
+    return NextResponse.json({ message: "Sertifikat dipindahkan ke trash." });
   } catch (error) {
     console.error("DELETE Certificate Error:", error);
     return NextResponse.json({ error: "Gagal menghapus sertifikat." }, { status: 500 });

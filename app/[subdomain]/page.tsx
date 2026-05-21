@@ -54,7 +54,7 @@ export default function PublicPortfolioPage() {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                userId: result.id,
+                subdomain: subdomain,  // FIX K1: server resolves userId dari subdomain
                 type: 'VIEW',
                 pagePath: window.location.pathname,
                 url: window.location.href,

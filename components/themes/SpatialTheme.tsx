@@ -64,6 +64,24 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
     const rawHighlightColor = theme?.themeColor || '#6366f1'; // Default elegant blue
     const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#6366f1';
 
+    // Font Sync
+    const fontHeading = theme?.fontHeading || 'Inter';
+    const fontBody = theme?.fontBody || 'Inter';
+    const getFontFamily = (f: string) => {
+        if (f?.toLowerCase().includes('mono') || f?.toLowerCase().includes('space')) return "'Space Mono', monospace";
+        if (f?.toLowerCase().includes('serif') || f?.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+        return "'Inter', sans-serif";
+    };
+    const customHeadingFont = getFontFamily(fontHeading);
+    const customBodyFont = getFontFamily(fontBody);
+
+    // Button Shape Sync
+    const radiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-[24px]';
+    const cardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-[24px]';
+    const xlCardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[48px]' : 'rounded-[32px]';
+    const cardStyle = theme?.cardStyle || 'flat';
+    const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#0f1115] shadow-[0_30px_60px_rgba(0,0,0,0.8)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border border-white/20 shadow-[8px_8px_0_0_#ffffff]' : 'glass-panel border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]';
+
     const handleCopyEmail = (e: React.MouseEvent) => {
         e.preventDefault();
         navigator.clipboard.writeText(userEmail);
@@ -90,8 +108,8 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        .spatial-theme *:not(i):not(.fa):not(.fas):not(.far):not(.fab) { font-family: 'Inter', sans-serif !important; }
-        
+        .spatial-theme *:not(i):not(.fa):not(.fas):not(.far):not(.fab) { font-family: ${customBodyFont} !important; }
+        .spatial-theme h1, .spatial-theme h2, .spatial-theme h3 { font-family: ${customHeadingFont} !important; }
         /* Glassmorphism Mewah */
         .glass-panel {
           background: rgba(255, 255, 255, 0.02);
@@ -163,7 +181,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                     className={`flex flex-col items-center text-center px-8`}
                 >
                     {/* Status Pill */}
-                    <motion.div variants={auraAnim} className="inline-flex items-center gap-3 px-4 py-2 rounded-full glass-panel mb-8">
+                    <motion.div variants={auraAnim} className={`inline-flex items-center gap-3 px-4 py-2 ${radiusClass} glass-panel mb-8`}>
                         <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--hl)] opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--hl)]"></span>
@@ -184,7 +202,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                     <motion.div variants={auraAnim} className={`flex items-center justify-center gap-4 mt-12 w-full flex-row`}>
 
                         {/* Avatar Capsule */}
-                        <div className="glass-panel p-1.5 pr-6 rounded-full flex items-center gap-4 hover:scale-105 transition-transform duration-500">
+                        <div className={`glass-panel p-1.5 pr-6 ${radiusClass} flex items-center gap-4 hover:scale-105 transition-transform duration-500`}>
                             <div className="w-12 h-12 rounded-full overflow-hidden relative">
                                 <LazyImage src={displayAvatar} alt={fullName} className="w-full h-full object-cover" />
                             </div>
@@ -195,7 +213,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                         </div>
 
                         {/* Copy Email Button */}
-                        <div onClick={handleCopyEmail} className="glass-panel p-4 px-6 rounded-full flex items-center gap-3 cursor-pointer group hover:scale-105 transition-transform duration-500 relative overflow-hidden">
+                        <div onClick={handleCopyEmail} className={`glass-panel p-4 px-6 ${radiusClass} flex items-center gap-3 cursor-pointer group hover:scale-105 transition-transform duration-500 relative overflow-hidden`}>
                             {isCopied && <motion.div initial={{ opacity: 1, scale: 0 }} animate={{ opacity: 0, scale: 2 }} className="absolute inset-0 bg-[var(--hl)] opacity-20"></motion.div>}
                             <span className={`text-sm font-medium transition-colors ${isCopied ? 'text-[var(--hl)]' : 'text-slate-300 group-hover:text-white'}`}>
                                 {isCopied ? 'Email Copied!' : 'Copy Email'}
@@ -241,7 +259,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                     }}
                                 >
                                     {/* Image Container with deep shadow and glow on hover */}
-                                    <div className="w-full aspect-[4/3] rounded-[24px] overflow-hidden relative glass-panel p-2 transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(var(--hl-rgb),0.15)] group-hover:border-[var(--hl)]/30">
+                                    <div className={`w-full aspect-[4/3] ${cardRadiusClass} overflow-hidden relative ${cardStyleClass} p-2 transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(var(--hl-rgb),0.15)] group-hover:border-[var(--hl)]/30`}>
                                         <div className="w-full h-full rounded-[16px] overflow-hidden relative bg-[#0a0a0a]">
                                             <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" />
                                             
@@ -266,7 +284,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                     <div className="flex flex-col px-2">
                                         <div className="flex justify-between items-center mb-1">
                                             <h3 className="text-xl font-medium text-white group-hover:text-[var(--hl)] transition-colors">{p.title}</h3>
-                                            <span className="text-[10px] uppercase tracking-widest text-slate-500 border border-slate-800 px-2 py-1 rounded-full">{p.projectType}</span>
+                                            <span className={`text-[10px] uppercase tracking-widest text-slate-500 border border-slate-800 px-2 py-1 ${radiusClass}`}>{p.projectType}</span>
                                         </div>
                                         <p className="text-sm text-slate-400 line-clamp-2 mt-2 leading-relaxed">{p.description || 'View detailed case study of this project.'}</p>
                                     </div>
@@ -277,7 +295,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
 
                     {/* Explore More Button */}
                     <motion.div {...viewAnim} variants={auraAnim} className="w-full flex justify-center mt-8">
-                        <Link href={`/${subdomain}/gallery`} scroll={false} className="glass-panel px-8 py-4 rounded-full flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group">
+                        <Link href={`/${subdomain}/gallery`} scroll={false} className={`${cardStyleClass} px-8 py-4 ${radiusClass} flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group`}>
                             <span className="font-medium text-white">Explore Full Archive</span>
                             <i className="fas fa-arrow-right text-sm text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all"></i>
                         </Link>
@@ -299,7 +317,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                     {...viewAnim} variants={auraAnim}
                                     className="group flex flex-col gap-6"
                                 >
-                                    <div className="w-full aspect-[4/3] @md:aspect-video rounded-[32px] @md:rounded-[48px] overflow-hidden relative glass-panel p-2 @md:p-3 transition-all duration-700 group-hover:shadow-[0_0_60px_rgba(var(--hl-rgb),0.2)] group-hover:border-[var(--hl)]/30">
+                                    <div className={`w-full aspect-[4/3] @md:aspect-video ${xlCardRadiusClass} overflow-hidden relative ${cardStyleClass} p-2 @md:p-3 transition-all duration-700 group-hover:shadow-[0_0_60px_rgba(var(--hl-rgb),0.2)] group-hover:border-[var(--hl)]/30`}>
                                         <div className="w-full h-full rounded-[24px] @md:rounded-[36px] overflow-hidden relative bg-[#0a0a0a]">
                                             <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0a" />
                                             {/* Hover Overlay */}
@@ -316,7 +334,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                                 <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--hl)] font-bold mb-1 opacity-60">Spatial Model 0{i+1}</span>
                                                 <h3 className="text-3xl @md:text-5xl font-medium text-white group-hover:text-[var(--hl)] transition-colors">{p.title}</h3>
                                             </div>
-                                            <span className="text-[10px] uppercase tracking-widest text-slate-500 border border-slate-800 px-4 py-2 rounded-full">3D Asset</span>
+                                            <span className={`text-[10px] uppercase tracking-widest text-slate-500 border border-slate-800 px-4 py-2 ${radiusClass}`}>3D Asset</span>
                                         </div>
                                         {p.description && <p className="text-slate-400 text-sm @md:text-base max-w-2xl mt-2 leading-relaxed">{p.description}</p>}
                                     </div>
@@ -351,7 +369,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                 <motion.div
                                     key={t.id}
                                     {...viewAnim} variants={auraAnim}
-                                    className="glass-panel p-8 rounded-[32px] flex flex-col gap-6 relative overflow-hidden group hover:border-[var(--hl)]/30 transition-colors"
+                                    className={`${cardStyleClass} p-8 ${xlCardRadiusClass} flex flex-col gap-6 relative overflow-hidden group hover:border-[var(--hl)]/30 transition-colors`}
                                 >
                                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-[var(--hl)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                     <p className="text-slate-300 italic text-base @md:text-lg leading-relaxed font-light">
@@ -406,7 +424,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                     </div>
                                     <div className={`flex items-center justify-between @md:justify-end w-full @md:w-auto`}>
                                         <p className="text-sm text-slate-500 line-clamp-1 max-w-xs hidden @lg:block">{award.description}</p>
-                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all @md:ml-8">
+                                        <div className={`w-10 h-10 ${radiusClass} border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all @md:ml-8`}>
                                             <i className="fas fa-arrow-right -rotate-45 text-slate-400 group-hover:text-white transition-colors"></i>
                                         </div>
                                     </div>
@@ -419,7 +437,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                 {/* FOOTER (Massive CTA) */}
                 <motion.footer
                     {...viewAnim} variants={auraAnim}
-                    className={`mt-24 @md:mt-40 mb-10 glass-panel rounded-[40px] flex flex-col items-center text-center relative overflow-hidden mx-8 p-10 @md:p-20`}
+                    className={`mt-24 @md:mt-40 mb-10 glass-panel ${xlCardRadiusClass} flex flex-col items-center text-center relative overflow-hidden mx-8 p-10 @md:p-20`}
                 >
                     {/* Inner Glow */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full blur-[100px] opacity-20 pointer-events-none" style={{ backgroundColor: highlightColor }}></div>
@@ -429,7 +447,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                         <span className="text-slate-400">extraordinary.</span>
                     </h2>
 
-                    <a href={`mailto:${userEmail}`} className="mt-10 px-8 py-4 bg-white text-black rounded-full font-semibold text-lg hover:scale-105 transition-transform duration-300 relative z-10 shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                    <a href={`mailto:${userEmail}`} className={`mt-10 px-8 py-4 bg-white text-black ${radiusClass} font-semibold text-lg hover:scale-105 transition-transform duration-300 relative z-10 shadow-[0_0_30px_rgba(255,255,255,0.3)]`}>
                         Get in touch
                     </a>
 
@@ -440,7 +458,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                         </div>
                         <div className="flex gap-4">
                             {links.map((l: any, i: number) => (
-                                <a key={i} href={l.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
+                                <a key={i} href={l.url} target="_blank" rel="noreferrer" className={`w-10 h-10 ${radiusClass} bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors`}>
                                     <i className={`fab fa-${l.platform.toLowerCase()}`}></i>
                                 </a>
                             ))}
@@ -462,7 +480,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
 
                             <motion.div 
                                 initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                                className="relative w-full max-w-5xl glass-panel p-4 @md:p-8 rounded-[32px] border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.5)] flex flex-col gap-6 overflow-hidden"
+                                className={`relative w-full max-w-5xl glass-panel p-4 @md:p-8 ${xlCardRadiusClass} border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.5)] flex flex-col gap-6 overflow-hidden`}
                                 style={{ border: `1px solid ${highlightColor}20` } as any}
                             >
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-[1px] opacity-50" style={{ background: `linear-gradient(90deg, transparent, ${highlightColor}, transparent)` }}></div>
@@ -478,14 +496,14 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                     </div>
                                     <button 
                                         onClick={() => setSelectedMedia(null)}
-                                        className="w-12 h-12 rounded-full glass-panel flex items-center justify-center hover:bg-white/10 transition-colors group"
+                                        className={`w-12 h-12 ${radiusClass} glass-panel flex items-center justify-center hover:bg-white/10 transition-colors group`}
                                     >
                                         <i className="fas fa-times text-slate-400 group-hover:text-white transition-colors"></i>
                                     </button>
                                 </div>
                                 <motion.div 
                                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-                                    className={`relative w-full ${selectedMedia.type === 'video' ? 'aspect-video' : 'max-h-[60vh]'} rounded-2xl overflow-hidden bg-black/40 border border-white/5 flex items-center justify-center`}
+                                    className={`relative w-full ${selectedMedia.type === 'video' ? 'aspect-video' : 'max-h-[60vh]'} ${cardRadiusClass} overflow-hidden bg-black/40 border border-white/5 flex items-center justify-center`}
                                 >
                                     {selectedMedia.type === 'video' ? (
                                         <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />

@@ -63,6 +63,23 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
     const rawHighlightColor = theme?.themeColor || '#ff3366';
     const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#ff3366';
 
+    // Font Sync
+    const fontHeading = theme?.fontHeading || 'Playfair Display';
+    const fontBody = theme?.fontBody || 'Inter';
+    const getFontFamily = (f: string) => {
+        if (f?.toLowerCase().includes('mono') || f?.toLowerCase().includes('space')) return "'Space Mono', monospace";
+        if (f?.toLowerCase().includes('serif') || f?.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+        return "'Inter', sans-serif";
+    };
+    const customHeadingFont = getFontFamily(fontHeading);
+    const customBodyFont = getFontFamily(fontBody);
+
+    // Button Shape Sync
+    const radiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';
+    const cardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[40px]' : 'rounded-2xl';
+    const cardStyle = theme?.cardStyle || 'flat';
+    const cardStyleClassDark = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#111111] shadow-[0_30px_60px_rgba(255,255,255,0.03)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border border-white/20 shadow-[6px_6px_0_0_rgba(255,255,255,0.2)]' : 'bg-[#080808] border border-white/10 hover:border-white/30';
+
     const handleCopyEmail = (e: React.MouseEvent) => {
         e.preventDefault();
         navigator.clipboard.writeText(userEmail);
@@ -109,8 +126,10 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        .monolith-theme .font-serif { font-family: 'Playfair Display', serif; }
-        .monolith-theme .font-sans { font-family: 'Inter', sans-serif; }
+        .monolith-theme .font-serif { font-family: ${customHeadingFont}; }
+        .monolith-theme .font-sans { font-family: ${customBodyFont}; }
+        .monolith-theme .custom-heading { font-family: ${customHeadingFont} !important; }
+        .monolith-theme .custom-body { font-family: ${customBodyFont} !important; }
 
         @keyframes marquee {
             0% { transform: translateX(0); }
@@ -255,7 +274,7 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
                                         window.open(p.mediaUrl, '_blank');
                                     }
                                 }}
-                                className={`snap-item shrink-0 relative overflow-hidden rounded-[24px] @md:rounded-[40px] group cursor-pointer border border-white/10 hover:border-white/30 transition-colors duration-500
+                                className={`snap-item shrink-0 relative overflow-hidden group cursor-pointer transition-colors duration-500 ${cardRadiusClass} ${cardStyleClassDark}
                                 w-[85cqi] max-w-[320px] aspect-[4/5] @md:max-w-none @md:aspect-auto @md:w-[65cqi] @md:h-[75vh]`}
                             >
                                 <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100 opacity-60 group-hover:opacity-90" />
@@ -317,7 +336,7 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
                             <motion.div
                                 key={i}
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "50px" }} variants={fadeUp}
-                                className="snap-item relative overflow-hidden rounded-[24px] @md:rounded-[48px] group border border-white/10 hover:border-white/30 transition-colors duration-500 w-full aspect-[4/5] @md:aspect-video"
+                                className={`snap-item relative overflow-hidden group transition-colors duration-500 w-full aspect-[4/5] @md:aspect-video ${cardRadiusClass} ${cardStyleClassDark}`}
                             >
                                 <div className="absolute inset-0 bg-[#050505]"></div>
                                 <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#050505" />
@@ -365,7 +384,7 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
                             <motion.div
                                 key={t.id}
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
-                                className="group flex flex-col p-8 @md:p-12 border border-white/10 hover:border-white/30 transition-colors duration-500 rounded-[24px] bg-[#080808]"
+                                className={`group flex flex-col p-8 @md:p-12 transition-colors duration-500 ${cardRadiusClass} ${cardStyleClassDark}`}
                             >
                                 <div className="flex items-center gap-6 mb-8 border-b border-white/10 pb-6 group-hover:border-[var(--hl)]/50 transition-colors">
                                     <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 border border-white/20">
@@ -469,7 +488,7 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
                         <motion.div 
                             initial={{ y: 100, opacity: 0, scale: 0.9 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 100, opacity: 0, scale: 0.9 }}
                             transition={{ duration: 0.6, ease: cinematicEase }}
-                            className={`relative w-full max-w-7xl bg-black shadow-[0_50px_100px_rgba(0,0,0,0.8)] border border-white/5 flex flex-col overflow-hidden @md:rounded-[40px]`}
+                            className={`relative w-full max-w-7xl flex flex-col overflow-hidden ${cardRadiusClass} ${cardStyleClassDark} shadow-[0_50px_100px_rgba(0,0,0,0.8)]`}
                         >
                             {/* Cinematic Header */}
                             <div className="flex justify-between items-center px-6 py-3 @md:px-10 border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent">

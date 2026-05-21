@@ -100,6 +100,10 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
   const headingFont = getFontFamily(theme?.fontHeading);
   const bodyFont = getFontFamily(theme?.fontBody);
   const themeColor = isValidHexColor(theme?.themeColor) ? theme?.themeColor : undefined;
+  const buttonShape = theme?.buttonShape || 'rounded';
+  const radiusClass = buttonShape === 'hard' || buttonShape === 'square' ? 'rounded-none' : buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-lg';
+  const cardStyle = theme?.cardStyle || 'flat';
+  const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-white border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)]' : 'bg-gray-50 border border-gray-200 shadow-sm';
 
   return (
     <div className={`flex w-full min-h-screen bg-white text-black relative min-body flex-col @lg:flex-row min-theme`}>
@@ -178,14 +182,14 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
             </motion.div>
           </div>
 
-          <motion.div variants={imageReveal} className="w-full aspect-[4/5] mb-8 relative group">
+          <motion.div variants={imageReveal} className="w-full aspect-square mb-8 relative group">
             <div className="w-full h-full overflow-hidden border border-gray-200 relative">
               <LazyImage src={displayAvatar} alt={fullName} className="w-full h-full object-cover grayscale transition-all duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 group-hover:grayscale-0" />
               <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             </div>
             {/* Verified Badge */}
             {(data?.plan === 'PRO' || data?.userPlan === 'PRO') && (
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-500 rounded-full border-[3px] border-white flex items-center justify-center text-white text-[10px] shadow-lg z-20">
+              <div className={`absolute -bottom-2 -right-2 w-8 h-8 ${themeColor ? 'text-white' : 'bg-blue-500 text-white'} rounded-full border-[3px] border-white flex items-center justify-center text-[10px] shadow-lg z-20`} style={themeColor ? { backgroundColor: themeColor } : {}}>
                 <i className="fas fa-check"></i>
               </div>
             )}
@@ -272,14 +276,14 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
                     }
                   }}
                 >
-                  <div className="w-full aspect-[4/3] bg-gray-100 mb-4 border border-gray-200 overflow-hidden relative">
+                  <div className={`w-full aspect-[4/3] mb-4 overflow-hidden relative ${cardStyleClass} ${radiusClass}`}>
                     <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] grayscale group-hover:grayscale-0 group-hover:scale-110" />
                     <div className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
                       ${isVideo
                         ? 'bg-transparent opacity-100'
                         : 'bg-black/30 backdrop-blur-sm opacity-0 group-hover:opacity-100'
                       }`}>
-                      <div className={`flex items-center justify-center rounded-full shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+                      <div className={`flex items-center justify-center shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${radiusClass}
                         ${isVideo
                           ? 'w-12 h-12 bg-white/90 text-black opacity-100 scale-100 group-hover:scale-110'
                           : 'w-14 h-14 bg-white text-black opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 delay-100'
@@ -313,7 +317,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
                 EXPLORE ARCHIVE
                 <span className="absolute -bottom-2 left-0 w-0 h-px bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
               </span>
-              <div className="w-10 h-10 @md:w-12 @md:h-12 rounded-full border border-gray-200 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-black group-hover:border-black shadow-sm group-hover:shadow-md overflow-hidden relative">
+              <div className={`w-10 h-10 @md:w-12 @md:h-12 border border-gray-200 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-black group-hover:border-black shadow-sm group-hover:shadow-md overflow-hidden relative ${radiusClass}`}>
                 <i className="fas fa-arrow-right absolute transform -translate-x-[150%] text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 text-[10px] @md:text-xs"></i>
                 <i className="fas fa-arrow-right absolute transform translate-x-0 text-gray-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%] opacity-100 group-hover:opacity-0 text-[10px] @md:text-xs"></i>
               </div>
@@ -343,7 +347,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
             >
               {items3D.map((p: any, i: number) => (
                 <motion.div key={p.id || i} variants={cinematicBlurUp} className="group w-full">
-                  <div className="w-full border border-gray-200 overflow-hidden relative rounded-sm shadow-sm hover:shadow-md transition-shadow">
+                  <div className={`w-full overflow-hidden relative hover:shadow-xl transition-shadow ${cardStyleClass} ${radiusClass}`}>
                     <Interactive3DViewer mediaUrl={p.mediaUrl} />
                   </div>
                   <div className="flex justify-between items-start mt-4">
@@ -448,7 +452,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
                 </div>
                 <button
                   onClick={() => setSelectedMedia(null)}
-                  className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:scale-110 transition-transform active:scale-95 shadow-lg"
+                  className={`w-12 h-12 bg-black text-white flex items-center justify-center hover:scale-110 transition-transform active:scale-95 shadow-lg ${radiusClass}`}
                 >
                   <i className="fas fa-times"></i>
                 </button>
@@ -456,7 +460,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
 
               <motion.div
                 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
-                className={`w-full ${selectedMedia.type === 'video' ? 'aspect-video bg-black' : 'max-h-[70vh] overflow-hidden bg-gray-50'} shadow-2xl rounded-sm relative flex items-center justify-center border border-gray-100`}
+                className={`w-full ${selectedMedia.type === 'video' ? 'aspect-video bg-black' : 'max-h-[70vh] overflow-hidden bg-gray-50'} shadow-2xl relative flex items-center justify-center border border-gray-100 ${radiusClass}`}
               >
                 {selectedMedia.type === 'video' ? (
                   <UniversalPlayer mediaUrl={selectedMedia.url} title={selectedMedia.title} />

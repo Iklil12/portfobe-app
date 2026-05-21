@@ -40,8 +40,8 @@ export async function GET(req: Request) {
         profile: true,
         siteAppearance: true,
         links: { orderBy: { order: 'asc' } },
-        projects: { orderBy: { createdAt: 'desc' } },
-        certificates: { orderBy: { createdAt: 'desc' } },
+        projects: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
+        certificates: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
         testimonials: { orderBy: { order: 'asc' } }
       }
     });

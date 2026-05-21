@@ -62,7 +62,18 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
     const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#4f46e5';
     const fontHeading = theme?.fontHeading || 'Cabinet Grotesk';
     const fontBody = theme?.fontBody || 'Inter';
-    const radiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';
+    const radiusClass = theme?.buttonShape === 'square' || theme?.buttonShape === 'hard' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';
+    const cardRadiusClass = theme?.buttonShape === 'square' || theme?.buttonShape === 'hard' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-3xl' : 'rounded-2xl';
+    const cardStyle = theme?.cardStyle || 'flat';
+    const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#0a0a0a] shadow-[0_20px_50px_rgba(255,255,255,0.05)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border-2 border-[var(--hl)] shadow-[6px_6px_0_0_var(--hl)]' : 'bg-white/[0.02] border border-white/10 hover:border-white/20';
+
+    const getFontFamily = (f: string) => {
+        if (f?.toLowerCase().includes('mono') || f?.toLowerCase().includes('space')) return "'Space Mono', monospace";
+        if (f?.toLowerCase().includes('serif') || f?.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+        return `'${f}', sans-serif`;
+    };
+    const customHeadingFont = getFontFamily(fontHeading);
+    const customBodyFont = getFontFamily(fontBody);
 
     const handleCopyEmail = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -92,8 +103,8 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
             
             <style dangerouslySetInnerHTML={{
                 __html: `
-        .nexus-theme .font-display { font-family: '${fontHeading}', sans-serif; }
-        .nexus-theme .font-sans { font-family: '${fontBody}', sans-serif; }
+        .nexus-theme .font-display { font-family: ${customHeadingFont}; }
+        .nexus-theme .font-sans { font-family: ${customBodyFont}; }
         
         /* Hilangkan Scrollbar untuk tampilan bersih — scoped ke nexus-theme */
         .nexus-theme ::-webkit-scrollbar { width: 6px; }
@@ -124,7 +135,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                     {/* Top: Avatar & Status */}
                     <div className="flex flex-col gap-8">
                         <div className="flex items-center justify-between">
-                            <div className="w-16 h-16 @md:w-20 @md:h-20 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                            <div className={`w-16 h-16 @md:w-20 @md:h-20 ${cardRadiusClass} overflow-hidden border border-white/10 shadow-2xl`}>
                                 <LazyImage src={displayAvatar} alt={fullName} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
                             </div>
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border nexus-border bg-white/5">
@@ -164,10 +175,10 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
 
                         {/* Action Buttons */}
                         <div className="flex flex-col @xl:flex-row gap-3 w-full border-t nexus-border pt-8">
-                            <a href={`mailto:${userEmail}`} className="flex-1 bg-white text-black hover:bg-[var(--hl)] hover:text-white transition-colors duration-300 ${radiusClass} py-3 px-4 flex items-center justify-center gap-2 font-sans font-bold text-sm">
+                            <a href={`mailto:${userEmail}`} className={`flex-1 bg-white text-black hover:bg-[var(--hl)] hover:text-white transition-colors duration-300 ${radiusClass} py-3 px-4 flex items-center justify-center gap-2 font-sans font-bold text-sm`}>
                                 Let's Talk <i className="fas fa-paper-plane"></i>
                             </a>
-                            <button onClick={handleCopyEmail} className="flex-1 bg-white/5 border nexus-border hover:bg-white/10 transition-colors duration-300 ${radiusClass} py-3 px-4 flex items-center justify-center gap-2 font-sans font-medium text-sm text-white">
+                            <button onClick={handleCopyEmail} className={`flex-1 bg-white/5 border nexus-border hover:bg-white/10 transition-colors duration-300 ${radiusClass} py-3 px-4 flex items-center justify-center gap-2 font-sans font-medium text-sm text-white`}>
                                 {isCopied ? 'Copied!' : 'Copy Email'} <i className={isCopied ? 'fas fa-check text-[var(--hl)]' : 'far fa-copy'}></i>
                             </button>
                         </div>
@@ -266,7 +277,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                                                         <motion.div 
                                                             initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
                                                             transition={{ duration: 0.3 }}
-                                                            className="absolute right-[15%] top-1/2 -translate-y-1/2 w-[320px] aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl z-0 pointer-events-none border border-white/20"
+                                                            className={`absolute right-[15%] top-1/2 -translate-y-1/2 w-[320px] aspect-[4/3] ${cardRadiusClass} overflow-hidden shadow-2xl z-0 pointer-events-none border border-white/20`}
                                                         >
                                                             <div className="relative w-full h-full">
                                                                 <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover" />
@@ -308,7 +319,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                                             <motion.div 
                                                 key={i}
                                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
-                                                className={`relative w-full border nexus-border group overflow-hidden ${radiusClass}`}
+                                                className={`relative w-full group overflow-hidden ${cardRadiusClass} ${cardStyleClass}`}
                                             >
                                                 <div className="flex flex-col w-full relative z-10 p-8 @md:p-12 bg-gradient-to-b from-white/10 to-transparent">
                                                     <div className="flex flex-col gap-3">
@@ -318,7 +329,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                                                         <h3 className={`font-display font-bold text-white transition-colors duration-300 text-4xl @md:text-7xl leading-none`}>
                                                             {p.title}
                                                         </h3>
-                                                        {p.description && <p className="text-slate-400 text-sm @md:text-lg max-w-2xl mt-6 leading-relaxed">{p.description}</p>}
+                                                        {p.description && <p className="font-sans text-slate-400 text-sm @md:text-lg max-w-2xl mt-6 leading-relaxed">{p.description}</p>}
                                                     </div>
                                                 </div>
 
@@ -356,7 +367,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                                         <motion.div
                                             key={t.id}
                                             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
-                                            className={`p-8 border nexus-border flex flex-col gap-6 bg-white/[0.02] hover:bg-white/[0.04] transition-colors rounded-[24px]`}
+                                            className={`p-8 flex flex-col gap-6 transition-colors ${cardRadiusClass} ${cardStyleClass}`}
                                         >
                                             <p className="font-sans text-sm @md:text-lg text-slate-300 leading-relaxed font-medium">
                                                 "{t.content}"
@@ -430,7 +441,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                                 <h2 className="font-display font-extrabold text-5xl @md:text-7xl @lg:text-[6cqi] text-white leading-[0.9] mb-8">
                                     Let's build<br/>the future.
                                 </h2>
-                                <a href={`mailto:${userEmail}`} className="px-8 py-4 bg-white text-black hover:bg-[var(--hl)] hover:text-white ${radiusClass} font-sans font-bold text-sm uppercase tracking-widest transition-colors duration-300">
+                                <a href={`mailto:${userEmail}`} className={`px-8 py-4 bg-white text-black hover:bg-[var(--hl)] hover:text-white ${radiusClass} font-sans font-bold text-sm uppercase tracking-widest transition-colors duration-300`}>
                                     Get in Touch
                                 </a>
                             </motion.div>

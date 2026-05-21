@@ -65,9 +65,9 @@ export async function GET(req: Request) {
         select: { id: true, type: true, ipAddress: true, duration: true, sessionId: true, referrer: true, createdAt: true }
       }),
       // E. Projects (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
-      prisma.project.count({ where: { userId } }),
+      prisma.project.count({ where: { userId, deletedAt: null } }),
       // F. Certificates (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
-      prisma.certificate.count({ where: { userId } }),
+      prisma.certificate.count({ where: { userId, deletedAt: null } }),
       // G. Links (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
       prisma.link.count({ where: { userId } }),
       // H. Testimonials (OPTIMASI: Gunakan count, hasilkan 1 angka integer)

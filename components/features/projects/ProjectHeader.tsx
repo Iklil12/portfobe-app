@@ -162,14 +162,25 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
               </Link>
             </motion.div>
           ) : (
-            <motion.button 
+            <motion.button
               key="add-btn"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              onClick={() => handleOpenModal()} 
-              className="w-full md:w-auto bg-slate-900 text-white px-7 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-md hover:bg-slate-800 hover:shadow-lg transition-all duration-300 active:scale-95"
+              onClick={() => handleOpenModal()}
+              className="group w-full md:w-auto relative overflow-hidden flex items-center gap-0 rounded-2xl bg-slate-900 shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.18)] transition-all duration-300 active:scale-95 hover:-translate-y-0.5"
             >
-              <i className="fas fa-plus text-[10px]"></i> Tambah Data
+              {/* shimmer sweep on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
+
+              {/* icon box */}
+              <div className="flex items-center justify-center w-11 h-11 m-1.5 rounded-xl bg-white/10 shrink-0">
+                <i className="fas fa-plus text-white text-[11px]" />
+              </div>
+
+              {/* label */}
+              <span className="pr-5 text-[11px] font-black uppercase tracking-widest text-white">
+                Tambah Data
+              </span>
             </motion.button>
           )}
         </AnimatePresence>

@@ -36,6 +36,25 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
 
     const primaryColor = theme?.themeColor || '#FF0033';
 
+    // Font Sync
+    const fontHeading = theme?.fontHeading || 'Bebas Neue';
+    const fontBody = theme?.fontBody || 'Space Mono';
+    const getFontFamily = (f: string) => {
+        if (!f) return "'Space Mono', monospace";
+        if (f.toLowerCase().includes('space') || f.toLowerCase().includes('mono')) return "'Space Mono', monospace";
+        if (f.toLowerCase().includes('serif') || f.toLowerCase().includes('elegant') || f.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+        if (f.toLowerCase().includes('bebas')) return "'Bebas Neue', sans-serif";
+        return "'Inter', sans-serif";
+    };
+    const customBodyFont = getFontFamily(fontBody);
+    const customHeadingFont = getFontFamily(fontHeading);
+
+    const radiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-sm';
+    const cardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-2xl' : 'rounded-md';
+    const cardStyle = theme?.cardStyle || 'flat';
+    const cardStyleClassDark = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#111] shadow-[0_30px_60px_rgba(255,255,255,0.05)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border-2 border-white shadow-[6px_6px_0_0_#fff]' : 'bg-[#050505] border border-[#222] hover:border-[#444]';
+    const cardStyleClassLight = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-white border-2 border-[#050505] shadow-[6px_6px_0_0_#050505]' : 'bg-white border-2 border-[#050505]';
+
     const [timecode] = useState("00:04:26:15");
     const [selectedCert, setSelectedCert] = useState<any>(null);
 
@@ -71,9 +90,10 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
             @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
             @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
 
-            .viewfinder-theme { font-family: 'Space Mono', monospace; }
+            .viewfinder-theme { font-family: ${customBodyFont} !important; }
+            .vf-body, .vf-hud-text { font-family: ${customBodyFont} !important; }
             .viewfinder-theme ::selection { background-color: var(--primary); color: #fff; }
-            .viewfinder-theme .font-cinema { font-family: 'Bebas Neue', sans-serif; }
+            .viewfinder-theme .font-cinema { font-family: ${customHeadingFont} !important; }
 
             .viewfinder-theme .film-strip::-webkit-scrollbar { display: none; }
             .viewfinder-theme .film-strip { -ms-overflow-style: none; scrollbar-width: none; scroll-snap-type: x mandatory; }
@@ -177,7 +197,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                         <span>TC {timecode}</span>
                     </div>
                     <div className="flex flex-col items-end gap-0.5">
-                        <span className="border border-current px-1.5 py-0.5 rounded-sm text-[9px]">100% 🔋</span>
+                        <span className={`border border-current px-1.5 py-0.5 ${radiusClass} text-[9px]`}>100% 🔋</span>
                         <span>ISO 800 | 24FPS</span>
                     </div>
                 </motion.div>
@@ -266,7 +286,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                     hidden: { opacity: 0, y: 20 },
                                     visible: { opacity: 1, y: 0, transition: { duration: 1, ease: cinematicEase } }
                                 }}
-                                className="text-gray-400 max-w-md mx-auto leading-relaxed mt-5 bg-[#050505]/60 p-4 border border-white/5 vf-hero-sub"
+                                className="text-gray-400 max-w-md mx-auto leading-relaxed mt-5 vf-hero-sub vf-body"
                             >
                                 "{bio}"
                             </motion.p>
@@ -344,13 +364,13 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                     }}
                                     className="film-frame flex-none block vf-reel-card group cursor-pointer"
                                 >
-                                    <div className="w-full aspect-video overflow-hidden bg-gray-900 border border-white/20 relative">
+                                    <div className={`w-full aspect-video overflow-hidden ${cardStyleClassDark} ${cardRadiusClass} relative`}>
                                         <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover opacity-80 cine-img group-hover:scale-110 group-hover:opacity-100 transition-all duration-1000" />
                                         
                                         {/* Cinematic Play Overlay */}
                                         {isVideo && (
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-14 h-14 rounded-full border border-white/40 flex items-center justify-center backdrop-blur-sm group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500">
+                                                <div className={`w-14 h-14 ${radiusClass} border border-white/40 flex items-center justify-center backdrop-blur-sm group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500`}>
                                                     <i className="fas fa-play text-white text-xs ml-1"></i>
                                                 </div>
                                             </div>
@@ -366,7 +386,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                             );
                         }) : (
                             <div className="film-frame flex-none vf-reel-card group">
-                                <div className="w-full aspect-[21/9] overflow-hidden bg-gray-900 border border-white/20">
+                                <div className={`w-full aspect-[21/9] overflow-hidden ${cardStyleClassDark} ${cardRadiusClass}`}>
                                     <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" />
                                 </div>
                                 <div className="mt-3 text-left">
@@ -423,7 +443,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                         key={idx}
                                         className="relative block w-full group"
                                     >
-                                        <div className="w-full aspect-video overflow-hidden bg-gray-900 border border-white/10 relative shadow-[0_0_100px_rgba(0,0,0,0.5)]">
+                                        <div className={`w-full aspect-video overflow-hidden ${cardStyleClassDark} ${cardRadiusClass} relative shadow-[0_0_100px_rgba(0,0,0,0.5)]`}>
                                             <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#050505" />
                                             {/* HUD Overlay for Cinematic Feel */}
                                             <div className="absolute top-8 left-8 flex flex-col gap-2 pointer-events-none z-20">
@@ -511,14 +531,14 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                         <motion.div
                                             key={t.id}
                                             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}
-                                            className="p-6 border-2 border-[#050505] bg-white flex flex-col relative"
+                                            className={`p-6 flex flex-col relative ${cardStyleClassLight} ${cardRadiusClass}`}
                                         >
                                             <div className="absolute top-2 right-2 flex gap-0.5">
                                                 {[...Array(5)].map((_, idx) => (
                                                     <i key={idx} className={`text-[8px] ${idx < t.rating ? 'fas fa-star text-[var(--primary)]' : 'far fa-star text-gray-300'}`}></i>
                                                 ))}
                                             </div>
-                                            <p className="font-sans text-xs @md:text-sm text-gray-600 italic mb-6 leading-relaxed relative z-10">
+                                            <p className="vf-body text-xs @md:text-sm text-gray-600 italic mb-6 leading-relaxed relative z-10">
                                                 "{t.content}"
                                             </p>
                                             <div className="flex items-center gap-3 mt-auto">
@@ -533,7 +553,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <h4 className="font-bold text-[10px] text-[#050505] uppercase tracking-widest">{t.clientName}</h4>
-                                                    {t.company && <p className="font-sans text-[8px] uppercase tracking-[0.2em] text-[var(--primary)]">{t.company}</p>}
+                                                    {t.company && <p className="vf-body text-[8px] uppercase tracking-[0.2em] text-[var(--primary)]">{t.company}</p>}
                                                 </div>
                                             </div>
                                         </motion.div>
@@ -618,7 +638,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                     variants={fadeUpVariants}
                     className="relative z-20 py-24 bg-[#050505] text-center border-t border-white/5"
                 >
-                    <p className="vf-hud-text uppercase tracking-[0.3em] font-bold mb-4" style={{ color: 'var(--primary)' }}>Cut. That's a wrap.</p>
+                    <p className="vf-hud-text vf-body uppercase tracking-[0.3em] font-bold mb-4" style={{ color: 'var(--primary)' }}>Cut. That's a wrap.</p>
                     <motion.h2
                         whileHover={{ scale: 1.05 }}
                         className="font-cinema text-[#F3F3F1] hover:text-[var(--primary)] transition-colors cursor-pointer mb-10 vf-footer-title leading-tight inline-block"
@@ -627,7 +647,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                             DIRECT<br />DIRECTIVE ↗<br />
                         </a>
                     </motion.h2>
-                    <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-[10px] text-gray-600 uppercase tracking-widest">
+                    <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-[10px] text-gray-600 uppercase tracking-widest vf-body">
                         <span>© {new Date().getFullYear()} {fullName.toUpperCase()}</span>
                         {links.length > 0 ? links.slice(0, 3).map((link: any, idx: number) => (
                             <motion.a whileHover={{ y: -2, color: "#F3F3F1" }} key={idx} href={link.url} target="_blank" rel="noreferrer" className="transition-colors">{link.platform}</motion.a>

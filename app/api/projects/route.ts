@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity"; 
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // 1. GET: Menarik Semua Proyek
 export async function GET(req: Request) {
@@ -21,13 +22,13 @@ export async function GET(req: Request) {
 
     const [projects, total] = await Promise.all([
       prisma.project.findMany({
-        where: { userId: user.id },
+        where: { userId: user.id, deletedAt: null },
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip: skip,
       }),
       prisma.project.count({
-        where: { userId: user.id },
+        where: { userId: user.id, deletedAt: null },
       })
     ]);
 
@@ -48,6 +49,9 @@ export async function GET(req: Request) {
 // 2. POST: Menyimpan Proyek Baru
 export async function POST(req: Request) {
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Tidak diizinkan" }, { status: 401 });
 
@@ -56,7 +60,7 @@ export async function POST(req: Request) {
 
     // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
     if (user.plan === 'FREE') {
-      const projectCount = await prisma.project.count({ where: { userId: user.id } });
+      const projectCount = await prisma.project.count({ where: { userId: user.id, deletedAt: null } });
       if (projectCount >= 5) {
         return NextResponse.json({ 
           error: "Kuota FREE maksimal 5 proyek. Silakan upgrade ke PRO.",
@@ -100,6 +104,9 @@ export async function POST(req: Request) {
 // 3. PATCH: Memperbarui Proyek
 export async function PATCH(req: Request) {
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Tidak diizinkan" }, { status: 401 });
 
@@ -143,6 +150,9 @@ export async function PATCH(req: Request) {
 // 4. DELETE: Menghapus Proyek
 export async function DELETE(req: Request) {
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Tidak diizinkan" }, { status: 401 });
 
@@ -159,12 +169,15 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
     }
 
-    await prisma.project.delete({ where: { id } });
+    await prisma.project.update({
+      where: { id },
+      data: { deletedAt: new Date() }
+    });
     
     // REKAM AKTIVITAS KE HISTORY
-    await logActivity(user.id, "DELETE_PROJECT", `Menghapus karya: "${existingProject.title}"`);
+    await logActivity(user.id, "DELETE_PROJECT", `Memindahkan ke trash: "${existingProject.title}"`);
 
-    return NextResponse.json({ message: "Proyek berhasil dihapus" }, { status: 200 });
+    return NextResponse.json({ message: "Proyek dipindahkan ke trash" }, { status: 200 });
 
   } catch (error) {
     console.error("Error Delete Project:", error);

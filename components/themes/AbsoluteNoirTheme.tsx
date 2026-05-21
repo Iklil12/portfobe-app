@@ -49,6 +49,20 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
     const firstName = nameParts[0];
     const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'SYSTEM';
 
+    // Font & Button Shape Sync
+    const fontHeading = theme?.fontHeading || 'Inter';
+    const fontBody = theme?.fontBody || 'Inter';
+    const buttonShape = theme?.buttonShape || 'hard';
+    const radiusClass = buttonShape === 'pill' ? 'rounded-full' : buttonShape === 'rounded' ? 'rounded-xl' : 'rounded-none';
+
+    const getFontFamily = (f: string) => {
+        if (f?.toLowerCase().includes('mono') || f?.toLowerCase().includes('space')) return "'Space Mono', monospace";
+        if (f?.toLowerCase().includes('serif') || f?.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+        return "'Inter', sans-serif";
+    };
+    const customHeadingFont = getFontFamily(fontHeading);
+    const customBodyFont = getFontFamily(fontBody);
+
     const smoothEase = [0.33, 1, 0.68, 1] as any;
     const wireframeReveal = {
         hidden: { opacity: 0, y: 30 },
@@ -65,7 +79,7 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
         <main className="relative bg-[#050505] text-white font-sans selection:bg-white selection:text-black @container tracking-tight noir-theme" style={{ filter: 'grayscale(100%) contrast(1.2)' }}>
             <style dangerouslySetInnerHTML={{
                     __html: `
-            .noir-theme .font-sans { font-family: 'Inter', sans-serif; }
+            .noir-theme .font-sans { font-family: ${customBodyFont}; }
             .noir-theme .font-mono { font-family: 'Space Mono', monospace; }
             @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
             .animate-ticker { animation: ticker 30s linear infinite; }

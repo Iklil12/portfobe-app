@@ -63,6 +63,17 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
     const fontHeading = theme?.fontHeading || 'Instrument Sans'; // Pakai Sans untuk modern look
     const fontBody = theme?.fontBody || 'Instrument Sans';
     const radiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-3xl';
+    const cardRadiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-3xl';
+    const cardStyle = theme?.cardStyle || 'glassmorphism';
+    const cardStyleClassDark = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#18181b] border-transparent shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border-2 border-[var(--hl)] shadow-[6px_6px_0_0_var(--hl)]' : cardStyle === 'flat' ? 'bg-[#0a0a0c] border-2 border-white/20' : 'bg-white/5 border border-white/10 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.1)] hover:border-white/20 hover:bg-white/10';
+
+    const getFontFamily = (f: string) => {
+        if (f?.toLowerCase().includes('mono') || f?.toLowerCase().includes('space')) return "'Space Mono', monospace";
+        if (f?.toLowerCase().includes('serif') || f?.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+        return "'Inter', sans-serif";
+    };
+    const customHeadingFont = getFontFamily(fontHeading);
+    const customBodyFont = getFontFamily(fontBody);
 
     const rawHighlightColor = theme?.themeColor || '#8b5cf6'; // Default Purple Aura
     const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#8b5cf6';
@@ -95,8 +106,10 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-            .aura-theme { font-family: 'Inter', sans-serif; }
-            .aura-theme .font-outfit { font-family: 'Outfit', sans-serif; }
+            .aura-theme { font-family: ${customBodyFont}; }
+            .aura-theme .font-outfit { font-family: ${customHeadingFont}; }
+            .aura-theme .font-serif { font-family: ${customHeadingFont}; }
+            .aura-theme .font-sans { font-family: ${customBodyFont}; }
 
             @keyframes blob {
                 0% { transform: translate(0, 0) scale(1); }
@@ -219,8 +232,8 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                                     }
                                 }}
                             >
-                                <div className={`relative w-full ${isLarge ? 'aspect-video @md:aspect-[21/9]' : 'aspect-video @md:aspect-[4/3]'} ${radiusClass} overflow-hidden bg-white/5 border border-white/10 backdrop-blur-xl p-2 transition-all duration-500 hover:border-white/20 hover:bg-white/10`}>
-                                    <div className={`relative w-full h-full ${radiusClass} overflow-hidden bg-[#0a0a0c]`}>
+                                <div className={`relative w-full ${isLarge ? 'aspect-video @md:aspect-[21/9]' : 'aspect-video @md:aspect-[4/3]'} ${cardRadiusClass} overflow-hidden ${cardStyleClassDark} p-2 transition-all duration-500`}>
+                                    <div className={`relative w-full h-full ${cardRadiusClass} overflow-hidden bg-[#0a0a0c]`}>
                                         <LazyImage
                                             src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl}
                                             alt={p.title}
@@ -278,8 +291,8 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                 className={`group relative block w-full`}
                             >
-                                <div className={`relative w-full aspect-[4/3] @md:aspect-video ${radiusClass} overflow-hidden bg-white/5 border border-white/10 backdrop-blur-xl p-2 @md:p-3 transition-all duration-500 hover:border-[var(--hl)] hover:bg-white/10`}>
-                                    <div className={`relative w-full h-full ${radiusClass} overflow-hidden bg-[#0a0a0c]`}>
+                                <div className={`relative w-full aspect-[4/3] @md:aspect-video ${cardRadiusClass} overflow-hidden ${cardStyleClassDark} p-2 @md:p-3 transition-all duration-500 hover:border-[var(--hl)] hover:bg-white/10`}>
+                                    <div className={`relative w-full h-full ${cardRadiusClass} overflow-hidden bg-[#0a0a0c]`}>
                                         <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0c" />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none opacity-80 group-hover:opacity-40 transition-opacity duration-500"></div>
 
@@ -327,7 +340,7 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                                 href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                 // List Item Interaktif
-                                className={`group flex flex-col @md:flex-row items-start @md:items-center justify-between p-6 @md:p-8 bg-white/5 border border-white/10 hover:border-[var(--hl)]/50 backdrop-blur-md hover:bg-white/10 transition-all duration-500 ${radiusClass} relative overflow-hidden`}
+                                className={`group flex flex-col @md:flex-row items-start @md:items-center justify-between p-6 @md:p-8 bg-white/5 border border-white/10 hover:border-[var(--hl)]/50 backdrop-blur-md hover:bg-white/10 transition-all duration-500 ${cardRadiusClass} relative overflow-hidden`}
                             >
                                 {/* Efek Cahaya dari Kiri saat Hover */}
                                 <div className="absolute top-0 left-0 w-2 h-full bg-[var(--hl)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -364,7 +377,7 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                             <motion.div
                                 key={t.id}
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
-                                className={`group relative p-8 bg-white/5 border border-white/10 hover:border-[var(--hl)]/50 backdrop-blur-md hover:bg-white/10 transition-all duration-500 ${radiusClass} overflow-hidden flex flex-col justify-between`}
+                                className={`group relative p-8 transition-all duration-500 ${cardRadiusClass} ${cardStyleClassDark} overflow-hidden flex flex-col justify-between`}
                             >
                                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--hl)] opacity-0 group-hover:opacity-10 blur-[50px] transition-opacity duration-500 rounded-full"></div>
                                 
@@ -465,7 +478,7 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                         <motion.div 
                             initial={{ scale: 0.8, opacity: 0, rotateX: 20 }} animate={{ scale: 1, opacity: 1, rotateX: 0 }} exit={{ scale: 0.8, opacity: 0, rotateX: 20 }}
                             transition={{ type: "spring", stiffness: 150, damping: 20 }}
-                            className={`relative w-full max-w-5xl bg-[#121214] border border-white/10 shadow-[0_32px_64px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden ${radiusClass}`}
+                            className={`relative w-full max-w-5xl flex flex-col overflow-hidden ${cardRadiusClass} ${cardStyleClassDark}`}
                         >
                             <div className="flex justify-between items-center p-6 @md:p-8 border-b border-white/5 relative z-10">
                                 <div className="flex flex-col text-left">

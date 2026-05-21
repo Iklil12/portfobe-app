@@ -4,12 +4,16 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import { Resend } from 'resend';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 // Inisialisasi Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function PATCH(req: Request) {
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

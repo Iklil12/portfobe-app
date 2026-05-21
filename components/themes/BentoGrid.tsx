@@ -63,6 +63,23 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
     const rawHighlightColor = theme?.themeColor || '#ff0055';
     const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#ff0055';
 
+    // Font Sync
+    const fontHeading = theme?.fontHeading || 'Plus Jakarta Sans';
+    const fontBody = theme?.fontBody || 'Plus Jakarta Sans';
+    const getFontFamily = (f: string) => {
+        if (f?.toLowerCase().includes('mono') || f?.toLowerCase().includes('space')) return "'Space Mono', monospace";
+        if (f?.toLowerCase().includes('serif') || f?.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+        return "'Plus Jakarta Sans', sans-serif";
+    };
+    const customHeadingFont = getFontFamily(fontHeading);
+    const customBodyFont = getFontFamily(fontBody);
+
+    // Button Shape Sync
+    const radiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-[24px]';
+    const cardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-[24px]';
+    const cardStyle = theme?.cardStyle || 'flat';
+    const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#121214] border-transparent shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#1a1a1d] border-2 border-white shadow-[6px_6px_0_0_#fff]' : 'bg-[#1a1a1d] border border-white/5 shadow-md';
+
     const handleCopyEmail = (e: React.MouseEvent) => {
         e.preventDefault();
         navigator.clipboard.writeText(userEmail);
@@ -99,14 +116,16 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        .bento-theme { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .bento-theme *:not(i) { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .bento-theme { font-family: ${customBodyFont}; }
+        .bento-theme *:not(i) { font-family: ${customBodyFont}; }
+        .bento-theme .custom-heading { font-family: ${customHeadingFont} !important; }
+        .bento-theme .custom-body { font-family: ${customBodyFont} !important; }
         
         .bento-card {
-          background-color: #121214;
-          border: 1px solid rgba(255,255,255,0.06);
-          border-radius: 32px;
-          box-shadow: inset 0 1px 1px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.5);
+          background-color: ${cardStyle === 'hard-shadow' || cardStyle === 'hard' ? '#1a1a1d' : cardStyle === 'soft-shadow' || cardStyle === 'soft' ? '#121214' : '#121214'};
+          border: ${cardStyle === 'hard-shadow' || cardStyle === 'hard' ? '2px solid white' : cardStyle === 'soft-shadow' || cardStyle === 'soft' ? '1px solid transparent' : '1px solid rgba(255,255,255,0.06)'};
+          border-radius: ${theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? '0' : theme?.buttonShape === 'pill' ? '32px' : '24px'};
+          box-shadow: ${cardStyle === 'hard-shadow' || cardStyle === 'hard' ? '6px 6px 0 0 white' : cardStyle === 'soft-shadow' || cardStyle === 'soft' ? '0 20px 50px rgba(0,0,0,0.5)' : 'inset 0 1px 1px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.5)'};
           overflow: hidden;
           position: relative;
           transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
@@ -173,8 +192,8 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                     {/* Interaksi Bawah (Telah diperbaiki untuk Mobile) */}
                     <div className={`relative z-10 flex w-full flex-row gap-4 mt-16`}>
                         
-                        <div onClick={handleCopyEmail} className={`flex-1 bg-[#1a1a1d] hover:bg-[#222226] border border-white/5 flex items-center gap-3 @md:gap-4 cursor-pointer transition-colors group shadow-lg rounded-full p-2 pr-6`}>
-                            <div className={`rounded-full bg-black/50 flex shrink-0 items-center justify-center group-hover:bg-[var(--hl)] group-hover:text-black transition-colors w-12 h-12`}>
+                        <div onClick={handleCopyEmail} className={`flex-1 bg-[#1a1a1d] hover:bg-[#222226] border border-white/5 flex items-center gap-3 @md:gap-4 cursor-pointer transition-colors group shadow-lg ${radiusClass} p-2 pr-6`}>
+                            <div className={`${radiusClass} bg-black/50 flex shrink-0 items-center justify-center group-hover:bg-[var(--hl)] group-hover:text-black transition-colors w-12 h-12`}>
                                 <i className={`fas ${isCopied ? 'fa-check' : 'fa-paper-plane'} text-lg`}></i>
                             </div>
                             <div className="flex flex-col flex-1 overflow-hidden">
@@ -185,7 +204,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                             </div>
                         </div>
 
-                        <div className={`bg-[#1a1a1d] border border-white/5 flex flex-col justify-center shadow-lg relative overflow-hidden @sm:w-1/3 rounded-full p-2 px-6 items-center text-center`}>
+                        <div className={`bg-[#1a1a1d] border border-white/5 flex flex-col justify-center shadow-lg relative overflow-hidden @sm:w-1/3 ${radiusClass} p-2 px-6 items-center text-center`}>
                             <i className={`fas fa-globe-asia absolute text-white/5 pointer-events-none -right-2 -bottom-4 text-5xl`}></i>
                             
                             {/* Layout Location & Time di mobile dibuat menyamping agar lebih rapi */}
@@ -223,10 +242,10 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                     initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
                     className={`bento-card flex flex-row p-3 gap-3 @lg:col-span-1 @lg:row-span-1`}
                 >
-                    <a href={githubLink?.url || '#'} target="_blank" rel="noreferrer" className="flex-1 rounded-[24px] bg-[#1a1a1d] border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors group cursor-pointer text-slate-400 min-h-[100px]">
+                    <a href={githubLink?.url || '#'} target="_blank" rel="noreferrer" className={`flex-1 ${cardRadiusClass} bg-[#1a1a1d] border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors group cursor-pointer text-slate-400 min-h-[100px]`}>
                         <i className={`fab fa-github text-4xl group-hover:scale-110 transition-transform ${!githubLink && 'opacity-20'}`}></i>
                     </a>
-                    <a href={linkedinLink?.url || '#'} target="_blank" rel="noreferrer" className="flex-1 rounded-[24px] bg-[#1a1a1d] border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-[#0a66c2] hover:text-white transition-colors group cursor-pointer text-slate-400 min-h-[100px]">
+                    <a href={linkedinLink?.url || '#'} target="_blank" rel="noreferrer" className={`flex-1 ${cardRadiusClass} bg-[#1a1a1d] border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-[#0a66c2] hover:text-white transition-colors group cursor-pointer text-slate-400 min-h-[100px]`}>
                         <i className={`fab fa-linkedin-in text-4xl group-hover:scale-110 transition-transform ${!linkedinLink && 'opacity-20'}`}></i>
                     </a>
                 </motion.div>
@@ -260,7 +279,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                         <div className="scroller__inner">
                             <div className="flex gap-4 pr-4">
                                 {[...techStack, ...techStack, ...techStack].map((tech, i) => (
-                                    <div key={`t1-${i}`} className="bg-[#1a1a1d] border border-white/5 rounded-2xl flex items-center justify-center w-14 h-14 shrink-0 transition-colors cursor-crosshair group">
+                                    <div key={`t1-${i}`} className={`${cardStyleClass} ${cardRadiusClass} flex items-center justify-center w-14 h-14 shrink-0 transition-colors cursor-crosshair group`}>
                                         <i className={`fab ${tech.icon} text-2xl text-slate-500 transition-colors duration-300 group-hover:text-[var(--hl)]`}></i>
                                     </div>
                                 ))}
@@ -287,7 +306,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                             }}
                             className={`bento-card p-2 @md:p-3 group relative overflow-hidden flex flex-col justify-end cursor-pointer ${spanClass}`}
                         >
-                            <div className="w-full h-full rounded-[1.25rem] overflow-hidden relative">
+                            <div className={`w-full h-full ${cardRadiusClass} overflow-hidden relative`}>
                                 <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="absolute inset-0 w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#000] via-[#000]/40 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-700"></div>
 
@@ -324,14 +343,14 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                                 <h3 className="text-xl @md:text-3xl font-black text-white tracking-tight flex items-center gap-3">
                                     <i className="fas fa-cube text-[var(--hl)]"></i> 3D Models
                                 </h3>
-                                <p className="text-sm text-slate-400 mt-2">Interactive spatial assets</p>
+                                <p className="custom-body text-sm text-slate-400 mt-2">Interactive spatial assets</p>
                             </div>
-                            <span className="text-[10px] font-bold tracking-widest uppercase text-[var(--hl)] bg-[#1a1a1d] px-4 py-2 rounded-full border border-white/10">{items3D.length} Items</span>
+                            <span className={`text-[10px] font-bold tracking-widest uppercase text-[var(--hl)] bg-[#1a1a1d] px-4 py-2 ${radiusClass} border border-white/10`}>{items3D.length} Items</span>
                         </div>
 
                         <div className="flex flex-col gap-6">
                             {items3D.map((p: any, i: number) => (
-                                <div key={p.id || i} className="group relative overflow-hidden bg-[#1a1a1d] border border-white/5 rounded-[32px] p-4 hover:border-[var(--hl)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(var(--hl-rgb),0.15)]">
+                                <div key={p.id || i} className={`group relative overflow-hidden ${cardStyleClass} ${cardRadiusClass} p-4 hover:border-[var(--hl)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(var(--hl-rgb),0.15)]`}>
                                     <div className="relative w-full aspect-video rounded-[24px] overflow-hidden bg-[#121214]">
                                         <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#121214" />
                                         <div className="absolute inset-0 border-2 border-transparent group-hover:border-[var(--hl)]/30 rounded-[24px] pointer-events-none transition-colors duration-300"></div>
@@ -387,7 +406,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                                 <div
                                     key={i}
                                     onClick={() => award.mediaUrl && setSelectedMedia({ url: award.mediaUrl, title: award.title, type: 'certificate' })}
-                                    className="bg-[#1a1a1d] border border-white/5 rounded-[24px] flex flex-col gap-4 p-4 hover:bg-white/5 transition-colors group cursor-pointer overflow-hidden"
+                                    className={`${cardStyleClass} ${cardRadiusClass} flex flex-col gap-4 p-4 hover:bg-white/5 transition-colors group cursor-pointer overflow-hidden`}
                                 >
                                     <div className="w-full aspect-video rounded-xl overflow-hidden bg-black relative border border-white/5">
                                         <LazyImage src={award.mediaUrl} alt={award.title} className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110" />
@@ -415,7 +434,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                             {testimonials.map((t: any, i: number) => (
                                 <div
                                     key={t.id}
-                                    className="bg-[#1a1a1d] border border-white/5 rounded-[24px] flex flex-col gap-4 p-6 hover:bg-white/5 transition-colors group"
+                                    className={`${cardStyleClass} ${cardRadiusClass} flex flex-col gap-4 p-6 hover:bg-white/5 transition-colors group`}
                                 >
                                     <div className="flex items-center gap-4 border-b border-white/10 pb-4">
                                         {t.avatarUrl ? (

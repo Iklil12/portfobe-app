@@ -55,14 +55,31 @@ export default function ThemesPage() {
             100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
         .animate-spin-slow { animation: spin 10s linear infinite; }
+        @keyframes scrollHint {
+            0%, 100% { transform: translateX(0); opacity: 0.5; }
+            50%       { transform: translateX(3px); opacity: 1; }
+        }
+        .scroll-hint-icon { animation: scrollHint 1.4s ease-in-out 1.2s 3; }
       `}} />
 
       <div className="max-w-6xl mx-auto p-6 md:p-10 relative z-10">
         <ThemeHeader state={state} />
 
         {/* ── TAB FILTER ── */}
-        <div className="relative mb-10">
-          <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-4 -mb-4 sm:pb-0 sm:mb-0">
+        <div className="relative mb-10 animate-enter" style={{ animationDelay: '120ms' }}>
+          {/* scroll-hint: right fade + chevron — mobile only */}
+          <div
+            className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 z-10 md:hidden flex items-center justify-end pr-1.5"
+            style={{ background: 'linear-gradient(to left, rgba(248,250,252,0.98) 20%, transparent)' }}
+          >
+            <i className="scroll-hint-icon fas fa-chevron-right text-[9px] text-slate-400" />
+          </div>
+
+          <div
+            role="tablist"
+            className="flex items-center gap-1 bg-slate-100/80 rounded-2xl p-1.5
+              overflow-x-auto hide-scrollbar w-full md:w-auto md:inline-flex"
+          >
             {FILTER_TABS.map(tab => {
               const isActive = activeFilter === tab.id;
               const count = tab.id === 'all'
@@ -76,28 +93,35 @@ export default function ThemesPage() {
               return (
                 <button
                   key={tab.id}
+                  role="tab"
+                  aria-selected={isActive}
                   onClick={() => setActiveFilter(tab.id)}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[12px] font-extrabold uppercase tracking-wider transition-all duration-300 border whitespace-nowrap shrink-0
+                  className={`
+                    relative flex items-center gap-2
+                    px-4 py-2.5 rounded-xl
+                    text-[12px] font-bold tracking-wide whitespace-nowrap shrink-0
+                    transition-all duration-200 select-none
                     ${isActive
-                      ? tab.id === 'favorites'
-                        ? 'bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20'
-                        : 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-900/10'
-                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:text-slate-900 hover:bg-slate-50'
-                    }`}
+                      ? 'bg-white text-slate-900 shadow-sm shadow-slate-200/80'
+                      : 'text-slate-500 hover:text-slate-700 hover:bg-white/60'
+                    }
+                  `}
                 >
-                  <i className={`fas ${tab.icon} text-[10px] ${isActive && tab.id === 'favorites' ? 'text-white' : tab.id === 'pro' && isActive ? 'text-[#ff9e00]' : ''}`}></i>
+                  <i className={`fas ${tab.icon} text-[10px] ${isActive ? 'text-slate-600' : 'text-slate-400'}`} />
                   {tab.label}
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-lg font-black
-                    ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400'}`}>
-                    {count}
-                  </span>
+                  {count > 0 && (
+                    <span className={`
+                      text-[10px] font-black min-w-[18px] h-[18px] px-1.5 rounded-md
+                      inline-flex items-center justify-center leading-none
+                      ${isActive ? 'bg-slate-100 text-slate-600' : 'bg-slate-200/60 text-slate-400'}
+                    `}>
+                      {count}
+                    </span>
+                  )}
                 </button>
               );
             })}
           </div>
-          
-          {/* Efek Fade di sisi kanan untuk menandakan bisa scroll (Mobile Only) */}
-          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#FAFAFA] to-transparent pointer-events-none md:hidden"></div>
         </div>
 
         {filteredThemes.length === 0 ? (

@@ -5,20 +5,7 @@ import Link from 'next/link';
 import { ThemeSelectionModal } from './ThemeSelectionModal';
 import { ProUpgradeModal } from '@/components/ProUpgradeModal';
 
-// --- IMPORT KOMPONEN KONTROL EDITOR ---
-import BrutalismControls from '@/components/editor-controls/BrutalismControls';
-import MinimalistControls from '@/components/editor-controls/MinimalistControls';
-import CinematicControls from '@/components/editor-controls/CinematicControls';
-import AcidControls from '@/components/editor-controls/AcidControls';
-import BentoGridControls from '@/components/editor-controls/BentoGridControls';
-import ViewfinderControls from '@/components/editor-controls/ViewfinderControls';
-import SpatialControls from '@/components/editor-controls/SpatialControls';
-import MonolithControls from '@/components/editor-controls/MonolithControls';
-import SplitControls from '@/components/editor-controls/SplitControls';
-import EditorialControls from '@/components/editor-controls/EditorialControls';
-import MidnightEmulsionControls from '@/components/editor-controls/MidnightEmulsionControls';
-import AuraKineticControls from '@/components/editor-controls/AuraKineticControls';
-import AbsoluteNoirControls from '@/components/editor-controls/AbsoluteNoirControls';
+import { ColorPicker, FontPicker, CardStylePicker, ButtonShapePicker } from '@/components/editor-controls/SharedControls';
 
 export function EditorPanel({ state, actions }: { state: any, actions: any }) {
   const {
@@ -87,44 +74,35 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
       <div className={`
         h-full flex flex-col z-30 relative shrink-0
-        bg-gradient-to-b from-white/95 to-slate-50/95 backdrop-blur-2xl 
-        shadow-[20px_0_40px_-15px_rgba(0,0,0,0.05)] border-r border-white/60
+        bg-white border-r border-neutral-200/70
         transition-all duration-300 ease-in-out
         ${isEditorCollapsed ? 'w-0 opacity-0 pointer-events-none overflow-hidden border-none' : 'w-full lg:w-[420px] xl:w-[460px] opacity-100'}
       `}>
-        {/* Dekorasi Background */}
-        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-slate-100/50 to-transparent pointer-events-none -z-10"></div>
-
         {/* Header Panel Editor */}
-        <div className="p-5 md:p-6 border-b border-slate-200/40 sticky top-0 z-20 shrink-0 bg-white/50 backdrop-blur-xl">
+        <div className="p-6 border-b border-neutral-200/50 sticky top-0 z-20 shrink-0 bg-white/80 backdrop-blur-md">
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-3 md:gap-4">
-              <Link href="/dashboard" className="w-9 h-9 rounded-xl bg-white border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 hover:shadow-md transition-all duration-300 active:scale-90 group shrink-0" title="Kembali ke Dashboard">
-                <i className="fas fa-arrow-left text-xs group-hover:-translate-x-0.5 transition-transform"></i>
+            <div className="flex items-center gap-4">
+              <Link href="/dashboard" className="w-8 h-8 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-all duration-200 shrink-0" title="Kembali ke Dashboard">
+                <i className="fas fa-arrow-left text-[10px]"></i>
               </Link>
               <div className="flex flex-col">
-                <h1 className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-none">
+                <h1 className="text-lg font-semibold text-neutral-900 tracking-tight leading-none">
                   Desain Visual
                 </h1>
-                <p className="text-[9px] md:text-[10px] text-slate-500 font-bold mt-1 uppercase tracking-widest">
-                  Editor Panel
+                <p className="text-[10px] text-neutral-500 font-medium mt-1 uppercase tracking-widest">
+                  Pengaturan Tampilan
                 </p>
               </div>
             </div>
 
-            {/* Tombol Save Inline */}
+            {/* Tombol Save Minimalist */}
             <button
               onClick={saveDesign}
               disabled={isSaving}
-              className="relative overflow-hidden px-5 py-2.5 rounded-xl text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all duration-300 shadow-[0_4px_12px_-2px_rgba(15,23,42,0.2)] hover:shadow-[0_8px_20px_-4px_rgba(15,23,42,0.3)] hover:-translate-y-0.5 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 disabled:cursor-not-allowed group bg-slate-900 hover:bg-black text-white flex items-center gap-2 border border-slate-700/50 shrink-0"
+              className="px-5 py-2 rounded-full text-[11px] font-semibold tracking-wide transition-all duration-200 bg-neutral-900 hover:bg-black text-white flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
             >
-              {/* Efek kilap (shine) */}
-              <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.2s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 z-0"></div>
-
-              <div className="relative flex items-center gap-2 z-10 drop-shadow-sm">
-                {isSaving ? <i className="fas fa-circle-notch animate-spin text-white/90"></i> : <i className="fas fa-save text-slate-300"></i>}
-                <span>{isSaving ? 'Menyimpan...' : 'Save'}</span>
-              </div>
+              {isSaving ? <i className="fas fa-spinner animate-spin text-neutral-400"></i> : <i className="fas fa-check text-neutral-300"></i>}
+              <span>{isSaving ? 'Menyimpan' : 'Simpan'}</span>
             </button>
           </div>
         </div>
@@ -132,62 +110,58 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
 
         {/* Tombol Collapse Panel Editor */}
-        <div className="absolute top-1/2 -right-[15px] -translate-y-1/2 z-[100] hidden lg:flex">
-          <button onClick={() => setIsEditorCollapsed(true)} className="w-8 h-16 bg-white/90 backdrop-blur-md border border-slate-200 shadow-[4px_4px_20px_rgba(0,0,0,0.06)] rounded-full flex items-center justify-center text-slate-400 hover:text-slate-900 hover:h-20 hover:border-slate-300 transition-all duration-300 active:scale-95 group" title="Sembunyikan Panel Editor">
-            <i className="fas fa-chevron-left text-[11px] group-hover:-translate-x-0.5 transition-transform"></i>
+        <div className="absolute top-1/2 -right-[14px] -translate-y-1/2 z-[100] hidden lg:flex">
+          <button onClick={() => setIsEditorCollapsed(true)} className="w-7 h-14 bg-white border border-neutral-200 shadow-sm rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-900 transition-all duration-200 hover:shadow-md" title="Sembunyikan Panel Editor">
+            <i className="fas fa-chevron-left text-[10px]"></i>
           </button>
         </div>
 
         {/* Konten Menu Editor */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 pb-32 relative z-10">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 pb-32 relative z-10">
 
           {/* SECTION: TEMA AKTIF */}
-          <div className="mb-10">
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200/50 shadow-inner flex items-center justify-center text-slate-700"><i className="fas fa-swatchbook text-xs"></i></div>
-                <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-800">Basis Tema</h3>
-              </div>
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500">Basis Tema</h3>
               {!isLoading && (
                 <button
                   onClick={() => setIsThemeModalOpen(true)}
-                  className="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100/50 text-[10px] font-bold text-slate-600 hover:bg-slate-200 hover:text-slate-900 uppercase tracking-widest transition-all"
+                  className="text-[10px] font-medium text-neutral-500 hover:text-neutral-900 transition-colors uppercase tracking-widest flex items-center gap-1"
                 >
-                  Ganti <i className="fas fa-arrow-right text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
+                  Ganti <i className="fas fa-chevron-right text-[8px]"></i>
                 </button>
               )}
             </div>
 
             {isLoading ? (
-              <div className="p-5 rounded-3xl border border-slate-100 bg-slate-50/50 animate-pulse h-24"></div>
+              <div className="p-5 rounded-2xl border border-neutral-100 bg-neutral-50 animate-pulse h-20"></div>
             ) : (
-              <div className="relative group cursor-pointer" onClick={() => setIsThemeModalOpen(true)}>
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-slate-300 to-slate-400 rounded-3xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
-                <div className="relative p-5 rounded-3xl border border-white/60 bg-gradient-to-br from-white to-slate-50/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 group-hover:-translate-y-1">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 shadow-inner flex items-center justify-center text-white transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
-                      <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : activeTheme === 'spatial' ? 'fa-star' : activeTheme === 'monolith' ? 'fa-cubes' : activeTheme === 'split' ? 'fa-columns' : activeTheme === 'editorial' ? 'fa-newspaper' : activeTheme === 'midnight-emulsion' ? 'fa-moon' : activeTheme === 'aura-kinetic' ? 'fa-water' : activeTheme === 'absolute-noir' ? 'fa-square' : 'fa-cube'} text-lg drop-shadow-md`}></i>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="font-black text-slate-900 text-base tracking-tight group-hover:text-slate-600 transition-colors">
-                        {activeTheme === 'minimalist' ? 'Minimalist Clean' :
-                          activeTheme === 'cinematic' ? 'Cinematic Dark' :
-                            activeTheme === 'acid' ? 'Acid Punk' :
-                              activeTheme === 'bentogrid' ? 'Bento Grid' :
-                                activeTheme === 'spatial' ? 'Aura Spatial' :
-                                  activeTheme === 'monolith' ? 'Monolith Vanguard' :
-                                    activeTheme === 'split' ? 'Nexus Split' :
-                                      activeTheme === 'editorial' ? 'Editorial Clean' :
-                                        activeTheme === 'midnight-emulsion' ? 'Midnight Emulsion' :
-                                          activeTheme === 'aura-kinetic' ? 'Aura Kinetic' :
-                                            activeTheme === 'absolute-noir' ? 'Absolute Noir' :
-                                              'Neo Brutalism'}
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        Aktif Digunakan
-                      </span>
-                    </div>
+              <div 
+                className="group cursor-pointer p-4 rounded-2xl border border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-sm transition-all flex items-center justify-between"
+                onClick={() => setIsThemeModalOpen(true)}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center text-white transition-transform group-hover:scale-105">
+                    <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : activeTheme === 'spatial' ? 'fa-star' : activeTheme === 'monolith' ? 'fa-cubes' : activeTheme === 'split' ? 'fa-columns' : activeTheme === 'editorial' ? 'fa-newspaper' : activeTheme === 'midnight-emulsion' ? 'fa-moon' : activeTheme === 'aura-kinetic' ? 'fa-water' : activeTheme === 'absolute-noir' ? 'fa-square' : 'fa-cube'} text-sm`}></i>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-neutral-900 text-sm tracking-tight">
+                      {activeTheme === 'minimalist' ? 'Minimalist Clean' :
+                        activeTheme === 'cinematic' ? 'Cinematic Dark' :
+                          activeTheme === 'acid' ? 'Acid Punk' :
+                            activeTheme === 'bentogrid' ? 'Bento Grid' :
+                              activeTheme === 'spatial' ? 'Aura Spatial' :
+                                activeTheme === 'monolith' ? 'Monolith Vanguard' :
+                                  activeTheme === 'split' ? 'Nexus Split' :
+                                    activeTheme === 'editorial' ? 'Editorial Clean' :
+                                      activeTheme === 'midnight-emulsion' ? 'Midnight Emulsion' :
+                                        activeTheme === 'aura-kinetic' ? 'Aura Kinetic' :
+                                          activeTheme === 'absolute-noir' ? 'Absolute Noir' :
+                                            'Neo Brutalism'}
+                    </span>
+                    <span className="text-[10px] text-neutral-400 font-medium mt-0.5">
+                      Sedang Digunakan
+                    </span>
                   </div>
                 </div>
               </div>
@@ -196,87 +170,68 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
           {/* DIVIDER */}
           <div className="flex items-center justify-center mb-10 opacity-70 relative">
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent"></div>
-            <div className="absolute bg-slate-50 px-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border border-slate-200/50 rounded-full py-1 shadow-sm">Kustomisasi Lanjutan</div>
+            <div className="w-full h-px bg-neutral-200"></div>
+            <div className="absolute bg-white px-3 text-[9px] font-semibold text-neutral-400 uppercase tracking-widest">Kustomisasi Lanjutan</div>
           </div>
 
-          {/* KONTROL DINAMIS */}
-          <div className="bg-white/60 backdrop-blur-xl border border-white/80 rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.03)] mb-10 transition-all duration-500 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:bg-white/80 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-100 rounded-full blur-3xl -z-10 opacity-50 translate-x-1/2 -translate-y-1/2"></div>
-            {activeTheme === 'brutalism' && (
-              <BrutalismControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} cardStyle={cardStyle} setCardStyle={setCardStyle} buttonShape={buttonShape} setButtonShape={setButtonShape} />
-            )}
-            {activeTheme === 'minimalist' && (
-              <MinimalistControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} />
-            )}
-            {activeTheme === 'cinematic' && (
-              <CinematicControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} cardStyle={cardStyle} setCardStyle={setCardStyle} buttonShape={buttonShape} setButtonShape={setButtonShape} />
-            )}
-            {activeTheme === 'acid' && (
-              <AcidControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} />
-            )}
-            {activeTheme === 'bentogrid' && (
-              <BentoGridControls themeColor={themeColor} setThemeColor={setThemeColor} />
-            )}
-            {activeTheme === 'viewfinder' && (
-              <ViewfinderControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} cardStyle={cardStyle} setCardStyle={setCardStyle} buttonShape={buttonShape} setButtonShape={setButtonShape} />
-            )}
-            {activeTheme === 'spatial' && (
-              <SpatialControls themeColor={themeColor} setThemeColor={setThemeColor} />
-            )}
-            {activeTheme === 'monolith' && (
-              <MonolithControls themeColor={themeColor} setThemeColor={setThemeColor} />
-            )}
-            {activeTheme === 'split' && (
-              <SplitControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} buttonShape={buttonShape} setButtonShape={setButtonShape} />
-            )}
-            {activeTheme === 'editorial' && (
-              <EditorialControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} buttonShape={buttonShape} setButtonShape={setButtonShape} />
-            )}
-            {activeTheme === 'midnight-emulsion' && (
-              <MidnightEmulsionControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} buttonShape={buttonShape} setButtonShape={setButtonShape} />
-            )}
-            {activeTheme === 'aura-kinetic' && (
-              <AuraKineticControls themeColor={themeColor} setThemeColor={setThemeColor} fontHeading={fontHeading} setFontHeading={setFontHeading} fontBody={fontBody} setFontBody={setFontBody} buttonShape={buttonShape} setButtonShape={setButtonShape} />
-            )}
+          {/* KONTROL DINAMIS (TERSTANDARISASI) */}
+          <div className="mb-10">
             {activeTheme === 'absolute-noir' && (
-              <AbsoluteNoirControls theme={{ fontHeading, fontBody }} updateTheme={(key: string, value: any) => {
-                if (key === 'fontHeading') setFontHeading(value);
-                if (key === 'fontBody') setFontBody(value);
-              }} />
+              <div className="p-4 mb-8 border border-neutral-200 bg-neutral-50 rounded-2xl flex items-start gap-3 animate-in fade-in duration-500">
+                <i className="fas fa-exclamation-triangle mt-1 text-neutral-400"></i>
+                <div>
+                  <h4 className="font-bold text-xs uppercase tracking-widest text-neutral-800 mb-1">Strict Mode Active</h4>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    Absolute Noir menerapkan desain grayscale brutalist murni. Palet warna, bayangan, dan bentuk elemen dikunci untuk mempertahankan estetika khasnya.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Warna: Tersedia di semua tema kecuali Absolute Noir */}
+            {activeTheme !== 'absolute-noir' && (
+              <ColorPicker themeColor={themeColor} setThemeColor={setThemeColor} />
+            )}
+
+            {/* Font: Tersedia di semua tema */}
+            <FontPicker fontHeading={fontHeading} setFontHeading={setFontHeading} setFontBody={setFontBody} />
+
+            {/* Kartu & Tombol: Tersedia di semua tema kecuali Absolute Noir */}
+            {activeTheme !== 'absolute-noir' && (
+              <>
+                <CardStylePicker cardStyle={cardStyle} setCardStyle={setCardStyle} />
+                <ButtonShapePicker buttonShape={buttonShape} setButtonShape={setButtonShape} />
+              </>
             )}
           </div>
 
           {/* TOGGLE SPLASH SCREEN */}
           {isLoading ? (
-            <div className="bg-slate-100 border border-slate-200 rounded-3xl p-6 h-24 animate-pulse mb-6"></div>
+            <div className="border border-neutral-100 rounded-2xl p-5 h-20 animate-pulse mb-6"></div>
           ) : (
-            <div className="relative group cursor-pointer" onClick={() => setSplashScreen(!splashScreen)}>
-              <div className={`absolute -inset-0.5 rounded-[2rem] blur opacity-0 transition duration-500 ${splashScreen ? 'bg-gradient-to-r from-slate-400 to-slate-600 opacity-20' : 'group-hover:opacity-10 bg-slate-300'}`}></div>
-              <div className="relative bg-white/80 backdrop-blur-md border border-white/80 rounded-[2rem] p-6 shadow-sm mb-6 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/40 to-transparent pointer-events-none z-0"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 shadow-inner ${splashScreen ? 'bg-gradient-to-br from-slate-700 to-slate-900 text-white' : 'bg-slate-100 border border-slate-200 text-slate-400 group-hover:bg-slate-200'}`}>
-                      <i className={`fas fa-play text-sm ml-1 ${splashScreen ? 'drop-shadow-md' : ''}`}></i>
-                    </div>
-                    <div>
-                      <h3 className={`text-sm font-black tracking-tight mb-1 transition-colors flex items-center gap-2 ${splashScreen ? 'text-slate-900' : 'text-slate-700 group-hover:text-slate-900'}`}>
-                        Cinematic Intro
-                        <span className="bg-gradient-to-r from-slate-700 to-slate-900 text-white text-[7px] font-black px-1.5 py-0.5 rounded-md tracking-widest uppercase flex items-center gap-1 shadow-sm">
-                          <i className="fas fa-crown text-[6px]"></i> PRO
-                        </span>
-                      </h3>
-                      <p className="text-[10px] text-slate-500 font-medium leading-relaxed">Animasi transisi memukau sebelum<br />portofolio Anda terbuka penuh.</p>
-                    </div>
-                  </div>
-                  <button className={`w-14 h-8 rounded-full relative transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shrink-0 outline-none shadow-inner border ${splashScreen ? 'bg-slate-800 border-slate-900' : 'bg-slate-200 border-slate-300'}`}>
-                    <div className={`w-6 h-6 rounded-full bg-white absolute top-[3px] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-[0_2px_5px_rgba(0,0,0,0.2)] flex items-center justify-center ${splashScreen ? 'left-[26px] scale-110' : 'left-1'}`}>
-                      {splashScreen && <i className="fas fa-check text-[8px] text-slate-800"></i>}
-                    </div>
-                  </button>
+            <div 
+              className="cursor-pointer border border-neutral-200 rounded-2xl p-5 mb-6 transition-all duration-200 hover:border-neutral-300 hover:shadow-sm bg-white flex items-center justify-between"
+              onClick={() => setSplashScreen(!splashScreen)}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${splashScreen ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-400'}`}>
+                  <i className="fas fa-play text-[10px] ml-0.5"></i>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold tracking-tight text-neutral-900 flex items-center gap-2">
+                    Cinematic Intro
+                    <span className="bg-neutral-100 border border-neutral-200 text-neutral-600 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">
+                      PRO
+                    </span>
+                  </h3>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">Animasi pembuka portofolio.</p>
                 </div>
               </div>
+              
+              {/* Minimalist Switch */}
+              <button className={`w-10 h-5 rounded-full relative transition-colors duration-300 shrink-0 outline-none ${splashScreen ? 'bg-neutral-900' : 'bg-neutral-200'}`}>
+                <div className={`w-4 h-4 rounded-full bg-white absolute top-[2px] transition-transform duration-300 shadow-sm ${splashScreen ? 'translate-x-[22px]' : 'translate-x-[2px]'}`}></div>
+              </button>
             </div>
           )}
 

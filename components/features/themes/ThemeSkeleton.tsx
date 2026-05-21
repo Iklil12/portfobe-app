@@ -21,6 +21,19 @@ export function ThemeSkeleton() {
           <div className="w-40 h-14 shimmer rounded-full hidden md:block"></div>
         </div>
 
+        {/* Filter Tab Skeleton */}
+        <div className="mb-10">
+          <div className="inline-flex items-center gap-1 bg-slate-100/60 rounded-2xl p-1.5">
+            {[82, 58, 52, 72].map((w, i) => (
+              <div
+                key={i}
+                className="h-9 rounded-xl shimmer"
+                style={{ width: w }}
+              />
+            ))}
+          </div>
+        </div>
+
         {/* Grid Skeleton (Dribbble Style) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
           {[1, 2, 3, 4, 5, 6].map((i) => (

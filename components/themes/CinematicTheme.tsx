@@ -49,6 +49,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
     const fontHeading = theme?.fontHeading || "Inter";
     const fontBody = theme?.fontBody || "Inter";
     const cardStyle = theme?.cardStyle || "hard";
+    const buttonShape = theme?.buttonShape || 'hard';
 
     const nameParts = fullName.split(' ');
     const firstName = nameParts[0];
@@ -63,8 +64,9 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
 
     const customHeadingFont = getFontFamily(fontHeading);
     const customBodyFont = getFontFamily(fontBody);
-    const radiusClass = cardStyle === 'soft' || cardStyle === 'soft-shadow' ? 'rounded-2xl' : 'rounded-none';
-
+    const radiusClass = theme?.buttonShape === 'pill' ? 'rounded-full' : theme?.buttonShape === 'rounded' ? 'rounded-2xl' : 'rounded-none';
+    const cardRadiusClass = theme?.buttonShape === 'pill' ? 'rounded-3xl' : theme?.buttonShape === 'rounded' ? 'rounded-2xl' : 'rounded-none';
+    const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#0a0a0a] shadow-[0_30px_60px_rgba(255,255,255,0.03)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border border-white/30 shadow-[4px_4px_0_0_#fff]' : 'bg-black border border-[#1f1f1f] hover:border-white/20';
     return (
         <div className={`w-full min-h-screen bg-[#0a0a0a] text-white selection:bg-white selection:text-black relative text-sm cinematic-theme`}>
 
@@ -122,7 +124,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
 
                     {/* PERBAIKAN: Posisi bio diatur jadi rata kiri saat tablet, baru rata kanan saat layar sangat besar */}
                     <div className={`cine-body w-full @lg:max-w-sm text-left @lg:text-right pb-4 @lg:pb-6 shrink-0`}>
-                        <p className={`text-gray-400 leading-relaxed text-sm @md:text-base mt-6 @lg:mt-0`}>
+                        <p className={`cine-body text-gray-400 leading-relaxed text-sm @md:text-base mt-6 @lg:mt-0`}>
                             {bio}
                         </p>
                         <div className={`mt-6 flex flex-wrap gap-4 justify-start @lg:justify-end`}>
@@ -206,7 +208,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
 
                                 <div className={`flex flex-col relative z-10 pointer-events-none cine-body mt-4 @md:mt-0 @md:text-right`}>
                                     <span className="text-[10px] @md:text-sm font-bold uppercase tracking-widest text-white">{p.projectType}</span>
-                                    <span className="text-gray-500 mt-1 text-[10px] @md:text-sm truncate max-w-[200px]">{p.description || 'View Project'}</span>
+                                    <span className="cine-body text-gray-500 mt-1 text-[10px] @md:text-sm truncate max-w-[200px]">{p.description || 'View Project'}</span>
                                 </div>
 
                                 {/* Mobile Inline Image */}
@@ -247,7 +249,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                             </div>
 
                             {/* Animated Arrow */}
-                            <div className={`flex items-center justify-center shrink-0 rounded-full border border-[#1f1f1f] group-hover:border-white group-hover:bg-white group-hover:text-black transition-all duration-700 text-gray-500 w-12 h-12 @md:w-20 @md:h-20`}>
+                            <div className={`flex items-center justify-center shrink-0 ${radiusClass} border border-[#1f1f1f] group-hover:border-white group-hover:bg-white group-hover:text-black transition-all duration-700 text-gray-500 w-12 h-12 @md:w-20 @md:h-20`}>
                                 <i className={`fas fa-arrow-right group-hover:-rotate-45 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] text-lg @md:text-2xl`}></i>
                             </div>
                         </div>
@@ -268,7 +270,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
 
                     <div className="flex flex-col gap-12 @md:gap-24">
                         {items3D.map((p: any, i: number) => (
-                            <div key={i} className={`group relative w-full aspect-[4/3] @md:aspect-video ${radiusClass} overflow-hidden bg-black border border-white/10 hover:border-white/30 transition-all duration-700`}>
+                            <div key={i} className={`group relative w-full aspect-[4/3] @md:aspect-video ${cardRadiusClass} overflow-hidden ${cardStyleClass} transition-all duration-700`}>
                                 <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#000000" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 pointer-events-none group-hover:opacity-40 transition-opacity"></div>
                                 <div className="absolute bottom-0 left-0 w-full p-8 @md:p-16 flex flex-col gap-4 transform translate-y-4 group-hover:translate-y-0 transition-all duration-700 ease-out pointer-events-none">
@@ -338,7 +340,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                                             </div>
                                             <div className="flex flex-col justify-center cine-body">
                                                 <p className="text-white font-bold mb-1 text-[11px] uppercase tracking-wider">{award.status || 'Verified'}</p>
-                                                <p className="text-gray-500 text-[11px] @md:text-sm max-w-md leading-relaxed mb-4">{award.description || 'Awarded for excellence in the respective category.'}</p>
+                                                <p className="cine-body text-gray-500 text-[11px] @md:text-sm max-w-md leading-relaxed mb-4">{award.description || 'Awarded for excellence in the respective category.'}</p>
                                                 <a href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" className="text-[10px] font-bold uppercase tracking-widest text-white hover:text-gray-400 transition flex items-center gap-2">View Certificate <i className="fas fa-external-link-alt text-[8px]"></i></a>
                                             </div>
                                         </div>
@@ -359,9 +361,9 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
 
                     <div className="grid grid-cols-1 @md:grid-cols-2 gap-8 @md:gap-12">
                         {testimonials.map((t: any, i: number) => (
-                            <div key={t.id} className="group border border-[#1f1f1f] hover:border-white/30 transition-colors duration-700 bg-black p-8 @md:p-12">
+                            <div key={t.id} className={`group ${cardStyleClass} ${cardRadiusClass} transition-colors duration-700 p-8 @md:p-12`}>
                                 <div className="flex items-center gap-6 mb-8 border-b border-[#1f1f1f] pb-6 group-hover:border-white/20 transition-colors">
-                                    <div className="w-16 h-16 shrink-0 bg-[#111] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+                                    <div className={`w-16 h-16 shrink-0 bg-[#111] ${radiusClass} overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700`}>
                                         {t.avatarUrl ? (
                                             <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover" />
                                         ) : (
@@ -375,7 +377,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                                         <span className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-1 cine-body">{t.company || 'CLIENT'}</span>
                                     </div>
                                 </div>
-                                <p className="text-sm @md:text-lg text-gray-400 italic leading-relaxed mb-8 group-hover:text-white transition-colors duration-500">
+                                <p className="cine-body text-sm @md:text-lg text-gray-400 italic leading-relaxed mb-8 group-hover:text-white transition-colors duration-500">
                                     "{t.content}"
                                 </p>
                                 <div className="flex gap-2 text-xs">
@@ -418,7 +420,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
 
                         <motion.div 
                             initial={{ scale: 1.05, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.05, opacity: 0 }}
-                            className={`relative w-full max-w-6xl bg-black border-y @md:border border-white/10 flex flex-col overflow-hidden ${radiusClass}`}
+                            className={`relative w-full max-w-6xl bg-black border-y @md:border border-white/10 flex flex-col overflow-hidden ${cardRadiusClass}`}
                         >
                             {/* Theater Header */}
                             <div className="flex justify-between items-center p-6 @md:p-8 border-b border-white/5 relative z-10 bg-black">
@@ -428,7 +430,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                                 </div>
                                 <button 
                                     onClick={() => setSelectedMedia(null)}
-                                    className="w-12 h-12 flex items-center justify-center bg-white text-black hover:bg-gray-200 transition-colors"
+                                    className={`w-12 h-12 flex items-center justify-center bg-white text-black hover:bg-gray-200 transition-colors ${radiusClass}`}
                                 >
                                     <i className="fas fa-times"></i>
                                 </button>

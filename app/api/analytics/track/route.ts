@@ -40,38 +40,45 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid body" }, { status: 400 });
     }
     
-    // action, targetId, metadata added for custom tracking (clicks, etc.)
-    const { userId, type, pagePath, url, analyticsId, sessionId, referrer: clientReferrer, action, targetId, metadata } = body;
+    const {
+      subdomain,           // FIX K1: subdomain menggantikan userId dari body
+      type,
+      pagePath,
+      url,
+      analyticsId,
+      sessionId,
+      referrer: clientReferrer,
+      action,
+      targetId,
+      metadata
+    } = body;
 
-    // 1. LOGIKA HEARTBEAT (Update durasi session & log)
+    // ── 1. HEARTBEAT — tidak butuh subdomain/userId, cukup analyticsId ────────
     if (type === "HEARTBEAT" && analyticsId) {
       const log = await prisma.analytics.findUnique({
         where: { id: analyticsId },
-        select: { createdAt: true, sessionId: true } // sessionId ini adalah VisitorSession.id (Database FK)
+        select: { createdAt: true, sessionId: true }
       });
 
       if (log) {
         const logDuration = Math.floor((new Date().getTime() - new Date(log.createdAt).getTime()) / 1000);
-        
         await prisma.analytics.update({
           where: { id: analyticsId },
           data: { duration: logDuration }
         });
 
-        // Update VisitorSession
         if (log.sessionId) {
           const sessionLog = await prisma.visitorSession.findUnique({
-             where: { id: log.sessionId },
-             select: { createdAt: true }
+            where: { id: log.sessionId },
+            select: { createdAt: true }
           });
-          
           if (sessionLog) {
             const sessionDuration = Math.floor((new Date().getTime() - new Date(sessionLog.createdAt).getTime()) / 1000);
             await prisma.visitorSession.update({
               where: { id: log.sessionId },
-              data: { 
+              data: {
                 duration: sessionDuration,
-                isBounced: sessionDuration < 10 ? true : false
+                isBounced: sessionDuration < 10
               }
             });
           }
@@ -80,11 +87,36 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true });
     }
 
-    if (!userId) return NextResponse.json({ error: "UserId is required" }, { status: 400 });
+    // ── 2. VALIDASI SUBDOMAIN — server resolves userId, tidak percaya body ────
+    // FIX K1: userId tidak lagi diambil dari body (mencegah data injection ke
+    //         analytics user lain). Hanya subdomain (info publik dari URL) yang
+    //         diterima, lalu server yang mencari userId-nya dari DB.
+    if (!subdomain || typeof subdomain !== "string") {
+      return NextResponse.json({ error: "Subdomain is required" }, { status: 400 });
+    }
 
+    const profile = await prisma.profile.findUnique({
+      where: { subdomain: subdomain.toLowerCase().trim() },
+      select: {
+        userId: true,
+        user: { select: { isLive: true } }
+      }
+    });
+
+    if (!profile) {
+      return NextResponse.json({ error: "Portfolio not found" }, { status: 404 });
+    }
+
+    // Jika portfolio offline, abaikan tracking secara diam-diam
+    if (!profile.user.isLive) {
+      return NextResponse.json({ success: false }, { status: 200 });
+    }
+
+    // userId terverifikasi dari server — aman dipakai
+    const userId = profile.userId;
+
+    // ── 3. IP & Geolocation ────────────────────────────────────────────────────
     const headersList = await headers();
-    
-    // -- Geolocation & IP Extraction --
     const forwardedFor = headersList.get("x-forwarded-for");
     const realIp = headersList.get("x-real-ip");
     let ip = "unknown";
@@ -97,7 +129,7 @@ export async function POST(req: Request) {
     const userAgent = headersList.get("user-agent") || "unknown";
     const { deviceType, os, browser } = parseUserAgent(userAgent);
 
-    // --- RATE LIMITING (ANTI SPAM) ---
+    // ── 4. RATE LIMITING ───────────────────────────────────────────────────────
     const trackTypes = ["VIEW", "CLICK", "PROJECT_OPEN"];
     if (trackTypes.includes(type) || !type) {
       const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
@@ -108,8 +140,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429 });
       }
     }
-    
-    // -- Referrer & Source Parsing --
+
+    // ── 5. Referrer & Source Parsing ───────────────────────────────────────────
     let finalReferrer = "Direct";
     const isValidReferrer = (ref: string | null) => {
       if (!ref || ref === "") return false;
@@ -120,7 +152,7 @@ export async function POST(req: Request) {
 
     if (isValidReferrer(clientReferrer)) finalReferrer = clientReferrer;
     else if (isValidReferrer(headersList.get("referer"))) finalReferrer = headersList.get("referer")!;
-    
+
     let source = finalReferrer;
     let utmSource = null, utmMedium = null, utmCampaign = null;
 
@@ -135,7 +167,7 @@ export async function POST(req: Request) {
         else if (urlObj.searchParams.has("fbclid")) source = "Facebook";
         else if (urlObj.searchParams.has("gclid")) source = "Google";
         else if (urlObj.searchParams.has("twclid") || utmSource === "twitter") source = "Twitter / X";
-      } catch (e) {}
+      } catch (_) {}
     }
 
     if (source === "Direct") {
@@ -147,20 +179,17 @@ export async function POST(req: Request) {
       else if (ua.includes("tiktok")) source = "TikTok";
     }
 
-    // -- SESSION MANAGEMENT --
+    // ── 6. SESSION MANAGEMENT ──────────────────────────────────────────────────
     let dbSessionId = null;
-    if (sessionId) { // client cookie/localStorage visitor ID
-      // Coba cari session aktif berdasarkan visitorId untuk userId ini
-      // Hanya cari yang 2 jam terakhir (agar tidak attach ke session bulan lalu)
+    if (sessionId) {
       const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
-      
+
       let sessionRecord = await prisma.visitorSession.findFirst({
         where: { visitorId: sessionId, userId, createdAt: { gte: twoHoursAgo } },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: "desc" }
       });
 
       if (!sessionRecord) {
-        // Buat sesi baru
         sessionRecord = await prisma.visitorSession.create({
           data: {
             userId,
@@ -179,17 +208,16 @@ export async function POST(req: Request) {
           }
         });
       } else if (type !== "VIEW") {
-        // Jika interaksi (klik/scroll), artinya bukan bounce
         await prisma.visitorSession.update({
           where: { id: sessionRecord.id },
           data: { isBounced: false }
         });
       }
-      
+
       dbSessionId = sessionRecord.id;
     }
 
-    // -- INSERT LOG --
+    // ── 7. INSERT LOG ──────────────────────────────────────────────────────────
     const newLog = await prisma.analytics.create({
       data: {
         userId,
@@ -198,12 +226,10 @@ export async function POST(req: Request) {
         action,
         targetId,
         metadata: metadata ? JSON.stringify(metadata) : undefined,
-        
         ipAddress: ip,
         userAgent,
         referrer: finalReferrer,
         pagePath: pagePath || "/",
-        
         country,
         city,
         deviceType,
@@ -212,7 +238,7 @@ export async function POST(req: Request) {
         utmSource,
         utmMedium,
         utmCampaign
-      },
+      }
     });
 
     return NextResponse.json({ success: true, id: newLog.id });
@@ -221,4 +247,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
-
