@@ -4,7 +4,6 @@ import { HeroSection } from '@/components/sections/HeroSection';
 import { MarqueeSection } from '@/components/sections/MarqueeSection';
 import { FeaturesSection } from '@/components/sections/FeaturesSection';
 import { TemplatesSection } from '@/components/sections/TemplatesSection';
-import { PricingSection } from '@/components/sections/PricingSection';
 import { FaqSection } from '@/components/sections/FaqSection';
 
 export default function LandingPage() {
@@ -15,7 +14,6 @@ export default function LandingPage() {
       <MarqueeSection />
       <FeaturesSection />
       <TemplatesSection />
-      <PricingSection />
       <FaqSection />
       <Footer />
     </div>

@@ -38,6 +38,7 @@ model User {
   testimonials           Testimonial[]
   visitorSessions        VisitorSession[]
   hourlyStats            HourlyStats[]
+  couponUsages           CouponUsage[]
 }
 
 model PasswordResetToken {
@@ -364,6 +365,7 @@ model RegisterAttempt {
 enum PlanType {
   FREE
   PRO
+  SUPREME
 }
 
 enum SubscriptionStatus {
@@ -447,4 +449,57 @@ model Testimonial {
   updatedAt   DateTime @updatedAt
 
   @@index([userId])
+}
+
+model PricingPlan {
+  id              String   @id @default(uuid())
+  code            String   @unique // e.g., "pro", "supreme"
+  name            String
+  monthlyPrice    Int
+  monthlyOriginal Int
+  yearlyPrice     Int
+  yearlyOriginal  Int
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([code])
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model Coupon {
+  id            String       @id @default(uuid())
+  code          String       @unique
+  discountType  DiscountType @default(PERCENTAGE)
+  discountValue Int          // e.g., 20 for 20%, or 50000 for Rp50.000
+  maxUses       Int?         // null means unlimited
+  maxUsesPerUser Int?        // null means unlimited per user
+  currentUses   Int          @default(0)
+  minPurchase   Int?         // null means no minimum purchase limit
+  allowedPlan   String?      @default("ALL") // "ALL", "pro", "supreme"
+  validFrom     DateTime     @default(now())
+  validUntil    DateTime?    // null means no expiry
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  usages        CouponUsage[]
+
+  @@index([code])
+}
+
+model CouponUsage {
+  id        String   @id @default(uuid())
+  userId    String
+  couponId  String
+  usedAt    DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([couponId])
 }

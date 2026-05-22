@@ -20,7 +20,7 @@ export const SYSTEM_RESERVED = [
   "www", "mail", "ftp", "localhost", "cdn", "media", "webhook", "oauth", "socket", "ws",
   "inbox", "messages", "notifications", "security", "trust", "abuse", "report", 
   "dmca", "privacy-policy", "terms-of-service","jobs", "careers", "teams", "partners", "affiliate", "forum", "cv", "resume", 
-  "hire", "hire-me","portfo", "portfobe", "admin-portfo", "support-portfo", "portfobe-admin"
+  "hire", "hire-me","portfo", "admin-portfo", "support-portfo", "portfobe-admin"
 ];
 
 export const PROFANITY_LIST = [

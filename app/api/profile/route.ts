@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
 
 // --- 1. FUNGSI GET (AMBIL DATA PROFIL LENGKAP) ---
 export async function GET() {
@@ -45,6 +46,11 @@ export async function POST(req: Request) {
       const { subdomain } = body;
       if (!subdomain) return NextResponse.json({ error: "Subdomain kosong" }, { status: 400 });
 
+      const check = isForbiddenUsername(subdomain);
+      if (check.forbidden) {
+        return NextResponse.json({ available: false, message: check.reason });
+      }
+
       // Cukup gunakan count (lebih cepat daripada findUnique)
       const existingCount = await prisma.profile.count({
         where: { subdomain: subdomain.toLowerCase() }
@@ -84,6 +90,11 @@ export async function PUT(req: Request) {
       // Validasi simpel
       if (subdomain.length < 3 || subdomain.length > 15) {
         return NextResponse.json({ error: "Subdomain harus 3-15 karakter." }, { status: 400 });
+      }
+
+      const check = isForbiddenUsername(subdomain);
+      if (check.forbidden) {
+        return NextResponse.json({ error: check.reason }, { status: 400 });
       }
       
       const existingProfile = await prisma.profile.findUnique({

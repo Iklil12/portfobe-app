@@ -6,6 +6,8 @@ import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { safeStringifyJson } from "@/lib/safeJson";
 
+import { THEMES_DATA } from "@/lib/themes";
+
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 export const revalidate = 0;
@@ -82,8 +84,8 @@ export async function PATCH(req: Request) {
 
     if (!isOnlyFavorites) {
       // --- PLAN ENFORCEMENT: PRO FEATURES ---
-      const proThemes = ['cinematic', 'acid'];
-      const isProTheme = proThemes.includes(themeTemplate);
+      const selectedThemeData = THEMES_DATA.find(t => t.id === themeTemplate);
+      const isProTheme = selectedThemeData ? selectedThemeData.isPro : false;
       const isProSplash = splashScreen === true;
 
       if ((isProTheme || isProSplash) && user.plan === 'FREE') {

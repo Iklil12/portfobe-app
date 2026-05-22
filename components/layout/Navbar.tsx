@@ -7,6 +7,12 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const navItems = [
+    { label: 'Features', href: '/#features' },
+    { label: 'Templates', href: '/#templates' },
+    { label: 'Pricing', href: '/pricing' }
+  ];
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
@@ -33,8 +39,8 @@ export function Navbar() {
           </Link>
 
           <div className="hidden md:flex items-center space-x-10">
-            {['Features', 'Templates', 'Pricing'].map(item => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="nav-link text-slate-600 hover:text-slate-900 text-sm font-bold transition-colors">{item}</a>
+            {navItems.map(item => (
+              <Link key={item.label} href={item.href} className="nav-link text-slate-600 hover:text-slate-900 text-sm font-bold transition-colors">{item.label}</Link>
             ))}
           </div>
 
@@ -64,10 +70,10 @@ export function Navbar() {
           </button>
         </div>
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 mt-4">
-          {['Features', 'Templates', 'Pricing'].map((item, i) => (
-            <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setIsMobileMenuOpen(false)} className="text-slate-800 font-extrabold text-3xl hover:text-[#ff9e00] transition-colors flex items-center justify-between group" style={{ animationDelay: `${i * 100}ms` }}>
-              {item} <i className="fas fa-chevron-right text-sm text-slate-300 group-hover:text-[#ff9e00] group-hover:translate-x-2 transition-transform"></i>
-            </a>
+          {navItems.map((item, i) => (
+            <Link key={item.label} href={item.href} onClick={() => setIsMobileMenuOpen(false)} className="text-slate-800 font-extrabold text-3xl hover:text-[#ff9e00] transition-colors flex items-center justify-between group" style={{ animationDelay: `${i * 100}ms` }}>
+              {item.label} <i className="fas fa-chevron-right text-sm text-slate-300 group-hover:text-[#ff9e00] group-hover:translate-x-2 transition-transform"></i>
+            </Link>
           ))}
         </div>
         <div className="p-6 border-t border-slate-100 flex flex-col gap-3">

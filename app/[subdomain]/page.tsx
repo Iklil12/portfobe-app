@@ -192,6 +192,19 @@ export default function PublicPortfolioPage() {
       <main className={`min-h-screen relative overflow-x-clip transition-all duration-1000 ${liftCurtain ? 'opacity-100' : 'opacity-0 h-screen overflow-hidden'}`}>
         {data && liftCurtain && <PortfolioView data={data} theme={data.siteAppearance || data} />}
       </main>
+
+      {/* PORTFOBE WATERMARK FOR FREE USERS */}
+      {data && data.plan === 'FREE' && liftCurtain && (
+        <a 
+          href="https://portfo.be?utm_source=watermark&utm_medium=portfolio" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[9999] flex items-center gap-2 md:gap-3.5 px-3.5 py-2 md:px-5 md:py-3 bg-slate-900 hover:bg-black backdrop-blur-xl border border-white/20 rounded-full shadow-2xl hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.6)] transition-all duration-300 group"
+        >
+          <img src="/portfo.be2.png" alt="Portfobe" className="h-5 md:h-8 w-auto rounded object-contain opacity-95 group-hover:opacity-100 transition-opacity" />
+          <span className="text-[10px] md:text-xs font-black text-white tracking-wide group-hover:text-white transition-colors">Build with Portfo.be</span>
+        </a>
+      )}
     </>
   );
 }
