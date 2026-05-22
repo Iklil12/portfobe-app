@@ -16,6 +16,7 @@ export default function DashboardOverview() {
     subdomain,
     avatarUrl,
     analytics,
+    userPlan,
     isLoadingStats,
     isLoadingActivities,
     isLoadingAnalytics
@@ -33,6 +34,7 @@ export default function DashboardOverview() {
           analytics={analytics} 
           strength={stats.strength || 0} 
           breakdown={stats.strengthBreakdown || []}
+          userPlan={userPlan}
           isLoading={isLoadingAnalytics} 
         />
 

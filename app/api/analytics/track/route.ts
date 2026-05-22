@@ -6,10 +6,10 @@ function parseUserAgent(ua: string) {
   const uaLower = ua.toLowerCase();
   
   let deviceType = "Desktop";
-  if (uaLower.includes("mobile") || uaLower.includes("android") || uaLower.includes("iphone")) {
-    deviceType = "Mobile";
-  } else if (uaLower.includes("tablet") || uaLower.includes("ipad")) {
+  if (uaLower.includes("tablet") || uaLower.includes("ipad") || (uaLower.includes("android") && !uaLower.includes("mobile"))) {
     deviceType = "Tablet";
+  } else if (uaLower.includes("mobile") || uaLower.includes("android") || uaLower.includes("iphone")) {
+    deviceType = "Mobile";
   }
 
   let os = "Unknown";

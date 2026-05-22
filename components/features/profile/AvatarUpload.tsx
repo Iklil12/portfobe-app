@@ -22,7 +22,8 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
   const cloudinaryPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "paperions_preset";
 
   // Deteksi status PRO
-  const isPro = userPlan === 'PRO';
+  const isPro = userPlan !== 'FREE';
+  const isSupreme = userPlan === 'SUPREME';
 
   return (
     <div className="relative mb-8 border-b border-slate-100 pb-8 sm:pb-10 pt-32 sm:pt-40">
@@ -73,9 +74,9 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
                     <i className="fas fa-camera text-xl mb-1"></i>
                   </div>
                 </div>
-                {/* Verified Badge - HANYA MUNCUL JIKA PRO */}
+                {/* Verified Badge - HANYA MUNCUL JIKA PRO/SUPREME */}
                 {isPro && (
-                  <div className="absolute -bottom-0.5 -right-0.5 w-9 h-9 bg-blue-500 rounded-full border-[3px] border-white flex items-center justify-center text-white text-[12px] shadow-lg z-40">
+                  <div className={`absolute -bottom-0.5 -right-0.5 w-9 h-9 rounded-full border-[3px] border-white flex items-center justify-center text-white text-[12px] shadow-lg z-40 ${isSupreme ? 'bg-violet-500' : 'bg-blue-500'}`}>
                     <i className="fas fa-check"></i>
                   </div>
                 )}
@@ -88,10 +89,10 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
               <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                 {firstName ? `${firstName} ${lastName}` : fullName}
               </h2>
-              {/* Pro Creator Tag - HANYA MUNCUL JIKA PRO */}
+              {/* Creator Tag - HANYA MUNCUL JIKA PRO/SUPREME */}
               {isPro && (
-                <span className="bg-orange-50 text-orange-600 border border-orange-200 text-[10px] font-extrabold px-2 py-0.5 rounded-md flex items-center gap-1 uppercase tracking-widest shadow-sm">
-                  <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></span> Pro Creator
+                <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md flex items-center gap-1 uppercase tracking-widest shadow-sm ${isSupreme ? 'bg-violet-50 text-violet-600 border border-violet-200' : 'bg-orange-50 text-orange-600 border border-orange-200'}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isSupreme ? 'bg-violet-500' : 'bg-orange-500'}`}></span> {isSupreme ? 'Supreme Creator' : 'Pro Creator'}
                 </span>
               )}
             </div>

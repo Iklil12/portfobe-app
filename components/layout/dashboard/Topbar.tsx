@@ -131,13 +131,13 @@ export function Topbar({
               <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
                 <div className="hidden sm:block text-right">
                   <p className="text-[13px] font-extrabold text-slate-900 tracking-tight group-hover:text-[#ff9e00] transition-colors">{userName}</p>
-                  <p className={`text-[9px] font-extrabold uppercase tracking-widest mt-0.5 ${userPlan === 'PRO' ? 'text-[#ff9e00]' : 'text-slate-400'}`}>{userPlan} PLAN</p>
+                  <p className={`text-[9px] font-extrabold uppercase tracking-widest mt-0.5 ${userPlan === 'SUPREME' ? 'text-violet-500' : userPlan !== 'FREE' ? 'text-[#ff9e00]' : 'text-slate-400'}`}>{userPlan} PLAN</p>
                 </div>
                 <div className="relative">
-                  <div className={`w-11 h-11 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 ${userPlan === 'PRO' ? 'border-2 border-[#ff9e00] shadow-[0_0_15px_rgba(255,158,0,0.3)]' : 'border border-slate-200'}`}>
+                  <div className={`w-11 h-11 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 ${userPlan === 'SUPREME' ? 'border-2 border-violet-500 shadow-[0_0_15px_rgba(139,92,246,0.3)]' : userPlan !== 'FREE' ? 'border-2 border-[#ff9e00] shadow-[0_0_15px_rgba(255,158,0,0.3)]' : 'border border-slate-200'}`}>
                     <img src={userAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=f8fafc&color=0f172a&bold=true`} className="w-full h-full object-cover" alt="Profile" />
                   </div>
-                  {userPlan === 'PRO' && <div className="absolute -top-1 -right-1 bg-[#ff9e00] text-black rounded-full w-4 h-4 flex items-center justify-center border border-white shadow-sm z-10"><i className="fas fa-crown text-[8px]"></i></div>}
+                  {userPlan !== 'FREE' && <div className={`absolute -top-1 -right-1 rounded-full w-4 h-4 flex items-center justify-center border border-white shadow-sm z-10 ${userPlan === 'SUPREME' ? 'bg-violet-500 text-white' : 'bg-[#ff9e00] text-black'}`}><i className="fas fa-crown text-[8px]"></i></div>}
                 </div>
               </div>
             )}
@@ -198,7 +198,7 @@ export function Topbar({
                     <i className="fas fa-headset text-slate-400 w-4 text-center"></i> 
                     <span className="flex-1">Pusat Bantuan</span>
                   </Link>
-                  {userPlan !== 'PRO' && (
+                  {userPlan === 'FREE' && (
                     <Link href="/pricing" className="px-3 py-2.5 text-[13px] font-semibold text-[#ff9e00] hover:bg-[#ff9e00]/10 rounded-lg transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
                       <i className="fas fa-arrow-up w-4 text-center"></i> 
                       <span className="flex-1">Upgrade Pro</span>

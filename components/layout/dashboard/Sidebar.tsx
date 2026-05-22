@@ -77,8 +77,8 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
                </Link>
              ) : (
-               <div className="w-12 h-12 mt-4 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-200" title="Pro Creator">
-                  <i className="fas fa-gem text-[#ff9e00] text-lg"></i>
+               <div className={`w-12 h-12 mt-4 rounded-2xl flex items-center justify-center border ${userPlan === 'SUPREME' ? 'bg-violet-50 border-violet-200' : 'bg-slate-50 border-slate-200'}`} title={userPlan === 'SUPREME' ? 'Supreme Creator' : 'Pro Creator'}>
+                  <i className={`fas fa-gem text-lg ${userPlan === 'SUPREME' ? 'text-violet-500' : 'text-[#ff9e00]'}`}></i>
                </div>
              )}
           </div>
@@ -247,10 +247,10 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
               <div className="relative overflow-hidden bg-slate-50 border border-slate-200 p-4 rounded-3xl group">
                 <div className="relative z-10 flex items-center justify-between">
                   <div>
-                    <p className="text-[9px] font-extrabold tracking-widest text-[#ff9e00] uppercase mb-1">Status</p>
-                    <p className="text-sm font-extrabold text-slate-900">Pro Creator</p>
+                    <p className={`text-[9px] font-extrabold tracking-widest uppercase mb-1 ${userPlan === 'SUPREME' ? 'text-violet-500' : 'text-[#ff9e00]'}`}>Status</p>
+                    <p className="text-sm font-extrabold text-slate-900">{userPlan === 'SUPREME' ? 'Supreme Creator' : 'Pro Creator'}</p>
                   </div>
-                  <i className="fas fa-check-circle text-2xl text-[#ff9e00]"></i>
+                  <i className={`fas fa-check-circle text-2xl ${userPlan === 'SUPREME' ? 'text-violet-500' : 'text-[#ff9e00]'}`}></i>
                 </div>
               </div>
             )}

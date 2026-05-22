@@ -27,14 +27,14 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
                 exit={{ opacity: 0 }}
                 className="w-14 h-5 bg-slate-200 rounded-md animate-pulse"
               ></motion.div>
-            ) : userPlan === 'PRO' ? (
+            ) : userPlan !== 'FREE' ? (
                <motion.span 
                 key="pro-badge"
                 initial={{ opacity: 0, scale: 0.8, x: -10 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 className="bg-slate-900 text-white text-[9px] font-black px-2.5 py-1 rounded-md tracking-widest uppercase flex items-center gap-1.5 shadow-sm"
                >
-                  <i className="fas fa-crown text-[8px] text-[#ff9e00]"></i> PRO
+                  <i className={`fas fa-crown text-[8px] ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`}></i> {userPlan}
                </motion.span>
             ) : (
                <motion.span 
@@ -110,7 +110,7 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
               animate={{ opacity: 1, y: 0 }}
               className="text-xs sm:text-sm text-slate-500 font-medium mt-2"
             >
-              Kelola portofolio tanpa batas sebagai Pro Creator.
+              Kelola portofolio tanpa batas sebagai {userPlan === 'SUPREME' ? 'Supreme' : 'Pro'} Creator.
             </motion.p>
           )}
         </AnimatePresence>

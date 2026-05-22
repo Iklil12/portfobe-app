@@ -37,7 +37,7 @@ export async function GET(req: Request) {
     const expiredSubscriptions = await prisma.subscription.findMany({
       where: {
         status: "ACTIVE",
-        plan: "PRO",
+        plan: { in: ["PRO", "SUPREME"] },
         expiredAt: { lt: now }, // expiredAt < sekarang
       },
       include: {
@@ -82,7 +82,7 @@ export async function GET(req: Request) {
           where: {
             userId,
             status: "ACTIVE",
-            plan: "PRO",
+            plan: { in: ["PRO", "SUPREME"] },
             id: { not: sub.id },
             OR: [
               { expiredAt: null },
@@ -185,7 +185,7 @@ export async function GET(req: Request) {
     const expiringSoonSubs = await prisma.subscription.findMany({
       where: {
         status: "ACTIVE",
-        plan: "PRO",
+        plan: { in: ["PRO", "SUPREME"] },
         expiredAt: {
           gt: now,
           lte: sevenDaysFromNow,
@@ -244,7 +244,7 @@ export async function GET(req: Request) {
     const winbackSubs = await prisma.subscription.findMany({
       where: {
         status: "EXPIRED",
-        plan: "PRO",
+        plan: { in: ["PRO", "SUPREME"] },
       },
       include: {
         user: {
@@ -257,7 +257,7 @@ export async function GET(req: Request) {
 
     for (const sub of winbackSubs) {
       // Jika user sudah langganan lagi (plan-nya PRO), lewati.
-      if (sub.user.plan === "PRO") continue;
+      if (sub.user.plan !== "FREE") continue;
 
       const daysSinceExpiry = Math.floor(
         (now.getTime() - sub.expiredAt!.getTime()) / (1000 * 60 * 60 * 24)

@@ -99,14 +99,39 @@ export default function AnalyticsPage() {
       : Math.round(((chartData[chartData.length - 1].views - chartData[chartData.length - 2].views) / chartData[chartData.length - 2].views) * 100)
     : 0;
 
-  // Device split
-  const deviceData = [
-    { name: 'Desktop', pct: stats.devices?.desktop || 0, color: '#0f172a' },
-    { name: 'Mobile', pct: stats.devices?.mobile || 0, color: '#6366f1' },
-    { name: 'Tablet', pct: stats.devices?.tablet || 0, color: '#e2e8f0' },
-  ];
+  // Device split — use static data for FREE
+  const isFree = userPlan === 'FREE';
+  const deviceData = isFree
+    ? [
+        { name: 'Desktop', pct: 58, color: '#0f172a' },
+        { name: 'Mobile', pct: 36, color: '#6366f1' },
+        { name: 'Tablet', pct: 6, color: '#e2e8f0' },
+      ]
+    : [
+        { name: 'Desktop', pct: stats.devices?.desktop || 0, color: '#0f172a' },
+        { name: 'Mobile', pct: stats.devices?.mobile || 0, color: '#6366f1' },
+        { name: 'Tablet', pct: stats.devices?.tablet || 0, color: '#e2e8f0' },
+      ];
 
-  const handleLocked = () => showToast({ message: "Upgrade PRO untuk data historis lebih dari 7 hari!", id: "range-lock", icon: "fa-lock" });
+  // Static placeholder sources for FREE
+  const staticSources = [
+    { name: 'Instagram', count: 842, percentage: 38 },
+    { name: 'Google', count: 531, percentage: 24 },
+    { name: 'Direct', count: 419, percentage: 19 },
+    { name: 'LinkedIn', count: 265, percentage: 12 },
+    { name: 'Twitter / X', count: 154, percentage: 7 },
+  ];
+  const displaySources = isFree ? staticSources : sources;
+
+  // Static placeholder values for locked KPI & secondary metrics (FREE)
+  const lockedAvgTime = '2m 34s';
+  const lockedBounceRate = '42%';
+  const lockedAvgDaily = 127;
+  const lockedPeakViews = 384;
+  const lockedPeakDay = 'Senin';
+  const lockedTotalPeriod = 891;
+
+  const handleLocked = () => showToast({ message: "Upgrade ke PRO untuk membuka fitur analitik lengkap!", id: "range-lock", icon: "fa-lock" });
 
   const RANGES = [
     { id: '1d', label: 'Hari Ini', pro: false },
@@ -154,8 +179,8 @@ export default function AnalyticsPage() {
         {(isLoading || isUserLoading || userPlan === undefined) ? [1,2,3,4].map(i => <SkeletonBlock key={i} className="h-[120px] md:h-[140px]" />) : [
           { label: 'Total Views', val: stats.totalViews, icon: 'fa-eye', badge: `${growth > 0 ? '+' : ''}${growth}%`, badgeColor: growth >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500', locked: false },
           { label: 'Unique Visitors', val: stats.uniqueVisitors, icon: 'fa-user', badge: 'Est.', badgeColor: 'bg-slate-50 text-slate-500', locked: false },
-          { label: 'Avg. Time', val: stats.avgTime, icon: 'fa-clock', badge: 'PRO', badgeColor: 'bg-slate-900 text-white', locked: userPlan === 'FREE' },
-          { label: 'Bounce Rate', val: stats.bounceRate, icon: 'fa-sign-out-alt', badge: 'PRO', badgeColor: 'bg-slate-900 text-white', locked: userPlan === 'FREE' },
+          { label: 'Avg. Time', val: isFree ? lockedAvgTime : stats.avgTime, icon: 'fa-clock', badge: 'PRO', badgeColor: 'bg-slate-900 text-white', locked: isFree },
+          { label: 'Bounce Rate', val: isFree ? lockedBounceRate : stats.bounceRate, icon: 'fa-sign-out-alt', badge: 'PRO', badgeColor: 'bg-slate-900 text-white', locked: isFree },
         ].map((card, i) => (
           <div key={i} onClick={card.locked ? handleLocked : undefined}
             className={`bg-white border border-slate-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-enter flex flex-col justify-between relative overflow-hidden ${card.locked ? 'cursor-pointer' : ''}`}
@@ -182,21 +207,32 @@ export default function AnalyticsPage() {
 
       {/* SECONDARY METRIC STRIP */}
       <div className="grid grid-cols-3 gap-3 md:gap-5 mb-8">
-        {isLoading ? [1,2,3].map(i => <SkeletonBlock key={i} className="h-20" />) : [
-          { label: 'Rata-rata Harian', val: avgDaily, suffix: 'views/hari', icon: 'fa-chart-bar' },
-          { label: 'Puncak Kunjungan', val: peakEntry.views, suffix: peakEntry.day, icon: 'fa-trophy' },
-          { label: 'Total Periode', val: totalPeriod, suffix: `dalam ${chartData.length} hari`, icon: 'fa-calendar' },
+        {(isLoading || isUserLoading || userPlan === undefined) ? [1,2,3].map(i => <SkeletonBlock key={i} className="h-20" />) : [
+          { label: 'Rata-rata Harian', val: isFree ? lockedAvgDaily : avgDaily, suffix: isFree ? 'views/hari' : 'views/hari', icon: 'fa-chart-bar' },
+          { label: 'Puncak Kunjungan', val: isFree ? lockedPeakViews : peakEntry.views, suffix: isFree ? lockedPeakDay : peakEntry.day, icon: 'fa-trophy' },
+          { label: 'Total Periode', val: isFree ? lockedTotalPeriod : totalPeriod, suffix: isFree ? 'dalam 7 hari' : `dalam ${chartData.length} hari`, icon: 'fa-calendar' },
         ].map((m, i) => (
-          <div key={i} className="bg-white border border-slate-100 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-5 shadow-sm animate-enter flex items-center gap-3 md:gap-4" style={{ animationDelay: `${250 + i * 50}ms` }}>
+          <div key={i} onClick={isFree ? handleLocked : undefined}
+            className={`bg-white border border-slate-100 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-5 shadow-sm animate-enter flex items-center gap-3 md:gap-4 relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
+            style={{ animationDelay: `${250 + i * 50}ms` }}
+          >
+            {isFree && (
+              <div className="absolute inset-0 bg-white/60 backdrop-blur-[3px] z-10 flex flex-col items-center justify-center">
+                <div className="w-7 h-7 bg-slate-900 text-white rounded-full flex items-center justify-center text-[10px] mb-1">
+                  <i className="fas fa-lock" />
+                </div>
+                <span className="text-[8px] font-black text-slate-900 tracking-widest">PRO ONLY</span>
+              </div>
+            )}
             <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
               <i className={`fas ${m.icon} text-sm`} />
             </div>
             <div className="min-w-0">
               <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest truncate">{m.label}</p>
-              <p className="text-lg md:text-xl font-black text-slate-900 tracking-tighter leading-tight">
+              <p className={`text-lg md:text-xl font-black text-slate-900 tracking-tighter leading-tight ${isFree ? 'blur-[6px] opacity-40' : ''}`}>
                 <AnimatedCounter value={m.val} />
               </p>
-              <p className="text-[9px] font-bold text-slate-400">{m.suffix}</p>
+              <p className={`text-[9px] font-bold text-slate-400 ${isFree ? 'blur-[6px] opacity-40' : ''}`}>{m.suffix}</p>
             </div>
           </div>
         ))}
@@ -261,7 +297,19 @@ export default function AnalyticsPage() {
         {isLoading ? (
           <div className="rounded-[2.5rem] shimmer h-[400px]" />
         ) : (
-        <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm animate-enter flex flex-col" style={{ animationDelay: '350ms' }}>
+        <div onClick={isFree ? handleLocked : undefined}
+          className={`bg-white border border-slate-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm animate-enter flex flex-col relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
+          style={{ animationDelay: '350ms' }}
+        >
+          {isFree && (
+            <div className="absolute inset-0 bg-white/60 backdrop-blur-[3px] z-10 flex flex-col items-center justify-center">
+              <div className="w-10 h-10 bg-slate-900 text-white rounded-full flex items-center justify-center text-sm mb-2">
+                <i className="fas fa-lock" />
+              </div>
+              <span className="text-[9px] font-black text-slate-900 tracking-widest">PRO ONLY</span>
+              <p className="text-[10px] text-slate-500 font-medium mt-1">Upgrade untuk melihat data perangkat</p>
+            </div>
+          )}
           <div className="mb-6">
             <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">Perangkat</h3>
             <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Distribusi per device</p>
@@ -309,7 +357,19 @@ export default function AnalyticsPage() {
         {isLoading ? (
           <div className="rounded-[2.5rem] shimmer h-[340px]" />
         ) : (
-        <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm animate-enter" style={{ animationDelay: '400ms' }}>
+        <div onClick={isFree ? handleLocked : undefined}
+          className={`bg-white border border-slate-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
+          style={{ animationDelay: '400ms' }}
+        >
+          {isFree && (
+            <div className="absolute inset-0 bg-white/60 backdrop-blur-[3px] z-10 flex flex-col items-center justify-center">
+              <div className="w-10 h-10 bg-slate-900 text-white rounded-full flex items-center justify-center text-sm mb-2">
+                <i className="fas fa-lock" />
+              </div>
+              <span className="text-[9px] font-black text-slate-900 tracking-widest">PRO ONLY</span>
+              <p className="text-[10px] text-slate-500 font-medium mt-1">Upgrade untuk melihat sumber trafik</p>
+            </div>
+          )}
           <div className="flex justify-between items-start mb-6">
             <div>
               <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">Top Sources</h3>
@@ -321,14 +381,14 @@ export default function AnalyticsPage() {
           </div>
           {false ? (
             <div className="space-y-4">{[1,2,3,4].map(i => <SkeletonBlock key={i} className="h-12" />)}</div>
-          ) : sources.length === 0 ? (
+          ) : displaySources.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-slate-300">
               <i className="fas fa-ghost text-3xl mb-3" />
               <p className="text-[10px] font-bold tracking-widest">Belum ada data sources</p>
             </div>
           ) : (
             <div className="space-y-5">
-              {sources.map((src, i) => (
+              {displaySources.map((src, i) => (
                 <div key={i} className="group/src">
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-3">

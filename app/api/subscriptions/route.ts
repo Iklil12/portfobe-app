@@ -26,7 +26,7 @@ export async function GET() {
         where: {
           userId,
           status: "ACTIVE",
-          plan: "PRO",
+          plan: { in: ["PRO", "SUPREME"] },
           OR: [
             { expiredAt: null },
             { expiredAt: { gt: new Date() } },

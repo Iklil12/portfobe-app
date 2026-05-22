@@ -188,7 +188,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
               <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             </div>
             {/* Verified Badge */}
-            {(data?.plan === 'PRO' || data?.userPlan === 'PRO') && (
+            {(data?.plan !== 'FREE' || data?.userPlan !== 'FREE') && (data?.plan || data?.userPlan) && (
               <div className={`absolute -bottom-2 -right-2 w-8 h-8 ${themeColor ? 'text-white' : 'bg-blue-500 text-white'} rounded-full border-[3px] border-white flex items-center justify-center text-[10px] shadow-lg z-20`} style={themeColor ? { backgroundColor: themeColor } : {}}>
                 <i className="fas fa-check"></i>
               </div>

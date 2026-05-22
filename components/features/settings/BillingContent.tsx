@@ -62,7 +62,9 @@ export default function BillingContent() {
 
   const plan: string           = data?.plan ?? "FREE";
   const remainingDays: number | null = data?.remainingDays ?? null;
-  const isPro                  = plan === "PRO";
+  const isPro                  = plan !== "FREE";
+  const isSupreme              = plan === "SUPREME";
+  const planLabel              = isSupreme ? "Supreme Creator" : "Pro Creator";
   const canClaimTrial          = data?.canClaimTrial ?? false;
   const sub                    = data?.subscription;
   const subHistory: any[]      = data?.subscriptionHistory ?? [];
@@ -178,14 +180,14 @@ export default function BillingContent() {
         <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden flex flex-col relative">
           
           {/* Subtle background gradient if PRO */}
-          {isPro && <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-400/10 to-transparent opacity-50 rounded-bl-full pointer-events-none" />}
+          {isPro && <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl to-transparent opacity-50 rounded-bl-full pointer-events-none ${isSupreme ? 'from-violet-400/10' : 'from-amber-400/10'}`} />}
 
           <div className="p-8 flex-1 relative z-10">
             <div className="flex justify-between items-start mb-8">
               <div>
                 <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Paket Saat Ini</p>
                 <div className="flex items-center gap-3">
-                  <h2 className="text-3xl font-black text-slate-900 tracking-tight">{isPro ? "Pro Creator" : "Starter"}</h2>
+                  <h2 className="text-3xl font-black text-slate-900 tracking-tight">{isPro ? planLabel : "Starter"}</h2>
                   {isPro && sub && (
                     <span className="px-2.5 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px] font-extrabold uppercase tracking-widest rounded-md flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Active
@@ -193,8 +195,8 @@ export default function BillingContent() {
                   )}
                 </div>
               </div>
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border shadow-sm ${isPro ? "bg-gradient-to-br from-amber-100 to-amber-50 border-amber-200" : "bg-slate-50 border-slate-100"}`}>
-                <i className={`fas ${isPro ? "fa-crown text-amber-500" : "fa-lock text-slate-300"} text-2xl`}></i>
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border shadow-sm ${isPro ? (isSupreme ? "bg-gradient-to-br from-violet-100 to-violet-50 border-violet-200" : "bg-gradient-to-br from-amber-100 to-amber-50 border-amber-200") : "bg-slate-50 border-slate-100"}`}>
+                <i className={`fas ${isPro ? "fa-crown" : "fa-lock"} text-2xl ${isPro ? (isSupreme ? "text-violet-500" : "text-amber-500") : "text-slate-300"}`}></i>
               </div>
             </div>
 
@@ -205,7 +207,7 @@ export default function BillingContent() {
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Sisa Hari</p>
                     <p className="font-extrabold text-slate-900 text-[15px]">
                       {remainingDays === -1 ? (
-                        <span className="text-amber-500">Seumur Hidup ♾️</span>
+                        <span className={isSupreme ? 'text-violet-500' : 'text-amber-500'}>Seumur Hidup ♾️</span>
                       ) : (
                         <span>
                           {remainingDays} Hari 
@@ -255,12 +257,12 @@ export default function BillingContent() {
                   Lisensi diberikan oleh: <span className="font-bold text-slate-700">{sub?.grantedBy || 'System Admin'}</span>
                 </p>
                 <a
-                  href="https://wa.me/628xxxxxxxxx?text=Halo%2C+saya+ingin+memperpanjang+paket+PRO+saya."
+                  href={`https://wa.me/628xxxxxxxxx?text=Halo%2C+saya+ingin+memperpanjang+paket+${plan}+saya.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-slate-900 text-white text-[13px] font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-md"
                 >
-                  Perpanjang PRO
+                  Perpanjang {plan}
                 </a>
               </>
             ) : (
@@ -332,8 +334,8 @@ export default function BillingContent() {
               ) : (
                 subHistory.map((s: any) => (
                   <div key={s.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-slate-50/50 transition-colors">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${s.status === "ACTIVE" ? "bg-amber-50 border-amber-100" : "bg-slate-50 border-slate-200"}`}>
-                      <i className={`fas fa-layer-group text-lg ${s.status === "ACTIVE" ? "text-amber-500" : "text-slate-300"}`} />
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${s.status === "ACTIVE" ? (s.plan === "SUPREME" ? "bg-violet-50 border-violet-100" : "bg-amber-50 border-amber-100") : "bg-slate-50 border-slate-200"}`}>
+                      <i className={`fas fa-layer-group text-lg ${s.status === "ACTIVE" ? (s.plan === "SUPREME" ? "text-violet-500" : "text-amber-500") : "text-slate-300"}`} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1">
@@ -371,7 +373,7 @@ export default function BillingContent() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1">
                         <span className="text-[15px] font-extrabold text-slate-900">
-                          PRO Access — {t.durationDays >= 36500 ? "Lifetime" : `${t.durationDays} Days`}
+                          {t.plan} Access — {t.durationDays >= 36500 ? "Lifetime" : `${t.durationDays} Days`}
                         </span>
                         <StatusBadge status={t.status} />
                       </div>

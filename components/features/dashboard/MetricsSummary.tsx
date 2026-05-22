@@ -35,10 +35,11 @@ interface MetricsSummaryProps {
   analytics: any;
   strength: number;
   breakdown?: { id: string; label: string; done: boolean; weight: number }[];
+  userPlan?: string;
   isLoading: boolean;
 }
 
-export function MetricsSummary({ analytics, strength, breakdown = [], isLoading }: MetricsSummaryProps) {
+export function MetricsSummary({ analytics, strength, breakdown = [], userPlan = 'FREE', isLoading }: MetricsSummaryProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [animatedStrength, setAnimatedStrength] = useState(0);
   
@@ -108,6 +109,7 @@ export function MetricsSummary({ analytics, strength, breakdown = [], isLoading 
                 </div>
             </div>
             
+            {userPlan !== 'FREE' ? (
             <div className="mt-4 pt-4 border-t border-slate-50 grid grid-cols-2 gap-4">
                <div>
                   <p className="text-[8px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Desktop</p>
@@ -124,6 +126,14 @@ export function MetricsSummary({ analytics, strength, breakdown = [], isLoading 
                   <p className="text-[10px] font-bold text-slate-700 mt-1">{analytics?.stats?.devices?.mobile || 0}%</p>
                </div>
             </div>
+            ) : (
+            <div className="mt-4 pt-4 border-t border-slate-50 flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                <i className="fas fa-lock text-[7px] text-slate-400"></i>
+              </div>
+              <p className="text-[9px] font-bold text-slate-400">Upgrade <span className="text-slate-600">PRO</span> untuk data perangkat</p>
+            </div>
+            )}
         </div>
       </div>
       </AnimateOnScroll>
@@ -162,6 +172,7 @@ export function MetricsSummary({ analytics, strength, breakdown = [], isLoading 
               </div>
             </div>
 
+            {userPlan !== 'FREE' ? (
             <div className="mt-4 pt-4 border-t border-white/10 flex justify-between gap-2">
                <div>
                   <p className="text-[8px] font-extrabold text-slate-500 uppercase tracking-widest mb-0.5">Avg. Time</p>
@@ -172,6 +183,14 @@ export function MetricsSummary({ analytics, strength, breakdown = [], isLoading 
                   <p className="text-xs font-bold text-white">{analytics?.todayStats?.bounceRate || '0%'}</p>
                </div>
             </div>
+            ) : (
+            <div className="mt-4 pt-4 border-t border-white/10 flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                <i className="fas fa-lock text-[7px] text-slate-500"></i>
+              </div>
+              <p className="text-[9px] font-bold text-slate-500">Upgrade <span className="text-slate-300">PRO</span> untuk analitik lengkap</p>
+            </div>
+            )}
         </div>
       </div>
       </AnimateOnScroll>

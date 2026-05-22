@@ -74,7 +74,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
       return;
     }
 
-    if (userPlan !== 'PRO') {
+    if (userPlan === 'FREE') {
       setShowUpgradeModal(true);
       return;
     }
@@ -210,7 +210,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                         whileHover={{ y: -5, scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => {
-                          if (opt.isPro && userPlan !== 'PRO') {
+                          if (opt.isPro && userPlan === 'FREE') {
                              setShowUpgradeModal(true);
                              return;
                           }
@@ -416,7 +416,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                 <input type="file" accept="video/mp4,video/x-m4v,video/*" className="hidden" ref={fileInputRef} onChange={handleVideoUpload} />
                                 <div 
                                   onClick={() => {
-                                    if(userPlan !== 'PRO') setShowUpgradeModal(true); 
+                                    if(userPlan === 'FREE') setShowUpgradeModal(true); 
                                     else fileInputRef.current?.click();
                                   }}
                                   className="cursor-pointer border-2 border-dashed border-slate-200 hover:border-slate-900 hover:bg-slate-50 transition-all duration-300 rounded-[20px] flex flex-col items-center justify-center overflow-hidden relative min-h-[160px] w-full group/upload"

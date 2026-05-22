@@ -209,7 +209,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                             <LazyImage src={displayAvatar} alt="Hero" className="w-full h-full object-cover" />
                         </div>
                         {/* Verified Badge */}
-                        {(data?.plan === 'PRO' || data?.userPlan === 'PRO') && (
+                        {(data?.plan !== 'FREE' || data?.userPlan !== 'FREE') && (data?.plan || data?.userPlan) && (
                             <motion.div 
                                 initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.5, type: "spring" }}
                                 className={`absolute -bottom-4 -right-4 w-12 h-12 bg-blue-500 ${radiusClass} border-4 border-black flex items-center justify-center text-white text-[14px] shadow-[5px_5px_0px_rgba(0,0,0,1)] z-40`}

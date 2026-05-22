@@ -2,15 +2,15 @@
 // Helper untuk pengecekan status plan yang akurat
 
 /**
- * Cek apakah user memiliki PRO yang masih aktif.
- * - plan=PRO + expiredAt=null → lifetime, selalu aktif
- * - plan=PRO + expiredAt > now → aktif
- * - plan=PRO + expiredAt <= now → sudah expired, treat as FREE
+ * Cek apakah user memiliki plan premium (PRO/SUPREME) yang masih aktif.
+ * - plan=PRO/SUPREME + expiredAt=null → lifetime, selalu aktif
+ * - plan=PRO/SUPREME + expiredAt > now → aktif
+ * - plan=PRO/SUPREME + expiredAt <= now → sudah expired, treat as FREE
  * - plan=FREE → tidak aktif
  */
 export function isProActive(user: { plan: string; planExpiredAt: Date | null }): boolean {
-  if (user.plan !== "PRO") return false;
-  if (!user.planExpiredAt) return true; // Lifetime PRO (admin grant tanpa expiry)
+  if (user.plan === "FREE") return false;
+  if (!user.planExpiredAt) return true; // Lifetime (admin grant tanpa expiry)
   return user.planExpiredAt > new Date();
 }
 
@@ -21,19 +21,20 @@ export function isProActive(user: { plan: string; planExpiredAt: Date | null }):
 export function getEffectivePlan(user: {
   plan: string;
   planExpiredAt: Date | null;
-}): "FREE" | "PRO" {
-  return isProActive(user) ? "PRO" : "FREE";
+}): "FREE" | "PRO" | "SUPREME" {
+  if (!isProActive(user)) return "FREE";
+  return user.plan as "PRO" | "SUPREME";
 }
 
 /**
- * Hitung sisa hari PRO.
- * Return null jika bukan PRO, 0 jika sudah expired, -1 jika lifetime
+ * Hitung sisa hari plan premium.
+ * Return null jika FREE, 0 jika sudah expired, -1 jika lifetime
  */
 export function getRemainingDays(user: {
   plan: string;
   planExpiredAt: Date | null;
 }): number | null {
-  if (user.plan !== "PRO") return null;
+  if (user.plan === "FREE") return null;
   if (!user.planExpiredAt) return -1; // -1 = lifetime
   const msLeft = user.planExpiredAt.getTime() - Date.now();
   return Math.max(0, Math.ceil(msLeft / (1000 * 60 * 60 * 24)));

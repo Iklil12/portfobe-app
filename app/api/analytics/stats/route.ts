@@ -9,8 +9,8 @@ export const revalidate = 0;
 
 function parseUserAgent(ua: string) {
   const uaLower = ua.toLowerCase();
+  if (uaLower.includes("tablet") || uaLower.includes("ipad") || (uaLower.includes("android") && !uaLower.includes("mobile"))) return "Tablet";
   if (uaLower.includes("mobile") || uaLower.includes("android") || uaLower.includes("iphone")) return "Mobile";
-  if (uaLower.includes("tablet") || uaLower.includes("ipad")) return "Tablet";
   return "Desktop";
 }
 
@@ -134,7 +134,7 @@ export async function GET(req: NextRequest) {
     // ── 7.5 Devices ────────────────────────────────────────────────────────
     let desktop = 0, mobile = 0, tablet = 0;
     rawViewLogs.forEach(l => {
-      const dev = (l as any).deviceType || parseUserAgent(l.userAgent || "");
+      const dev = parseUserAgent(l.userAgent || "");
       if (dev === "Mobile") mobile++;
       else if (dev === "Tablet") tablet++;
       else desktop++;
