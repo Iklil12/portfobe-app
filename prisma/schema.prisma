@@ -253,6 +253,7 @@ model Analytics {
   @@index([type])
   @@index([sessionId])
   @@index([userId], map: "Analytics_userId_fkey")
+  @@index([userId, createdAt]) // OPTIMIZATION: Composite index for fast time-range queries per user
 }
 
 model VisitorSession {
@@ -290,6 +291,7 @@ model VisitorSession {
   @@index([userId])
   @@index([visitorId])
   @@index([createdAt])
+  @@index([userId, createdAt]) // OPTIMIZATION: Composite index for fast time-range queries per user
 }
 
 model Transaction {

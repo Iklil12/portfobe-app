@@ -77,6 +77,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Judul dan Media wajib diisi" }, { status: 400 });
     }
 
+    if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
+      return NextResponse.json({ error: "Format URL media tidak valid" }, { status: 400 });
+    }
+
     const newProject = await prisma.project.create({
       data: {
         title: title,
@@ -118,6 +122,10 @@ export async function PATCH(req: Request) {
 
     if (!id || !title || !mediaUrl) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
+    }
+
+    if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
+      return NextResponse.json({ error: "Format URL media tidak valid" }, { status: 400 });
     }
 
     const existingProject = await prisma.project.findUnique({ where: { id } });

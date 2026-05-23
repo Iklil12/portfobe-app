@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // --- 1. FUNGSI GET (AMBIL DATA PROFIL LENGKAP) ---
 export async function GET() {
@@ -40,6 +41,10 @@ export async function GET() {
 // --- 2. FUNGSI POST (VALIDASI SUBDOMAIN CEPAT) ---
 export async function POST(req: Request) {
   try {
+    // Rate limit: maks 10 cek per menit untuk mencegah enumerasi subdomain
+    const rateLimitResponse = await checkRateLimit(10, 60000);
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await req.json();
 
     if (body.action === 'check_subdomain') {

@@ -86,6 +86,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Kolom wajib harus diisi." }, { status: 400 });
     }
 
+    if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
+      return NextResponse.json({ error: "Format URL media tidak valid" }, { status: 400 });
+    }
+
     const newCertificate = await prisma.certificate.create({
       data: {
         title,
@@ -129,6 +133,10 @@ export async function PATCH(req: Request) {
 
     if (!id) {
       return NextResponse.json({ error: "ID Sertifikat tidak ditemukan." }, { status: 400 });
+    }
+
+    if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
+      return NextResponse.json({ error: "Format URL media tidak valid" }, { status: 400 });
     }
 
     const existingCert = await prisma.certificate.findUnique({ where: { id } });

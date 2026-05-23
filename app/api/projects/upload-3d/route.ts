@@ -11,6 +11,16 @@ export async function POST(req: Request) {
     }
 
     const userId = session.user.id;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { plan: true }
+    });
+
+    if (!user || user.plan === 'FREE') {
+      return NextResponse.json({ error: 'Upgrade ke PRO untuk mengunggah model 3D.' }, { status: 403 });
+    }
+
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
     const title = formData.get('title') as string | null;
@@ -24,8 +34,10 @@ export async function POST(req: Request) {
        return NextResponse.json({ error: 'Hanya format .glb / .gltf yang diizinkan' }, { status: 400 });
     }
 
-    if (file.size > 50 * 1024 * 1024) {
-      return NextResponse.json({ error: 'Ukuran maksimal file 3D adalah 50MB' }, { status: 400 });
+    const max3DSize = user.plan === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
+
+    if (file.size > max3DSize) {
+      return NextResponse.json({ error: `Ukuran maksimal file 3D adalah ${user.plan === 'SUPREME' ? '100MB' : '50MB'}` }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
