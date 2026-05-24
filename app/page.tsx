@@ -3,6 +3,7 @@ import { Footer } from '@/components/layout/Footer';
 import { HeroSection } from '@/components/sections/HeroSection';
 import { MarqueeSection } from '@/components/sections/MarqueeSection';
 import { FeaturesSection } from '@/components/sections/FeaturesSection';
+import { MemeGeneratorSection } from '@/components/sections/MemeGeneratorSection';
 import { DeviceResizerSection } from '@/components/sections/DeviceResizerSection';
 import { TemplatesSection } from '@/components/sections/TemplatesSection';
 import { FaqSection } from '@/components/sections/FaqSection';
@@ -14,6 +15,7 @@ export default function LandingPage() {
       <HeroSection />
       <MarqueeSection />
       <FeaturesSection />
+      <MemeGeneratorSection />
       <TemplatesSection />
       <DeviceResizerSection />
       <FaqSection />

@@ -8,12 +8,12 @@ type PreviewMode = 'desktop' | 'mobile';
 const DEVICE_TIPS: Record<PreviewMode, { title: string; desc: string; icon: string }> = {
   desktop: {
     title: "Minimalist Desktop Layout",
-    desc: "Menampilkan layout split-screen premium: kolom sidebar statis di sisi kiri (35% lebar) dan konten scrollable utama di sisi kanan (65% lebar).",
+    desc: "Renders a premium split-screen layout: a static sidebar column on the left (35% width) and a scrollable main content area on the right (65% width).",
     icon: "fa-desktop"
   },
   mobile: {
     title: "Thumb-Optimized Mobile View",
-    desc: "Menampilkan versi ponsel yang ramping dengan header terpadu dan konten satu kolom linier.",
+    desc: "Renders a streamlined mobile version featuring a unified top header and a single linear layout column.",
     icon: "fa-mobile-alt"
   }
 };
@@ -142,7 +142,7 @@ export function DeviceResizerSection() {
             <span className="text-[#ff9e00]">100%</span> Fluid. <span className="text-white/40">0% Layout Break.</span>
           </h2>
           <p className="text-white/50 text-sm md:text-base max-w-xl mx-auto leading-relaxed font-medium">
-            Satu kanvas cerdas yang merombak tata letak secara presisi untuk kenyamanan membaca di setiap dimensi layar.
+            One smart canvas that precisely reshapes layout rules for comfortable reading across all screen dimensions.
           </p>
         </div>
 

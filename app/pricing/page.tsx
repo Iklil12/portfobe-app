@@ -21,65 +21,65 @@ export default function PricingPage() {
   const plans = [
     {
       name: "Starter",
-      tagline: "Untuk memulai perjalanan karir digital Anda.",
+      tagline: "To kickstart your digital career journey.",
       price: "Rp 0",
-      period: "Selamanya",
+      period: "Forever",
       badge: "Free Plan",
       isPro: false,
       isSupreme: false,
-      buttonText: "Mulai Gratis",
+      buttonText: "Start Free",
       link: "/register",
       features: [
-        { text: "Maksimal 1 Proyek", active: true },
-        { text: "Maksimal 2 Sertifikat", active: true },
-        { text: "1 Tautan Publik (Bio)", active: true },
-        { text: "Tema Dasar (3-5 Tema)", active: true },
-        { text: "Watermark Portfobe", active: true },
-        { text: "Analitik Dasar", active: true },
+        { text: "Max 1 Project", active: true },
+        { text: "Max 2 Certificates", active: true },
+        { text: "1 Public Bio Link", active: true },
+        { text: "Basic Themes (3-5 Themes)", active: true },
+        { text: "Portfobe Watermark", active: true },
+        { text: "Basic Analytics", active: true },
         { text: "Custom Domain", active: false },
         { text: "VIP Support", active: false },
       ]
     },
     ...(pricing && !pricing.pro ? [] : [{
       name: "Pro Creator",
-      tagline: "Segala yang Anda butuhkan untuk tampil profesional.",
+      tagline: "Everything you need to showcase yourself professionally.",
       originalPrice: pricing && pricing.pro ? formatIDR(pricing.pro[billingCycle].original) : "Rp 49.000",
       price: pricing && pricing.pro ? formatIDR(pricing.pro[billingCycle].price) : (billingCycle === 'monthly' ? "Rp 39.000" : "Rp 30.000"),
-      period: billingCycle === 'monthly' ? "/ bulan" : "/ bulan, ditagih tahunan",
-      badge: "Paling Populer",
+      period: billingCycle === 'monthly' ? "/ mo" : "/ mo, billed yearly",
+      badge: "Most Popular",
       isPro: true,
       isSupreme: false,
-      buttonText: "Daftar Pro",
+      buttonText: "Get Pro",
       link: "/checkout?plan=pro",
       features: [
-        { text: "Proyek & Sertifikat Tanpa Batas", active: true },
-        { text: "Semua Tema Premium", active: true },
-        { text: "Tanpa Watermark", active: true },
-        { text: "Analitik Mendalam & SEO", active: true },
-        { text: "Hubungkan Custom Domain", active: true },
-        { text: "GitHub & Penpot Widget", active: true },
+        { text: "Unlimited Projects & Certs", active: true },
+        { text: "All Premium Themes", active: true },
+        { text: "No Watermark", active: true },
+        { text: "Deep Analytics & SEO", active: true },
+        { text: "Connect Custom Domain", active: true },
+        { text: "GitHub & Penpot Widgets", active: true },
         { text: "VIP Support", active: false },
       ]
     }]),
     ...(pricing && !pricing.supreme ? [] : [{
       name: "Supreme VIP",
-      tagline: "Solusi maksimal untuk agensi & kreator besar.",
+      tagline: "Ultimate solution for agencies & power creators.",
       originalPrice: pricing && pricing.supreme ? formatIDR(pricing.supreme[billingCycle].original) : "Rp 89.000",
       price: pricing && pricing.supreme ? formatIDR(pricing.supreme[billingCycle].price) : (billingCycle === 'monthly' ? "Rp 79.000" : "Rp 65.000"),
-      period: billingCycle === 'monthly' ? "/ bulan" : "/ bulan, ditagih tahunan",
+      period: billingCycle === 'monthly' ? "/ mo" : "/ mo, billed yearly",
       badge: "Power User",
       isPro: true,
       isSupreme: true,
-      buttonText: "Daftar Supreme",
+      buttonText: "Get Supreme",
       link: "/checkout?plan=supreme",
       features: [
-        { text: "Semua Fitur Pro", active: true },
+        { text: "All Pro Features", active: true },
         { text: "Multiple Custom Domains", active: true },
         { text: "Custom CSS / HTML", active: true },
         { text: "Google/Meta Pixel Analytics", active: true },
-        { text: billingCycle === 'yearly' ? "Gratis Domain 1 Tahun" : "Hubungkan Custom Domain", active: true, bonus: billingCycle === 'yearly' },
-        { text: "Prioritas VIP Support", active: true },
-        { text: "Fitur Akses Awal", active: true },
+        { text: billingCycle === 'yearly' ? "Free 1-Year Domain" : "Connect Custom Domain", active: true, bonus: billingCycle === 'yearly' },
+        { text: "Priority VIP Support", active: true },
+        { text: "Early Access Features", active: true },
       ]
     }])
   ];
@@ -114,7 +114,7 @@ export default function PricingPage() {
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors">Login</Link>
-            <Link href="/register" className="text-xs font-bold text-white px-5 py-2.5 bg-slate-900 rounded-full hover:bg-slate-800 transition-all shadow-md">Daftar</Link>
+            <Link href="/register" className="text-xs font-bold text-white px-5 py-2.5 bg-slate-900 rounded-full hover:bg-slate-800 transition-all shadow-md">Register</Link>
           </div>
         </div>
 
@@ -124,23 +124,23 @@ export default function PricingPage() {
             <i className="fas fa-crown"></i> Simple Pricing
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter mb-6">
-            Pilih Paket <span className="text-slate-400 font-light">Terbaik</span><br/>Untuk Karir Anda.
+            Choose the <span className="text-slate-400 font-light">Best Plan</span><br/>For Your Career.
           </h1>
           <p className="text-slate-500 max-w-xl mx-auto text-sm md:text-base font-medium leading-relaxed mb-10">
-            Mulai bangun portofolio profesional hari ini. Pilih paket gratis selamanya atau upgrade ke Pro untuk fitur tanpa batas.
+            Start building your professional portfolio today. Choose a free forever plan or upgrade to Pro for unlimited features.
           </p>
 
           {/* Billing Toggle */}
           <div className="flex items-center justify-center gap-4">
-            <span className={`text-xs font-bold ${billingCycle === 'monthly' ? 'text-slate-900' : 'text-slate-400'}`}>Bulanan</span>
+            <span className={`text-xs font-bold ${billingCycle === 'monthly' ? 'text-slate-900' : 'text-slate-400'}`}>Monthly</span>
             <button 
                 onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
                 className="w-14 h-7 bg-slate-200 rounded-full p-1 relative transition-colors group"
             >
                 <div className={`w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 transform ${billingCycle === 'yearly' ? 'translate-x-7' : 'translate-x-0'}`}></div>
             </button>
-            <span className={`text-xs font-bold ${billingCycle === 'yearly' ? 'text-slate-900' : 'text-slate-400'}`}>Tahunan</span>
-            <span className="bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded-md animate-pulse">HEMAT 20%</span>
+            <span className={`text-xs font-bold ${billingCycle === 'yearly' ? 'text-slate-900' : 'text-slate-400'}`}>Yearly</span>
+            <span className="bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded-md animate-pulse">SAVE 20%</span>
           </div>
         </div>
 
@@ -167,7 +167,7 @@ export default function PricingPage() {
                 {plan.originalPrice && (
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-sm font-bold text-slate-400 line-through decoration-slate-300">{plan.originalPrice}</span>
-                    <span className="text-[10px] font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full uppercase tracking-wider border border-rose-100">DISKON</span>
+                    <span className="text-[10px] font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full uppercase tracking-wider border border-rose-100 font-mono">OFF</span>
                   </div>
                 )}
                 <div className="flex items-baseline gap-2">
@@ -210,29 +210,29 @@ export default function PricingPage() {
         {/* Domain Advantages Section */}
         <div className="max-w-5xl mx-auto mt-24 p-8 md:p-12 bg-white rounded-[2.5rem] border border-slate-100 shadow-xl animate-enter" style={{ animationDelay: '300ms' }}>
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4">Keunggulan Langganan Tahunan 🎁</h2>
-            <p className="text-slate-500 font-medium text-sm md:text-base">Inilah alasan mengapa kreator profesional selalu memilih paket tahunan.</p>
+            <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4">Yearly Subscription Benefits 🎁</h2>
+            <p className="text-slate-500 font-medium text-sm md:text-base">Here is why professional creators always choose the yearly plan.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 transition-all hover:bg-slate-100">
               <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-6 text-2xl">🗓️</div>
-              <h3 className="text-xl font-black text-slate-900 mb-4">Langganan Bulanan</h3>
+              <h3 className="text-xl font-black text-slate-900 mb-4">Monthly Subscription</h3>
               <ul className="space-y-4 text-sm font-semibold text-slate-600">
-                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-500 mt-1"></i><span>Bisa menautkan ke Custom Domain.</span></li>
-                <li className="flex gap-4 items-start"><i className="fas fa-times text-rose-500 mt-1"></i><span>Anda harus membeli domain sendiri secara terpisah.</span></li>
-                <li className="flex gap-4 items-start"><i className="fas fa-times text-rose-500 mt-1"></i><span>Perlu mengatur DNS (Name Server) secara manual.</span></li>
+                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-500 mt-1"></i><span>Allows linking custom domains.</span></li>
+                <li className="flex gap-4 items-start"><i className="fas fa-times text-rose-500 mt-1"></i><span>You must purchase your domain separately.</span></li>
+                <li className="flex gap-4 items-start"><i className="fas fa-times text-rose-500 mt-1"></i><span>Requires manual DNS settings configuration.</span></li>
               </ul>
             </div>
             
             <div className="p-8 bg-slate-900 rounded-3xl text-white shadow-2xl relative overflow-hidden transition-all hover:shadow-[#ff9e00]/20">
               <div className="absolute -right-10 -bottom-10 text-[120px] opacity-10 rotate-12">🎁</div>
               <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shadow-sm mb-6 text-2xl text-white border border-white/20">🌟</div>
-              <h3 className="text-xl font-black text-white mb-4">Langganan Tahunan</h3>
+              <h3 className="text-xl font-black text-white mb-4">Yearly Subscription</h3>
               <ul className="space-y-4 text-sm font-semibold text-slate-300 relative z-10">
-                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-400 mt-1"></i><span><strong className="text-white text-base">Gratis 1 Custom Domain</strong> (.com/.net/.me) untuk tahun pertama.</span></li>
-                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-400 mt-1"></i><span>Tidak perlu repot membeli domain di tempat lain.</span></li>
-                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-400 mt-1"></i><span>Otomatis terhubung (1-Click Setup) tanpa pusing DNS.</span></li>
+                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-400 mt-1"></i><span><strong className="text-white text-base">Free 1 Custom Domain</strong> (.com/.net/.me) for the first year.</span></li>
+                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-400 mt-1"></i><span>No need to buy a domain elsewhere.</span></li>
+                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-400 mt-1"></i><span>Connected automatically (1-Click Setup) with zero DNS hassle.</span></li>
               </ul>
             </div>
           </div>
@@ -240,7 +240,7 @@ export default function PricingPage() {
 
         {/* Trust Section */}
         <div className="mt-24 text-center animate-enter" style={{ animationDelay: '400ms' }}>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-10">Mulai Karir Digital Anda Sekarang</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-10">Kickstart Your Digital Career Now</p>
             <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-30 grayscale items-center">
                 <i className="fab fa-google text-3xl"></i>
                 <i className="fab fa-instagram text-3xl"></i>
