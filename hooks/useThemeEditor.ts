@@ -136,13 +136,16 @@ export function useThemeEditor() {
     });
 
     try {
-      const res = await fetch('/api/appearance', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          themeTemplate: activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen
-        })
-      });
+      const [res] = await Promise.all([
+        fetch('/api/appearance', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            themeTemplate: activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen
+          })
+        }),
+        new Promise(resolve => setTimeout(resolve, 2000))
+      ]);
 
       if (res.ok) {
         mutate('/api/dashboard/sync');

@@ -24,7 +24,7 @@ export default function DashboardOverview() {
   return (
     <div className="min-h-screen pb-32 relative overflow-hidden">
       {/* KONTEN UTAMA */}
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-10 lg:px-12 py-8 relative z-10">
+      <div className="max-w-[2000px] mx-auto px-4 md:px-8 lg:px-12 xl:px-16 py-8 relative z-10">
         {/* ROW 1: HEADER & QUICK STATS (full width) */}
         <div className="mb-8">
           <OverviewHeader subdomain={subdomain} avatarUrl={avatarUrl} isLoading={isLoadingStats} />
