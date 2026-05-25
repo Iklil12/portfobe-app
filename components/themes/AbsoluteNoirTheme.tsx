@@ -77,7 +77,7 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
 
     return (
         <div className="relative noir-root">
-        <main className="relative bg-[#050505] text-white font-sans selection:bg-white selection:text-black @container tracking-tight noir-theme" style={{ filter: 'grayscale(100%) contrast(1.2)' }}>
+        <main className="relative bg-[#050505] text-white font-sans selection:bg-white selection:text-black @container tracking-tight noir-theme">
             <style dangerouslySetInnerHTML={{
                     __html: `
             .noir-theme .font-sans { font-family: ${customHeadingFont} !important; }
