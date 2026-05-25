@@ -19,6 +19,9 @@ export function useThemeEditor() {
 
   // --- STATE UNTUK DATA PROFIL ---
   const [fullName, setFullName] = useState("Nama Anda");
+  const fullNameRef = useRef(fullName);
+  useEffect(() => { fullNameRef.current = fullName; }, [fullName]);
+  
   const [profession, setProfession] = useState("Profesi / Bio Singkat");
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -35,6 +38,9 @@ export function useThemeEditor() {
   const [cardStyle, setCardStyle] = useState("hard-shadow");
   const [splashScreen, setSplashScreen] = useState(true);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [customTexts, setCustomTexts] = useState<Record<string, string>>({});
+  const customTextsRef = useRef(customTexts);
+  useEffect(() => { customTextsRef.current = customTexts; }, [customTexts]);
   const dataLoaded = useRef(false);
 
   useEffect(() => {
@@ -79,6 +85,11 @@ export function useThemeEditor() {
 
               if (sa.favoriteThemes !== undefined) {
                 // Ambil dari ThemeFavorite table langsung
+              }
+              
+              if (sa.customTexts) {
+                const parsedTexts = safeParseJson(sa.customTexts, {});
+                setCustomTexts(parsedTexts || {});
               }
             }
           }
@@ -129,6 +140,42 @@ export function useThemeEditor() {
     }
   };
 
+  // Listener untuk pesan dari iframe preview (Inline Editing)
+  useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.data?.type === 'INLINE_EDIT' && event.data?.entity === 'profile') {
+        const { field, value } = event.data;
+        
+        let finalField = field;
+        let finalValue = value;
+
+        // Gabungkan firstName dan lastName menjadi fullName
+        if (field === 'firstName') {
+          finalField = 'fullName';
+          const lastName = fullNameRef.current.split(' ').slice(1).join(' ');
+          finalValue = `${value} ${lastName}`.trim();
+          setFullName(finalValue);
+        } else if (field === 'lastName') {
+          finalField = 'fullName';
+          const firstName = fullNameRef.current.split(' ')[0];
+          finalValue = `${firstName} ${value}`.trim();
+          setFullName(finalValue);
+        } else {
+          // 1. Update State Lokal agar UI berubah seketika
+          if (field === 'fullName') setFullName(value);
+          if (field === 'bio') setBio(value);
+          if (field === 'profession') setProfession(value);
+        }
+      } else if (event.data?.type === 'INLINE_EDIT' && event.data?.entity === 'appearance') {
+        const { field, value } = event.data;
+        setCustomTexts({ ...customTextsRef.current, [field]: value });
+      }
+    };
+    
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
   const saveDesign = async () => {
     setIsSaving(true);
     const toastId = toast.loading('Menyimpan desain...', {
@@ -136,18 +183,37 @@ export function useThemeEditor() {
     });
 
     try {
-      const [res] = await Promise.all([
-        fetch('/api/appearance', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            themeTemplate: activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen
-          })
-        }),
-        new Promise(resolve => setTimeout(resolve, 2000))
-      ]);
+      const payload = { 
+        themeTemplate: activeTheme, 
+        themeColor, 
+        fontHeading, 
+        fontBody, 
+        buttonShape, 
+        cardStyle, 
+        splashScreen,
+        customTexts // TAMBAHAN: Kirim customTexts ke server
+      };
+      
+      // 1. Minimum 2 second delay promise
+      const delayPromise = new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // 2. API Fetch promises (Appearance & Profile in parallel)
+      const appearancePromise = fetch('/api/appearance', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-      if (res.ok) {
+      const profilePromise = fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName, profession, bio })
+      });
+
+      // Tunggu semuanya selesai (delay dipaksa minimal 2 detik meskipun fetch instan)
+      const [resApp, resProf] = await Promise.all([appearancePromise, profilePromise, delayPromise]);
+
+      if (resApp.ok && resProf.ok) {
         mutate('/api/dashboard/sync');
         toast.dismiss(toastId);
 
@@ -157,14 +223,17 @@ export function useThemeEditor() {
           showToast({ message: 'Desain berhasil dipublikasikan!', id: toastId, icon: 'fa-check-circle' });
         }
       } else {
-        const errorData = await res.json();
-        // Jika backend menolak karena user FREE memilih tema PRO
-        if (res.status === 403 && (errorData.code === 'THEME_LOCKED' || errorData.code === 'FEATURE_LOCKED')) {
-          toast.dismiss(toastId);
-          setShowProModal(true); 
-        } else {
-          throw new Error('Gagal menyimpan');
+        // Cek jika error berasal dari api appearance (misal tema terkunci)
+        if (!resApp.ok) {
+          const errorData = await resApp.json().catch(() => ({}));
+          // Jika backend menolak karena user FREE memilih tema PRO
+          if (resApp.status === 403 && (errorData.code === 'THEME_LOCKED' || errorData.code === 'FEATURE_LOCKED')) {
+            toast.dismiss(toastId);
+            setShowProModal(true); 
+            return;
+          }
         }
+        throw new Error('Gagal menyimpan');
       }
     } catch (error) {
       showToast({ message: 'Terjadi kesalahan server.', id: toastId, icon: 'fa-exclamation-triangle' });
@@ -188,7 +257,8 @@ export function useThemeEditor() {
     fontBody, 
     buttonShape, 
     cardStyle, 
-    splashScreen 
+    splashScreen,
+    customTexts
   };
 
   return {

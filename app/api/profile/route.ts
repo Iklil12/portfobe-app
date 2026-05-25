@@ -133,3 +133,50 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Gagal memproses data." }, { status: 500 });
   }
 }
+
+// --- 4. FUNGSI PATCH (PARTIAL UPDATE UNTUK INLINE EDITING) ---
+export async function PATCH(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await req.json();
+    const allowedFields = ['fullName', 'profession', 'bio', 'subdomain'];
+    
+    // Filter only allowed fields
+    const updateData: any = {};
+    for (const key of Object.keys(body)) {
+      if (allowedFields.includes(key)) {
+        updateData[key] = body[key];
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true }
+    });
+
+    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+    const updatedProfile = await prisma.profile.upsert({
+      where: { userId: user.id },
+      update: updateData,
+      create: {
+        userId: user.id,
+        fullName: updateData.fullName || "Creator",
+        subdomain: updateData.subdomain || null,
+        profession: updateData.profession || null,
+        bio: updateData.bio || null
+      }
+    });
+
+    return NextResponse.json({ message: "Profil diperbarui sebagian", profile: updatedProfile });
+  } catch (error) {
+    console.error("Error Patch Profile:", error);
+    return NextResponse.json({ error: "Gagal memproses data patch." }, { status: 500 });
+  }
+}

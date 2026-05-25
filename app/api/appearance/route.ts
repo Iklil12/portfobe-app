@@ -76,11 +76,21 @@ export async function PATCH(req: Request) {
         buttonShape, 
         cardStyle,
         splashScreen,
-        favoriteThemes
+        favoriteThemes,
+        customTexts
     } = body;
 
     // OPTIMASI: Jika hanya update favorit, lewati pengecekan plan dan logging
     const isOnlyFavorites = favoriteThemes !== undefined && themeTemplate === undefined;
+
+    // VALIDASI KEAMANAN: Batasi ukuran customTexts untuk mencegah serangan Payload Bloat
+    let stringifiedCustomTexts: string | undefined = undefined;
+    if (customTexts !== undefined) {
+      stringifiedCustomTexts = safeStringifyJson(customTexts);
+      if (stringifiedCustomTexts.length > 5000) {
+        return NextResponse.json({ error: "Payload customTexts terlalu besar. Maksimal 5000 karakter." }, { status: 400 });
+      }
+    }
 
     if (!isOnlyFavorites) {
       // --- PLAN ENFORCEMENT: PRO FEATURES ---
@@ -102,14 +112,15 @@ export async function PATCH(req: Request) {
     const updatedAppearance = await prisma.siteAppearance.upsert({
       where: { userId: user.id },
       update: { 
-        themeTemplate, 
-        themeColor, 
-        fontHeading, 
-        fontBody, 
-        buttonShape, 
-        cardStyle,
-        splashScreen,
-        favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : undefined
+        ...(themeTemplate !== undefined && { themeTemplate }), 
+        ...(themeColor !== undefined && { themeColor }), 
+        ...(fontHeading !== undefined && { fontHeading }), 
+        ...(fontBody !== undefined && { fontBody }), 
+        ...(buttonShape !== undefined && { buttonShape }), 
+        ...(cardStyle !== undefined && { cardStyle }),
+        ...(splashScreen !== undefined && { splashScreen }),
+        ...(favoriteThemes !== undefined && { favoriteThemes: safeStringifyJson(favoriteThemes) }),
+        ...(stringifiedCustomTexts !== undefined && { customTexts: stringifiedCustomTexts })
       },
       create: {
         userId: user.id,
@@ -120,7 +131,8 @@ export async function PATCH(req: Request) {
         buttonShape, 
         cardStyle,
         splashScreen,
-        favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : "[]"
+        favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : "[]",
+        customTexts: stringifiedCustomTexts !== undefined ? stringifiedCustomTexts : "{}"
       }
     });
 

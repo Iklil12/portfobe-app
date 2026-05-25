@@ -39,9 +39,9 @@ const THEME_MAP: Record<string, React.FC<any>> = {
   // Nanti tinggal tambah: 'elegant': ElegantTheme, dst...
 };
 
-export default function PortfolioView({ data, theme, isMobileView = false, isCardPreview = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean }) {
+export default function PortfolioView({ data, theme, isMobileView = false, isCardPreview = false, isEditor }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
   const pathname = usePathname();
-  const isEditor = pathname?.includes('/dashboard');
+  const effectiveIsEditor = isEditor !== undefined ? isEditor : pathname?.includes('/dashboard');
   
   // PENYESUAIAN BARU: Ambil subdomain dari dalam objek profile
   const subdomain = data?.profile?.subdomain || data?.subdomain || "";
@@ -53,10 +53,22 @@ export default function PortfolioView({ data, theme, isMobileView = false, isCar
   // 4. PILIH KOMPONEN YANG SESUAI DARI REGISTRY
   const SelectedThemeComponent = THEME_MAP[activeThemeName] || THEME_MAP['brutalism'];
 
+  // 5. PARSING CUSTOM TEXTS
+  // Di Editor (livePreviewTheme), customTexts adalah Object.
+  // Tapi di halaman publik (dari database API), customTexts adalah JSON String.
+  const processedTheme = { ...theme };
+  if (typeof processedTheme.customTexts === 'string') {
+    try {
+      processedTheme.customTexts = JSON.parse(processedTheme.customTexts);
+    } catch (e) {
+      processedTheme.customTexts = {};
+    }
+  }
+
   return (
     <div className="relative w-full h-full" style={{ containerType: 'inline-size' }}>
       {/* RENDER TEMA YANG DIPILIH SECARA DINAMIS */}
-      <SelectedThemeComponent data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor} />
+      <SelectedThemeComponent data={data} theme={processedTheme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={effectiveIsEditor} />
     </div>
   );
 }

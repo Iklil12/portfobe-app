@@ -104,6 +104,7 @@ model SiteAppearance {
   fontBody      String  @default("Inter")
   buttonShape   String  @default("rounded")
   cardStyle     String  @default("flat")
+  customTexts   String  @default("{}") @db.Text
   favoriteThemes String @default("[]") @db.Text
   user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
