@@ -2,9 +2,17 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: Request) {
   try {
+    // 1. Rate Limiting (Anti-Spam Bot): Batasi maksimal 10 request upload per menit per IP
+    const rateLimitRes = await checkRateLimit(10, 60 * 1000);
+    if (rateLimitRes) {
+      return rateLimitRes;
+    }
+
+    // 2. Autentikasi
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -12,7 +20,7 @@ export async function POST(req: Request) {
 
     const userId = session.user.id;
     
-    // Get user tier to enforce limits server-side
+    // 3. Otorisasi Plan/Tier
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { plan: true }
@@ -41,6 +49,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: `Ukuran maksimal video adalah ${user.plan === 'SUPREME' ? '100MB' : '50MB'}` }, { status: 400 });
     }
 
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    // 4. Validasi Magic Bytes (File Content Sniffing)
+    const isMp4OrMov = buffer.length >= 8 && buffer.toString('ascii', 4, 8) === 'ftyp';
+    const isWebm = buffer.length >= 4 && buffer.readUInt32BE(0) === 0x1A45DFA3;
+
+    if (!isMp4OrMov && !isWebm) {
+      return NextResponse.json({ error: 'Format file tidak valid. Harap unggah file video MP4, WEBM, atau MOV yang asli.' }, { status: 400 });
+    }
+
     const libraryId = process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID;
     const apiKey = process.env.BUNNY_API_KEY;
 
@@ -49,7 +67,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
     }
 
-    // 1. Create Video Object in Bunny Stream
+    // 5. Create Video Object in Bunny Stream
     const createRes = await fetch(`https://video.bunnycdn.com/library/${libraryId}/videos`, {
       method: "POST",
       headers: {
@@ -72,9 +90,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Gagal mendapatkan referensi video" }, { status: 500 });
     }
 
-    // 2. Upload Video Binary to Bunny Stream
-    const buffer = Buffer.from(await file.arrayBuffer());
-    
+    // 6. Upload Video Binary to Bunny Stream
     const uploadRes = await fetch(`https://video.bunnycdn.com/library/${libraryId}/videos/${guid}`, {
       method: 'PUT',
       headers: {

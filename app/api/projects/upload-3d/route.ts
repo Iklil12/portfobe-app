@@ -2,9 +2,17 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: Request) {
   try {
+    // 1. Rate Limiting (Anti-Spam Bot): Batasi maksimal 10 request upload per menit per IP
+    const rateLimitRes = await checkRateLimit(10, 60 * 1000);
+    if (rateLimitRes) {
+      return rateLimitRes;
+    }
+
+    // 2. Autentikasi
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -12,6 +20,7 @@ export async function POST(req: Request) {
 
     const userId = session.user.id;
 
+    // 3. Otorisasi Plan/Tier
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { plan: true }
@@ -41,6 +50,22 @@ export async function POST(req: Request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
+
+    // 4. Validasi Magic Bytes (File Content Sniffing)
+    const isGlb = buffer.length >= 4 && buffer.toString('ascii', 0, 4) === 'glTF';
+    let isGltf = false;
+    if (!isGlb) {
+      try {
+        const text = buffer.toString('utf-8', 0, 100).trim();
+        if (text.startsWith('{')) {
+          isGltf = true;
+        }
+      } catch (e) {}
+    }
+
+    if (!isGlb && !isGltf) {
+      return NextResponse.json({ error: 'Format file tidak valid. Harap unggah file model 3D GLB atau GLTF yang asli.' }, { status: 400 });
+    }
     const safeTitle = title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
     const filename = `${Date.now()}-${safeTitle}.glb`;
     const storagePath = `${userId}/${filename}`;
