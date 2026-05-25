@@ -393,11 +393,11 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
         )}
 
         {/* PENPOT SHOWCASE SECTION */}
-        <PenpotShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="monochrome" themeColor={themeColor} />
-        <CanvaShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="monochrome" themeColor={themeColor} />
+        <PenpotShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="minimalist" themeColor={themeColor} />
+        <CanvaShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="minimalist" themeColor={themeColor} />
 
         {/* OPEN SOURCE SECTION (GITHUB) */}
-        <GithubStats userId={data?.userId || data?.user?.id || data?.id || ""} variant="monochrome" themeColor={themeColor} />
+        <GithubStats userId={data?.userId || data?.user?.id || data?.id || ""} variant="minimalist" themeColor={themeColor} />
 
         {/* AWARDS SECTION */}
         <section className="border-t border-gray-200 bg-gray-50/30 overflow-hidden">
@@ -459,7 +459,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
         {testimonials.length > 0 && (
           <section className="border-t border-gray-200 bg-white">
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={cinematicBlurUp} custom={0.2} className="p-8 @lg:p-12 pb-6">
-              <TestimonialSection testimonials={testimonials} variant="grid" />
+              <TestimonialSection testimonials={testimonials} variant="grid" isEditor={isEditor} theme={theme} />
             </motion.div>
           </section>
         )}

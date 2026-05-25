@@ -141,7 +141,7 @@ export async function PATCH(req: Request) {
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const allowedFields = ['fullName', 'profession', 'bio', 'subdomain'];
+    const allowedFields = ['fullName', 'profession', 'bio', 'subdomain', 'location'];
     
     // Filter only allowed fields
     const updateData: any = {};

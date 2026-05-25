@@ -24,6 +24,7 @@ export function useThemeEditor() {
   
   const [profession, setProfession] = useState("Profesi / Bio Singkat");
   const [bio, setBio] = useState("");
+  const [location, setLocation] = useState("Indonesia");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [subdomain, setSubdomain] = useState("");
   const [isLive, setIsLive] = useState(true);
@@ -57,6 +58,7 @@ export function useThemeEditor() {
               if (appData.profile.fullName) setFullName(appData.profile.fullName);
               if (appData.profile.profession) setProfession(appData.profile.profession);
               if (appData.profile.bio) setBio(appData.profile.bio);
+              if (appData.profile.location) setLocation(appData.profile.location);
               if (appData.profile.avatarUrl) setAvatarUrl(appData.profile.avatarUrl);
               if (appData.profile.subdomain) setSubdomain(appData.profile.subdomain);
             }
@@ -165,6 +167,7 @@ export function useThemeEditor() {
           if (field === 'fullName') setFullName(value);
           if (field === 'bio') setBio(value);
           if (field === 'profession') setProfession(value);
+          if (field === 'location') setLocation(value);
         }
       } else if (event.data?.type === 'INLINE_EDIT' && event.data?.entity === 'appearance') {
         const { field, value } = event.data;
@@ -207,7 +210,7 @@ export function useThemeEditor() {
       const profilePromise = fetch('/api/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullName, profession, bio })
+        body: JSON.stringify({ fullName, profession, bio, location })
       });
 
       // Tunggu semuanya selesai (delay dipaksa minimal 2 detik meskipun fetch instan)
@@ -247,7 +250,7 @@ export function useThemeEditor() {
   // Persiapan data untuk Live Preview
   const livePreviewData = {
     ...dbData,
-    profile: { fullName, profession, bio, avatarUrl, subdomain }
+    profile: { fullName, profession, bio, avatarUrl, subdomain, location }
   };
   
   const livePreviewTheme = { 
