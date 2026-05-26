@@ -1,22 +1,14 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { useScrollReveal } from '@/hooks/useScrollReveal';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-type PreviewMode = 'desktop' | 'mobile';
+// ============================================================================
+// ARTISTIC CONCEPT: THE LIQUID CANVAS (DIMENSIONAL SHIFTER)
+// High-end cinematic exterior wrapping the meticulously crafted simulated portfolio.
+// ============================================================================
 
-const DEVICE_TIPS: Record<PreviewMode, { title: string; desc: string; icon: string }> = {
-  desktop: {
-    title: "Minimalist Desktop Layout",
-    desc: "Renders a premium split-screen layout: a static sidebar column on the left (35% width) and a scrollable main content area on the right (65% width).",
-    icon: "fa-desktop"
-  },
-  mobile: {
-    title: "Thumb-Optimized Mobile View",
-    desc: "Renders a streamlined mobile version featuring a unified top header and a single linear layout column.",
-    icon: "fa-mobile-alt"
-  }
-};
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const PenpotIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -27,210 +19,102 @@ const PenpotIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const CanvaIcon = ({ className }: { className?: string }) => (
-  <span className={`font-black tracking-tight text-[9px] border border-current px-1 py-0.5 rounded-none ${className}`}>CANVA</span>
-);
-
 export function DeviceResizerSection() {
-  const sectionRef = useScrollReveal<HTMLElement>();
-  const [previewMode, setPreviewMode] = useState<PreviewMode>('desktop');
-  
-  const [parentWidth, setParentWidth] = useState(960);
-  const [isMobileWindow, setIsMobileWindow] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!wrapperRef.current) return;
-    const updateWidth = () => {
-      if (wrapperRef.current) {
-        setParentWidth(wrapperRef.current.offsetWidth);
-        setIsMobileWindow(window.innerWidth < 1024);
-      }
-    };
-    
-    updateWidth();
-    
-    const observer = new ResizeObserver(updateWidth);
-    observer.observe(wrapperRef.current);
-    
-    window.addEventListener('resize', updateWidth);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', updateWidth);
-    };
-  }, []);
-
-  const scale = previewMode === 'desktop' && isMobileWindow ? (parentWidth / 960) : 1;
-
-  const currentTip = DEVICE_TIPS[previewMode];
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
 
   return (
-    <section 
-      ref={sectionRef} 
-      className="relative py-24 md:py-32 bg-[#08080a] overflow-hidden border-y border-white/10 animate-fade-in"
-    >
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes scanner-sweep {
-          0% { top: 0%; opacity: 0.1; }
-          10% { opacity: 0.8; }
-          90% { opacity: 0.8; }
-          100% { top: 100%; opacity: 0.1; }
-        }
-        @keyframes blueprint-pulse {
-          0%, 100% { opacity: 0.05; }
-          50% { opacity: 0.3; }
-        }
-        .grid-masked {
-          background-image: 
-            linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-          background-size: 40px 40px;
-          mask-image: radial-gradient(ellipse at center, black 50%, transparent 100%);
-          -webkit-mask-image: radial-gradient(ellipse at center, black 50%, transparent 100%);
-        }
-      `}} />
-
-      {/* OVERHAULED CONCEPT: CAD Layout Blueprint Scanner Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        
-        {/* Dotted/Grid mesh with radial center focus fade */}
-        <div className="absolute inset-0 grid-masked" />
-
-        {/* Dynamic Sweeping Laser Scanner */}
-        <div 
-          className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ff9e00]/40 to-transparent z-10"
-          style={{
-            animation: 'scanner-sweep 8s infinite linear',
-            boxShadow: '0 0 12px rgba(255, 158, 0, 0.5), 0 0 25px rgba(255, 158, 0, 0.25)'
+    <section className="relative min-h-[130vh] w-full bg-[#020202] text-white overflow-hidden py-32 flex flex-col items-center justify-center font-sans">
+      
+      {/* ================= BACKGROUND ART ================= */}
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
+        <motion.div 
+          layout
+          className="absolute rounded-full blur-[120px] opacity-20"
+          animate={{
+            width: previewMode === 'desktop' ? '80vw' : '40vw',
+            height: previewMode === 'desktop' ? '40vw' : '80vw',
+            backgroundColor: previewMode === 'desktop' ? '#ff9e00' : '#3b82f6',
           }}
+          transition={{ duration: 1.5, ease: EASE }}
         />
-
-        {/* Soft ambient background glows behind the grid to add depth */}
-        <div className="absolute top-[25%] left-[20%] w-[500px] h-[500px] rounded-full bg-[#ff9e00]/[0.05] blur-[140px]" />
-        <div className="absolute bottom-[25%] right-[20%] w-[500px] h-[500px] rounded-full bg-[#3b82f6]/[0.03] blur-[140px]" />
-
-        {/* Floating Blueprint Markers */}
-        <div className="absolute top-12 left-12 font-mono text-[8px] text-white tracking-widest" style={{ animation: 'blueprint-pulse 4s infinite ease-in-out' }}>
-          [X: 00.00, Y: 00.00] // GRID_ORIGIN
+        
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] mix-blend-overlay">
+          <AnimatePresence mode="wait">
+            <motion.h1 
+              key={previewMode}
+              initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 1.1, filter: 'blur(20px)' }}
+              transition={{ duration: 1 }}
+              className="text-[20vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap"
+            >
+              {previewMode}
+            </motion.h1>
+          </AnimatePresence>
         </div>
-        <div className="absolute top-24 right-16 font-mono text-[8px] text-white tracking-widest" style={{ animation: 'blueprint-pulse 5s infinite ease-in-out 1s' }}>
-          viewport: 100vw x 100vh
-        </div>
-        <div className="absolute bottom-20 left-16 font-mono text-[8px] text-white tracking-widest" style={{ animation: 'blueprint-pulse 6s infinite ease-in-out 2s' }}>
-          media_queries: [min-width: 1024px]
-        </div>
-        <div className="absolute bottom-32 right-12 font-mono text-[8px] text-white tracking-widest" style={{ animation: 'blueprint-pulse 4s infinite ease-in-out 3s' }}>
-          grid-template: repeat(12, 1fr)
-        </div>
-        <div className="absolute top-1/2 left-8 font-mono text-[8px] text-white tracking-widest -rotate-90 origin-left" style={{ animation: 'blueprint-pulse 7s infinite ease-in-out' }}>
-          flexbox_alignment: stretch
-        </div>
-
-        {/* Technical Coordinate Crosshairs (+) */}
-        <div className="absolute top-16 left-[20%] font-mono text-sm text-[#ff9e00]/30 select-none animate-pulse">+</div>
-        <div className="absolute top-48 right-[25%] font-mono text-sm text-white/20 select-none animate-pulse" style={{ animationDelay: '1.5s' }}>+</div>
-        <div className="absolute bottom-48 left-[30%] font-mono text-sm text-white/20 select-none animate-pulse" style={{ animationDelay: '0.8s' }}>+</div>
-        <div className="absolute bottom-16 right-[20%] font-mono text-sm text-[#ff9e00]/30 select-none animate-pulse" style={{ animationDelay: '2.2s' }}>+</div>
-
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        
-        {/* SECTION HEADER */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-4 leading-tight">
-            <span className="text-[#ff9e00]">100%</span> Fluid. <span className="text-white/40">0% Layout Break.</span>
-          </h2>
-          <p className="text-white/50 text-sm md:text-base max-w-xl mx-auto leading-relaxed font-medium">
-            One smart canvas that precisely reshapes layout rules for comfortable reading across all screen dimensions.
-          </p>
-        </div>
+      <div className="w-full max-w-[1400px] mx-auto px-6 relative z-10 flex flex-col items-center">
+         
+         {/* ================= POETIC HEADER ================= */}
+         <motion.div 
+           initial={{ opacity: 0, y: 50 }}
+           whileInView={{ opacity: 1, y: 0 }}
+           viewport={{ once: true }}
+           transition={{ duration: 1, ease: EASE }}
+           className="text-center mb-16 space-y-6"
+         >
+            <span className="font-mono text-[#ff9e00] text-[10px] tracking-[0.5em] uppercase block border-b border-[#ff9e00]/30 pb-4 inline-block">
+               [ DIMENSIONAL FLUIDITY ]
+            </span>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tight">
+               Liquid <span className="text-transparent bg-clip-text bg-gradient-to-r from-white/50 to-white/10">Architecture</span>
+            </h2>
+            <p className="text-white/40 font-mono text-[9px] md:text-xs tracking-[0.2em] max-w-lg mx-auto uppercase leading-relaxed">
+               The interface bends to the vessel. Complete responsive precision without breaking the artistic narrative.
+            </p>
+         </motion.div>
 
-        {/* CONTROLS BAR */}
-        <div className="flex justify-center items-center mb-16">
-          <div className="bg-white/[0.03] backdrop-blur-xl p-1 rounded-full border border-white/10 flex items-center relative w-[280px] h-[48px] shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
-            
-            {/* Sliding Pill Indicator */}
-            <div 
-              className="absolute top-1 bottom-1 rounded-full bg-gradient-to-r from-[#ff9e00] to-[#ffb700] shadow-[0_0_20px_rgba(255,158,0,0.3)] transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
-              style={{
-                left: previewMode === 'desktop' ? '4px' : 'calc(50% + 2px)',
-                width: 'calc(50% - 6px)',
-              }}
-            />
-
-            {/* Desktop Button */}
-            <button
+         {/* ================= THE CONTROLLER ================= */}
+         <motion.div 
+           initial={{ opacity: 0, scale: 0.8 }}
+           whileInView={{ opacity: 1, scale: 1 }}
+           viewport={{ once: true }}
+           transition={{ duration: 1, delay: 0.2, ease: EASE }}
+           className="flex gap-4 mb-20 p-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl"
+         >
+            <button 
               onClick={() => setPreviewMode('desktop')}
-              className={`w-1/2 h-full rounded-full text-[10px] font-black uppercase tracking-widest transition-colors duration-500 flex items-center justify-center gap-2 cursor-pointer z-10 relative ${
-                previewMode === 'desktop' 
-                  ? 'text-black' 
-                  : 'text-white/40 hover:text-white/80'
-              }`}
+              className={`relative px-8 py-3 rounded-full transition-colors duration-500 z-10 ${previewMode === 'desktop' ? 'text-black' : 'text-white/40 hover:text-white/80'}`}
             >
-              <i className="fas fa-desktop text-[12px]"></i> Desktop
+               <span className="relative z-20 font-mono text-[10px] uppercase tracking-widest font-bold">Desktop Layout</span>
+               {previewMode === 'desktop' && (
+                 <motion.div layoutId="pill-active" className="absolute inset-0 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.5)] z-10" />
+               )}
             </button>
-
-            {/* Mobile Button */}
-            <button
+            <button 
               onClick={() => setPreviewMode('mobile')}
-              className={`w-1/2 h-full rounded-full text-[10px] font-black uppercase tracking-widest transition-colors duration-500 flex items-center justify-center gap-2 cursor-pointer z-10 relative ${
-                previewMode === 'mobile' 
-                  ? 'text-black' 
-                  : 'text-white/40 hover:text-white/80'
-              }`}
+              className={`relative px-8 py-3 rounded-full transition-colors duration-500 z-10 ${previewMode === 'mobile' ? 'text-black' : 'text-white/40 hover:text-white/80'}`}
             >
-              <i className="fas fa-mobile-alt text-[12px]"></i> Mobile
+               <span className="relative z-20 font-mono text-[10px] uppercase tracking-widest font-bold">Mobile View</span>
+               {previewMode === 'mobile' && (
+                 <motion.div layoutId="pill-active" className="absolute inset-0 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.5)] z-10" />
+               )}
             </button>
+         </motion.div>
 
-          </div>
-        </div>
-
-        {/* MAIN CANVAS GRID */}
-        <div className="grid lg:grid-cols-12 gap-12 items-center min-h-[580px]">
-          
-          {/* MOCKUP VIEWER PANEL (LEFT COLUMN) */}
-          <div ref={wrapperRef} className="lg:col-span-8 flex justify-center items-center h-full w-full overflow-visible">
+         {/* ================= THE LIVING CANVAS (MOCKUP) ================= */}
+         <div className="relative w-full flex justify-center items-center min-h-[600px] perspective-[2000px]">
             
-            <div 
-              style={{ 
-                width: '100%', 
-                height: previewMode === 'desktop' 
-                  ? (isMobileWindow ? `${520 * scale}px` : '520px') 
-                  : '600px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                overflow: 'visible',
-                position: 'relative',
-                transition: isMobileWindow ? 'none' : 'height 0.7s cubic-bezier(0.22, 1, 0.36, 1)'
-              }}
+            {/* The Morphing Container */}
+            <motion.div
+               layout
+               className={`bg-white shadow-[0_0_80px_rgba(0,0,0,0.4)] overflow-hidden relative flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                 previewMode === 'desktop' 
+                   ? 'w-full max-w-[960px] h-[640px] rounded-2xl' 
+                   : 'w-[315px] h-[600px] rounded-[3rem] border-[12px] border-neutral-900'
+               }`}
             >
-              {/* Device Container Frame */}
-              <div
-                className={`relative z-10 flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden shrink-0 shadow-[0_20px_60px_rgba(0,0,0,0.25)] border border-slate-200/80
-                  ${previewMode === 'desktop' 
-                    ? 'bg-white rounded-2xl max-w-4xl' 
-                    : 'bg-black border-[12px] border-slate-900 rounded-[3rem]'}
-                `}
-                style={isMobileWindow ? {
-                  position: 'absolute',
-                  left: '50%',
-                  top: '50%',
-                  width: previewMode === 'desktop' ? '960px' : '315px',
-                  height: previewMode === 'desktop' ? '520px' : '600px',
-                  minWidth: previewMode === 'desktop' ? '960px' : '315px',
-                  flexShrink: 0,
-                  transform: `translate(-50%, -50%) scale(${scale})`,
-                  transformOrigin: 'center center',
-                  transition: 'none'
-                } : {
-                  position: 'relative',
-                  width: previewMode === 'desktop' ? '100%' : '315px',
-                  height: previewMode === 'desktop' ? '520px' : '600px',
-                  transition: 'transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), width 0.7s ease, height 0.7s ease'
-                }}
-              >
               {/* Browser Header / Notch bar */}
               <div className="shrink-0 z-20">
                 {previewMode === 'desktop' ? (
@@ -251,7 +135,6 @@ export function DeviceResizerSection() {
                 )}
               </div>
 
-              {/* SIMULATED MINIMALIST THEME PAGE */}
               {/* SIMULATED MINIMALIST THEME PAGE */}
               <div 
                 className={`flex-1 bg-white text-black text-xs flex relative simulated-theme ${
@@ -689,153 +572,9 @@ export function DeviceResizerSection() {
                   </div>
 
                 </div>
-
-
-
               </div>
-
-            </div>
-          </div>
-        </div>
-
-          {/* DYNAMIC BLUEPRINT PANEL (RIGHT COLUMN) */}
-          <div className="lg:col-span-4 flex flex-col justify-between items-stretch text-left space-y-6 self-stretch">
-            
-            {/* 1. Header with Active Viewport Stats */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                  Live Viewport Engine
-                </span>
-                <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-green-500/10 border border-green-500/25 text-[8px] font-bold text-green-400 uppercase tracking-wider">
-                  <span className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></span>
-                  Active
-                </span>
-              </div>
-              
-              <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight flex items-baseline gap-2">
-                <span>{previewMode === 'desktop' ? '1280px' : '390px'}</span>
-                <span className="text-xs font-normal text-white/40">Viewport Width</span>
-              </h3>
-            </div>
-
-            {/* 2. Visual Layout Minimap (CSS Grid Wireframe) */}
-            <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-4 space-y-3 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#ff9e00]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <div className="flex items-center justify-between text-[9px] font-bold text-white/50 tracking-wider uppercase relative z-10">
-                <span>Layout Minimap</span>
-                <span className="text-[#ff9e00] font-mono font-bold">
-                  {previewMode === 'desktop' ? 'display: flex' : 'flex-direction: column'}
-                </span>
-              </div>
-
-              {/* Minimap Box Visualizer */}
-              <div className="h-28 w-full border border-white/10 rounded-xl relative z-10 p-2 flex gap-2 transition-all duration-500 bg-black/40">
-                {previewMode === 'desktop' ? (
-                  <>
-                    {/* Desktop Sidebar */}
-                    <div className="w-[35%] h-full border border-[#ff9e00]/30 bg-[#ff9e00]/10 rounded-lg flex flex-col justify-between p-2 transition-all duration-500 animate-pulse">
-                      <div className="w-5 h-5 rounded-full bg-white/20"></div>
-                      <div className="space-y-1">
-                        <div className="h-1 bg-white/30 rounded w-full"></div>
-                        <div className="h-1 bg-white/20 rounded w-2/3"></div>
-                      </div>
-                    </div>
-                    {/* Desktop Content */}
-                    <div className="w-[65%] h-full border border-white/10 bg-white/[0.02] rounded-lg p-2 flex flex-col gap-2 transition-all duration-500">
-                      <div className="flex gap-2 h-1/2">
-                        <div className="w-1/2 h-full border border-white/5 bg-white/[0.03] rounded"></div>
-                        <div className="w-1/2 h-full border border-white/5 bg-white/[0.03] rounded"></div>
-                      </div>
-                      <div className="h-1/2 border border-white/5 bg-white/[0.03] rounded"></div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="w-full h-full flex flex-col gap-2 transition-all duration-500">
-                    {/* Mobile Sidebar (Header) */}
-                    <div className="h-[30%] border border-[#ff9e00]/30 bg-[#ff9e00]/10 rounded-lg flex items-center justify-between px-3 py-1 transition-all duration-500 animate-pulse">
-                      <div className="w-3 h-3 rounded-full bg-white/20"></div>
-                      <div className="w-12 h-1 bg-white/30 rounded"></div>
-                    </div>
-                    {/* Mobile Content */}
-                    <div className="h-[70%] border border-white/10 bg-white/[0.02] rounded-lg p-2 flex flex-col gap-1.5 transition-all duration-500">
-                      <div className="h-3 border border-white/5 bg-white/[0.03] rounded"></div>
-                      <div className="h-3 border border-white/5 bg-white/[0.03] rounded"></div>
-                      <div className="h-3 border border-white/5 bg-white/[0.03] rounded"></div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* 3. Code Config Terminal Visualizer */}
-            <div className="bg-[#0b0c10] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col font-mono">
-              {/* Terminal Window Header */}
-              <div className="bg-white/5 px-4 py-2.5 border-b border-white/10 flex items-center justify-between shrink-0">
-                <div className="flex gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></span>
-                </div>
-                <span className="text-[9px] text-white/40 font-bold uppercase tracking-widest">
-                  minimalist-theme.json
-                </span>
-                <span className="w-10"></span>
-              </div>
-
-              {/* Terminal Content */}
-              <div className="p-4 text-[10px] sm:text-xs leading-relaxed space-y-1 select-none overflow-x-auto text-white/95">
-                <div>
-                  <span className="text-[#f47067] font-bold">{"{"}</span>
-                </div>
-                <div className="pl-4">
-                  <span className="text-[#8ddb8c]">"theme"</span>: <span className="text-[#6cb6ff]">"minimalist"</span>,
-                </div>
-                <div className="pl-4">
-                  <span className="text-[#8ddb8c]">"typography"</span>: <span className="text-[#6cb6ff]">"Space Mono"</span>,
-                </div>
-                
-                {/* Dynamically changes state based on active layout */}
-                <div className="pl-4 py-0.5 px-2 bg-white/[0.03] border-l-2 border-[#ff9e00] my-1 transition-all">
-                  <span className="text-[#8ddb8c]">"layout"</span>: <span className="text-[#ffb454] font-bold">
-                    {previewMode === 'desktop' ? '"split-screen"' : '"stacked-column"'}
-                  </span>,
-                </div>
-                
-                <div className="pl-4">
-                  <span className="text-[#8ddb8c]">"sidebarWidth"</span>: <span className="text-[#ffb454]">
-                    {previewMode === 'desktop' ? '"35%"' : '"100%"'}
-                  </span>,
-                </div>
-                <div className="pl-4">
-                  <span className="text-[#8ddb8c]">"contentWidth"</span>: <span className="text-[#ffb454]">
-                    {previewMode === 'desktop' ? '"65%"' : '"100%"'}
-                  </span>,
-                </div>
-                <div className="pl-4">
-                  <span className="text-[#8ddb8c]">"independentScroll"</span>: <span className="text-[#ffb454]">
-                    {previewMode === 'desktop' ? 'true' : 'false'}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[#f47067] font-bold">{"}"}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 4. Active Media Queries Hint */}
-            <div className="text-[10px] text-white/35 flex items-center justify-between font-mono bg-white/[0.01] border border-white/5 px-4 py-2 rounded-xl">
-              <span>CSS Rules:</span>
-              <span className="text-[#ff9e00]">
-                {previewMode === 'desktop' ? '@media (min-width: 1024px)' : '@media (max-width: 1023px)'}
-              </span>
-            </div>
-
-          </div>
-
-        </div>
-
+            </motion.div>
+         </div>
       </div>
     </section>
   );

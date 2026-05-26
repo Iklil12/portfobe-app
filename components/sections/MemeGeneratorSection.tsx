@@ -1,245 +1,314 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-interface Meme {
-  id: number;
-  title: string;
-  truth: string;
-  painLevel: string;
-  metricLabel: string;
-  metricValue: string;
-  fileSymbol: string;
+// ============================================================================
+// NEW CONCEPT: THE DATA SYNCHRONIZATION ENGINE
+// Shows how Portfobe automatically ingests data from GitHub, LinkedIn, etc.
+// (Export name kept as MemeGeneratorSection to prevent breaking imports in page.tsx)
+// ============================================================================
+
+interface Integration {
+  id: string;
+  name: string;
+  type: string;
+  icon: string;
+  accent: string;
+  payloadJsx: React.ReactNode;
+  renderComponent: () => React.ReactNode;
 }
 
-const MEMES: Meme[] = [
+const INTEGRATIONS: Integration[] = [
   {
-    id: 1,
-    title: "The WebGL Debacle",
-    truth: "Spent 3 weeks building a custom three.js WebGL scene for my hero header. Recruiters on mobile just see a black screen and a 'WebGL context lost' error.",
-    painLevel: "FATAL (10/10)",
-    metricLabel: "Time Wasted",
-    metricValue: "21 Days",
-    fileSymbol: "threejs_failure.log"
+    id: 'github',
+    name: 'GitHub',
+    type: 'Open Source & Code',
+    icon: 'fa-github',
+    accent: 'text-white',
+    payloadJsx: (
+      <pre className="font-mono text-[10px] md:text-[11px] leading-relaxed">
+        <span className="text-neutral-500">{"{"}</span><br/>
+        <span className="text-neutral-300 ml-4">"endpoint"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"api.github.com/graphql"</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-4">"status"</span><span className="text-neutral-500">: </span><span className="text-blue-400">200</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-4">"data"</span><span className="text-neutral-500">: {"{"}</span><br/>
+        <span className="text-neutral-300 ml-8">"repo"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"quantum-engine"</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-8">"stars"</span><span className="text-neutral-500">: </span><span className="text-blue-400">4092</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-8">"language"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"TypeScript"</span><br/>
+        <span className="text-neutral-500 ml-4">{"}"}</span><br/>
+        <span className="text-neutral-500">{"}"}</span>
+      </pre>
+    ),
+    renderComponent: () => (
+      <div className="bg-[#080808] border border-neutral-800 p-6 md:p-8 rounded-[2rem] w-full shadow-2xl">
+        <div className="flex justify-between items-start mb-6">
+          <div className="w-12 h-12 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center">
+            <i className="fab fa-github text-white text-xl"></i>
+          </div>
+          <div className="flex gap-2">
+            <span className="px-3 py-1.5 bg-[#0a0a0a] border border-neutral-800 rounded-full text-[10px] font-mono text-neutral-400 flex items-center gap-1.5">
+              <i className="fas fa-star text-yellow-500"></i> 4,092
+            </span>
+          </div>
+        </div>
+        <h4 className="text-xl md:text-2xl font-bold text-white mb-3 tracking-tight">quantum-engine</h4>
+        <p className="text-neutral-400 text-sm leading-relaxed mb-8">
+          Next-generation physics engine optimized for WebGL and WebAssembly. Built for high-performance browser rendering.
+        </p>
+        <div className="flex items-center gap-3 text-xs font-mono text-neutral-500">
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500"></span> TypeScript</span>
+          <span className="text-neutral-800">|</span>
+          <span>Updated 2h ago</span>
+        </div>
+      </div>
+    )
   },
   {
-    id: 2,
-    title: "Safari's Revenge",
-    truth: "Wrote a custom CSS layout system from scratch to prove I'm a senior engineer. Spent 4 hours yesterday fixing container alignment because it broke exclusively on Safari.",
-    painLevel: "SEVERE (8.5/10)",
-    metricLabel: "Safari CSS Fixes",
-    metricValue: "4 Hours",
-    fileSymbol: "safari_must_die.css"
+    id: 'linkedin',
+    name: 'LinkedIn',
+    type: 'Career Timeline',
+    icon: 'fa-linkedin',
+    accent: 'text-blue-500',
+    payloadJsx: (
+      <pre className="font-mono text-[10px] md:text-[11px] leading-relaxed">
+        <span className="text-neutral-500">{"{"}</span><br/>
+        <span className="text-neutral-300 ml-4">"endpoint"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"api.linkedin.com/v2/me"</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-4">"status"</span><span className="text-neutral-500">: </span><span className="text-blue-400">200</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-4">"data"</span><span className="text-neutral-500">: {"{"}</span><br/>
+        <span className="text-neutral-300 ml-8">"role"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"Senior Engineer"</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-8">"company"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"Vercel"</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-8">"duration"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"2023 - Present"</span><br/>
+        <span className="text-neutral-500 ml-4">{"}"}</span><br/>
+        <span className="text-neutral-500">{"}"}</span>
+      </pre>
+    ),
+    renderComponent: () => (
+      <div className="bg-[#080808] border border-neutral-800 p-6 md:p-8 rounded-[2rem] w-full shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-8 md:left-10 w-[2px] h-full bg-neutral-900"></div>
+        <div className="relative z-10 pl-8 md:pl-10 py-2">
+          <div className="absolute left-[-5px] top-2 w-3 h-3 rounded-full bg-blue-500 border-4 border-[#080808] shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+          <h4 className="text-lg md:text-xl font-bold text-white mb-1">Senior Frontend Engineer</h4>
+          <div className="text-blue-400 font-medium text-sm mb-4">Vercel <span className="text-neutral-600 font-normal ml-2">2023 - Present</span></div>
+          <p className="text-neutral-400 text-sm leading-relaxed">
+            Led the architectural redesign of the edge-compute analytics dashboard. Improved rendering performance by 40% using React Server Components and optimized caching layers.
+          </p>
+        </div>
+      </div>
+    )
   },
   {
-    id: 3,
-    title: "Over-engineered Static Page",
-    truth: "Configured a Kubernetes cluster, Docker containers, AWS CloudFront, and a multi-stage GitHub Actions CI/CD pipeline... for a static 3-page HTML portfolio.",
-    painLevel: "MAXIMUM OVER-ENGINEERING",
-    metricLabel: "Monthly Cloud Bill",
-    metricValue: "$48.50 /mo",
-    fileSymbol: "k8s_deployment.yaml"
+    id: 'medium',
+    name: 'Medium',
+    type: 'Technical Writing',
+    icon: 'fa-medium',
+    accent: 'text-white',
+    payloadJsx: (
+      <pre className="font-mono text-[10px] md:text-[11px] leading-relaxed">
+        <span className="text-neutral-500">{"{"}</span><br/>
+        <span className="text-neutral-300 ml-4">"endpoint"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"api.medium.com/feed"</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-4">"status"</span><span className="text-neutral-500">: </span><span className="text-blue-400">200</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-4">"data"</span><span className="text-neutral-500">: {"{"}</span><br/>
+        <span className="text-neutral-300 ml-8">"title"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"React Server Comps"</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-8">"views"</span><span className="text-neutral-500">: </span><span className="text-blue-400">12400</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-8">"readTime"</span><span className="text-neutral-500">: </span><span className="text-blue-400">8</span><br/>
+        <span className="text-neutral-500 ml-4">{"}"}</span><br/>
+        <span className="text-neutral-500">{"}"}</span>
+      </pre>
+    ),
+    renderComponent: () => (
+      <div className="bg-[#080808] border border-neutral-800 p-6 md:p-8 rounded-[2rem] w-full shadow-2xl flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+        <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-neutral-900 border border-neutral-800 flex-shrink-0 flex items-center justify-center">
+           <i className="fab fa-medium text-white text-2xl sm:text-3xl"></i>
+        </div>
+        <div>
+          <div className="flex items-center gap-3 text-[9px] font-mono text-neutral-500 mb-3 uppercase tracking-widest">
+            <span>Oct 24, 2026</span>
+            <span className="w-1 h-1 rounded-full bg-neutral-700"></span>
+            <span>8 min read</span>
+          </div>
+          <h4 className="text-base sm:text-lg font-bold text-white leading-snug mb-3">Mastering React Server Components in Production Environments</h4>
+          <div className="flex items-center gap-2 text-[10px] font-mono text-neutral-400">
+            <i className="fas fa-eye text-neutral-600"></i> 12.4k views
+          </div>
+        </div>
+      </div>
+    )
   },
   {
-    id: 4,
-    title: "The Irony of Detail",
-    truth: "My portfolio page prominently claims I am a 'Detail-Oriented Frontend Engineer', but the links to my GitHub and LinkedIn projects return a 404 Not Found error.",
-    painLevel: "CRITICAL (9.9/10)",
-    metricLabel: "HR Reaction",
-    metricValue: "Facepalm",
-    fileSymbol: "broken_links.json"
-  },
-  {
-    id: 5,
-    title: "Ancient History",
-    truth: "Designed a stunning custom template. Haven't updated my projects list since 2023 because editing the raw React components, re-bundling, and deploying takes too much effort.",
-    painLevel: "LAZINESS LEVEL: 100%",
-    metricLabel: "Content Freshness",
-    metricValue: "Ancient (3 yrs old)",
-    fileSymbol: "stale_data.ts"
-  },
-  {
-    id: 6,
-    title: "The Font Flash",
-    truth: "Carefully curated custom premium typography files. Visitors open the page and get a 3-second blinding flash of unstyled Times New Roman text while fonts load.",
-    painLevel: "AESTHETIC CRASH (7.5/10)",
-    metricLabel: "First Impression",
-    metricValue: "Unprofessional",
-    fileSymbol: "font_flicker.css"
-  },
-  {
-    id: 7,
-    title: "Spotify Rate Limit",
-    truth: "Added a real-time Spotify API tracker widget to show recruiters what I'm listening to. Got rate-limited by Spotify, and now the entire landing page takes 6 seconds to render.",
-    painLevel: "PERFORMANCE DEATH",
-    metricLabel: "Lighthouse Score",
-    metricValue: "18 / 100",
-    fileSymbol: "spotify_overflow.log"
+    id: 'figma',
+    name: 'Figma',
+    type: 'Design Tokens',
+    icon: 'fa-figma',
+    accent: 'text-purple-400',
+    payloadJsx: (
+      <pre className="font-mono text-[10px] md:text-[11px] leading-relaxed">
+        <span className="text-neutral-500">{"{"}</span><br/>
+        <span className="text-neutral-300 ml-4">"endpoint"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"api.figma.com/v1"</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-4">"status"</span><span className="text-neutral-500">: </span><span className="text-blue-400">200</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-4">"data"</span><span className="text-neutral-500">: {"{"}</span><br/>
+        <span className="text-neutral-300 ml-8">"file"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">"Design System 2.0"</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-8">"nodes"</span><span className="text-neutral-500">: </span><span className="text-blue-400">142</span><span className="text-neutral-500">,</span><br/>
+        <span className="text-neutral-300 ml-8">"tokens"</span><span className="text-neutral-500">: </span><span className="text-emerald-400">true</span><br/>
+        <span className="text-neutral-500 ml-4">{"}"}</span><br/>
+        <span className="text-neutral-500">{"}"}</span>
+      </pre>
+    ),
+    renderComponent: () => (
+      <div className="bg-[#080808] border border-neutral-800 rounded-[2rem] w-full shadow-2xl overflow-hidden">
+        <div className="h-28 md:h-32 bg-neutral-900 relative overflow-hidden flex items-center justify-center">
+           {/* Abstract minimalist shapes representing design tokens */}
+           <div className="w-12 h-12 rounded-full bg-purple-500/80 mix-blend-screen -ml-4"></div>
+           <div className="w-12 h-12 rounded-full bg-orange-500/80 mix-blend-screen -mr-4"></div>
+        </div>
+        <div className="p-6 md:p-8">
+          <div className="flex justify-between items-center mb-2">
+            <h4 className="text-white font-bold text-lg">Design System 2.0</h4>
+            <i className="fab fa-figma text-purple-400 text-xl"></i>
+          </div>
+          <p className="text-neutral-500 text-xs mb-6 font-mono">142 Nodes • Core UI Kit</p>
+          <div className="flex gap-3">
+            <div className="w-8 h-8 rounded-full bg-white border-2 border-[#080808] shadow-sm"></div>
+            <div className="w-8 h-8 rounded-full bg-blue-500 border-2 border-[#080808] shadow-sm -ml-4"></div>
+            <div className="w-8 h-8 rounded-full bg-purple-500 border-2 border-[#080808] shadow-sm -ml-4"></div>
+            <div className="w-8 h-8 rounded-full bg-orange-500 border-2 border-[#080808] shadow-sm -ml-4"></div>
+          </div>
+        </div>
+      </div>
+    )
   }
 ];
 
 export function MemeGeneratorSection() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isCompiling, setIsCompiling] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [activeId, setActiveId] = useState<string>(INTEGRATIONS[0].id);
 
-  const activeMeme = MEMES[currentIndex];
-
-  const handleNextMeme = () => {
-    setIsCompiling(true);
-    setProgress(0);
-  };
-
-  useEffect(() => {
-    if (!isCompiling) return;
-
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % MEMES.length);
-            setIsCompiling(false);
-          }, 150);
-          return 100;
-        }
-        return prev + 25; // 4 steps to complete
-      });
-    }, 80);
-
-    return () => clearInterval(interval);
-  }, [isCompiling]);
+  const activeIntegration = INTEGRATIONS.find(i => i.id === activeId) || INTEGRATIONS[0];
 
   return (
-    <section className="relative py-24 md:py-32 bg-[#050507] overflow-hidden border-y border-white/5">
+    <section className="relative py-24 md:py-40 bg-[#020202] overflow-hidden font-sans border-y border-neutral-900">
       
-      {/* Background CAD Blueprint Grid Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:30px_30px] opacity-60 pointer-events-none z-0" />
-      
-      {/* Soft background ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-[#ff9e00]/[0.03] blur-[150px] pointer-events-none z-0"></div>
+      <div className="max-w-[1800px] w-full mx-auto px-6 md:px-12 relative z-10">
 
-      <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
-        
-        {/* Header */}
-        <div className="mb-12">
-          <span className="px-3 py-1 text-[9px] font-bold tracking-widest text-[#ff9e00] bg-[#ff9e00]/10 border border-[#ff9e00]/20 rounded-full uppercase">
-            The Portfolio Paradox
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mt-4 mb-3">
-            Why building portfolios is a nightmare.
-          </h2>
-          <p className="text-white/40 text-xs md:text-sm max-w-lg mx-auto font-mono">
-            Let's be honest. We've all over-engineered, broken styles, or abandoned our sites. Click below to compile a developer truth.
-          </p>
-        </div>
-
-        {/* Developer Console Terminal Card */}
-        <div className="bg-[#0b0c10] border-2 border-white/10 rounded-2xl shadow-[0_30px_70px_rgba(0,0,0,0.6)] overflow-hidden text-left max-w-2xl mx-auto mb-12">
-          
-          {/* Terminal Window Header Bar */}
-          <div className="h-10 bg-white/[0.03] border-b border-white/10 flex items-center justify-between px-4">
-            <div className="flex gap-1.5 items-center">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
-            </div>
-            <span className="font-mono text-[9px] text-white/30 tracking-widest select-none">
-              ~/{activeMeme.fileSymbol}
+        {/* WIDESCREEN HEADER */}
+        <div className="mb-16 md:mb-24 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+          <div>
+            <span className="font-mono text-[#ff9e00] text-[10px] tracking-[0.4em] uppercase block mb-4">
+              [ THE SYNCHRONIZATION ENGINE ]
             </span>
-            <div className="w-8"></div>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter uppercase leading-[0.9]">
+              CONNECT ONCE. <br/>
+              <span className="text-neutral-700">SYNC FOREVER.</span>
+            </h2>
           </div>
-
-          {/* Terminal Body Content */}
-          <div className="p-6 md:p-8 font-mono min-h-[220px] flex flex-col justify-between">
-            {isCompiling ? (
-              // Compiling/Loading State
-              <div className="flex-1 flex flex-col justify-center items-center py-8">
-                <span className="text-[10px] text-[#ff9e00] font-bold tracking-wider mb-3 animate-pulse">
-                  COMPILING PORTFOLIO_TRUTH.TS...
-                </span>
-                <div className="w-64 h-3 bg-white/5 border border-white/10 rounded-full overflow-hidden p-0.5">
-                  <div 
-                    className="h-full bg-gradient-to-r from-[#ff9e00] to-[#ffb700] rounded-full transition-all duration-75"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-                <span className="text-[8px] text-white/30 mt-2">
-                  {progress}% - loading compiler tokens
-                </span>
-              </div>
-            ) : (
-              // Active Meme State
-              <div className="space-y-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-2 text-[8px] text-[#ff9e00] uppercase font-bold tracking-wider mb-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#ff9e00] animate-ping"></span>
-                    <span>Issue Detected: {activeMeme.title}</span>
-                  </div>
-                  
-                  {/* The Quote */}
-                  <p className="text-sm md:text-base text-white/90 font-medium leading-relaxed">
-                    "{activeMeme.truth}"
-                  </p>
-                </div>
-
-                {/* Severity Metric Footer */}
-                <div className="pt-4 border-t border-white/5 flex flex-wrap gap-x-8 gap-y-3 text-[10px]">
-                  <div>
-                    <span className="text-white/30 block text-[8px] uppercase tracking-wider mb-0.5">Pain Severity</span>
-                    <span className="text-red-400 font-bold uppercase">{activeMeme.painLevel}</span>
-                  </div>
-                  <div>
-                    <span className="text-white/30 block text-[8px] uppercase tracking-wider mb-0.5">{activeMeme.metricLabel}</span>
-                    <span className="text-white font-bold">{activeMeme.metricValue}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Action Button */}
-        <div className="flex flex-col items-center gap-4">
-          <button
-            onClick={handleNextMeme}
-            disabled={isCompiling}
-            className="px-6 py-3 rounded-full bg-white text-black font-mono text-xs font-bold uppercase tracking-widest hover:bg-[#ff9e00] hover:text-black transition-all shadow-[0_0_30px_rgba(255,255,255,0.05)] active:scale-95 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
-          >
-            <i className={`fas fa-sync ${isCompiling ? 'animate-spin' : ''}`}></i>
-            Compile Next Truth
-          </button>
-          
-          <p className="text-[10px] text-white/30 font-mono">
-            Press to reload simulator database
+          <p className="text-neutral-500 text-sm md:text-base max-w-md leading-relaxed">
+            Your portfolio lives where you work. Portfobe automatically ingests your repositories, career timeline, and articles to keep your site updated in real-time. Zero maintenance required.
           </p>
         </div>
 
-        {/* The Portfobe Solution pitch card */}
-        <div className="mt-20 max-w-2xl mx-auto p-6 rounded-2xl bg-white/[0.02] border border-white/5 text-left font-mono">
-          <h4 className="text-[#ff9e00] text-xs font-bold uppercase tracking-wider mb-2">
-            The Portfobe Alternative:
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-[10px] leading-relaxed text-white/50">
-            <div className="space-y-2 border-r border-white/5 pr-0 md:pr-6">
-              <span className="text-red-400 font-bold block">🚨 MANUAL PORTFOLIO</span>
-              <ul className="list-disc list-inside space-y-1.5">
-                <li>30+ hours of custom frontend CSS tweaking.</li>
-                <li>Manual updates every time you push to Git.</li>
-                <li>Fragile layout breaks on recruiter's mobile.</li>
-                <li>Complex backend configuration & API calls.</li>
-              </ul>
+        {/* MAJESTIC WIDESCREEN GRID (3 - 4 - 5 Layout) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+
+          {/* ======================================================== */}
+          {/* LEFT COLUMN: THE CONNECTORS (3/12 Columns)              */}
+          {/* ======================================================== */}
+          <div className="lg:col-span-3 flex flex-col justify-center">
+            <div className="font-mono text-[9px] text-neutral-600 uppercase tracking-widest mb-6 border-b border-neutral-900 pb-4">
+              DATA SOURCES
             </div>
-            <div className="space-y-2 pl-0 md:pl-6">
-              <span className="text-[#ff9e00] font-bold block">✨ PORTFOBE AUTOPILOT</span>
-              <ul className="list-disc list-inside space-y-1.5">
-                <li>Zero setup. AI builds and coordinates layout.</li>
-                <li>Auto-syncs code contribution & social updates.</li>
-                <li>100% fluid, responsive grids on all screens.</li>
-                <li>Hosting, domain, & analytics ready in 3 seconds.</li>
-              </ul>
+            <div className="flex flex-col">
+              {INTEGRATIONS.map((int) => {
+                const isActive = activeId === int.id;
+                return (
+                  <button 
+                    key={int.id}
+                    onClick={() => setActiveId(int.id)}
+                    className={`w-full text-left py-6 border-b border-neutral-900 flex items-center justify-between group transition-all duration-300 cursor-pointer ${
+                      isActive ? 'border-white' : 'hover:border-neutral-700'
+                    }`}
+                  >
+                    <div>
+                      <h3 className={`text-xl md:text-2xl font-bold tracking-tight transition-colors ${
+                        isActive ? 'text-white' : 'text-neutral-600 group-hover:text-neutral-300'
+                      }`}>
+                        {int.name}
+                      </h3>
+                      <span className={`font-mono text-[9px] tracking-widest uppercase mt-2 block transition-colors ${
+                        isActive ? 'text-neutral-400' : 'text-neutral-700'
+                      }`}>
+                        {int.type}
+                      </span>
+                    </div>
+                    <i className={`fab ${int.icon} text-2xl transition-all duration-300 ${
+                      isActive ? int.accent : 'text-neutral-800 group-hover:text-neutral-600'
+                    }`}></i>
+                  </button>
+                );
+              })}
             </div>
           </div>
+
+          {/* ======================================================== */}
+          {/* CENTER COLUMN: THE DATA STREAM (4/12 Columns)             */}
+          {/* ======================================================== */}
+          <div className="lg:col-span-4 flex flex-col">
+            <div className="font-mono text-[9px] text-neutral-600 uppercase tracking-widest mb-6 border-b border-neutral-900 pb-4">
+              RAW API PAYLOAD
+            </div>
+            <div className="bg-[#050505] border border-neutral-900 rounded-[2rem] p-6 md:p-8 flex-1 min-h-[300px] lg:min-h-[400px] flex flex-col relative overflow-hidden shadow-inner">
+              
+              {/* Terminal Header */}
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-neutral-900/50">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-800"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-800"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-800"></div>
+                </div>
+                <span className="font-mono text-[9px] text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded">
+                  STATUS 200 OK
+                </span>
+              </div>
+
+              {/* Streaming JSON payload */}
+              <div className="flex-1 relative">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeId}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0"
+                  >
+                    {activeIntegration.payloadJsx}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+            </div>
+          </div>
+
+          {/* ======================================================== */}
+          {/* RIGHT COLUMN: THE COMPILED OUTPUT (5/12 Columns)          */}
+          {/* ======================================================== */}
+          <div className="lg:col-span-5 flex flex-col">
+            <div className="font-mono text-[9px] text-neutral-600 uppercase tracking-widest mb-6 border-b border-neutral-900 pb-4">
+              COMPILED UI COMPONENT
+            </div>
+            <div className="flex-1 flex flex-col items-center justify-center relative min-h-[300px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeId}
+                  initial={{ opacity: 0, scale: 0.95, filter: "blur(5px)" }}
+                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 1.05, filter: "blur(5px)" }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  className="w-full"
+                >
+                  {activeIntegration.renderComponent()}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+
         </div>
 
       </div>
