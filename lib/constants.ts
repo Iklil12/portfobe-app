@@ -19,7 +19,7 @@ export const FEATURE_LIST = [
 export const FAQ_LIST = [
   { id: 0, q: "Is it really free?", a: "Yes, the Starter plan is free forever with no time limits. You can use all basic features, which are more than enough to get started." },
   { id: 1, q: "Can I embed videos from YouTube or Vimeo?", a: "Absolutely. We recommend embedding links from YouTube, Vimeo, or TikTok so your portfolio page loads instantly without resource overhead." },
-  { id: 2, q: "How do I set up a custom domain (.com)?", a: "After upgrading to the Pro plan, you will receive a simple 2-step guide to connect your personal domain to our servers." }
+  { id: 2, q: "How do I set up a custom domain (.com)?", a: "After upgrading to the Supreme plan, you will receive a simple 2-step guide to connect your personal domain to our servers." }
 ];
 
 export const MARQUEE_TEXTS = ["VIDEOGRAPHER", "PHOTOGRAPHER", "GRAPHIC DESIGNER", "3D ARTIST", "VIDEO EDITOR", "ILLUSTRATOR"];

@@ -45,7 +45,14 @@ function AnimatedGeometry() {
 
 export function Abstract3DShowcase() {
   return (
-    <div className="w-full h-full absolute inset-0 cursor-grab active:cursor-grabbing">
+    <div 
+      className="w-full h-full absolute inset-0 cursor-grab active:cursor-grabbing"
+      style={{
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)',
+        backgroundSize: '40px 40px',
+        backgroundPosition: 'center center'
+      }}
+    >
       <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 1.5]}>
         <ambientLight intensity={1} />
         <directionalLight position={[10, 10, 5]} intensity={2.5} color="#10b981" />

@@ -8,40 +8,13 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 export function TemplatesSection() {
-  const sectionRef = useScrollReveal<HTMLElement>();
   const [hoveredIndex, setHoveredIndex] = useState<number>(0);
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);
   const [cardAnimations, setCardAnimations] = useState<boolean[]>(new Array(TEMPLATE_LIST.length).fill(false));
 
-  // Detect when section comes into view for staggered card animations
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          // Stagger card entrance animations
-          TEMPLATE_LIST.forEach((_, i) => {
-            setTimeout(() => {
-              setCardAnimations(prev => {
-                const next = [...prev];
-                next[i] = true;
-                return next;
-              });
-            }, 200 + i * 120);
-          });
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [sectionRef]);
 
   // Track active card on mobile scroll with IntersectionObserver
   useEffect(() => {
@@ -81,11 +54,11 @@ export function TemplatesSection() {
   }, []);
 
   return (
-    <section id="templates" ref={sectionRef} className="relative py-24 md:py-32 bg-[#020202] overflow-hidden border-y border-white/10">
+    <section id="templates" className="relative py-24 md:py-32 bg-[#020202] overflow-hidden border-y border-white/10">
       
       {/* Animated Background Glows */}
-      <div className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-[#ff9e00]/8 blur-[180px] rounded-full pointer-events-none animate-blob"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#ff5e00]/6 blur-[200px] rounded-full pointer-events-none animate-blob animation-delay-4000"></div>
+      <div className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-[#ff9e00]/8 blur-[180px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#ff5e00]/6 blur-[200px] rounded-full pointer-events-none"></div>
 
       {/* Subtle Grid Overlay */}
       <div 

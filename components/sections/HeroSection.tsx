@@ -100,7 +100,7 @@ export function HeroSection() {
               {/* Visible typing text overlaid on top */}
               <span className="absolute left-0 top-0 whitespace-nowrap">
                 {currentText}
-                <span className="inline-block w-[3px] h-[0.75em] bg-slate-400 ml-[2px] align-middle animate-[blink_1s_step-end_infinite]"></span>
+                <span className={`inline-block w-[3px] h-[0.75em] bg-slate-400 ml-[2px] align-middle ${currentText === words[currentWordIndex] ? 'animate-[blink_1s_step-end_infinite]' : ''}`}></span>
               </span>
             </motion.span>
             <div className="w-full basis-full h-0"></div>

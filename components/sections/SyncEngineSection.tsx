@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Abstract3DShowcase } from '../ui/Abstract3DShowcase';
+import { ThemeHoverShowcase } from '../ui/ThemeHoverShowcase';
 
 // ============================================================================
 // ARTISTIC CONCEPT: THE INFINITE DATA SEA (PURE ABSTRACT EXHIBITION)
@@ -25,7 +26,7 @@ const PILLARS: Pillar[] = [
     payloadStr: "{\n  \"action\": \"SYNC_ALL\",\n  \"targets\": [\"GitHub\", \"Canva\", \"Penpot\"]\n}",
     renderComponent: () => (
       <div className="bg-[#050505] border border-white/5 p-8 rounded-[2rem] w-full h-[400px] flex flex-col justify-between shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
-        
+
         {/* Minimalist Header */}
         <div>
           <h3 className="text-white text-2xl font-semibold tracking-tight">Active Integrations</h3>
@@ -85,25 +86,10 @@ const PILLARS: Pillar[] = [
     id: 'themes',
     name: 'Theme Engine',
     type: 'Architectural Layouts',
-    payloadStr: "{\n  \"activeId\": \"absolute_noir\",\n  \"cssVariables\": {\n    \"--bg\": \"#000000\",\n    \"--text\": \"#ffffff\",\n    \"--radius\": \"0px\"\n  }\n}",
+    payloadStr: "{\n  \"activeId\": \"morphic_hover\",\n  \"cssVariables\": {\n    \"--bg\": \"#000000\",\n    \"--text\": \"#ffffff\",\n    \"--radius\": \"0px\"\n  }\n}",
     renderComponent: () => (
-      <div className="bg-[#050505]/90 border border-white/10 rounded-[2rem] w-full shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden flex h-[350px] transition-all">
-        <div className="w-1/2 bg-[#020202] p-8 border-r border-white/10 flex flex-col gap-6 relative group overflow-hidden">
-          <div className="w-10 h-10 bg-white border border-white/20 rounded-none relative z-10"></div>
-          <div className="w-full h-4 bg-white/20 rounded-none relative z-10"></div>
-          <div className="w-3/4 h-4 bg-white/10 rounded-none relative z-10"></div>
-          <div className="mt-auto w-full h-12 border-2 border-white text-white font-black text-[10px] tracking-widest uppercase flex items-center justify-center relative z-10">
-            Absolute Noir
-          </div>
-        </div>
-        <div className="w-1/2 bg-white p-8 flex flex-col gap-6 relative group overflow-hidden">
-          <div className="w-10 h-10 bg-black/10 rounded-2xl relative z-10"></div>
-          <div className="w-full h-4 bg-black/20 rounded-full relative z-10"></div>
-          <div className="w-3/4 h-4 bg-black/10 rounded-full relative z-10"></div>
-          <div className="mt-auto w-full h-12 bg-black text-white font-mono text-[10px] tracking-widest uppercase flex items-center justify-center rounded-[2rem] relative z-10">
-            Minimalist
-          </div>
-        </div>
+      <div className="w-full h-[500px]">
+        <ThemeHoverShowcase />
       </div>
     )
   },
@@ -247,145 +233,206 @@ export function SyncEngineSection() {
   const activePillar = PILLARS[activeIndex];
 
   return (
-    <section ref={containerRef} className="relative w-full h-[200vh] bg-[#020202] font-sans">
-
-      <div
-        className="sticky top-0 h-screen w-full overflow-hidden flex items-center"
-      >
-
-        {/* Abstract Orbs (Epic Bloom Entrance) */}
-        <div
-          className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#ff9e00]/[0.02] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
-        ></div>
-        <div
-          className="absolute top-1/3 right-1/4 w-[40vw] h-[40vw] bg-blue-500/[0.02] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
-        ></div>
-
-        {/* LAYER 1: RAW CODE WATERMARK (Matrix Fade In) */}
-        <div
-          className="absolute top-1/2 right-[10%] -translate-y-1/2 pointer-events-none z-0 select-none opacity-5"
-        >
-          <AnimatePresence mode="popLayout">
-            <motion.pre
-              key={activePillar.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-              style={{ willChange: "transform, opacity" }}
-              className="text-[4vw] font-mono text-emerald-400 font-bold leading-none tracking-tighter"
-            >
-              {activePillar.payloadStr}
-            </motion.pre>
-          </AnimatePresence>
-        </div>
-
-        {/* LAYER 2: VERTICAL LABEL (Slide in) */}
-        <div
-          className="hidden lg:block absolute left-8 top-1/2 -translate-y-1/2 -rotate-90 origin-center pointer-events-none z-30"
-        >
-          <span className="font-mono text-[8px] text-neutral-600 tracking-[0.5em] uppercase whitespace-nowrap">
-            PORTFOBE CORE ENGINE // V2.0
+    <div className="bg-[#020202]">
+      {/* MOBILE LAYOUT (lg:hidden) */}
+      <div className="lg:hidden w-full bg-[#020202] py-20 px-6 flex flex-col gap-16 relative z-20">
+        <div className="flex flex-col gap-2">
+          <span className="text-[#ff9e00] font-mono text-[10px] tracking-[0.4em] uppercase block border-l-2 border-[#ff9e00] pl-4">
+            [ PLATFORM PILLARS ]
           </span>
+          <h2 className="text-white text-3xl font-black tracking-tight mt-2 uppercase">
+            Core Architecture
+          </h2>
         </div>
 
-        <div className="w-full max-w-[1800px] mx-auto px-6 md:px-12 relative z-20 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8 h-full py-20">
+        <div className="flex flex-col gap-14">
+          {PILLARS.map((pillar) => (
+            <motion.div
+              key={pillar.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col gap-5 border-t border-white/5 pt-8 first:border-t-0"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <span className="font-mono text-[9px] tracking-widest uppercase text-neutral-500">
+                    {pillar.type}
+                  </span>
+                  <h3 className="text-white text-2xl font-bold uppercase tracking-tight mt-1">
+                    {pillar.name}
+                  </h3>
+                </div>
+                
+                {/* Micro Pill */}
+                <div className="bg-white/5 border border-white/10 rounded-full px-3 py-1 flex items-center gap-1.5 backdrop-blur-md">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+                  <span className="text-[8px] font-mono text-emerald-400 uppercase tracking-widest">Active</span>
+                </div>
+              </div>
 
-          {/* ABSOLUTE HEADER TO PREVENT JIGGLE */}
+              {/* Render visual component */}
+              <div className="w-full relative z-10">
+                {pillar.renderComponent()}
+              </div>
+
+              {/* Payload code snippet card */}
+              <div className="bg-black/40 border border-white/5 rounded-2xl p-4 mt-2">
+                <div className="flex justify-between items-center pb-2 border-b border-white/5 mb-2">
+                  <span className="font-mono text-[8px] text-white/30 tracking-widest uppercase">[ Payload Data ]</span>
+                  <span className="font-mono text-[8px] text-neutral-500">JSON</span>
+                </div>
+                <pre className="font-mono text-[10px] text-emerald-500/70 overflow-x-auto leading-relaxed select-all">
+                  {pillar.payloadStr}
+                </pre>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* DESKTOP LAYOUT (hidden lg:block) */}
+      <section ref={containerRef} className="relative w-full h-[200vh] bg-[#020202] font-sans hidden lg:block">
+
+        <div
+          className="sticky top-0 h-screen w-full overflow-hidden flex items-center"
+        >
+
+          {/* Abstract Orbs (Epic Bloom Entrance) */}
           <div
-            className="absolute top-12 md:top-24 left-6 md:left-12 z-30 hidden md:block"
+            className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#ff9e00]/[0.02] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
+          ></div>
+          <div
+            className="absolute top-1/3 right-1/4 w-[40vw] h-[40vw] bg-blue-500/[0.02] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
+          ></div>
+
+          {/* LAYER 1: RAW CODE WATERMARK (Matrix Fade In) */}
+          <div
+            className="absolute top-1/2 right-[10%] -translate-y-1/2 pointer-events-none z-0 select-none opacity-5"
           >
-            <span className="text-[#ff9e00] font-mono text-[10px] tracking-[0.4em] uppercase block border-l-2 border-[#ff9e00] pl-4">
-              [ PLATFORM PILLARS ]
+            <AnimatePresence mode="popLayout">
+              <motion.pre
+                key={activePillar.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                style={{ willChange: "transform, opacity" }}
+                className="text-[4vw] font-mono text-emerald-400 font-bold leading-none tracking-tighter"
+              >
+                {activePillar.payloadStr}
+              </motion.pre>
+            </AnimatePresence>
+          </div>
+
+          {/* LAYER 2: VERTICAL LABEL (Slide in) */}
+          <div
+            className="hidden lg:block absolute left-8 top-1/2 -translate-y-1/2 -rotate-90 origin-center pointer-events-none z-30"
+          >
+            <span className="font-mono text-[8px] text-neutral-600 tracking-[0.5em] uppercase whitespace-nowrap">
+              PORTFOBE CORE ENGINE // V2.0
             </span>
           </div>
 
-          {/* ABSOLUTE FOOTER TO PREVENT JIGGLE */}
-          <div
-            className="absolute bottom-12 md:bottom-24 left-6 md:left-12 z-30 hidden md:flex items-center gap-3 text-neutral-600 font-mono text-[9px] tracking-widest uppercase animate-pulse"
-          >
-            <i className="fas fa-arrow-down"></i> KEEP SCROLLING
-          </div>
+          <div className="w-full max-w-[1800px] mx-auto px-6 md:px-12 relative z-20 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8 h-full py-20">
 
-          {/* LAYER 3: MASSIVE HOLLOW TYPOGRAPHY MENU */}
-          <div className="w-full lg:w-3/5 flex flex-col justify-center gap-2 relative z-20 mt-8 md:mt-0">
-            {/* Mobile-only header (flow-based) */}
-            <div className="md:hidden mb-6">
+            {/* ABSOLUTE HEADER TO PREVENT JIGGLE */}
+            <div
+              className="absolute top-12 md:top-24 left-6 md:left-12 z-30 hidden md:block"
+            >
               <span className="text-[#ff9e00] font-mono text-[10px] tracking-[0.4em] uppercase block border-l-2 border-[#ff9e00] pl-4">
                 [ PLATFORM PILLARS ]
               </span>
             </div>
 
-            <div className="flex flex-col gap-1 md:gap-3">
-              {PILLARS.map((pillar, idx) => {
-                const isActive = activeIndex === idx;
-                return (
-                  <div
-                    key={pillar.id}
-                  >
-                    <div
-                      className="flex flex-col justify-center relative transition-all duration-500 ease-out"
-                      style={{ opacity: isActive ? 1 : 0.35 }}
-                    >
-                      <div className="flex items-center gap-4">
-                        <h1
-                          className={`text-[3rem] sm:text-[4rem] md:text-[5.5rem] lg:text-[6.5rem] font-black uppercase leading-[0.9] transition-all duration-500 ease-out select-none ${isActive ? 'scale-100 origin-left' : 'scale-[0.85] origin-left'
-                            }`}
-                          style={{
-                            WebkitTextStroke: isActive ? '0px' : '1.5px rgba(255,255,255,0.3)',
-                            color: isActive ? '#ffffff' : 'transparent',
-                          }}
-                        >
-                          {pillar.name}
-                        </h1>
-                      </div>
+            {/* ABSOLUTE FOOTER TO PREVENT JIGGLE */}
+            <div
+              className="absolute bottom-12 md:bottom-24 left-6 md:left-12 z-30 hidden md:flex items-center gap-3 text-neutral-600 font-mono text-[9px] tracking-widest uppercase animate-pulse"
+            >
+              <i className="fas fa-arrow-down"></i> KEEP SCROLLING
+            </div>
 
-                      <div className={`overflow-hidden transition-all duration-300 ease-out ${isActive ? 'max-h-12 opacity-100 mt-1 md:mt-3' : 'max-h-0 opacity-0'}`}>
-                        <span className="font-mono text-[9px] md:text-[10px] tracking-widest uppercase text-neutral-500 ml-1">
-                          ARCHITECTURE // {pillar.type}
-                        </span>
+            {/* LAYER 3: MASSIVE HOLLOW TYPOGRAPHY MENU */}
+            <div className="w-full lg:w-3/5 flex flex-col justify-center gap-2 relative z-20 mt-8 md:mt-0">
+              {/* Mobile-only header (flow-based) */}
+              <div className="md:hidden mb-6">
+                <span className="text-[#ff9e00] font-mono text-[10px] tracking-[0.4em] uppercase block border-l-2 border-[#ff9e00] pl-4">
+                  [ PLATFORM PILLARS ]
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1 md:gap-3">
+                {PILLARS.map((pillar, idx) => {
+                  const isActive = activeIndex === idx;
+                  return (
+                    <div
+                      key={pillar.id}
+                    >
+                      <div
+                        className="flex flex-col justify-center relative transition-all duration-500 ease-out"
+                        style={{ opacity: isActive ? 1 : 0.35 }}
+                      >
+                        <div className="flex items-center gap-4">
+                          <h1
+                            className={`text-[3rem] sm:text-[4rem] md:text-[5.5rem] lg:text-[6.5rem] font-black uppercase leading-[0.9] transition-all duration-500 ease-out select-none ${isActive ? 'scale-100 origin-left' : 'scale-[0.85] origin-left'
+                              }`}
+                            style={{
+                              WebkitTextStroke: isActive ? '0px' : '1.5px rgba(255,255,255,0.3)',
+                              color: isActive ? '#ffffff' : 'transparent',
+                            }}
+                          >
+                            {pillar.name}
+                          </h1>
+                        </div>
+
+                        <div className={`overflow-hidden transition-all duration-300 ease-out ${isActive ? 'max-h-12 opacity-100 mt-1 md:mt-3' : 'max-h-0 opacity-0'}`}>
+                          <span className="font-mono text-[9px] md:text-[10px] tracking-widest uppercase text-neutral-500 ml-1">
+                            ARCHITECTURE // {pillar.type}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
+
+            {/* LAYER 4: THE HOLOGRAPHIC RENDERED ARTIFACT */}
+            <div
+              className="w-full lg:w-2/5 flex items-center justify-end relative z-30 min-h-[400px]"
+            >
+              <AnimatePresence mode="popLayout">
+                <motion.div
+                  key={activePillar.id}
+                  initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -40, scale: 0.95 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  style={{ willChange: "transform, opacity" }}
+                  className="w-full max-w-lg absolute right-0"
+                >
+
+                  <div className="absolute -top-12 right-0 flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-[#ff9e00] animate-pulse"></span>
+                    <span className="font-mono text-[9px] text-[#ff9e00] tracking-[0.3em] uppercase">SYSTEM ACTIVE</span>
+                  </div>
+
+                  {activePillar.renderComponent()}
+
+                  <div className="absolute -bottom-10 right-0">
+                    <span className="font-mono text-[9px] text-neutral-600 tracking-widest uppercase">
+                      INSTANT ARCHITECTURE
+                    </span>
+                  </div>
+
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
           </div>
-
-          {/* LAYER 4: THE HOLOGRAPHIC RENDERED ARTIFACT */}
-          <div
-            className="w-full lg:w-2/5 flex items-center justify-end relative z-30 min-h-[400px]"
-          >
-            <AnimatePresence mode="popLayout">
-              <motion.div
-                key={activePillar.id}
-                initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -40, scale: 0.95 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                style={{ willChange: "transform, opacity" }}
-                className="w-full max-w-lg absolute right-0"
-              >
-
-                <div className="absolute -top-12 right-0 flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#ff9e00] animate-pulse"></span>
-                  <span className="font-mono text-[9px] text-[#ff9e00] tracking-[0.3em] uppercase">SYSTEM ACTIVE</span>
-                </div>
-
-                {activePillar.renderComponent()}
-
-                <div className="absolute -bottom-10 right-0">
-                  <span className="font-mono text-[9px] text-neutral-600 tracking-widest uppercase">
-                    INSTANT ARCHITECTURE
-                  </span>
-                </div>
-
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
