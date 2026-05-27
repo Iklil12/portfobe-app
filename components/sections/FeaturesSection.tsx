@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { FEATURE_LIST } from '@/lib/constants';
-import { motion, useInView, Variants } from 'framer-motion';
+import { useInView } from 'framer-motion';
 
 export function FeaturesSection() {
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
@@ -24,53 +24,21 @@ export function FeaturesSection() {
 
   const currentActive = isHovering ? activeFeature : FEATURE_LIST[autoCycleIndex]?.id ?? null;
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.1 }
-    }
-  };
-
-  const headingVariants: Variants = {
-    hidden: { opacity: 0, x: -40, filter: "blur(10px)" },
-    visible: { 
-      opacity: 1, x: 0, filter: "blur(0px)",
-      transition: { duration: 0.8, type: "spring", bounce: 0.3 }
-    }
-  };
-
-  const columnVariants: Variants = {
-    hidden: { opacity: 0, y: 50, filter: "blur(5px)" },
-    visible: { 
-      opacity: 1, y: 0, filter: "blur(0px)",
-      transition: { duration: 0.7, type: "spring", bounce: 0.35 }
-    }
-  };
-
   return (
     <section id="features" ref={sectionRef} className="bg-[#0a0a0a] pt-24 md:pt-32 pb-0 flex flex-col relative overflow-hidden">
       <div className="absolute top-10 left-[20%] w-1 h-1 bg-white rounded-full opacity-50 animate-pulse"></div>
       <div className="absolute top-40 right-[10%] w-2 h-2 bg-white rounded-full opacity-20 animate-pulse animation-delay-2000"></div>
 
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+      <div 
         className="max-w-7xl mx-auto px-6 md:px-12 mb-16 md:mb-20 w-full relative z-10"
       >
         <div className="max-w-2xl relative">
           <div className="absolute -top-32 -right-64 w-[500px] h-[500px] border border-white/5 rounded-full pointer-events-none hidden lg:block animate-pulse animation-delay-4000"></div>
-          <motion.h2 variants={headingVariants} className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-white leading-tight">Built for speed.<br/><span className="text-slate-500 font-light">Designed to impress.</span></motion.h2>
+          <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-white leading-tight">Built for speed.<br/><span className="text-slate-500 font-light">Designed to impress.</span></h2>
         </div>
-      </motion.div>
+      </div>
       
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
+      <div 
         className="w-full border-t border-b border-white/10 flex flex-col md:flex-row h-auto md:h-[450px] relative z-10"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => { setIsHovering(false); setActiveFeature(null); }}
@@ -79,9 +47,8 @@ export function FeaturesSection() {
           const isActive = currentActive === feat.id;
 
           return (
-            <motion.div 
+            <div 
               key={feat.id}
-              variants={columnVariants}
               onMouseEnter={() => window.innerWidth >= 768 && setActiveFeature(feat.id)}
               onClick={() => setActiveFeature(isActive ? null : feat.id)}
               className={`relative flex-1 p-8 md:p-10 lg:p-12 border-b md:border-b-0 md:border-r border-white/10 last:border-r-0 cursor-pointer overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] bg-[#0a0a0a] ${isActive ? 'md:flex-[1.4] bg-[#111111]' : ''}`}
@@ -111,10 +78,10 @@ export function FeaturesSection() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           );
         })}
-      </motion.div>
+      </div>
     </section>
   );
 }

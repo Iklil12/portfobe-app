@@ -57,11 +57,7 @@ export function DeviceResizerSection() {
       <div className="w-full max-w-[1400px] mx-auto px-6 relative z-10 flex flex-col items-center">
          
          {/* ================= POETIC HEADER ================= */}
-         <motion.div 
-           initial={{ opacity: 0, y: 50 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: true }}
-           transition={{ duration: 1, ease: EASE }}
+         <div 
            className="text-center mb-16 space-y-6"
          >
             <span className="font-mono text-[#ff9e00] text-[10px] tracking-[0.5em] uppercase block border-b border-[#ff9e00]/30 pb-4 inline-block">
@@ -73,14 +69,10 @@ export function DeviceResizerSection() {
             <p className="text-white/40 font-mono text-[9px] md:text-xs tracking-[0.2em] max-w-lg mx-auto uppercase leading-relaxed">
                The interface bends to the vessel. Complete responsive precision without breaking the artistic narrative.
             </p>
-         </motion.div>
+         </div>
 
          {/* ================= THE CONTROLLER ================= */}
-         <motion.div 
-           initial={{ opacity: 0, scale: 0.8 }}
-           whileInView={{ opacity: 1, scale: 1 }}
-           viewport={{ once: true }}
-           transition={{ duration: 1, delay: 0.2, ease: EASE }}
+         <div 
            className="flex gap-4 mb-20 p-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl"
          >
             <button 
@@ -101,7 +93,7 @@ export function DeviceResizerSection() {
                  <motion.div layoutId="pill-active" className="absolute inset-0 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.5)] z-10" />
                )}
             </button>
-         </motion.div>
+         </div>
 
          {/* ================= THE LIVING CANVAS (MOCKUP) ================= */}
          <div className="relative w-full flex justify-center items-center min-h-[600px] perspective-[2000px]">

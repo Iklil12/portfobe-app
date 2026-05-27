@@ -99,7 +99,7 @@ export function TemplatesSection() {
       <div className="max-w-[1600px] mx-auto relative z-10 flex flex-col h-full">
         
         {/* Clean Centered Header with staggered entrance */}
-        <div className={`text-center mb-10 md:mb-16 px-6 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className="text-center mb-10 md:mb-16 px-6">
 
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tight mb-6">
             Engineered for <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff9e00] via-[#ffb940] to-[#ff5e00]">Brilliance.</span>
@@ -156,7 +156,7 @@ export function TemplatesSection() {
                   
                   /* Animation entrance */
                   transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)]
-                  ${isAnimated ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.95]'}
+                  opacity-100 translate-y-0 scale-100
                 `}
                 style={{ transitionDelay: `${index * 60}ms` }}
               >
@@ -322,7 +322,7 @@ export function TemplatesSection() {
         </div>
 
         {/* Global Action Button */}
-        <div className={`mt-10 md:mt-16 flex justify-center pb-8 px-6 transition-all duration-700 delay-500 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className="mt-10 md:mt-16 flex justify-center pb-8 px-6">
             <Link href="/register" className="group relative flex items-center gap-4 px-8 py-4 rounded-full border border-white/10 text-white font-bold hover:border-[#ff9e00]/30 hover:shadow-[0_0_40px_rgba(255,158,0,0.1)] transition-all duration-500 w-full md:w-auto justify-center overflow-hidden">
               {/* Button shimmer effect */}
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>

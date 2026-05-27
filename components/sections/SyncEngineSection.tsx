@@ -165,31 +165,21 @@ export function SyncEngineSection() {
   return (
     <section ref={containerRef} className="relative w-full h-[200vh] bg-[#020202] font-sans">
       
-      <motion.div 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-10%" }}
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
-        }}
+      <div 
         className="sticky top-0 h-screen w-full overflow-hidden flex items-center"
       >
         
         {/* Abstract Orbs (Epic Bloom Entrance) */}
-        <motion.div 
-          variants={{ hidden: { scale: 0, opacity: 0 }, visible: { scale: 1, opacity: 1, transition: { duration: 3, ease: EASE } } }}
+        <div 
           className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#ff9e00]/[0.02] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
-        ></motion.div>
-        <motion.div 
-          variants={{ hidden: { scale: 0, opacity: 0 }, visible: { scale: 1, opacity: 1, transition: { duration: 3.5, ease: EASE, delay: 0.2 } } }}
+        ></div>
+        <div 
           className="absolute top-1/3 right-1/4 w-[40vw] h-[40vw] bg-blue-500/[0.02] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
-        ></motion.div>
+        ></div>
 
         {/* LAYER 1: RAW CODE WATERMARK (Matrix Fade In) */}
-        <motion.div 
-          variants={{ hidden: { opacity: 0, y: 100, scale: 1.1 }, visible: { opacity: 0.03, y: 0, scale: 1, transition: { duration: 2, ease: EASE, delay: 0.6 } } }}
-          className="absolute top-1/2 right-[10%] -translate-y-1/2 pointer-events-none z-0 select-none"
+        <div 
+          className="absolute top-1/2 right-[10%] -translate-y-1/2 pointer-events-none z-0 select-none opacity-5"
         >
           <AnimatePresence mode="popLayout">
             <motion.pre
@@ -204,37 +194,34 @@ export function SyncEngineSection() {
               {activePillar.payloadStr}
             </motion.pre>
           </AnimatePresence>
-        </motion.div>
+        </div>
 
         {/* LAYER 2: VERTICAL LABEL (Slide in) */}
-        <motion.div 
-          variants={{ hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0, transition: { duration: 1, ease: EASE, delay: 0.4 } } }}
+        <div 
           className="hidden lg:block absolute left-8 top-1/2 -translate-y-1/2 -rotate-90 origin-center pointer-events-none z-30"
         >
           <span className="font-mono text-[8px] text-neutral-600 tracking-[0.5em] uppercase whitespace-nowrap">
             PORTFOBE CORE ENGINE // V2.0
           </span>
-        </motion.div>
+        </div>
 
         <div className="w-full max-w-[1800px] mx-auto px-6 md:px-12 relative z-20 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8 h-full py-20">
 
           {/* ABSOLUTE HEADER TO PREVENT JIGGLE */}
-          <motion.div 
-            variants={{ hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0, transition: { duration: 1, ease: EASE } } }}
+          <div 
             className="absolute top-12 md:top-24 left-6 md:left-12 z-30 hidden md:block"
           >
             <span className="text-[#ff9e00] font-mono text-[10px] tracking-[0.4em] uppercase block border-l-2 border-[#ff9e00] pl-4">
               [ PLATFORM PILLARS ]
             </span>
-          </motion.div>
+          </div>
 
           {/* ABSOLUTE FOOTER TO PREVENT JIGGLE */}
-          <motion.div 
-            variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 1, delay: 1.5 } } }}
+          <div 
             className="absolute bottom-12 md:bottom-24 left-6 md:left-12 z-30 hidden md:flex items-center gap-3 text-neutral-600 font-mono text-[9px] tracking-widest uppercase animate-pulse"
           >
             <i className="fas fa-arrow-down"></i> KEEP SCROLLING
-          </motion.div>
+          </div>
 
           {/* LAYER 3: MASSIVE HOLLOW TYPOGRAPHY MENU */}
           <div className="w-full lg:w-3/5 flex flex-col justify-center gap-2 relative z-20 mt-8 md:mt-0">
@@ -249,12 +236,8 @@ export function SyncEngineSection() {
               {PILLARS.map((pillar, idx) => {
                 const isActive = activeIndex === idx;
                 return (
-                  <motion.div 
+                  <div 
                     key={pillar.id}
-                    variants={{
-                      hidden: { opacity: 0, x: -100, filter: 'blur(20px)' },
-                      visible: { opacity: 1, x: 0, filter: 'blur(0px)', transition: { duration: 1.2, ease: EASE } }
-                    }}
                   >
                     <div 
                       className="flex flex-col justify-center relative transition-all duration-500 ease-out"
@@ -280,15 +263,14 @@ export function SyncEngineSection() {
                         </span>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
           </div>
 
           {/* LAYER 4: THE HOLOGRAPHIC RENDERED ARTIFACT */}
-          <motion.div 
-            variants={{ hidden: { opacity: 0, x: 100, rotateY: 30, filter: 'blur(30px)' }, visible: { opacity: 1, x: 0, rotateY: 0, filter: 'blur(0px)', transition: { duration: 1.5, ease: EASE, delay: 0.8 } } }}
+          <div 
             className="w-full lg:w-2/5 flex items-center justify-end relative z-30 min-h-[400px]"
           >
             <AnimatePresence mode="popLayout">
@@ -317,10 +299,10 @@ export function SyncEngineSection() {
 
               </motion.div>
             </AnimatePresence>
-          </motion.div>
+          </div>
 
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
