@@ -2,8 +2,45 @@
 
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 export function HeroSection() {
+  const words = ["Work.", "Portfolio.", "Presence.", "Brand.", "Identity."];
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const typingSpeed = 100;
+    const deletingSpeed = 50;
+    const pauseBeforeDelete = 2000;
+
+    let timer: NodeJS.Timeout;
+    const currentFullWord = words[currentWordIndex];
+
+    if (isDeleting) {
+      if (currentText === "") {
+        setIsDeleting(false);
+        setCurrentWordIndex((prev) => (prev + 1) % words.length);
+      } else {
+        timer = setTimeout(() => {
+          setCurrentText(currentFullWord.substring(0, currentText.length - 1));
+        }, deletingSpeed);
+      }
+    } else {
+      if (currentText === currentFullWord) {
+        timer = setTimeout(() => {
+          setIsDeleting(true);
+        }, pauseBeforeDelete);
+      } else {
+        timer = setTimeout(() => {
+          setCurrentText(currentFullWord.substring(0, currentText.length + 1));
+        }, typingSpeed);
+      }
+    }
+
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, currentWordIndex]);
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -15,7 +52,7 @@ export function HeroSection() {
 
   const wordVariants: Variants = {
     hidden: { opacity: 0, y: 25, filter: "blur(8px)" },
-    visible: { 
+    visible: {
       opacity: 1, y: 0, filter: "blur(0px)",
       transition: { duration: 0.5, type: "spring", bounce: 0.35 }
     }
@@ -23,14 +60,14 @@ export function HeroSection() {
 
   const fadeUpVariants: Variants = {
     hidden: { opacity: 0, y: 20, filter: "blur(5px)" },
-    visible: { 
+    visible: {
       opacity: 1, y: 0, filter: "blur(0px)",
       transition: { duration: 0.7, type: "spring", bounce: 0.3 }
     }
   };
 
   return (
-    <section className="relative pt-36 pb-24 md:pt-52 md:pb-40 overflow-hidden bg-grid">
+    <section className="relative pt-36 pb-24 md:pt-36 md:pb-40 overflow-hidden bg-grid">
       <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/80 to-[#FAFAFA] pointer-events-none z-0"></div>
 
       {/* Animated Background Blobs */}
@@ -43,7 +80,7 @@ export function HeroSection() {
       <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
 
         {/* TEXT CONTAINER HERO — Full width, centered */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -57,14 +94,22 @@ export function HeroSection() {
             <motion.div variants={wordVariants} className="w-24 md:w-40 h-12 md:h-[4.5rem] rounded-full overflow-hidden inline-block align-middle shadow-[0_8px_20px_rgba(0,0,0,0.12)] shrink-0 hover:scale-105 transition-transform duration-500 cursor-pointer">
               <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=400&auto=format&fit=crop" className="w-full h-full object-cover" alt="Creative team" />
             </motion.div>
-            <motion.span variants={wordVariants} className="font-light text-slate-400 italic">Work.</motion.span>
+            <motion.span variants={wordVariants} className="font-light text-slate-400 italic relative inline-block">
+              {/* Invisible longest word to reserve fixed width */}
+              <span className="invisible">Portfolio.</span>
+              {/* Visible typing text overlaid on top */}
+              <span className="absolute left-0 top-0 whitespace-nowrap">
+                {currentText}
+                <span className="inline-block w-[3px] h-[0.75em] bg-slate-400 ml-[2px] align-middle animate-[blink_1s_step-end_infinite]"></span>
+              </span>
+            </motion.span>
             <div className="w-full basis-full h-0"></div>
             <motion.span variants={wordVariants} className="font-extrabold">Land More</motion.span>
             <motion.span variants={wordVariants} className="font-light text-slate-400">Clients.</motion.span>
           </motion.h1>
 
           <motion.p variants={fadeUpVariants} className="text-slate-500 text-lg md:text-xl mb-12 leading-relaxed max-w-2xl mx-auto font-medium">
-            The minimalist portfolio builder designed exclusively for visual creators. Zero coding, lightning-fast, and unapologetically beautiful.
+            The quick brown fox minimalist portfolio builder designed exclusively for visual creators. Zero coding, lightning-fast, and unapologetically beautiful.
           </motion.p>
 
           <motion.div variants={fadeUpVariants} className="flex flex-col sm:flex-row items-center gap-4 relative">
