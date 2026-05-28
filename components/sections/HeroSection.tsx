@@ -94,7 +94,7 @@ export function HeroSection() {
             <motion.div variants={wordVariants} className="w-24 md:w-40 h-12 md:h-[4.5rem] rounded-full overflow-hidden inline-block align-middle shadow-[0_8px_20px_rgba(0,0,0,0.12)] shrink-0 hover:scale-105 transition-transform duration-500 cursor-pointer">
               <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=400&auto=format&fit=crop" className="w-full h-full object-cover" alt="Creative team" />
             </motion.div>
-            <motion.span variants={wordVariants} className="font-light text-slate-400 italic relative inline-block">
+            <motion.span variants={wordVariants} className="font-light text-slate-400 italic relative inline-block" translate="no">
               {/* Invisible longest word to reserve fixed width */}
               <span className="invisible">Portfolio.</span>
               {/* Visible typing text overlaid on top */}

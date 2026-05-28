@@ -142,39 +142,31 @@ export function ThemeHoverShowcase() {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 p-5 md:p-6 bg-[#09090b]/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+    <div className="w-full h-full flex flex-col gap-4 p-5 md:p-6 rounded-[2rem] overflow-hidden" translate="no">
       
-      {/* HEADER: Controls & Presets */}
-      <div className="w-full flex flex-col gap-1.5 shrink-0">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-white text-lg font-bold tracking-tight">Theme Engine</h3>
-            <p className="text-white/40 text-[9px] font-mono uppercase tracking-wider mt-0.5">Automated Style Synthesizer</p>
-          </div>
-          
-          {/* Active indicators */}
-          <div className="flex items-center gap-2">
-            {(['noir', 'spatial', 'cyber', 'brutalist'] as ThemeType[]).map((themeKey) => {
-              const isSelected = activeTheme === themeKey;
-              return (
-                <div 
-                  key={themeKey}
-                  className="h-1 rounded-full transition-all duration-[600ms] ease-out"
-                  style={{ 
-                    width: isSelected ? '24px' : '6px',
-                    backgroundColor: isSelected ? 
-                      (themeKey === 'spatial' ? '#60a5fa' :
-                       themeKey === 'cyber' ? '#bcfe00' :
-                       themeKey === 'noir' ? '#ff9e00' : '#ef4444') : 'rgba(255, 255, 255, 0.15)'
-                  }}
-                />
-              );
-            })}
-          </div>
+      {/* HEADER: Controls & Presets (Indicators Only) */}
+      <div className="w-full flex justify-end items-center mb-2 shrink-0">
+        {/* Active indicators */}
+        <div className="flex items-center gap-2">
+          {(['noir', 'spatial', 'cyber', 'brutalist'] as ThemeType[]).map((themeKey) => {
+            const isSelected = activeTheme === themeKey;
+            return (
+              <div 
+                key={themeKey}
+                className="h-1 rounded-full transition-all duration-[600ms] ease-out"
+                style={{ 
+                  width: isSelected ? '24px' : '6px',
+                  backgroundColor: isSelected ? 
+                    (themeKey === 'spatial' ? '#60a5fa' :
+                     themeKey === 'cyber' ? '#bcfe00' :
+                     themeKey === 'noir' ? '#ff9e00' : '#ef4444') : 'rgba(255, 255, 255, 0.15)'
+                }}
+              />
+            );
+          })}
         </div>
       </div>
 
-      {/* CANVAS */}
       <div 
         className="flex-1 min-h-[250px] relative rounded-2xl overflow-hidden border border-white/10 flex items-center justify-center"
       >

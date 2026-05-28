@@ -25,16 +25,10 @@ const PILLARS: Pillar[] = [
     type: 'External Data Sync',
     payloadStr: "{\n  \"action\": \"SYNC_ALL\",\n  \"targets\": [\"GitHub\", \"Penpot\", \"Canva\", \"AI Core\"]\n}",
     renderComponent: (instanceId) => (
-      <div className="bg-[#050505] border border-white/5 p-6 rounded-[2rem] w-full h-[480px] flex flex-col shadow-[0_10px_40px_rgba(0,0,0,0.5)] gap-6">
+      <div className="w-full h-[400px] lg:h-[480px] flex flex-col gap-4 sm:gap-6">
 
-        {/* Minimalist Header */}
-        <div>
-          <h3 className="text-white text-2xl font-semibold tracking-tight">Active Integrations</h3>
-          <p className="text-white/40 text-sm mt-1">Data pipelines synchronized to core.</p>
-        </div>
-
-        {/* 2x2 Grid Layout mimicking the provided design */}
-        <div className="grid grid-cols-2 grid-rows-2 gap-4 flex-1">
+        {/* 2x2 Grid Layout with responsive gaps */}
+        <div className="grid grid-cols-2 grid-rows-2 gap-3 sm:gap-4 flex-1">
           {[
             {
               id: 'github',
@@ -46,7 +40,7 @@ const PILLARS: Pillar[] = [
               subtitle: 'Commits & PRs sync',
               location: 'Pipeline Active',
               pattern: (
-                <svg className="absolute -bottom-2 -right-2 w-28 h-28 opacity-20 pointer-events-none" viewBox="0 0 100 100">
+                <svg className="absolute -bottom-2 -right-2 w-20 h-20 sm:w-28 sm:h-28 opacity-20 pointer-events-none" viewBox="0 0 100 100">
                   <path d="M10 100 Q 30 70 60 80 T 100 50" stroke="#ffffff" strokeWidth="2" fill="none" />
                   <path d="M20 100 Q 40 60 70 70 T 100 30" stroke="#ffffff" strokeWidth="2" fill="none" />
                   <path d="M30 100 Q 50 50 80 60 T 100 10" stroke="#ffffff" strokeWidth="2" fill="none" />
@@ -63,7 +57,7 @@ const PILLARS: Pillar[] = [
               subtitle: 'Design assets sync',
               location: 'Pipeline Active',
               pattern: (
-                <svg className="absolute -bottom-4 -right-4 w-28 h-28 opacity-30 pointer-events-none" viewBox="0 0 100 100">
+                <svg className="absolute -bottom-4 -right-4 w-20 h-20 sm:w-28 sm:h-28 opacity-30 pointer-events-none" viewBox="0 0 100 100">
                   <path d="M0 100 Q 25 50 50 75 T 100 25" stroke="#10b981" strokeWidth="4" strokeDasharray="4 4" fill="none" />
                   <path d="M0 120 Q 25 70 50 95 T 100 45" stroke="#10b981" strokeWidth="4" strokeDasharray="4 4" fill="none" />
                   <path d="M0 140 Q 25 90 50 115 T 100 65" stroke="#10b981" strokeWidth="4" strokeDasharray="4 4" fill="none" />
@@ -80,7 +74,7 @@ const PILLARS: Pillar[] = [
               subtitle: 'Slides & graphics sync',
               location: 'Pipeline Active',
               pattern: (
-                <svg className="absolute -bottom-2 -right-2 w-28 h-28 opacity-30 pointer-events-none" viewBox="0 0 100 100">
+                <svg className="absolute -bottom-2 -right-2 w-20 h-20 sm:w-28 sm:h-28 opacity-30 pointer-events-none" viewBox="0 0 100 100">
                   <path d="M10 100 L55 55 L100 100" stroke="#0ea5e9" strokeWidth="4" fill="none" />
                   <path d="M40 100 L70 70 L100 100" stroke="#0ea5e9" strokeWidth="4" fill="none" />
                   <path d="M70 100 L85 85 L100 100" stroke="#0ea5e9" strokeWidth="4" fill="none" />
@@ -97,7 +91,7 @@ const PILLARS: Pillar[] = [
               subtitle: 'Automated content',
               location: 'Core Neural Active',
               pattern: (
-                <svg className="absolute -bottom-6 -right-6 w-32 h-32 opacity-30 pointer-events-none" viewBox="0 0 100 100">
+                <svg className="absolute -bottom-4 -right-4 w-24 h-24 sm:w-32 sm:h-32 opacity-30 pointer-events-none" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="40" fill="#9333ea" />
                   <circle cx="80" cy="20" r="15" fill="#9333ea" />
                   <circle cx="20" cy="80" r="25" fill="#9333ea" />
@@ -107,26 +101,26 @@ const PILLARS: Pillar[] = [
               )
             }
           ].map((item) => (
-            <div key={item.id} className="bg-[#141414] rounded-xl p-4 relative overflow-hidden flex flex-col justify-between group hover:bg-[#1a1a1a] transition-colors border border-white/5">
+            <div key={item.id} className="bg-[#141414] rounded-xl p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between group hover:bg-[#1a1a1a] transition-colors border border-white/5">
               
               {/* Top Row: Logo & Date */}
               <div className="flex justify-between items-start relative z-10">
-                <div className={`w-8 h-8 rounded-lg ${item.iconBg} flex items-center justify-center shadow-lg`}>
-                  <i className={`fab ${item.icon} fas ${item.icon} text-white text-sm`}></i>
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg ${item.iconBg} flex items-center justify-center shadow-lg`}>
+                  <i className={`fab ${item.icon} fas ${item.icon} text-white text-[10px] sm:text-sm`}></i>
                 </div>
-                <span className="text-white/40 text-[9px] font-medium tracking-wider uppercase">{item.date}</span>
+                <span className="text-white/40 text-[8px] sm:text-[9px] font-medium tracking-wider uppercase">{item.date}</span>
               </div>
 
               {/* Middle Row: Text Content */}
-              <div className="mt-4 mb-2 relative z-10">
-                <p className="text-white/50 text-[10px] uppercase tracking-wider mb-1">{item.label}</p>
-                <h4 className="text-white text-sm font-bold tracking-tight leading-tight">{item.title}</h4>
-                <p className="text-white/70 text-xs mt-1 font-mono">{item.subtitle}</p>
+              <div className="mt-2.5 sm:mt-4 mb-1 sm:mb-2 relative z-10">
+                <p className="text-white/50 text-[8px] sm:text-[10px] uppercase tracking-wider mb-0.5 sm:mb-1">{item.label}</p>
+                <h4 className="text-white text-xs sm:text-sm font-bold tracking-tight leading-tight">{item.title}</h4>
+                <p className="text-white/70 text-[9px] sm:text-xs mt-0.5 sm:mt-1 font-mono">{item.subtitle}</p>
               </div>
 
               {/* Bottom Row: Location */}
-              <div className="relative z-10 mt-auto pt-2">
-                <span className="text-white/40 text-[9px] uppercase tracking-wider">{item.location}</span>
+              <div className="relative z-10 mt-auto pt-1 sm:pt-2">
+                <span className="text-white/40 text-[8px] sm:text-[9px] uppercase tracking-wider">{item.location}</span>
               </div>
 
               {/* Background Pattern */}
@@ -144,7 +138,7 @@ const PILLARS: Pillar[] = [
     type: 'Immersive WebGL',
     payloadStr: "{\n  \"renderer\": \"Bunny.net Edge\",\n  \"model\": \"architecture_v2.glb\",\n  \"polygons\": 142050,\n  \"materials\": \"PBR_Active\"\n}",
     renderComponent: (instanceId) => (
-      <div className="bg-[#050505]/90 border border-white/10 p-6 md:p-8 rounded-[2rem] w-full shadow-[0_0_50px_rgba(0,0,0,0.8)] transition-all">
+      <div className="w-full transition-all">
         <div className="w-full aspect-square rounded-2xl bg-gradient-to-tr from-neutral-950 to-neutral-900 border border-white/5 relative overflow-hidden group">
 
           <Abstract3DShowcase />
@@ -177,7 +171,7 @@ const PILLARS: Pillar[] = [
     type: 'Visitor Intelligence',
     payloadStr: "{\n  \"event\": \"SESSION_START\",\n  \"visitorId\": \"v_9f82x\",\n  \"device\": \"Desktop\",\n  \"country\": \"ID\",\n  \"duration\": 245\n}",
     renderComponent: (instanceId) => (
-      <div className="relative bg-[#020202]/90 backdrop-blur-3xl border border-white/10 p-8 rounded-[2rem] w-full shadow-[0_0_100px_rgba(0,0,0,1)] overflow-hidden group">
+      <div className="relative p-6 sm:p-8 rounded-[2rem] w-full overflow-hidden group">
 
         {/* Animated Cyber Grid Background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_at_center,black_50%,transparent_100%)] opacity-70"></div>
@@ -191,20 +185,7 @@ const PILLARS: Pillar[] = [
         <div className="absolute bottom-6 left-6 w-3 h-3 border-b-2 border-l-2 border-white/30"></div>
         <div className="absolute bottom-6 right-6 w-3 h-3 border-b-2 border-r-2 border-white/30"></div>
 
-        {/* Top Header / Status */}
-        <div className="relative z-10 flex justify-between items-start mb-12">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_#10b981]"></span>
-              <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-[0.3em]">Live Telemetry</span>
-            </div>
-            <h3 className="text-white text-4xl font-black tracking-tighter mix-blend-difference">Global Reach</h3>
-          </div>
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-full px-5 py-2 flex items-center gap-3 backdrop-blur-md">
-            <span className="text-emerald-500/50 text-[10px] font-mono tracking-widest">NODE</span>
-            <span className="text-emerald-400 text-xs font-mono font-bold">ACTV-01</span>
-          </div>
-        </div>
+
 
         {/* Main Graph Area: Abstract SVG Line Chart with glow */}
         <div className="relative z-10 h-36 w-full mb-8">
@@ -355,15 +336,12 @@ export function SyncEngineSection() {
                 {pillar.renderComponent('mobile')}
               </div>
 
-              {/* Payload code snippet card */}
+              {/* Payload code snippet card (Header Only) */}
               <div className="bg-black/40 border border-white/5 rounded-2xl p-4 mt-2">
-                <div className="flex justify-between items-center pb-2 border-b border-white/5 mb-2">
+                <div className="flex justify-between items-center pb-2 border-b border-white/5">
                   <span className="font-mono text-[8px] text-white/30 tracking-widest uppercase">[ Payload Data ]</span>
                   <span className="font-mono text-[8px] text-neutral-500">JSON</span>
                 </div>
-                <pre className="font-mono text-[10px] text-emerald-500/70 overflow-x-auto leading-relaxed select-all">
-                  {pillar.payloadStr}
-                </pre>
               </div>
             </motion.div>
           ))}
@@ -388,6 +366,7 @@ export function SyncEngineSection() {
           {/* LAYER 1: RAW CODE WATERMARK (Matrix Fade In) */}
           <div
             className="absolute top-1/2 right-[10%] -translate-y-1/2 pointer-events-none z-0 select-none opacity-5"
+            translate="no"
           >
             <AnimatePresence mode="popLayout">
               <motion.pre
@@ -431,7 +410,7 @@ export function SyncEngineSection() {
               <i className="fas fa-arrow-down"></i> KEEP SCROLLING
             </div>
 
-            {/* LAYER 3: MASSIVE HOLLOW TYPOGRAPHY MENU */}
+            {/* LAYER 3: MASSIVE HOLLOW TYPOGRAPHY MENU WITH SCROLL TRACKER */}
             <div className="w-full lg:w-3/5 flex flex-col justify-center gap-2 relative z-20 mt-8 md:mt-0">
               {/* Mobile-only header (flow-based) */}
               <div className="md:hidden mb-6">
@@ -440,39 +419,72 @@ export function SyncEngineSection() {
                 </span>
               </div>
 
-              <div className="flex flex-col gap-1 md:gap-3">
-                {PILLARS.map((pillar, idx) => {
-                  const isActive = activeIndex === idx;
-                  return (
-                    <div
-                      key={pillar.id}
-                    >
-                      <div
-                        className="flex flex-col justify-center relative transition-all duration-500 ease-out"
-                        style={{ opacity: isActive ? 1 : 0.35 }}
-                      >
-                        <div className="flex items-center gap-4">
-                          <h1
-                            className={`text-[3rem] sm:text-[4rem] md:text-[5.5rem] lg:text-[6.5rem] font-black uppercase leading-[0.9] transition-all duration-500 ease-out select-none ${isActive ? 'scale-100 origin-left' : 'scale-[0.85] origin-left'
-                              }`}
-                            style={{
-                              WebkitTextStroke: isActive ? '0px' : '1.5px rgba(255,255,255,0.3)',
-                              color: isActive ? '#ffffff' : 'transparent',
-                            }}
-                          >
-                            {pillar.name}
-                          </h1>
-                        </div>
+              <div className="flex gap-6 md:gap-8 items-stretch relative">
+                {/* Scroll Timeline Tracker (Desktop Only) */}
+                <div className="hidden md:flex flex-col items-center relative w-1 select-none">
+                  {/* Background Track Line */}
+                  <div className="absolute top-2 bottom-2 w-[2px] bg-white/10 rounded-full" />
+                  
+                  {/* Active Progress Fill Line */}
+                  <motion.div 
+                    className="absolute top-2 w-[2px] bg-gradient-to-b from-[#ff9e00] to-amber-500 rounded-full origin-top"
+                    style={{ scaleY: scrollYProgress, originY: 0, height: 'calc(100% - 16px)' }}
+                  />
+                  
+                  {/* Floating Glowing Indicator Dot */}
+                  <motion.div 
+                    className="absolute w-3.5 h-3.5 rounded-full bg-[#ff9e00] border-2 border-neutral-950 shadow-[0_0_12px_rgba(255,158,0,0.6)] -left-[5px] -translate-y-1/2"
+                    animate={{ 
+                      top: `calc(${activeIndex * (100 / (PILLARS.length - 1))}% + ${8 - activeIndex * 5.33}px)`,
+                    }}
+                    transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+                  />
+                </div>
 
-                        <div className={`overflow-hidden transition-all duration-300 ease-out ${isActive ? 'max-h-12 opacity-100 mt-1 md:mt-3' : 'max-h-0 opacity-0'}`}>
-                          <span className="font-mono text-[9px] md:text-[10px] tracking-widest uppercase text-neutral-500 ml-1">
-                            ARCHITECTURE // {pillar.type}
-                          </span>
-                        </div>
+                {/* Typography Menu */}
+                <div className="flex flex-col gap-1 md:gap-3 flex-1">
+                  {PILLARS.map((pillar, idx) => {
+                    const isActive = activeIndex === idx;
+                    return (
+                      <div key={pillar.id}>
+                        <motion.div
+                          animate={{ 
+                            opacity: isActive ? 1 : 0.3,
+                            scale: isActive ? 1 : 0.9,
+                          }}
+                          transition={{ duration: 0.4, ease: EASE }}
+                          className="flex flex-col justify-center relative origin-left"
+                        >
+                          <div className="flex items-center gap-4">
+                            <h1
+                              className="text-[3rem] sm:text-[4rem] md:text-[5.5rem] lg:text-[6.5rem] font-black uppercase leading-[0.9] select-none transition-colors duration-300"
+                              style={{
+                                WebkitTextStroke: isActive ? '0px' : '1.5px rgba(255,255,255,0.2)',
+                                color: isActive ? '#ffffff' : 'transparent',
+                              }}
+                            >
+                              {pillar.name}
+                            </h1>
+                          </div>
+
+                          <motion.div 
+                            initial={false}
+                            animate={{ 
+                              height: isActive ? 'auto' : 0, 
+                              opacity: isActive ? 1 : 0 
+                            }}
+                            transition={{ duration: 0.3, ease: EASE }}
+                            className="overflow-hidden"
+                          >
+                            <span className="font-mono text-[9px] md:text-[10px] tracking-widest uppercase text-neutral-500 ml-1 block mt-1 md:mt-3">
+                              ARCHITECTURE // {pillar.type}
+                            </span>
+                          </motion.div>
+                        </motion.div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -483,6 +495,7 @@ export function SyncEngineSection() {
               <AnimatePresence mode="popLayout">
                 <motion.div
                   key={activePillar.id}
+                  translate="no"
                   initial={{ opacity: 0, y: 40, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -40, scale: 0.95 }}
