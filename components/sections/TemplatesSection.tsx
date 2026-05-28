@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { LazyImage } from '@/components/ui/LazyImage';
+import { OptimizedLazyImage } from '@/components/ui/OptimizedLazyImage';
 import { TEMPLATE_LIST } from '@/lib/constants';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -149,7 +149,7 @@ export function TemplatesSection() {
                 <div className="absolute inset-[1px] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-[#0a0a0a]">
                   
                   {/* Background Image with enhanced transitions */}
-                  <LazyImage 
+                  <OptimizedLazyImage 
                     src={item.image} 
                     alt={item.title} 
                     className={`

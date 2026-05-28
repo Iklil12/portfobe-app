@@ -232,10 +232,11 @@ export function ThemeHoverShowcase() {
             {/* Back Spotlight Beam (Rendered behind furniture) */}
             <motion.polygon
               points="200,55 120,215 280,215"
+              initial={{ strokeWidth: 0 }}
               animate={{
                 fill: t.lampBeamFill,
                 opacity: t.lampBeamOpacity,
-                stroke: activeTheme === 'cyber' ? '#ff007f' : 'transparent',
+                stroke: activeTheme === 'cyber' ? '#ff007f' : 'rgba(0,0,0,0)',
                 strokeWidth: activeTheme === 'cyber' ? 1 : 0,
                 strokeDasharray: activeTheme === 'cyber' ? '3 3' : 'none'
               }}
@@ -429,9 +430,10 @@ export function ThemeHoverShowcase() {
             {/* Laptop/Monitor Neck */}
             <motion.path
               d="M 198,185 L 202,185 L 202,170 L 198,170 Z"
+              initial={{ strokeWidth: 0 }}
               animate={{
                 fill: t.deskStroke,
-                stroke: activeTheme === 'brutalist' ? '#000000' : 'transparent',
+                stroke: activeTheme === 'brutalist' ? '#000000' : 'rgba(0,0,0,0)',
                 strokeWidth: activeTheme === 'brutalist' ? 2 : 0
               }}
               transition={springTransition}
@@ -557,9 +559,10 @@ export function ThemeHoverShowcase() {
             {/* Lamp Dome Shade */}
             <motion.path
               d="M 190,50 Q 200,42 210,50 Z"
+              initial={{ strokeWidth: 0 }}
               animate={{
                 fill: t.lampFill,
-                stroke: activeTheme === 'brutalist' ? '#000000' : 'transparent',
+                stroke: activeTheme === 'brutalist' ? '#000000' : 'rgba(0,0,0,0)',
                 strokeWidth: activeTheme === 'brutalist' ? 2 : 0
               }}
               transition={springTransition}

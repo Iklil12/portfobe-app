@@ -15,7 +15,7 @@ interface Pillar {
   name: string;
   type: string;
   payloadStr: string;
-  renderComponent: () => React.ReactNode;
+  renderComponent: (instanceId?: string) => React.ReactNode;
 }
 
 const PILLARS: Pillar[] = [
@@ -23,9 +23,9 @@ const PILLARS: Pillar[] = [
     id: 'integrations',
     name: 'Integrations',
     type: 'External Data Sync',
-    payloadStr: "{\n  \"action\": \"SYNC_ALL\",\n  \"targets\": [\"GitHub\", \"Canva\", \"Penpot\"]\n}",
-    renderComponent: () => (
-      <div className="bg-[#050505] border border-white/5 p-8 rounded-[2rem] w-full h-[400px] flex flex-col justify-between shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+    payloadStr: "{\n  \"action\": \"SYNC_ALL\",\n  \"targets\": [\"GitHub\", \"Penpot\", \"Canva\", \"AI Core\"]\n}",
+    renderComponent: (instanceId) => (
+      <div className="bg-[#050505] border border-white/5 p-6 rounded-[2rem] w-full h-[480px] flex flex-col shadow-[0_10px_40px_rgba(0,0,0,0.5)] gap-6">
 
         {/* Minimalist Header */}
         <div>
@@ -33,26 +33,104 @@ const PILLARS: Pillar[] = [
           <p className="text-white/40 text-sm mt-1">Data pipelines synchronized to core.</p>
         </div>
 
-        {/* Minimalist Static List */}
-        <div className="space-y-4">
+        {/* 2x2 Grid Layout mimicking the provided design */}
+        <div className="grid grid-cols-2 grid-rows-2 gap-4 flex-1">
           {[
-            { id: 'gh', name: 'GitHub', desc: 'Code repositories & commits', icon: 'fa-github' },
-            { id: 'pn', name: 'Penpot', desc: 'UI/UX design assets', icon: 'fa-pen-nib' },
-            { id: 'cv', name: 'Canva', desc: 'Presentation slides', icon: 'fa-layer-group' }
+            {
+              id: 'github',
+              icon: 'fa-github',
+              iconBg: 'bg-[#2b3137]', // GitHub dark
+              date: '28 Nov 2024',
+              label: 'Code Repositories',
+              title: 'GitHub',
+              subtitle: 'Commits & PRs sync',
+              location: 'Pipeline Active',
+              pattern: (
+                <svg className="absolute -bottom-2 -right-2 w-28 h-28 opacity-20 pointer-events-none" viewBox="0 0 100 100">
+                  <path d="M10 100 Q 30 70 60 80 T 100 50" stroke="#ffffff" strokeWidth="2" fill="none" />
+                  <path d="M20 100 Q 40 60 70 70 T 100 30" stroke="#ffffff" strokeWidth="2" fill="none" />
+                  <path d="M30 100 Q 50 50 80 60 T 100 10" stroke="#ffffff" strokeWidth="2" fill="none" />
+                </svg>
+              )
+            },
+            {
+              id: 'penpot',
+              icon: 'fa-pen-nib',
+              iconBg: 'bg-[#10b981]', // Penpot green feel
+              date: '12 Oct 2024',
+              label: 'UI/UX Design',
+              title: 'Penpot',
+              subtitle: 'Design assets sync',
+              location: 'Pipeline Active',
+              pattern: (
+                <svg className="absolute -bottom-4 -right-4 w-28 h-28 opacity-30 pointer-events-none" viewBox="0 0 100 100">
+                  <path d="M0 100 Q 25 50 50 75 T 100 25" stroke="#10b981" strokeWidth="4" strokeDasharray="4 4" fill="none" />
+                  <path d="M0 120 Q 25 70 50 95 T 100 45" stroke="#10b981" strokeWidth="4" strokeDasharray="4 4" fill="none" />
+                  <path d="M0 140 Q 25 90 50 115 T 100 65" stroke="#10b981" strokeWidth="4" strokeDasharray="4 4" fill="none" />
+                </svg>
+              )
+            },
+            {
+              id: 'canva',
+              icon: 'fa-layer-group',
+              iconBg: 'bg-[#0ea5e9]', // Canva cyan/blue
+              date: '30 Dec 2024',
+              label: 'Presentations',
+              title: 'Canva',
+              subtitle: 'Slides & graphics sync',
+              location: 'Pipeline Active',
+              pattern: (
+                <svg className="absolute -bottom-2 -right-2 w-28 h-28 opacity-30 pointer-events-none" viewBox="0 0 100 100">
+                  <path d="M10 100 L55 55 L100 100" stroke="#0ea5e9" strokeWidth="4" fill="none" />
+                  <path d="M40 100 L70 70 L100 100" stroke="#0ea5e9" strokeWidth="4" fill="none" />
+                  <path d="M70 100 L85 85 L100 100" stroke="#0ea5e9" strokeWidth="4" fill="none" />
+                </svg>
+              )
+            },
+            {
+              id: 'ai',
+              icon: 'fa-robot',
+              iconBg: 'bg-[#9333ea]', // AI Purple
+              date: '13 Aug 2024',
+              label: 'Artificial Intelligence',
+              title: 'AI Integration',
+              subtitle: 'Automated content',
+              location: 'Core Neural Active',
+              pattern: (
+                <svg className="absolute -bottom-6 -right-6 w-32 h-32 opacity-30 pointer-events-none" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" fill="#9333ea" />
+                  <circle cx="80" cy="20" r="15" fill="#9333ea" />
+                  <circle cx="20" cy="80" r="25" fill="#9333ea" />
+                  <circle cx="20" cy="20" r="10" fill="#9333ea" />
+                  <circle cx="80" cy="80" r="20" fill="#9333ea" />
+                </svg>
+              )
+            }
           ].map((item) => (
-            <div key={item.id} className="flex items-center gap-4 border-t border-white/5 pt-4">
-              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                <i className={`fab ${item.icon} fas ${item.icon} text-white/70 text-lg`}></i>
-              </div>
-              <div className="flex justify-between items-center w-full">
-                <div className="flex flex-col">
-                  <span className="text-white font-medium text-base">{item.name}</span>
-                  <span className="text-white/40 text-xs">{item.desc}</span>
+            <div key={item.id} className="bg-[#141414] rounded-xl p-4 relative overflow-hidden flex flex-col justify-between group hover:bg-[#1a1a1a] transition-colors border border-white/5">
+              
+              {/* Top Row: Logo & Date */}
+              <div className="flex justify-between items-start relative z-10">
+                <div className={`w-8 h-8 rounded-lg ${item.iconBg} flex items-center justify-center shadow-lg`}>
+                  <i className={`fab ${item.icon} fas ${item.icon} text-white text-sm`}></i>
                 </div>
-                <div className="text-emerald-500 text-[10px] font-mono uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 rounded">
-                  Connected
-                </div>
+                <span className="text-white/40 text-[9px] font-medium tracking-wider uppercase">{item.date}</span>
               </div>
+
+              {/* Middle Row: Text Content */}
+              <div className="mt-4 mb-2 relative z-10">
+                <p className="text-white/50 text-[10px] uppercase tracking-wider mb-1">{item.label}</p>
+                <h4 className="text-white text-sm font-bold tracking-tight leading-tight">{item.title}</h4>
+                <p className="text-white/70 text-xs mt-1 font-mono">{item.subtitle}</p>
+              </div>
+
+              {/* Bottom Row: Location */}
+              <div className="relative z-10 mt-auto pt-2">
+                <span className="text-white/40 text-[9px] uppercase tracking-wider">{item.location}</span>
+              </div>
+
+              {/* Background Pattern */}
+              {item.pattern}
             </div>
           ))}
         </div>
@@ -65,7 +143,7 @@ const PILLARS: Pillar[] = [
     name: '3D Showcase',
     type: 'Immersive WebGL',
     payloadStr: "{\n  \"renderer\": \"Bunny.net Edge\",\n  \"model\": \"architecture_v2.glb\",\n  \"polygons\": 142050,\n  \"materials\": \"PBR_Active\"\n}",
-    renderComponent: () => (
+    renderComponent: (instanceId) => (
       <div className="bg-[#050505]/90 border border-white/10 p-6 md:p-8 rounded-[2rem] w-full shadow-[0_0_50px_rgba(0,0,0,0.8)] transition-all">
         <div className="w-full aspect-square rounded-2xl bg-gradient-to-tr from-neutral-950 to-neutral-900 border border-white/5 relative overflow-hidden group">
 
@@ -87,7 +165,7 @@ const PILLARS: Pillar[] = [
     name: 'Theme Engine',
     type: 'Architectural Layouts',
     payloadStr: "{\n  \"activeId\": \"morphic_hover\",\n  \"cssVariables\": {\n    \"--bg\": \"#000000\",\n    \"--text\": \"#ffffff\",\n    \"--radius\": \"0px\"\n  }\n}",
-    renderComponent: () => (
+    renderComponent: (instanceId) => (
       <div className="w-full h-[500px]">
         <ThemeHoverShowcase />
       </div>
@@ -98,7 +176,7 @@ const PILLARS: Pillar[] = [
     name: 'Analytics',
     type: 'Visitor Intelligence',
     payloadStr: "{\n  \"event\": \"SESSION_START\",\n  \"visitorId\": \"v_9f82x\",\n  \"device\": \"Desktop\",\n  \"country\": \"ID\",\n  \"duration\": 245\n}",
-    renderComponent: () => (
+    renderComponent: (instanceId) => (
       <div className="relative bg-[#020202]/90 backdrop-blur-3xl border border-white/10 p-8 rounded-[2rem] w-full shadow-[0_0_100px_rgba(0,0,0,1)] overflow-hidden group">
 
         {/* Animated Cyber Grid Background */}
@@ -142,7 +220,7 @@ const PILLARS: Pillar[] = [
             <motion.path
               d="M0,25 C10,10 15,30 25,20 C35,10 40,5 50,15 C60,25 70,5 80,18 C90,30 95,10 100,5"
               fill="none"
-              stroke="url(#data-gradient)"
+              stroke={`url(#data-gradient-${instanceId})`}
               strokeWidth="0.8"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
@@ -150,15 +228,15 @@ const PILLARS: Pillar[] = [
             />
             <path
               d="M0,25 C10,10 15,30 25,20 C35,10 40,5 50,15 C60,25 70,5 80,18 C90,30 95,10 100,5 L100,30 L0,30 Z"
-              fill="url(#data-fade)"
+              fill={`url(#data-fade-${instanceId})`}
             />
             <defs>
-              <linearGradient id="data-gradient" x1="0" y1="0" x2="1" y2="0">
+              <linearGradient id={`data-gradient-${instanceId}`} x1="0" y1="0" x2="1" y2="0">
                 <stop offset="0%" stopColor="#10b981" stopOpacity="0" />
                 <stop offset="50%" stopColor="#10b981" />
                 <stop offset="100%" stopColor="#3b82f6" />
               </linearGradient>
-              <linearGradient id="data-fade" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id={`data-fade-${instanceId}`} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
                 <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
               </linearGradient>
@@ -274,7 +352,7 @@ export function SyncEngineSection() {
 
               {/* Render visual component */}
               <div className="w-full relative z-10">
-                {pillar.renderComponent()}
+                {pillar.renderComponent('mobile')}
               </div>
 
               {/* Payload code snippet card */}
@@ -418,7 +496,7 @@ export function SyncEngineSection() {
                     <span className="font-mono text-[9px] text-[#ff9e00] tracking-[0.3em] uppercase">SYSTEM ACTIVE</span>
                   </div>
 
-                  {activePillar.renderComponent()}
+                  {activePillar.renderComponent('desktop')}
 
                   <div className="absolute -bottom-10 right-0">
                     <span className="font-mono text-[9px] text-neutral-600 tracking-widest uppercase">
