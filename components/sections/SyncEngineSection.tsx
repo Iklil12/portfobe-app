@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, memo } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Abstract3DShowcase } from '../ui/Abstract3DShowcase';
 import { ThemeHoverShowcase } from '../ui/ThemeHoverShowcase';
+import './sync-engine-integrations.css';
 
 // ============================================================================
 // ARTISTIC CONCEPT: THE INFINITE DATA SEA (PURE ABSTRACT EXHIBITION)
@@ -29,19 +30,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
     { id: 4, time: "12:45:32", type: "PROJECT", msg: "Opened project (Abstract-3D-Showcase)", latency: "28ms" },
   ]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLiveVisitors(prev => {
-        const diff = Math.floor(Math.random() * 7) - 3;
-        return Math.max(1400, Math.min(1600, prev + diff));
-      });
-      setSessionsCount(prev => prev + Math.floor(Math.random() * 4));
-      setVisitorsCount(prev => prev + Math.floor(Math.random() * 2));
-    }, 2500);
-
-    return () => clearInterval(interval);
-  }, []);
-
+  // Single merged interval for all live updates (was 2 separate intervals)
   useEffect(() => {
     const logTemplates = [
       { type: "VIEW", msg: "Visited /projects (Mobile // Safari)", latency: "18ms" },
@@ -55,15 +44,20 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
     ];
 
     const interval = setInterval(() => {
+      // Update metrics
+      setLiveVisitors(prev => {
+        const diff = Math.floor(Math.random() * 7) - 3;
+        return Math.max(1400, Math.min(1600, prev + diff));
+      });
+      setSessionsCount(prev => prev + Math.floor(Math.random() * 4));
+      setVisitorsCount(prev => prev + Math.floor(Math.random() * 2));
+
+      // Update log stream
       const template = logTemplates[Math.floor(Math.random() * logTemplates.length)];
       const now = new Date();
       const timeStr = now.toTimeString().split(' ')[0];
-
-      setLogs(prev => {
-        const newLogs = [...prev.slice(1), { id: Date.now(), time: timeStr, ...template }];
-        return newLogs;
-      });
-    }, 4000);
+      setLogs(prev => [...prev.slice(1), { id: Date.now(), time: timeStr, ...template }]);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
@@ -226,11 +220,10 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
             {logs.map((log) => (
               <motion.div
                 key={log.id}
-                layout
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 8 }}
-                transition={{ type: "spring", stiffness: 180, damping: 18 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
                 className="flex justify-between items-center text-[9px] sm:text-[10px] transition-all"
               >
                 <div className="flex gap-2.5 items-center min-w-0">
@@ -255,6 +248,114 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
   );
 }
 
+// ============================================================================
+// MEMOIZED SVG PATTERNS — Prevents recreation on every parent render
+// ============================================================================
+const GitHubPattern = memo(function GitHubPattern() {
+  return (
+    <svg className="absolute -bottom-2 -right-2 w-24 h-24 sm:w-32 sm:h-32 opacity-40 pointer-events-none" viewBox="0 0 100 100">
+      {/* Contribution Grid */}
+      <g>
+        <rect x="52" y="15" width="4.5" height="4.5" rx="1" className="gh-empty" />
+        <rect x="52" y="21" width="4.5" height="4.5" rx="1" className="gh-l1 gh-d1" />
+        <rect x="52" y="27" width="4.5" height="4.5" rx="1" className="gh-empty" />
+        <rect x="52" y="33" width="4.5" height="4.5" rx="1" className="gh-l2 gh-d2" />
+        <rect x="58" y="15" width="4.5" height="4.5" rx="1" className="gh-l3 gh-d3" />
+        <rect x="58" y="21" width="4.5" height="4.5" rx="1" className="gh-empty" />
+        <rect x="58" y="27" width="4.5" height="4.5" rx="1" className="gh-l1 gh-d4" />
+        <rect x="58" y="33" width="4.5" height="4.5" rx="1" className="gh-l4 gh-d1" />
+        <rect x="64" y="15" width="4.5" height="4.5" rx="1" className="gh-empty" />
+        <rect x="64" y="21" width="4.5" height="4.5" rx="1" className="gh-l2 gh-d2" />
+        <rect x="64" y="27" width="4.5" height="4.5" rx="1" className="gh-l3 gh-d3" />
+        <rect x="64" y="33" width="4.5" height="4.5" rx="1" className="gh-empty" />
+        <rect x="70" y="15" width="4.5" height="4.5" rx="1" className="gh-l1 gh-d4" />
+        <rect x="70" y="21" width="4.5" height="4.5" rx="1" className="gh-l4 gh-d1" />
+        <rect x="70" y="27" width="4.5" height="4.5" rx="1" className="gh-empty" />
+        <rect x="70" y="33" width="4.5" height="4.5" rx="1" className="gh-l2 gh-d2" />
+        <rect x="76" y="15" width="4.5" height="4.5" rx="1" className="gh-l2 gh-d3" />
+        <rect x="76" y="21" width="4.5" height="4.5" rx="1" className="gh-l1 gh-d4" />
+        <rect x="76" y="27" width="4.5" height="4.5" rx="1" className="gh-l3 gh-d1" />
+        <rect x="76" y="33" width="4.5" height="4.5" rx="1" className="gh-empty" />
+        <rect x="82" y="15" width="4.5" height="4.5" rx="1" className="gh-empty" />
+        <rect x="82" y="21" width="4.5" height="4.5" rx="1" className="gh-l3 gh-d2" />
+        <rect x="82" y="27" width="4.5" height="4.5" rx="1" className="gh-l4 gh-d3" />
+        <rect x="82" y="33" width="4.5" height="4.5" rx="1" className="gh-l1 gh-d4" />
+        <rect x="88" y="15" width="4.5" height="4.5" rx="1" className="gh-l4 gh-d1" />
+        <rect x="88" y="21" width="4.5" height="4.5" rx="1" className="gh-empty" />
+        <rect x="88" y="27" width="4.5" height="4.5" rx="1" className="gh-l2 gh-d2" />
+        <rect x="88" y="33" width="4.5" height="4.5" rx="1" className="gh-empty" />
+      </g>
+      {/* Git branch graph */}
+      <g>
+        <path d="M 10 75 L 90 75" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" opacity="0.2" fill="none" />
+        <path d="M 25 75 C 35 55, 60 55, 70 75" stroke="#58a6ff" strokeWidth="1.5" strokeLinecap="round" opacity="0.45" fill="none" />
+        <circle cx="25" cy="75" r="2" fill="#ffffff" opacity="0.4" />
+        <circle cx="70" cy="75" r="2" fill="#ffffff" opacity="0.4" />
+        <circle cx="70" cy="75" r="5" fill="none" stroke="#58a6ff" strokeWidth="1" className="github-ripple" />
+        <circle r="3" fill="#58a6ff" className="github-commit-dot" style={{ filter: 'drop-shadow(0 0 3px #58a6ff)', offsetPath: "path('M 25 75 C 35 55, 60 55, 70 75')" }} />
+      </g>
+    </svg>
+  );
+});
+
+const PenpotPattern = memo(function PenpotPattern() {
+  return (
+    <svg className="absolute -bottom-4 -right-4 w-20 h-20 sm:w-28 sm:h-28 opacity-40 pointer-events-none" viewBox="0 0 100 100">
+      <path d="M0 100 Q 25 50 50 75 T 100 25" stroke="#10b981" strokeWidth="3" fill="none" className="penpot-path" />
+      <path d="M0 120 Q 25 70 50 95 T 100 45" stroke="#10b981" strokeWidth="3" fill="none" className="penpot-path" />
+      <path d="M0 140 Q 25 90 50 115 T 100 65" stroke="#10b981" strokeWidth="3" fill="none" className="penpot-path" />
+    </svg>
+  );
+});
+
+const CanvaPattern = memo(function CanvaPattern() {
+  return (
+    <svg className="absolute -bottom-4 -right-4 w-24 h-24 sm:w-32 sm:h-32 opacity-50 pointer-events-none" viewBox="0 0 100 100">
+      <defs>
+        <pattern id="canva-grid" width="10" height="10" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="0.8" fill="#0ea5e9" opacity="0.25" />
+        </pattern>
+      </defs>
+      <rect width="100" height="100" fill="url(#canva-grid)" />
+      <rect x="10" y="10" width="80" height="80" rx="6" fill="none" stroke="rgba(14, 165, 233, 0.15)" strokeWidth="1" />
+      <line x1="50" y1="0" x2="50" y2="100" stroke="#0ea5e9" strokeWidth="1" className="canva-snap-line canva-snap-x" />
+      <line x1="0" y1="40" x2="100" y2="40" stroke="#0ea5e9" strokeWidth="1" className="canva-snap-line canva-snap-y" />
+      <rect x="18" y="18" width="64" height="64" rx="4" fill="rgba(14, 165, 233, 0.03)" stroke="none" />
+      <g className="canva-selected-layer">
+        <rect x="25" y="25" width="50" height="30" rx="3" fill="rgba(14, 165, 233, 0.08)" stroke="#0ea5e9" strokeWidth="1.2" />
+        <circle cx="50" cy="40" r="8" fill="#0ea5e9" opacity="0.35" />
+        <rect x="23" y="23" width="54" height="34" rx="4" fill="none" stroke="#0ea5e9" strokeWidth="1" strokeDasharray="3 2" />
+        <rect x="21" y="21" width="4" height="4" fill="#ffffff" stroke="#0ea5e9" strokeWidth="1" />
+        <rect x="75" y="21" width="4" height="4" fill="#ffffff" stroke="#0ea5e9" strokeWidth="1" />
+        <rect x="21" y="55" width="4" height="4" fill="#ffffff" stroke="#0ea5e9" strokeWidth="1" />
+        <rect x="75" y="55" width="4" height="4" fill="#ffffff" stroke="#0ea5e9" strokeWidth="1" />
+      </g>
+      <rect x="25" y="68" width="35" height="3" rx="1.5" fill="rgba(14, 165, 233, 0.25)" />
+      <rect x="25" y="75" width="50" height="3" rx="1.5" fill="rgba(14, 165, 233, 0.15)" />
+      <g className="canva-cursor-group">
+        <path d="M77 57 L85 65 L81 66 L86 71 L84 72 L79 67 L78 71 Z" fill="#ffffff" stroke="#0ea5e9" strokeWidth="1" />
+        <circle cx="77" cy="57" r="2" fill="#0ea5e9" />
+      </g>
+    </svg>
+  );
+});
+
+const AIPattern = memo(function AIPattern() {
+  return (
+    <svg className="absolute -bottom-4 -right-4 w-24 h-24 sm:w-32 sm:h-32 opacity-45 pointer-events-none" viewBox="0 0 100 100">
+      <line x1="50" y1="50" x2="80" y2="20" stroke="#9333ea" className="ai-line ai-line-1" />
+      <line x1="50" y1="50" x2="20" y2="80" stroke="#9333ea" className="ai-line ai-line-2" />
+      <line x1="50" y1="50" x2="20" y2="20" stroke="#9333ea" className="ai-line ai-line-3" />
+      <line x1="50" y1="50" x2="80" y2="80" stroke="#9333ea" className="ai-line ai-line-4" />
+      <circle cx="50" cy="50" r="6" fill="#9333ea" stroke="#ffffff" strokeWidth="1" className="ai-node ai-node-center" />
+      <circle cx="80" cy="20" r="4" fill="#9333ea" stroke="#ffffff" strokeWidth="1" className="ai-node ai-node-1" />
+      <circle cx="20" cy="80" r="5" fill="#9333ea" stroke="#ffffff" strokeWidth="1" className="ai-node ai-node-2" />
+      <circle cx="20" cy="20" r="4" fill="#9333ea" stroke="#ffffff" strokeWidth="1" className="ai-node ai-node-3" />
+      <circle cx="80" cy="80" r="5" fill="#9333ea" stroke="#ffffff" strokeWidth="1" className="ai-node ai-node-4" />
+    </svg>
+  );
+});
+
 const PILLARS: Pillar[] = [
   {
     id: 'integrations',
@@ -263,144 +364,6 @@ const PILLARS: Pillar[] = [
     payloadStr: "{\n  \"action\": \"SYNC_ALL\",\n  \"targets\": [\"GitHub\", \"Penpot\", \"Canva\", \"AI Core\"]\n}",
     renderComponent: (instanceId) => (
       <div className="w-full h-[400px] lg:h-[480px] flex flex-col gap-4 sm:gap-6">
-        <style dangerouslySetInnerHTML={{ __html: `
-          /* GitHub: Git branches and contributions calendar */
-          @keyframes github-contrib-glow {
-            0%, 100% { opacity: 0.65; }
-            50% { opacity: 1; filter: brightness(1.2) drop-shadow(0 0 1px currentColor); }
-          }
-          @keyframes github-commit-flow {
-            0% {
-              offset-distance: 0%;
-              opacity: 0;
-            }
-            12% {
-              opacity: 1;
-            }
-            50% {
-              offset-distance: 100%;
-              opacity: 1;
-            }
-            52%, 100% {
-              offset-distance: 100%;
-              opacity: 0;
-            }
-          }
-          @keyframes github-merge-ripple {
-            0%, 49% {
-              transform: scale(0.3);
-              opacity: 0;
-            }
-            52% {
-              transform: scale(0.3);
-              opacity: 0.8;
-            }
-            72%, 100% {
-              transform: scale(1.6);
-              opacity: 0;
-            }
-          }
-          .gh-empty { fill: #1f232b; }
-          .gh-l1 { fill: #0e4429; color: #0e4429; animation: github-contrib-glow 4s ease-in-out infinite; }
-          .gh-l2 { fill: #006d32; color: #006d32; animation: github-contrib-glow 4s ease-in-out infinite; }
-          .gh-l3 { fill: #26a641; color: #26a641; animation: github-contrib-glow 4s ease-in-out infinite; }
-          .gh-l4 { fill: #39d353; color: #39d353; animation: github-contrib-glow 4s ease-in-out infinite; }
-          
-          .gh-d1 { animation-delay: -0.8s; }
-          .gh-d2 { animation-delay: -1.6s; }
-          .gh-d3 { animation-delay: -2.4s; }
-          .gh-d4 { animation-delay: -3.2s; }
-
-          .github-commit-dot {
-            animation: github-commit-flow 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-          }
-          .github-ripple {
-            animation: github-merge-ripple 4s ease-out infinite;
-            transform-box: fill-box;
-            transform-origin: center;
-          }
-
-          /* Penpot: Original flowing dash line animation */
-          @keyframes penpot-flow {
-            to { stroke-dashoffset: -32; }
-          }
-          .penpot-path {
-            stroke-dasharray: 8 8;
-            animation: penpot-flow 3s linear infinite;
-          }
-
-          /* Canva: Template resizing and grid alignment snapping */
-          @keyframes canva-resize-group {
-            0%, 100% {
-              transform: scale(1);
-            }
-            45%, 55% {
-              transform: scale(1.12);
-            }
-          }
-          @keyframes canva-cursor-move {
-            0%, 100% {
-              transform: translate(0px, 0px);
-            }
-            45%, 55% {
-              transform: translate(6.24px, 3.84px);
-            }
-          }
-          @keyframes canva-snap-flash {
-            0%, 40%, 60%, 100% { opacity: 0; }
-            45%, 55% { opacity: 0.75; }
-          }
-          .canva-selected-layer {
-            animation: canva-resize-group 4s ease-in-out infinite;
-            transform-origin: 25px 25px;
-          }
-          .canva-cursor-group {
-            animation: canva-cursor-move 4s ease-in-out infinite;
-          }
-          .canva-snap-x {
-            animation: canva-snap-flash 4s ease-in-out infinite;
-          }
-          .canva-snap-y {
-            animation: canva-snap-flash 4s ease-in-out infinite;
-            animation-delay: -2s;
-          }
-
-          /* AI Integration: Firing synapses and glowing brain/neural nodes */
-          @keyframes ai-synapse-fire {
-            0%, 100% { opacity: 0.15; stroke-width: 1.5px; }
-            50% { opacity: 0.7; stroke-width: 2.2px; }
-          }
-          @keyframes ai-node-glow {
-            0%, 100% {
-              transform: scale(0.85);
-              opacity: 0.45;
-              filter: drop-shadow(0 0 2px rgba(147, 51, 234, 0.4));
-            }
-            50% {
-              transform: scale(1.2);
-              opacity: 1;
-              filter: drop-shadow(0 0 8px rgba(147, 51, 234, 0.9));
-            }
-          }
-          .ai-line {
-            animation: ai-synapse-fire 3s ease-in-out infinite;
-          }
-          .ai-line-1 { animation-delay: 0s; }
-          .ai-line-2 { animation-delay: 0.75s; }
-          .ai-line-3 { animation-delay: 1.5s; }
-          .ai-line-4 { animation-delay: 2.25s; }
-
-          .ai-node {
-            animation: ai-node-glow 4s ease-in-out infinite;
-            transform-box: fill-box;
-            transform-origin: center;
-          }
-          .ai-node-center { animation-delay: 0s; }
-          .ai-node-1 { animation-delay: 0.8s; }
-          .ai-node-2 { animation-delay: 1.6s; }
-          .ai-node-3 { animation-delay: 1.2s; }
-          .ai-node-4 { animation-delay: 2s; }
-        `}} />
 
         {/* 2x2 Grid Layout with responsive gaps */}
         <div className="grid grid-cols-2 grid-rows-2 gap-3 sm:gap-4 flex-1">
@@ -414,73 +377,7 @@ const PILLARS: Pillar[] = [
               title: 'GitHub',
               subtitle: 'Commits & PRs sync',
               location: 'Pipeline Active',
-              pattern: (
-                <svg className="absolute -bottom-2 -right-2 w-24 h-24 sm:w-32 sm:h-32 opacity-40 pointer-events-none" viewBox="0 0 100 100">
-                  {/* Contribution Grid (Top part) */}
-                  <g>
-                    {/* Col 0 */}
-                    <rect x="52" y="15" width="4.5" height="4.5" rx="1" className="gh-empty" />
-                    <rect x="52" y="21" width="4.5" height="4.5" rx="1" className="gh-l1 gh-d1" />
-                    <rect x="52" y="27" width="4.5" height="4.5" rx="1" className="gh-empty" />
-                    <rect x="52" y="33" width="4.5" height="4.5" rx="1" className="gh-l2 gh-d2" />
-
-                    {/* Col 1 */}
-                    <rect x="58" y="15" width="4.5" height="4.5" rx="1" className="gh-l3 gh-d3" />
-                    <rect x="58" y="21" width="4.5" height="4.5" rx="1" className="gh-empty" />
-                    <rect x="58" y="27" width="4.5" height="4.5" rx="1" className="gh-l1 gh-d4" />
-                    <rect x="58" y="33" width="4.5" height="4.5" rx="1" className="gh-l4 gh-d1" />
-
-                    {/* Col 2 */}
-                    <rect x="64" y="15" width="4.5" height="4.5" rx="1" className="gh-empty" />
-                    <rect x="64" y="21" width="4.5" height="4.5" rx="1" className="gh-l2 gh-d2" />
-                    <rect x="64" y="27" width="4.5" height="4.5" rx="1" className="gh-l3 gh-d3" />
-                    <rect x="64" y="33" width="4.5" height="4.5" rx="1" className="gh-empty" />
-
-                    {/* Col 3 */}
-                    <rect x="70" y="15" width="4.5" height="4.5" rx="1" className="gh-l1 gh-d4" />
-                    <rect x="70" y="21" width="4.5" height="4.5" rx="1" className="gh-l4 gh-d1" />
-                    <rect x="70" y="27" width="4.5" height="4.5" rx="1" className="gh-empty" />
-                    <rect x="70" y="33" width="4.5" height="4.5" rx="1" className="gh-l2 gh-d2" />
-
-                    {/* Col 4 */}
-                    <rect x="76" y="15" width="4.5" height="4.5" rx="1" className="gh-l2 gh-d3" />
-                    <rect x="76" y="21" width="4.5" height="4.5" rx="1" className="gh-l1 gh-d4" />
-                    <rect x="76" y="27" width="4.5" height="4.5" rx="1" className="gh-l3 gh-d1" />
-                    <rect x="76" y="33" width="4.5" height="4.5" rx="1" className="gh-empty" />
-
-                    {/* Col 5 */}
-                    <rect x="82" y="15" width="4.5" height="4.5" rx="1" className="gh-empty" />
-                    <rect x="82" y="21" width="4.5" height="4.5" rx="1" className="gh-l3 gh-d2" />
-                    <rect x="82" y="27" width="4.5" height="4.5" rx="1" className="gh-l4 gh-d3" />
-                    <rect x="82" y="33" width="4.5" height="4.5" rx="1" className="gh-l1 gh-d4" />
-
-                    {/* Col 6 */}
-                    <rect x="88" y="15" width="4.5" height="4.5" rx="1" className="gh-l4 gh-d1" />
-                    <rect x="88" y="21" width="4.5" height="4.5" rx="1" className="gh-empty" />
-                    <rect x="88" y="27" width="4.5" height="4.5" rx="1" className="gh-l2 gh-d2" />
-                    <rect x="88" y="33" width="4.5" height="4.5" rx="1" className="gh-empty" />
-                  </g>
-
-                  {/* Git branch graph (Bottom part) */}
-                  <g>
-                    {/* Main branch line */}
-                    <path d="M 10 75 L 90 75" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" opacity="0.2" fill="none" />
-                    
-                    {/* Feature branch line */}
-                    <path d="M 25 75 C 35 55, 60 55, 70 75" stroke="#58a6ff" strokeWidth="1.5" strokeLinecap="round" opacity="0.45" fill="none" />
-                    
-                    {/* Branch commit nodes (static background points) */}
-                    <circle cx="25" cy="75" r="2" fill="#ffffff" opacity="0.4" />
-                    <circle cx="70" cy="75" r="2" fill="#ffffff" opacity="0.4" />
-                    
-                    {/* Glowing merge point indicator */}
-                    <circle cx="70" cy="75" r="5" fill="none" stroke="#58a6ff" strokeWidth="1" className="github-ripple" />
-                    
-                    {/* Traveling commit node */}
-                    <circle r="3" fill="#58a6ff" className="github-commit-dot" style={{ filter: 'drop-shadow(0 0 3px #58a6ff)', offsetPath: "path('M 25 75 C 35 55, 60 55, 70 75')" }} />
-                  </g>
-                </svg>
-              )
+              pattern: <GitHubPattern />
             },
             {
               id: 'penpot',
@@ -491,13 +388,7 @@ const PILLARS: Pillar[] = [
               title: 'Penpot',
               subtitle: 'Design assets sync',
               location: 'Pipeline Active',
-              pattern: (
-                <svg className="absolute -bottom-4 -right-4 w-20 h-20 sm:w-28 sm:h-28 opacity-40 pointer-events-none" viewBox="0 0 100 100">
-                  <path d="M0 100 Q 25 50 50 75 T 100 25" stroke="#10b981" strokeWidth="3" fill="none" className="penpot-path" />
-                  <path d="M0 120 Q 25 70 50 95 T 100 45" stroke="#10b981" strokeWidth="3" fill="none" className="penpot-path" />
-                  <path d="M0 140 Q 25 90 50 115 T 100 65" stroke="#10b981" strokeWidth="3" fill="none" className="penpot-path" />
-                </svg>
-              )
+              pattern: <PenpotPattern />
             },
             {
               id: 'canva',
@@ -508,35 +399,7 @@ const PILLARS: Pillar[] = [
               title: 'Canva',
               subtitle: 'Slides & graphics sync',
               location: 'Pipeline Active',
-              pattern: (
-                <svg className="absolute -bottom-4 -right-4 w-24 h-24 sm:w-32 sm:h-32 opacity-50 pointer-events-none" viewBox="0 0 100 100">
-                  <defs>
-                    <pattern id="canva-grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                      <circle cx="2" cy="2" r="0.8" fill="#0ea5e9" opacity="0.25" />
-                    </pattern>
-                  </defs>
-                  <rect width="100" height="100" fill="url(#canva-grid)" />
-                  <rect x="10" y="10" width="80" height="80" rx="6" fill="none" stroke="rgba(14, 165, 233, 0.15)" strokeWidth="1" />
-                  <line x1="50" y1="0" x2="50" y2="100" stroke="#0ea5e9" strokeWidth="1" className="canva-snap-line canva-snap-x" />
-                  <line x1="0" y1="40" x2="100" y2="40" stroke="#0ea5e9" strokeWidth="1" className="canva-snap-line canva-snap-y" />
-                  <rect x="18" y="18" width="64" height="64" rx="4" fill="rgba(14, 165, 233, 0.03)" stroke="none" />
-                  <g className="canva-selected-layer">
-                    <rect x="25" y="25" width="50" height="30" rx="3" fill="rgba(14, 165, 233, 0.08)" stroke="#0ea5e9" strokeWidth="1.2" />
-                    <circle cx="50" cy="40" r="8" fill="#0ea5e9" opacity="0.35" />
-                    <rect x="23" y="23" width="54" height="34" rx="4" fill="none" stroke="#0ea5e9" strokeWidth="1" strokeDasharray="3 2" />
-                    <rect x="21" y="21" width="4" height="4" fill="#ffffff" stroke="#0ea5e9" strokeWidth="1" />
-                    <rect x="75" y="21" width="4" height="4" fill="#ffffff" stroke="#0ea5e9" strokeWidth="1" />
-                    <rect x="21" y="55" width="4" height="4" fill="#ffffff" stroke="#0ea5e9" strokeWidth="1" />
-                    <rect x="75" y="55" width="4" height="4" fill="#ffffff" stroke="#0ea5e9" strokeWidth="1" />
-                  </g>
-                  <rect x="25" y="68" width="35" height="3" rx="1.5" fill="rgba(14, 165, 233, 0.25)" />
-                  <rect x="25" y="75" width="50" height="3" rx="1.5" fill="rgba(14, 165, 233, 0.15)" />
-                  <g className="canva-cursor-group">
-                    <path d="M77 57 L85 65 L81 66 L86 71 L84 72 L79 67 L78 71 Z" fill="#ffffff" stroke="#0ea5e9" strokeWidth="1" />
-                    <circle cx="77" cy="57" r="2" fill="#0ea5e9" />
-                  </g>
-                </svg>
-              )
+              pattern: <CanvaPattern />
             },
             {
               id: 'ai',
@@ -547,22 +410,7 @@ const PILLARS: Pillar[] = [
               title: 'AI Integration',
               subtitle: 'Automated content',
               location: 'Core Neural Active',
-              pattern: (
-                <svg className="absolute -bottom-4 -right-4 w-24 h-24 sm:w-32 sm:h-32 opacity-45 pointer-events-none" viewBox="0 0 100 100">
-                  {/* Firing neural connections */}
-                  <line x1="50" y1="50" x2="80" y2="20" stroke="#9333ea" className="ai-line ai-line-1" />
-                  <line x1="50" y1="50" x2="20" y2="80" stroke="#9333ea" className="ai-line ai-line-2" />
-                  <line x1="50" y1="50" x2="20" y2="20" stroke="#9333ea" className="ai-line ai-line-3" />
-                  <line x1="50" y1="50" x2="80" y2="80" stroke="#9333ea" className="ai-line ai-line-4" />
-                  
-                  {/* Glowing/pulsing neural nodes */}
-                  <circle cx="50" cy="50" r="6" fill="#9333ea" stroke="#ffffff" strokeWidth="1" className="ai-node ai-node-center" />
-                  <circle cx="80" cy="20" r="4" fill="#9333ea" stroke="#ffffff" strokeWidth="1" className="ai-node ai-node-1" />
-                  <circle cx="20" cy="80" r="5" fill="#9333ea" stroke="#ffffff" strokeWidth="1" className="ai-node ai-node-2" />
-                  <circle cx="20" cy="20" r="4" fill="#9333ea" stroke="#ffffff" strokeWidth="1" className="ai-node ai-node-3" />
-                  <circle cx="80" cy="80" r="5" fill="#9333ea" stroke="#ffffff" strokeWidth="1" className="ai-node ai-node-4" />
-                </svg>
-              )
+              pattern: <AIPattern />
             }
           ].map((item) => (
             <div key={item.id} className="bg-[#141414] rounded-xl p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between group hover:bg-[#1a1a1a] transition-colors border border-white/5">
@@ -638,6 +486,49 @@ const PILLARS: Pillar[] = [
 // Apple-style cinematic easing curve
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
+// ============================================================================
+// LAZY MOBILE PILLAR — Only render heavy components when scrolled into view
+// Uses IntersectionObserver with rootMargin for preloading.
+// Once mounted, stays mounted to preserve state (no re-init cost).
+// ============================================================================
+function LazyMobilePillar({ children, height = '400px' }: { children: React.ReactNode; height?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [hasEnteredView, setHasEnteredView] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasEnteredView(true);
+          observer.disconnect(); // Once visible, stop observing — component stays mounted
+        }
+      },
+      { rootMargin: '200px 0px', threshold: 0 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} style={{ minHeight: hasEnteredView ? undefined : height }}>
+      {hasEnteredView ? (
+        children
+      ) : (
+        <div className="w-full flex items-center justify-center" style={{ height }}>
+          <div className="flex flex-col items-center gap-3 opacity-30">
+            <div className="w-8 h-8 rounded-lg bg-white/5 animate-pulse" />
+            <div className="w-24 h-1.5 rounded-full bg-white/5 animate-pulse" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function SyncEngineSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -653,9 +544,9 @@ export function SyncEngineSection() {
     if (newIndex >= totalSections) newIndex = totalSections - 1;
     if (newIndex < 0) newIndex = 0;
 
-    if (newIndex !== activeIndex) {
-      setActiveIndex(newIndex);
-    }
+    // Use functional state update to completely avoid stale closure issues
+    // React will bail out of the render if it returns the exact same value.
+    setActiveIndex(prev => prev === newIndex ? prev : newIndex);
   });
 
   const activePillar = PILLARS[activeIndex];
@@ -692,9 +583,11 @@ export function SyncEngineSection() {
 
               </div>
 
-              {/* Render visual component */}
+              {/* Render visual component — lazy loaded on mobile */}
               <div className="w-full relative z-10">
-                {pillar.renderComponent('mobile')}
+                <LazyMobilePillar height={pillar.id === '3d-showcase' ? '450px' : '400px'}>
+                  {pillar.renderComponent('mobile')}
+                </LazyMobilePillar>
               </div>
 
 
@@ -787,12 +680,11 @@ export function SyncEngineSection() {
                   />
                   
                   {/* Floating Glowing Indicator Dot */}
-                  <motion.div 
-                    className="absolute w-3.5 h-3.5 rounded-full bg-[#ff9e00] border-2 border-neutral-950 shadow-[0_0_12px_rgba(255,158,0,0.6)] -left-[5px] -translate-y-1/2"
-                    animate={{ 
+                  <div 
+                    className="absolute w-3.5 h-3.5 rounded-full bg-[#ff9e00] border-2 border-neutral-950 shadow-[0_0_12px_rgba(255,158,0,0.6)] -left-[5px] -translate-y-1/2 transition-all duration-300 ease-out"
+                    style={{ 
                       top: `calc(${activeIndex * (100 / (PILLARS.length - 1))}% + ${8 - activeIndex * 5.33}px)`,
                     }}
-                    transition={{ type: 'spring', stiffness: 100, damping: 15 }}
                   />
                 </div>
 
@@ -802,13 +694,10 @@ export function SyncEngineSection() {
                     const isActive = activeIndex === idx;
                     return (
                       <div key={pillar.id}>
-                        <motion.div
-                          animate={{ 
-                            opacity: isActive ? 1 : 0.3,
-                            scale: isActive ? 1 : 0.9,
-                          }}
-                          transition={{ duration: 0.4, ease: EASE }}
-                          className="flex flex-col justify-center relative origin-left"
+                        <div
+                          className={`flex flex-col justify-center relative origin-left transition-all duration-300 ease-out ${
+                            isActive ? 'opacity-100 scale-100' : 'opacity-30 scale-90'
+                          }`}
                         >
                           <div className="flex items-center gap-4">
                             <h1
@@ -822,20 +711,16 @@ export function SyncEngineSection() {
                             </h1>
                           </div>
 
-                          <motion.div 
-                            initial={false}
-                            animate={{ 
-                              height: isActive ? 'auto' : 0, 
-                              opacity: isActive ? 1 : 0 
-                            }}
-                            transition={{ duration: 0.3, ease: EASE }}
-                            className="overflow-hidden"
+                          <div 
+                            className={`overflow-hidden transition-all duration-300 ease-out ${
+                              isActive ? 'h-8 md:h-12 opacity-100' : 'h-0 opacity-0'
+                            }`}
                           >
                             <span className="font-mono text-[9px] md:text-[10px] tracking-widest uppercase text-neutral-500 ml-1 block mt-1 md:mt-3">
                               ARCHITECTURE // {pillar.type}
                             </span>
-                          </motion.div>
-                        </motion.div>
+                          </div>
+                        </div>
                       </div>
                     );
                   })}
