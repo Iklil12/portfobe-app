@@ -56,8 +56,8 @@ export default function PricingPage() {
         { text: "All Premium Themes", active: true },
         { text: "No Watermark", active: true },
         { text: "Deep Analytics & SEO", active: true },
-        { text: "Connect Custom Domain", active: true },
         { text: "GitHub & Penpot Widgets", active: true },
+        { text: "Connect Custom Domain", active: false },
         { text: "VIP Support", active: false },
       ]
     }]),
@@ -74,12 +74,11 @@ export default function PricingPage() {
       link: "/checkout?plan=supreme",
       features: [
         { text: "All Pro Features", active: true },
-        { text: "Multiple Custom Domains", active: true },
-        { text: "Custom CSS / HTML", active: true },
-        { text: "Google/Meta Pixel Analytics", active: true },
-        { text: billingCycle === 'yearly' ? "Free 1-Year Domain" : "Connect Custom Domain", active: true, bonus: billingCycle === 'yearly' },
-        { text: "Priority VIP Support", active: true },
+        { text: "Larger Storage", active: true },
+        ...(billingCycle === 'yearly' ? [{ text: "Free 1-Year Domain", active: true, bonus: true }] : []),
         { text: "Early Access Features", active: true },
+        { text: "Priority VIP Support", active: true },
+        { text: "Connect Custom Domain", active: billingCycle === 'yearly' },
       ]
     }])
   ];

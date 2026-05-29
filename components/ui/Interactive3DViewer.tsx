@@ -39,7 +39,7 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
       {inView ? (
         <>
           <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js" />
-          
+
           <ModelViewer
             src={mediaUrl}
             auto-rotate={autoRotate ? "" : null}
@@ -59,11 +59,11 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
                   {[...Array(6)].map((_, i) => (
                     <div key={i} className="mv3d-face absolute w-full h-full border border-white/20 rounded-sm bg-white/5" style={{
                       transform: i === 0 ? 'rotateY(0deg) translateZ(20px)' :
-                                 i === 1 ? 'rotateY(90deg) translateZ(20px)' :
-                                 i === 2 ? 'rotateY(180deg) translateZ(20px)' :
-                                 i === 3 ? 'rotateY(270deg) translateZ(20px)' :
-                                 i === 4 ? 'rotateX(90deg) translateZ(20px)' :
-                                           'rotateX(-90deg) translateZ(20px)'
+                        i === 1 ? 'rotateY(90deg) translateZ(20px)' :
+                          i === 2 ? 'rotateY(180deg) translateZ(20px)' :
+                            i === 3 ? 'rotateY(270deg) translateZ(20px)' :
+                              i === 4 ? 'rotateX(90deg) translateZ(20px)' :
+                                'rotateX(-90deg) translateZ(20px)'
                     }}></div>
                   ))}
                 </div>
@@ -76,15 +76,15 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
               {/* Exposure Slider */}
               <div className="flex items-center gap-2 px-2 border-r border-white/10">
                 <i className="fas fa-sun text-[8px] text-white/50"></i>
-                <input 
-                  type="range" min="0.5" max="2" step="0.1" 
-                  value={exposure} 
+                <input
+                  type="range" min="0.5" max="2" step="0.1"
+                  value={exposure}
                   onChange={(e) => setExposure(parseFloat(e.target.value))}
                   className="w-14 @md:w-24 h-[3px] bg-white/20 rounded-lg appearance-none cursor-pointer accent-white"
                 />
               </div>
               {/* Auto Rotate Toggle */}
-              <button 
+              <button
                 onClick={() => setAutoRotate(!autoRotate)}
                 className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${autoRotate ? 'bg-white text-black' : 'bg-white/10 text-white hover:bg-white/20'}`}
                 title="Toggle Auto-Rotate"
@@ -102,11 +102,11 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="mv3d-face absolute w-full h-full border border-white/20 rounded-sm bg-white/5" style={{
                   transform: i === 0 ? 'rotateY(0deg) translateZ(20px)' :
-                             i === 1 ? 'rotateY(90deg) translateZ(20px)' :
-                             i === 2 ? 'rotateY(180deg) translateZ(20px)' :
-                             i === 3 ? 'rotateY(270deg) translateZ(20px)' :
-                             i === 4 ? 'rotateX(90deg) translateZ(20px)' :
-                                       'rotateX(-90deg) translateZ(20px)'
+                    i === 1 ? 'rotateY(90deg) translateZ(20px)' :
+                      i === 2 ? 'rotateY(180deg) translateZ(20px)' :
+                        i === 3 ? 'rotateY(270deg) translateZ(20px)' :
+                          i === 4 ? 'rotateX(90deg) translateZ(20px)' :
+                            'rotateX(-90deg) translateZ(20px)'
                 }}></div>
               ))}
             </div>

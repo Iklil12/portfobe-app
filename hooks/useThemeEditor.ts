@@ -179,6 +179,10 @@ export function useThemeEditor() {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
+  const updateCustomText = (field: string, value: string) => {
+    setCustomTexts((prev: any) => ({ ...prev, [field]: value }));
+  };
+
   const saveDesign = async () => {
     setIsSaving(true);
     const toastId = toast.loading('Menyimpan desain...', {
@@ -300,7 +304,8 @@ export function useThemeEditor() {
       setIsThemeModalOpen,
       setShowProModal,
       saveDesign,
-      toggleFavorite
+      toggleFavorite,
+      updateCustomText
     }
   };
 }

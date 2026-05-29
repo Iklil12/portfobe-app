@@ -19,6 +19,7 @@ import EditorialTheme from './themes/EditorialTheme';
 import MidnightEmulsionTheme from './themes/MidnightEmulsionTheme';
 import AuraKineticTheme from './themes/AuraKineticTheme';
 import AbsoluteNoirTheme from './themes/AbsoluteNoirTheme';
+import ObsidianReelTheme from './themes/ObsidianReelTheme';
 
 // 2. DAFTARKAN TEMA KE DALAM "THEME REGISTRY"
 const THEME_MAP: Record<string, React.FC<any>> = {
@@ -35,6 +36,7 @@ const THEME_MAP: Record<string, React.FC<any>> = {
   'midnight-emulsion': MidnightEmulsionTheme,
   'aura-kinetic': AuraKineticTheme,
   'absolute-noir': AbsoluteNoirTheme,
+  'obsidian-reel': ObsidianReelTheme,
   
   // Nanti tinggal tambah: 'elegant': ElegantTheme, dst...
 };

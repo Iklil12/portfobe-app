@@ -10,6 +10,15 @@ export const THEMES_DATA = [
       isPro: true,
       img: '/themes/spatial.jpg'
   },
+    {
+      id: 'obsidian-reel',
+      name: 'Obsidian Reel',
+      desc: 'Cinematic dark theme tailored for video production and creative studios.',
+      preview: 'bg-[#050505]',
+      isAvailable: true,
+      isPro: true,
+      img: 'https://images.unsplash.com/photo-1534938665420-4193d6aa2a28?q=80&w=600&auto=format&fit=crop'
+  },
   {
       id: 'aura-kinetic',
       name: 'Aura Kinetic',
