@@ -23,7 +23,7 @@ export function DeviceResizerSection() {
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
 
   return (
-    <section className="relative min-h-[130vh] w-full bg-[#020202] text-white overflow-hidden py-32 flex flex-col items-center justify-center font-sans">
+    <section className="relative min-h-[130vh] w-full bg-[#020202] text-white overflow-hidden pt-12 pb-32 sm:pt-16 md:pt-20 flex flex-col items-center justify-center font-sans">
 
       {/* ================= BACKGROUND ART ================= */}
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
