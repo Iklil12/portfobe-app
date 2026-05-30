@@ -384,6 +384,16 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                                 );
                             })}
                         </motion.div>
+                        
+                        {/* Explore Gallery Button */}
+                        <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="mt-16 flex justify-center">
+                            <Link href={`/${subdomain}/gallery`} scroll={false} className={`group flex items-center gap-4 px-8 py-4 border border-[rgba(255,255,255,0.1)] ${btnShape} obsidian-btn-outline transition-all duration-300`}>
+                                <span className="font-heading font-medium text-lg">
+                                    <EditableText value={theme?.customTexts?.explore_archive || 'Explore Gallery'} field="explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                                </span>
+                                <i className="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
+                            </Link>
+                        </motion.div>
                     </div>
                 </section>
 
@@ -485,9 +495,18 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                                             <i className="fas fa-quote-left text-2xl text-[var(--brand-accent)] opacity-50 mb-6 block"></i>
                                             <p className="font-body text-lg text-[#d1d1d6] leading-relaxed mb-8">"{t.content}"</p>
                                         </div>
-                                        <div>
-                                            <h4 className="font-heading text-xl font-medium text-white">{t.name}</h4>
-                                            <p className="font-body text-[#8a8a93] text-sm mt-1">{t.position} {t.company ? `at ${t.company}` : ''}</p>
+                                        <div className="flex items-center gap-4 mt-2">
+                                            {t.avatarUrl || t.avatar ? (
+                                                <img src={t.avatarUrl || t.avatar} alt={t.clientName || t.name || 'Client'} className="w-12 h-12 rounded-full object-cover border border-white/10" />
+                                            ) : (
+                                                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white/40 border border-white/10 uppercase font-medium">
+                                                    {(t.clientName || t.name || 'U').charAt(0)}
+                                                </div>
+                                            )}
+                                            <div>
+                                                <h4 className="font-heading text-lg font-medium text-white">{t.clientName || t.name || 'Anonymous Client'}</h4>
+                                                <p className="font-body text-[#8a8a93] text-sm">{t.position || ''} {t.company ? `${t.position ? 'at ' : ''}${t.company}` : ''}</p>
+                                            </div>
                                         </div>
                                     </motion.div>
                                 ))}

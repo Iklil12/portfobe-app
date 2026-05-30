@@ -97,12 +97,15 @@ export async function PATCH(req: Request) {
       const selectedThemeData = THEMES_DATA.find(t => t.id === themeTemplate);
       const isProTheme = selectedThemeData ? selectedThemeData.isPro : false;
       const isProSplash = splashScreen === true;
+      const isProSmoothScroll = customTexts?.smooth_scroll === 'true';
 
-      if ((isProTheme || isProSplash) && user.plan === 'FREE') {
+      if ((isProTheme || isProSplash || isProSmoothScroll) && user.plan === 'FREE') {
         return NextResponse.json({ 
           error: isProTheme 
             ? "Tema ini eksklusif untuk PRO Creator." 
-            : "Fitur Cinematic Intro eksklusif untuk PRO Creator.",
+            : isProSplash 
+              ? "Fitur Cinematic Intro eksklusif untuk PRO Creator."
+              : "Fitur Smooth Scroll eksklusif untuk PRO Creator.",
           code: "FEATURE_LOCKED"
         }, { status: 403 });
       }

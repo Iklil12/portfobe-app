@@ -135,5 +135,32 @@ export const THEMES_DATA = [
       preview: 'bg-[#e5e5e5]',
       isAvailable: false, 
       img: 'https://images.unsplash.com/photo-1613521140785-e85e427f8002?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+      id: 'layered-monolith',
+      name: 'Layered Monolith',
+      desc: 'Highly interactive stacking cards with architectural precision and GSAP-powered depth.',
+      preview: 'bg-[#1A1A18]',
+      isAvailable: true,
+      isPro: true,
+      img: 'https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+      id: 'kinetic-avant-garde',
+      name: 'Dynamic Void',
+      desc: 'Brutalist typography, dynamic GSAP animations, and interactive design.',
+      preview: 'bg-[#0a0a0a]',
+      isAvailable: true,
+      isPro: true,
+      img: 'https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+      id: 'nexus-noir',
+      name: 'Nexus Noir',
+      desc: 'Premium ultimate portfolio with glassmorphism, precise typography, and dark mode.',
+      preview: 'bg-[#050505]',
+      isAvailable: true,
+      isPro: true,
+      img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop'
   }
 ];

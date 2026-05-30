@@ -52,6 +52,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         isOpen={showProModal}
         onClose={() => setShowProModal(false)}
         feature={
+          state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' && userPlan === 'FREE' && !splashScreen && activeTheme !== 'cinematic' && activeTheme !== 'bentogrid' && activeTheme !== 'spatial' && activeTheme !== 'monolith' && activeTheme !== 'acid' && activeTheme !== 'split' && activeTheme !== 'editorial' && activeTheme !== 'obsidian-reel' ? "Fitur Smooth Scroll" :
           splashScreen ? "Fitur Cinematic Intro" :
             activeTheme === 'brutalism' ? "Tema Neo Brutalism" :
               activeTheme === 'cinematic' ? "Tema Cinematic Dark" :
@@ -61,7 +62,10 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                       activeTheme === 'acid' ? "Tema Acid Tech" : 
                         activeTheme === 'split' ? "Tema Nexus Split" : 
                           activeTheme === 'editorial' ? "Tema Editorial Clean" : 
-                            activeTheme === 'obsidian-reel' ? "Tema Obsidian Reel" : undefined
+                            activeTheme === 'obsidian-reel' ? "Tema Obsidian Reel" :
+                              activeTheme === 'layered-monolith' ? "Tema Layered Monolith" : 
+                                activeTheme === 'kinetic-avant-garde' ? "Tema Dynamic Void" : 
+                                  activeTheme === 'nexus-noir' ? "Tema Nexus Noir" : undefined
         }
       />
       <ThemeSelectionModal
@@ -144,7 +148,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center text-white transition-transform group-hover:scale-105">
-                    <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : activeTheme === 'spatial' ? 'fa-star' : activeTheme === 'monolith' ? 'fa-cubes' : activeTheme === 'split' ? 'fa-columns' : activeTheme === 'editorial' ? 'fa-newspaper' : activeTheme === 'midnight-emulsion' ? 'fa-moon' : activeTheme === 'aura-kinetic' ? 'fa-water' : activeTheme === 'absolute-noir' ? 'fa-square' : activeTheme === 'obsidian-reel' ? 'fa-video' : 'fa-cube'} text-sm`}></i>
+                    <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : activeTheme === 'spatial' ? 'fa-star' : activeTheme === 'monolith' || activeTheme === 'layered-monolith' ? 'fa-cubes' : activeTheme === 'kinetic-avant-garde' ? 'fa-bolt' : activeTheme === 'split' ? 'fa-columns' : activeTheme === 'editorial' ? 'fa-newspaper' : activeTheme === 'midnight-emulsion' ? 'fa-moon' : activeTheme === 'aura-kinetic' ? 'fa-water' : activeTheme === 'absolute-noir' ? 'fa-square' : activeTheme === 'obsidian-reel' ? 'fa-video' : 'fa-cube'} text-sm`}></i>
                   </div>
                   <div className="flex flex-col">
                     <span className="font-semibold text-neutral-900 text-sm tracking-tight">
@@ -160,7 +164,9 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                                         activeTheme === 'aura-kinetic' ? 'Aura Kinetic' :
                                           activeTheme === 'absolute-noir' ? 'Absolute Noir' :
                                             activeTheme === 'obsidian-reel' ? 'Obsidian Reel' :
-                                              'Neo Brutalism'}
+                                              activeTheme === 'layered-monolith' ? 'Layered Monolith' :
+                                                activeTheme === 'kinetic-avant-garde' ? 'Dynamic Void' :
+                                                  'Neo Brutalism'}
                     </span>
                     <span className="text-[10px] text-neutral-400 font-medium mt-0.5">
                       Sedang Digunakan
@@ -252,7 +258,10 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold tracking-tight text-neutral-900 flex items-center gap-2">
-                    Premium Scroll
+                    Smooth Scroll
+                    <span className="bg-neutral-100 border border-neutral-200 text-neutral-600 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">
+                      PRO
+                    </span>
                   </h3>
                   <p className="text-[11px] text-neutral-500 mt-0.5">Efek gulir mulus seperti Webflow.</p>
                 </div>
