@@ -34,13 +34,13 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
   const handleBlur = () => {
     let rawText = elementRef.current?.innerText || "";
     let newText = sanitizeText(rawText).trim();
-    
+
     if (maxLength && newText.length > maxLength) {
       newText = newText.substring(0, maxLength);
     }
-    
+
     elementRef.current.innerText = newText;
-    
+
     if (newText !== value && newText !== "") {
       setContent(newText);
       // Kirim pesan ke parent window
@@ -67,7 +67,7 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
       elementRef.current?.blur();
       return;
     }
-    
+
     // Prevent typing if length exceeds maxLength
     if (maxLength && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key) && !e.ctrlKey && !e.metaKey) {
       const currentText = elementRef.current?.innerText || "";
@@ -83,18 +83,18 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
     e.preventDefault();
     const rawText = e.clipboardData.getData('text/plain');
     const cleanText = sanitizeText(rawText);
-    
+
     const currentText = elementRef.current?.innerText || "";
     const selection = window.getSelection();
     const selectionLength = selection ? selection.toString().length : 0;
-    
+
     let allowedLength = cleanText.length;
     if (maxLength) {
       allowedLength = maxLength - (currentText.length - selectionLength);
     }
-    
+
     if (allowedLength <= 0) return;
-    
+
     const textToInsert = cleanText.slice(0, allowedLength);
     document.execCommand('insertText', false, textToInsert);
   };
@@ -111,7 +111,7 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
 
     if (rawText !== finalText) {
       elementRef.current.innerText = finalText;
-      
+
       // Kembalikan kursor ke posisi akhir teks
       const range = document.createRange();
       const sel = window.getSelection();

@@ -3,7 +3,7 @@
 "use client";
 
 import React from 'react';
-import { usePathname } from 'next/navigation'; 
+import { usePathname } from 'next/navigation';
 
 // 1. IMPORT SEMUA TEMA DARI FOLDER THEMES
 import BrutalismTheme from './themes/BrutalismTheme';
@@ -23,6 +23,7 @@ import ObsidianReelTheme from './themes/ObsidianReelTheme';
 import LayeredMonolithTheme from './themes/LayeredMonolithTheme';
 import KineticAvantGardeTheme from './themes/KineticAvantGardeTheme';
 import NexusNoirTheme from './themes/NexusNoirTheme';
+import HorizontalFlowTheme from './themes/HorizontalFlowTheme';
 
 // 2. DAFTARKAN TEMA KE DALAM "THEME REGISTRY"
 const THEME_MAP: Record<string, React.FC<any>> = {
@@ -43,21 +44,22 @@ const THEME_MAP: Record<string, React.FC<any>> = {
   'layered-monolith': LayeredMonolithTheme,
   'kinetic-avant-garde': KineticAvantGardeTheme,
   'nexus-noir': NexusNoirTheme,
-  
+  'horizontal-flow': HorizontalFlowTheme,
+
   // Nanti tinggal tambah: 'elegant': ElegantTheme, dst...
 };
 
 export default function PortfolioView({ data, theme, isMobileView = false, isCardPreview = false, isEditor }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
   const pathname = usePathname();
   const effectiveIsEditor = isEditor !== undefined ? isEditor : pathname?.includes('/dashboard');
-  
+
   // PENYESUAIAN BARU: Ambil subdomain dari dalam objek profile
   const subdomain = data?.profile?.subdomain || data?.subdomain || "";
 
   // 3. CEK TEMA APA YANG SEDANG DIPILIH USER DI DATABASE ATAU REGISTRY
   // Jika dari registry (di ThemeGrid), gunakan theme.id. Jika dari DB, gunakan theme.themeTemplate.
   const activeThemeName = theme?.themeTemplate || theme?.id || 'brutalism';
-  
+
   // 4. PILIH KOMPONEN YANG SESUAI DARI REGISTRY
   const SelectedThemeComponent = THEME_MAP[activeThemeName] || THEME_MAP['brutalism'];
 
