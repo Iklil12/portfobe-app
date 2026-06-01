@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Lenis from 'lenis';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { LazyImage } from '@/components/ui/LazyImage';
@@ -75,6 +76,24 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
         visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
     };
 
+    const isSmoothScroll = (!isMobileView && !isCardPreview) && (theme?.customTexts?.smooth_scroll === 'true');
+
+    useEffect(() => {
+        if (!isSmoothScroll) return;
+
+        const lenis = new Lenis({
+            autoRaf: true,
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        return () => {
+            lenis.destroy();
+        };
+    }, [isSmoothScroll]);
+
     return (
         <div className="relative noir-root">
         <main className="relative bg-[#050505] text-white font-sans selection:bg-white selection:text-black @container tracking-tight noir-theme">
@@ -87,6 +106,12 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
             .wire-border-b { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
             .wire-border-r { border-right: 1px solid rgba(255, 255, 255, 0.1); }
             .hover-invert:hover { background-color: white !important; color: black !important; }
+
+            /* Lenis Smooth Scroll CSS */
+            html.lenis, html.lenis body { height: auto; }
+            .lenis.lenis-smooth { scroll-behavior: auto !important; }
+            .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+            .lenis.lenis-stopped { overflow: hidden; }
           `}} />
 
             <motion.div 

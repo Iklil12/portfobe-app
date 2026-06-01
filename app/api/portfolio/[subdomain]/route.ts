@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
+
+// Hilangkan revalidate route level yang gagal, kita gunakan Data-Level Caching
+// export const revalidate = 60;
 
 export async function GET(
   req: Request,
@@ -12,34 +16,43 @@ export async function GET(
     // 2. Bersihkan teks
     const userSubdomain = resolvedParams.subdomain.trim().toLowerCase();
 
-    // 3. Cari di database (SEKARANG KITA JADIKAN 'USER' SEBAGAI AKARNYA)
-    const userData = await prisma.user.findFirst({
-      where: { 
-        profile: {
-          subdomain: userSubdomain // Cari user berdasarkan subdomain di dalam profilnya
-        }
+    // 3. Data-Level Caching (Menambal kebocoran Next.js)
+    // Walaupun rute ini dinamis, query database akan di-cache keras selama 60 detik
+    const getCachedUserData = unstable_cache(
+      async () => {
+        return await prisma.user.findFirst({
+          where: { 
+            profile: {
+              subdomain: userSubdomain
+            }
+          },
+          include: {
+            profile: true,
+            siteAppearance: true,
+            links: { 
+              where: { isActive: true }, 
+              orderBy: { order: 'asc' } 
+            },
+            projects: { 
+              where: { deletedAt: null },
+              orderBy: { createdAt: 'desc' } 
+            },
+            certificates: { 
+              where: { deletedAt: null },
+              orderBy: { createdAt: 'desc' }
+            },
+            testimonials: {
+              where: { isVisible: true },
+              orderBy: { order: 'asc' }
+            }
+          }
+        });
       },
-      include: {
-        profile: true,
-        siteAppearance: true, // <--- INI DIA BINTANG UTAMANYA!
-        links: { 
-          where: { isActive: true }, 
-          orderBy: { order: 'asc' } 
-        },
-        projects: { 
-          where: { deletedAt: null },   // FIX K2: exclude item di trash
-          orderBy: { createdAt: 'desc' } 
-        },
-        certificates: { 
-          where: { deletedAt: null },   // FIX K2: exclude item di trash
-          orderBy: { createdAt: 'desc' }
-        },
-        testimonials: {
-          where: { isVisible: true },
-          orderBy: { order: 'asc' }
-        }
-      }
-    });
+      [`portfolio-db-${userSubdomain}`], // Kunci cache unik per subdomain
+      { revalidate: 60, tags: [`portfolio-${userSubdomain}`] }
+    );
+
+    const userData = await getCachedUserData();
 
     // 4. Jika tidak ketemu
     if (!userData || !userData.profile) {

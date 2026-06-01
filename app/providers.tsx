@@ -5,15 +5,29 @@ import { SessionProvider } from "next-auth/react";
 import { SWRConfig } from "swr";
 import { Toaster, resolveValue, toast } from 'react-hot-toast';
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { SystemErrorUI } from "@/components/errors/SystemErrorUI";
 
 const globalFetcher = (url: string) =>
   fetch(url, { cache: 'no-store' }).then((res) => {
-    if (!res.ok) throw new Error("API Error");
+    if (!res.ok) {
+      const error: any = new Error("API Error");
+      error.status = res.status;
+      throw error;
+    }
     return res.json();
   });
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [swrError, setSwrError] = useState<Error | null>(null);
+
+  if (swrError) {
+    // Jangan 'throw' karena berada di Root Layout (tidak tertangkap error.tsx).
+    // Render saja komponen UI-nya secara langsung untuk menggantikan layar.
+    return <SystemErrorUI error={swrError} reset={() => window.location.reload()} />;
+  }
+
   const isPublicPage = pathname === "/" || 
                        pathname === "/pricing" || 
                        pathname === "/privacy" || 
@@ -27,6 +41,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
         focusThrottleInterval: 10000,
         dedupingInterval: 10000,
         revalidateOnReconnect: true,
+        onError: (error) => {
+          // Hanya tangkap error 500 (Server Error) atau jaringan terputus (tanpa status)
+          if (error.status >= 500 || !error.status) {
+            setSwrError(error);
+          }
+        }
       }}
     >
       {children}

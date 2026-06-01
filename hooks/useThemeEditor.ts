@@ -3,14 +3,15 @@ import toast from 'react-hot-toast';
 import { mutate } from 'swr';
 import { useSearchParams } from 'next/navigation';
 import { showToast } from '@/lib/customToast';
-import { safeParseJson } from '@/lib/safeJson';
+import { safeParseJson, safeStringifyJson } from '@/lib/safeJson';
 
 export function useThemeEditor() {
   const searchParams = useSearchParams();
   const previewTheme = searchParams.get('previewTheme');
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   
   const [isEditorCollapsed, setIsEditorCollapsed] = useState(false);
   const [showOfflineModal, setShowOfflineModal] = useState(false);
@@ -43,6 +44,29 @@ export function useThemeEditor() {
   const customTextsRef = useRef(customTexts);
   useEffect(() => { customTextsRef.current = customTexts; }, [customTexts]);
   const dataLoaded = useRef(false);
+
+  // --- STATE DRAFTS & PUBLISHING ---
+  const [drafts, setDrafts] = useState<any[]>([]);
+  const [activeDraftId, setActiveDraftId] = useState<string | null>(null);
+  const [activeDraftName, setActiveDraftName] = useState<string | null>(null);
+  const [publishedDraftId, setPublishedDraftId] = useState<string | null>(null);
+  const [isDraftsModalOpen, setIsDraftsModalOpen] = useState(false);
+  const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
+  
+  // Track clean state for Anti-Spam
+  const [lastSavedState, setLastSavedState] = useState<any>(null);
+
+  // Compute isDirty
+  const isDirty = lastSavedState ? (
+    activeTheme !== lastSavedState.activeTheme ||
+    themeColor !== lastSavedState.themeColor ||
+    fontHeading !== lastSavedState.fontHeading ||
+    fontBody !== lastSavedState.fontBody ||
+    buttonShape !== lastSavedState.buttonShape ||
+    cardStyle !== lastSavedState.cardStyle ||
+    splashScreen !== lastSavedState.splashScreen ||
+    safeStringifyJson(customTexts) !== safeStringifyJson(lastSavedState.customTexts)
+  ) : false;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,6 +117,21 @@ export function useThemeEditor() {
                 const parsedTexts = safeParseJson(sa.customTexts, {});
                 setCustomTexts(parsedTexts || {});
               }
+              
+              if (sa.publishedDraftId) setPublishedDraftId(sa.publishedDraftId);
+              
+              // Set lastSavedState for dirty tracking
+              const texts = sa.customTexts ? safeParseJson(sa.customTexts, {}) : {};
+              setLastSavedState({
+                activeTheme: sa.themeTemplate || 'minimalist',
+                themeColor: sa.themeColor || '#000000',
+                fontHeading: sa.fontHeading || 'Inter',
+                fontBody: sa.fontBody || 'Inter',
+                buttonShape: sa.buttonShape || 'rounded',
+                cardStyle: sa.cardStyle || 'flat',
+                splashScreen: sa.splashScreen || false,
+                customTexts: texts
+              });
             }
           }
         }
@@ -108,6 +147,17 @@ export function useThemeEditor() {
           }
         } catch {
           setFavorites([]);
+        }
+
+        // Ambil Drafts
+        try {
+          const draftsRes = await fetch('/api/appearance/drafts');
+          if (draftsRes.ok) {
+            const draftsData = await draftsRes.json();
+            setDrafts(Array.isArray(draftsData) ? draftsData : []);
+          }
+        } catch (e) {
+          console.error(e);
         }
 
       } catch (error) {
@@ -183,9 +233,71 @@ export function useThemeEditor() {
     setCustomTexts((prev: any) => ({ ...prev, [field]: value }));
   };
 
-  const saveDesign = async () => {
-    setIsSaving(true);
-    const toastId = toast.loading('Menyimpan desain...', {
+  const saveDraft = async (draftName?: string, draftDescription?: string) => {
+    setIsSavingDraft(true);
+    const toastId = toast.loading(activeDraftId ? 'Menyimpan perubahan draft...' : 'Menyimpan draft baru...', {
+      style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+    });
+
+    try {
+      const payload = { 
+        id: activeDraftId || undefined,
+        name: draftName,
+        description: draftDescription,
+        themeTemplate: activeTheme, 
+        themeColor, 
+        fontHeading, 
+        fontBody, 
+        buttonShape, 
+        cardStyle, 
+        splashScreen,
+        customTexts 
+      };
+
+      const method = activeDraftId ? 'PUT' : 'POST';
+      const res = await fetch('/api/appearance/drafts', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      
+      if (res.ok) {
+        toast.dismiss(toastId);
+        showToast({ message: activeDraftId ? 'Perubahan disimpan!' : 'Draft baru berhasil dibuat!', id: toastId, icon: 'fa-check-circle' });
+        
+        // Refresh drafts
+        const draftsRes = await fetch('/api/appearance/drafts');
+        if (draftsRes.ok) {
+          setDrafts(await draftsRes.json());
+        }
+        
+        setActiveDraftId(data.id);
+        setActiveDraftName(data.name);
+        setIsSaveDraftModalOpen(false);
+        setLastSavedState({
+          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts
+        });
+      } else {
+        if (res.status === 403 && data.code === 'FEATURE_LOCKED') {
+          toast.dismiss(toastId);
+          setShowProModal(true);
+          return;
+        }
+        throw new Error(data.error || 'Gagal menyimpan draft');
+      }
+    } catch (error: any) {
+      toast.dismiss(toastId);
+      toast.error(error.message || 'Terjadi kesalahan server.', { style: { background: '#333', color: '#fff' }});
+    } finally {
+      setIsSavingDraft(false);
+    }
+  };
+
+  const publishDesign = async () => {
+    setIsPublishing(true);
+    const toastId = toast.loading('Menyimpan & menayangkan desain...', {
       style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
 
@@ -198,13 +310,12 @@ export function useThemeEditor() {
         buttonShape, 
         cardStyle, 
         splashScreen,
-        customTexts // TAMBAHAN: Kirim customTexts ke server
+        customTexts,
+        publishedDraftId: activeDraftId || null // Set pelacak draft yang sedang tayang
       };
       
-      // 1. Minimum 2 second delay promise
       const delayPromise = new Promise(resolve => setTimeout(resolve, 2000));
       
-      // 2. API Fetch promises (Appearance & Profile in parallel)
       const appearancePromise = fetch('/api/appearance', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -217,36 +328,67 @@ export function useThemeEditor() {
         body: JSON.stringify({ fullName, profession, bio, location })
       });
 
-      // Tunggu semuanya selesai (delay dipaksa minimal 2 detik meskipun fetch instan)
       const [resApp, resProf] = await Promise.all([appearancePromise, profilePromise, delayPromise]);
 
       if (resApp.ok && resProf.ok) {
         mutate('/api/dashboard/sync');
         toast.dismiss(toastId);
+        showToast({ message: 'Desain berhasil dipublikasikan!', id: toastId, icon: 'fa-rocket' });
+        
+        setPublishedDraftId(activeDraftId || null);
+        setLastSavedState({
+          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts
+        });
 
-        if (!isLive) {
-          setShowOfflineModal(true);
-        } else {
-          showToast({ message: 'Desain berhasil dipublikasikan!', id: toastId, icon: 'fa-check-circle' });
-        }
       } else {
-        // Cek jika error berasal dari api appearance (misal tema terkunci)
         if (!resApp.ok) {
           const errorData = await resApp.json().catch(() => ({}));
-          // Jika backend menolak karena user FREE memilih tema PRO
           if (resApp.status === 403 && (errorData.code === 'THEME_LOCKED' || errorData.code === 'FEATURE_LOCKED')) {
             toast.dismiss(toastId);
             setShowProModal(true); 
             return;
           }
         }
-        throw new Error('Gagal menyimpan');
+        throw new Error('Gagal publish');
       }
     } catch (error) {
       showToast({ message: 'Terjadi kesalahan server.', id: toastId, icon: 'fa-exclamation-triangle' });
     } finally {
-      setIsSaving(false);
+      setIsPublishing(false);
     }
+  };
+
+  const loadDraft = async (draft: any) => {
+    setIsDraftsModalOpen(false);
+    setIsLoading(true);
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    setActiveTheme(draft.themeTemplate);
+    setThemeColor(draft.themeColor);
+    setFontHeading(draft.fontHeading);
+    setFontBody(draft.fontBody);
+    setButtonShape(draft.buttonShape);
+    setCardStyle(draft.cardStyle);
+    setSplashScreen(draft.splashScreen);
+    
+    const parsedTexts = safeParseJson(draft.customTexts, {});
+    setCustomTexts(parsedTexts);
+    
+    setActiveDraftId(draft.id);
+    setActiveDraftName(draft.name);
+    setLastSavedState({
+      activeTheme: draft.themeTemplate,
+      themeColor: draft.themeColor,
+      fontHeading: draft.fontHeading,
+      fontBody: draft.fontBody,
+      buttonShape: draft.buttonShape,
+      cardStyle: draft.cardStyle,
+      splashScreen: draft.splashScreen,
+      customTexts: parsedTexts
+    });
+
+    setIsLoading(false);
   };
 
 
@@ -271,7 +413,8 @@ export function useThemeEditor() {
   return {
     state: {
       isLoading,
-      isSaving,
+      isSavingDraft,
+      isPublishing,
       isEditorCollapsed,
       showOfflineModal,
       isLive,
@@ -289,7 +432,14 @@ export function useThemeEditor() {
 
       livePreviewData,
       livePreviewTheme,
-      favorites
+      favorites,
+      drafts,
+      activeDraftId,
+      activeDraftName,
+      publishedDraftId,
+      isDraftsModalOpen,
+      isSaveDraftModalOpen,
+      isDirty
     },
     actions: {
       setIsEditorCollapsed,
@@ -303,7 +453,11 @@ export function useThemeEditor() {
       setSplashScreen,
       setIsThemeModalOpen,
       setShowProModal,
-      saveDesign,
+      setIsDraftsModalOpen,
+      setIsSaveDraftModalOpen,
+      saveDraft,
+      publishDesign,
+      loadDraft,
       toggleFavorite,
       updateCustomText
     }

@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { safeStringifyJson } from "@/lib/safeJson";
+import { revalidateTag } from "next/cache";
 
 import { THEMES_DATA } from "@/lib/themes";
 
@@ -62,7 +63,10 @@ export async function PATCH(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ 
+      where: { email: session.user.email },
+      include: { profile: true }
+    });
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     const body = await req.json();
@@ -73,11 +77,12 @@ export async function PATCH(req: Request) {
         themeColor, 
         fontHeading, 
         fontBody, 
-        buttonShape, 
+        buttonShape,
         cardStyle,
         splashScreen,
         favoriteThemes,
-        customTexts
+        customTexts,
+        publishedDraftId
     } = body;
 
     // OPTIMASI: Jika hanya update favorit, lewati pengecekan plan dan logging
@@ -123,7 +128,8 @@ export async function PATCH(req: Request) {
         ...(cardStyle !== undefined && { cardStyle }),
         ...(splashScreen !== undefined && { splashScreen }),
         ...(favoriteThemes !== undefined && { favoriteThemes: safeStringifyJson(favoriteThemes) }),
-        ...(stringifiedCustomTexts !== undefined && { customTexts: stringifiedCustomTexts })
+        ...(stringifiedCustomTexts !== undefined && { customTexts: stringifiedCustomTexts }),
+        ...(publishedDraftId !== undefined && { publishedDraftId })
       },
       create: {
         userId: user.id,
@@ -135,12 +141,19 @@ export async function PATCH(req: Request) {
         cardStyle,
         splashScreen,
         favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : "[]",
-        customTexts: stringifiedCustomTexts !== undefined ? stringifiedCustomTexts : "{}"
+        customTexts: stringifiedCustomTexts !== undefined ? stringifiedCustomTexts : "{}",
+        publishedDraftId: publishedDraftId !== undefined ? publishedDraftId : null
       }
     });
 
     if (!isOnlyFavorites) {
       await logActivity(user.id, "UPDATE_THEME", `Memperbarui tema portofolio ke ${themeTemplate}`);
+      
+      // FIRE THE MISSILE: Hancurkan cache 60-detik untuk pengunjung publik
+      if (user.profile?.subdomain) {
+        // @ts-expect-error: Next.js 16.2.4 requires a second 'profile' argument for revalidateTag but we only need to invalidate the tag.
+        revalidateTag(`portfolio-${user.profile.subdomain.trim().toLowerCase()}`);
+      }
     }
 
     return NextResponse.json(updatedAppearance);

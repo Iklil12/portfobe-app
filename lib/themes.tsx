@@ -137,6 +137,15 @@ export const THEMES_DATA = [
         img: 'https://images.unsplash.com/photo-1613521140785-e85e427f8002?q=80&w=600&auto=format&fit=crop'
     },
     {
+        id: 'cinematic-gallery',
+        name: 'Ruang Cinematic',
+        desc: 'Pengalaman galeri horizontal dengan efek paralaks sinematik dan grain film klasik.',
+        preview: 'bg-[#050505]',
+        isAvailable: true,
+        isPro: true,
+        img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+    },
+    {
         id: 'layered-monolith',
         name: 'Layered Monolith',
         desc: 'Highly interactive stacking cards with architectural precision and GSAP-powered depth.',
@@ -171,5 +180,14 @@ export const THEMES_DATA = [
         isAvailable: true,
         isPro: true,
         img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop'
+    },
+    {
+        id: 'split-screen-studio',
+        name: 'Split Screen Studio',
+        desc: 'High-end interactive agency look with split-screen mechanics and dynamic colors.',
+        preview: 'bg-[#050505]',
+        isAvailable: true,
+        isPro: true,
+        img: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600&auto=format&fit=crop'
     }
 ];

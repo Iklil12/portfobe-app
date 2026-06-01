@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link'; 
 import { motion } from 'framer-motion';
 import PortfolioView from '@/components/PortfolioView';
+import { NotFoundUI } from '@/components/errors/NotFoundUI';
 
 export default function PublicPortfolioPage() {
   const params = useParams();
@@ -17,13 +18,9 @@ export default function PublicPortfolioPage() {
   const [showSplash, setShowSplash] = useState(false); 
   const [liftCurtain, setLiftCurtain] = useState(false);
   const [removeSplash, setRemoveSplash] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [serverError, setServerError] = useState<Error | null>(null);
 
   const heartbeatRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    setMousePos({ x: e.clientX, y: e.clientY });
-  };
 
   useEffect(() => {
     return () => {
@@ -35,9 +32,7 @@ export default function PublicPortfolioPage() {
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
-        const res = await fetch(`/api/portfolio/${subdomain}?t=${new Date().getTime()}`, {
-          cache: 'no-store'
-        });
+        const res = await fetch(`/api/portfolio/${subdomain}`);
 
         if (res.ok) {
           const result = await res.json();
@@ -120,9 +115,13 @@ export default function PublicPortfolioPage() {
             setRemoveSplash(true);
             setShowSplash(false);
           }
+        } else if (res.status >= 500) {
+          // Tangkap error 500+ (seperti database terputus)
+          setServerError(new Error("Koneksi ke database atau server internal terputus."));
         }
       } catch (error) {
         console.error("Gagal memuat portofolio", error);
+        setServerError(error instanceof Error ? error : new Error("Gagal terhubung ke jaringan."));
       } finally {
         setIsFetching(false);
       }
@@ -134,19 +133,12 @@ export default function PublicPortfolioPage() {
     }
   }, [subdomain]);
 
+  if (serverError) {
+    throw serverError; // Ini akan ditangkap oleh app/error.tsx secara otomatis!
+  }
+
   if (!isFetching && !data) {
-    return (
-      <div onMouseMove={handleMouseMove} className="relative min-h-screen flex flex-col items-center justify-center bg-[#050505] overflow-hidden font-sans selection:bg-white selection:text-black">
-        <div className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300" style={{ background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255,255,255,0.06), transparent 40%)` }} />
-        <div className="absolute inset-0 z-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]"></div>
-        <div className="relative z-20 flex flex-col items-center text-center">
-          <h1 className="text-[8rem] md:text-[15rem] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-900 leading-none tracking-tighter">404</h1>
-          <h2 className="text-xl md:text-2xl font-bold text-slate-200 tracking-tight mb-3">Destinasi Tidak Diketahui</h2>
-          <p className="text-slate-500 font-medium max-w-md mx-auto mb-10 px-4 leading-relaxed">Portofolio dengan subdomain <span className="text-white px-2 py-0.5 bg-white/10 rounded-md font-mono text-sm border border-white/20 shadow-sm mx-1">{subdomain}</span> tidak ditemukan.</p>
-          <Link href="/" className="px-8 py-4 bg-white text-black font-bold uppercase tracking-widest text-[11px] rounded-full">Kembali ke Beranda</Link>
-        </div>
-      </div>
-    );
+    return <NotFoundUI subdomain={subdomain} />;
   }
 
   if (!isFetching && data && data.isLive === false) {
@@ -164,7 +156,6 @@ export default function PublicPortfolioPage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
         .splash-screen { position: fixed; inset: 0; z-index: 9999; background-color: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1); }
         .curtain-up { transform: translateY(-100%); }
         .splash-text { color: #ffffff; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: bold; opacity: 0; animation: blurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }

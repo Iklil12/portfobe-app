@@ -24,6 +24,8 @@ import LayeredMonolithTheme from './themes/LayeredMonolithTheme';
 import KineticAvantGardeTheme from './themes/KineticAvantGardeTheme';
 import NexusNoirTheme from './themes/NexusNoirTheme';
 import HorizontalFlowTheme from './themes/HorizontalFlowTheme';
+import SplitScreenStudioTheme from './themes/SplitScreenStudioTheme';
+import CinematicGalleryTheme from './themes/CinematicGalleryTheme';
 
 // 2. DAFTARKAN TEMA KE DALAM "THEME REGISTRY"
 const THEME_MAP: Record<string, React.FC<any>> = {
@@ -45,6 +47,8 @@ const THEME_MAP: Record<string, React.FC<any>> = {
   'kinetic-avant-garde': KineticAvantGardeTheme,
   'nexus-noir': NexusNoirTheme,
   'horizontal-flow': HorizontalFlowTheme,
+  'split-screen-studio': SplitScreenStudioTheme,
+  'cinematic-gallery': CinematicGalleryTheme,
 
   // Nanti tinggal tambah: 'elegant': ElegantTheme, dst...
 };
@@ -65,8 +69,17 @@ export default function PortfolioView({ data, theme, isMobileView = false, isCar
 
   // 5. PARSING CUSTOM TEXTS
   // Di Editor (livePreviewTheme), customTexts adalah Object.
-  // Tapi di halaman publik (dari database API), customTexts adalah JSON String.
-  const processedTheme = { ...theme };
+  // Tapi di halaman publik (dari database API), kadang theme atau customTexts adalah JSON String.
+  let parsedTheme = theme;
+  if (typeof theme === 'string') {
+    try {
+      parsedTheme = JSON.parse(theme);
+    } catch (e) {
+      parsedTheme = {};
+    }
+  }
+
+  const processedTheme = { ...parsedTheme };
   if (typeof processedTheme.customTexts === 'string') {
     try {
       processedTheme.customTexts = JSON.parse(processedTheme.customTexts);

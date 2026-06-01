@@ -42,15 +42,7 @@ export default function proxy(req: NextRequest) {
         rateLimitMap.set(ip, { count: 1, resetAt: now + 60 * 1000 });
       } else {
         if (currentRecord.count >= 30) {
-          return new NextResponse(
-            JSON.stringify({ 
-              error: "Terlahu banyak mengakses halaman. Silakan tunggu 1 menit untuk mencoba kembali." 
-            }),
-            { 
-              status: 429, 
-              headers: { "Content-Type": "application/json" } 
-            }
-          );
+          return NextResponse.rewrite(new URL('/rate-limited', req.url));
         }
         currentRecord.count += 1;
       }

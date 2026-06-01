@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { GitHubCalendar } from 'react-github-calendar';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export type CalendarThemeVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist';
+export type CalendarThemeVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist' | 'split-screen-studio';
 
 interface GithubCalendarWidgetProps {
   username: string;

@@ -6,7 +6,7 @@ import { GithubCalendarWidget, CalendarThemeVariant } from './GithubCalendarWidg
 import { GithubActivityFeed } from './GithubActivityFeed';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
-export type StatsVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist';
+export type StatsVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist' | 'split-screen-studio';
 
 interface GithubStatsProps {
   userId: string;
@@ -255,6 +255,19 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       progressBg: 'bg-gray-200',
       progressFill: 'bg-black',
       calendarColorScheme: 'light' as const
+    },
+    'split-screen-studio': {
+      section: 'flex flex-col p-8 md:p-12 lg:p-16 border-t border-white/10 w-full',
+      heading: 'font-display font-bold text-4xl @lg:text-5xl text-white mb-8 uppercase',
+      label: 'font-sans text-[10px] tracking-widest text-white/50 uppercase border border-white/10 px-4 py-2 rounded-full w-max mb-6',
+      border: 'border-white/10',
+      cardBg: 'bg-[#0a0a0a] border border-white/10 group-hover:border-white transition-colors p-6',
+      icon: 'text-white/50 group-hover:text-white',
+      textPrimary: 'font-display text-2xl font-bold uppercase tracking-wide text-white transition-colors',
+      textSecondary: 'font-sans text-xs text-white/50 tracking-widest uppercase mt-2',
+      progressBg: 'bg-white/10',
+      progressFill: 'bg-white',
+      calendarColorScheme: 'dark' as const
     }
   };
 
@@ -262,7 +275,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
 
   // --- DYNAMIC STYLING ---
   // Jika variant adalah acid atau aura, dan user memilih warna di editor, kita "timpa" warna bawaan
-  const isDynamic = variant === 'acid' || variant === 'aura' || variant === 'noir' || variant === 'bento' || variant === 'brutalism' || variant === 'cinematic' || variant === 'editorial' || variant === 'midnight' || variant === 'monolith' || variant === 'spatial' || variant === 'split' || variant === 'viewfinder' || variant === 'minimalist';
+  const isDynamic = variant === 'acid' || variant === 'aura' || variant === 'noir' || variant === 'bento' || variant === 'brutalism' || variant === 'cinematic' || variant === 'editorial' || variant === 'midnight' || variant === 'monolith' || variant === 'spatial' || variant === 'split' || variant === 'viewfinder' || variant === 'minimalist' || variant === 'split-screen-studio';
   const dynamicTextStyle = isDynamic && themeColor ? { color: themeColor } : {};
   const dynamicBgStyle = isDynamic && themeColor ? { backgroundColor: themeColor } : {};
 

@@ -4,13 +4,38 @@ import React from 'react';
 import Link from 'next/link';
 import { ThemeSelectionModal } from './ThemeSelectionModal';
 import { ProUpgradeModal } from '@/components/ProUpgradeModal';
+import { DraftManagerModal } from './DraftManagerModal';
+import { SaveDraftModal } from './SaveDraftModal';
+import { THEMES_DATA } from '@/lib/themes';
 
 import { ColorPicker, FontPicker, CardStylePicker, ButtonShapePicker } from '@/components/editor-controls/SharedControls';
+
+const THEME_ICONS: Record<string, string> = {
+  'minimalist': 'fa-align-left',
+  'cinematic': 'fa-film',
+  'acid': 'fa-bolt',
+  'bentogrid': 'fa-th-large',
+  'spatial': 'fa-star',
+  'monolith': 'fa-cubes',
+  'layered-monolith': 'fa-cubes',
+  'kinetic-avant-garde': 'fa-bolt',
+  'split': 'fa-columns',
+  'editorial': 'fa-newspaper',
+  'midnight-emulsion': 'fa-moon',
+  'aura-kinetic': 'fa-water',
+  'absolute-noir': 'fa-square',
+  'obsidian-reel': 'fa-video',
+  'split-screen-studio': 'fa-columns',
+  'cinematic-gallery': 'fa-images',
+  'horizontal-flow': 'fa-water',
+  'nexus-noir': 'fa-gem'
+};
 
 export function EditorPanel({ state, actions }: { state: any, actions: any }) {
   const {
     isEditorCollapsed,
-    isSaving,
+    isSavingDraft,
+    isPublishing,
     activeTheme,
     themeColor,
     fontHeading,
@@ -20,9 +45,16 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     splashScreen,
     isThemeModalOpen,
     showProModal,
+    isDraftsModalOpen,
     isLoading,
     livePreviewData,
     favorites,
+    drafts,
+    activeDraftId,
+    activeDraftName,
+    publishedDraftId,
+    isDirty,
+    isSaveDraftModalOpen,
     subdomain: stateSubdomain
   } = state;
 
@@ -32,7 +64,6 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
   const {
     setIsEditorCollapsed,
-    saveDesign,
     setThemeColor,
     setFontHeading,
     setFontBody,
@@ -42,9 +73,18 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     setIsThemeModalOpen,
     setActiveTheme,
     setShowProModal,
+    setIsDraftsModalOpen,
+    setIsSaveDraftModalOpen,
+    saveDraft,
+    publishDesign,
+    loadDraft,
     toggleFavorite,
     updateCustomText
   } = actions;
+
+  // Logika Anti-Spam & Status Tombol
+  const isCurrentlyLive = activeDraftId ? activeDraftId === publishedDraftId : publishedDraftId === null;
+  const canPublish = isDirty || !isCurrentlyLive;
 
   return (
     <>
@@ -52,7 +92,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         isOpen={showProModal}
         onClose={() => setShowProModal(false)}
         feature={
-          state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' && userPlan === 'FREE' && !splashScreen && activeTheme !== 'cinematic' && activeTheme !== 'bentogrid' && activeTheme !== 'spatial' && activeTheme !== 'monolith' && activeTheme !== 'acid' && activeTheme !== 'split' && activeTheme !== 'editorial' && activeTheme !== 'obsidian-reel' ? "Fitur Smooth Scroll" :
+          state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' && userPlan === 'FREE' && !splashScreen && activeTheme !== 'cinematic' && activeTheme !== 'bentogrid' && activeTheme !== 'spatial' && activeTheme !== 'monolith' && activeTheme !== 'acid' && activeTheme !== 'split' && activeTheme !== 'editorial' && activeTheme !== 'obsidian-reel' && activeTheme !== 'split-screen-studio' ? "Fitur Smooth Scroll" :
           splashScreen ? "Fitur Cinematic Intro" :
             activeTheme === 'brutalism' ? "Tema Neo Brutalism" :
               activeTheme === 'cinematic' ? "Tema Cinematic Dark" :
@@ -65,7 +105,9 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                             activeTheme === 'obsidian-reel' ? "Tema Obsidian Reel" :
                               activeTheme === 'layered-monolith' ? "Tema Layered Monolith" : 
                                 activeTheme === 'kinetic-avant-garde' ? "Tema Dynamic Void" : 
-                                  activeTheme === 'nexus-noir' ? "Tema Nexus Noir" : undefined
+                                      activeTheme === 'nexus-noir' ? "Tema Nexus Noir" : 
+                                        activeTheme === 'split-screen-studio' ? "Tema Split Screen Studio" :
+                                          activeTheme === 'cinematic-gallery' ? "Tema Ruang Cinematic" : undefined
         }
       />
       <ThemeSelectionModal
@@ -77,6 +119,20 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         userPlan={userPlan}
         onToggleFavorite={toggleFavorite}
       />
+      <DraftManagerModal
+        isOpen={isDraftsModalOpen}
+        onClose={() => setIsDraftsModalOpen(false)}
+        drafts={drafts}
+        activeDraftId={activeDraftId}
+        publishedDraftId={publishedDraftId}
+        onLoadDraft={loadDraft}
+      />
+      <SaveDraftModal
+        isOpen={isSaveDraftModalOpen}
+        onClose={() => setIsSaveDraftModalOpen(false)}
+        onSave={(name, desc) => saveDraft(name, desc)}
+        isSaving={isSavingDraft}
+      />
 
       <div className={`
         h-full flex flex-col z-30 relative shrink-0
@@ -86,7 +142,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
       `}>
         {/* Header Panel Editor */}
         <div className="p-6 border-b border-neutral-200/50 sticky top-0 z-20 shrink-0 bg-white/80 backdrop-blur-md">
-          <div className="flex items-center justify-between w-full">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
             <div className="flex items-center gap-4">
               <Link href="/dashboard" className="w-8 h-8 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-all duration-200 shrink-0" title="Kembali ke Dashboard">
                 <i className="fas fa-arrow-left text-[10px]"></i>
@@ -101,19 +157,60 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               </div>
             </div>
 
-            {/* Tombol Save Minimalist */}
-            <button
-              onClick={saveDesign}
-              disabled={isSaving}
-              className="px-5 py-2 rounded-full text-[11px] font-semibold tracking-wide transition-all duration-200 bg-neutral-900 hover:bg-black text-white flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-            >
-              {isSaving ? <i className="fas fa-spinner animate-spin text-neutral-400"></i> : <i className="fas fa-check text-neutral-300"></i>}
-              <span>{isSaving ? 'Menyimpan' : 'Simpan'}</span>
-            </button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => {
+                  if (activeDraftId) {
+                    saveDraft();
+                  } else {
+                    setIsSaveDraftModalOpen(true);
+                  }
+                }}
+                disabled={isSavingDraft || isPublishing || (activeDraftId ? !isDirty : false)}
+                title={activeDraftId && !isDirty ? "Belum ada perubahan untuk disimpan" : undefined}
+                className={`flex-1 sm:flex-none justify-center px-4 py-2 rounded-full text-[11px] font-semibold tracking-wide transition-all duration-200 flex items-center gap-2 shrink-0 ${
+                  activeDraftId && !isDirty 
+                    ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed opacity-50' 
+                    : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
+                } disabled:opacity-50`}
+              >
+                {isSavingDraft ? <i className="fas fa-spinner animate-spin"></i> : <i className="fas fa-save"></i>}
+                <span className="truncate">{activeDraftId ? 'Simpan' : 'Draft'}</span>
+              </button>
+
+              <button
+                onClick={publishDesign}
+                disabled={isSavingDraft || isPublishing || !canPublish}
+                title={!canPublish ? "Desain ini sudah tayang di web" : "Publish ke Web"}
+                className={`flex-1 sm:flex-none justify-center px-5 py-2 rounded-full text-[11px] font-semibold tracking-wide transition-all duration-200 flex items-center gap-2 shrink-0 ${canPublish ? 'bg-neutral-900 hover:bg-black text-white' : 'bg-neutral-200 text-neutral-400 cursor-not-allowed'}`}
+              >
+                {isPublishing ? <i className="fas fa-spinner animate-spin"></i> : <i className="fas fa-rocket"></i>}
+                <span>Publish</span>
+              </button>
+            </div>
           </div>
         </div>
 
-
+        {/* Indikator Draft Aktif */}
+        {activeDraftName && (
+          <div className="px-6 py-2.5 bg-amber-50 border-b border-amber-200/50 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              <i className="fas fa-file-alt text-amber-500 text-[10px]"></i>
+              <span className="text-[11px] font-bold text-amber-700 tracking-tight">
+                Draft: {activeDraftName}
+              </span>
+              {publishedDraftId === activeDraftId && (
+                <span className="text-[8px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 uppercase tracking-widest font-black">LIVE</span>
+              )}
+            </div>
+            <button
+              onClick={() => { window.location.reload(); }}
+              className="text-[10px] font-medium text-amber-500 hover:text-amber-700 transition-colors"
+            >
+              Keluar Draft
+            </button>
+          </div>
+        )}
 
         {/* Tombol Collapse Panel Editor */}
         <div className="absolute top-1/2 -right-[14px] -translate-y-1/2 z-[100] hidden lg:flex">
@@ -128,7 +225,14 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
           {/* SECTION: TEMA AKTIF */}
           <div className="mb-12">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500">Basis Tema</h3>
+              <div className="flex flex-col">
+                <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500">Basis Tema</h3>
+                {isCurrentlyLive && !isDirty && (
+                   <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-1 uppercase tracking-widest animate-pulse">
+                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Sedang Live
+                   </span>
+                )}
+              </div>
               {!isLoading && (
                 <button
                   onClick={() => setIsThemeModalOpen(true)}
@@ -148,25 +252,11 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center text-white transition-transform group-hover:scale-105">
-                    <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : activeTheme === 'spatial' ? 'fa-star' : activeTheme === 'monolith' || activeTheme === 'layered-monolith' ? 'fa-cubes' : activeTheme === 'kinetic-avant-garde' ? 'fa-bolt' : activeTheme === 'split' ? 'fa-columns' : activeTheme === 'editorial' ? 'fa-newspaper' : activeTheme === 'midnight-emulsion' ? 'fa-moon' : activeTheme === 'aura-kinetic' ? 'fa-water' : activeTheme === 'absolute-noir' ? 'fa-square' : activeTheme === 'obsidian-reel' ? 'fa-video' : 'fa-cube'} text-sm`}></i>
+                    <i className={`fas ${THEME_ICONS[activeTheme] || 'fa-cube'} text-sm`}></i>
                   </div>
                   <div className="flex flex-col">
                     <span className="font-semibold text-neutral-900 text-sm tracking-tight">
-                      {activeTheme === 'minimalist' ? 'Minimalist Clean' :
-                        activeTheme === 'cinematic' ? 'Cinematic Dark' :
-                          activeTheme === 'acid' ? 'Acid Punk' :
-                            activeTheme === 'bentogrid' ? 'Bento Grid' :
-                              activeTheme === 'spatial' ? 'Aura Spatial' :
-                                activeTheme === 'monolith' ? 'Monolith Vanguard' :
-                                  activeTheme === 'split' ? 'Nexus Split' :
-                                    activeTheme === 'editorial' ? 'Editorial Clean' :
-                                      activeTheme === 'midnight-emulsion' ? 'Midnight Emulsion' :
-                                        activeTheme === 'aura-kinetic' ? 'Aura Kinetic' :
-                                          activeTheme === 'absolute-noir' ? 'Absolute Noir' :
-                                            activeTheme === 'obsidian-reel' ? 'Obsidian Reel' :
-                                              activeTheme === 'layered-monolith' ? 'Layered Monolith' :
-                                                activeTheme === 'kinetic-avant-garde' ? 'Dynamic Void' :
-                                                  'Neo Brutalism'}
+                      {THEMES_DATA.find(t => t.id === activeTheme)?.name || 'Neo Brutalism'}
                     </span>
                     <span className="text-[10px] text-neutral-400 font-medium mt-0.5">
                       Sedang Digunakan
@@ -175,6 +265,17 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                 </div>
               </div>
             )}
+
+            {/* TOMBOL DRAFT - Di bawah Basis Tema */}
+            <button
+              onClick={() => setIsDraftsModalOpen(true)}
+              className="w-full mt-4 p-3.5 rounded-2xl border border-dashed border-neutral-300 bg-neutral-50/50 hover:bg-neutral-100 hover:border-neutral-400 transition-all duration-200 flex items-center justify-center gap-2.5 group"
+            >
+              <i className="fas fa-folder-open text-neutral-400 group-hover:text-neutral-600 text-xs transition-colors"></i>
+              <span className="text-[11px] font-semibold text-neutral-500 group-hover:text-neutral-700 tracking-wide transition-colors">
+                {drafts.length > 0 ? `Manajemen Draft (${drafts.length})` : 'Belum Ada Draft'}
+              </span>
+            </button>
           </div>
 
           {/* DIVIDER */}

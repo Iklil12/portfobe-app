@@ -12,15 +12,23 @@ interface EditableTextProps {
   maxLength?: number;
 }
 
-// Fungsi untuk membersihkan teks dari emoji dan karakter aneh (HTML tags, dll)
-// Dideklarasikan di luar komponen agar lebih ringan dan efisien (tidak dibuat ulang setiap render)
+import DOMPurify from 'isomorphic-dompurify';
+
+// Fungsi untuk membersihkan teks secara aman menggunakan DOMPurify
 const sanitizeText = (text: string) => {
   if (!text) return "";
-  return text
-    // Hapus Emoji menggunakan Unicode Property Escapes
-    .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '')
-    // Hapus kurung siku/tag (mencegah XSS/HTML mentah)
-    .replace(/[<>]/g, '');
+  
+  // Konfigurasi DOMPurify: Hanya izinkan tag teks dasar jika diinginkan
+  // (saat ini kita biarkan kosong agar berfungsi layaknya plain text murni
+  // namun tetap membersihkan struktur XSS)
+  const clean = DOMPurify.sanitize(text, {
+    ALLOWED_TAGS: [], // Kosongkan jika kita hanya ingin teks biasa tanpa formatting
+    ALLOWED_ATTR: []
+  });
+  
+  return clean
+    // Hapus Emoji jika tetap ingin menjaga gaya brutalist/clean
+    .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
 };
 
 export function EditableText({ value, field, entity, isEditor, className = "", as: Component = "span", maxLength }: EditableTextProps) {
@@ -125,7 +133,7 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
   };
 
   if (!isEditor) {
-    return <Component className={className} style={{ fontFamily: 'inherit' }}>{content}</Component>;
+    return <Component className={`break-words break-all [word-break:break-word] whitespace-pre-wrap ${className}`} style={{ fontFamily: 'inherit' }}>{content}</Component>;
   }
 
   return (
@@ -133,7 +141,7 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
       ref={elementRef}
       contentEditable
       suppressContentEditableWarning
-      className={`outline-none cursor-text transition-all hover:shadow-[0_0_0_1px_#007bff] focus:shadow-[0_0_0_1px_#007bff] focus:bg-[#007bff]/5 rounded-[2px] ${className}`}
+      className={`outline-none cursor-text transition-all hover:shadow-[0_0_0_1px_#007bff] focus:shadow-[0_0_0_1px_#007bff] focus:bg-[#007bff]/5 rounded-[2px] break-words break-all [word-break:break-word] whitespace-pre-wrap ${className}`}
       style={{ fontFamily: 'inherit' }}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}

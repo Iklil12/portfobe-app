@@ -50,6 +50,7 @@ export function useDashboardOverview() {
       'midnight-emulsion': 'Midnight Emulsion',
       'aura-kinetic': 'Aura Kinetic',
       'absolute-noir': 'Absolute Noir',
+      'split-screen-studio': 'Split Screen Studio',
     };
 
     let tName = "Belum Dipilih";
