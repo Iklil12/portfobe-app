@@ -408,6 +408,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
             )}
 
             {/* AWARDS SECTION */}
+            {awardItems.length > 0 && (
             <section className="acid-bg text-[#09090b] py-20 @md:py-24" id="awards">
                 <div className="max-w-6xl mx-auto px-6 @md:px-12">
                     <motion.h2 
@@ -418,7 +419,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                     </motion.h2>
 
                     <div className="border-t-4 border-[#09090b]">
-                        {awardItems.length > 0 ? awardItems.map((award: any, i: number) => {
+                        {awardItems.map((award: any, i: number) => {
                             const isOpen = openAward === award.id;
                             return (
                                 <motion.div 
@@ -450,10 +451,11 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                                     </div>
                                 </motion.div>
                             )
-                        }) : <div className="py-10 font-bold text-sm uppercase tracking-widest text-[#09090b]/50 acid-body">SYSTEM: NO_DATA_FOUND</div>}
+                        })}
                     </div>
                 </div>
             </section>
+            )}
 
             {/* TESTIMONIALS SECTION */}
             {testimonials.length > 0 && (

@@ -36,6 +36,8 @@ model User {
   canvaProjects          CanvaProject[]
   themeFavorites         ThemeFavorite[]
   testimonials           Testimonial[]
+  pageBlocks             PageBlock[]
+  adminNotes             AdminNote[]
   visitorSessions        VisitorSession[]
   hourlyStats            HourlyStats[]
   couponUsages           CouponUsage[]
@@ -527,4 +529,31 @@ model CouponUsage {
 
   @@index([userId])
   @@index([couponId])
+}
+
+model PageBlock {
+  id          String   @id @default(uuid())
+  userId      String
+  blockType   String   
+  orderIndex  Int      @default(0)
+  isVisible   Boolean  @default(true)
+  configJson  String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, orderIndex])
+}
+
+model AdminNote {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   @default("IDEA") // IDEA, BUG, ERROR
+  content     String   @db.Text
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

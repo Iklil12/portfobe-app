@@ -13,6 +13,11 @@ import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { EditableText } from '@/components/ui/EditableText';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
+import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
+import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { TestimonialSection } from '@/components/features/testimonials/TestimonialSection';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
@@ -44,6 +49,8 @@ export default function KineticAvantGardeTheme({ data, theme, isMobileView = fal
     const featuredProjects = allProjects.filter((p: any) => p.projectType?.toLowerCase() !== '3d').slice(0, 3);
     
     const certificates = data?.certificates || data?.user?.certificates || [];
+    const items3D = allProjects.filter((p: any) => p.projectType?.toLowerCase() === '3d');
+    const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
 
     // TEMA & WARNA
     const accentColor = theme?.themeColor || '#c92a2a'; // Blood Red default
@@ -486,8 +493,29 @@ export default function KineticAvantGardeTheme({ data, theme, isMobileView = fal
                     </div>
                 </section>
 
+                {/* 3D Projects */}
+                {items3D.length > 0 && (
+                <section className="relative kag-bg-void py-32 px-6 md:px-20 z-10 border-t border-white/20">
+                    <h3 className="font-kag-mono kag-text-blood tracking-[0.3em] uppercase text-sm mb-16">
+                        <EditableText entity="appearance" field="kag_3d_subtitle" value={getCustomText('kag_3d_subtitle', '[ DIMENSI KETIGA ]')} isEditor={isEditor} />
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                        {items3D.map((p: any, i: number) => (
+                        <div key={i} className="group rounded-2xl overflow-hidden relative bg-[#111] border border-white/10">
+                            <div className="w-full h-80 relative">
+                                <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#111" />
+                            </div>
+                            <div className="p-6 border-t border-white/10">
+                                <h3 className="font-kag-brutal text-3xl kag-text-bone uppercase">{p.title}</h3>
+                            </div>
+                        </div>
+                        ))}
+                    </div>
+                </section>
+                )}
+
                 {/* Chronology Section */}
-                <section className="relative kag-bg-void kag-text-bone py-32 px-6 md:px-20 z-10 overflow-hidden" id="chronology">
+                <section className="relative kag-bg-void kag-text-bone py-32 px-6 md:px-20 z-10 overflow-hidden border-t border-white/20" id="chronology">
                     <div className="flex flex-col md:flex-row gap-16 md:gap-20 max-w-7xl mx-auto">
                         <div className="md:w-1/3">
                             <div className="md:sticky md:top-32">
@@ -537,6 +565,7 @@ export default function KineticAvantGardeTheme({ data, theme, isMobileView = fal
                 </section>
 
                 {/* Recognition Section */}
+                {certificates.length > 0 && (
                 <section className="relative kag-bg-blood kag-text-bone py-32 px-6 md:px-20 z-10" id="recognition">
                     <div className="max-w-7xl mx-auto">
                         <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-white/30 pb-6">
@@ -555,31 +584,36 @@ export default function KineticAvantGardeTheme({ data, theme, isMobileView = fal
                                 <div className="col-span-4 text-right">KREDENSIAL</div>
                             </div>
                             
-                            {certificates.length > 0 ? (
-                                certificates.map((cert: any, i: number) => (
-                                    <div key={cert.id || i} className="grid grid-cols-12 border-b border-white/30 p-4 hover:kag-bg-bone hover:kag-text-blood hover-trigger transition-colors duration-300 cursor-pointer" onClick={() => cert.url ? window.open(cert.url, '_blank') : setSelectedMedia({ url: cert.fileUrl, title: cert.title, type: 'certificate' })}>
-                                        <div className="col-span-2">{cert.year || '2024'}</div>
-                                        <div className="col-span-6 truncate pr-4">{cert.title}</div>
-                                        <div className="col-span-4 text-right truncate text-white/60 group-hover:kag-text-blood/60">{cert.issuer}</div>
-                                    </div>
-                                ))
-                            ) : (
-                                <>
-                                    <div className="grid grid-cols-12 border-b border-white/30 p-4 hover:kag-bg-bone hover:kag-text-blood hover-trigger transition-colors duration-300">
-                                        <div className="col-span-2">2025</div>
-                                        <div className="col-span-6">AWWWARDS SITE OF THE MONTH</div>
-                                        <div className="col-span-4 text-right">KINETIKA</div>
-                                    </div>
-                                    <div className="grid grid-cols-12 border-b border-white/30 p-4 hover:kag-bg-bone hover:kag-text-blood hover-trigger transition-colors duration-300">
-                                        <div className="col-span-2">2024</div>
-                                        <div className="col-span-6">FWA OF THE DAY</div>
-                                        <div className="col-span-4 text-right">MONOLIT</div>
-                                    </div>
-                                </>
-                            )}
+                            {certificates.map((cert: any, i: number) => (
+                                <div key={cert.id || i} className="grid grid-cols-12 border-b border-white/30 p-4 hover:kag-bg-bone hover:kag-text-blood hover-trigger transition-colors duration-300 cursor-pointer" onClick={() => cert.url ? window.open(cert.url, '_blank') : setSelectedMedia({ url: cert.fileUrl, title: cert.title, type: 'certificate' })}>
+                                    <div className="col-span-2">{cert.year || '2024'}</div>
+                                    <div className="col-span-6 truncate pr-4">{cert.title}</div>
+                                    <div className="col-span-4 text-right truncate text-white/60 group-hover:kag-text-blood/60">{cert.issuer}</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
+                )}
+
+                {/* Testimonials Section */}
+                {testimonials.length > 0 && (
+                <section className="relative kag-bg-bone kag-text-void py-32 px-6 md:px-20 z-10 border-b border-black/20">
+                    <h3 className="font-kag-mono kag-text-blood tracking-[0.3em] uppercase text-sm mb-16">
+                        <EditableText entity="appearance" field="kag_testi_subtitle" value={getCustomText('kag_testi_subtitle', '[ SUARA KLIEN ]')} isEditor={isEditor} />
+                    </h3>
+                    <div className="bg-transparent border-4 border-black p-4">
+                        <TestimonialSection testimonials={testimonials} variant="grid" isEditor={isEditor} theme={theme} />
+                    </div>
+                </section>
+                )}
+
+                {/* Widgets */}
+                <div className="kag-bg-void kag-text-bone w-full border-t-8 border-black">
+                    <GithubStats userId={data?.userId || data?.user?.id || data?.id || ""} variant="kinetic-avant-garde" />
+                    <CanvaShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="kinetic-avant-garde" />
+                    <PenpotShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="kinetic-avant-garde" />
+                </div>
 
                 {/* Footer */}
                 <footer className="kag-bg-bone kag-text-void py-20 px-10 relative overflow-hidden z-10">

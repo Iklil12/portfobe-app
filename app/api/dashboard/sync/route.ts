@@ -93,6 +93,7 @@ export async function GET(req: Request) {
       plan: user.plan || "FREE",
       fullName: user.profile?.fullName,
       email: user.email,
+      role: user.role,
       siteAppearance: user.siteAppearance,
       canClaimTrial: user.plan !== "PRO" && user.transactions && user.transactions.length === 0,
     };

@@ -227,7 +227,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                 >
                     <div className="leading-snug">
                         <span><EditableText value={theme?.customTexts?.vf_dir || 'DIR.'} field="vf_dir" entity="appearance" isEditor={isEditor} as="span" maxLength={10} /> <EditableText value={fullName.toUpperCase()} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} /></span>
-                        <br /><EditableText value={location.toUpperCase()} field="location" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
+                        <br /><EditableText value={location.toUpperCase()} field="vf_location" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                     </div>
                     <div className="text-right pointer-events-auto flex flex-col gap-0.5" style={{ mixBlendMode: 'normal' }}>
                         <a href="#reel" className="hover:opacity-70 transition">/ <EditableText value={theme?.customTexts?.vf_nav_reel || 'REEL'} field="vf_nav_reel" entity="appearance" isEditor={isEditor} as="span" maxLength={15} /></a>
@@ -565,6 +565,8 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                             </div>
                         )}
 
+                        {certificates.length > 0 && (
+                        <>
                         <motion.h3
                             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}
                             className="text-[10px] font-bold uppercase tracking-widest mb-3 bg-[#050505] text-[#F3F3F1] inline-block px-3 py-1"
@@ -573,7 +575,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                         </motion.h3>
 
                         <div className="border-y-2 border-[#050505]">
-                            {certificates.length > 0 ? certificates.map((cert: any, idx: number) => (
+                            {certificates.map((cert: any, idx: number) => (
                                 <motion.div
                                     initial={{ opacity: 0, x: -30 }}
                                     whileInView={{ opacity: 1, x: 0 }}
@@ -624,14 +626,10 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                         )}
                                     </AnimatePresence>
                                 </motion.div>
-                            )) : (
-                                <div className="grid grid-cols-12 py-3 border-b border-gray-300 items-start">
-                                    <div className="col-span-2 text-[10px] font-bold text-gray-500">2018</div>
-                                    <div className="col-span-7 text-xs font-bold uppercase" style={{ color: 'var(--primary)' }}>SITE OF THE DAY</div>
-                                    <div className="col-span-3 text-[9px] text-gray-400 text-right">AWWWARDS</div>
-                                </div>
-                            )}
+                            ))}
                         </div>
+                        </>
+                        )}
                     </div>
                 </section>
 

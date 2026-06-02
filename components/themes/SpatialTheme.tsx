@@ -216,7 +216,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                     <EditableText value={fullName} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
                                 </span>
                                 <span className="text-[11px] text-slate-400">
-                                    <EditableText value={location} field="location" entity="profile" isEditor={isEditor} as="span" maxLength={20} /> {currentTime ? `• ${currentTime}` : ''}
+                                    <EditableText value={location} field="spatial_location" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /> {currentTime ? `• ${currentTime}` : ''}
                                 </span>
                             </div>
                         </div>
@@ -246,7 +246,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                 <div id="projects" className={`flex flex-col w-full px-8 gap-12`}>
                     <motion.div {...viewAnim} variants={auraAnim} className="flex justify-between items-end mb-4">
                         <h2 className={`font-medium tracking-tight text-white text-4xl`}>
-                            <EditableText value={theme?.customTexts?.stats_projects || 'Selected Works'} field="stats_projects" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                            <EditableText value={theme?.customTexts?.spatial_stats_projects || 'Selected Works'} field="spatial_stats_projects" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                         </h2>
                         <span className="text-slate-500 font-medium">({archiveItems.length})</span>
                     </motion.div>
@@ -308,7 +308,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                     <motion.div {...viewAnim} variants={auraAnim} className="w-full flex justify-center mt-8">
                         <Link href={`/${subdomain}/gallery`} scroll={false} className={`${cardStyleClass} px-8 py-4 ${radiusClass} flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group`}>
                             <span className="font-medium text-white">
-                                <EditableText value={theme?.customTexts?.explore_archive || 'Explore Full Archive'} field="explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                                <EditableText value={theme?.customTexts?.spatial_explore_archive || 'Explore Full Archive'} field="spatial_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                             </span>
                             <i className="fas fa-arrow-right text-sm text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all"></i>
                         </Link>
@@ -320,7 +320,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                     <div className={`flex flex-col w-full px-8 gap-12 mt-24 @md:mt-32`}>
                         <motion.div {...viewAnim} variants={auraAnim} className="flex justify-between items-end mb-4">
                             <h2 className={`font-medium tracking-tight text-white text-4xl`}>
-                                <EditableText value={theme?.customTexts?.models_title || 'Spatial Assets'} field="models_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                                <EditableText value={theme?.customTexts?.spatial_models_title || 'Spatial Assets'} field="spatial_models_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                             </h2>
                             <span className="text-slate-500 font-medium">({items3D.length})</span>
                         </motion.div>
@@ -381,7 +381,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                     <div className={`flex flex-col w-full mt-24 @md:mt-32 px-8`}>
                         <motion.div {...viewAnim} variants={auraAnim} className="mb-8">
                             <h2 className={`font-medium tracking-tight text-white text-4xl`}>
-                                <EditableText value={theme?.customTexts?.testimonials_title || 'Client Voices'} field="testimonials_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                                <EditableText value={theme?.customTexts?.spatial_testimonials_title || 'Client Voices'} field="spatial_testimonials_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                             </h2>
                         </motion.div>
 
@@ -427,7 +427,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                     <div id="awards" className={`flex flex-col w-full mt-24 @md:mt-32 px-8`}>
                         <motion.div {...viewAnim} variants={auraAnim} className="mb-8">
                             <h2 className={`font-medium tracking-tight text-white text-4xl`}>
-                                <EditableText value={theme?.customTexts?.awards_title || 'Recognitions'} field="awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                                <EditableText value={theme?.customTexts?.spatial_awards_title || 'Recognitions'} field="spatial_awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                             </h2>
                         </motion.div>
 
@@ -477,7 +477,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                     <div className="w-full mt-20 pt-8 border-t border-white/10 flex justify-between items-center relative z-10 flex-col @md:flex-row gap-6">
                         <div className="flex items-center gap-2 text-sm text-slate-400">
                             <div className="w-2 h-2 rounded-full bg-[var(--hl)]"></div>
-                            <span>© {new Date().getFullYear()} <EditableText value={fullName} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} />. <EditableText value={theme?.customTexts?.footer_rights || 'All rights reserved.'} field="footer_rights" entity="appearance" isEditor={isEditor} as="span" maxLength={40} /></span>
+                            <span>© {new Date().getFullYear()} <EditableText value={fullName} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} />. <EditableText value={theme?.customTexts?.spatial_footer_rights || 'All rights reserved.'} field="spatial_footer_rights" entity="appearance" isEditor={isEditor} as="span" maxLength={40} /></span>
                         </div>
                         <div className="flex gap-4">
                             {links.map((l: any, i: number) => (

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Design Document: Hybrid Modular Builder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #fcfcfc;
+        }
+        h1, h2, h3 {
+            color: #111;
+        }
+        h1 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        h2 {
+            margin-top: 40px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            color: #2c3e50;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            border-left: 5px solid #ffc107;
+        }
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            border-left: 5px solid #17a2b8;
+        }
+        pre {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        ul {
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .code-inline {
+            background-color: #f8f9fa;
+            border: 1px solid #eaecf0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: Consolas, monospace;
+            color: #e83e8c;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Technical Design Document: Hybrid Modular Builder Migration</h1>
+
+    <h2>1. Executive Summary</h2>
+    <p>Dokumen ini adalah cetak biru (blueprint) strategis untuk merombak arsitektur <em>rendering</em> Portfo.be. Berdasarkan keputusan bisnis untuk memberikan kebebasan kustomisasi (<em>drag-and-drop</em>) tanpa mengorbankan pengalaman instan (<em>theme presets</em>), kita akan bermigrasi dari <strong>Monolithic Theme Architecture</strong> menuju <strong>Block-Based Hybrid Architecture</strong>.</p>
+    <p>Sebagai <em>Senior Systems Architect</em>, saya telah menyusun peta jalan (roadmap) ini untuk meminimalisir risiko kegagalan sistem (<em>downtime</em>) dan memastikan transisi kode yang mulus.</p>
+
+    <h2>2. Analisis Arsitektur (Sebelum vs Sesudah)</h2>
+    
+    <h3>Arsitektur Saat Ini (Monolitik)</h3>
+    <p>Saat ini, satu tema (misalnya <span class="code-inline">CinematicTheme</span>) adalah satu file raksasa yang berisi semua seksi (Hero, About, Projects, Awards) yang urutannya dikunci permanen (<em>hardcoded</em>).</p>
+    <ul>
+        <li>Database -> Membaca <span class="code-inline">themeTemplate: 'cinematic'</span></li>
+        <li>Halaman memanggil komponen <span class="code-inline">&lt;CinematicTheme /&gt;</span> secara utuh.</li>
+    </ul>
+
+    <h3>Arsitektur Baru (Modular Block Builder)</h3>
+    <p>Nantinya, halaman portofolio tidak lagi membaca 1 file tema utuh. Ia akan mengambil sebuah <em>Array</em> (daftar urutan) blok dari <em>database</em> dan merendernya satu per satu menggunakan <em>Dynamic Block Renderer</em>.</p>
+    <ul>
+        <li>Database -> Mengambil Array dari tabel <span class="code-inline">PageBlock</span></li>
+        <li>Halaman memanggil <span class="code-inline">&lt;DynamicBlockRenderer blocks={data} /&gt;</span></li>
+        <li>Renderer akan melooping blok: Index 0 memanggil <span class="code-inline">&lt;CinematicHeroBlock /&gt;</span>, Index 1 memanggil <span class="code-inline">&lt;MinimalistAwardsBlock /&gt;</span>, dst.</li>
+    </ul>
+
+    <h2>3. Desain Database (Skema Prisma)</h2>
+    <p>Kita perlu menambahkan tabel baru untuk melacak urutan dan konfigurasi masing-masing blok milik pengguna.</p>
+    <pre><code>// Penambahan model baru di schema.prisma
+model PageBlock {
+  id          String   @id @default(uuid())
+  userId      String
+  
+  // Tipe blok, misal: 'CINEMATIC_HERO', 'ACID_GALLERY'
+  blockType   String   
+  
+  // Urutan render dari atas ke bawah (0, 1, 2, 3...)
+  orderIndex  Int      @default(0)
+  
+  // Sakelar untuk Toggle Visibility (ON/OFF tanpa menghapus data)
+  isVisible   Boolean  @default(true)
+  
+  // Konfigurasi spesifik per blok (Warna teks khusus, spacing, dll)
+  configJson  String?  @db.Text
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, orderIndex]) // Diindeks agar fetching berurutan sangat cepat
+}</code></pre>
+
+    <h2>4. Strategi Pemecahan Komponen (Component Refactoring)</h2>
+    <div class="alert alert-warning">
+        <strong>Aturan Isolasi Blok:</strong> Setiap file blok tidak boleh membocorkan CSS-nya ke luar kontainernya agar tidak terjadi tabrakan desain.
+    </div>
+    <p><strong>Struktur Direktori Baru:</strong></p>
+    <pre><code>components/
+└── blocks/
+    ├── cinematic/
+    │   ├── CinematicHeroBlock.tsx
+    │   ├── CinematicProjectsBlock.tsx
+    │   └── CinematicAwardsBlock.tsx
+    ├── acid/
+    │   ├── AcidHeroBlock.tsx
+    │   └── ...
+    └── shared/
+        └── BlockWrapper.tsx (Komponen HOC untuk menangani spacing antar blok)</code></pre>
+
+    <h2>5. Peta Jalan Eksekusi (Phased Roadmap)</h2>
+    <p>Agar proyek raksasa ini tidak membebani sistem secara tiba-tiba, saya membaginya menjadi 3 fase progresif. <strong>Kita hanya akan maju ke fase berikutnya jika fase sebelumnya sudah 100% stabil.</strong></p>
+    
+    <ul>
+        <li><strong>FASE 1: Fondasi & Basis Data (Durasi: ~2 Hari)</strong>
+            <ul>
+                <li>Menambahkan model <span class="code-inline">PageBlock</span> ke schema Prisma.</li>
+                <li>Membuat API Endpoint CRUD untuk blok.</li>
+                <li>Membuat mekanisme <em>Seeding</em> (menyiapkan layout default).</li>
+            </ul>
+        </li>
+        <li><strong>FASE 2: Pembongkaran Komponen (Durasi: ~4 Hari)</strong>
+            <ul>
+                <li>Membedah 1 Tema Saja (misalnya CinematicTheme) sebagai uji coba (Proof of Concept).</li>
+                <li>Menulis <span class="code-inline">DynamicBlockRenderer</span>.</li>
+            </ul>
+        </li>
+        <li><strong>FASE 3: UI Builder di Dashboard (Durasi: ~5 Hari)</strong>
+            <ul>
+                <li>Menambahkan tab "Layout Builder" di halaman Dashboard.</li>
+                <li>Mengimplementasikan Drag and Drop.</li>
+            </ul>
+        </li>
+        <li><strong>FASE 4: Migrasi Skala Penuh (Durasi: ~2-3 Minggu)</strong>
+            <ul>
+                <li>Membedah sisa 20 tema lainnya.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>6. Manajemen Risiko & Mitigasi</h2>
+    <div class="alert alert-warning">
+        <strong>Risiko:</strong> Pengguna lama yang sedang live webnya bisa rusak (blank page) jika proses migrasi gagal.<br><br>
+        <strong>Mitigasi:</strong> Kita akan membuat fitur ini sebagai fitur tersembunyi (feature flag) atau beta testing terlebih dahulu. Halaman publik akan mendukung dua mode (membaca SiteAppearance ATAU PageBlock) hingga migrasi 100% selesai.
+    </div>
+
+    <h2>7. Kemampuan & Keuntungan untuk User (Post-Launch Features)</h2>
+    <ul>
+        <li><strong>Drag-and-Drop Layout:</strong> Menggeser posisi seksi secara bebas.</li>
+        <li><strong>Strict Theme Integrity:</strong> Hanya bisa memakai blok dari tema yang aktif agar desain tidak rusak.</li>
+        <li><strong>Singleton Dynamic Blocks:</strong> Seksi seperti Projects/3D hanya bisa digeser/disembunyikan (karena datanya tunggal dari DB).</li>
+        <li><strong>Addable Static Blocks:</strong> Bisa menambahkan berulang kali seksi statis eksklusif milik tema (misal: Text Block, Timeline, Banner).</li>
+        <li><strong>Live Instant Preview:</strong> Drag & drop langsung ter-update di iFrame tanpa loading layar.</li>
+    </ul>
+
+    <h2>8. Katalog & Registri Static Blocks (Panduan Maintenance)</h2>
+    <p>Aturan konvensi penamaan (Registry) untuk blok di database: <span class="code-inline">[NAMA_TEMA]_[NAMA_BLOK]</span> (Contoh: <span class="code-inline">CINEMATIC_MANIFESTO</span>).</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Nama Blok</th>
+                <th>Kode blockType</th>
+                <th>Deskripsi & Fungsi Utama</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Manifesto / Quote</strong></td>
+                <td><span class="code-inline">*_MANIFESTO</span></td>
+                <td>Tipografi raksasa (full-screen) berisi filosofi kerja. Sangat cocok untuk Cinematic atau Viewfinder.</td>
+            </tr>
+            <tr>
+                <td><strong>Trusted By (Logos)</strong></td>
+                <td><span class="code-inline">*_CLIENT_LOGOS</span></td>
+                <td>Marquee berjalan atau grid logo klien. Cocok untuk semua tema demi social proof.</td>
+            </tr>
+            <tr>
+                <td><strong>Service Packages</strong></td>
+                <td><span class="code-inline">*_PRICING</span></td>
+                <td>Tabel harga 3 kolom untuk freelancer berjualan paket.</td>
+            </tr>
+            <tr>
+                <td><strong>Fun Facts (Counters)</strong></td>
+                <td><span class="code-inline">*_STATS_COUNTER</span></td>
+                <td>Angka raksasa yang bergerak dari 0 ke target saat di-scroll.</td>
+            </tr>
+            <tr>
+                <td><strong>FAQ Accordion</strong></td>
+                <td><span class="code-inline">*_FAQ</span></td>
+                <td>Daftar Pertanyaan Sering Diajukan yang bisa di-expand.</td>
+            </tr>
+            <tr>
+                <td><strong>Parallax Banner</strong></td>
+                <td><span class="code-inline">*_MEDIA_BREAK</span></td>
+                <td>Pemisah visual berupa foto/video resolusi tinggi dengan parallax effect.</td>
+            </tr>
+            <tr>
+                <td><strong>Career Journey</strong></td>
+                <td><span class="code-inline">*_TIMELINE</span></td>
+                <td>Garis waktu statis berisi sejarah pendidikan/pekerjaan.</td>
+            </tr>
+            <tr>
+                <td><strong>Massive CTA</strong></td>
+                <td><span class="code-inline">*_CTA_FOOTER</span></td>
+                <td>Ajakan "Let's Work Together" berukuran raksasa tepat sebelum footer utama.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-info">
+        <strong>Pesan untuk Developer:</strong> Dokumen ini dipersiapkan untuk memastikan maintenance jangka panjang Anda tetap mulus dan terstruktur. Silakan simpan dokumen ini.
+    </div>
+
+</body>
+</html>

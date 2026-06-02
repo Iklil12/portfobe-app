@@ -128,14 +128,7 @@ export const THEMES_DATA = [
         img: '/themes/brutalism.jpg'
     },
 
-    {
-        id: 'elegant',
-        name: 'Elegant Serif',
-        desc: 'Earth Tones, Fine Art, Elegant.',
-        preview: 'bg-[#e5e5e5]',
-        isAvailable: false,
-        img: 'https://images.unsplash.com/photo-1613521140785-e85e427f8002?q=80&w=600&auto=format&fit=crop'
-    },
+
     {
         id: 'cinematic-gallery',
         name: 'Ruang Cinematic',

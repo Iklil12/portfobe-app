@@ -35,7 +35,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     projectsCount,
     certificatesCount,
     linksCount,
-    testimonialsCount
+    testimonialsCount,
+    userRole
   } = useDashboardLayout();
 
   useEffect(() => {
@@ -90,6 +91,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         projectsCount={totalProjectsAndCertificates}
         linksCount={linksCount}
         testimonialsCount={testimonialsCount}
+        userRole={userRole}
       />
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">

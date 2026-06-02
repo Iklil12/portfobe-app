@@ -232,7 +232,7 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
   };
 
   const s = (styles as any)[variant] || styles.monochrome;
-  const isDynamic = variant === 'acid' || variant === 'aura' || variant === 'noir' || variant === 'bento' || variant === 'brutalism' || variant === 'cinematic' || variant === 'editorial' || variant === 'midnight' || variant === 'monolith' || variant === 'spatial' || variant === 'split' || variant === 'viewfinder' || variant === 'minimalist' || variant === 'split-screen-studio';
+  const isDynamic = ['acid', 'aura', 'noir', 'bento', 'brutalism', 'cinematic', 'editorial', 'midnight', 'monolith', 'spatial', 'split', 'viewfinder', 'minimalist', 'split-screen-studio', 'horizontal-flow', 'kinetic-avant-garde', 'layered-monolith', 'nexus-noir'].includes(variant);
   const dynamicTextStyle = isDynamic && themeColor ? { color: themeColor } : {};
 
   return (

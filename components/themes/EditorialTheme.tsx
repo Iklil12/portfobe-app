@@ -440,7 +440,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                     <div className="flex items-center gap-2">
                         <span>© {new Date().getFullYear()} <EditableText value={fullName} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} />.</span>
                         <span className="w-1 h-1 bg-slate-300 rounded-full mx-2"></span>
-                        <span><EditableText value={theme?.customTexts?.footer_rights || 'All rights reserved.'} field="footer_rights" entity="appearance" isEditor={isEditor} as="span" maxLength={40} /></span>
+                        <span><EditableText value={theme?.customTexts?.editorial_footer_rights || 'All rights reserved.'} field="editorial_footer_rights" entity="appearance" isEditor={isEditor} as="span" maxLength={40} /></span>
                     </div>
 
                     <div className="flex items-center gap-6">

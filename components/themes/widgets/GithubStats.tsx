@@ -6,7 +6,7 @@ import { GithubCalendarWidget, CalendarThemeVariant } from './GithubCalendarWidg
 import { GithubActivityFeed } from './GithubActivityFeed';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
-export type StatsVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist' | 'split-screen-studio';
+export type StatsVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist' | 'split-screen-studio' | 'horizontal-flow' | 'kinetic-avant-garde' | 'layered-monolith' | 'nexus-noir';
 
 interface GithubStatsProps {
   userId: string;
@@ -14,8 +14,17 @@ interface GithubStatsProps {
   themeColor?: string; // Menambahkan prop themeColor dinamis
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => {
-  if (!res.ok) throw new Error('API Error');
+const fetcher = (url: string) => fetch(url).then(async (res) => {
+  if (res.status === 401 || res.status === 403 || res.status === 404) {
+    const err: any = new Error('Not connected');
+    err.status = res.status;
+    throw err;
+  }
+  if (!res.ok) {
+    const err: any = new Error('API Error');
+    err.status = res.status;
+    throw err;
+  }
   return res.json();
 });
 
@@ -58,6 +67,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
   if (error) return null;
 
   const hasNoPublicRepos = !isLoading && !data?.topRepo && (!data?.languages || data.languages.length === 0);
+  if (hasNoPublicRepos) return null;
 
   // --- STYLING MAP ---
   const styles = {
@@ -268,14 +278,68 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       progressBg: 'bg-white/10',
       progressFill: 'bg-white',
       calendarColorScheme: 'dark' as const
+    },
+  
+    'horizontal-flow': {
+      section: 'flex-shrink-0 w-[85vw] @md:w-[60vw] @lg:w-[45vw] h-full p-8 @md:p-12 border-r border-black/10 bg-white snap-center',
+      heading: 'text-3xl font-bold tracking-tight text-black mb-6',
+      label: 'text-[10px] font-mono text-gray-500 uppercase',
+      border: 'border-black/10',
+      cardBg: 'bg-gray-50 border border-black/5',
+      icon: 'text-black',
+      textPrimary: 'text-black',
+      textSecondary: 'text-gray-500',
+      progressBg: 'bg-gray-200',
+      progressFill: 'bg-black',
+      calendarColorScheme: 'light' as const
+    },
+    'kinetic-avant-garde': {
+      section: 'w-full p-8 @lg:p-16 border-b-4 border-black bg-[#E5E5E5]',
+      heading: 'font-mono text-4xl @md:text-6xl font-black uppercase text-black tracking-tighter mb-8',
+      label: 'font-mono text-xs font-bold bg-black text-white px-2 py-1 uppercase',
+      border: 'border-black border-2',
+      cardBg: 'bg-white border-4 border-black shadow-[8px_8px_0_0_#000]',
+      icon: 'text-black',
+      textPrimary: 'font-mono text-black font-bold',
+      textSecondary: 'font-mono text-black/70',
+      progressBg: 'bg-gray-300 border-2 border-black',
+      progressFill: 'bg-black',
+      calendarColorScheme: 'light' as const
+    },
+    'layered-monolith': {
+      section: 'w-full px-6 @md:px-12 py-20 relative z-20',
+      heading: 'font-serif text-3xl @md:text-5xl text-white mb-8',
+      label: 'font-sans text-[10px] tracking-widest uppercase text-[var(--hl)] mb-4 block',
+      border: 'border-white/10',
+      cardBg: 'bg-[#111] border border-white/5 shadow-2xl backdrop-blur-md',
+      icon: 'text-white/80',
+      textPrimary: 'text-white font-serif',
+      textSecondary: 'text-white/50 text-xs',
+      progressBg: 'bg-white/10',
+      progressFill: 'bg-[var(--hl)]',
+      calendarColorScheme: 'dark' as const
+    },
+    'nexus-noir': {
+      section: 'w-full px-6 @md:px-10 py-16 border-t border-[#333] bg-[#050505]',
+      heading: 'font-serif text-2xl text-white tracking-wide uppercase',
+      label: 'font-mono text-[10px] text-gray-500',
+      border: 'border-[#333]',
+      cardBg: 'bg-[#0a0a0a] border border-[#222]',
+      icon: 'text-gray-400',
+      textPrimary: 'text-gray-100',
+      textSecondary: 'text-gray-500',
+      progressBg: 'bg-[#222]',
+      progressFill: 'bg-gray-300',
+      calendarColorScheme: 'dark' as const
     }
+  
   };
 
   const s = styles[variant] || styles.monochrome;
 
   // --- DYNAMIC STYLING ---
   // Jika variant adalah acid atau aura, dan user memilih warna di editor, kita "timpa" warna bawaan
-  const isDynamic = variant === 'acid' || variant === 'aura' || variant === 'noir' || variant === 'bento' || variant === 'brutalism' || variant === 'cinematic' || variant === 'editorial' || variant === 'midnight' || variant === 'monolith' || variant === 'spatial' || variant === 'split' || variant === 'viewfinder' || variant === 'minimalist' || variant === 'split-screen-studio';
+  const isDynamic = ['acid', 'aura', 'noir', 'bento', 'brutalism', 'cinematic', 'editorial', 'midnight', 'monolith', 'spatial', 'split', 'viewfinder', 'minimalist', 'split-screen-studio', 'horizontal-flow', 'kinetic-avant-garde', 'layered-monolith', 'nexus-noir'].includes(variant);
   const dynamicTextStyle = isDynamic && themeColor ? { color: themeColor } : {};
   const dynamicBgStyle = isDynamic && themeColor ? { backgroundColor: themeColor } : {};
 
@@ -294,12 +358,6 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
               <div className={`h-3 ${s.progressBg} rounded w-full mb-1`}></div>
               <div className={`h-3 ${s.progressBg} rounded w-4/5`}></div>
             </div>
-          </div>
-        ) : hasNoPublicRepos ? (
-          <div className={`py-8 text-center border rounded-2xl ${s.cardBg}`}>
-            <i className={`fab fa-github text-3xl mb-3 ${s.textSecondary}`}></i>
-            <p className={`text-sm font-bold tracking-tight ${s.textSecondary}`}>No public repositories</p>
-            <p className={`text-[10px] uppercase tracking-widest mt-1 opacity-50 ${s.textSecondary}`}>Repositories are private or empty</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 @md:grid-cols-2 gap-8 md:gap-12">

@@ -222,7 +222,7 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
             {/* ================= INTERACTIVE WORK GRID ================= */}
             <section id="work" className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-24 @md:py-32">
                 <motion.h2 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="font-serif text-4xl @md:text-5xl font-bold text-center mb-16">
-                    <EditableText value={theme?.customTexts?.stats_projects || 'Selected Works'} field="stats_projects" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                    <EditableText value={theme?.customTexts?.aura_stats_projects || 'Selected Works'} field="aura_stats_projects" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                 </motion.h2>
 
                 <div className="grid grid-cols-1 @md:grid-cols-2 gap-6 @md:gap-10">
@@ -282,7 +282,7 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                     <Link href={`/${subdomain}/gallery`} scroll={false} className={`group relative inline-flex items-center justify-center gap-4 px-8 py-4 bg-white/5 border border-white/10 hover:border-[var(--hl)] backdrop-blur-md transition-all duration-300 ${radiusClass} overflow-hidden shadow-lg`}>
                         <div className="absolute inset-0 bg-[var(--hl)] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                         <span className="font-sans text-xs uppercase tracking-widest font-bold text-white group-hover:text-[var(--hl)] transition-colors">
-                            <EditableText value={theme?.customTexts?.explore_archive || 'Explore Full Archive'} field="explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                            <EditableText value={theme?.customTexts?.aura_explore_archive || 'Explore Full Archive'} field="aura_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                         </span>
                         <i className="fas fa-arrow-right text-[var(--hl)] transform group-hover:translate-x-2 transition-transform duration-300"></i>
                     </Link>
@@ -294,10 +294,10 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                 <section className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-24 @md:py-32 border-t border-white/5">
                     <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="text-center mb-16">
                         <h2 className="font-serif text-4xl @md:text-5xl font-bold">
-                            <EditableText value={theme?.customTexts?.models_title || 'Interactive Models'} field="models_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                            <EditableText value={theme?.customTexts?.aura_models_title || 'Interactive Models'} field="aura_models_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                         </h2>
                         <p className="font-sans text-white/50 mt-4 text-sm">
-                            <EditableText value={theme?.customTexts?.models_subtitle || 'Explore spatial design in 3D.'} field="models_subtitle" entity="appearance" isEditor={isEditor} as="span" maxLength={40} />
+                            <EditableText value={theme?.customTexts?.aura_models_subtitle || 'Explore spatial design in 3D.'} field="aura_models_subtitle" entity="appearance" isEditor={isEditor} as="span" maxLength={40} />
                         </p>
                     </motion.div>
 
@@ -350,10 +350,10 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                 <section id="awards" className="relative z-10 w-full max-w-[1000px] mx-auto px-6 py-24 @md:py-32">
                     <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="text-center mb-16">
                         <h2 className="font-serif text-4xl @md:text-5xl font-bold">
-                            <EditableText value={theme?.customTexts?.awards_title || 'Recognitions'} field="awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                            <EditableText value={theme?.customTexts?.aura_awards_title || 'Recognitions'} field="aura_awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                         </h2>
                         <p className="font-sans text-white/50 mt-4 text-sm">
-                            <EditableText value={theme?.customTexts?.awards_subtitle || 'Validations of quality and expertise.'} field="awards_subtitle" entity="appearance" isEditor={isEditor} as="span" maxLength={45} />
+                            <EditableText value={theme?.customTexts?.aura_awards_subtitle || 'Validations of quality and expertise.'} field="aura_awards_subtitle" entity="appearance" isEditor={isEditor} as="span" maxLength={45} />
                         </p>
                     </motion.div>
 
@@ -392,10 +392,10 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                 <section id="testimonials" className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-24 @md:py-32">
                     <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="text-center mb-16">
                         <h2 className="font-serif text-4xl @md:text-5xl font-bold">
-                            <EditableText value={theme?.customTexts?.testimonials_title || 'Client Feedback'} field="testimonials_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                            <EditableText value={theme?.customTexts?.aura_testimonials_title || 'Client Feedback'} field="aura_testimonials_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                         </h2>
                         <p className="font-sans text-white/50 mt-4 text-sm">
-                            <EditableText value={theme?.customTexts?.testimonials_subtitle || 'Voices of collaboration and impact.'} field="testimonials_subtitle" entity="appearance" isEditor={isEditor} as="span" maxLength={45} />
+                            <EditableText value={theme?.customTexts?.aura_testimonials_subtitle || 'Voices of collaboration and impact.'} field="aura_testimonials_subtitle" entity="appearance" isEditor={isEditor} as="span" maxLength={45} />
                         </p>
                     </motion.div>
 
@@ -481,7 +481,7 @@ export default function AuraKineticTheme({ data, theme, isMobileView = false, is
                 </motion.div>
 
                 <div className="relative z-10 max-w-[1400px] mx-auto mt-32 flex flex-col @md:flex-row justify-between items-center gap-6 font-sans text-xs font-semibold text-white/40">
-                    <p>© {new Date().getFullYear()} <EditableText value={fullName} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} />. <EditableText value={theme?.customTexts?.footer_rights || 'All rights reserved.'} field="footer_rights" entity="appearance" isEditor={isEditor} as="span" maxLength={40} /></p>
+                    <p>© {new Date().getFullYear()} <EditableText value={fullName} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} />. <EditableText value={theme?.customTexts?.aura_footer_rights || 'All rights reserved.'} field="aura_footer_rights" entity="appearance" isEditor={isEditor} as="span" maxLength={40} /></p>
                     <div className="flex gap-6">
                         {links.map((l: any, i: number) => (
                             <motion.a whileHover={{ y: -2, color: '#fff' }} key={i} href={l.url} target="_blank" rel="noreferrer" className="uppercase tracking-widest transition-colors">

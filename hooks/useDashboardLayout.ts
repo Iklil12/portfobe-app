@@ -62,6 +62,7 @@ export function useDashboardLayout() {
   const userProfession = syncData ? syncData.profession : (session?.user as any)?.profession;
   const userBio = syncData ? syncData.bio : (session?.user as any)?.bio;
   const userAvatar = syncData ? syncData.avatar : ((session?.user as any)?.avatar || session?.user?.image);
+  const userRole = syncData?.role || (session?.user as any)?.role || "USER";
   const canClaimTrial = syncData?.canClaimTrial === true;
 
   const isSubdomainEmpty = !userSubdomain || String(userSubdomain).trim() === '' || String(userSubdomain) === 'null';
@@ -134,5 +135,6 @@ export function useDashboardLayout() {
     certificatesCount: overviewData?.certificatesCount || 0,
     linksCount: overviewData?.linksCount || 0,
     testimonialsCount: overviewData?.testimonialsCount || 0,
+    userRole,
   };
 }

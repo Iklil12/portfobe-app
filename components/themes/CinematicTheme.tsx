@@ -303,6 +303,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
             )}
 
             {/* AWARDS SECTION */}
+            {awardItems.length > 0 && (
             <section className={`bg-[#050505] border-t border-[#1f1f1f] py-20 @md:py-24 px-6 @md:px-12`}>
                 <div className={`grid gap-10 @md:grid-cols-12 @md:gap-12`}>
                     <div className={`@md:col-span-4`}>
@@ -313,7 +314,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                     </div>
 
                     <div className={`border-t border-[#1f1f1f] @md:col-span-8`}>
-                        {awardItems.length > 0 ? awardItems.map((award: any, i: number) => {
+                        {awardItems.map((award: any, i: number) => {
                             const isOpen = openAward === award.id;
                             return (
                                 <div key={i} className="border-b border-[#1f1f1f] @container">
@@ -347,10 +348,11 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                                     </div>
                                 </div>
                             )
-                        }) : <div className="py-10 text-gray-600 font-mono text-xs uppercase tracking-widest">No recognitions yet.</div>}
+                        })}
                     </div>
                 </div>
             </section>
+            )}
 
             {/* TESTIMONIALS SECTION */}
             {testimonials.length > 0 && (

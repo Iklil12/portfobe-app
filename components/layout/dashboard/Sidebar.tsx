@@ -12,9 +12,10 @@ interface SidebarProps {
   projectsCount?: number;
   linksCount?: number;
   testimonialsCount?: number;
+  userRole?: string;
 }
 
-export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0, linksCount = 0, testimonialsCount = 0 }: SidebarProps) {
+export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0, linksCount = 0, testimonialsCount = 0, userRole = 'USER' }: SidebarProps) {
   const pathname = usePathname();
   
   const isActive = (path: string) => pathname === path;
@@ -28,7 +29,10 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                         pathname.includes('/dashboard/integrations') ||
                         pathname.includes('/dashboard/trash');
   
+  const isAdminRoute = pathname.includes('/dashboard/admin');
+  
   const [isMobileDesignMenuOpen, setIsMobileDesignMenuOpen] = useState(isDesignRoute);
+  const [isMobileAdminMenuOpen, setIsMobileAdminMenuOpen] = useState(isAdminRoute);
 
   return (
     <div className={`fixed inset-y-0 left-0 z-50 flex transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0 md:relative md:shadow-none'}`}>
@@ -63,6 +67,9 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                   <RailItem href="/dashboard/profile" icon="fas fa-user-circle" label="Profil" active={isActive('/dashboard/profile')} />
                   <RailItem href="/support" icon="fas fa-headset" label="Bantuan" active={isActive('/support')} />
                   <RailItem href="/dashboard/settings" icon="fas fa-cog" label="Settings" active={isActive('/dashboard/settings')} />
+                  {userRole === 'ADMIN' && (
+                    <RailItem href="/dashboard/admin/architecture" icon="fas fa-laptop-code" label="Dev Hub" active={isAdminRoute} />
+                  )}
                </>
             )}
           </nav>
@@ -84,9 +91,9 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
           </div>
         </aside>
 
-        {/* SECONDARY SIDEBAR (KHUSUS UNTUK DESAIN) */}
+        {/* SECONDARY SIDEBAR (KHUSUS UNTUK DESAIN & ADMIN) */}
         <aside className={`bg-white border-r border-slate-100 flex flex-col h-full flex-shrink-0 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden z-10
-          ${isDesignRoute ? 'w-[240px] opacity-100 border-r' : 'w-0 opacity-0 border-r-0'}
+          ${isDesignRoute || isAdminRoute ? 'w-[240px] opacity-100 border-r' : 'w-0 opacity-0 border-r-0'}
         `}>
           {isDesignRoute && (
              <div className="flex flex-col h-full w-[240px]">
@@ -97,10 +104,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                      <div className="w-32 h-5 skeleton-premium rounded-md"></div>
                    </>
                  ) : (
-                   <>
-                     <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Sub Menu</p>
-                     <h2 className="font-extrabold text-[15px] text-slate-900 tracking-tight">Desain Portofolio</h2>
-                   </>
+                   <h2 className="font-semibold text-[15px] text-slate-900 tracking-tight">Desain Portofolio</h2>
                  )}
                </div>
                
@@ -157,6 +161,45 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                    </div>
                  )}
                </div>
+             </div>
+          )}
+
+          {isAdminRoute && (
+             <div className="flex flex-col h-full w-[240px]">
+               <div className="h-[88px] shrink-0 flex flex-col justify-center px-6">
+                 {isLoading ? (
+                   <>
+                     <div className="w-16 h-3 skeleton-premium rounded-md mb-2"></div>
+                     <div className="w-32 h-5 skeleton-premium rounded-md"></div>
+                   </>
+                 ) : (
+                   <h2 className="font-semibold text-[15px] text-violet-700 tracking-tight flex items-center gap-2">
+                     <i className="fas fa-terminal"></i> Developer Hub
+                   </h2>
+                 )}
+               </div>
+               
+               <nav className="flex-1 py-2 px-3 space-y-1 overflow-y-auto hide-scrollbar">
+                 {isLoading ? (
+                   <div className="flex flex-col gap-2">
+                     {[1, 2, 3].map(i => <div key={i} className="w-full h-11 skeleton-premium rounded-xl"></div>)}
+                   </div>
+                 ) : (
+                   <>
+                     <div className="mb-4 space-y-0.5">
+                       <p className="px-3 text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Architecture</p>
+                       <SecondaryNavItem href="/dashboard/admin/architecture" icon="fas fa-sitemap" label="TDD Plan" active={isActive('/dashboard/admin/architecture')} />
+                     </div>
+
+                     <div className="mb-4 space-y-0.5">
+                       <p className="px-3 text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Maintenance</p>
+                       <SecondaryNavItem href="/dashboard/admin/ideas" icon="fas fa-lightbulb" label="Feature Backlog" active={isActive('/dashboard/admin/ideas')} />
+                       <SecondaryNavItem href="/dashboard/admin/errors" icon="fas fa-bug" label="System Logs" active={isActive('/dashboard/admin/errors')} />
+                       <SecondaryNavItem href="/dashboard/admin/features" icon="fas fa-toggle-on" label="Feature Flags" active={isActive('/dashboard/admin/features')} />
+                     </div>
+                   </>
+                 )}
+               </nav>
              </div>
           )}
         </aside>
@@ -224,6 +267,27 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                 <MobileNavItem href="/dashboard/profile" icon="fas fa-user-circle" label="Profil & Bio" active={isActive('/dashboard/profile')} />
                 <MobileNavItem href="/support" icon="fas fa-headset" label="Bantuan" active={isActive('/support')} />
                 <MobileNavItem href="/dashboard/settings" icon="fas fa-cog" label="Settings" active={isActive('/dashboard/settings')} />
+                
+                {/* Menu Admin (Dengan Submenu Accordion) */}
+                {userRole === 'ADMIN' && (
+                  <div className="pt-2">
+                    <button onClick={() => setIsMobileAdminMenuOpen(!isMobileAdminMenuOpen)} className={`w-full flex items-center transition-all duration-300 group py-3.5 rounded-2xl px-4 justify-between ${isAdminRoute ? 'text-violet-700' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
+                      <div className="flex items-center gap-4">
+                        <i className={`fas fa-laptop-code text-center text-lg w-6 ${isAdminRoute ? 'text-violet-700' : 'text-slate-400 group-hover:text-slate-600'}`}></i> 
+                        <span className="font-extrabold text-[13px] tracking-wide">Developer Hub</span>
+                      </div>
+                      <i className={`fas fa-chevron-down text-[10px] text-slate-400 transition-transform duration-300 ${isMobileAdminMenuOpen ? 'rotate-180' : ''}`}></i>
+                    </button>
+
+                    {/* Submenu Inline (Accordion) */}
+                    <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${isMobileAdminMenuOpen ? 'max-h-60 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 pointer-events-none'}`}>
+                      <MobileSubNavItem href="/dashboard/admin/architecture" label="TDD Plan" active={isActive('/dashboard/admin/architecture')} />
+                      <MobileSubNavItem href="/dashboard/admin/ideas" label="Feature Backlog" active={isActive('/dashboard/admin/ideas')} />
+                      <MobileSubNavItem href="/dashboard/admin/errors" label="System Logs" active={isActive('/dashboard/admin/errors')} />
+                      <MobileSubNavItem href="/dashboard/admin/features" label="Feature Flags" active={isActive('/dashboard/admin/features')} />
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </nav>

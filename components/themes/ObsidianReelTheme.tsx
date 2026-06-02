@@ -179,18 +179,18 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                         
                         <div className="hidden md:flex items-center gap-8 text-sm text-gray-300">
                             <a href="#work" className="hover-accent transition-colors">
-                                <EditableText value={theme?.customTexts?.nav_work || 'Work'} field="nav_work" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
+                                <EditableText value={theme?.customTexts?.obs_nav_work || 'Work'} field="obs_nav_work" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
                             </a>
                             <a href="#about" className="hover-accent transition-colors">
-                                <EditableText value={theme?.customTexts?.nav_about || 'Studio'} field="nav_about" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
+                                <EditableText value={theme?.customTexts?.obs_nav_about || 'Studio'} field="obs_nav_about" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
                             </a>
                             <a href="#services" className="hover-accent transition-colors">
-                                <EditableText value={theme?.customTexts?.nav_services || 'Services'} field="nav_services" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
+                                <EditableText value={theme?.customTexts?.obs_nav_services || 'Services'} field="obs_nav_services" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
                             </a>
                         </div>
 
                         <a href="#contact" className={`hidden md:flex items-center gap-2 border border-[rgba(255,255,255,0.1)] ${btnShape} px-5 py-2 text-sm transition-colors duration-300 text-white obsidian-btn-outline`}>
-                            <EditableText value={theme?.customTexts?.nav_cta || "Let's Talk"} field="nav_cta" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
+                            <EditableText value={theme?.customTexts?.obs_nav_cta || "Let's Talk"} field="obs_nav_cta" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
                         </a>
 
                         <button className="md:hidden text-white text-2xl hover-accent" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -216,18 +216,18 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                                 <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
                             </motion.div>
                             <motion.h1 variants={revealVariants} className="font-heading text-5xl sm:text-6xl md:text-8xl font-medium tracking-tight leading-[1.05] mb-8">
-                                <EditableText value={theme?.customTexts?.hero_title || 'Visual storytelling that leaves a mark.'} field="hero_title" entity="appearance" isEditor={isEditor} as="span" maxLength={60} />
+                                <EditableText value={theme?.customTexts?.obs_hero_title || 'Visual storytelling that leaves a mark.'} field="obs_hero_title" entity="appearance" isEditor={isEditor} as="span" maxLength={60} />
                             </motion.h1>
                             <motion.p variants={revealVariants} className="font-body text-[#8a8a93] text-lg md:text-xl max-w-2xl leading-relaxed mb-10">
                                 <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={150} />
                             </motion.p>
                             <motion.div variants={revealVariants} className="flex flex-wrap items-center gap-4">
                                 <a href="#work" className={`obsidian-btn-primary px-8 py-4 ${btnShape} font-medium transition-all`}>
-                                    <EditableText value={theme?.customTexts?.hero_cta1 || 'Explore Works'} field="hero_cta1" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                    <EditableText value={theme?.customTexts?.obs_hero_cta1 || 'Explore Works'} field="obs_hero_cta1" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                                 </a>
                                 <button onClick={() => setSelectedMedia({ url: heroMediaUrl, title: heroMediaTitle, type: heroMediaType as any })} className={`flex items-center gap-2 border border-[rgba(255,255,255,0.1)] px-8 py-4 ${btnShape} transition-colors duration-300 obsidian-btn-outline`}>
                                     <i className="fas fa-play-circle text-xl"></i> 
-                                    <EditableText value={theme?.customTexts?.hero_cta2 || 'Play Showreel'} field="hero_cta2" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                    <EditableText value={theme?.customTexts?.obs_hero_cta2 || 'Play Showreel'} field="obs_hero_cta2" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                                 </button>
                             </motion.div>
                         </motion.div>
@@ -249,12 +249,12 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-24">
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="md:col-span-5">
                                 <h2 className="font-heading text-3xl md:text-4xl font-medium mb-6">
-                                    <EditableText value={theme?.customTexts?.about_title || 'About our studio'} field="about_title" entity="appearance" isEditor={isEditor} as="span" maxLength={40} />
+                                    <EditableText value={theme?.customTexts?.obs_about_title || 'About our studio'} field="obs_about_title" entity="appearance" isEditor={isEditor} as="span" maxLength={40} />
                                 </h2>
                             </motion.div>
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="md:col-span-7">
                                 <p className="font-heading text-xl md:text-3xl font-light leading-snug text-gray-300">
-                                    <EditableText value={theme?.customTexts?.about_desc || 'Founded by a passionate team of filmmakers, editors, and visual artists, our studio was born from a shared vision. With years of experience and a diverse portfolio, we have established ourselves as a leading force in the world of video production.'} field="about_desc" entity="appearance" isEditor={isEditor} as="span" maxLength={300} />
+                                    <EditableText value={theme?.customTexts?.obs_about_desc || 'Founded by a passionate team of filmmakers, editors, and visual artists, our studio was born from a shared vision. With years of experience and a diverse portfolio, we have established ourselves as a leading force in the world of video production.'} field="obs_about_desc" entity="appearance" isEditor={isEditor} as="span" maxLength={300} />
                                 </p>
                             </motion.div>
                         </div>
@@ -263,28 +263,28 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={staggerReveal} viewport={{ once: true, amount: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 border-t border-[rgba(255,255,255,0.1)] pt-16">
                             <motion.div variants={revealVariants}>
                                 <h3 className="font-heading text-5xl md:text-6xl font-medium mb-3">
-                                    <EditableText value={theme?.customTexts?.stat_1_val || '14'} field="stat_1_val" entity="appearance" isEditor={isEditor} as="span" maxLength={10} />
+                                    <EditableText value={theme?.customTexts?.obs_stat_1_val || '14'} field="obs_stat_1_val" entity="appearance" isEditor={isEditor} as="span" maxLength={10} />
                                 </h3>
                                 <p className="font-body text-sm text-[#8a8a93] uppercase tracking-widest">
-                                    <EditableText value={theme?.customTexts?.stat_1_label || 'Years of experience'} field="stat_1_label" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                    <EditableText value={theme?.customTexts?.obs_stat_1_label || 'Years of experience'} field="obs_stat_1_label" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                                 </p>
                             </motion.div>
                             
                             <motion.div variants={revealVariants}>
                                 <h3 className="font-heading text-5xl md:text-6xl font-medium mb-3">
-                                    <EditableText value={theme?.customTexts?.stat_2_val || '80+'} field="stat_2_val" entity="appearance" isEditor={isEditor} as="span" maxLength={10} />
+                                    <EditableText value={theme?.customTexts?.obs_stat_2_val || '80+'} field="obs_stat_2_val" entity="appearance" isEditor={isEditor} as="span" maxLength={10} />
                                 </h3>
                                 <p className="font-body text-sm text-[#8a8a93] uppercase tracking-widest">
-                                    <EditableText value={theme?.customTexts?.stat_2_label || 'Projects done'} field="stat_2_label" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                    <EditableText value={theme?.customTexts?.obs_stat_2_label || 'Projects done'} field="obs_stat_2_label" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                                 </p>
                             </motion.div>
                             
                             <motion.div variants={revealVariants}>
                                 <h3 className="font-heading text-5xl md:text-6xl font-medium mb-3">
-                                    <EditableText value={theme?.customTexts?.stat_3_val || '280+'} field="stat_3_val" entity="appearance" isEditor={isEditor} as="span" maxLength={10} />
+                                    <EditableText value={theme?.customTexts?.obs_stat_3_val || '280+'} field="obs_stat_3_val" entity="appearance" isEditor={isEditor} as="span" maxLength={10} />
                                 </h3>
                                 <p className="font-body text-sm text-[#8a8a93] uppercase tracking-widest">
-                                    <EditableText value={theme?.customTexts?.stat_3_label || 'Satisfied clients'} field="stat_3_label" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                    <EditableText value={theme?.customTexts?.obs_stat_3_label || 'Satisfied clients'} field="obs_stat_3_label" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                                 </p>
                             </motion.div>
                             
@@ -293,7 +293,7 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                                     {awardItems.length}
                                 </h3>
                                 <p className="font-body text-sm text-[#8a8a93] uppercase tracking-widest">
-                                    <EditableText value={theme?.customTexts?.awards_title || 'Awards'} field="awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                    <EditableText value={theme?.customTexts?.obs_awards_title || 'Awards'} field="obs_awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                                 </p>
                             </motion.div>
                         </motion.div>
@@ -307,10 +307,10 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="md:col-span-4">
                                 <div className="sticky top-32">
                                     <span className="font-body text-sm text-[#8a8a93] uppercase tracking-widest mb-4 block">
-                                        <EditableText value={theme?.customTexts?.services_label || 'What we do'} field="services_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                        <EditableText value={theme?.customTexts?.obs_services_label || 'What we do'} field="obs_services_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                                     </span>
                                     <h2 className="font-heading text-4xl md:text-5xl font-medium">
-                                        <EditableText value={theme?.customTexts?.services_title || 'Our Services'} field="services_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                        <EditableText value={theme?.customTexts?.obs_services_title || 'Our Services'} field="obs_services_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                                     </h2>
                                 </div>
                             </motion.div>
@@ -341,14 +341,14 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="flex flex-col md:flex-row md:items-end justify-between mb-16">
                             <div>
                                 <span className="font-body text-sm text-[#8a8a93] uppercase tracking-widest mb-4 block">
-                                    <EditableText value={theme?.customTexts?.portfolio_label || 'Portfolio'} field="portfolio_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                    <EditableText value={theme?.customTexts?.obs_portfolio_label || 'Portfolio'} field="obs_portfolio_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                                 </span>
                                 <h2 className="font-heading text-4xl md:text-5xl font-medium">
-                                    <EditableText value={theme?.customTexts?.portfolio_title || 'Selected Works'} field="portfolio_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                    <EditableText value={theme?.customTexts?.obs_portfolio_title || 'Selected Works'} field="obs_portfolio_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                                 </h2>
                             </div>
                             <Link href={`/${subdomain}/gallery`} className="hidden md:block font-body text-sm hover:underline mt-4 md:mt-0 text-gray-300 hover-accent">
-                                <EditableText value={theme?.customTexts?.portfolio_view_all || 'View all projects'} field="portfolio_view_all" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                <EditableText value={theme?.customTexts?.obs_portfolio_view_all || 'View all projects'} field="obs_portfolio_view_all" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                             </Link>
                         </motion.div>
 
@@ -389,7 +389,7 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="mt-16 flex justify-center">
                             <Link href={`/${subdomain}/gallery`} scroll={false} className={`group flex items-center gap-4 px-8 py-4 border border-[rgba(255,255,255,0.1)] ${btnShape} obsidian-btn-outline transition-all duration-300`}>
                                 <span className="font-heading font-medium text-lg">
-                                    <EditableText value={theme?.customTexts?.explore_archive || 'Explore Gallery'} field="explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                                    <EditableText value={theme?.customTexts?.obs_explore_archive || 'Explore Gallery'} field="obs_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                                 </span>
                                 <i className="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
                             </Link>
@@ -404,10 +404,10 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="flex flex-col md:flex-row justify-between md:items-end mb-16">
                                 <div>
                                     <span className="font-body text-sm text-[#8a8a93] uppercase tracking-widest mb-4 block">
-                                        <EditableText value={theme?.customTexts?.obsidian_3d_label || 'Immersive'} field="obsidian_3d_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                        <EditableText value={theme?.customTexts?.obs_obsidian_3d_label || 'Immersive'} field="obs_obsidian_3d_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                                     </span>
                                     <h2 className="font-heading text-4xl md:text-5xl font-medium">
-                                        <EditableText value={theme?.customTexts?.obsidian_3d_title || '3D Models'} field="obsidian_3d_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                        <EditableText value={theme?.customTexts?.obs_obsidian_3d_title || '3D Models'} field="obs_obsidian_3d_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                                     </h2>
                                 </div>
                                 <span className="text-[#8a8a93] font-medium hidden md:block group">
@@ -431,7 +431,7 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                                             </div>
                                             <span className="font-sans text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#8a8a93] border border-white/10 px-4 py-2 rounded-full flex items-center gap-2">
                                                 <i className="fas fa-cube"></i>
-                                                <EditableText value={theme?.customTexts?.obsidian_3d_badge || '3D Asset'} field="obsidian_3d_badge" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
+                                                <EditableText value={theme?.customTexts?.obs_obsidian_3d_badge || '3D Asset'} field="obs_obsidian_3d_badge" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
                                             </span>
                                         </div>
                                     </motion.div>
@@ -458,10 +458,10 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                         <div className="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="md:col-span-4">
                                 <span className="font-body text-sm text-[#8a8a93] uppercase tracking-widest mb-4 block">
-                                    <EditableText value={theme?.customTexts?.awards_label || 'Recognition'} field="awards_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                    <EditableText value={theme?.customTexts?.obs_awards_label || 'Recognition'} field="obs_awards_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                                 </span>
                                 <h2 className="font-heading text-4xl md:text-5xl font-medium">
-                                    <EditableText value={theme?.customTexts?.awards_title || 'Awards'} field="awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                    <EditableText value={theme?.customTexts?.obs_awards_title || 'Awards'} field="obs_awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                                 </h2>
                             </motion.div>
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={staggerReveal} viewport={{ once: true, amount: 0 }} className="md:col-span-8">
@@ -482,10 +482,10 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                         <div className="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="md:col-span-4">
                                 <span className="font-body text-sm text-[#8a8a93] uppercase tracking-widest mb-4 block">
-                                    <EditableText value={theme?.customTexts?.testimonials_label || 'Voices'} field="testimonials_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                    <EditableText value={theme?.customTexts?.obs_testimonials_label || 'Voices'} field="obs_testimonials_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                                 </span>
                                 <h2 className="font-heading text-4xl md:text-5xl font-medium">
-                                    <EditableText value={theme?.customTexts?.testimonials_title || 'Client Feedback'} field="testimonials_title" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                    <EditableText value={theme?.customTexts?.obs_testimonials_title || 'Client Feedback'} field="obs_testimonials_title" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                                 </h2>
                             </motion.div>
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={staggerReveal} viewport={{ once: true, amount: 0 }} className="md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -520,13 +520,13 @@ export default function ObsidianReelTheme({ data, theme, isMobileView = false, i
                     <div className="max-w-screen-2xl mx-auto">
                         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="text-center mb-32">
                             <h2 className="font-heading text-6xl md:text-[8rem] font-medium tracking-tight mb-8">
-                                <EditableText value={theme?.customTexts?.footer_title || "Let's create."} field="footer_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                                <EditableText value={theme?.customTexts?.obs_footer_title || "Let's create."} field="obs_footer_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                             </h2>
                             <p className="font-body text-[#8a8a93] text-lg mb-10 max-w-xl mx-auto">
-                                <EditableText value={theme?.customTexts?.footer_desc || 'Have an idea in mind? Let us tell your story and leave a lasting impression.'} field="footer_desc" entity="appearance" isEditor={isEditor} as="span" maxLength={100} />
+                                <EditableText value={theme?.customTexts?.obs_footer_desc || 'Have an idea in mind? Let us tell your story and leave a lasting impression.'} field="obs_footer_desc" entity="appearance" isEditor={isEditor} as="span" maxLength={100} />
                             </p>
                             <a href={`mailto:${userEmail}`} className={`inline-block obsidian-btn-primary px-10 py-5 ${btnShape} font-medium text-lg transition-transform hover:scale-105 duration-300`}>
-                                <EditableText value={theme?.customTexts?.footer_btn || 'Get in touch'} field="footer_btn" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                <EditableText value={theme?.customTexts?.obs_footer_btn || 'Get in touch'} field="obs_footer_btn" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                             </a>
                         </motion.div>
 

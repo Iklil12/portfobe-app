@@ -17,34 +17,13 @@ import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
-// Komponen Scramble Text
+// Komponen Scramble Text (Vibration removed based on user feedback)
 const ScrambleText = ({ text, isHovered }: { text: string, isHovered?: boolean }) => {
-    const [displayText, setDisplayText] = useState(text);
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    useEffect(() => {
-        if (!isHovered) {
-            setDisplayText(text);
-            return;
-        }
-        
-        let iterations = 0;
-        const interval = setInterval(() => {
-            setDisplayText(prev => 
-                prev.split("").map((letter, index) => {
-                    if(index < iterations) return text[index];
-                    return letters[Math.floor(Math.random() * 26)];
-                }).join("")
-            );
-            
-            if(iterations >= text.length) clearInterval(interval);
-            iterations += 1 / 3;
-        }, 30);
-
-        return () => clearInterval(interval);
-    }, [isHovered, text]);
-
-    return <span>{displayText}</span>;
+    return (
+        <span className="relative inline-flex items-center justify-center whitespace-nowrap">
+            {text}
+        </span>
+    );
 };
 
 // Komponen Scroll Block untuk mendeteksi perubahan panel kiri
@@ -92,7 +71,7 @@ export default function SplitScreenStudioTheme({ data, theme, isMobileView = fal
     const isPreviewRoute = pathname?.includes('/preview/');
 
     const [currentTime, setCurrentTime] = useState("00:00:00");
-    const [cursorHovered, setCursorHovered] = useState(false);
+    const [cursorHovered, setCursorHovered] = useState<boolean | string>(false);
     
     // Performance Optimized Cursor
     const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
@@ -304,9 +283,9 @@ export default function SplitScreenStudioTheme({ data, theme, isMobileView = fal
                     </div>
                     <a href={`mailto:${userEmail}`} 
                        className="cursor-hover-target font-display text-lg hover:italic transition-all uppercase tracking-wider hidden md:block"
-                       onMouseEnter={() => setCursorHovered(true)} onMouseLeave={() => setCursorHovered(false)}
+                       onMouseEnter={() => setCursorHovered('talk')} onMouseLeave={() => setCursorHovered(false)}
                     >
-                        <ScrambleText text="LET'S TALK" isHovered={cursorHovered} /> <i className="ph ph-arrow-down-right inline-block ml-1"></i>
+                        <ScrambleText text="LET'S TALK" isHovered={cursorHovered === 'talk'} /> <i className="ph ph-arrow-down-right inline-block ml-1"></i>
                     </a>
                 </div>
             </section>
@@ -393,8 +372,8 @@ export default function SplitScreenStudioTheme({ data, theme, isMobileView = fal
                             ) : (
                                 <Link href={isPreviewRoute ? `/preview/${subdomain}/gallery` : `/${subdomain}/gallery`}
                                       className="cursor-hover-target flex items-center justify-center px-8 py-4 rounded-full border border-white/20 hover:bg-white hover:text-black transition-colors duration-300 font-display uppercase tracking-widest text-xs font-bold"
-                                      onMouseEnter={() => setCursorHovered(true)} onMouseLeave={() => setCursorHovered(false)}>
-                                    <ScrambleText text="EXPLORE FULL GALLERY" isHovered={cursorHovered} />
+                                      onMouseEnter={() => setCursorHovered('gallery')} onMouseLeave={() => setCursorHovered(false)}>
+                                    <ScrambleText text="EXPLORE FULL GALLERY" isHovered={cursorHovered === 'gallery'} />
                                 </Link>
                             )}
                         </div>
@@ -514,16 +493,16 @@ export default function SplitScreenStudioTheme({ data, theme, isMobileView = fal
                             <div className="flex flex-wrap gap-4 mt-8">
                                 <a href={`mailto:${userEmail}`} 
                                    className="cursor-hover-target flex items-center justify-center px-8 py-4 rounded-full border border-white/20 hover:bg-white hover:text-black transition-colors duration-300 font-display uppercase tracking-widest text-xs font-bold"
-                                   onMouseEnter={() => setCursorHovered(true)} onMouseLeave={() => setCursorHovered(false)}
+                                   onMouseEnter={() => setCursorHovered('email')} onMouseLeave={() => setCursorHovered(false)}
                                 >
-                                    <ScrambleText text="EMAIL US" isHovered={cursorHovered} />
+                                    <ScrambleText text="EMAIL US" isHovered={cursorHovered === 'email'} />
                                 </a>
                                 {links.map((l: any, i: number) => (
                                     <a key={i} href={l.url} target="_blank" rel="noreferrer" 
                                        className="cursor-hover-target flex items-center justify-center px-8 py-4 rounded-full border border-white/20 hover:bg-white hover:text-black transition-colors duration-300 font-display uppercase tracking-widest text-xs font-bold"
-                                       onMouseEnter={() => setCursorHovered(true)} onMouseLeave={() => setCursorHovered(false)}
+                                       onMouseEnter={() => setCursorHovered(`link_${i}`)} onMouseLeave={() => setCursorHovered(false)}
                                     >
-                                        {l.platform}
+                                        <ScrambleText text={l.platform} isHovered={cursorHovered === `link_${i}`} />
                                     </a>
                                 ))}
                             </div>

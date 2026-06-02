@@ -252,20 +252,20 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
           <div className="grid grid-cols-2 border-b border-gray-200">
             <motion.div variants={cinematicBlurUp} className="p-8 border-r border-gray-200 flex flex-col justify-center">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2 min-heading">
-                <EditableText value={theme?.customTexts?.stats_projects || 'Projects'} field="stats_projects" entity="appearance" isEditor={isEditor} maxLength={15} className="min-heading" />
+                <EditableText value={theme?.customTexts?.min_stats_projects || 'Projects'} field="min_stats_projects" entity="appearance" isEditor={isEditor} maxLength={15} className="min-heading" />
               </p>
               <motion.p className={`text-3xl @md:text-4xl font-black tracking-tighter min-heading flex items-center gap-2`}>
                 <span className="min-heading">{(data?.projects || data?.user?.projects || []).length}</span>
-                <EditableText value={theme?.customTexts?.stats_total || 'Total'} field="stats_total" entity="appearance" isEditor={isEditor} maxLength={15} className="min-heading" />
+                <EditableText value={theme?.customTexts?.min_stats_total || 'Total'} field="min_stats_total" entity="appearance" isEditor={isEditor} maxLength={15} className="min-heading" />
               </motion.p>
             </motion.div>
             <motion.div variants={cinematicBlurUp} className="p-8 flex flex-col justify-center">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2 min-heading">
-                <EditableText value={theme?.customTexts?.stats_recognition || 'Recognition'} field="stats_recognition" entity="appearance" isEditor={isEditor} maxLength={15} className="min-heading" />
+                <EditableText value={theme?.customTexts?.min_stats_recognition || 'Recognition'} field="min_stats_recognition" entity="appearance" isEditor={isEditor} maxLength={15} className="min-heading" />
               </p>
               <motion.p className={`text-3xl @md:text-4xl font-black tracking-tighter min-heading flex items-center gap-2`}>
                 <span className="min-heading">{awardItems.length}</span>
-                <EditableText value={theme?.customTexts?.stats_awards || 'Awards'} field="stats_awards" entity="appearance" isEditor={isEditor} maxLength={15} className="min-heading" />
+                <EditableText value={theme?.customTexts?.min_stats_awards || 'Awards'} field="min_stats_awards" entity="appearance" isEditor={isEditor} maxLength={15} className="min-heading" />
               </motion.p>
             </motion.div>
           </div>
@@ -279,10 +279,10 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
             className="flex justify-between items-end mb-10 border-b border-gray-100 pb-6"
           >
             <h2 className="text-2xl font-black uppercase tracking-tighter min-heading">
-              <EditableText value={theme?.customTexts?.projects_title || 'Selected Index'} field="projects_title" entity="appearance" isEditor={isEditor} maxLength={25} className="min-heading" />
+              <EditableText value={theme?.customTexts?.min_projects_title || 'Selected Index'} field="min_projects_title" entity="appearance" isEditor={isEditor} maxLength={25} className="min-heading" />
             </h2>
             <span className="text-[10px] font-mono text-gray-400 uppercase min-heading">
-              <EditableText value={theme?.customTexts?.projects_subtitle || 'Archive'} field="projects_subtitle" entity="appearance" isEditor={isEditor} maxLength={15} className="min-heading" />
+              <EditableText value={theme?.customTexts?.min_projects_subtitle || 'Archive'} field="min_projects_subtitle" entity="appearance" isEditor={isEditor} maxLength={15} className="min-heading" />
             </span>
           </motion.div>
 
@@ -343,7 +343,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
           >
             <Link href={`/${subdomain}/gallery`} scroll={false} className="group inline-flex items-center gap-4 @md:gap-6 no-underline p-2">
               <span className="text-[10px] @md:text-xs font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500 relative min-heading">
-                <EditableText value={theme?.customTexts?.explore_archive || 'EXPLORE ARCHIVE'} field="explore_archive" entity="appearance" isEditor={isEditor} maxLength={20} as="span" className="min-heading" />
+                <EditableText value={theme?.customTexts?.min_explore_archive || 'EXPLORE ARCHIVE'} field="min_explore_archive" entity="appearance" isEditor={isEditor} maxLength={20} as="span" className="min-heading" />
                 <span className="absolute -bottom-2 left-0 w-0 h-px bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
               </span>
               <div className={`w-10 h-10 @md:w-12 @md:h-12 border border-gray-200 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-black group-hover:border-black shadow-sm group-hover:shadow-md overflow-hidden relative ${radiusClass}`}>
@@ -400,15 +400,16 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
         <GithubStats userId={data?.userId || data?.user?.id || data?.id || ""} variant="minimalist" themeColor={themeColor} />
 
         {/* AWARDS SECTION */}
+        {awardItems.length > 0 && (
         <section className="border-t border-gray-200 bg-gray-50/30 overflow-hidden">
           <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={cinematicBlurUp} custom={0.2} className={`p-8 @lg:p-12 pb-6`}>
             <h2 className="text-2xl font-black uppercase tracking-tighter min-heading">
-              <EditableText value={theme?.customTexts?.awards_title || 'Honors & Awards'} field="awards_title" entity="appearance" isEditor={isEditor} maxLength={25} className="min-heading" />
+              <EditableText value={theme?.customTexts?.min_awards_title || 'Honors & Awards'} field="min_awards_title" entity="appearance" isEditor={isEditor} maxLength={25} className="min-heading" />
             </h2>
           </motion.div>
 
           <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={getStaggerContainer(0.4, 0.2)} className="border-t border-gray-200">
-            {awardItems.length > 0 ? awardItems.map((award: any, i: number) => {
+            {awardItems.map((award: any, i: number) => {
               const isOpen = openAward === award.id;
               return (
                 <motion.div variants={cinematicBlurUp} key={i} className="border-b border-gray-200 group">
@@ -436,7 +437,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
                             <p className="text-xs text-gray-600 max-w-md leading-relaxed mb-6 opacity-90 min-body">{award.description || 'Awarded for exceptional performance and dedication in the respective field.'}</p>
 
                             <a href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-black hover:text-gray-500 transition-colors w-max relative group/btn min-heading">
-                              <EditableText value={theme?.customTexts?.awards_view || 'Lihat Lampiran'} field="awards_view" entity="appearance" isEditor={isEditor} maxLength={20} as="span" className="min-heading" /> 
+                              <EditableText value={theme?.customTexts?.min_awards_view || 'Lihat Lampiran'} field="min_awards_view" entity="appearance" isEditor={isEditor} maxLength={20} as="span" className="min-heading" /> 
                               <i className="fas fa-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
                               <span className="absolute bottom-[-4px] left-0 w-0 h-px bg-black transition-all duration-300 group-hover/btn:w-full"></span>
                             </a>
@@ -447,13 +448,10 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
                   </AnimatePresence>
                 </motion.div>
               );
-            }) : (
-              <div className="px-8 py-10 text-gray-400 text-sm font-mono border-b border-gray-200 text-center">
-                <EditableText value={theme?.customTexts?.awards_empty || 'No awards recorded.'} field="awards_empty" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
-              </div>
-            )}
+            })}
           </motion.div>
         </section>
+        )}
 
         {/* TESTIMONIALS SECTION */}
         {testimonials.length > 0 && (
@@ -467,7 +465,7 @@ export default function MinimalistTheme({ data, theme, isMobileView = false, isC
         {/* FOOTER */}
         <motion.footer initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={cinematicBlurUp} custom={0.2} className={`p-8 text-center flex gap-4 bg-gray-100 border-t border-gray-200 min-body flex-col @md:flex-row @md:text-left justify-between @lg:p-12`}>
           <p className="text-[10px] font-mono text-gray-500">
-            © {new Date().getFullYear()} {fullName}. <EditableText value={theme?.customTexts?.footer_rights || 'All Rights Reserved.'} field="footer_rights" entity="appearance" isEditor={isEditor} maxLength={30} as="span" className="min-body" />
+            © {new Date().getFullYear()} {fullName}. <EditableText value={theme?.customTexts?.min_footer_rights || 'All Rights Reserved.'} field="min_footer_rights" entity="appearance" isEditor={isEditor} maxLength={30} as="span" className="min-body" />
           </p>
           <span className="text-[10px] font-bold uppercase tracking-widest text-black min-heading">portfo.be/{subdomain}</span>
         </motion.footer>

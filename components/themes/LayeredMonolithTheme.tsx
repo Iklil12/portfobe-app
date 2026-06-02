@@ -12,6 +12,10 @@ import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { EditableText } from '@/components/ui/EditableText';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
+import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
+import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
@@ -58,6 +62,7 @@ export default function LayeredMonolithTheme({ data, theme, isMobileView = false
     
     const allProjects = data?.projects || data?.user?.projects || [];
     const featuredProjects = allProjects.filter((p: any) => p.projectType?.toLowerCase() !== '3d').slice(0, 4);
+    const items3D = allProjects.filter((p: any) => p.projectType?.toLowerCase() === '3d');
     const awardItems = data?.certificates || data?.user?.certificates || [];
     const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
@@ -471,6 +476,41 @@ export default function LayeredMonolithTheme({ data, theme, isMobileView = false
                 </div>
 
                 <div id="nav-expertise" className="w-full h-0 pointer-events-none invisible"></div>
+                
+                {/* 3D CARD */}
+                {items3D.length > 0 && (
+                <section className="stack-card bg-black text-white p-8 md:p-16 flex flex-col justify-center" style={{ zIndex: 50 }}>
+                    <div className="noise mix-blend-overlay opacity-10"></div>
+                    <div className="w-full max-w-6xl mx-auto relative z-10 flex flex-col h-full justify-center">
+                        <p className="font-display text-xs tracking-[0.3em] uppercase opacity-50 border-l border-brand-accent pl-4 mb-8">
+                            <EditableText value={theme?.customTexts?.lm_3d_label || '3D Experience'} field="lm_3d_label" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                            {items3D.map((p: any, i: number) => (
+                            <div key={i} className="group rounded-2xl overflow-hidden relative border border-white/10 bg-[#111]">
+                                <div className="w-full h-80 relative">
+                                    <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#111" />
+                                </div>
+                                <div className="p-6">
+                                    <h3 className="font-display font-bold uppercase tracking-tight text-xl">{p.title}</h3>
+                                </div>
+                            </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+                )}
+
+                {/* WIDGETS CARD */}
+                <section className="stack-card bg-[#111] text-white p-8 md:p-16 flex flex-col overflow-y-auto" style={{ zIndex: 55 }}>
+                    <div className="noise mix-blend-overlay opacity-10"></div>
+                    <div className="w-full max-w-6xl mx-auto relative z-10 pb-20">
+                        <GithubStats userId={data?.userId || data?.user?.id || data?.id || ""} variant="layered-monolith" />
+                        <CanvaShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="layered-monolith" />
+                        <PenpotShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="layered-monolith" />
+                    </div>
+                </section>
+
                 {/* EXPERTISE CARD */}
                 <section id="expertise" className="stack-card bg-[#1E2328] text-white p-8 md:p-16 flex flex-col justify-center" style={{ zIndex: 60 }}>
                     <div className="noise mix-blend-overlay opacity-10"></div>

@@ -38,6 +38,7 @@ export default function CinematicGalleryTheme({ data, theme, isMobileView = fals
     const items3D = allProjects.filter((p: any) => p.projectType?.toLowerCase() === '3d');
     const featuredProjects = allProjects.filter((p: any) => p.projectType?.toLowerCase() !== '3d').slice(0, 4);
     const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
+    const certificates = data?.certificates || data?.user?.certificates || [];
     const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
     const isSmoothScroll = theme?.customTexts?.smooth_scroll === 'true';
@@ -427,6 +428,23 @@ export default function CinematicGalleryTheme({ data, theme, isMobileView = fals
                             </div>
                         </section>
                     )}
+
+                    {/* PANEL: AWARDS */}
+                    {certificates.length > 0 && (
+                        <section className="panel flex-col items-center justify-center">
+                            <h2 className="font-serif text-3xl md:text-5xl italic mb-12 reveal-on-scroll">Honors</h2>
+                            <div className="flex flex-col md:flex-row gap-6 items-center justify-center flex-wrap max-w-7xl px-4 w-[90vw] md:w-auto h-[60vh] md:h-auto overflow-y-auto hide-scrollbar">
+                                {certificates.map((cert: any, i: number) => (
+                                    <div key={i} className="w-full md:w-[350px] border border-[#f5f5f0]/20 p-8 rounded-lg reveal-on-scroll bg-[#0a0a0a] shrink-0 text-center">
+                                        <p className="font-sans text-[10px] md:text-xs tracking-[0.2em] uppercase text-[#8b8b8b] mb-4">{cert.year || new Date(cert.createdAt).getFullYear()}</p>
+                                        <h3 className="font-sans font-bold uppercase tracking-widest text-sm md:text-base text-[#f5f5f0] mb-2">{cert.title}</h3>
+                                        <p className="font-sans text-[10px] md:text-xs uppercase text-gray-400">{cert.issuer}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+                    
                     {/* CONTACT PANEL */}
                     <section className="panel flex-col items-center justify-center bg-[#f5f5f0] text-[#050505] relative">
                         <div className="text-center w-full relative z-10 px-4">

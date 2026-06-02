@@ -10,6 +10,10 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { EditableText } from '@/components/ui/EditableText';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
+import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
+import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { TestimonialSection } from '@/components/features/testimonials/TestimonialSection';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -28,6 +32,7 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
   const items3D = allProjects.filter((p: any) => p.projectType === '3d');
   
   const awards = data?.certificates || data?.user?.certificates || [];
+  const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
   const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -374,12 +379,12 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
 
               <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-start mt-20">
                   <p className="font-mono text-accent tracking-[0.3em] uppercase text-xs mb-4 slide-up-text">
-                      <EditableText value={theme?.customTexts?.hero_top || 'System / V2.0.26'} field="hero_top" entity="appearance" isEditor={isEditor} as="span" />
+                      <EditableText value={theme?.customTexts?.hf_hero_top || 'System / V2.0.26'} field="hf_hero_top" entity="appearance" isEditor={isEditor} as="span" />
                   </p>
                   <h1 className="font-display text-[12vw] md:text-[8vw] font-bold uppercase leading-[0.85] tracking-tight">
-                      <div className="overflow-hidden"><span className="block slide-up-text"><EditableText value={theme?.customTexts?.hero_t1 || 'Shaping'} field="hero_t1" entity="appearance" isEditor={isEditor} as="span" /></span></div>
-                      <div className="overflow-hidden"><span className="block slide-up-text"><EditableText value={theme?.customTexts?.hero_t2 || 'Digital'} field="hero_t2" entity="appearance" isEditor={isEditor} as="span" /></span></div>
-                      <div className="overflow-hidden"><span className="block slide-up-text text-stroke" data-cursor="EXPLORE"><EditableText value={theme?.customTexts?.hero_t3 || 'Realities'} field="hero_t3" entity="appearance" isEditor={isEditor} as="span" /></span></div>
+                      <div className="overflow-hidden"><span className="block slide-up-text"><EditableText value={theme?.customTexts?.hf_hero_t1 || 'Shaping'} field="hf_hero_t1" entity="appearance" isEditor={isEditor} as="span" /></span></div>
+                      <div className="overflow-hidden"><span className="block slide-up-text"><EditableText value={theme?.customTexts?.hf_hero_t2 || 'Digital'} field="hf_hero_t2" entity="appearance" isEditor={isEditor} as="span" /></span></div>
+                      <div className="overflow-hidden"><span className="block slide-up-text text-stroke" data-cursor="EXPLORE"><EditableText value={theme?.customTexts?.hf_hero_t3 || 'Realities'} field="hf_hero_t3" entity="appearance" isEditor={isEditor} as="span" /></span></div>
                   </h1>
                   
                   <div className="mt-12 flex flex-col md:flex-row justify-between w-full items-start md:items-end gap-8">
@@ -404,10 +409,10 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
           <section className="py-12 md:py-24 border-y border-white/10 bg-surface/30">
               <div className="marquee-wrapper mb-4">
                   <div className="marquee-content font-display text-5xl md:text-7xl font-bold uppercase tracking-tight text-white/5">
-                      <span className="mx-8"><EditableText value={theme?.customTexts?.mq1_1 || 'Awwwards SOTD'} field="mq1_1" entity="appearance" isEditor={isEditor} as="span" /></span>•
-                      <span className="mx-8"><EditableText value={theme?.customTexts?.mq1_2 || 'FWA of the Day'} field="mq1_2" entity="appearance" isEditor={isEditor} as="span" /></span>•
-                      <span className="mx-8"><EditableText value={theme?.customTexts?.mq1_3 || 'Webby Nominee'} field="mq1_3" entity="appearance" isEditor={isEditor} as="span" /></span>•
-                      <span className="mx-8"><EditableText value={theme?.customTexts?.mq1_4 || 'CSSDA Winner'} field="mq1_4" entity="appearance" isEditor={isEditor} as="span" /></span>•
+                      <span className="mx-8"><EditableText value={theme?.customTexts?.hf_mq1_1 || 'Awwwards SOTD'} field="hf_mq1_1" entity="appearance" isEditor={isEditor} as="span" /></span>•
+                      <span className="mx-8"><EditableText value={theme?.customTexts?.hf_mq1_2 || 'FWA of the Day'} field="hf_mq1_2" entity="appearance" isEditor={isEditor} as="span" /></span>•
+                      <span className="mx-8"><EditableText value={theme?.customTexts?.hf_mq1_3 || 'Webby Nominee'} field="hf_mq1_3" entity="appearance" isEditor={isEditor} as="span" /></span>•
+                      <span className="mx-8"><EditableText value={theme?.customTexts?.hf_mq1_4 || 'CSSDA Winner'} field="hf_mq1_4" entity="appearance" isEditor={isEditor} as="span" /></span>•
                       
                       <span className="mx-8">{theme?.customTexts?.mq1_1 || 'Awwwards SOTD'}</span>•
                       <span className="mx-8">{theme?.customTexts?.mq1_2 || 'FWA of the Day'}</span>•
@@ -417,10 +422,10 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
               </div>
               <div className="marquee-wrapper">
                   <div className="marquee-content reverse font-display text-5xl md:text-7xl font-bold uppercase tracking-tight text-white/5">
-                      <span className="mx-8"><EditableText value={theme?.customTexts?.mq2_1 || 'Creative Strategy'} field="mq2_1" entity="appearance" isEditor={isEditor} as="span" /></span>•
-                      <span className="mx-8"><EditableText value={theme?.customTexts?.mq2_2 || 'WebGL Engineering'} field="mq2_2" entity="appearance" isEditor={isEditor} as="span" /></span>•
-                      <span className="mx-8"><EditableText value={theme?.customTexts?.mq2_3 || 'Spatial UX/UI'} field="mq2_3" entity="appearance" isEditor={isEditor} as="span" /></span>•
-                      <span className="mx-8"><EditableText value={theme?.customTexts?.mq2_4 || 'Motion Design'} field="mq2_4" entity="appearance" isEditor={isEditor} as="span" /></span>•
+                      <span className="mx-8"><EditableText value={theme?.customTexts?.hf_mq2_1 || 'Creative Strategy'} field="hf_mq2_1" entity="appearance" isEditor={isEditor} as="span" /></span>•
+                      <span className="mx-8"><EditableText value={theme?.customTexts?.hf_mq2_2 || 'WebGL Engineering'} field="hf_mq2_2" entity="appearance" isEditor={isEditor} as="span" /></span>•
+                      <span className="mx-8"><EditableText value={theme?.customTexts?.hf_mq2_3 || 'Spatial UX/UI'} field="hf_mq2_3" entity="appearance" isEditor={isEditor} as="span" /></span>•
+                      <span className="mx-8"><EditableText value={theme?.customTexts?.hf_mq2_4 || 'Motion Design'} field="hf_mq2_4" entity="appearance" isEditor={isEditor} as="span" /></span>•
                       
                       <span className="mx-8">{theme?.customTexts?.mq2_1 || 'Creative Strategy'}</span>•
                       <span className="mx-8">{theme?.customTexts?.mq2_2 || 'WebGL Engineering'}</span>•
@@ -435,12 +440,12 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
               <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
                   <div className="md:col-span-4">
                       <h2 className="font-mono text-[10px] tracking-[0.3em] uppercase text-textMuted border-l border-accent pl-4">
-                        <EditableText value={theme?.customTexts?.manifesto_label || '01 / The Manifesto'} field="manifesto_label" entity="appearance" isEditor={isEditor} as="span" />
+                        <EditableText value={theme?.customTexts?.hf_manifesto_label || '01 / The Manifesto'} field="hf_manifesto_label" entity="appearance" isEditor={isEditor} as="span" />
                       </h2>
                   </div>
                   <div className="md:col-span-8">
                       <h3 className="font-display text-3xl md:text-5xl font-medium leading-[1.2] tracking-tight reveal-text">
-                          <EditableText value={theme?.customTexts?.manifesto_text || "We don't believe in templates. We believe in bespoke digital architecture. Every project is an opportunity to push the boundaries of physics, interaction, and aesthetics on the web."} field="manifesto_text" entity="appearance" isEditor={isEditor} as="span" />
+                          <EditableText value={theme?.customTexts?.hf_manifesto_text || "We don't believe in templates. We believe in bespoke digital architecture. Every project is an opportunity to push the boundaries of physics, interaction, and aesthetics on the web."} field="hf_manifesto_text" entity="appearance" isEditor={isEditor} as="span" />
                       </h3>
                       
                       <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white/10 pt-8">
@@ -470,10 +475,10 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
               <div className="horizontal-wrapper">
                   <div className="absolute top-0 left-0 w-full p-6 md:p-10 z-10 pointer-events-none flex justify-between items-end h-screen">
                       <h2 className="font-display text-6xl md:text-[8vw] font-bold uppercase tracking-tight opacity-10">
-                        <EditableText value={theme?.customTexts?.archive_title || 'Archive'} field="archive_title" entity="appearance" isEditor={isEditor} as="span" />
+                        <EditableText value={theme?.customTexts?.hf_archive_title || 'Archive'} field="hf_archive_title" entity="appearance" isEditor={isEditor} as="span" />
                       </h2>
                       <div className="font-mono text-xs opacity-50 uppercase tracking-widest mb-4">
-                        <EditableText value={theme?.customTexts?.archive_subtitle || 'Scroll Horizontal →'} field="archive_subtitle" entity="appearance" isEditor={isEditor} as="span" />
+                        <EditableText value={theme?.customTexts?.hf_archive_subtitle || 'Scroll Horizontal →'} field="hf_archive_subtitle" entity="appearance" isEditor={isEditor} as="span" />
                       </div>
                   </div>
                   <div className="horizontal-container">
@@ -526,7 +531,7 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
           {items3D.length > 0 && (
             <section className="py-20 px-6 md:px-10 max-w-7xl mx-auto w-full relative z-20">
               <h2 className="font-mono text-[10px] tracking-[0.3em] uppercase text-textMuted border-l border-accent pl-4 mb-16">
-                 <EditableText value={theme?.customTexts?.showcase3d_label || '3D Space'} field="showcase3d_label" entity="appearance" isEditor={isEditor} as="span" />
+                 <EditableText value={theme?.customTexts?.hf_showcase3d_label || '3D Space'} field="hf_showcase3d_label" entity="appearance" isEditor={isEditor} as="span" />
               </h2>
               
               <div className={`grid grid-cols-1 ${items3D.length > 1 ? 'md:grid-cols-2' : ''} gap-8 w-full`}>
@@ -550,7 +555,7 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
           {/* 06. EXPERTISE (BENTO GRID) */}
           <section className="py-20 px-6 md:px-10 max-w-7xl mx-auto w-full border-t border-white/10 relative z-20">
               <h2 className="font-mono text-[10px] tracking-[0.3em] uppercase text-textMuted border-l border-accent pl-4 mb-16">
-                <EditableText value={theme?.customTexts?.expertise_label || '02 / Expertise'} field="expertise_label" entity="appearance" isEditor={isEditor} as="span" />
+                <EditableText value={theme?.customTexts?.hf_expertise_label || '02 / Expertise'} field="hf_expertise_label" entity="appearance" isEditor={isEditor} as="span" />
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 w-full" style={{ perspective: '1000px' }}>
@@ -560,10 +565,10 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
                       <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <div className="relative z-10 pointer-events-auto" style={{ transform: 'translateZ(30px)' }}>
                         <h3 className="font-display text-4xl md:text-5xl font-medium uppercase tracking-tight mb-4">
-                          <EditableText value={theme?.customTexts?.srv1_title || 'Digital Strategy'} field="srv1_title" entity="appearance" isEditor={isEditor} />
+                          <EditableText value={theme?.customTexts?.hf_srv1_title || 'Digital Strategy'} field="hf_srv1_title" entity="appearance" isEditor={isEditor} />
                         </h3>
                         <p className="font-body text-textMuted max-w-md text-sm md:text-base">
-                          <EditableText value={theme?.customTexts?.srv1_desc || 'Brand positioning, architecture, and user journey mapping designed to elevate your digital presence and drive measurable impact.'} field="srv1_desc" entity="appearance" isEditor={isEditor} />
+                          <EditableText value={theme?.customTexts?.hf_srv1_desc || 'Brand positioning, architecture, and user journey mapping designed to elevate your digital presence and drive measurable impact.'} field="hf_srv1_desc" entity="appearance" isEditor={isEditor} />
                         </p>
                       </div>
                       <div className="relative z-10 mt-12 flex justify-end" style={{ transform: 'translateZ(40px)' }}>
@@ -585,10 +590,10 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
                       <div className="relative z-10 pointer-events-auto" style={{ transform: 'translateZ(30px)' }}>
                           <span className="px-3 py-1 text-[10px] font-mono tracking-widest uppercase bg-white/10 backdrop-blur-md rounded-full border border-white/20 mb-4 inline-block text-white">Focus</span>
                           <h3 className="font-display text-3xl md:text-4xl font-medium uppercase tracking-tight mb-2 text-white">
-                            <EditableText value={theme?.customTexts?.srv2_title || 'Spatial UI/UX'} field="srv2_title" entity="appearance" isEditor={isEditor} />
+                            <EditableText value={theme?.customTexts?.hf_srv2_title || 'Spatial UI/UX'} field="hf_srv2_title" entity="appearance" isEditor={isEditor} />
                           </h3>
                           <p className="font-body text-textMuted text-sm">
-                            <EditableText value={theme?.customTexts?.srv2_desc || 'Designing interfaces that feel tactile, logical, and beautiful.'} field="srv2_desc" entity="appearance" isEditor={isEditor} />
+                            <EditableText value={theme?.customTexts?.hf_srv2_desc || 'Designing interfaces that feel tactile, logical, and beautiful.'} field="hf_srv2_desc" entity="appearance" isEditor={isEditor} />
                           </p>
                       </div>
                   </div>
@@ -599,10 +604,10 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
                       <i className="ph ph-code text-4xl text-textMuted group-hover:text-accent transition-colors duration-300" style={{ transform: 'translateZ(20px)' }}></i>
                       <div className="mt-8 relative z-10 pointer-events-auto" style={{ transform: 'translateZ(30px)' }}>
                          <h3 className="font-display text-2xl font-medium uppercase tracking-tight mb-2">
-                           <EditableText value={theme?.customTexts?.srv3_title || 'Creative Eng'} field="srv3_title" entity="appearance" isEditor={isEditor} />
+                           <EditableText value={theme?.customTexts?.hf_srv3_title || 'Creative Eng'} field="hf_srv3_title" entity="appearance" isEditor={isEditor} />
                          </h3>
                          <p className="font-body text-textMuted text-xs">
-                           <EditableText value={theme?.customTexts?.srv3_desc || 'WebGL, GSAP, and robust frontend architectures.'} field="srv3_desc" entity="appearance" isEditor={isEditor} />
+                           <EditableText value={theme?.customTexts?.hf_srv3_desc || 'WebGL, GSAP, and robust frontend architectures.'} field="hf_srv3_desc" entity="appearance" isEditor={isEditor} />
                          </p>
                       </div>
                   </div>
@@ -619,10 +624,31 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
               </div>
           </section>
 
+          {/* TESTIMONIALS */}
+          {testimonials.length > 0 && (
+            <section className="py-20 px-6 md:px-10 max-w-7xl mx-auto w-full border-t border-white/10 relative z-20">
+               <h2 className="font-mono text-[10px] tracking-[0.3em] uppercase text-textMuted border-l border-accent pl-4 mb-16">
+                 <EditableText value={theme?.customTexts?.hf_testimonials_label || '0X / Client Words'} field="hf_testimonials_label" entity="appearance" isEditor={isEditor} as="span" />
+               </h2>
+               <div className="bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-4">
+                 <TestimonialSection testimonials={testimonials} variant="grid" isEditor={isEditor} theme={theme} />
+               </div>
+            </section>
+          )}
+
+          {/* OPEN SOURCE & DESIGN WIDGETS */}
+          <div className="horizontal-wrapper !h-auto !overflow-visible border-t border-white/10" style={{ height: 'auto', overflow: 'visible' }}>
+            <div className="flex flex-col @lg:flex-row gap-8 w-full max-w-7xl mx-auto py-20 px-6 md:px-10 overflow-x-auto hide-scrollbar snap-x snap-mandatory">
+              <GithubStats userId={data?.userId || data?.user?.id || data?.id || ""} variant="horizontal-flow" />
+              <CanvaShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="horizontal-flow" />
+              <PenpotShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="horizontal-flow" />
+            </div>
+          </div>
+
           {/* 07. AWARDS */}
           <section className="py-20 px-6 md:px-10 max-w-7xl mx-auto w-full mb-20" id="awards">
               <h2 className="font-mono text-[10px] tracking-[0.3em] uppercase text-textMuted border-l border-accent pl-4 mb-16">
-                 <EditableText value={theme?.customTexts?.recognition_label || '03 / Recognition'} field="recognition_label" entity="appearance" isEditor={isEditor} as="span" />
+                 <EditableText value={theme?.customTexts?.hf_recognition_label || '03 / Recognition'} field="hf_recognition_label" entity="appearance" isEditor={isEditor} as="span" />
               </h2>
               <div className="w-full text-sm font-mono uppercase tracking-widest text-textMuted border-b border-white/20 pb-4 flex justify-between">
                   <span>Award</span>
@@ -656,11 +682,11 @@ export default function HorizontalFlowTheme({ data, theme, isMobileView = false,
           <section id="contact" className="bg-accent text-bg py-20 px-6 md:px-10 relative overflow-hidden flex flex-col justify-between min-h-[80vh]">
               <div className="relative z-10 mt-10">
                   <p className="font-mono text-[10px] font-semibold tracking-[0.3em] uppercase mb-4">
-                     <EditableText value={theme?.customTexts?.contact_label || '04 / Start a project'} field="contact_label" entity="appearance" isEditor={isEditor} as="span" />
+                     <EditableText value={theme?.customTexts?.hf_contact_label || '04 / Start a project'} field="hf_contact_label" entity="appearance" isEditor={isEditor} as="span" />
                   </p>
                   <a href={`mailto:${userEmail}`} className="inline-block group magnetic-btn" data-cursor="SAY HI">
                       <h2 className="font-display text-[14vw] md:text-[11vw] font-bold uppercase leading-[0.8] tracking-tighter">
-                          <EditableText value={theme?.customTexts?.contact_title || "Let's Talk"} field="contact_title" entity="appearance" isEditor={isEditor} as="span" />
+                          <EditableText value={theme?.customTexts?.hf_contact_title || "Let's Talk"} field="hf_contact_title" entity="appearance" isEditor={isEditor} as="span" />
                       </h2>
                       <div className="w-full h-2 bg-bg transform scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100 mt-4"></div>
                   </a>

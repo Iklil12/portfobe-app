@@ -13,6 +13,11 @@ import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { EditableText } from '@/components/ui/EditableText';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { GithubStats } from '@/components/themes/widgets/GithubStats';
+import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
+import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
+import { TestimonialSection } from '@/components/features/testimonials/TestimonialSection';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
@@ -43,6 +48,8 @@ export default function NexusNoirTheme({ data, theme, isMobileView = false, isCa
     
     const experiences = data?.experiences || data?.user?.experiences || [];
     const certificates = data?.certificates || data?.user?.certificates || [];
+    const items3D = allProjects.filter((p: any) => p.projectType?.toLowerCase() === '3d');
+    const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
 
     // TEMA & WARNA
     const accentColor = theme?.themeColor || '#4F46E5'; // Indigo default
@@ -553,6 +560,62 @@ export default function NexusNoirTheme({ data, theme, isMobileView = false, isCa
                     </div>
                 </div>
             </section>
+
+            {/* WIDGETS SECTION */}
+            <div className="w-full bg-[#030303] text-white">
+                <GithubStats userId={data?.userId || data?.user?.id || data?.id || ""} variant="nexus-noir" />
+                <CanvaShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="nexus-noir" />
+                <PenpotShowcase userId={data?.userId || data?.user?.id || data?.id || ""} variant="nexus-noir" />
+            </div>
+
+            {/* 3D SECTION */}
+            {items3D.length > 0 && (
+            <section className="py-24 px-6 md:px-10 border-t border-[#333] relative bg-[#050505]">
+                <div className="max-w-7xl mx-auto">
+                    <h3 className="font-nn-heading text-4xl uppercase tracking-tighter mb-12">3D / Spatial</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {items3D.map((p: any, i: number) => (
+                        <div key={i} className="rounded-xl overflow-hidden bg-[#0A0A0A] border border-[#222]">
+                            <div className="w-full h-80 relative">
+                                <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0A0A0A" />
+                            </div>
+                            <div className="p-6 border-t border-[#222]">
+                                <h4 className="font-nn-heading text-2xl font-bold uppercase">{p.title}</h4>
+                            </div>
+                        </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+            )}
+
+            {/* AWARDS SECTION */}
+            {certificates.length > 0 && (
+            <section className="py-24 px-6 md:px-10 border-t border-[#333] relative bg-[#050505]">
+                <div className="max-w-7xl mx-auto">
+                    <h3 className="font-nn-heading text-4xl uppercase tracking-tighter mb-12">Honors</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {certificates.map((cert: any, i: number) => (
+                            <div key={i} className="p-8 border border-[#222] bg-[#0A0A0A] rounded-xl">
+                                <span className="font-nn-sans text-xs uppercase tracking-widest text-[#888888] block mb-2">{cert.year || new Date(cert.createdAt).getFullYear()}</span>
+                                <h4 className="font-nn-heading text-xl font-bold uppercase mb-4 text-white">{cert.title}</h4>
+                                <p className="font-nn-sans text-sm text-[#888888]">{cert.issuer}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+            )}
+
+            {/* TESTIMONIALS SECTION */}
+            {testimonials.length > 0 && (
+            <section className="py-24 px-6 md:px-10 border-t border-[#333] relative bg-[#050505]">
+                <div className="max-w-7xl mx-auto">
+                    <h3 className="font-nn-heading text-4xl uppercase tracking-tighter mb-12">Endorsements</h3>
+                    <TestimonialSection testimonials={testimonials} variant="grid" isEditor={isEditor} theme={theme} />
+                </div>
+            </section>
+            )}
 
             {/* Footer Contact */}
             <footer id="contact" className="pt-32 pb-10 px-6 mt-20 relative overflow-hidden bg-[#030303] z-20">
