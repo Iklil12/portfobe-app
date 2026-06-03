@@ -54,7 +54,9 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     activeDraftName,
     publishedDraftId,
     isDirty,
+    hasUnpublishedChanges,
     isSaveDraftModalOpen,
+    pageBlocks,
     subdomain: stateSubdomain
   } = state;
 
@@ -79,12 +81,13 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     publishDesign,
     loadDraft,
     toggleFavorite,
-    updateCustomText
+    updateCustomText,
+    setPageBlocks
   } = actions;
 
   // Logika Anti-Spam & Status Tombol
   const isCurrentlyLive = activeDraftId ? activeDraftId === publishedDraftId : publishedDraftId === null;
-  const canPublish = isDirty || !isCurrentlyLive;
+  const canPublish = isDirty || !isCurrentlyLive || hasUnpublishedChanges;
 
   return (
     <>
@@ -204,7 +207,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               )}
             </div>
             <button
-              onClick={() => { window.location.reload(); }}
+              onClick={actions.exitDraft}
               className="text-[10px] font-medium text-amber-500 hover:text-amber-700 transition-colors"
             >
               Keluar Draft
@@ -264,6 +267,16 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                   </div>
                 </div>
               </div>
+            )}
+
+            {!isLoading && (
+              <button
+                onClick={actions.resetToThemePreset}
+                className="w-full mt-3 p-3 rounded-2xl border border-neutral-200 bg-white hover:bg-neutral-50 hover:border-neutral-300 transition-all duration-200 flex items-center justify-center gap-2.5 text-neutral-600 hover:text-neutral-900 shadow-sm"
+              >
+                <i className="fas fa-magic text-[10px]"></i>
+                <span className="text-[11px] font-semibold tracking-wide">Reset Susunan ke Bawaan Tema</span>
+              </button>
             )}
 
             {/* TOMBOL DRAFT - Di bawah Basis Tema */}

@@ -88,46 +88,15 @@ export function useThemes() {
       return;
     }
 
-    // LOGIKA TEASER: Jika tema adalah PRO dan user adalah FREE, jangan simpan ke DB.
-    // Langsung arahkan ke Editor dengan query param untuk PREVIEW.
-    if (theme.isPro && userPlan === 'FREE') {
-      toast.success(`Pratinjau tema ${themeName} aktif!`, {
-        id: `theme-preview-${themeId}`,
-        icon: '✨'
-      });
-      
-      router.push(`/dashboard/appearance?previewTheme=${themeId}`);
-      return;
-    }
-
-    // Jika tema FREE atau user sudah PRO, simpan ke database seperti biasa
-    const toastId = toast.loading(`Menerapkan tema ${themeName}...`, {
-      id: 'apply-theme-loading'
+    // SELALU arahkan ke Editor dengan query param untuk PREVIEW.
+    // Jangan pernah auto-publish (simpan ke DB) dari halaman Tema, biarkan user preview dulu di Editor.
+    toast.success(`Membuka editor untuk tema ${themeName}...`, {
+      id: `theme-preview-${themeId}`,
+      icon: '✨',
+      style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
     
-    try {
-      const res = await fetch('/api/appearance', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ themeTemplate: themeId })
-      });
-
-      if (res.ok) {
-        toast.success('Tema berhasil diterapkan!', { 
-            id: toastId
-        });
-        
-        setCurrentTheme(themeId);
-        setTimeout(() => {
-          router.push('/dashboard/appearance'); 
-        }, 800);
-      } else {
-        throw new Error('Gagal');
-      }
-
-    } catch (error) {
-      toast.error('Gagal menerapkan tema.', { id: toastId });
-    }
+    router.push(`/dashboard/appearance?previewTheme=${themeId}`);
   };
 
   const handleProComingSoon = () => {

@@ -8,6 +8,7 @@ import { safeStringifyJson } from "@/lib/safeJson";
 import { revalidateTag } from "next/cache";
 
 import { THEMES_DATA } from "@/lib/themes";
+import { ensureUniversalBlocks } from "@/lib/blockSeeder";
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
@@ -45,11 +46,24 @@ export async function GET(req: Request) {
         links: { orderBy: { order: 'asc' } },
         projects: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
         certificates: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
-        testimonials: { orderBy: { order: 'asc' } }
+        testimonials: { orderBy: { order: 'asc' } },
+        pageBlocks: { orderBy: { orderIndex: 'asc' } }
       }
     });
 
     if (!userData) return NextResponse.json({});
+
+    // CEK DAN PASTIKAN BLOK UNIVERSAL ADA
+    // Jika user belum punya blok sama sekali, kita jalankan fungsi ensureUniversalBlocks
+    if (userData.pageBlocks.length === 0) {
+      await ensureUniversalBlocks(userData.id);
+      // Ambil ulang blok setelah dibuat
+      userData.pageBlocks = await prisma.pageBlock.findMany({
+        where: { userId: userData.id },
+        orderBy: { orderIndex: 'asc' }
+      });
+    }
+
     return NextResponse.json(userData);
   } catch (error) {
     console.error("GET Appearance Error:", error);
@@ -116,6 +130,9 @@ export async function PATCH(req: Request) {
       }
     }
 
+    const currentAppearance = await prisma.siteAppearance.findUnique({ where: { userId: user.id } });
+    const isThemeChanged = themeTemplate && currentAppearance?.themeTemplate !== themeTemplate;
+
     // UPDATE ATAU CREATE KE TABEL SITE_APPEARANCE
     const updatedAppearance = await prisma.siteAppearance.upsert({
       where: { userId: user.id },
@@ -147,7 +164,7 @@ export async function PATCH(req: Request) {
     });
 
     if (!isOnlyFavorites) {
-      await logActivity(user.id, "UPDATE_THEME", `Memperbarui tema portofolio ke ${themeTemplate}`);
+      await logActivity(user.id, "UPDATE_THEME", `Memperbarui tema portofolio ke ${themeTemplate || 'terbaru'}`);
       
       // FIRE THE MISSILE: Hancurkan cache 60-detik untuk pengunjung publik
       if (user.profile?.subdomain) {

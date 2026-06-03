@@ -5,6 +5,24 @@ import { useSearchParams } from 'next/navigation';
 import { showToast } from '@/lib/customToast';
 import { safeParseJson, safeStringifyJson } from '@/lib/safeJson';
 
+const THEME_BLOCK_PRESETS: Record<string, string[]> = {
+  'spatial': ['HERO', 'PROJECTS', '3D', 'STATS', 'INTEGRATIONS', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'],
+  'minimalist': ['HERO', 'STATS', 'PROJECTS', '3D', 'INTEGRATIONS', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'],
+  'default': ['HERO', 'STATS', 'PROJECTS', '3D', 'INTEGRATIONS', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER']
+};
+
+const applyPresetToBlocks = (blocks: any[], themeId: string) => {
+  const preset = THEME_BLOCK_PRESETS[themeId] || THEME_BLOCK_PRESETS['default'];
+  const newBlocks = [...blocks].sort((a, b) => {
+    const indexA = preset.indexOf(a.blockType);
+    const indexB = preset.indexOf(b.blockType);
+    const finalA = indexA === -1 ? 999 : indexA;
+    const finalB = indexB === -1 ? 999 : indexB;
+    return finalA - finalB;
+  });
+  return newBlocks.map((b, i) => ({ ...b, orderIndex: i }));
+};
+
 export function useThemeEditor() {
   const searchParams = useSearchParams();
   const previewTheme = searchParams.get('previewTheme');
@@ -43,6 +61,7 @@ export function useThemeEditor() {
   const [customTexts, setCustomTexts] = useState<Record<string, string>>({});
   const customTextsRef = useRef(customTexts);
   useEffect(() => { customTextsRef.current = customTexts; }, [customTexts]);
+  const [pageBlocks, setPageBlocks] = useState<any[]>([]);
   const dataLoaded = useRef(false);
 
   // --- STATE DRAFTS & PUBLISHING ---
@@ -53,6 +72,9 @@ export function useThemeEditor() {
   const [isDraftsModalOpen, setIsDraftsModalOpen] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
   
+  // Menandakan apakah ada draft yang sudah disimpan tapi belum dipublish di sesi ini
+  const [hasUnpublishedChanges, setHasUnpublishedChanges] = useState(false);
+
   // Track clean state for Anti-Spam
   const [lastSavedState, setLastSavedState] = useState<any>(null);
 
@@ -65,7 +87,9 @@ export function useThemeEditor() {
     buttonShape !== lastSavedState.buttonShape ||
     cardStyle !== lastSavedState.cardStyle ||
     splashScreen !== lastSavedState.splashScreen ||
-    safeStringifyJson(customTexts) !== safeStringifyJson(lastSavedState.customTexts)
+    safeStringifyJson(customTexts) !== safeStringifyJson(lastSavedState.customTexts) ||
+    safeStringifyJson(pageBlocks.map(b => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible}))) !== 
+    safeStringifyJson(lastSavedState.pageBlocks?.map((b: any) => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible})))
   ) : false;
 
   useEffect(() => {
@@ -130,13 +154,24 @@ export function useThemeEditor() {
                 buttonShape: sa.buttonShape || 'rounded',
                 cardStyle: sa.cardStyle || 'flat',
                 splashScreen: sa.splashScreen || false,
-                customTexts: texts
+                customTexts: texts,
+                pageBlocks: appData.pageBlocks || []
               });
             }
           }
         }
 
         setDbData(appData);
+        if (appData.pageBlocks) {
+          if (previewTheme) {
+            // Jika masuk dari halaman Tema, terapkan preset tema tujuan
+            const presetBlocks = applyPresetToBlocks(appData.pageBlocks, previewTheme);
+            setPageBlocks(presetBlocks);
+          } else {
+            // Jika masuk normal, biarkan susunan sesuai database (Live Web)
+            setPageBlocks(appData.pageBlocks);
+          }
+        }
 
         // Ambil favorit dari tabel ThemeFavorite
         try {
@@ -154,7 +189,19 @@ export function useThemeEditor() {
           const draftsRes = await fetch('/api/appearance/drafts');
           if (draftsRes.ok) {
             const draftsData = await draftsRes.json();
-            setDrafts(Array.isArray(draftsData) ? draftsData : []);
+            const validDrafts = Array.isArray(draftsData) ? draftsData : [];
+            setDrafts(validDrafts);
+
+            // Skenario 1: Jika tidak sedang preview tema lain, dan ada draft yang Live, 
+            // otomatis aktifkan draft tersebut agar user melanjutkan kerjanya.
+            if (!previewTheme && appData.siteAppearance?.publishedDraftId) {
+              const liveDraft = validDrafts.find((d: any) => d.id === appData.siteAppearance.publishedDraftId);
+              if (liveDraft) {
+                setActiveDraftId(liveDraft.id);
+                setActiveDraftName(liveDraft.name);
+                setHasUnpublishedChanges(false);
+              }
+            }
           }
         } catch (e) {
           console.error(e);
@@ -222,12 +269,66 @@ export function useThemeEditor() {
       } else if (event.data?.type === 'INLINE_EDIT' && event.data?.entity === 'appearance') {
         const { field, value } = event.data;
         setCustomTexts({ ...customTextsRef.current, [field]: value });
+      } else if (event.data?.type === 'BLOCK_MOVE_UP') {
+        setPageBlocks(prev => {
+          const index = prev.findIndex(b => b.id === event.data.blockId);
+          if (index > 0 && !prev[index - 1].blockType.includes('HERO')) {
+            const newBlocks = [...prev];
+            const temp = newBlocks[index];
+            newBlocks[index] = newBlocks[index - 1];
+            newBlocks[index - 1] = temp;
+            
+            const updated = newBlocks.map((b, i) => ({ ...b, orderIndex: i }));
+            return updated;
+          }
+          return prev;
+        });
+      } else if (event.data?.type === 'BLOCK_MOVE_DOWN') {
+        setPageBlocks(prev => {
+          const index = prev.findIndex(b => b.id === event.data.blockId);
+          if (index >= 0 && index < prev.length - 1 && !prev[index + 1].blockType.includes('HERO')) {
+            const newBlocks = [...prev];
+            const temp = newBlocks[index];
+            newBlocks[index] = newBlocks[index + 1];
+            newBlocks[index + 1] = temp;
+            
+            const updated = newBlocks.map((b, i) => ({ ...b, orderIndex: i }));
+            return updated;
+          }
+          return prev;
+        });
+      } else if (event.data?.type === 'BLOCK_TOGGLE_VISIBILITY') {
+        const { blockId, currentVisibility } = event.data;
+        setPageBlocks(prev => {
+          const updated = prev.map(b => b.id === blockId ? { ...b, isVisible: !currentVisibility } : b);
+          return updated;
+        });
       }
     };
     
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  const changeThemeWithPreset = (themeId: string) => {
+    setActiveTheme(themeId);
+    
+    // Soft Reorder: Jika di luar draf, susun ulang blok sesuai preset bawaan tema
+    if (!activeDraftId && pageBlocks.length > 0) {
+      const presetBlocks = applyPresetToBlocks(pageBlocks, themeId);
+      setPageBlocks(presetBlocks);
+    }
+  };
+
+  const resetToThemePreset = () => {
+    if (pageBlocks.length > 0) {
+      const presetBlocks = applyPresetToBlocks(pageBlocks, activeTheme);
+      setPageBlocks(presetBlocks);
+      toast.success('Urutan blok dikembalikan ke bawaan tema!', {
+        style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+      });
+    }
+  };
 
   const updateCustomText = (field: string, value: string) => {
     setCustomTexts((prev: any) => ({ ...prev, [field]: value }));
@@ -251,7 +352,15 @@ export function useThemeEditor() {
         buttonShape, 
         cardStyle, 
         splashScreen,
-        customTexts 
+        customTexts: {
+          ...customTexts,
+          draftBlocksConfig: pageBlocks.map((b: any) => ({ 
+            id: b.id, 
+            blockType: b.blockType, 
+            orderIndex: b.orderIndex, 
+            isVisible: b.isVisible 
+          }))
+        } 
       };
 
       const method = activeDraftId ? 'PUT' : 'POST';
@@ -277,8 +386,11 @@ export function useThemeEditor() {
         setActiveDraftName(data.name);
         setIsSaveDraftModalOpen(false);
         setLastSavedState({
-          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts
+          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks: [...pageBlocks]
         });
+        
+        // Tandai bahwa draft telah diubah dan belum dipublish
+        setHasUnpublishedChanges(true);
       } else {
         if (res.status === 403 && data.code === 'FEATURE_LOCKED') {
           toast.dismiss(toastId);
@@ -328,17 +440,24 @@ export function useThemeEditor() {
         body: JSON.stringify({ fullName, profession, bio, location })
       });
 
-      const [resApp, resProf] = await Promise.all([appearancePromise, profilePromise, delayPromise]);
+      const blocksPromise = fetch('/api/blocks/bulk', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ blocks: pageBlocks.map((b: any) => ({ id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible })) })
+      });
 
-      if (resApp.ok && resProf.ok) {
+      const [resApp, resProf, resBlocks] = await Promise.all([appearancePromise, profilePromise, blocksPromise, delayPromise]);
+
+      if (resApp.ok && resProf.ok && resBlocks.ok) {
         mutate('/api/dashboard/sync');
         toast.dismiss(toastId);
         showToast({ message: 'Desain berhasil dipublikasikan!', id: toastId, icon: 'fa-rocket' });
         
         setPublishedDraftId(activeDraftId || null);
         setLastSavedState({
-          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts
+          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks: [...pageBlocks]
         });
+        setHasUnpublishedChanges(false);
 
       } else {
         if (!resApp.ok) {
@@ -372,11 +491,37 @@ export function useThemeEditor() {
     setCardStyle(draft.cardStyle);
     setSplashScreen(draft.splashScreen);
     
-    const parsedTexts = safeParseJson(draft.customTexts, {});
+    const parsedTexts: any = safeParseJson(draft.customTexts, {});
     setCustomTexts(parsedTexts);
+    
+    let draftBlocks = pageBlocks;
+    const baseBlocks = dbData.pageBlocks || pageBlocks;
+    
+    if (parsedTexts.draftBlocksConfig) {
+      const updatedBlocks = baseBlocks.map((b: any) => {
+        // Coba cocokkan berdasarkan ID. Jika tidak ketemu (misal karena migrasi), coba cocokkan berdasarkan blockType
+        const draftCfg = parsedTexts.draftBlocksConfig.find((d: any) => 
+          d.id === b.id || (d.blockType && d.blockType === b.blockType)
+        );
+        
+        if (draftCfg) {
+          return { ...b, orderIndex: draftCfg.orderIndex, isVisible: draftCfg.isVisible };
+        }
+        
+        // Jika tidak ada di draft, kembali ke susunan asli dari database, jangan pakai susunan memori yang bocor
+        return { ...b };
+      }).sort((a: any, b: any) => a.orderIndex - b.orderIndex);
+      
+      setPageBlocks(updatedBlocks);
+      draftBlocks = updatedBlocks;
+    }
     
     setActiveDraftId(draft.id);
     setActiveDraftName(draft.name);
+    // Jika draft yang dimuat adalah draft yang sedang LIVE, kita asumsikan tidak ada perubahan yang belum dipublish
+    // (sampai pengguna mengubah sesuatu dan menyimpannya lagi)
+    setHasUnpublishedChanges(draft.id !== publishedDraftId);
+    
     setLastSavedState({
       activeTheme: draft.themeTemplate,
       themeColor: draft.themeColor,
@@ -385,18 +530,58 @@ export function useThemeEditor() {
       buttonShape: draft.buttonShape,
       cardStyle: draft.cardStyle,
       splashScreen: draft.splashScreen,
-      customTexts: parsedTexts
+      customTexts: parsedTexts,
+      pageBlocks: draftBlocks
     });
 
     setIsLoading(false);
   };
 
+  const exitDraft = () => {
+    setActiveDraftId(null);
+    setActiveDraftName(null);
+    setHasUnpublishedChanges(false);
 
+    // Kembalikan ke state Live DB
+    if (dbData.siteAppearance) {
+      setActiveTheme(dbData.siteAppearance.themeTemplate || 'minimalist');
+      setThemeColor(dbData.siteAppearance.themeColor || '#000000');
+      setFontHeading(dbData.siteAppearance.fontHeading || 'Inter');
+      setFontBody(dbData.siteAppearance.fontBody || 'Inter');
+      setButtonShape(dbData.siteAppearance.buttonShape || 'rounded');
+      setCardStyle(dbData.siteAppearance.cardStyle || 'flat');
+      setSplashScreen(dbData.siteAppearance.splashScreen || false);
+      
+      const parsedTexts: any = safeParseJson(dbData.siteAppearance.customTexts, {});
+      setCustomTexts(parsedTexts);
+      
+      // Update dirty tracking
+      setLastSavedState({
+        activeTheme: dbData.siteAppearance.themeTemplate || 'minimalist',
+        themeColor: dbData.siteAppearance.themeColor || '#000000',
+        fontHeading: dbData.siteAppearance.fontHeading || 'Inter',
+        fontBody: dbData.siteAppearance.fontBody || 'Inter',
+        buttonShape: dbData.siteAppearance.buttonShape || 'rounded',
+        cardStyle: dbData.siteAppearance.cardStyle || 'flat',
+        splashScreen: dbData.siteAppearance.splashScreen || false,
+        customTexts: parsedTexts,
+        pageBlocks: dbData.pageBlocks || []
+      });
+    }
+
+    if (dbData.pageBlocks) {
+      // Karena "Luar Draft" adalah playground, selalu terapkan preset bawaan tema saat ini
+      const currentTheme = dbData.siteAppearance?.themeTemplate || 'minimalist';
+      const presetBlocks = applyPresetToBlocks(dbData.pageBlocks, currentTheme);
+      setPageBlocks(presetBlocks);
+    }
+  };
 
   // Persiapan data untuk Live Preview
   const livePreviewData = {
     ...dbData,
-    profile: { fullName, profession, bio, avatarUrl, subdomain, location }
+    profile: { fullName, profession, bio, avatarUrl, subdomain, location },
+    pageBlocks
   };
   
   const livePreviewTheme = { 
@@ -439,12 +624,14 @@ export function useThemeEditor() {
       publishedDraftId,
       isDraftsModalOpen,
       isSaveDraftModalOpen,
-      isDirty
+      isDirty,
+      hasUnpublishedChanges,
+      pageBlocks
     },
     actions: {
       setIsEditorCollapsed,
       setShowOfflineModal,
-      setActiveTheme,
+      setActiveTheme: changeThemeWithPreset,
       setThemeColor,
       setFontHeading,
       setFontBody,
@@ -458,8 +645,11 @@ export function useThemeEditor() {
       saveDraft,
       publishDesign,
       loadDraft,
+      exitDraft,
       toggleFavorite,
-      updateCustomText
+      updateCustomText,
+      setPageBlocks,
+      resetToThemePreset
     }
   };
 }

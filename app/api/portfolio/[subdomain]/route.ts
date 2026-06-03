@@ -44,6 +44,10 @@ export async function GET(
             testimonials: {
               where: { isVisible: true },
               orderBy: { order: 'asc' }
+            },
+            pageBlocks: {
+              where: { isVisible: true },
+              orderBy: { orderIndex: 'asc' }
             }
           }
         });
