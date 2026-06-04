@@ -14,17 +14,14 @@ interface PenpotShowcaseProps {
 
 const fetcher = (url: string) => fetch(url).then(async (res) => {
   if (res.status === 401 || res.status === 403 || res.status === 404) {
-    // User belum connect / token tidak valid → tandai sebagai "not connected"
-    const err: any = new Error('Not connected');
-    err.status = res.status;
-    throw err;
+    return { hasError: true, status: res.status };
   }
   if (!res.ok) {
-    const err: any = new Error('Server Error');
-    err.status = res.status;
-    throw err;
+    return { hasError: true, status: res.status };
   }
   return res.json();
+}).catch((err) => {
+  return { hasError: true, error: err.message };
 });
 
 export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: PenpotShowcaseProps) {
@@ -34,7 +31,7 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
     dedupingInterval: 60000,
   });
 
-  if (!isLoading && (!data?.projects || data.projects.length === 0)) return null;
+  if (!isLoading && (!data?.projects || data.projects.length === 0 || data.hasError)) return null;
 
   const styles = {
     monochrome: {
@@ -207,17 +204,17 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       calendarColorScheme: 'dark' as const
     },
     viewfinder: {
-      section: 'border-y-2 border-[#050505] py-10 mb-10 w-full',
-      heading: 'font-cinema tracking-wide text-5xl text-[#050505] mb-6',
-      label: 'font-bold uppercase tracking-widest text-[10px] text-[#050505] mb-2 block',
-      border: 'border-[#050505]',
-      cardBg: 'bg-transparent',
-      icon: 'text-[#050505]',
-      textPrimary: 'font-cinema text-5xl text-[#050505]',
+      section: 'border-y border-white/10 py-16 mb-10 w-full px-6 @md:px-12 @lg:px-20 bg-[#050505]',
+      heading: 'font-cinema tracking-wide text-5xl text-[#F3F3F1] mb-6',
+      label: 'font-bold uppercase tracking-widest text-[10px] text-[#F3F3F1] mb-2 block',
+      border: 'border-white/10',
+      cardBg: 'bg-transparent border border-white/10 p-6',
+      icon: 'text-[#F3F3F1]',
+      textPrimary: 'font-cinema text-4xl text-[#F3F3F1]',
       textSecondary: 'font-bold uppercase tracking-widest text-[10px] text-gray-500 mt-2',
-      progressBg: 'bg-gray-300',
+      progressBg: 'bg-gray-800',
       progressFill: 'bg-[var(--primary)]',
-      calendarColorScheme: 'light' as const
+      calendarColorScheme: 'dark' as const
     },
     minimalist: {
       section: 'border-t border-gray-200 bg-gray-50/30 overflow-hidden w-full pb-8',

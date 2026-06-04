@@ -147,6 +147,12 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
       onKeyDown={handleKeyDown}
       onPaste={handlePaste}
       onInput={handleInput}
+      onClick={(e: any) => {
+        if (isEditor) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }}
       title={`Klik untuk mengedit${maxLength ? ` (Maksimal ${maxLength} karakter)` : ''}`}
       dangerouslySetInnerHTML={{ __html: content }}
     />

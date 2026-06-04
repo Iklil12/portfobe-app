@@ -11,15 +11,7 @@ import { DynamicBlockRenderer } from './blocks/DynamicBlockRenderer';
 import CinematicTheme from './themes/CinematicTheme';
 import AcidTheme from './themes/AcidTheme';
 import BentoTheme from './themes/BentoGrid';
-import ViewfinderTheme from './themes/ViewfinderTheme';
-import MonolithTheme from './themes/MonolithTheme';
-import SplitTheme from './themes/SplitTheme';
-import EditorialTheme from './themes/EditorialTheme';
-import MidnightEmulsionTheme from './themes/MidnightEmulsionTheme';
-import AuraKineticTheme from './themes/AuraKineticTheme';
 import AbsoluteNoirTheme from './themes/AbsoluteNoirTheme';
-import ObsidianReelTheme from './themes/ObsidianReelTheme';
-import LayeredMonolithTheme from './themes/LayeredMonolithTheme';
 import KineticAvantGardeTheme from './themes/KineticAvantGardeTheme';
 import NexusNoirTheme from './themes/NexusNoirTheme';
 import HorizontalFlowTheme from './themes/HorizontalFlowTheme';
@@ -32,15 +24,7 @@ const THEME_MAP: Record<string, React.FC<any>> = {
   'cinematic': CinematicTheme,
   'acid': AcidTheme,
   'bentogrid': BentoTheme,
-  'viewfinder': ViewfinderTheme,
-  'monolith': MonolithTheme,
-  'split': SplitTheme,
-  'editorial': EditorialTheme,
-  'midnight-emulsion': MidnightEmulsionTheme,
-  'aura-kinetic': AuraKineticTheme,
   'absolute-noir': AbsoluteNoirTheme,
-  'obsidian-reel': ObsidianReelTheme,
-  'layered-monolith': LayeredMonolithTheme,
   'kinetic-avant-garde': KineticAvantGardeTheme,
   'nexus-noir': NexusNoirTheme,
   'horizontal-flow': HorizontalFlowTheme,
@@ -85,13 +69,16 @@ export default function PortfolioView({ data, theme, isMobileView = false, isCar
     }
   }
 
-  if (activeThemeName === 'minimalist' || activeThemeName === 'spatial') {
+  // Jika tema yang aktif adalah minimalist, spatial, obsidian-reel, aura-kinetic, editorial, midnight-emulsion, viewfinder, split, atau monolith, kita gunakan DynamicBlockRenderer
+  if (activeThemeName === 'minimalist' || activeThemeName === 'spatial' || activeThemeName === 'obsidian-reel' || activeThemeName === 'aura-kinetic' || activeThemeName === 'editorial' || activeThemeName === 'midnight-emulsion' || activeThemeName === 'viewfinder' || activeThemeName === 'split' || activeThemeName === 'monolith' || activeThemeName === 'layered-monolith') {
     return (
       <div className="relative w-full h-full" style={{ containerType: 'inline-size' }}>
-        <DynamicBlockRenderer blocks={data.pageBlocks || []} data={data} theme={processedTheme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={effectiveIsEditor} />
+        <DynamicBlockRenderer blocks={data.pageBlocks || data.blocks || []} data={data} theme={processedTheme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={effectiveIsEditor} />
       </div>
     );
   }
+
+
 
   return (
     <div className="relative w-full h-full" style={{ containerType: 'inline-size' }}>

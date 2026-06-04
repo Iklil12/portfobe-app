@@ -108,8 +108,9 @@ body {
   }
 }
 
-.marquee {
-  animation: marquee 35s linear infinite;
+.marquee,
+.animate-marquee {
+  animation: marquee 15s linear infinite;
 }
 
 @keyframes blob {

@@ -67,7 +67,7 @@ export const MinimalistHeroBlock = ({ data, theme, isEditor }: any) => {
   return (
     <motion.aside
       initial="hidden" animate="visible" variants={getStaggerContainer(0.1, 0.15)}
-      className={`bg-gray-50 border-gray-200 p-8 flex flex-col justify-between z-10 overflow-y-auto w-full @lg:w-[35%] @lg:fixed @lg:top-0 @lg:h-screen @lg:border-r @lg:p-12`}
+      className={`bg-gray-50 border-gray-200 p-8 flex flex-col justify-between z-10 @lg:overflow-y-auto w-full @lg:w-[35%] @lg:fixed @lg:top-0 @lg:h-screen @lg:border-r @lg:p-12`}
       data-lenis-prevent="true"
     >
       <div>

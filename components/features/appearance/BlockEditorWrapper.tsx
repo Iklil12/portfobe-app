@@ -37,7 +37,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false }
 
   return (
     <div 
-      className={`relative group/block transition-all duration-300 ${hiddenOpacity} ${isHovered ? 'z-50' : 'z-10'}`}
+      className={`relative group/block transition-opacity duration-300 ${hiddenOpacity} ${isHovered ? 'z-50' : 'z-10'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

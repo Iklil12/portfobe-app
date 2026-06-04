@@ -4,7 +4,10 @@ import React from 'react';
 import useSWR from 'swr';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => fetch(url).then((res) => {
+  if (!res.ok) return { projects: [] };
+  return res.json();
+}).catch(() => ({ projects: [] }));
 
 interface CanvaShowcaseProps {
   userId: string;
@@ -191,17 +194,17 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       calendarColorScheme: 'dark' as const
     },
     viewfinder: {
-      section: 'border-y-2 border-[#050505] py-10 mb-10 w-full',
-      heading: 'font-cinema tracking-wide text-5xl text-[#050505] mb-6',
-      label: 'font-bold uppercase tracking-widest text-[10px] text-[#050505] mb-2 block',
-      border: 'border-[#050505]',
-      cardBg: 'bg-transparent',
-      icon: 'text-[#050505]',
-      textPrimary: 'font-cinema text-5xl text-[#050505]',
+      section: 'border-y border-white/10 py-16 mb-10 w-full px-6 @md:px-12 @lg:px-20 bg-[#050505]',
+      heading: 'font-cinema tracking-wide text-5xl text-[#F3F3F1] mb-6',
+      label: 'font-bold uppercase tracking-widest text-[10px] text-[#F3F3F1] mb-2 block',
+      border: 'border-white/10',
+      cardBg: 'bg-transparent border border-white/10 p-6',
+      icon: 'text-[#F3F3F1]',
+      textPrimary: 'font-cinema text-4xl text-[#F3F3F1]',
       textSecondary: 'font-bold uppercase tracking-widest text-[10px] text-gray-500 mt-2',
-      progressBg: 'bg-gray-300',
+      progressBg: 'bg-gray-800',
       progressFill: 'bg-[var(--primary)]',
-      calendarColorScheme: 'light' as const
+      calendarColorScheme: 'dark' as const
     },
     minimalist: {
       section: 'border-t border-gray-200 overflow-hidden w-full pb-8',

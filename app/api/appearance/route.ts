@@ -54,8 +54,8 @@ export async function GET(req: Request) {
     if (!userData) return NextResponse.json({});
 
     // CEK DAN PASTIKAN BLOK UNIVERSAL ADA
-    // Jika user belum punya blok sama sekali, kita jalankan fungsi ensureUniversalBlocks
-    if (userData.pageBlocks.length === 0) {
+    // Jika user belum memiliki set lengkap blok (misal sebelumnya hanya 11, sekarang ada 13), kita seeder.
+    if (userData.pageBlocks.length < 13) {
       await ensureUniversalBlocks(userData.id);
       // Ambil ulang blok setelah dibuat
       userData.pageBlocks = await prisma.pageBlock.findMany({

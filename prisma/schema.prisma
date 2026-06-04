@@ -9,39 +9,39 @@ datasource db {
 }
 
 model User {
-  id                     String          @id @default(uuid())
-  email                  String          @unique
-  password               String
-  plan                   PlanType        @default(FREE)
-  role                   Role            @default(USER)
-  avatar                 String
-  createdAt              DateTime        @default(now())
-  updatedAt              DateTime        @updatedAt
-  isLive                 Boolean         @default(false)
-  emailVerified          DateTime?
-  pendingEmail           String?
-  planExpiredAt          DateTime?
-  subscriptions          Subscription[]
-  accounts               Account[]
-  activities             Activity[]
-  analytics              Analytics[]
-  certificates           Certificate[]
-  dailyStats             DailyStats[]
-  links                  Link[]
-  profile                Profile?
-  projects               Project[]
-  siteAppearance         SiteAppearance?
-  transactions           Transaction[]
-  integrations           Integration[]
-  canvaProjects          CanvaProject[]
-  themeFavorites         ThemeFavorite[]
-  testimonials           Testimonial[]
-  pageBlocks             PageBlock[]
-  adminNotes             AdminNote[]
-  visitorSessions        VisitorSession[]
-  hourlyStats            HourlyStats[]
-  couponUsages           CouponUsage[]
-  themeDrafts            ThemeDraft[]
+  id              String           @id @default(uuid())
+  email           String           @unique
+  password        String
+  plan            PlanType         @default(FREE)
+  role            Role             @default(USER)
+  avatar          String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  isLive          Boolean          @default(false)
+  pendingEmail    String?
+  planExpiredAt   DateTime?
+  emailVerified   DateTime?
+  accounts        Account[]
+  activities      Activity[]
+  adminNotes      AdminNote[]
+  analytics       Analytics[]
+  canvaProjects   CanvaProject[]
+  certificates    Certificate[]
+  couponUsages    CouponUsage[]
+  dailyStats      DailyStats[]
+  hourlyStats     HourlyStats[]
+  integrations    Integration[]
+  links           Link[]
+  pageBlocks      PageBlock[]
+  profile         Profile?
+  projects        Project[]
+  siteAppearance  SiteAppearance?
+  subscriptions   Subscription[]
+  testimonials    Testimonial[]
+  themeDrafts     ThemeDraft[]
+  themeFavorites  ThemeFavorite[]
+  transactions    Transaction[]
+  visitorSessions VisitorSession[]
 }
 
 model PasswordResetToken {
@@ -98,26 +98,25 @@ model Profile {
 }
 
 model SiteAppearance {
-  id            String  @id @default(uuid())
-  userId        String  @unique
-  splashScreen  Boolean @default(false)
-  themeTemplate String  @default("minimalist")
-  themeColor    String  @default("#000000")
-  fontHeading   String  @default("Inter")
-  fontBody      String  @default("Inter")
-  buttonShape   String  @default("rounded")
-  cardStyle     String  @default("flat")
-  customTexts   String  @default("{}") @db.Text
-  favoriteThemes String @default("[]") @db.Text
-  publishedDraftId String? // Pelacak draft yang sedang Live di Web
-  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String  @id @default(uuid())
+  userId           String  @unique
+  splashScreen     Boolean @default(false)
+  themeTemplate    String  @default("minimalist")
+  themeColor       String  @default("#000000")
+  fontHeading      String  @default("Inter")
+  fontBody         String  @default("Inter")
+  buttonShape      String  @default("rounded")
+  cardStyle        String  @default("flat")
+  favoriteThemes   String  @default("[]") @db.Text
+  customTexts      String  @default("{}") @db.Text
+  publishedDraftId String?
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ThemeDraft {
   id            String   @id @default(uuid())
   userId        String
   name          String   @default("Draft Baru")
-  description   String?  @db.Text
   themeTemplate String
   themeColor    String
   fontHeading   String
@@ -128,6 +127,7 @@ model ThemeDraft {
   customTexts   String   @db.Text
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  description   String?  @db.Text
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -158,16 +158,16 @@ model Link {
 }
 
 model Project {
-  id          String   @id @default(uuid())
+  id          String           @id @default(uuid())
   title       String
   description String?
   mediaUrl    String?
-  projectType String   @default("photo")
-  tags        String   @default("[]") @db.Text
+  projectType String           @default("photo")
   userId      String
-  createdAt   DateTime @default(now())
-  deletedAt   DateTime?                    // null = aktif, ada nilai = di trash
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime         @default(now())
+  tags        String           @default("[]") @db.Text
+  deletedAt   DateTime?
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   detail3D    Project3DDetail?
 
   @@index([createdAt])
@@ -176,11 +176,11 @@ model Project {
 }
 
 model Project3DDetail {
-  id          String   @id @default(cuid())
-  projectId   String   @unique
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id          String  @id @default(cuid())
+  projectId   String  @unique
   fileSize    Int
-  storagePath String   // Nama/path file di Bunny.net untuk keperluan delete
+  storagePath String
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Activity {
@@ -196,17 +196,17 @@ model Activity {
 }
 
 model Certificate {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   issuer      String?
   year        String?
-  status      String?  @default("VERIFIED")
-  description String?  @db.Text
+  status      String?   @default("VERIFIED")
+  description String?   @db.Text
   mediaUrl    String?
   userId      String
-  createdAt   DateTime @default(now())
-  deletedAt   DateTime?                    // null = aktif, ada nilai = di trash
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "Certificate_userId_fkey")
   @@index([deletedAt])
@@ -242,93 +242,76 @@ model AdminLog {
 }
 
 model Analytics {
-  id        String   @id @default(uuid())
-  userId    String
-  sessionId String?  // Optional for backward compatibility with old logs
-  session   VisitorSession? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  
-  type      String   @default("VIEW") // e.g., VIEW, CLICK, SCROLL, DOWNLOAD
-  action    String?  // Spesifik aksi (e.g., "clicked_resume")
-  targetId  String?  // ID dari elemen UI yang diinteraksikan
-  metadata  Json?    // Data fleksibel, e.g., { scrollDepth: 80, timeSpent: 30 }
-  
-  ipAddress String?
-  userAgent String?  @db.Text
-  referrer  String?  @db.Text
-  pagePath  String?
-  duration  Int      @default(0) // Hanya relevan untuk VIEW
-  
-  // Geolocation & Device (Extracted)
-  country   String?
-  city      String?
-  deviceType String? // Mobile, Desktop, Tablet
-  os        String?
-  browser   String?
-  
-  // Marketing UTM
-  utmSource   String?
-  utmMedium   String?
+  id          String          @id @default(uuid())
+  userId      String
+  sessionId   String?
+  type        String          @default("VIEW")
+  ipAddress   String?
+  userAgent   String?         @db.Text
+  referrer    String?         @db.Text
+  pagePath    String?
+  duration    Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  action      String?
+  browser     String?
+  city        String?
+  country     String?
+  deviceType  String?
+  metadata    String?         @db.LongText
+  os          String?
+  targetId    String?
   utmCampaign String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  utmMedium   String?
+  utmSource   String?
+  session     VisitorSession? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([type])
   @@index([sessionId])
   @@index([userId], map: "Analytics_userId_fkey")
-  @@index([userId, createdAt]) // OPTIMIZATION: Composite index for fast time-range queries per user
+  @@index([userId, createdAt])
 }
 
 model VisitorSession {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   userId      String
-  visitorId   String   // Cookie-based unique ID
-  
-  // Traffic Origin
-  referrer    String?  @db.Text
-  source      String?  // parsed: Instagram, Direct, Google, dll
-  
-  // Aggregated Session Data
-  duration    Int      @default(0)
-  isBounced   Boolean  @default(true) // Menjadi false jika duration > 10s atau pageview > 1
-  
-  // First touch Geolocation & Device
+  visitorId   String
+  referrer    String?     @db.Text
+  source      String?
+  duration    Int         @default(0)
+  isBounced   Boolean     @default(true)
   country     String?
   city        String?
   deviceType  String?
   os          String?
   browser     String?
   ipAddress   String?
-
-  // First touch UTM
   utmSource   String?
   utmMedium   String?
   utmCampaign String?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   logs        Analytics[]
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([visitorId])
   @@index([createdAt])
-  @@index([userId, createdAt]) // OPTIMIZATION: Composite index for fast time-range queries per user
+  @@index([userId, createdAt])
 }
 
 model Transaction {
   id             String   @id @default(cuid())
   userId         String
   amount         Int
-  status         String   // "PENDING", "SUCCESS", "FAILED", "REFUNDED"
+  status         String
   plan           PlanType
-  durationDays   Int      @default(30)   // Durasi plan yang dibeli/diberikan
-  gateway        String?                 // "admin_grant", nanti: "midtrans", "xendit"
-  subscriptionId String?                 // Link ke Subscription yang dibuat
   createdAt      DateTime @default(now())
+  durationDays   Int      @default(30)
+  gateway        String?
+  subscriptionId String?
   updatedAt      DateTime @updatedAt
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -354,9 +337,9 @@ model DailyStats {
 model HourlyStats {
   id        String   @id @default(uuid())
   userId    String
-  dateHour  DateTime // "2026-05-18T14:00:00Z"
+  dateHour  DateTime
   views     Int      @default(0)
-  visitors  Int      @default(0) // Unique visitors di jam tersebut
+  visitors  Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -389,98 +372,73 @@ model RegisterAttempt {
   @@index([ip])
 }
 
-enum PlanType {
-  FREE
-  PRO
-  SUPREME
-}
-
-enum SubscriptionStatus {
-  ACTIVE     // Aktif dan valid
-  EXPIRED    // Sudah kedaluwarsa
-  CANCELLED  // Dibatalkan admin sebelum expired
-}
-
-enum Role {
-  USER
-  ADMIN
-}
-
 model Subscription {
-  id          String             @id @default(cuid())
-  userId      String
-  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  plan        PlanType           // PRO atau FREE
-  status      SubscriptionStatus @default(ACTIVE)
-
-  startedAt   DateTime           @default(now())  // Kapan mulai aktif
-  expiredAt   DateTime?                            // null = lifetime/permanen
-
-  // Metadata admin
-  grantedBy   String?                              // Email admin yang grant
-  notes       String?  @db.Text                   // Catatan, misal: "Pembayaran manual via BCA"
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String             @id @default(cuid())
+  userId    String
+  plan      PlanType
+  status    SubscriptionStatus @default(ACTIVE)
+  startedAt DateTime           @default(now())
+  expiredAt DateTime?
+  grantedBy String?
+  notes     String?            @db.Text
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
-  @@index([expiredAt])  // Penting untuk cron query
+  @@index([expiredAt])
 }
 
 model Integration {
-  id              String   @id @default(uuid())
-  userId          String
-  provider        String
-  providerId      String
-  accessToken     String?  @db.Text              // Token akses API (misal: Penpot)
-  settings        String?  @db.Text              // Pengaturan tambahan (misal: list file ID publik)
-  cachedData      String?  @db.LongText  // JSON data yang dicache dari GitHub API
-  cacheExpiresAt  DateTime?              // Kapan cache ini kedaluwarsa
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String    @id @default(uuid())
+  userId         String
+  provider       String
+  providerId     String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  cacheExpiresAt DateTime?
+  cachedData     String?   @db.LongText
+  accessToken    String?   @db.Text
+  settings       String?   @db.Text
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, provider])
   @@index([userId])
 }
 
 model CanvaProject {
-  id          String   @id @default(uuid())
-  userId      String
-  title       String
-  embedLink   String   @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  embedLink String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model Testimonial {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  clientName  String   // Nama pemberi testimoni (misal: "Budi Santoso")
-  company     String?  // Posisi/Perusahaan (misal: "CEO di TechCorp" atau "Klien Freelance")
-  content     String   @db.Text // Isi testimoni (maksimal misal 300-500 karakter)
-  rating      Int      @default(5) // Rating 1-5 bintang
-  avatarUrl   String?  // Foto pemberi testimoni (opsional)
-  
-  isVisible   Boolean  @default(true) // Toggle aktif/nonaktif tanpa harus hapus
-  order       Int      @default(0) // Urutan tampilan
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  userId     String
+  clientName String
+  company    String?
+  content    String   @db.Text
+  rating     Int      @default(5)
+  avatarUrl  String?
+  isVisible  Boolean  @default(true)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model PricingPlan {
   id              String   @id @default(uuid())
-  code            String   @unique // e.g., "pro", "supreme"
+  code            String   @unique
   name            String
   monthlyPrice    Int
   monthlyOriginal Int
@@ -493,54 +451,48 @@ model PricingPlan {
   @@index([code])
 }
 
-enum DiscountType {
-  PERCENTAGE
-  FIXED
-}
-
 model Coupon {
-  id            String       @id @default(uuid())
-  code          String       @unique
-  discountType  DiscountType @default(PERCENTAGE)
-  discountValue Int          // e.g., 20 for 20%, or 50000 for Rp50.000
-  maxUses       Int?         // null means unlimited
-  maxUsesPerUser Int?        // null means unlimited per user
-  currentUses   Int          @default(0)
-  minPurchase   Int?         // null means no minimum purchase limit
-  allowedPlan   String?      @default("ALL") // "ALL", "pro", "supreme"
-  validFrom     DateTime     @default(now())
-  validUntil    DateTime?    // null means no expiry
-  isActive      Boolean      @default(true)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  usages        CouponUsage[]
+  id             String        @id @default(uuid())
+  code           String        @unique
+  discountType   DiscountType  @default(PERCENTAGE)
+  discountValue  Int
+  maxUses        Int?
+  currentUses    Int           @default(0)
+  validFrom      DateTime      @default(now())
+  validUntil     DateTime?
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  maxUsesPerUser Int?
+  allowedPlan    String?       @default("ALL")
+  minPurchase    Int?
+  usages         CouponUsage[]
 
   @@index([code])
 }
 
 model CouponUsage {
-  id        String   @id @default(uuid())
-  userId    String
-  couponId  String
-  usedAt    DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  id       String   @id @default(uuid())
+  userId   String
+  couponId String
+  usedAt   DateTime @default(now())
+  coupon   Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([couponId])
 }
 
 model PageBlock {
-  id          String   @id @default(uuid())
-  userId      String
-  blockType   String   
-  orderIndex  Int      @default(0)
-  isVisible   Boolean  @default(true)
-  configJson  String?  @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(uuid())
+  userId     String
+  blockType  String
+  orderIndex Int      @default(0)
+  isVisible  Boolean  @default(true)
+  configJson String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, orderIndex])
 }
@@ -548,7 +500,7 @@ model PageBlock {
 model AdminNote {
   id          String   @id @default(uuid())
   userId      String
-  type        String   @default("IDEA") // IDEA, BUG, ERROR
+  type        String   @default("IDEA")
   content     String   @db.Text
   isCompleted Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -556,4 +508,26 @@ model AdminNote {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+enum PlanType {
+  FREE
+  PRO
+  SUPREME
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
 }

@@ -7,6 +7,9 @@ import { ReactLenis } from '@studio-freight/react-lenis';
 
 // Minimalist Blocks
 import { MinimalistHeroBlock } from './minimalist/MinimalistHeroBlock';
+import { MinimalistMarqueeBlock } from './minimalist/MinimalistMarqueeBlock';
+import { MinimalistAboutBlock } from './minimalist/MinimalistAboutBlock';
+import { MinimalistServicesBlock } from './minimalist/MinimalistServicesBlock';
 import { MinimalistStatsBlock } from './minimalist/MinimalistStatsBlock';
 import { MinimalistProjectsBlock } from './minimalist/MinimalistProjectsBlock';
 import { Minimalist3DBlock } from './minimalist/Minimalist3DBlock';
@@ -17,9 +20,12 @@ import { MinimalistFooterBlock } from './minimalist/MinimalistFooterBlock';
 // Spatial Theme Blocks
 import { SpatialShell } from './spatial/SpatialShell';
 import { SpatialHeroBlock } from './spatial/SpatialHeroBlock';
+import { SpatialMarqueeBlock } from './spatial/SpatialMarqueeBlock';
+import { SpatialAboutBlock } from './spatial/SpatialAboutBlock';
+import { SpatialServicesBlock } from './spatial/SpatialServicesBlock';
 import { SpatialProjectsBlock } from './spatial/SpatialProjectsBlock';
 import { Spatial3DBlock } from './spatial/Spatial3DBlock';
-import { SpatialIntegrationsBlock } from './spatial/SpatialIntegrationsBlock';
+import { SpatialStatsBlock } from './spatial/SpatialStatsBlock';
 import { SpatialGithubBlock } from './spatial/SpatialGithubBlock';
 import { SpatialTestimonialsBlock } from './spatial/SpatialTestimonialsBlock';
 import { SpatialAwardsBlock } from './spatial/SpatialAwardsBlock';
@@ -29,6 +35,96 @@ import { SpatialFooterBlock } from './spatial/SpatialFooterBlock';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { GithubStats } from '@/components/themes/widgets/GithubStats';
+
+// Obsidian Reel Theme Blocks
+import { ObsidianShell } from './obsidian/ObsidianShell';
+import { ObsidianHeroBlock } from './obsidian/ObsidianHeroBlock';
+import { ObsidianMarqueeBlock } from './obsidian/ObsidianMarqueeBlock';
+import { ObsidianAboutBlock } from './obsidian/ObsidianAboutBlock';
+import { ObsidianServicesBlock } from './obsidian/ObsidianServicesBlock';
+import { ObsidianProjectsBlock } from './obsidian/ObsidianProjectsBlock';
+import { Obsidian3DBlock } from './obsidian/Obsidian3DBlock';
+import { ObsidianStatsBlock } from './obsidian/ObsidianStatsBlock';
+import { ObsidianAwardsBlock } from './obsidian/ObsidianAwardsBlock';
+import { ObsidianTestimonialsBlock } from './obsidian/ObsidianTestimonialsBlock';
+import { ObsidianFooterBlock } from './obsidian/ObsidianFooterBlock';
+// Aura Kinetic Theme Blocks
+import { AuraKineticShell } from './aura-kinetic/AuraKineticShell';
+import { AuraKineticHeroBlock } from './aura-kinetic/AuraKineticHeroBlock';
+import { AuraKineticMarqueeBlock } from './aura-kinetic/AuraKineticMarqueeBlock';
+import { AuraKineticAboutBlock } from './aura-kinetic/AuraKineticAboutBlock';
+import { AuraKineticServicesBlock } from './aura-kinetic/AuraKineticServicesBlock';
+import { AuraKineticProjectsBlock } from './aura-kinetic/AuraKineticProjectsBlock';
+import { AuraKineticStatsBlock } from './aura-kinetic/AuraKineticStatsBlock';
+import { AuraKinetic3DBlock } from './aura-kinetic/AuraKinetic3DBlock';
+import { AuraKineticAwardsBlock } from './aura-kinetic/AuraKineticAwardsBlock';
+import { AuraKineticTestimonialsBlock } from './aura-kinetic/AuraKineticTestimonialsBlock';
+import { AuraKineticFooterBlock } from './aura-kinetic/AuraKineticFooterBlock';
+
+// Editorial Theme Blocks
+import { EditorialShell } from './editorial/EditorialShell';
+import { EditorialHeroBlock } from './editorial/EditorialHeroBlock';
+import { EditorialMarqueeBlock } from './editorial/EditorialMarqueeBlock';
+import { EditorialAboutBlock } from './editorial/EditorialAboutBlock';
+import { EditorialServicesBlock } from './editorial/EditorialServicesBlock';
+import { EditorialProjectsBlock } from './editorial/EditorialProjectsBlock';
+import { EditorialStatsBlock } from './editorial/EditorialStatsBlock';
+import { Editorial3DBlock } from './editorial/Editorial3DBlock';
+import { EditorialAwardsBlock } from './editorial/EditorialAwardsBlock';
+import { EditorialTestimonialsBlock } from './editorial/EditorialTestimonialsBlock';
+import { EditorialFooterBlock } from './editorial/EditorialFooterBlock';
+// Midnight Emulsion Theme Blocks
+import { MidnightEmulsionShell } from './midnight-emulsion/MidnightEmulsionShell';
+import { MidnightEmulsionHeroBlock } from './midnight-emulsion/MidnightEmulsionHeroBlock';
+import { MidnightEmulsionMarqueeBlock } from './midnight-emulsion/MidnightEmulsionMarqueeBlock';
+import { MidnightEmulsionAboutBlock } from './midnight-emulsion/MidnightEmulsionAboutBlock';
+import { MidnightEmulsionServicesBlock } from './midnight-emulsion/MidnightEmulsionServicesBlock';
+import { MidnightEmulsionProjectsBlock } from './midnight-emulsion/MidnightEmulsionProjectsBlock';
+import { MidnightEmulsionStatsBlock } from './midnight-emulsion/MidnightEmulsionStatsBlock';
+import { MidnightEmulsion3DBlock } from './midnight-emulsion/MidnightEmulsion3DBlock';
+import { MidnightEmulsionAwardsBlock } from './midnight-emulsion/MidnightEmulsionAwardsBlock';
+import { MidnightEmulsionTestimonialsBlock } from './midnight-emulsion/MidnightEmulsionTestimonialsBlock';
+import { MidnightEmulsionFooterBlock } from './midnight-emulsion/MidnightEmulsionFooterBlock';
+
+// Viewfinder Theme Blocks
+import { ViewfinderShell } from './viewfinder/ViewfinderShell';
+import { ViewfinderHeroBlock } from './viewfinder/ViewfinderHeroBlock';
+import { ViewfinderMarqueeBlock } from './viewfinder/ViewfinderMarqueeBlock';
+import { ViewfinderAboutBlock } from './viewfinder/ViewfinderAboutBlock';
+import { ViewfinderServicesBlock } from './viewfinder/ViewfinderServicesBlock';
+import { ViewfinderProjectsBlock } from './viewfinder/ViewfinderProjectsBlock';
+import { ViewfinderStatsBlock } from './viewfinder/ViewfinderStatsBlock';
+import { Viewfinder3DBlock } from './viewfinder/Viewfinder3DBlock';
+import { ViewfinderAwardsBlock } from './viewfinder/ViewfinderAwardsBlock';
+import { ViewfinderTestimonialsBlock } from './viewfinder/ViewfinderTestimonialsBlock';
+import { ViewfinderFooterBlock } from './viewfinder/ViewfinderFooterBlock';
+
+// Nexus Split Theme Blocks
+import { NexusSplitShell } from './nexus-split/NexusSplitShell';
+import { NexusSplitHeroBlock } from './nexus-split/NexusSplitHeroBlock';
+import { NexusSplitMarqueeBlock } from './nexus-split/NexusSplitMarqueeBlock';
+import { NexusSplitAboutBlock } from './nexus-split/NexusSplitAboutBlock';
+import { NexusSplitServicesBlock } from './nexus-split/NexusSplitServicesBlock';
+import { NexusSplitStatsBlock } from './nexus-split/NexusSplitStatsBlock';
+import { NexusSplitProjectsBlock } from './nexus-split/NexusSplitProjectsBlock';
+import { NexusSplit3DBlock } from './nexus-split/NexusSplit3DBlock';
+import { NexusSplitTestimonialsBlock } from './nexus-split/NexusSplitTestimonialsBlock';
+import { NexusSplitAwardsBlock } from './nexus-split/NexusSplitAwardsBlock';
+import { NexusSplitFooterBlock } from './nexus-split/NexusSplitFooterBlock';
+
+// Monolith Vanguard Theme Blocks
+import { MonolithShell } from './monolith/MonolithShell';
+import { MonolithHeroBlock } from './monolith/MonolithHeroBlock';
+import { MonolithMarqueeBlock } from './monolith/MonolithMarqueeBlock';
+import { MonolithAboutBlock } from './monolith/MonolithAboutBlock';
+import { MonolithServicesBlock } from './monolith/MonolithServicesBlock';
+import { MonolithStatsBlock } from './monolith/MonolithStatsBlock';
+import { MonolithProjectsBlock } from './monolith/MonolithProjectsBlock';
+import { Monolith3DBlock } from './monolith/Monolith3DBlock';
+import { MonolithTestimonialsBlock } from './monolith/MonolithTestimonialsBlock';
+import { MonolithAwardsBlock } from './monolith/MonolithAwardsBlock';
+import { MonolithFooterBlock } from './monolith/MonolithFooterBlock';
+
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { BlockEditorWrapper } from '@/components/features/appearance/BlockEditorWrapper';
 
@@ -39,17 +135,25 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
 
   if (!block.isVisible && !isEditor) return null;
 
-  let content = null;
+  let content: React.ReactNode | undefined = undefined;
   const activeThemeTemplate = theme?.themeTemplate || 'minimalist';
   
   // Ambil tipe dasar blok, contoh: 'SPATIAL_HERO' -> 'HERO'
   const baseParts = block.blockType.split('_');
   const baseBlockType = baseParts.length > 1 ? baseParts.slice(1).join('_') : block.blockType;
 
+  // HARD IGNORE LEGACY BLOCKS
+  if (baseBlockType === 'INTEGRATIONS') {
+    return null;
+  }
+
   // 1. SMART MAPPING: Render blok sesuai dengan tema yang sedang aktif
   if (activeThemeTemplate === 'minimalist') {
       switch (baseBlockType) {
         case 'HERO': content = <MinimalistHeroBlock {...commonProps} />; break;
+        case 'MARQUEE': content = <MinimalistMarqueeBlock {...commonProps} />; break;
+        case 'ABOUT': content = <MinimalistAboutBlock {...commonProps} />; break;
+        case 'SERVICES': content = <MinimalistServicesBlock {...commonProps} />; break;
         case 'STATS': content = <MinimalistStatsBlock {...commonProps} />; break;
         case 'PROJECTS': content = <MinimalistProjectsBlock {...commonProps} />; break;
         case '3D': content = <Minimalist3DBlock {...commonProps} />; break;
@@ -63,45 +167,144 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
   } else if (activeThemeTemplate === 'spatial') {
       switch (baseBlockType) {
         case 'HERO': content = <SpatialHeroBlock {...commonProps} />; break;
+        case 'MARQUEE': content = <SpatialMarqueeBlock {...commonProps} />; break;
+        case 'ABOUT': content = <SpatialAboutBlock {...commonProps} />; break;
+        case 'SERVICES': content = <SpatialServicesBlock {...commonProps} />; break;
+        case 'STATS': content = <SpatialStatsBlock {...commonProps} />; break;
         case 'PROJECTS': content = <SpatialProjectsBlock {...commonProps} />; break;
         case '3D': content = <Spatial3DBlock {...commonProps} />; break;
-        case 'INTEGRATIONS': content = <SpatialIntegrationsBlock {...commonProps} />; break;
+        case 'PENPOT': content = <PenpotShowcase userId={userId} variant="spatial" />; break;
+        case 'CANVA': content = <CanvaShowcase userId={userId} variant="spatial" />; break;
         case 'GITHUB': content = <SpatialGithubBlock {...commonProps} />; break;
         case 'TESTIMONIALS': content = <SpatialTestimonialsBlock {...commonProps} />; break;
         case 'AWARDS': content = <SpatialAwardsBlock {...commonProps} />; break;
         case 'FOOTER': content = <SpatialFooterBlock {...commonProps} />; break;
       }
+  } else if (activeThemeTemplate === 'obsidian-reel') {
+      switch (baseBlockType) {
+        case 'HERO': content = <ObsidianHeroBlock {...commonProps} />; break;
+        case 'MARQUEE': content = <ObsidianMarqueeBlock {...commonProps} />; break;
+        case 'ABOUT': content = <ObsidianAboutBlock {...commonProps} />; break;
+        case 'SERVICES': content = <ObsidianServicesBlock {...commonProps} />; break;
+        case 'PROJECTS': content = <ObsidianProjectsBlock {...commonProps} />; break;
+        case 'STATS': content = <ObsidianStatsBlock {...commonProps} />; break;
+        case '3D': content = <Obsidian3DBlock {...commonProps} />; break;
+        case 'AWARDS': content = <ObsidianAwardsBlock {...commonProps} />; break;
+        case 'TESTIMONIALS': content = <ObsidianTestimonialsBlock {...commonProps} />; break;
+        case 'FOOTER': content = <ObsidianFooterBlock {...commonProps} />; break;
+        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
+        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
+        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
+      }
+  } else if (activeThemeTemplate === 'aura-kinetic') {
+      switch (baseBlockType) {
+        case 'HERO': content = <AuraKineticHeroBlock {...commonProps} />; break;
+        case 'MARQUEE': content = <AuraKineticMarqueeBlock {...commonProps} />; break;
+        case 'ABOUT': content = <AuraKineticAboutBlock {...commonProps} />; break;
+        case 'SERVICES': content = <AuraKineticServicesBlock {...commonProps} />; break;
+        case 'PROJECTS': content = <AuraKineticProjectsBlock {...commonProps} />; break;
+        case 'STATS': content = <AuraKineticStatsBlock {...commonProps} />; break;
+        case '3D': content = <AuraKinetic3DBlock {...commonProps} />; break;
+        case 'AWARDS': content = <AuraKineticAwardsBlock {...commonProps} />; break;
+        case 'TESTIMONIALS': content = <AuraKineticTestimonialsBlock {...commonProps} />; break;
+        case 'FOOTER': content = <AuraKineticFooterBlock {...commonProps} />; break;
+        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
+        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
+        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
+      }
+  } else if (activeThemeTemplate === 'editorial') {
+      switch (baseBlockType) {
+        case 'HERO': content = <EditorialHeroBlock {...commonProps} />; break;
+        case 'MARQUEE': content = <EditorialMarqueeBlock {...commonProps} />; break;
+        case 'ABOUT': content = <EditorialAboutBlock {...commonProps} />; break;
+        case 'SERVICES': content = <EditorialServicesBlock {...commonProps} />; break;
+        case 'PROJECTS': content = <EditorialProjectsBlock {...commonProps} />; break;
+        case 'STATS': content = <EditorialStatsBlock {...commonProps} />; break;
+        case '3D': content = <Editorial3DBlock {...commonProps} />; break;
+        case 'AWARDS': content = <EditorialAwardsBlock {...commonProps} />; break;
+        case 'TESTIMONIALS': content = <EditorialTestimonialsBlock {...commonProps} />; break;
+        case 'FOOTER': content = <EditorialFooterBlock {...commonProps} />; break;
+        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
+        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
+        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
+        default: console.log(`Editorial block type not mapped: ${baseBlockType}`); break;
+      }
+  } else if (activeThemeTemplate === 'midnight-emulsion') {
+      switch (baseBlockType) {
+        case 'HERO': content = <MidnightEmulsionHeroBlock {...commonProps} />; break;
+        case 'MARQUEE': content = <MidnightEmulsionMarqueeBlock {...commonProps} />; break;
+        case 'ABOUT': content = <MidnightEmulsionAboutBlock {...commonProps} />; break;
+        case 'SERVICES': content = <MidnightEmulsionServicesBlock {...commonProps} />; break;
+        case 'PROJECTS': content = <MidnightEmulsionProjectsBlock {...commonProps} />; break;
+        case 'STATS': content = <MidnightEmulsionStatsBlock {...commonProps} />; break;
+        case '3D': content = <MidnightEmulsion3DBlock {...commonProps} />; break;
+        case 'AWARDS': content = <MidnightEmulsionAwardsBlock {...commonProps} />; break;
+        case 'TESTIMONIALS': content = <MidnightEmulsionTestimonialsBlock {...commonProps} />; break;
+        case 'FOOTER': content = <MidnightEmulsionFooterBlock {...commonProps} />; break;
+        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="midnight" themeColor={themeColor} /> : null; break;
+        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="midnight" themeColor={themeColor} /> : null; break;
+        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="midnight" themeColor={themeColor} /> : null; break;
+      }
+  } else if (activeThemeTemplate === 'viewfinder') {
+      switch (baseBlockType) {
+        case 'HERO': content = <ViewfinderHeroBlock {...commonProps} />; break;
+        case 'MARQUEE': content = <ViewfinderMarqueeBlock {...commonProps} />; break;
+        case 'ABOUT': content = <ViewfinderAboutBlock {...commonProps} />; break;
+        case 'SERVICES': content = <ViewfinderServicesBlock {...commonProps} />; break;
+        case 'PROJECTS': content = <ViewfinderProjectsBlock {...commonProps} />; break;
+        case 'STATS': content = <ViewfinderStatsBlock {...commonProps} />; break;
+        case '3D': content = <Viewfinder3DBlock {...commonProps} />; break;
+        case 'AWARDS': content = <ViewfinderAwardsBlock {...commonProps} />; break;
+        case 'TESTIMONIALS': content = <ViewfinderTestimonialsBlock {...commonProps} />; break;
+        case 'FOOTER': content = <ViewfinderFooterBlock {...commonProps} />; break;
+        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
+        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
+        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
+      }
+  } else if (activeThemeTemplate === 'split') {
+      switch (baseBlockType) {
+        case 'HERO': content = <NexusSplitHeroBlock {...commonProps} />; break;
+        case 'MARQUEE': content = <NexusSplitMarqueeBlock {...commonProps} />; break;
+        case 'ABOUT': content = <NexusSplitAboutBlock {...commonProps} />; break;
+        case 'SERVICES': content = <NexusSplitServicesBlock {...commonProps} />; break;
+        case 'STATS': content = <NexusSplitStatsBlock {...commonProps} />; break;
+        case 'PROJECTS': content = <NexusSplitProjectsBlock {...commonProps} />; break;
+        case '3D': content = <NexusSplit3DBlock {...commonProps} />; break;
+        case 'AWARDS': content = <NexusSplitAwardsBlock {...commonProps} />; break;
+        case 'TESTIMONIALS': content = <NexusSplitTestimonialsBlock {...commonProps} />; break;
+        case 'FOOTER': content = <NexusSplitFooterBlock {...commonProps} />; break;
+        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+      }
+  } else if (activeThemeTemplate === 'monolith' || activeThemeTemplate === 'layered-monolith') {
+      switch (baseBlockType) {
+        case 'HERO': content = <MonolithHeroBlock {...commonProps} />; break;
+        case 'MARQUEE': content = <MonolithMarqueeBlock {...commonProps} />; break;
+        case 'ABOUT': content = <MonolithAboutBlock {...commonProps} />; break;
+        case 'SERVICES': content = <MonolithServicesBlock {...commonProps} />; break;
+        case 'STATS': content = <MonolithStatsBlock {...commonProps} />; break;
+        case 'PROJECTS': content = <MonolithProjectsBlock {...commonProps} />; break;
+        case '3D': content = <Monolith3DBlock {...commonProps} />; break;
+        case 'AWARDS': content = <MonolithAwardsBlock {...commonProps} />; break;
+        case 'TESTIMONIALS': content = <MonolithTestimonialsBlock {...commonProps} />; break;
+        case 'FOOTER': content = <MonolithFooterBlock {...commonProps} />; break;
+        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+      }
   }
 
-  // 2. FALLBACK MAPPING: Jika tidak ada versi dari tema saat ini, gunakan blok aslinya
-  if (!content) {
-    switch (block.blockType) {
-      // Minimalist
-      case 'MINIMALIST_STATS': content = <MinimalistStatsBlock {...commonProps} />; break;
-      case 'MINIMALIST_PROJECTS': content = <MinimalistProjectsBlock {...commonProps} />; break;
-      case 'MINIMALIST_3D': content = <Minimalist3DBlock {...commonProps} />; break;
-      case 'MINIMALIST_AWARDS': content = <MinimalistAwardsBlock {...commonProps} />; break;
-      case 'MINIMALIST_TESTIMONIALS': content = <MinimalistTestimonialsBlock {...commonProps} />; break;
-      case 'MINIMALIST_FOOTER': content = <MinimalistFooterBlock {...commonProps} />; break;
-      
-      // Widgets mapped to Minimalist
-      case 'MINIMALIST_PENPOT': content = <PenpotShowcase userId={userId} variant="minimalist" themeColor={themeColor} />; break;
-      case 'MINIMALIST_CANVA': content = <CanvaShowcase userId={userId} variant="minimalist" themeColor={themeColor} />; break;
-      case 'MINIMALIST_GITHUB': content = <GithubStats userId={userId} variant="minimalist" themeColor={themeColor} />; break;
-
-      // Spatial
-      case 'SPATIAL_HERO': content = <SpatialHeroBlock {...commonProps} />; break;
-      case 'SPATIAL_PROJECTS': content = <SpatialProjectsBlock {...commonProps} />; break;
-      case 'SPATIAL_3D': content = <Spatial3DBlock {...commonProps} />; break;
-      case 'SPATIAL_INTEGRATIONS': content = <SpatialIntegrationsBlock {...commonProps} />; break;
-      case 'SPATIAL_GITHUB': content = <SpatialGithubBlock {...commonProps} />; break;
-      case 'SPATIAL_TESTIMONIALS': content = <SpatialTestimonialsBlock {...commonProps} />; break;
-      case 'SPATIAL_AWARDS': content = <SpatialAwardsBlock {...commonProps} />; break;
-      case 'SPATIAL_FOOTER': content = <SpatialFooterBlock {...commonProps} />; break;
-    }
+  if (content === undefined) {
+      if (isEditor) {
+          return (
+              <div className="w-full h-32 bg-red-500/20 border-2 border-red-500 flex items-center justify-center text-red-500 font-bold">
+                  [DEBUG] Content is NULL for blockType: {block.blockType} / baseBlockType: {baseBlockType}
+              </div>
+          );
+      }
+      return null;
   }
-
-  if (!content) return null;
 
   const isHero = block.blockType.includes('HERO');
 
@@ -131,6 +334,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
   const sortedBlocks = [...(blocks || [])].sort((a, b) => a.orderIndex - b.orderIndex);
 
   const isSmoothScroll = (!isMobileView && !isCardPreview) && (theme?.customTexts?.smooth_scroll === 'true');
+  const activeThemeTemplate = theme?.themeTemplate || 'minimalist';
 
   const renderLayout = () => {
     // Jika tema minimalist, kita gunakan Layout Shell khusus
@@ -210,7 +414,6 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
                       onClick={() => setSelectedMedia(null)}
                       className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 hover:text-black transition-colors"
                     >
-                      [ CLOSE {selectedMedia.type === 'video' ? 'PLAYER' : 'PREVIEW'} ]
                     </button>
                   </div>
                 </div>
@@ -221,7 +424,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
       );
     }
 
-    if (theme?.themeTemplate === 'spatial') {
+    if (activeThemeTemplate === 'spatial') {
       return (
         <SpatialShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
           {sortedBlocks.map(b => (
@@ -231,7 +434,80 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
       );
     }
 
-    // Generic flat layout fallback untuk tema lain
+    if (activeThemeTemplate === 'obsidian-reel') {
+      return (
+        <ObsidianShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map(b => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </ObsidianShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'aura-kinetic') {
+      return (
+        <AuraKineticShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map(b => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </AuraKineticShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'editorial') {
+      return (
+        <EditorialShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map(b => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </EditorialShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'midnight-emulsion') {
+      return (
+        <MidnightEmulsionShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map(b => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </MidnightEmulsionShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'viewfinder') {
+      return (
+        <ViewfinderShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map(b => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </ViewfinderShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'split') {
+      const heroBlockData = sortedBlocks.find((b: any) => b.blockType.includes('HERO'));
+      const otherBlocks = sortedBlocks.filter((b: any) => b.id !== heroBlockData?.id);
+
+      return (
+        <NexusSplitShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor} heroBlock={heroBlockData}>
+          {otherBlocks.map((b: any) => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </NexusSplitShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'monolith' || activeThemeTemplate === 'layered-monolith') {
+      return (
+        <MonolithShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor} selectedMedia={selectedMedia} setSelectedMedia={setSelectedMedia}>
+          {sortedBlocks.map(b => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </MonolithShell>
+      );
+    }
+
+    // Default Minimalist
     return (
       <div className="flex flex-col w-full min-h-screen">
         {sortedBlocks.map(b => (
@@ -263,5 +539,3 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
 
   return content;
 };
-
-

@@ -3,6 +3,8 @@ import prisma from "./prisma";
 // Daftar semua jenis blok universal yang didukung oleh Hybrid Modular Builder
 const UNIVERSAL_BLOCKS = [
   "HERO",
+  "ABOUT",
+  "SERVICES",
   "STATS",
   "PROJECTS",
   "3D",
@@ -11,7 +13,7 @@ const UNIVERSAL_BLOCKS = [
   "GITHUB",
   "AWARDS",
   "TESTIMONIALS",
-  "INTEGRATIONS",
+  "MARQUEE",
   "FOOTER"
 ];
 
@@ -38,8 +40,8 @@ export async function ensureUniversalBlocks(userId: string) {
         userId,
         blockType: type,
         orderIndex: existingBlocks.length + index,
-        // Sembunyikan secara default jika ini bukan inisialisasi awal (agar tidak mengagetkan user)
-        isVisible: existingBlocks.length === 0 ? true : false,
+        // Set selalu visible agar tidak membingungkan user
+        isVisible: true,
         configJson: "{}"
       }));
 

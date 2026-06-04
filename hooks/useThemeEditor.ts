@@ -5,10 +5,18 @@ import { useSearchParams } from 'next/navigation';
 import { showToast } from '@/lib/customToast';
 import { safeParseJson, safeStringifyJson } from '@/lib/safeJson';
 
+const UNIVERSAL_BLOCK_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
+
 const THEME_BLOCK_PRESETS: Record<string, string[]> = {
-  'spatial': ['HERO', 'PROJECTS', '3D', 'STATS', 'INTEGRATIONS', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'],
-  'minimalist': ['HERO', 'STATS', 'PROJECTS', '3D', 'INTEGRATIONS', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'],
-  'default': ['HERO', 'STATS', 'PROJECTS', '3D', 'INTEGRATIONS', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER']
+  'spatial': UNIVERSAL_BLOCK_ORDER,
+  'minimalist': UNIVERSAL_BLOCK_ORDER,
+  'obsidian-reel': UNIVERSAL_BLOCK_ORDER,
+  'aura-kinetic': UNIVERSAL_BLOCK_ORDER,
+  'editorial': UNIVERSAL_BLOCK_ORDER,
+  'viewfinder': UNIVERSAL_BLOCK_ORDER,
+  'midnight-emulsion': UNIVERSAL_BLOCK_ORDER,
+  'split': UNIVERSAL_BLOCK_ORDER,
+  'default': UNIVERSAL_BLOCK_ORDER
 };
 
 const applyPresetToBlocks = (blocks: any[], themeId: string) => {
@@ -87,6 +95,10 @@ export function useThemeEditor() {
     buttonShape !== lastSavedState.buttonShape ||
     cardStyle !== lastSavedState.cardStyle ||
     splashScreen !== lastSavedState.splashScreen ||
+    fullName !== lastSavedState.fullName ||
+    profession !== lastSavedState.profession ||
+    bio !== lastSavedState.bio ||
+    location !== lastSavedState.location ||
     safeStringifyJson(customTexts) !== safeStringifyJson(lastSavedState.customTexts) ||
     safeStringifyJson(pageBlocks.map(b => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible}))) !== 
     safeStringifyJson(lastSavedState.pageBlocks?.map((b: any) => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible})))
@@ -145,7 +157,10 @@ export function useThemeEditor() {
               if (sa.publishedDraftId) setPublishedDraftId(sa.publishedDraftId);
               
               // Set lastSavedState for dirty tracking
+              // PENTING: Gunakan blok yang sudah difilter (tanpa legacy INTEGRATIONS)
+              // agar isDirty tidak salah deteksi setelah refresh halaman
               const texts = sa.customTexts ? safeParseJson(sa.customTexts, {}) : {};
+              const cleanBlocks = (appData.pageBlocks || []).filter((b: any) => !b.blockType.includes('INTEGRATIONS'));
               setLastSavedState({
                 activeTheme: sa.themeTemplate || 'minimalist',
                 themeColor: sa.themeColor || '#000000',
@@ -155,7 +170,11 @@ export function useThemeEditor() {
                 cardStyle: sa.cardStyle || 'flat',
                 splashScreen: sa.splashScreen || false,
                 customTexts: texts,
-                pageBlocks: appData.pageBlocks || []
+                pageBlocks: cleanBlocks,
+                fullName: appData.profile?.fullName || "Nama Anda",
+                profession: appData.profile?.profession || "Profesi / Bio Singkat",
+                bio: appData.profile?.bio || "",
+                location: appData.profile?.location || "Indonesia"
               });
             }
           }
@@ -163,13 +182,15 @@ export function useThemeEditor() {
 
         setDbData(appData);
         if (appData.pageBlocks) {
+          // FILTER OUT LEGACY BLOCKS TO PREVENT RED BOX BUGS
+          const validBlocks = appData.pageBlocks.filter((b: any) => !b.blockType.includes('INTEGRATIONS'));
           if (previewTheme) {
             // Jika masuk dari halaman Tema, terapkan preset tema tujuan
-            const presetBlocks = applyPresetToBlocks(appData.pageBlocks, previewTheme);
+            const presetBlocks = applyPresetToBlocks(validBlocks, previewTheme);
             setPageBlocks(presetBlocks);
           } else {
             // Jika masuk normal, biarkan susunan sesuai database (Live Web)
-            setPageBlocks(appData.pageBlocks);
+            setPageBlocks(validBlocks);
           }
         }
 
@@ -386,7 +407,8 @@ export function useThemeEditor() {
         setActiveDraftName(data.name);
         setIsSaveDraftModalOpen(false);
         setLastSavedState({
-          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks: [...pageBlocks]
+          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks: [...pageBlocks],
+          fullName, profession, bio, location
         });
         
         // Tandai bahwa draft telah diubah dan belum dipublish
@@ -455,7 +477,8 @@ export function useThemeEditor() {
         
         setPublishedDraftId(activeDraftId || null);
         setLastSavedState({
-          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks: [...pageBlocks]
+          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks: [...pageBlocks],
+          fullName, profession, bio, location
         });
         setHasUnpublishedChanges(false);
 
@@ -522,7 +545,8 @@ export function useThemeEditor() {
     // (sampai pengguna mengubah sesuatu dan menyimpannya lagi)
     setHasUnpublishedChanges(draft.id !== publishedDraftId);
     
-    setLastSavedState({
+    setLastSavedState((prev: any) => ({
+      ...prev,
       activeTheme: draft.themeTemplate,
       themeColor: draft.themeColor,
       fontHeading: draft.fontHeading,
@@ -532,7 +556,7 @@ export function useThemeEditor() {
       splashScreen: draft.splashScreen,
       customTexts: parsedTexts,
       pageBlocks: draftBlocks
-    });
+    }));
 
     setIsLoading(false);
   };
@@ -556,7 +580,8 @@ export function useThemeEditor() {
       setCustomTexts(parsedTexts);
       
       // Update dirty tracking
-      setLastSavedState({
+      setLastSavedState((prev: any) => ({
+        ...prev,
         activeTheme: dbData.siteAppearance.themeTemplate || 'minimalist',
         themeColor: dbData.siteAppearance.themeColor || '#000000',
         fontHeading: dbData.siteAppearance.fontHeading || 'Inter',
@@ -566,7 +591,7 @@ export function useThemeEditor() {
         splashScreen: dbData.siteAppearance.splashScreen || false,
         customTexts: parsedTexts,
         pageBlocks: dbData.pageBlocks || []
-      });
+      }));
     }
 
     if (dbData.pageBlocks) {
