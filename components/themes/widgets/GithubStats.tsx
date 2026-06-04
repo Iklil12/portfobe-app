@@ -122,7 +122,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       calendarColorScheme: 'dark' as const
     },
     noir: {
-      section: 'p-8 @md:p-12 border-t border-white/10 bg-[#050505] text-white wire-border-b',
+      section: 'p-8 @md:p-12 border-t border-white/10 bg-[#050505] text-white wire-border-b grayscale',
       heading: 'font-sans font-black text-3xl @md:text-5xl tracking-tighter uppercase',
       label: 'font-mono text-[10px] uppercase tracking-[0.2em] text-white/50',
       border: 'border-white/10',

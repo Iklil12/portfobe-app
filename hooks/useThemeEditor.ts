@@ -6,6 +6,7 @@ import { showToast } from '@/lib/customToast';
 import { safeParseJson, safeStringifyJson } from '@/lib/safeJson';
 
 const UNIVERSAL_BLOCK_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
+const NOIR_BLOCK_ORDER = ['MARQUEE', 'HERO', 'ABOUT', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
 
 const THEME_BLOCK_PRESETS: Record<string, string[]> = {
   'spatial': UNIVERSAL_BLOCK_ORDER,
@@ -16,6 +17,7 @@ const THEME_BLOCK_PRESETS: Record<string, string[]> = {
   'viewfinder': UNIVERSAL_BLOCK_ORDER,
   'midnight-emulsion': UNIVERSAL_BLOCK_ORDER,
   'split': UNIVERSAL_BLOCK_ORDER,
+  'absolute-noir': NOIR_BLOCK_ORDER,
   'default': UNIVERSAL_BLOCK_ORDER
 };
 

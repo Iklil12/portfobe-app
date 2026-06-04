@@ -125,6 +125,19 @@ import { MonolithTestimonialsBlock } from './monolith/MonolithTestimonialsBlock'
 import { MonolithAwardsBlock } from './monolith/MonolithAwardsBlock';
 import { MonolithFooterBlock } from './monolith/MonolithFooterBlock';
 
+// Absolute Noir Theme Blocks
+import { AbsoluteNoirShell } from './absolute-noir/AbsoluteNoirShell';
+import { AbsoluteNoirHeroBlock } from './absolute-noir/AbsoluteNoirHeroBlock';
+import { AbsoluteNoirMarqueeBlock } from './absolute-noir/AbsoluteNoirMarqueeBlock';
+import { AbsoluteNoirAboutBlock } from './absolute-noir/AbsoluteNoirAboutBlock';
+import { AbsoluteNoirServicesBlock } from './absolute-noir/AbsoluteNoirServicesBlock';
+import { AbsoluteNoirStatsBlock } from './absolute-noir/AbsoluteNoirStatsBlock';
+import { AbsoluteNoirProjectsBlock } from './absolute-noir/AbsoluteNoirProjectsBlock';
+import { AbsoluteNoir3DBlock } from './absolute-noir/AbsoluteNoir3DBlock';
+import { AbsoluteNoirAwardsBlock } from './absolute-noir/AbsoluteNoirAwardsBlock';
+import { AbsoluteNoirTestimonialsBlock } from './absolute-noir/AbsoluteNoirTestimonialsBlock';
+import { AbsoluteNoirFooterBlock } from './absolute-noir/AbsoluteNoirFooterBlock';
+
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { BlockEditorWrapper } from '@/components/features/appearance/BlockEditorWrapper';
 
@@ -292,6 +305,22 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
         case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
         case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
         case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+      }
+  } else if (activeThemeTemplate === 'absolute-noir') {
+      switch (baseBlockType) {
+        case 'HERO': content = <AbsoluteNoirHeroBlock {...commonProps} />; break;
+        case 'MARQUEE': content = null; break; // Locked to Hero in this theme
+        case 'ABOUT': content = <AbsoluteNoirAboutBlock {...commonProps} />; break;
+        case 'SERVICES': content = <AbsoluteNoirServicesBlock {...commonProps} />; break;
+        case 'STATS': content = <AbsoluteNoirStatsBlock {...commonProps} />; break;
+        case 'PROJECTS': content = <AbsoluteNoirProjectsBlock {...commonProps} />; break;
+        case '3D': content = <AbsoluteNoir3DBlock {...commonProps} />; break;
+        case 'AWARDS': content = <AbsoluteNoirAwardsBlock {...commonProps} />; break;
+        case 'TESTIMONIALS': content = <AbsoluteNoirTestimonialsBlock {...commonProps} />; break;
+        case 'FOOTER': content = <AbsoluteNoirFooterBlock {...commonProps} />; break;
+        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="noir" /> : null; break;
+        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="noir" /> : null; break;
+        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="noir" /> : null; break;
       }
   }
 
@@ -504,6 +533,16 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
             <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
           ))}
         </MonolithShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'absolute-noir') {
+      return (
+        <AbsoluteNoirShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map((b: any) => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </AbsoluteNoirShell>
       );
     }
 

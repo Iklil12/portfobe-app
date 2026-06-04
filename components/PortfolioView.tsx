@@ -69,8 +69,8 @@ export default function PortfolioView({ data, theme, isMobileView = false, isCar
     }
   }
 
-  // Jika tema yang aktif adalah minimalist, spatial, obsidian-reel, aura-kinetic, editorial, midnight-emulsion, viewfinder, split, atau monolith, kita gunakan DynamicBlockRenderer
-  if (activeThemeName === 'minimalist' || activeThemeName === 'spatial' || activeThemeName === 'obsidian-reel' || activeThemeName === 'aura-kinetic' || activeThemeName === 'editorial' || activeThemeName === 'midnight-emulsion' || activeThemeName === 'viewfinder' || activeThemeName === 'split' || activeThemeName === 'monolith' || activeThemeName === 'layered-monolith') {
+  // Jika tema yang aktif adalah minimalist, spatial, obsidian-reel, aura-kinetic, editorial, midnight-emulsion, viewfinder, split, monolith, atau absolute-noir, kita gunakan DynamicBlockRenderer
+  if (activeThemeName === 'minimalist' || activeThemeName === 'spatial' || activeThemeName === 'obsidian-reel' || activeThemeName === 'aura-kinetic' || activeThemeName === 'editorial' || activeThemeName === 'midnight-emulsion' || activeThemeName === 'viewfinder' || activeThemeName === 'split' || activeThemeName === 'monolith' || activeThemeName === 'layered-monolith' || activeThemeName === 'absolute-noir') {
     return (
       <div className="relative w-full h-full" style={{ containerType: 'inline-size' }}>
         <DynamicBlockRenderer blocks={data.pageBlocks || data.blocks || []} data={data} theme={processedTheme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={effectiveIsEditor} />

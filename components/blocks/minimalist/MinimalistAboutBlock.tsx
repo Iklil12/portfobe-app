@@ -3,7 +3,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { EditableText } from '@/components/ui/EditableText';
-import { LazyImage } from '@/components/ui/LazyImage';
 
 const premiumEase = [0.16, 1, 0.3, 1] as const;
 
@@ -26,10 +25,6 @@ const getStaggerContainer = (delayStart = 0, staggerGap = 0.15) => ({
 });
 
 export const MinimalistAboutBlock = ({ data, theme, isEditor }: any) => {
-  const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
-  const cleanAvatar = rawAvatar.replace(/"/g, '').trim();
-  const displayAvatar = (cleanAvatar !== "" && cleanAvatar !== "null") ? cleanAvatar : `https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop`;
-
   const animationTrigger = isEditor ? "animate" : "whileInView";
 
   return (
@@ -38,13 +33,8 @@ export const MinimalistAboutBlock = ({ data, theme, isEditor }: any) => {
       variants={getStaggerContainer(0, 0.15)}
       className="border-b border-gray-200"
     >
-      <div className="grid grid-cols-1 @md:grid-cols-2">
-        {/* Left Column: Image */}
-        <motion.div variants={cinematicBlurUp} className="w-full aspect-[4/3] overflow-hidden border-b @md:border-b-0 @md:border-r border-gray-200">
-          <LazyImage src={displayAvatar} alt="About" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-[1.5s]" />
-        </motion.div>
-
-        {/* Right Column: Text Content */}
+      <div className="w-full">
+        {/* Text Content */}
         <div className="p-8 @md:p-12 flex flex-col justify-center">
           <motion.p variants={cinematicBlurUp} className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4 min-heading">
             <EditableText value={theme?.customTexts?.min_about_label || 'About'} field="min_about_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} className="min-heading" />
