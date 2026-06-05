@@ -178,4 +178,4 @@ export async function PATCH(req: Request) {
     console.error("PATCH Appearance Error:", error);
     return NextResponse.json({ error: "Gagal menyimpan tema" }, { status: 500 });
   }
-}
+}

@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { showToast } from '@/lib/customToast';
 import { safeParseJson, safeStringifyJson } from '@/lib/safeJson';
 
-const UNIVERSAL_BLOCK_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
+const UNIVERSAL_BLOCK_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SKILLS', 'EXPERIENCE', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
 
 
 const THEME_BLOCK_PRESETS: Record<string, string[]> = {
@@ -26,6 +26,9 @@ const THEME_BLOCK_PRESETS: Record<string, string[]> = {
   'cinematic-gallery': UNIVERSAL_BLOCK_ORDER,
   'monolith': UNIVERSAL_BLOCK_ORDER,
   'layered-monolith': UNIVERSAL_BLOCK_ORDER,
+  'kinetic-avant-garde': UNIVERSAL_BLOCK_ORDER,
+  'nexus-noir': UNIVERSAL_BLOCK_ORDER,
+  'horizontal-flow': UNIVERSAL_BLOCK_ORDER,
   'default': UNIVERSAL_BLOCK_ORDER
 };
 

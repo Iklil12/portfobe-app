@@ -214,6 +214,53 @@ import { BrutalismAboutBlock } from './brutalism/BrutalismAboutBlock';
 import { BrutalismServicesBlock } from './brutalism/BrutalismServicesBlock';
 import { BrutalismMarqueeBlock } from './brutalism/BrutalismMarqueeBlock';
 
+// Kinetic Avant Garde Theme Blocks
+import { KineticAvantGardeShell } from './kinetic-avant-garde/KineticAvantGardeShell';
+import { KineticAvantGardeHeroBlock } from './kinetic-avant-garde/KineticAvantGardeHeroBlock';
+import { KineticAvantGardeMarqueeBlock } from './kinetic-avant-garde/KineticAvantGardeMarqueeBlock';
+import { KineticAvantGardeAboutBlock } from './kinetic-avant-garde/KineticAvantGardeAboutBlock';
+import { KineticAvantGardeServicesBlock } from './kinetic-avant-garde/KineticAvantGardeServicesBlock';
+import { KineticAvantGardeSkillsBlock } from './kinetic-avant-garde/KineticAvantGardeSkillsBlock';
+import { KineticAvantGardeProjectsBlock } from './kinetic-avant-garde/KineticAvantGardeProjectsBlock';
+import { KineticAvantGarde3DBlock } from './kinetic-avant-garde/KineticAvantGarde3DBlock';
+import { KineticAvantGardeStatsBlock } from './kinetic-avant-garde/KineticAvantGardeStatsBlock';
+import { KineticAvantGardeExperienceBlock } from './kinetic-avant-garde/KineticAvantGardeExperienceBlock';
+import { KineticAvantGardeAwardsBlock } from './kinetic-avant-garde/KineticAvantGardeAwardsBlock';
+import { KineticAvantGardeTestimonialsBlock } from './kinetic-avant-garde/KineticAvantGardeTestimonialsBlock';
+import { KineticAvantGardeFooterBlock } from './kinetic-avant-garde/KineticAvantGardeFooterBlock';
+
+// Nexus Noir Theme Blocks
+import { NexusNoirShell } from './nexus-noir/NexusNoirShell';
+import { NexusNoirHeroBlock } from './nexus-noir/NexusNoirHeroBlock';
+import { NexusNoirMarqueeBlock } from './nexus-noir/NexusNoirMarqueeBlock';
+import { NexusNoirAboutBlock } from './nexus-noir/NexusNoirAboutBlock';
+import { NexusNoirSkillsBlock } from './nexus-noir/NexusNoirSkillsBlock';
+import { NexusNoirExperienceBlock } from './nexus-noir/NexusNoirExperienceBlock';
+import { NexusNoirServicesBlock } from './nexus-noir/NexusNoirServicesBlock';
+import { NexusNoirStatsBlock } from './nexus-noir/NexusNoirStatsBlock';
+import { NexusNoirProjectsBlock } from './nexus-noir/NexusNoirProjectsBlock';
+import { NexusNoir3DBlock } from './nexus-noir/NexusNoir3DBlock';
+import { NexusNoirAwardsBlock } from './nexus-noir/NexusNoirAwardsBlock';
+import { NexusNoirTestimonialsBlock } from './nexus-noir/NexusNoirTestimonialsBlock';
+import { NexusNoirFooterBlock } from './nexus-noir/NexusNoirFooterBlock';
+
+// ====================
+// HORIZONTAL FLOW BLOCKS
+// ====================
+import { HorizontalFlowShell } from './horizontal-flow/HorizontalFlowShell';
+import { HorizontalFlowHeroBlock } from './horizontal-flow/HorizontalFlowHeroBlock';
+import { HorizontalFlowMarqueeBlock } from './horizontal-flow/HorizontalFlowMarqueeBlock';
+import { HorizontalFlowAboutBlock } from './horizontal-flow/HorizontalFlowAboutBlock';
+import { HorizontalFlowStatsBlock } from './horizontal-flow/HorizontalFlowStatsBlock';
+import { HorizontalFlowProjectsBlock } from './horizontal-flow/HorizontalFlowProjectsBlock';
+import { HorizontalFlow3DBlock } from './horizontal-flow/HorizontalFlow3DBlock';
+import { HorizontalFlowServicesBlock } from './horizontal-flow/HorizontalFlowServicesBlock';
+import { HorizontalFlowSkillsBlock } from './horizontal-flow/HorizontalFlowSkillsBlock';
+import { HorizontalFlowExperienceBlock } from './horizontal-flow/HorizontalFlowExperienceBlock';
+import { HorizontalFlowTestimonialsBlock } from './horizontal-flow/HorizontalFlowTestimonialsBlock';
+import { HorizontalFlowAwardsBlock } from './horizontal-flow/HorizontalFlowAwardsBlock';
+import { HorizontalFlowFooterBlock } from './horizontal-flow/HorizontalFlowFooterBlock';
+
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { BlockEditorWrapper } from '@/components/features/appearance/BlockEditorWrapper';
 
@@ -316,7 +363,39 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
       case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
       case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
       case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
-      default: console.log(`Editorial block type not mapped: ${baseBlockType}`); break;
+    }
+  } else if (activeThemeTemplate === 'nexus-noir') {
+    switch (baseBlockType) {
+      case 'HERO': content = <NexusNoirHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <NexusNoirMarqueeBlock />; break;
+      case 'ABOUT': content = <NexusNoirAboutBlock {...commonProps} />; break;
+      case 'SKILLS': content = <NexusNoirSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <NexusNoirExperienceBlock {...commonProps} />; break;
+      case 'SERVICES': content = <NexusNoirServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <NexusNoirStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <NexusNoirProjectsBlock {...commonProps} />; break;
+      case '3D': content = <NexusNoir3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <NexusNoirAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <NexusNoirTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <NexusNoirFooterBlock {...commonProps} />; break;
+    }
+  } else if (activeThemeTemplate === 'horizontal-flow') {
+    switch (baseBlockType) {
+      case 'HERO': content = <HorizontalFlowHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <HorizontalFlowMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <HorizontalFlowAboutBlock {...commonProps} />; break;
+      case 'STATS': content = <HorizontalFlowStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <HorizontalFlowProjectsBlock {...commonProps} />; break;
+      case '3D': content = <HorizontalFlow3DBlock {...commonProps} />; break;
+      case 'SERVICES': content = <HorizontalFlowServicesBlock {...commonProps} />; break;
+      case 'SKILLS': content = <HorizontalFlowSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <HorizontalFlowExperienceBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <HorizontalFlowTestimonialsBlock {...commonProps} />; break;
+      case 'AWARDS': content = <HorizontalFlowAwardsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <HorizontalFlowFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <div className="border-t border-white/10 py-10 px-6"><PenpotShowcase userId={userId} variant="horizontal-flow" /></div> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <div className="border-t border-white/10 py-10 px-6"><CanvaShowcase userId={userId} variant="horizontal-flow" /></div> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <div className="border-t border-white/10 py-10 px-6"><GithubStats userId={userId} variant="horizontal-flow" /></div> : null; break;
     }
   } else if (activeThemeTemplate === 'midnight-emulsion') {
     switch (baseBlockType) {
@@ -494,6 +573,42 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
       case 'CANVA': content = data?.id || data?.userId ? <section className="w-full bg-white border-b-[3px] border-black"><CanvaShowcase userId={userId} variant="brutalism" themeColor={themeColor} /></section> : null; break;
       case 'GITHUB': content = data?.id || data?.userId ? <section className="w-full bg-white border-b-[3px] border-black"><GithubStats userId={userId} variant="brutalism" themeColor={themeColor} /></section> : null; break;
     }
+  } else if (activeThemeTemplate === 'kinetic-avant-garde') {
+    switch (baseBlockType) {
+      case 'HERO': content = <KineticAvantGardeHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <KineticAvantGardeMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <KineticAvantGardeAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <KineticAvantGardeServicesBlock {...commonProps} />; break;
+      case 'SKILLS': content = <KineticAvantGardeSkillsBlock {...commonProps} />; break;
+      case 'STATS': content = <KineticAvantGardeStatsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <KineticAvantGardeExperienceBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <KineticAvantGardeProjectsBlock {...commonProps} />; break;
+      case '3D': content = <KineticAvantGarde3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <KineticAvantGardeAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <KineticAvantGardeTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <KineticAvantGardeFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <div className="kag-bg-void kag-text-bone w-full border-t-8 border-black"><PenpotShowcase userId={userId} variant="kinetic-avant-garde" /></div> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <div className="kag-bg-void kag-text-bone w-full border-t-8 border-black"><CanvaShowcase userId={userId} variant="kinetic-avant-garde" /></div> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <div className="kag-bg-void kag-text-bone w-full border-t-8 border-black"><GithubStats userId={userId} variant="kinetic-avant-garde" /></div> : null; break;
+    }
+  } else if (activeThemeTemplate === 'nexus-noir') {
+    switch (baseBlockType) {
+      case 'HERO': content = <NexusNoirHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <NexusNoirMarqueeBlock />; break;
+      case 'ABOUT': content = <NexusNoirAboutBlock {...commonProps} />; break;
+      case 'SKILLS': content = <NexusNoirSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <NexusNoirExperienceBlock {...commonProps} />; break;
+      case 'SERVICES': content = <NexusNoirServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <NexusNoirStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <NexusNoirProjectsBlock {...commonProps} setSelectedMedia={setSelectedMedia} />; break;
+      case '3D': content = <NexusNoir3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <NexusNoirAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <NexusNoirTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <NexusNoirFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><PenpotShowcase userId={userId} variant="nexus-noir" /></div> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><CanvaShowcase userId={userId} variant="nexus-noir" /></div> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><GithubStats userId={userId} variant="nexus-noir" /></div> : null; break;
+    }
   }
 
   if (content === undefined) {
@@ -542,7 +657,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
     // Fallback: Jika pengguna belum pernah menyimpan blok (database kosong),
     // berikan blok standar agar halaman tidak kosong melompong.
     if (sortedBlocks.length === 0) {
-      const DEFAULT_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
+      const DEFAULT_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SKILLS', 'EXPERIENCE', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
       sortedBlocks = DEFAULT_ORDER.map((type, i) => ({
         id: `fallback-${i}`,
         blockType: type,
@@ -799,6 +914,36 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
             <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
           ))}
         </BrutalismShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'kinetic-avant-garde') {
+      return (
+        <KineticAvantGardeShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map((b: any) => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </KineticAvantGardeShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'nexus-noir') {
+      return (
+        <NexusNoirShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map((b: any) => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </NexusNoirShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'horizontal-flow') {
+      return (
+        <HorizontalFlowShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map((b: any) => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </HorizontalFlowShell>
       );
     }
 

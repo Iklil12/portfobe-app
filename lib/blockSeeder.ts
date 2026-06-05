@@ -3,7 +3,10 @@ import prisma from "./prisma";
 // Daftar semua jenis blok universal yang didukung oleh Hybrid Modular Builder
 const UNIVERSAL_BLOCKS = [
   "HERO",
+  "MARQUEE",
   "ABOUT",
+  "SKILLS",
+  "EXPERIENCE",
   "SERVICES",
   "STATS",
   "PROJECTS",
@@ -13,7 +16,6 @@ const UNIVERSAL_BLOCKS = [
   "GITHUB",
   "AWARDS",
   "TESTIMONIALS",
-  "MARQUEE",
   "FOOTER"
 ];
 
