@@ -138,6 +138,82 @@ import { AbsoluteNoirAwardsBlock } from './absolute-noir/AbsoluteNoirAwardsBlock
 import { AbsoluteNoirTestimonialsBlock } from './absolute-noir/AbsoluteNoirTestimonialsBlock';
 import { AbsoluteNoirFooterBlock } from './absolute-noir/AbsoluteNoirFooterBlock';
 
+// Layered Monolith Theme Blocks
+import { LayeredMonolithShell } from './layered-monolith/LayeredMonolithShell';
+import { LayeredMonolithHeroBlock } from './layered-monolith/LayeredMonolithHeroBlock';
+import { LayeredMonolithMarqueeBlock } from './layered-monolith/LayeredMonolithMarqueeBlock';
+import { LayeredMonolithEthosBlock } from './layered-monolith/LayeredMonolithEthosBlock';
+import { LayeredMonolithWorksBlock } from './layered-monolith/LayeredMonolithWorksBlock';
+import { LayeredMonolith3DBlock } from './layered-monolith/LayeredMonolith3DBlock';
+import { LayeredMonolithExpertiseBlock } from './layered-monolith/LayeredMonolithExpertiseBlock';
+import { LayeredMonolithWidgetsBlock } from './layered-monolith/LayeredMonolithWidgetsBlock';
+import { LayeredMonolithAwardsBlock } from './layered-monolith/LayeredMonolithAwardsBlock';
+import { LayeredMonolithTestimonialBlock } from './layered-monolith/LayeredMonolithTestimonialBlock';
+import { LayeredMonolithFooterBlock } from './layered-monolith/LayeredMonolithFooterBlock';
+
+// Cinematic Theme Blocks
+import { CinematicShell } from './cinematic/CinematicShell';
+import { CinematicHeroBlock } from './cinematic/CinematicHeroBlock';
+import { CinematicMarqueeBlock } from './cinematic/CinematicMarqueeBlock';
+import { CinematicAboutBlock } from './cinematic/CinematicAboutBlock';
+import { CinematicServicesBlock } from './cinematic/CinematicServicesBlock';
+
+// Cinematic Gallery Theme Blocks
+import { CinematicGalleryShell } from './cinematic-gallery/CinematicGalleryShell';
+import { CinematicGalleryHeroBlock } from './cinematic-gallery/CinematicGalleryHeroBlock';
+import { CinematicGalleryAboutBlock } from './cinematic-gallery/CinematicGalleryAboutBlock';
+import { CinematicGalleryServicesBlock } from './cinematic-gallery/CinematicGalleryServicesBlock';
+import { CinematicGalleryProjectsBlock } from './cinematic-gallery/CinematicGalleryProjectsBlock';
+import { CinematicGallery3DBlock } from './cinematic-gallery/CinematicGallery3DBlock';
+import { CinematicGalleryTestimonialsBlock } from './cinematic-gallery/CinematicGalleryTestimonialsBlock';
+import { CinematicGalleryAwardsBlock } from './cinematic-gallery/CinematicGalleryAwardsBlock';
+import { CinematicGalleryFooterBlock } from './cinematic-gallery/CinematicGalleryFooterBlock';
+import { CinematicStatsBlock } from './cinematic/CinematicStatsBlock';
+import { CinematicProjectsBlock } from './cinematic/CinematicProjectsBlock';
+import { Cinematic3DBlock } from './cinematic/Cinematic3DBlock';
+import { CinematicAwardsBlock } from './cinematic/CinematicAwardsBlock';
+import { CinematicTestimonialsBlock } from './cinematic/CinematicTestimonialsBlock';
+import { CinematicFooterBlock } from './cinematic/CinematicFooterBlock';
+
+// Acid Tech Theme Blocks
+import { AcidTechShell } from './acid-tech/AcidTechShell';
+import { AcidTechHeroBlock } from './acid-tech/AcidTechHeroBlock';
+import { AcidTechMarqueeBlock } from './acid-tech/AcidTechMarqueeBlock';
+import { AcidTechAboutBlock } from './acid-tech/AcidTechAboutBlock';
+import { AcidTechServicesBlock } from './acid-tech/AcidTechServicesBlock';
+import { AcidTechProjectsBlock } from './acid-tech/AcidTechProjectsBlock';
+import { AcidTech3DBlock } from './acid-tech/AcidTech3DBlock';
+import { AcidTechStatsBlock } from './acid-tech/AcidTechStatsBlock';
+import { AcidTechAwardsBlock } from './acid-tech/AcidTechAwardsBlock';
+import { AcidTechTestimonialsBlock } from './acid-tech/AcidTechTestimonialsBlock';
+import { AcidTechFooterBlock } from './acid-tech/AcidTechFooterBlock';
+
+// Bento Grid Theme Blocks
+import { BentoGridShell } from './bentogrid/BentoGridShell';
+import { BentoGridHeroBlock } from './bentogrid/BentoGridHeroBlock';
+import { BentoGridMarqueeBlock } from './bentogrid/BentoGridMarqueeBlock';
+import { BentoGridProjectsBlock } from './bentogrid/BentoGridProjectsBlock';
+import { BentoGrid3DBlock } from './bentogrid/BentoGrid3DBlock';
+import { BentoGridAwardsBlock } from './bentogrid/BentoGridAwardsBlock';
+import { BentoGridTestimonialsBlock } from './bentogrid/BentoGridTestimonialsBlock';
+import { BentoGridFooterBlock } from './bentogrid/BentoGridFooterBlock';
+import { BentoGridAboutBlock } from './bentogrid/BentoGridAboutBlock';
+import { BentoGridServicesBlock } from './bentogrid/BentoGridServicesBlock';
+import { BentoGridStatsBlock } from './bentogrid/BentoGridStatsBlock';
+
+// Brutalism Theme Blocks
+import { BrutalismShell } from './brutalism/BrutalismShell';
+import { BrutalismHeroBlock } from './brutalism/BrutalismHeroBlock';
+import { BrutalismStatsBlock } from './brutalism/BrutalismStatsBlock';
+import { BrutalismProjectsBlock } from './brutalism/BrutalismProjectsBlock';
+import { Brutalism3DBlock } from './brutalism/Brutalism3DBlock';
+import { BrutalismAwardsBlock } from './brutalism/BrutalismAwardsBlock';
+import { BrutalismTestimonialsBlock } from './brutalism/BrutalismTestimonialsBlock';
+import { BrutalismFooterBlock } from './brutalism/BrutalismFooterBlock';
+import { BrutalismAboutBlock } from './brutalism/BrutalismAboutBlock';
+import { BrutalismServicesBlock } from './brutalism/BrutalismServicesBlock';
+import { BrutalismMarqueeBlock } from './brutalism/BrutalismMarqueeBlock';
+
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { BlockEditorWrapper } from '@/components/features/appearance/BlockEditorWrapper';
 
@@ -149,8 +225,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
   if (!block.isVisible && !isEditor) return null;
 
   let content: React.ReactNode | undefined = undefined;
-  const activeThemeTemplate = theme?.themeTemplate || 'minimalist';
-  
+  const activeThemeTemplate = theme?.themeTemplate || theme?.id || 'minimalist';
+
   // Ambil tipe dasar blok, contoh: 'SPATIAL_HERO' -> 'HERO'
   const baseParts = block.blockType.split('_');
   const baseBlockType = baseParts.length > 1 ? baseParts.slice(1).join('_') : block.blockType;
@@ -162,183 +238,281 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
 
   // 1. SMART MAPPING: Render blok sesuai dengan tema yang sedang aktif
   if (activeThemeTemplate === 'minimalist') {
-      switch (baseBlockType) {
-        case 'HERO': content = <MinimalistHeroBlock {...commonProps} />; break;
-        case 'MARQUEE': content = <MinimalistMarqueeBlock {...commonProps} />; break;
-        case 'ABOUT': content = <MinimalistAboutBlock {...commonProps} />; break;
-        case 'SERVICES': content = <MinimalistServicesBlock {...commonProps} />; break;
-        case 'STATS': content = <MinimalistStatsBlock {...commonProps} />; break;
-        case 'PROJECTS': content = <MinimalistProjectsBlock {...commonProps} />; break;
-        case '3D': content = <Minimalist3DBlock {...commonProps} />; break;
-        case 'AWARDS': content = <MinimalistAwardsBlock {...commonProps} />; break;
-        case 'TESTIMONIALS': content = <MinimalistTestimonialsBlock {...commonProps} />; break;
-        case 'FOOTER': content = <MinimalistFooterBlock {...commonProps} />; break;
-        case 'PENPOT': content = <PenpotShowcase userId={userId} variant="minimalist" themeColor={themeColor} />; break;
-        case 'CANVA': content = <CanvaShowcase userId={userId} variant="minimalist" themeColor={themeColor} />; break;
-        case 'GITHUB': content = <GithubStats userId={userId} variant="minimalist" themeColor={themeColor} />; break;
-      }
+    switch (baseBlockType) {
+      case 'HERO': content = <MinimalistHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <MinimalistMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <MinimalistAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <MinimalistServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <MinimalistStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <MinimalistProjectsBlock {...commonProps} />; break;
+      case '3D': content = <Minimalist3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <MinimalistAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <MinimalistTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <MinimalistFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = <PenpotShowcase userId={userId} variant="minimalist" themeColor={themeColor} />; break;
+      case 'CANVA': content = <CanvaShowcase userId={userId} variant="minimalist" themeColor={themeColor} />; break;
+      case 'GITHUB': content = <GithubStats userId={userId} variant="minimalist" themeColor={themeColor} />; break;
+    }
   } else if (activeThemeTemplate === 'spatial') {
-      switch (baseBlockType) {
-        case 'HERO': content = <SpatialHeroBlock {...commonProps} />; break;
-        case 'MARQUEE': content = <SpatialMarqueeBlock {...commonProps} />; break;
-        case 'ABOUT': content = <SpatialAboutBlock {...commonProps} />; break;
-        case 'SERVICES': content = <SpatialServicesBlock {...commonProps} />; break;
-        case 'STATS': content = <SpatialStatsBlock {...commonProps} />; break;
-        case 'PROJECTS': content = <SpatialProjectsBlock {...commonProps} />; break;
-        case '3D': content = <Spatial3DBlock {...commonProps} />; break;
-        case 'PENPOT': content = <PenpotShowcase userId={userId} variant="spatial" />; break;
-        case 'CANVA': content = <CanvaShowcase userId={userId} variant="spatial" />; break;
-        case 'GITHUB': content = <SpatialGithubBlock {...commonProps} />; break;
-        case 'TESTIMONIALS': content = <SpatialTestimonialsBlock {...commonProps} />; break;
-        case 'AWARDS': content = <SpatialAwardsBlock {...commonProps} />; break;
-        case 'FOOTER': content = <SpatialFooterBlock {...commonProps} />; break;
-      }
+    switch (baseBlockType) {
+      case 'HERO': content = <SpatialHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <SpatialMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <SpatialAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <SpatialServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <SpatialStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <SpatialProjectsBlock {...commonProps} />; break;
+      case '3D': content = <Spatial3DBlock {...commonProps} />; break;
+      case 'PENPOT': content = <PenpotShowcase userId={userId} variant="spatial" />; break;
+      case 'CANVA': content = <CanvaShowcase userId={userId} variant="spatial" />; break;
+      case 'GITHUB': content = <SpatialGithubBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <SpatialTestimonialsBlock {...commonProps} />; break;
+      case 'AWARDS': content = <SpatialAwardsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <SpatialFooterBlock {...commonProps} />; break;
+    }
   } else if (activeThemeTemplate === 'obsidian-reel') {
-      switch (baseBlockType) {
-        case 'HERO': content = <ObsidianHeroBlock {...commonProps} />; break;
-        case 'MARQUEE': content = <ObsidianMarqueeBlock {...commonProps} />; break;
-        case 'ABOUT': content = <ObsidianAboutBlock {...commonProps} />; break;
-        case 'SERVICES': content = <ObsidianServicesBlock {...commonProps} />; break;
-        case 'PROJECTS': content = <ObsidianProjectsBlock {...commonProps} />; break;
-        case 'STATS': content = <ObsidianStatsBlock {...commonProps} />; break;
-        case '3D': content = <Obsidian3DBlock {...commonProps} />; break;
-        case 'AWARDS': content = <ObsidianAwardsBlock {...commonProps} />; break;
-        case 'TESTIMONIALS': content = <ObsidianTestimonialsBlock {...commonProps} />; break;
-        case 'FOOTER': content = <ObsidianFooterBlock {...commonProps} />; break;
-        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
-        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
-        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
-      }
+    switch (baseBlockType) {
+      case 'HERO': content = <ObsidianHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <ObsidianMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <ObsidianAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <ObsidianServicesBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <ObsidianProjectsBlock {...commonProps} />; break;
+      case 'STATS': content = <ObsidianStatsBlock {...commonProps} />; break;
+      case '3D': content = <Obsidian3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <ObsidianAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <ObsidianTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <ObsidianFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
+    }
   } else if (activeThemeTemplate === 'aura-kinetic') {
-      switch (baseBlockType) {
-        case 'HERO': content = <AuraKineticHeroBlock {...commonProps} />; break;
-        case 'MARQUEE': content = <AuraKineticMarqueeBlock {...commonProps} />; break;
-        case 'ABOUT': content = <AuraKineticAboutBlock {...commonProps} />; break;
-        case 'SERVICES': content = <AuraKineticServicesBlock {...commonProps} />; break;
-        case 'PROJECTS': content = <AuraKineticProjectsBlock {...commonProps} />; break;
-        case 'STATS': content = <AuraKineticStatsBlock {...commonProps} />; break;
-        case '3D': content = <AuraKinetic3DBlock {...commonProps} />; break;
-        case 'AWARDS': content = <AuraKineticAwardsBlock {...commonProps} />; break;
-        case 'TESTIMONIALS': content = <AuraKineticTestimonialsBlock {...commonProps} />; break;
-        case 'FOOTER': content = <AuraKineticFooterBlock {...commonProps} />; break;
-        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
-        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
-        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
-      }
+    switch (baseBlockType) {
+      case 'HERO': content = <AuraKineticHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <AuraKineticMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <AuraKineticAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <AuraKineticServicesBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <AuraKineticProjectsBlock {...commonProps} />; break;
+      case 'STATS': content = <AuraKineticStatsBlock {...commonProps} />; break;
+      case '3D': content = <AuraKinetic3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <AuraKineticAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <AuraKineticTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <AuraKineticFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
+    }
   } else if (activeThemeTemplate === 'editorial') {
-      switch (baseBlockType) {
-        case 'HERO': content = <EditorialHeroBlock {...commonProps} />; break;
-        case 'MARQUEE': content = <EditorialMarqueeBlock {...commonProps} />; break;
-        case 'ABOUT': content = <EditorialAboutBlock {...commonProps} />; break;
-        case 'SERVICES': content = <EditorialServicesBlock {...commonProps} />; break;
-        case 'PROJECTS': content = <EditorialProjectsBlock {...commonProps} />; break;
-        case 'STATS': content = <EditorialStatsBlock {...commonProps} />; break;
-        case '3D': content = <Editorial3DBlock {...commonProps} />; break;
-        case 'AWARDS': content = <EditorialAwardsBlock {...commonProps} />; break;
-        case 'TESTIMONIALS': content = <EditorialTestimonialsBlock {...commonProps} />; break;
-        case 'FOOTER': content = <EditorialFooterBlock {...commonProps} />; break;
-        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
-        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
-        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
-        default: console.log(`Editorial block type not mapped: ${baseBlockType}`); break;
-      }
+    switch (baseBlockType) {
+      case 'HERO': content = <EditorialHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <EditorialMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <EditorialAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <EditorialServicesBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <EditorialProjectsBlock {...commonProps} />; break;
+      case 'STATS': content = <EditorialStatsBlock {...commonProps} />; break;
+      case '3D': content = <Editorial3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <EditorialAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <EditorialTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <EditorialFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="editorial" themeColor={themeColor} /> : null; break;
+      default: console.log(`Editorial block type not mapped: ${baseBlockType}`); break;
+    }
   } else if (activeThemeTemplate === 'midnight-emulsion') {
-      switch (baseBlockType) {
-        case 'HERO': content = <MidnightEmulsionHeroBlock {...commonProps} />; break;
-        case 'MARQUEE': content = <MidnightEmulsionMarqueeBlock {...commonProps} />; break;
-        case 'ABOUT': content = <MidnightEmulsionAboutBlock {...commonProps} />; break;
-        case 'SERVICES': content = <MidnightEmulsionServicesBlock {...commonProps} />; break;
-        case 'PROJECTS': content = <MidnightEmulsionProjectsBlock {...commonProps} />; break;
-        case 'STATS': content = <MidnightEmulsionStatsBlock {...commonProps} />; break;
-        case '3D': content = <MidnightEmulsion3DBlock {...commonProps} />; break;
-        case 'AWARDS': content = <MidnightEmulsionAwardsBlock {...commonProps} />; break;
-        case 'TESTIMONIALS': content = <MidnightEmulsionTestimonialsBlock {...commonProps} />; break;
-        case 'FOOTER': content = <MidnightEmulsionFooterBlock {...commonProps} />; break;
-        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="midnight" themeColor={themeColor} /> : null; break;
-        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="midnight" themeColor={themeColor} /> : null; break;
-        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="midnight" themeColor={themeColor} /> : null; break;
-      }
+    switch (baseBlockType) {
+      case 'HERO': content = <MidnightEmulsionHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <MidnightEmulsionMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <MidnightEmulsionAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <MidnightEmulsionServicesBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <MidnightEmulsionProjectsBlock {...commonProps} />; break;
+      case 'STATS': content = <MidnightEmulsionStatsBlock {...commonProps} />; break;
+      case '3D': content = <MidnightEmulsion3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <MidnightEmulsionAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <MidnightEmulsionTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <MidnightEmulsionFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="midnight" themeColor={themeColor} /> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="midnight" themeColor={themeColor} /> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="midnight" themeColor={themeColor} /> : null; break;
+    }
   } else if (activeThemeTemplate === 'viewfinder') {
-      switch (baseBlockType) {
-        case 'HERO': content = <ViewfinderHeroBlock {...commonProps} />; break;
-        case 'MARQUEE': content = <ViewfinderMarqueeBlock {...commonProps} />; break;
-        case 'ABOUT': content = <ViewfinderAboutBlock {...commonProps} />; break;
-        case 'SERVICES': content = <ViewfinderServicesBlock {...commonProps} />; break;
-        case 'PROJECTS': content = <ViewfinderProjectsBlock {...commonProps} />; break;
-        case 'STATS': content = <ViewfinderStatsBlock {...commonProps} />; break;
-        case '3D': content = <Viewfinder3DBlock {...commonProps} />; break;
-        case 'AWARDS': content = <ViewfinderAwardsBlock {...commonProps} />; break;
-        case 'TESTIMONIALS': content = <ViewfinderTestimonialsBlock {...commonProps} />; break;
-        case 'FOOTER': content = <ViewfinderFooterBlock {...commonProps} />; break;
-        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
-        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
-        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
-      }
+    switch (baseBlockType) {
+      case 'HERO': content = <ViewfinderHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <ViewfinderMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <ViewfinderAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <ViewfinderServicesBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <ViewfinderProjectsBlock {...commonProps} />; break;
+      case 'STATS': content = <ViewfinderStatsBlock {...commonProps} />; break;
+      case '3D': content = <Viewfinder3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <ViewfinderAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <ViewfinderTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <ViewfinderFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
+    }
   } else if (activeThemeTemplate === 'split') {
-      switch (baseBlockType) {
-        case 'HERO': content = <NexusSplitHeroBlock {...commonProps} />; break;
-        case 'MARQUEE': content = <NexusSplitMarqueeBlock {...commonProps} />; break;
-        case 'ABOUT': content = <NexusSplitAboutBlock {...commonProps} />; break;
-        case 'SERVICES': content = <NexusSplitServicesBlock {...commonProps} />; break;
-        case 'STATS': content = <NexusSplitStatsBlock {...commonProps} />; break;
-        case 'PROJECTS': content = <NexusSplitProjectsBlock {...commonProps} />; break;
-        case '3D': content = <NexusSplit3DBlock {...commonProps} />; break;
-        case 'AWARDS': content = <NexusSplitAwardsBlock {...commonProps} />; break;
-        case 'TESTIMONIALS': content = <NexusSplitTestimonialsBlock {...commonProps} />; break;
-        case 'FOOTER': content = <NexusSplitFooterBlock {...commonProps} />; break;
-        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
-        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
-        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="split" themeColor={themeColor} /> : null; break;
-      }
-  } else if (activeThemeTemplate === 'monolith' || activeThemeTemplate === 'layered-monolith') {
-      switch (baseBlockType) {
-        case 'HERO': content = <MonolithHeroBlock {...commonProps} />; break;
-        case 'MARQUEE': content = <MonolithMarqueeBlock {...commonProps} />; break;
-        case 'ABOUT': content = <MonolithAboutBlock {...commonProps} />; break;
-        case 'SERVICES': content = <MonolithServicesBlock {...commonProps} />; break;
-        case 'STATS': content = <MonolithStatsBlock {...commonProps} />; break;
-        case 'PROJECTS': content = <MonolithProjectsBlock {...commonProps} />; break;
-        case '3D': content = <Monolith3DBlock {...commonProps} />; break;
-        case 'AWARDS': content = <MonolithAwardsBlock {...commonProps} />; break;
-        case 'TESTIMONIALS': content = <MonolithTestimonialsBlock {...commonProps} />; break;
-        case 'FOOTER': content = <MonolithFooterBlock {...commonProps} />; break;
-        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
-        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
-        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="split" themeColor={themeColor} /> : null; break;
-      }
+    switch (baseBlockType) {
+      case 'HERO': content = <NexusSplitHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <NexusSplitMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <NexusSplitAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <NexusSplitServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <NexusSplitStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <NexusSplitProjectsBlock {...commonProps} />; break;
+      case '3D': content = <NexusSplit3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <NexusSplitAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <NexusSplitTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <NexusSplitFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+    }
+  } else if (activeThemeTemplate === 'monolith') {
+    switch (baseBlockType) {
+      case 'HERO': content = <MonolithHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <MonolithMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <MonolithAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <MonolithServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <MonolithStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <MonolithProjectsBlock {...commonProps} />; break;
+      case '3D': content = <Monolith3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <MonolithAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <MonolithTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <MonolithFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="split" themeColor={themeColor} /> : null; break;
+    }
+  } else if (activeThemeTemplate === 'layered-monolith') {
+    switch (baseBlockType) {
+      case 'HERO': content = <LayeredMonolithHeroBlock {...commonProps} />; break;
+      case 'ABOUT': content = <LayeredMonolithEthosBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <LayeredMonolithWorksBlock {...commonProps} />; break;
+      case '3D': content = <LayeredMonolith3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <LayeredMonolithAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <LayeredMonolithTestimonialBlock {...commonProps} />; break;
+      case 'FOOTER': content = <LayeredMonolithFooterBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <LayeredMonolithMarqueeBlock {...commonProps} />; break;
+      case 'SERVICES': content = <LayeredMonolithExpertiseBlock {...commonProps} />; break;
+      case 'STATS': content = null; break; // Layered Monolith does not have a dedicated stats block, only widgets
+      case 'PENPOT': content = data?.id || data?.userId ? <section className="stack-card bg-[#111] text-white p-8 md:p-16 flex flex-col min-h-[100vh] justify-center overflow-y-auto relative"><div className="noise mix-blend-overlay opacity-10"></div><div className="w-full max-w-6xl mx-auto relative z-10 pb-24"><PenpotShowcase userId={userId} variant="layered-monolith" themeColor={themeColor} /></div></section> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <section className="stack-card bg-[#111] text-white p-8 md:p-16 flex flex-col min-h-[100vh] justify-center overflow-y-auto relative"><div className="noise mix-blend-overlay opacity-10"></div><div className="w-full max-w-6xl mx-auto relative z-10 pb-24"><CanvaShowcase userId={userId} variant="layered-monolith" themeColor={themeColor} /></div></section> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <section className="stack-card bg-[#111] text-white p-8 md:p-16 flex flex-col min-h-[100vh] justify-center overflow-y-auto relative"><div className="noise mix-blend-overlay opacity-10"></div><div className="w-full max-w-6xl mx-auto relative z-10 pb-32"><GithubStats userId={userId} variant="layered-monolith" themeColor={themeColor} /></div></section> : null; break;
+    }
   } else if (activeThemeTemplate === 'absolute-noir') {
-      switch (baseBlockType) {
-        case 'HERO': content = <AbsoluteNoirHeroBlock {...commonProps} />; break;
-        case 'MARQUEE': content = null; break; // Locked to Hero in this theme
-        case 'ABOUT': content = <AbsoluteNoirAboutBlock {...commonProps} />; break;
-        case 'SERVICES': content = <AbsoluteNoirServicesBlock {...commonProps} />; break;
-        case 'STATS': content = <AbsoluteNoirStatsBlock {...commonProps} />; break;
-        case 'PROJECTS': content = <AbsoluteNoirProjectsBlock {...commonProps} />; break;
-        case '3D': content = <AbsoluteNoir3DBlock {...commonProps} />; break;
-        case 'AWARDS': content = <AbsoluteNoirAwardsBlock {...commonProps} />; break;
-        case 'TESTIMONIALS': content = <AbsoluteNoirTestimonialsBlock {...commonProps} />; break;
-        case 'FOOTER': content = <AbsoluteNoirFooterBlock {...commonProps} />; break;
-        case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="noir" /> : null; break;
-        case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="noir" /> : null; break;
-        case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="noir" /> : null; break;
-      }
+    switch (baseBlockType) {
+      case 'HERO': content = <AbsoluteNoirHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = null; break; // Locked to Hero in this theme
+      case 'ABOUT': content = <AbsoluteNoirAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <AbsoluteNoirServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <AbsoluteNoirStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <AbsoluteNoirProjectsBlock {...commonProps} />; break;
+      case '3D': content = <AbsoluteNoir3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <AbsoluteNoirAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <AbsoluteNoirTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <AbsoluteNoirFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="noir" /> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="noir" /> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="noir" /> : null; break;
+    }
+  } else if (activeThemeTemplate === 'cinematic') {
+    switch (baseBlockType) {
+      case 'HERO': content = <CinematicHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <CinematicMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <CinematicAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <CinematicServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <CinematicStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <CinematicProjectsBlock {...commonProps} />; break;
+      case '3D': content = <Cinematic3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <CinematicAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <CinematicTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <CinematicFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="cinematic" themeColor={themeColor} /> : null; break;
+    }
+  } else if (activeThemeTemplate === 'cinematic-gallery') {
+    switch (baseBlockType) {
+      case 'HERO': content = <CinematicGalleryHeroBlock {...commonProps} />; break;
+      case 'ABOUT': content = <CinematicGalleryAboutBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <CinematicGalleryProjectsBlock {...commonProps} />; break;
+      case '3D': content = <CinematicGallery3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <CinematicGalleryAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <CinematicGalleryTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <CinematicGalleryFooterBlock {...commonProps} />; break;
+      case 'MARQUEE': content = null; break; // Locked to Hero
+      case 'STATS': content = null; break; // Locked to About
+      case 'SERVICES': content = <CinematicGalleryServicesBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <section className="panel flex-col items-center justify-center"><div className="w-[100vw] h-full overflow-y-auto hide-scrollbar flex items-center justify-center px-2 md:px-0 pt-16 pb-8 pointer-events-auto"><PenpotShowcase userId={userId} variant="cinematic" themeColor="#ffffff" /></div></section> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <section className="panel flex-col items-center justify-center"><div className="w-[100vw] h-full overflow-y-auto hide-scrollbar flex items-center justify-center px-2 md:px-0 pt-16 pb-8 pointer-events-auto"><CanvaShowcase userId={userId} variant="cinematic" themeColor="#ffffff" /></div></section> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <section className="panel flex-col items-center justify-center"><div className="w-[100vw] h-full overflow-y-auto hide-scrollbar flex items-center justify-center px-2 md:px-0 pt-16 pb-8 pointer-events-auto"><GithubStats userId={userId} variant="cinematic" themeColor="#ffffff" /></div></section> : null; break;
+    }
+  } else if (activeThemeTemplate === 'acid-tech' || activeThemeTemplate === 'acid') {
+    switch (baseBlockType) {
+      case 'HERO': content = <AcidTechHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <AcidTechMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <AcidTechAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <AcidTechServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <AcidTechStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <AcidTechProjectsBlock {...commonProps} />; break;
+      case '3D': content = <AcidTech3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <AcidTechAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <AcidTechTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <AcidTechFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="acid" themeColor={themeColor} /> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="acid" themeColor={themeColor} /> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="acid" themeColor={themeColor} /> : null; break;
+    }
+  } else if (activeThemeTemplate === 'bentogrid') {
+    switch (baseBlockType) {
+      case 'HERO': content = <BentoGridHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <BentoGridMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <BentoGridAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <BentoGridServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <BentoGridStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <BentoGridProjectsBlock {...commonProps} />; break;
+      case '3D': content = <BentoGrid3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <BentoGridAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <BentoGridTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <BentoGridFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <div className="bento-card p-0 mb-6"><PenpotShowcase userId={userId} variant="bento" themeColor={themeColor} /></div> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <div className="bento-card p-0 mb-6"><CanvaShowcase userId={userId} variant="bento" themeColor={themeColor} /></div> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <div className="bento-card p-0"><GithubStats userId={userId} variant="bento" themeColor={themeColor} /></div> : null; break;
+    }
+  } else if (activeThemeTemplate === 'brutalism') {
+    switch (baseBlockType) {
+      case 'HERO': content = <BrutalismHeroBlock {...commonProps} />; break;
+      case 'STATS': content = <BrutalismStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <BrutalismProjectsBlock {...commonProps} />; break;
+      case '3D': content = <Brutalism3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <BrutalismAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <BrutalismTestimonialsBlock {...commonProps} />; break;
+      case 'FOOTER': content = <BrutalismFooterBlock {...commonProps} />; break;
+      case 'ABOUT': content = <BrutalismAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <BrutalismServicesBlock {...commonProps} />; break;
+      case 'MARQUEE': content = null; break; // Locked to Hero in this theme
+      case 'PENPOT': content = data?.id || data?.userId ? <section className="w-full bg-white border-b-[3px] border-black"><PenpotShowcase userId={userId} variant="brutalism" themeColor={themeColor} /></section> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <section className="w-full bg-white border-b-[3px] border-black"><CanvaShowcase userId={userId} variant="brutalism" themeColor={themeColor} /></section> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <section className="w-full bg-white border-b-[3px] border-black"><GithubStats userId={userId} variant="brutalism" themeColor={themeColor} /></section> : null; break;
+    }
   }
 
   if (content === undefined) {
-      if (isEditor) {
-          return (
-              <div className="w-full h-32 bg-red-500/20 border-2 border-red-500 flex items-center justify-center text-red-500 font-bold">
-                  [DEBUG] Content is NULL for blockType: {block.blockType} / baseBlockType: {baseBlockType}
-              </div>
-          );
-      }
-      return null;
+    if (isEditor) {
+      return (
+        <div className="w-full h-32 bg-red-500/20 border-2 border-red-500 flex items-center justify-center text-red-500 font-bold">
+          [DEBUG] Content is NULL for blockType: {block.blockType} / baseBlockType: {baseBlockType}
+        </div>
+      );
+    }
+    return null;
   }
 
   const isHero = block.blockType.includes('HERO');
 
+  const isHorizontalFlow = activeThemeTemplate === 'cinematic-gallery';
+
   return (
-    <BlockEditorWrapper key={block.id} block={block} isEditor={isEditor} isHero={isHero}>
+    <BlockEditorWrapper key={block.id} block={block} isEditor={isEditor} isHero={isHero} isHorizontalFlow={isHorizontalFlow}>
       {content}
     </BlockEditorWrapper>
   );
@@ -359,11 +533,31 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
   const buttonShape = theme?.buttonShape || 'rounded';
   const radiusClass = buttonShape === 'hard' || buttonShape === 'square' ? 'rounded-none' : buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-lg';
 
-  // Urutkan blok berdasarkan orderIndex
-  const sortedBlocks = [...(blocks || [])].sort((a, b) => a.orderIndex - b.orderIndex);
+  // Urutkan blok berdasarkan orderIndex dan filter yang tersembunyi
+  let sortedBlocks = [...(blocks || [])].sort((a, b) => a.orderIndex - b.orderIndex);
+
+  if (!isEditor) {
+    sortedBlocks = sortedBlocks.filter(b => b.isVisible !== false);
+
+    // Fallback: Jika pengguna belum pernah menyimpan blok (database kosong),
+    // berikan blok standar agar halaman tidak kosong melompong.
+    if (sortedBlocks.length === 0) {
+      const DEFAULT_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
+      sortedBlocks = DEFAULT_ORDER.map((type, i) => ({
+        id: `fallback-${i}`,
+        blockType: type,
+        orderIndex: i,
+        isVisible: true
+      }));
+    }
+  }
 
   const isSmoothScroll = (!isMobileView && !isCardPreview) && (theme?.customTexts?.smooth_scroll === 'true');
   const activeThemeTemplate = theme?.themeTemplate || 'minimalist';
+
+  const renderBlock = (b: any) => (
+    <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+  );
 
   const renderLayout = () => {
     // Jika tema minimalist, kita gunakan Layout Shell khusus
@@ -513,6 +707,18 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
       );
     }
 
+    if (activeThemeTemplate === 'cinematic-gallery') {
+      return (
+        <CinematicGalleryShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map((b: any) => (
+            <React.Fragment key={b.id}>
+              {renderBlock(b)}
+            </React.Fragment>
+          ))}
+        </CinematicGalleryShell>
+      );
+    }
+
     if (activeThemeTemplate === 'split') {
       const heroBlockData = sortedBlocks.find((b: any) => b.blockType.includes('HERO'));
       const otherBlocks = sortedBlocks.filter((b: any) => b.id !== heroBlockData?.id);
@@ -526,13 +732,23 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
       );
     }
 
-    if (activeThemeTemplate === 'monolith' || activeThemeTemplate === 'layered-monolith') {
+    if (activeThemeTemplate === 'monolith') {
       return (
         <MonolithShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor} selectedMedia={selectedMedia} setSelectedMedia={setSelectedMedia}>
           {sortedBlocks.map(b => (
             <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
           ))}
         </MonolithShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'layered-monolith') {
+      return (
+        <LayeredMonolithShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor} selectedMedia={selectedMedia} setSelectedMedia={setSelectedMedia}>
+          {sortedBlocks.map(b => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </LayeredMonolithShell>
       );
     }
 
@@ -543,6 +759,46 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
             <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
           ))}
         </AbsoluteNoirShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'cinematic') {
+      return (
+        <CinematicShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map((b: any) => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </CinematicShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'acid-tech' || activeThemeTemplate === 'acid') {
+      return (
+        <AcidTechShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map((b: any) => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </AcidTechShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'bentogrid') {
+      return (
+        <BentoGridShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map((b: any) => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </BentoGridShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'brutalism') {
+      return (
+        <BrutalismShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor}>
+          {sortedBlocks.map((b: any) => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </BrutalismShell>
       );
     }
 

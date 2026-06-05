@@ -7,9 +7,10 @@ interface BlockEditorWrapperProps {
   isEditor: boolean;
   children: React.ReactNode;
   isHero?: boolean;
+  isHorizontalFlow?: boolean;
 }
 
-export function BlockEditorWrapper({ block, isEditor, children, isHero = false }: BlockEditorWrapperProps) {
+export function BlockEditorWrapper({ block, isEditor, children, isHero = false, isHorizontalFlow = false }: BlockEditorWrapperProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   // Jika bukan mode editor, render anak secara normal jika visible
@@ -37,7 +38,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false }
 
   return (
     <div 
-      className={`relative group/block transition-opacity duration-300 ${hiddenOpacity} ${isHovered ? 'z-50' : 'z-10'}`}
+      className={`relative group/block transition-opacity duration-300 ${hiddenOpacity} ${isHovered ? 'z-50' : 'z-10'} ${isHorizontalFlow ? 'flex flex-row flex-nowrap shrink-0 h-full items-stretch' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -61,16 +62,16 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false }
             <button 
               onClick={() => sendAction('BLOCK_MOVE_UP')}
               className="px-2.5 py-1.5 hover:bg-white/20 transition-colors flex items-center justify-center text-[11px]"
-              title="Pindah ke Atas"
+              title={isHorizontalFlow ? "Geser ke Kiri" : "Pindah ke Atas"}
             >
-              <i className="fas fa-arrow-up"></i>
+              <i className={`fas ${isHorizontalFlow ? 'fa-arrow-left' : 'fa-arrow-up'}`}></i>
             </button>
             <button 
               onClick={() => sendAction('BLOCK_MOVE_DOWN')}
               className="px-2.5 py-1.5 hover:bg-white/20 transition-colors flex items-center justify-center text-[11px] border-r border-white/10"
-              title="Pindah ke Bawah"
+              title={isHorizontalFlow ? "Geser ke Kanan" : "Pindah ke Bawah"}
             >
-              <i className="fas fa-arrow-down"></i>
+              <i className={`fas ${isHorizontalFlow ? 'fa-arrow-right' : 'fa-arrow-down'}`}></i>
             </button>
 
             <button 
@@ -96,7 +97,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false }
       )}
 
       {/* Konten Asli */}
-      <div className={`transition-all duration-300 ${!block.isVisible ? 'pointer-events-none blur-[1px]' : ''}`}>
+      <div className={`transition-all duration-300 ${!block.isVisible ? 'pointer-events-none blur-[1px]' : ''} ${isHorizontalFlow ? 'flex flex-row flex-nowrap shrink-0 h-full w-full items-stretch' : ''}`}>
         {children}
       </div>
     </div>

@@ -10,6 +10,7 @@ interface EditableTextProps {
   className?: string;
   as?: any;
   maxLength?: number;
+  href?: string;
 }
 
 import DOMPurify from 'isomorphic-dompurify';
@@ -31,7 +32,7 @@ const sanitizeText = (text: string) => {
     .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
 };
 
-export function EditableText({ value, field, entity, isEditor, className = "", as: Component = "span", maxLength }: EditableTextProps) {
+export function EditableText({ value, field, entity, isEditor, className = "", as: Component = "span", maxLength, href }: EditableTextProps) {
   const [content, setContent] = useState(() => sanitizeText(value || ""));
   const elementRef = useRef<any>(null);
 
@@ -133,11 +134,12 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
   };
 
   if (!isEditor) {
-    return <Component className={`break-words break-all [word-break:break-word] whitespace-pre-wrap ${className}`} style={{ fontFamily: 'inherit' }}>{content}</Component>;
+    return <Component href={href} className={`break-words break-all [word-break:break-word] whitespace-pre-wrap ${className}`} style={{ fontFamily: 'inherit' }}>{content}</Component>;
   }
 
   return (
     <Component
+      href={href}
       ref={elementRef}
       contentEditable
       suppressContentEditableWarning

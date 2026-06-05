@@ -17,6 +17,7 @@ import NexusNoirTheme from './themes/NexusNoirTheme';
 import HorizontalFlowTheme from './themes/HorizontalFlowTheme';
 import SplitScreenStudioTheme from './themes/SplitScreenStudioTheme';
 import CinematicGalleryTheme from './themes/CinematicGalleryTheme';
+import LayeredMonolithTheme from './themes/LayeredMonolithTheme';
 
 // 2. DAFTARKAN TEMA KE DALAM "THEME REGISTRY"
 const THEME_MAP: Record<string, React.FC<any>> = {
@@ -30,6 +31,7 @@ const THEME_MAP: Record<string, React.FC<any>> = {
   'horizontal-flow': HorizontalFlowTheme,
   'split-screen-studio': SplitScreenStudioTheme,
   'cinematic-gallery': CinematicGalleryTheme,
+  'layered-monolith': LayeredMonolithTheme,
 
   // Nanti tinggal tambah: 'elegant': ElegantTheme, dst...
 };
@@ -69,8 +71,8 @@ export default function PortfolioView({ data, theme, isMobileView = false, isCar
     }
   }
 
-  // Jika tema yang aktif adalah minimalist, spatial, obsidian-reel, aura-kinetic, editorial, midnight-emulsion, viewfinder, split, monolith, atau absolute-noir, kita gunakan DynamicBlockRenderer
-  if (activeThemeName === 'minimalist' || activeThemeName === 'spatial' || activeThemeName === 'obsidian-reel' || activeThemeName === 'aura-kinetic' || activeThemeName === 'editorial' || activeThemeName === 'midnight-emulsion' || activeThemeName === 'viewfinder' || activeThemeName === 'split' || activeThemeName === 'monolith' || activeThemeName === 'layered-monolith' || activeThemeName === 'absolute-noir') {
+  // Jika tema yang aktif adalah minimalist, spatial, obsidian-reel, aura-kinetic, editorial, midnight-emulsion, viewfinder, split, monolith, absolute-noir, cinematic, acid, bentogrid, brutalism, cinematic-gallery, atau layered-monolith, kita gunakan DynamicBlockRenderer
+  if (activeThemeName === 'minimalist' || activeThemeName === 'spatial' || activeThemeName === 'obsidian-reel' || activeThemeName === 'aura-kinetic' || activeThemeName === 'editorial' || activeThemeName === 'midnight-emulsion' || activeThemeName === 'viewfinder' || activeThemeName === 'split' || activeThemeName === 'monolith' || activeThemeName === 'absolute-noir' || activeThemeName === 'cinematic' || activeThemeName === 'acid' || activeThemeName === 'acid-tech' || activeThemeName === 'bentogrid' || activeThemeName === 'brutalism' || activeThemeName === 'cinematic-gallery' || activeThemeName === 'layered-monolith') {
     return (
       <div className="relative w-full h-full" style={{ containerType: 'inline-size' }}>
         <DynamicBlockRenderer blocks={data.pageBlocks || data.blocks || []} data={data} theme={processedTheme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={effectiveIsEditor} />

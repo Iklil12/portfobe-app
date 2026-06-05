@@ -6,7 +6,7 @@ import { showToast } from '@/lib/customToast';
 import { safeParseJson, safeStringifyJson } from '@/lib/safeJson';
 
 const UNIVERSAL_BLOCK_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
-const NOIR_BLOCK_ORDER = ['MARQUEE', 'HERO', 'ABOUT', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
+
 
 const THEME_BLOCK_PRESETS: Record<string, string[]> = {
   'spatial': UNIVERSAL_BLOCK_ORDER,
@@ -17,7 +17,15 @@ const THEME_BLOCK_PRESETS: Record<string, string[]> = {
   'viewfinder': UNIVERSAL_BLOCK_ORDER,
   'midnight-emulsion': UNIVERSAL_BLOCK_ORDER,
   'split': UNIVERSAL_BLOCK_ORDER,
-  'absolute-noir': NOIR_BLOCK_ORDER,
+  'absolute-noir': UNIVERSAL_BLOCK_ORDER,
+  'cinematic': UNIVERSAL_BLOCK_ORDER,
+  'acid': UNIVERSAL_BLOCK_ORDER,
+  'acid-tech': UNIVERSAL_BLOCK_ORDER,
+  'bentogrid': UNIVERSAL_BLOCK_ORDER,
+  'brutalism': UNIVERSAL_BLOCK_ORDER,
+  'cinematic-gallery': UNIVERSAL_BLOCK_ORDER,
+  'monolith': UNIVERSAL_BLOCK_ORDER,
+  'layered-monolith': UNIVERSAL_BLOCK_ORDER,
   'default': UNIVERSAL_BLOCK_ORDER
 };
 
