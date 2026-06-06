@@ -56,6 +56,7 @@ export function useThemeEditor() {
   const [showOfflineModal, setShowOfflineModal] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [showProModal, setShowProModal] = useState(false);
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
 
   // --- STATE UNTUK DATA PROFIL ---
   const [fullName, setFullName] = useState("Nama Anda");
@@ -664,7 +665,8 @@ export function useThemeEditor() {
       isSaveDraftModalOpen,
       isDirty,
       hasUnpublishedChanges,
-      pageBlocks
+      pageBlocks,
+      previewMode
     },
     actions: {
       setIsEditorCollapsed,
@@ -680,6 +682,7 @@ export function useThemeEditor() {
       setShowProModal,
       setIsDraftsModalOpen,
       setIsSaveDraftModalOpen,
+      setPreviewMode,
       saveDraft,
       publishDesign,
       loadDraft,

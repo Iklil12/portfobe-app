@@ -1,7 +1,21 @@
+// app/[subdomain]/layout.tsx
 import React from 'react';
 import { ClientTransition } from '@/components/animations/ClientTransition';
 import { Metadata } from 'next';
 import prisma from '@/lib/prisma';
+
+function getOptimizedFavicon(url: string | null | undefined) {
+  if (!url) return '/favicon.ico';
+  // Jika URL berasal dari Cloudinary, tambahkan parameter crop & resize agar jadi lingkaran sempurna (r_max, f_png)
+  if (url.includes('cloudinary.com') && url.includes('/upload/')) {
+    return url.replace('/upload/', '/upload/c_fill,g_face,w_128,h_128,r_max,f_png/');
+  }
+  // Jika URL dari Google, tambahkan parameter resize =s128-c
+  if (url.includes('googleusercontent.com') && !url.includes('=s')) {
+    return url + '=s128-c';
+  }
+  return url;
+}
 
 // 1. DYNAMIC SEO METADATA: Bintang utama untuk membuka mata Google dan WhatsApp
 export async function generateMetadata({
@@ -25,28 +39,65 @@ export async function generateMetadata({
 
   const name = user.profile.fullName || subdomain;
   const profession = user.profile.profession || 'Creative Professional';
+  const bio = user.profile.bio || `Welcome to the creative portfolio of ${name}, a ${profession}. Explore my latest works and experiences.`;
+  const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://portfo.be';
+  const canonicalUrl = `${domain}/${subdomain}`;
+  
+  const optimizedIcon = getOptimizedFavicon(user.profile.avatarUrl);
+  const ogImage = user.profile.avatarUrl || `${domain}/default-og-image.jpg`;
   
   return {
-    title: `${name} | ${profession}`,
-    description: user.profile.bio || `Welcome to the creative portfolio of ${name}, a ${profession}.`,
+    metadataBase: new URL(domain),
+    title: {
+      default: `${name} | ${profession}`,
+      template: `%s | ${name}`,
+    },
+    description: bio,
+    keywords: [name, profession, 'Portfolio', 'Creative', 'Portfobe', subdomain],
+    authors: [{ name }],
+    creator: name,
+    publisher: name,
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    icons: {
+      icon: optimizedIcon,
+      shortcut: optimizedIcon,
+      apple: optimizedIcon,
+    },
     openGraph: {
       title: `${name} | ${profession}`,
-      description: user.profile.bio || `Welcome to the creative portfolio of ${name}.`,
+      description: bio,
+      url: canonicalUrl,
+      siteName: `${name} Portfolio`,
       images: [
         {
-          url: user.profile.avatarUrl || '/default-og-image.jpg', // Ganti dengan path logo default Anda
+          url: ogImage,
           width: 1200,
           height: 630,
-          alt: `${name} Portfolio`,
+          alt: `${name} - ${profession}`,
         },
       ],
+      locale: 'id_ID', // atau 'en_US' tergantung target
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
       title: `${name} | ${profession}`,
-      description: user.profile.bio || `Welcome to the creative portfolio of ${name}.`,
-      images: [user.profile.avatarUrl || '/default-og-image.jpg'],
+      description: bio,
+      images: [ogImage],
+      creator: `@${subdomain}`,
     },
   };
 }

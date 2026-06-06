@@ -60,6 +60,8 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     subdomain: stateSubdomain
   } = state;
 
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
+
   const subdomain = stateSubdomain || livePreviewData?.subdomain;
 
   const userPlan = livePreviewData?.plan || 'FREE';
@@ -137,20 +139,83 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         isSaving={isSavingDraft}
       />
 
+      {/* MOBILE FLOATING DOCK (Live Canvas First) */}
       <div className={`
-        h-full flex flex-col z-30 relative shrink-0
-        bg-white border-r border-neutral-200/70
-        transition-all duration-300 ease-in-out
-        ${isEditorCollapsed ? 'w-0 opacity-0 pointer-events-none overflow-hidden border-none' : 'w-full lg:w-[420px] xl:w-[460px] opacity-100'}
+        lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] 
+        bg-slate-900/95 backdrop-blur-md text-white rounded-full px-5 py-2 
+        flex items-center gap-6 shadow-[0_10px_40px_rgba(0,0,0,0.3)] border border-slate-800
+        transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
+        ${isMobileDrawerOpen ? 'translate-y-32 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}
       `}>
+        <button 
+          onClick={() => {
+            if (activeDraftId) saveDraft();
+            else setIsSaveDraftModalOpen(true);
+          }} 
+          disabled={isSavingDraft || isPublishing || (activeDraftId ? !isDirty : false)}
+          className={`flex flex-col items-center gap-1 transition-opacity ${activeDraftId && !isDirty ? 'opacity-30' : 'opacity-80 hover:opacity-100'}`}
+        >
+          {isSavingDraft ? <i className="fas fa-spinner animate-spin text-[14px]"></i> : <i className="fas fa-save text-[14px]"></i>}
+          <span className="text-[7px] font-bold tracking-widest uppercase">Save</span>
+        </button>
+
+        <div className="flex flex-col items-center justify-center -mt-[3.75rem]">
+          <div className="bg-slate-900/90 backdrop-blur-md p-1 rounded-full border border-white/10 flex items-center mb-2 shadow-xl relative z-10">
+            <button
+              onClick={() => actions.setPreviewMode('desktop')}
+              className={`px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all flex items-center gap-1.5 ${state.previewMode === 'desktop' ? 'bg-white text-slate-900 shadow-sm' : 'text-white/50 hover:text-white hover:bg-white/10'}`}
+            >
+              <i className="fas fa-desktop text-[11px]"></i>
+            </button>
+            <button
+              onClick={() => actions.setPreviewMode('mobile')}
+              className={`px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all flex items-center gap-1.5 ${state.previewMode === 'mobile' ? 'bg-white text-slate-900 shadow-sm' : 'text-white/50 hover:text-white hover:bg-white/10'}`}
+            >
+              <i className="fas fa-mobile-alt text-[11px]"></i>
+            </button>
+          </div>
+          <button 
+            onClick={() => setIsMobileDrawerOpen(true)} 
+            className="flex flex-col items-center justify-center w-12 h-12 bg-white text-slate-900 rounded-full border-[4px] border-[#F8FAFC] shadow-lg hover:scale-105 transition-transform z-20 relative"
+          >
+            <i className="fas fa-sliders-h text-lg"></i>
+          </button>
+        </div>
+
+        <button 
+          onClick={publishDesign} 
+          disabled={!canPublish || isPublishing}
+          className={`flex flex-col items-center gap-1 transition-opacity ${canPublish ? 'text-emerald-400 hover:text-emerald-300' : 'text-slate-600'}`}
+        >
+          {isPublishing ? <i className="fas fa-spinner animate-spin text-[14px]"></i> : <i className="fas fa-rocket text-[14px]"></i>}
+          <span className="text-[7px] font-bold tracking-widest uppercase">Publish</span>
+        </button>
+      </div>
+
+      {/* KONTROL EDITOR UTAMA (Sidebar di Desktop, Bottom Sheet di Mobile) */}
+      <div className={`
+        flex flex-col z-[100] bg-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
+        lg:relative lg:h-full lg:shrink-0 lg:border-r lg:border-neutral-200/70 lg:rounded-none lg:shadow-none lg:translate-y-0 lg:max-h-full
+        fixed left-0 right-0 bottom-0 rounded-t-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.15)] max-h-[85vh]
+        ${isEditorCollapsed ? 'lg:w-0 lg:opacity-0 lg:pointer-events-none' : 'lg:w-[420px] xl:w-[460px] lg:opacity-100'}
+        ${isMobileDrawerOpen ? 'translate-y-0' : 'translate-y-full'}
+      `}>
+        {/* Mobile Drag Handle */}
+        <div 
+          className="lg:hidden w-full flex justify-center pt-4 pb-2 cursor-pointer active:bg-neutral-50 rounded-t-3xl transition-colors" 
+          onClick={() => setIsMobileDrawerOpen(false)}
+        >
+          <div className="w-12 h-1.5 bg-neutral-200 rounded-full"></div>
+        </div>
+
         {/* Header Panel Editor */}
-        <div className="p-6 border-b border-neutral-200/50 sticky top-0 z-20 shrink-0 bg-white/80 backdrop-blur-md">
+        <div className="p-4 lg:p-6 border-b border-neutral-200/50 sticky top-0 z-20 shrink-0 bg-white/95 backdrop-blur-md">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 w-full">
               <Link href="/dashboard" className="w-8 h-8 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-all duration-200 shrink-0" title="Kembali ke Dashboard">
                 <i className="fas fa-arrow-left text-[10px]"></i>
               </Link>
-              <div className="flex flex-col">
+              <div className="flex flex-col flex-1">
                 <h1 className="text-lg font-semibold text-neutral-900 tracking-tight leading-none">
                   Desain Visual
                 </h1>
@@ -158,9 +223,15 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                   Pengaturan Tampilan
                 </p>
               </div>
+              <button 
+                onClick={() => setIsMobileDrawerOpen(false)} 
+                className="lg:hidden w-8 h-8 flex items-center justify-center bg-neutral-100 text-neutral-500 rounded-full shrink-0"
+              >
+                <i className="fas fa-times text-sm"></i>
+              </button>
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="hidden lg:flex items-center gap-2 w-full sm:w-auto">
               <button
                 onClick={() => {
                   if (activeDraftId) {
@@ -390,20 +461,16 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         </div>
       </div>
 
-      {/* MOBILE FLOATING BUTTONS (Only on mobile) */}
-      {!isEditorCollapsed && (
-        <div className="lg:hidden">
-          {subdomain && (
-            <a 
-              href={`/${subdomain}`} 
-              target="_blank" 
-              rel="noreferrer"
-              className="fixed bottom-6 right-6 z-[100] px-6 py-3.5 bg-[#ff9e00] text-black font-black uppercase text-[10px] tracking-widest rounded-full shadow-[0_10px_30px_rgba(255,158,0,0.4)] hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 border-[2px] border-black"
-            >
-              <i className="fas fa-external-link-alt"></i> Live Preview
-            </a>
-          )}
-        </div>
+      {/* MOBILE FLOATING PREVIEW URL (Only on mobile) */}
+      {!isMobileDrawerOpen && subdomain && (
+        <a 
+          href={`/${subdomain}`} 
+          target="_blank" 
+          rel="noreferrer"
+          className="lg:hidden fixed top-6 right-6 z-[90] px-4 py-2 bg-white/90 backdrop-blur-md text-slate-900 font-black uppercase text-[9px] tracking-widest rounded-full shadow-md flex items-center gap-2 border border-slate-200 hover:scale-105 transition-transform"
+        >
+          <i className="fas fa-external-link-alt text-slate-400"></i> Live View
+        </a>
       )}
     </>
   );

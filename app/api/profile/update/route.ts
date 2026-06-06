@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity"; 
 import { checkRateLimit } from "@/lib/rate-limit";
 import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
+import DOMPurify from 'isomorphic-dompurify';
 
 export async function PATCH(req: Request) {
   try {
@@ -17,7 +18,14 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json();
-    const { firstName, lastName, subdomain, profession, bio, avatar } = body; 
+    let { firstName, lastName, subdomain, profession, bio, avatar } = body; 
+    
+    // XSS PROTECTION: Sanitize input pengguna di sisi server sebelum masuk database
+    firstName = DOMPurify.sanitize(firstName || "", { ALLOWED_TAGS: [] }).trim();
+    lastName = DOMPurify.sanitize(lastName || "", { ALLOWED_TAGS: [] }).trim();
+    profession = DOMPurify.sanitize(profession || "", { ALLOWED_TAGS: [] }).trim();
+    bio = DOMPurify.sanitize(bio || "", { ALLOWED_TAGS: [] }).trim();
+
     
     // Ambil data User & Profile yang sekarang ada di database
     const currentUser = await prisma.user.findUnique({

@@ -322,6 +322,128 @@ export default function ArchitecturePlanPage() {
               </div>
             </section>
 
+            {/* Section 8 */}
+            <section>
+              <h2 className="text-xl font-black text-slate-900 border-b border-slate-100 pb-3 mb-6 flex items-center gap-3">
+                <span className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 text-sm">8</span> 
+                Katalog Enterprise Blocks (Ekspansi Mendatang)
+              </h2>
+              <div className="bg-indigo-50/50 rounded-2xl p-6 border border-indigo-100">
+                <p className="text-sm text-slate-600 mb-6">Blok tingkat lanjut untuk memfasilitasi kebutuhan kreator profesional, agensi, dan C-Level.</p>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm text-slate-600">
+                    <thead className="bg-indigo-100/50 text-indigo-800 text-xs uppercase tracking-widest">
+                      <tr>
+                        <th className="px-4 py-3 font-bold rounded-tl-xl">Nama Blok</th>
+                        <th className="px-4 py-3 font-bold">Kode blockType</th>
+                        <th className="px-4 py-3 font-bold rounded-tr-xl">Deskripsi (Use Case)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-indigo-100/60 bg-white">
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Contact & Booking</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_CONTACT</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Formulir kontak sebaris dan integrasi Calendly.</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Downloadable Assets</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_ASSETS</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Tombol fokus untuk unduh CV, Resume, atau Media Kit.</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Case Studies</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_CASE_STUDY</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Narasi mendalam masalah/solusi khusus Konsultan dan UX.</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Before & After Slider</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_BEFORE_AFTER</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Slider komparasi visual untuk Retoucher atau Arsitek.</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Press & Media Mentions</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_PRESS</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Deretan publikasi ("As Featured In") untuk kredibilitas.</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Process & Workflow</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_WORKFLOW</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Langkah kerja terstruktur dari Discovery hingga Delivery.</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Blog / Articles</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_BLOG</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Feed kartu tulisan terbaru dari Medium atau Substack.</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Speaking & Events</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_EVENTS</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Daftar jadwal acara, seminar, atau konferensi aktif.</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Giant Video Reel</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_VIDEO_REEL</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Pemutar video layar penuh khusus Filmmaker/Animator.</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Audio Player</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_AUDIO</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Kaset pemutar audio bagi Podcaster atau Musisi.</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Interactive Map</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_LOCATION</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Peta lokasi elegan berbasis wilayah (Google/Mapbox).</td>
+                      </tr>
+                      <tr className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-900">Availability Status</td>
+                        <td className="px-4 py-3"><code className="text-xs bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-600">*_AVAILABILITY</code></td>
+                        <td className="px-4 py-3 text-xs leading-relaxed">Indikator ketersediaan status kerja (Available/Booked).</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            {/* Section 9 */}
+            <section>
+              <h2 className="text-xl font-black text-slate-900 border-b border-slate-100 pb-3 mb-6 flex items-center gap-3">
+                <span className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 text-sm">9</span> 
+                Arsitektur UX Mobile-First (Enterprise Editor)
+              </h2>
+              <div className="bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100">
+                <p className="text-sm text-slate-600 mb-6">Mengatasi keterbatasan ruang di layar *smartphone* (HP) untuk menciptakan pengalaman mengedit setara aplikasi *native* seperti Instagram atau Canva.</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white p-5 rounded-xl border border-emerald-100/60 shadow-sm">
+                    <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mb-4"><i className="fas fa-mobile-alt text-lg"></i></div>
+                    <h4 className="font-bold text-slate-900 mb-2">1. Live Canvas First</h4>
+                    <p className="text-sm text-slate-600">Saat dibuka di HP, form editor disembunyikan. Layar 100% dialokasikan untuk <strong>Live Preview</strong>. Pengguna mengedit portofolio dengan menyentuh teks secara langsung (<em>Inline Editing via EditableText</em>).</p>
+                  </div>
+                  
+                  <div className="bg-white p-5 rounded-xl border border-emerald-100/60 shadow-sm">
+                    <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mb-4"><i className="fas fa-layer-group text-lg"></i></div>
+                    <h4 className="font-bold text-slate-900 mb-2">2. Bottom Sheet Drawer</h4>
+                    <p className="text-sm text-slate-600">Sidebar desktop diubah menjadi <strong>Laci Bawah</strong> (<em>Drawer</em>) yang bisa ditarik naik-turun. Digunakan khusus untuk pengaturan tingkat lanjut (Ganti Tema, Susunan Blok, Warna) agar tidak menutupi seluruh kanvas.</p>
+                  </div>
+                  
+                  <div className="bg-white p-5 rounded-xl border border-emerald-100/60 shadow-sm">
+                    <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mb-4"><i className="fas fa-ellipsis-h text-lg"></i></div>
+                    <h4 className="font-bold text-slate-900 mb-2">3. Floating Action Bar (Dock)</h4>
+                    <p className="text-sm text-slate-600">Bar navigasi mengambang di bagian bawah layar berisi ikon esensial: [Tema, Blok, Pengaturan, Publish]. Sentuhan pada ikon akan memicu animasi <em>Bottom Sheet</em> terbuka.</p>
+                  </div>
+                  
+                  <div className="bg-white p-5 rounded-xl border border-emerald-100/60 shadow-sm">
+                    <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mb-4"><i className="fas fa-magic text-lg"></i></div>
+                    <h4 className="font-bold text-slate-900 mb-2">4. Seamless Gestures</h4>
+                    <p className="text-sm text-slate-600">Mendukung <em>Swipe to close</em> pada menu dan <em>Drag handles</em> berukuran besar (minimal 44x44px) agar mudah ditekan dengan jari untuk menyusun urutan blok.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
           </div>
         </div>
       </div>

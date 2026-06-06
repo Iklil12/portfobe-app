@@ -6,6 +6,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ReactLenis } from '@studio-freight/react-lenis';
 
 // Minimalist Blocks
+import { MinimalistSkillsBlock } from './minimalist/MinimalistSkillsBlock';
+import { MinimalistExperienceBlock } from './minimalist/MinimalistExperienceBlock';
 import { MinimalistHeroBlock } from './minimalist/MinimalistHeroBlock';
 import { MinimalistMarqueeBlock } from './minimalist/MinimalistMarqueeBlock';
 import { MinimalistAboutBlock } from './minimalist/MinimalistAboutBlock';
@@ -19,6 +21,8 @@ import { MinimalistFooterBlock } from './minimalist/MinimalistFooterBlock';
 
 // Spatial Theme Blocks
 import { SpatialShell } from './spatial/SpatialShell';
+import { SpatialSkillsBlock } from './spatial/SpatialSkillsBlock';
+import { SpatialExperienceBlock } from './spatial/SpatialExperienceBlock';
 import { SpatialHeroBlock } from './spatial/SpatialHeroBlock';
 import { SpatialMarqueeBlock } from './spatial/SpatialMarqueeBlock';
 import { SpatialAboutBlock } from './spatial/SpatialAboutBlock';
@@ -38,6 +42,8 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 
 // Obsidian Reel Theme Blocks
 import { ObsidianShell } from './obsidian/ObsidianShell';
+import { ObsidianSkillsBlock } from './obsidian-reel/ObsidianSkillsBlock';
+import { ObsidianExperienceBlock } from './obsidian-reel/ObsidianExperienceBlock';
 import { ObsidianHeroBlock } from './obsidian/ObsidianHeroBlock';
 import { ObsidianMarqueeBlock } from './obsidian/ObsidianMarqueeBlock';
 import { ObsidianAboutBlock } from './obsidian/ObsidianAboutBlock';
@@ -50,6 +56,8 @@ import { ObsidianTestimonialsBlock } from './obsidian/ObsidianTestimonialsBlock'
 import { ObsidianFooterBlock } from './obsidian/ObsidianFooterBlock';
 // Aura Kinetic Theme Blocks
 import { AuraKineticShell } from './aura-kinetic/AuraKineticShell';
+import { AuraKineticSkillsBlock } from './aura-kinetic/AuraKineticSkillsBlock';
+import { AuraKineticExperienceBlock } from './aura-kinetic/AuraKineticExperienceBlock';
 import { AuraKineticHeroBlock } from './aura-kinetic/AuraKineticHeroBlock';
 import { AuraKineticMarqueeBlock } from './aura-kinetic/AuraKineticMarqueeBlock';
 import { AuraKineticAboutBlock } from './aura-kinetic/AuraKineticAboutBlock';
@@ -63,6 +71,8 @@ import { AuraKineticFooterBlock } from './aura-kinetic/AuraKineticFooterBlock';
 
 // Editorial Theme Blocks
 import { EditorialShell } from './editorial/EditorialShell';
+import { EditorialSkillsBlock } from './editorial/EditorialSkillsBlock';
+import { EditorialExperienceBlock } from './editorial/EditorialExperienceBlock';
 import { EditorialHeroBlock } from './editorial/EditorialHeroBlock';
 import { EditorialMarqueeBlock } from './editorial/EditorialMarqueeBlock';
 import { EditorialAboutBlock } from './editorial/EditorialAboutBlock';
@@ -75,6 +85,8 @@ import { EditorialTestimonialsBlock } from './editorial/EditorialTestimonialsBlo
 import { EditorialFooterBlock } from './editorial/EditorialFooterBlock';
 // Midnight Emulsion Theme Blocks
 import { MidnightEmulsionShell } from './midnight-emulsion/MidnightEmulsionShell';
+import { MidnightEmulsionSkillsBlock } from './midnight-emulsion/MidnightEmulsionSkillsBlock';
+import { MidnightEmulsionExperienceBlock } from './midnight-emulsion/MidnightEmulsionExperienceBlock';
 import { MidnightEmulsionHeroBlock } from './midnight-emulsion/MidnightEmulsionHeroBlock';
 import { MidnightEmulsionMarqueeBlock } from './midnight-emulsion/MidnightEmulsionMarqueeBlock';
 import { MidnightEmulsionAboutBlock } from './midnight-emulsion/MidnightEmulsionAboutBlock';
@@ -88,6 +100,8 @@ import { MidnightEmulsionFooterBlock } from './midnight-emulsion/MidnightEmulsio
 
 // Viewfinder Theme Blocks
 import { ViewfinderShell } from './viewfinder/ViewfinderShell';
+import { ViewfinderSkillsBlock } from './viewfinder/ViewfinderSkillsBlock';
+import { ViewfinderExperienceBlock } from './viewfinder/ViewfinderExperienceBlock';
 import { ViewfinderHeroBlock } from './viewfinder/ViewfinderHeroBlock';
 import { ViewfinderMarqueeBlock } from './viewfinder/ViewfinderMarqueeBlock';
 import { ViewfinderAboutBlock } from './viewfinder/ViewfinderAboutBlock';
@@ -101,6 +115,8 @@ import { ViewfinderFooterBlock } from './viewfinder/ViewfinderFooterBlock';
 
 // Nexus Split Theme Blocks
 import { NexusSplitShell } from './nexus-split/NexusSplitShell';
+import { NexusSplitSkillsBlock } from './nexus-split/NexusSplitSkillsBlock';
+import { NexusSplitExperienceBlock } from './nexus-split/NexusSplitExperienceBlock';
 import { NexusSplitHeroBlock } from './nexus-split/NexusSplitHeroBlock';
 import { NexusSplitMarqueeBlock } from './nexus-split/NexusSplitMarqueeBlock';
 import { NexusSplitAboutBlock } from './nexus-split/NexusSplitAboutBlock';
@@ -114,6 +130,8 @@ import { NexusSplitFooterBlock } from './nexus-split/NexusSplitFooterBlock';
 
 // Monolith Vanguard Theme Blocks
 import { MonolithShell } from './monolith/MonolithShell';
+import { MonolithSkillsBlock } from './monolith/MonolithSkillsBlock';
+import { MonolithExperienceBlock } from './monolith/MonolithExperienceBlock';
 import { MonolithHeroBlock } from './monolith/MonolithHeroBlock';
 import { MonolithMarqueeBlock } from './monolith/MonolithMarqueeBlock';
 import { MonolithAboutBlock } from './monolith/MonolithAboutBlock';
@@ -127,6 +145,8 @@ import { MonolithFooterBlock } from './monolith/MonolithFooterBlock';
 
 // Absolute Noir Theme Blocks
 import { AbsoluteNoirShell } from './absolute-noir/AbsoluteNoirShell';
+import { AbsoluteNoirSkillsBlock } from './absolute-noir/AbsoluteNoirSkillsBlock';
+import { AbsoluteNoirExperienceBlock } from './absolute-noir/AbsoluteNoirExperienceBlock';
 import { AbsoluteNoirHeroBlock } from './absolute-noir/AbsoluteNoirHeroBlock';
 import { AbsoluteNoirMarqueeBlock } from './absolute-noir/AbsoluteNoirMarqueeBlock';
 import { AbsoluteNoirAboutBlock } from './absolute-noir/AbsoluteNoirAboutBlock';
@@ -140,6 +160,8 @@ import { AbsoluteNoirFooterBlock } from './absolute-noir/AbsoluteNoirFooterBlock
 
 // Layered Monolith Theme Blocks
 import { LayeredMonolithShell } from './layered-monolith/LayeredMonolithShell';
+import { LayeredMonolithSkillsBlock } from './layered-monolith/LayeredMonolithSkillsBlock';
+import { LayeredMonolithExperienceBlock } from './layered-monolith/LayeredMonolithExperienceBlock';
 import { LayeredMonolithHeroBlock } from './layered-monolith/LayeredMonolithHeroBlock';
 import { LayeredMonolithMarqueeBlock } from './layered-monolith/LayeredMonolithMarqueeBlock';
 import { LayeredMonolithEthosBlock } from './layered-monolith/LayeredMonolithEthosBlock';
@@ -153,6 +175,8 @@ import { LayeredMonolithFooterBlock } from './layered-monolith/LayeredMonolithFo
 
 // Cinematic Theme Blocks
 import { CinematicShell } from './cinematic/CinematicShell';
+import { CinematicSkillsBlock } from './cinematic/CinematicSkillsBlock';
+import { CinematicExperienceBlock } from './cinematic/CinematicExperienceBlock';
 import { CinematicHeroBlock } from './cinematic/CinematicHeroBlock';
 import { CinematicMarqueeBlock } from './cinematic/CinematicMarqueeBlock';
 import { CinematicAboutBlock } from './cinematic/CinematicAboutBlock';
@@ -160,6 +184,8 @@ import { CinematicServicesBlock } from './cinematic/CinematicServicesBlock';
 
 // Cinematic Gallery Theme Blocks
 import { CinematicGalleryShell } from './cinematic-gallery/CinematicGalleryShell';
+import { CinematicGallerySkillsBlock } from './cinematic-gallery/CinematicGallerySkillsBlock';
+import { CinematicGalleryExperienceBlock } from './cinematic-gallery/CinematicGalleryExperienceBlock';
 import { CinematicGalleryHeroBlock } from './cinematic-gallery/CinematicGalleryHeroBlock';
 import { CinematicGalleryAboutBlock } from './cinematic-gallery/CinematicGalleryAboutBlock';
 import { CinematicGalleryServicesBlock } from './cinematic-gallery/CinematicGalleryServicesBlock';
@@ -177,6 +203,8 @@ import { CinematicFooterBlock } from './cinematic/CinematicFooterBlock';
 
 // Acid Tech Theme Blocks
 import { AcidTechShell } from './acid-tech/AcidTechShell';
+import { AcidTechSkillsBlock } from './acid-tech/AcidTechSkillsBlock';
+import { AcidTechExperienceBlock } from './acid-tech/AcidTechExperienceBlock';
 import { AcidTechHeroBlock } from './acid-tech/AcidTechHeroBlock';
 import { AcidTechMarqueeBlock } from './acid-tech/AcidTechMarqueeBlock';
 import { AcidTechAboutBlock } from './acid-tech/AcidTechAboutBlock';
@@ -190,6 +218,8 @@ import { AcidTechFooterBlock } from './acid-tech/AcidTechFooterBlock';
 
 // Bento Grid Theme Blocks
 import { BentoGridShell } from './bentogrid/BentoGridShell';
+import { BentoGridSkillsBlock } from './bentogrid/BentoGridSkillsBlock';
+import { BentoGridExperienceBlock } from './bentogrid/BentoGridExperienceBlock';
 import { BentoGridHeroBlock } from './bentogrid/BentoGridHeroBlock';
 import { BentoGridMarqueeBlock } from './bentogrid/BentoGridMarqueeBlock';
 import { BentoGridProjectsBlock } from './bentogrid/BentoGridProjectsBlock';
@@ -203,6 +233,8 @@ import { BentoGridStatsBlock } from './bentogrid/BentoGridStatsBlock';
 
 // Brutalism Theme Blocks
 import { BrutalismShell } from './brutalism/BrutalismShell';
+import { BrutalismSkillsBlock } from './brutalism/BrutalismSkillsBlock';
+import { BrutalismExperienceBlock } from './brutalism/BrutalismExperienceBlock';
 import { BrutalismHeroBlock } from './brutalism/BrutalismHeroBlock';
 import { BrutalismStatsBlock } from './brutalism/BrutalismStatsBlock';
 import { BrutalismProjectsBlock } from './brutalism/BrutalismProjectsBlock';
@@ -261,6 +293,21 @@ import { HorizontalFlowTestimonialsBlock } from './horizontal-flow/HorizontalFlo
 import { HorizontalFlowAwardsBlock } from './horizontal-flow/HorizontalFlowAwardsBlock';
 import { HorizontalFlowFooterBlock } from './horizontal-flow/HorizontalFlowFooterBlock';
 
+// Split Screen Studio Theme Blocks
+import { SplitScreenStudioShell } from './split-screen-studio/SplitScreenStudioShell';
+import { SplitScreenStudioHeroBlock } from './split-screen-studio/SplitScreenStudioHeroBlock';
+import { SplitScreenStudioMarqueeBlock } from './split-screen-studio/SplitScreenStudioMarqueeBlock';
+import { SplitScreenStudioAboutBlock } from './split-screen-studio/SplitScreenStudioAboutBlock';
+import { SplitScreenStudioServicesBlock } from './split-screen-studio/SplitScreenStudioServicesBlock';
+import { SplitScreenStudioStatsBlock } from './split-screen-studio/SplitScreenStudioStatsBlock';
+import { SplitScreenStudioProjectsBlock } from './split-screen-studio/SplitScreenStudioProjectsBlock';
+import { SplitScreenStudio3DBlock } from './split-screen-studio/SplitScreenStudio3DBlock';
+import { SplitScreenStudioAwardsBlock } from './split-screen-studio/SplitScreenStudioAwardsBlock';
+import { SplitScreenStudioTestimonialsBlock } from './split-screen-studio/SplitScreenStudioTestimonialsBlock';
+import { SplitScreenStudioSkillsBlock } from './split-screen-studio/SplitScreenStudioSkillsBlock';
+import { SplitScreenStudioExperienceBlock } from './split-screen-studio/SplitScreenStudioExperienceBlock';
+import { SplitScreenStudioFooterBlock } from './split-screen-studio/SplitScreenStudioFooterBlock';
+
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { BlockEditorWrapper } from '@/components/features/appearance/BlockEditorWrapper';
 
@@ -286,6 +333,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
   // 1. SMART MAPPING: Render blok sesuai dengan tema yang sedang aktif
   if (activeThemeTemplate === 'minimalist') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <MinimalistSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <MinimalistExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <MinimalistHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <MinimalistMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <MinimalistAboutBlock {...commonProps} />; break;
@@ -302,6 +351,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'spatial') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <SpatialSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <SpatialExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <SpatialHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <SpatialMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <SpatialAboutBlock {...commonProps} />; break;
@@ -318,6 +369,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'obsidian-reel') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <ObsidianSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <ObsidianExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <ObsidianHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <ObsidianMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <ObsidianAboutBlock {...commonProps} />; break;
@@ -334,6 +387,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'aura-kinetic') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <AuraKineticSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <AuraKineticExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <AuraKineticHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <AuraKineticMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <AuraKineticAboutBlock {...commonProps} />; break;
@@ -350,6 +405,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'editorial') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <EditorialSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <EditorialExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <EditorialHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <EditorialMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <EditorialAboutBlock {...commonProps} />; break;
@@ -399,6 +456,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'midnight-emulsion') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <MidnightEmulsionSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <MidnightEmulsionExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <MidnightEmulsionHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <MidnightEmulsionMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <MidnightEmulsionAboutBlock {...commonProps} />; break;
@@ -415,6 +474,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'viewfinder') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <ViewfinderSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <ViewfinderExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <ViewfinderHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <ViewfinderMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <ViewfinderAboutBlock {...commonProps} />; break;
@@ -429,8 +490,28 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
       case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
       case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="viewfinder" themeColor={themeColor} /> : null; break;
     }
+  } else if (activeThemeTemplate === 'split-screen-studio') {
+    switch (baseBlockType) {
+      case 'HERO': content = <SplitScreenStudioHeroBlock {...commonProps} />; break;
+      case 'MARQUEE': content = <SplitScreenStudioMarqueeBlock {...commonProps} />; break;
+      case 'ABOUT': content = <SplitScreenStudioAboutBlock {...commonProps} />; break;
+      case 'SERVICES': content = <SplitScreenStudioServicesBlock {...commonProps} />; break;
+      case 'STATS': content = <SplitScreenStudioStatsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <SplitScreenStudioProjectsBlock {...commonProps} />; break;
+      case '3D': content = <SplitScreenStudio3DBlock {...commonProps} />; break;
+      case 'AWARDS': content = <SplitScreenStudioAwardsBlock {...commonProps} />; break;
+      case 'TESTIMONIALS': content = <SplitScreenStudioTestimonialsBlock {...commonProps} />; break;
+      case 'SKILLS': content = <SplitScreenStudioSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <SplitScreenStudioExperienceBlock {...commonProps} />; break;
+      case 'FOOTER': content = <SplitScreenStudioFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <div className="w-full bg-[#050505] p-8 md:p-12"><PenpotShowcase userId={userId} variant="split-screen-studio" themeColor={themeColor} /></div> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <div className="w-full bg-[#050505] p-8 md:p-12"><CanvaShowcase userId={userId} variant="split-screen-studio" themeColor={themeColor} /></div> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <div className="w-full bg-[#050505] p-8 md:p-12"><GithubStats userId={userId} variant="split-screen-studio" themeColor={themeColor} /></div> : null; break;
+    }
   } else if (activeThemeTemplate === 'split') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <NexusSplitSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <NexusSplitExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <NexusSplitHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <NexusSplitMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <NexusSplitAboutBlock {...commonProps} />; break;
@@ -447,6 +528,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'monolith') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <MonolithSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <MonolithExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <MonolithHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <MonolithMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <MonolithAboutBlock {...commonProps} />; break;
@@ -463,6 +546,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'layered-monolith') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <LayeredMonolithSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <LayeredMonolithExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <LayeredMonolithHeroBlock {...commonProps} />; break;
       case 'ABOUT': content = <LayeredMonolithEthosBlock {...commonProps} />; break;
       case 'PROJECTS': content = <LayeredMonolithWorksBlock {...commonProps} />; break;
@@ -479,6 +564,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'absolute-noir') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <AbsoluteNoirSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <AbsoluteNoirExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <AbsoluteNoirHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = null; break; // Locked to Hero in this theme
       case 'ABOUT': content = <AbsoluteNoirAboutBlock {...commonProps} />; break;
@@ -495,6 +582,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'cinematic') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <CinematicSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <CinematicExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <CinematicHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <CinematicMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <CinematicAboutBlock {...commonProps} />; break;
@@ -511,6 +600,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'cinematic-gallery') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <CinematicGallerySkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <CinematicGalleryExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <CinematicGalleryHeroBlock {...commonProps} />; break;
       case 'ABOUT': content = <CinematicGalleryAboutBlock {...commonProps} />; break;
       case 'PROJECTS': content = <CinematicGalleryProjectsBlock {...commonProps} />; break;
@@ -527,6 +618,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'acid-tech' || activeThemeTemplate === 'acid') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <AcidTechSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <AcidTechExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <AcidTechHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <AcidTechMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <AcidTechAboutBlock {...commonProps} />; break;
@@ -543,6 +636,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'bentogrid') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <BentoGridSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <BentoGridExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <BentoGridHeroBlock {...commonProps} />; break;
       case 'MARQUEE': content = <BentoGridMarqueeBlock {...commonProps} />; break;
       case 'ABOUT': content = <BentoGridAboutBlock {...commonProps} />; break;
@@ -559,6 +654,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     }
   } else if (activeThemeTemplate === 'brutalism') {
     switch (baseBlockType) {
+            case 'SKILLS': content = <BrutalismSkillsBlock {...commonProps} />; break;
+      case 'EXPERIENCE': content = <BrutalismExperienceBlock {...commonProps} />; break;
       case 'HERO': content = <BrutalismHeroBlock {...commonProps} />; break;
       case 'STATS': content = <BrutalismStatsBlock {...commonProps} />; break;
       case 'PROJECTS': content = <BrutalismProjectsBlock {...commonProps} />; break;
@@ -944,6 +1041,19 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
             <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
           ))}
         </HorizontalFlowShell>
+      );
+    }
+
+    if (activeThemeTemplate === 'split-screen-studio') {
+      const heroBlockData = sortedBlocks.find((b: any) => b.blockType.includes('HERO'));
+      const otherBlocks = sortedBlocks.filter((b: any) => b.id !== heroBlockData?.id);
+
+      return (
+        <SplitScreenStudioShell data={data} theme={theme} isMobileView={isMobileView} isCardPreview={isCardPreview} isEditor={isEditor} heroBlock={heroBlockData}>
+          {otherBlocks.map((b: any) => (
+            <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+          ))}
+        </SplitScreenStudioShell>
       );
     }
 
