@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { ThemeSelectionModal } from './ThemeSelectionModal';
 import { ProUpgradeModal } from '@/components/ProUpgradeModal';
@@ -61,6 +61,31 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
   } = state;
 
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
+  const [dragY, setDragY] = React.useState(0);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const touchStartY = React.useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - touchStartY.current;
+    if (diff > 0) {
+      setDragY(diff);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    if (dragY > 100) {
+      setIsMobileDrawerOpen(false);
+    }
+    setDragY(0);
+  };
 
   const subdomain = stateSubdomain || livePreviewData?.subdomain;
 
@@ -90,9 +115,26 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
   // Logika Anti-Spam & Status Tombol
   const isCurrentlyLive = activeDraftId ? activeDraftId === publishedDraftId : publishedDraftId === null;
   const canPublish = isDirty || !isCurrentlyLive || hasUnpublishedChanges;
+  // Cegah pengguna keluar/refresh jika ada perubahan yang belum disimpan
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = ''; // Memicu prompt bawaan browser
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .glass-noise {
+           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+        }
+      `}} />
       <ProUpgradeModal
         isOpen={showProModal}
         onClose={() => setShowProModal(false)}
@@ -141,7 +183,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
       {/* MOBILE FLOATING DOCK (Live Canvas First) */}
       <div className={`
-        lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] 
+        glass-noise lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] 
         bg-slate-900/95 backdrop-blur-md text-white rounded-full px-5 py-2 
         flex items-center gap-6 shadow-[0_10px_40px_rgba(0,0,0,0.3)] border border-slate-800
         transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
@@ -153,14 +195,14 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
             else setIsSaveDraftModalOpen(true);
           }} 
           disabled={isSavingDraft || isPublishing || (activeDraftId ? !isDirty : false)}
-          className={`flex flex-col items-center gap-1 transition-opacity ${activeDraftId && !isDirty ? 'opacity-30' : 'opacity-80 hover:opacity-100'}`}
+          className={`flex flex-col items-center justify-center w-16 gap-1 transition-opacity ${activeDraftId && !isDirty ? 'opacity-30' : 'opacity-80 hover:opacity-100'}`}
         >
           {isSavingDraft ? <i className="fas fa-spinner animate-spin text-[14px]"></i> : <i className="fas fa-save text-[14px]"></i>}
           <span className="text-[7px] font-bold tracking-widest uppercase">Save</span>
         </button>
 
         <div className="flex flex-col items-center justify-center -mt-[3.75rem]">
-          <div className="bg-slate-900/90 backdrop-blur-md p-1 rounded-full border border-white/10 flex items-center mb-2 shadow-xl relative z-10">
+          <div className="glass-noise bg-slate-900/90 backdrop-blur-md p-1 rounded-full border border-white/10 flex items-center mb-2 shadow-xl relative z-10">
             <button
               onClick={() => actions.setPreviewMode('desktop')}
               className={`px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all flex items-center gap-1.5 ${state.previewMode === 'desktop' ? 'bg-white text-slate-900 shadow-sm' : 'text-white/50 hover:text-white hover:bg-white/10'}`}
@@ -185,25 +227,38 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         <button 
           onClick={publishDesign} 
           disabled={!canPublish || isPublishing}
-          className={`flex flex-col items-center gap-1 transition-opacity ${canPublish ? 'text-emerald-400 hover:text-emerald-300' : 'text-slate-600'}`}
+          className={`flex flex-col items-center justify-center w-16 gap-1 transition-opacity ${canPublish ? 'text-emerald-400 hover:text-emerald-300' : 'text-slate-600'}`}
         >
           {isPublishing ? <i className="fas fa-spinner animate-spin text-[14px]"></i> : <i className="fas fa-rocket text-[14px]"></i>}
           <span className="text-[7px] font-bold tracking-widest uppercase">Publish</span>
         </button>
       </div>
 
+      {/* MOBILE BACKDROP UNTUK MENUTUP SETTINGS KETIKA DIKLIK DI LUAR */}
+      <div 
+        className={`lg:hidden fixed inset-0 bg-black/40 z-[95] transition-opacity duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${isMobileDrawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => setIsMobileDrawerOpen(false)}
+      />
+
       {/* KONTROL EDITOR UTAMA (Sidebar di Desktop, Bottom Sheet di Mobile) */}
-      <div className={`
-        flex flex-col z-[100] bg-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
-        lg:relative lg:h-full lg:shrink-0 lg:border-r lg:border-neutral-200/70 lg:rounded-none lg:shadow-none lg:translate-y-0 lg:max-h-full
-        fixed left-0 right-0 bottom-0 rounded-t-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.15)] max-h-[85vh]
-        ${isEditorCollapsed ? 'lg:w-0 lg:opacity-0 lg:pointer-events-none' : 'lg:w-[420px] xl:w-[460px] lg:opacity-100'}
-        ${isMobileDrawerOpen ? 'translate-y-0' : 'translate-y-full'}
-      `}>
+      <div 
+        className={`
+          glass-noise flex flex-col z-[100] bg-white 
+          ${isDragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'}
+          lg:relative lg:h-full lg:shrink-0 lg:border-r lg:border-neutral-200/70 lg:rounded-none lg:shadow-none lg:translate-y-0 lg:max-h-full
+          fixed left-0 right-0 bottom-0 rounded-t-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.15)] max-h-[85vh]
+          ${isEditorCollapsed ? 'lg:w-0 lg:opacity-0 lg:pointer-events-none' : 'lg:w-[420px] xl:w-[460px] lg:opacity-100'}
+          ${isMobileDrawerOpen && !dragY ? 'translate-y-0' : dragY ? '' : 'translate-y-full'}
+        `}
+        style={dragY > 0 ? { transform: `translateY(${dragY}px)` } : undefined}
+      >
         {/* Mobile Drag Handle */}
         <div 
           className="lg:hidden w-full flex justify-center pt-4 pb-2 cursor-pointer active:bg-neutral-50 rounded-t-3xl transition-colors" 
           onClick={() => setIsMobileDrawerOpen(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <div className="w-12 h-1.5 bg-neutral-200 rounded-full"></div>
         </div>
@@ -212,13 +267,26 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         <div className="p-4 lg:p-6 border-b border-neutral-200/50 sticky top-0 z-20 shrink-0 bg-white/95 backdrop-blur-md">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
             <div className="flex items-center gap-4 w-full">
-              <Link href="/dashboard" className="w-8 h-8 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-all duration-200 shrink-0" title="Kembali ke Dashboard">
+              <Link 
+                href="/dashboard" 
+                onClick={(e) => {
+                  if (isDirty) {
+                    if (!window.confirm("Keluar dari Editor? Perubahan yang Anda lakukan mungkin tidak disimpan.")) {
+                      e.preventDefault();
+                    }
+                  }
+                }}
+                className="w-8 h-8 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-all duration-200 shrink-0" 
+                title="Kembali ke Dashboard"
+              >
                 <i className="fas fa-arrow-left text-[10px]"></i>
               </Link>
               <div className="flex flex-col flex-1">
-                <h1 className="text-lg font-semibold text-neutral-900 tracking-tight leading-none">
-                  Desain Visual
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-lg font-semibold text-neutral-900 tracking-tight leading-none">
+                    Desain Visual
+                  </h1>
+                </div>
                 <p className="text-[10px] text-neutral-500 font-medium mt-1 uppercase tracking-widest">
                   Pengaturan Tampilan
                 </p>
@@ -341,25 +409,28 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
             )}
 
             {!isLoading && (
-              <button
-                onClick={actions.resetToThemePreset}
-                className="w-full mt-3 p-3 rounded-2xl border border-neutral-200 bg-white hover:bg-neutral-50 hover:border-neutral-300 transition-all duration-200 flex items-center justify-center gap-2.5 text-neutral-600 hover:text-neutral-900 shadow-sm"
-              >
-                <i className="fas fa-magic text-[10px]"></i>
-                <span className="text-[11px] font-semibold tracking-wide">Reset Susunan ke Bawaan Tema</span>
-              </button>
-            )}
+              <div className="flex w-full gap-3 mt-3">
+                <button
+                  onClick={actions.resetToThemePreset}
+                  className="flex-1 px-2 py-3 rounded-xl border border-neutral-200/60 bg-gradient-to-b from-white to-neutral-50 hover:from-neutral-50 hover:to-neutral-100 hover:border-neutral-300 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-neutral-600 hover:text-neutral-900 shadow-sm group"
+                  title="Reset susunan blok ke setelan pabrik (segar)"
+                >
+                  <i className="fas fa-magic text-[10px] text-[#ff9e00] group-hover:scale-110 transition-transform"></i>
+                  <span className="text-[10px] font-bold tracking-wide">Reset Tema</span>
+                </button>
 
-            {/* TOMBOL DRAFT - Di bawah Basis Tema */}
-            <button
-              onClick={() => setIsDraftsModalOpen(true)}
-              className="w-full mt-4 p-3.5 rounded-2xl border border-dashed border-neutral-300 bg-neutral-50/50 hover:bg-neutral-100 hover:border-neutral-400 transition-all duration-200 flex items-center justify-center gap-2.5 group"
-            >
-              <i className="fas fa-folder-open text-neutral-400 group-hover:text-neutral-600 text-xs transition-colors"></i>
-              <span className="text-[11px] font-semibold text-neutral-500 group-hover:text-neutral-700 tracking-wide transition-colors">
-                {drafts.length > 0 ? `Manajemen Draft (${drafts.length})` : 'Belum Ada Draft'}
-              </span>
-            </button>
+                <button
+                  onClick={() => setIsDraftsModalOpen(true)}
+                  className="flex-1 px-2 py-3 rounded-xl border border-dashed border-neutral-300/80 bg-neutral-50/50 hover:bg-neutral-100 hover:border-neutral-400 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group hover:shadow-sm"
+                  title="Buka panel manajemen draft"
+                >
+                  <i className="fas fa-folder-open text-blue-500/80 group-hover:scale-110 text-[10px] transition-transform"></i>
+                  <span className="text-[10px] font-bold text-neutral-600 group-hover:text-neutral-800 tracking-wide transition-colors">
+                    Drafts {drafts.length > 0 ? <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md ml-0.5 border border-blue-200">{drafts.length}</span> : ''}
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* DIVIDER */}
@@ -461,7 +532,32 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         </div>
       </div>
 
-      {/* MOBILE FLOATING PREVIEW URL (Only on mobile) */}
+      {/* MOBILE FLOATING CONTROLS (Top Left - Undo/Redo) */}
+      {!isMobileDrawerOpen && (
+        <div className="lg:hidden fixed top-6 left-6 z-[90] bg-white/90 backdrop-blur-md p-1 rounded-full shadow-md flex items-center border border-slate-200">
+          <button
+            onClick={actions.undo}
+            disabled={!state.canUndo}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+              state.canUndo ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95' : 'text-slate-300 cursor-not-allowed'
+            }`}
+          >
+            <i className="fas fa-undo text-[12px]"></i>
+          </button>
+          <div className="w-[1px] h-3 bg-slate-200 mx-0.5"></div>
+          <button
+            onClick={actions.redo}
+            disabled={!state.canRedo}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+              state.canRedo ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95' : 'text-slate-300 cursor-not-allowed'
+            }`}
+          >
+            <i className="fas fa-redo text-[12px]"></i>
+          </button>
+        </div>
+      )}
+
+      {/* MOBILE FLOATING PREVIEW URL (Top Right) */}
       {!isMobileDrawerOpen && subdomain && (
         <a 
           href={`/${subdomain}`} 

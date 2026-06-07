@@ -47,6 +47,9 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
   // Listener untuk sinyal PREVIEW_READY dari iframe
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      // SECURITY: Cegah injeksi dari domain asing
+      if (event.origin !== window.location.origin) return;
+
       if (event.data?.type === 'PREVIEW_READY') {
         iframeReady.current = true;
         sendDataToIframe();
@@ -103,8 +106,34 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
 
       <div className="absolute inset-0 bg-grid-slate pointer-events-none z-0 hidden lg:block"></div>
 
-      {/* DESKTOP FLOATING CONTROLS (MODE SWITCHER) */}
+      {/* DESKTOP FLOATING CONTROLS (MODE SWITCHER & UNDO/REDO) */}
       <div className="hidden lg:flex absolute top-6 left-1/2 -translate-x-1/2 z-[80] items-center gap-3 transition-all duration-700">
+        
+        {/* Undo / Redo */}
+        <div className="bg-white/80 backdrop-blur-xl p-1.5 rounded-full border border-slate-200 flex items-center shadow-[0_5px_20px_rgba(0,0,0,0.05)]">
+          <button
+            onClick={actions.undo}
+            disabled={!state.canUndo}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+              state.canUndo ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95' : 'text-slate-300 cursor-not-allowed'
+            }`}
+            title="Undo (Kembali)"
+          >
+            <i className="fas fa-undo text-[12px]"></i>
+          </button>
+          <div className="w-[1px] h-4 bg-slate-200 mx-1"></div>
+          <button
+            onClick={actions.redo}
+            disabled={!state.canRedo}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+              state.canRedo ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95' : 'text-slate-300 cursor-not-allowed'
+            }`}
+            title="Redo (Maju)"
+          >
+            <i className="fas fa-redo text-[12px]"></i>
+          </button>
+        </div>
+
         {/* Mode Switcher */}
         <div className="bg-white/80 backdrop-blur-xl p-1.5 rounded-full border border-slate-200 flex items-center gap-1 shadow-[0_5px_20px_rgba(0,0,0,0.05)]">
           <button
@@ -120,6 +149,9 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
             <i className="fas fa-mobile-alt text-[13px]"></i> Mobile
           </button>
         </div>
+
+
+
       </div>
 
       {/* Desktop Zoom Controls (Hidden on Mobile) */}
@@ -166,7 +198,7 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
       <div
         className={`relative z-10 flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden shrink-0
           ${isMobileDevice && previewMode === 'mobile' ? 'w-full h-full bg-white absolute inset-0' : ''}
-          ${isMobileDevice && previewMode === 'desktop' ? 'bg-white w-[90vw] h-[60vh] mt-8 rounded-xl shadow-2xl border border-slate-200/80' : ''}
+          ${isMobileDevice && previewMode === 'desktop' ? 'bg-white w-[90vw] h-[60vh] -translate-y-12 rounded-xl shadow-2xl border border-slate-200/80' : ''}
           ${!isMobileDevice ? `mt-12 shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-slate-200/80 ${
               previewMode === 'desktop' ? 'bg-white w-full max-w-6xl h-full max-h-[85vh] rounded-2xl sm:rounded-[2rem]' : 'bg-black border-[12px] border-slate-900 rounded-[3rem] origin-center'
             }` : ''
@@ -180,14 +212,14 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
       >
         <div className="shrink-0 transition-all duration-700 z-20">
           {previewMode === 'desktop' && (
-            <div className="h-12 flex items-center px-4 gap-3 bg-slate-50/80 backdrop-blur-sm border-b border-slate-100">
+            <div className="h-10 flex items-center px-4 gap-3 bg-slate-50/80 backdrop-blur-sm border-b border-slate-100">
               <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-slate-300"></div>
-                <div className="w-3 h-3 rounded-full bg-slate-300"></div>
-                <div className="w-3 h-3 rounded-full bg-slate-300"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
               </div>
-              <div className="mx-auto px-6 py-1.5 bg-white text-[10px] font-mono text-slate-400 rounded-md flex items-center gap-2 font-bold shadow-sm border border-slate-200/50 truncate max-w-[250px]">
-                <i className="fas fa-lock"></i>portfo.be/{subdomain || 'username'}
+              <div className="mx-auto px-4 py-1 bg-white text-[9px] font-mono text-slate-400 rounded-md flex items-center gap-1.5 font-bold shadow-sm border border-slate-200/50 truncate max-w-[200px]">
+                <i className="fas fa-lock text-[8px]"></i>portfo.be/{subdomain || 'username'}
               </div>
             </div>
           )}

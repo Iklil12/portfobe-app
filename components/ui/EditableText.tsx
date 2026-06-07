@@ -4,13 +4,14 @@ import React, { useState, useRef, useEffect } from 'react';
 
 interface EditableTextProps {
   value: string;
-  field: string;
-  entity: string;
+  field?: string;
+  entity?: string;
   isEditor?: boolean;
   className?: string;
   as?: any;
   maxLength?: number;
   href?: string;
+  onChange?: (newText: string) => void;
 }
 
 import DOMPurify from 'isomorphic-dompurify';
@@ -32,7 +33,27 @@ const sanitizeText = (text: string) => {
     .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
 };
 
-export function EditableText({ value, field, entity, isEditor, className = "", as: Component = "span", maxLength, href }: EditableTextProps) {
+export function EditableText({ value, field, entity, isEditor, className = "", as: Component = "span", maxLength, href, onChange }: EditableTextProps) {
+  
+  // Tentukan batas karakter cerdas berdasarkan jenis field
+  let activeMaxLength = maxLength;
+  
+  // OVERRIDE: Data Profil selalu mengikuti aturan mutlak (mengabaikan limit dari tema)
+  if (entity === 'profile') {
+    if (field === 'fullName' || field === 'firstName' || field === 'lastName') {
+      activeMaxLength = 10;
+    } else if (field === 'profession') {
+      activeMaxLength = 20;
+    } else if (field === 'location') {
+      activeMaxLength = 40;
+    } else if (field === 'bio') {
+      activeMaxLength = 250;
+    }
+  } else if (!activeMaxLength) {
+    // Jika bukan data profil dan tidak ada maxLength eksplisit dari tema, gunakan default statis
+    activeMaxLength = 150;
+  }
+
   const [content, setContent] = useState(() => sanitizeText(value || ""));
   const elementRef = useRef<any>(null);
 
@@ -44,16 +65,17 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
     let rawText = elementRef.current?.innerText || "";
     let newText = sanitizeText(rawText).trim();
 
-    if (maxLength && newText.length > maxLength) {
-      newText = newText.substring(0, maxLength);
+    if (activeMaxLength && newText.length > activeMaxLength) {
+      newText = newText.substring(0, activeMaxLength);
     }
 
     elementRef.current.innerText = newText;
 
     if (newText !== value && newText !== "") {
       setContent(newText);
-      // Kirim pesan ke parent window
-      if (window.parent) {
+      if (onChange) {
+        onChange(newText);
+      } else if (window.parent && field && entity) {
         window.parent.postMessage({
           type: 'INLINE_EDIT',
           entity,
@@ -77,12 +99,12 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
       return;
     }
 
-    // Prevent typing if length exceeds maxLength
-    if (maxLength && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key) && !e.ctrlKey && !e.metaKey) {
+    // Prevent typing if length exceeds activeMaxLength
+    if (activeMaxLength && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key) && !e.ctrlKey && !e.metaKey) {
       const currentText = elementRef.current?.innerText || "";
       const selection = window.getSelection();
       const hasSelection = selection && selection.toString().length > 0;
-      if (currentText.length >= maxLength && !hasSelection) {
+      if (currentText.length >= activeMaxLength && !hasSelection) {
         e.preventDefault();
       }
     }
@@ -91,15 +113,20 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     const rawText = e.clipboardData.getData('text/plain');
-    const cleanText = sanitizeText(rawText);
+    let cleanText = sanitizeText(rawText);
+
+    // Mencegah paste multi-baris (newline) pada elemen inline seperti span/h1/h2
+    if (Component !== 'p' && Component !== 'div') {
+      cleanText = cleanText.replace(/\r?\n|\r/g, ' ');
+    }
 
     const currentText = elementRef.current?.innerText || "";
     const selection = window.getSelection();
     const selectionLength = selection ? selection.toString().length : 0;
 
     let allowedLength = cleanText.length;
-    if (maxLength) {
-      allowedLength = maxLength - (currentText.length - selectionLength);
+    if (activeMaxLength) {
+      allowedLength = activeMaxLength - (currentText.length - selectionLength);
     }
 
     if (allowedLength <= 0) return;
@@ -114,8 +141,8 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
     const cleanText = sanitizeText(rawText);
     let finalText = cleanText;
 
-    if (maxLength && cleanText.length > maxLength) {
-      finalText = cleanText.substring(0, maxLength);
+    if (activeMaxLength && cleanText.length > activeMaxLength) {
+      finalText = cleanText.substring(0, activeMaxLength);
     }
 
     if (rawText !== finalText) {
@@ -155,7 +182,7 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
           e.stopPropagation();
         }
       }}
-      title={`Klik untuk mengedit${maxLength ? ` (Maksimal ${maxLength} karakter)` : ''}`}
+      title={`Klik untuk mengedit${activeMaxLength ? ` (Maksimal ${activeMaxLength} karakter)` : ''}`}
       dangerouslySetInnerHTML={{ __html: content }}
     />
   );

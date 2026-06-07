@@ -12,6 +12,9 @@ export default function PreviewPage() {
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      // SECURITY: Cegah injeksi dari domain asing
+      if (event.origin !== window.location.origin) return;
+
       if (event.data?.type === 'PREVIEW_UPDATE') {
         setData(event.data.data);
         setTheme(event.data.theme);
@@ -42,7 +45,14 @@ export default function PreviewPage() {
 
   return (
     <main className="min-h-screen relative overflow-x-clip bg-transparent">
-      <style dangerouslySetInnerHTML={{ __html: `body { background: transparent !important; }` }} />
+      <style dangerouslySetInnerHTML={{ __html: `
+        body { background: transparent !important; }
+        
+        /* Subtle Glass Noise Texture */
+        .glass-noise {
+           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E");
+        }
+      ` }} />
       <PortfolioView data={data} theme={theme} isMobileView={isMobileView} isCardPreview={false} isEditor={true} />
     </main>
   );

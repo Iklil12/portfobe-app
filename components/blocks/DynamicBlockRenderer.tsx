@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Script from 'next/script';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReactLenis } from '@studio-freight/react-lenis';
@@ -58,6 +58,9 @@ import { ObsidianFooterBlock } from './obsidian/ObsidianFooterBlock';
 import { AuraKineticShell } from './aura-kinetic/AuraKineticShell';
 import { AuraKineticSkillsBlock } from './aura-kinetic/AuraKineticSkillsBlock';
 import { AuraKineticExperienceBlock } from './aura-kinetic/AuraKineticExperienceBlock';
+
+// Global Smart Blocks
+import FaqRenderer from './faq/FaqRenderer';
 import { AuraKineticHeroBlock } from './aura-kinetic/AuraKineticHeroBlock';
 import { AuraKineticMarqueeBlock } from './aura-kinetic/AuraKineticMarqueeBlock';
 import { AuraKineticAboutBlock } from './aura-kinetic/AuraKineticAboutBlock';
@@ -330,8 +333,14 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
     return null;
   }
 
+  // GLOBAL SMART BLOCKS
+  if (baseBlockType === 'FAQ') {
+    content = <FaqRenderer themeId={activeThemeTemplate} data={data} theme={theme} isEditor={isEditor} />;
+  }
+
   // 1. SMART MAPPING: Render blok sesuai dengan tema yang sedang aktif
-  if (activeThemeTemplate === 'minimalist') {
+  if (!content) {
+    if (activeThemeTemplate === 'minimalist') {
     switch (baseBlockType) {
             case 'SKILLS': content = <MinimalistSkillsBlock {...commonProps} />; break;
       case 'EXPERIENCE': content = <MinimalistExperienceBlock {...commonProps} />; break;
@@ -707,7 +716,7 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
       case 'GITHUB': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><GithubStats userId={userId} variant="nexus-noir" /></div> : null; break;
     }
   }
-
+} // End of if (!content)
   if (content === undefined) {
     if (isEditor) {
       return (
@@ -732,6 +741,82 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
 
 export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: any) => {
   const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [insertIndex, setInsertIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // SECURITY: Cegah injeksi dari domain asing
+      if (event.origin !== window.location.origin) return;
+
+      if (event.data?.type === 'OPEN_LIBRARY') {
+        setInsertIndex(event.data.insertIndex);
+        setIsLibraryOpen(true);
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  // Filter available blocks that are not currently in the layout
+  const allAvailableBlocks = [
+    { type: 'HERO', name: 'Hero / Utama', icon: 'fa-star' },
+    { type: 'MARQUEE', name: 'Teks Berjalan', icon: 'fa-exchange-alt' },
+    { type: 'ABOUT', name: 'Tentang Saya', icon: 'fa-user' },
+    { type: 'SERVICES', name: 'Layanan', icon: 'fa-briefcase' },
+    { type: 'STATS', name: 'Statistik', icon: 'fa-chart-bar' },
+    { type: 'SKILLS', name: 'Keahlian', icon: 'fa-tools' },
+    { type: 'EXPERIENCE', name: 'Pengalaman', icon: 'fa-history' },
+    { type: 'PROJECTS', name: 'Portofolio', icon: 'fa-images' },
+    { type: 'AWARDS', name: 'Penghargaan', icon: 'fa-trophy' },
+    { type: 'TESTIMONIALS', name: 'Testimoni', icon: 'fa-comment-alt' },
+    { type: '3D', name: 'Showcase 3D', icon: 'fa-cube' },
+    { type: 'FAQ', name: 'Tanya Jawab', icon: 'fa-question-circle' },
+    { type: 'FOOTER', name: 'Footer', icon: 'fa-shoe-prints' },
+  ];
+
+  const existingBlockTypes = new Set(blocks.map((b: any) => {
+    const parts = b.blockType.split('_');
+    return parts.length > 1 ? parts.slice(1).join('_') : b.blockType;
+  }));
+
+  const addableBlocks = allAvailableBlocks.filter(b => !existingBlockTypes.has(b.type));
+
+  const handleAddBlock = (blockType: string) => {
+    window.parent.postMessage({ type: 'BLOCK_ADD', blockType, insertIndex }, '*');
+    setIsLibraryOpen(false);
+    setInsertIndex(null);
+  };
+
+  const LibraryUI = isEditor && isLibraryOpen ? (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 pointer-events-auto">
+          <div className="w-full max-w-lg bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="p-4 border-b border-white/10 flex justify-between items-center bg-zinc-950">
+              <h3 className="text-white font-bold text-sm uppercase tracking-widest">Library Seksi</h3>
+              <button onClick={() => setIsLibraryOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors">
+                <i className="fas fa-times text-xs"></i>
+              </button>
+            </div>
+            <div className="p-4 overflow-y-auto flex-1 grid grid-cols-2 gap-3 custom-scrollbar">
+              {addableBlocks.length > 0 ? addableBlocks.map(b => (
+                <button 
+                  key={b.type}
+                  onClick={() => handleAddBlock(b.type)}
+                  className="flex flex-col items-center justify-center p-4 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all text-white/70 hover:text-white gap-2 group"
+                >
+                  <i className={`fas ${b.icon} text-xl mb-1 text-white/50 group-hover:text-white/90 transition-colors`}></i>
+                  <span className="text-[10px] font-bold uppercase tracking-widest">{b.name}</span>
+                </button>
+              )) : (
+                <div className="col-span-2 py-10 flex flex-col items-center justify-center text-white/40">
+                  <i className="fas fa-check-circle text-3xl mb-3"></i>
+                  <p className="text-xs uppercase tracking-widest font-medium">Semua Seksi Telah Digunakan</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+  ) : null;
 
   const getFontFamily = (fontName: string) => {
     if (!fontName) return "'Inter', sans-serif";
@@ -1069,6 +1154,13 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
 
   const content = renderLayout();
 
+  const finalContent = isEditor ? (
+    <div className="flex flex-col w-full min-h-screen">
+      {content}
+      {LibraryUI}
+    </div>
+  ) : content;
+
   if (isSmoothScroll) {
     return (
       <>
@@ -1081,11 +1173,11 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
           `
         }} />
         <ReactLenis root options={{ smoothWheel: true, duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) }}>
-          {content}
+          {finalContent}
         </ReactLenis>
       </>
     );
   }
 
-  return content;
+  return finalContent;
 };

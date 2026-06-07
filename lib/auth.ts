@@ -12,6 +12,9 @@ import GithubProvider from "next-auth/providers/github";
 // Inisialisasi Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+import { DefaultSession, DefaultUser } from "next-auth";
+import { JWT } from "next-auth/jwt";
+
 declare module "next-auth" {
   interface Session {
     user: {
@@ -19,16 +22,48 @@ declare module "next-auth" {
       name: string;
       email: string;
       plan: string;
-      profession: string;
-      bio: string;
-      avatar: string;
-      image: string;
-      subdomain: string;
+      profession: string | null;
+      bio: string | null;
+      avatar: string | null;
+      image: string | null;
+      subdomain: string | null;
       isLive: boolean;
       isOAuthLinked: boolean;
       isStrictlyGoogle: boolean;
       isEmailVerified: boolean;
-    };
+      role: string;
+    } & DefaultSession["user"];
+  }
+
+  interface User extends DefaultUser {
+    plan: string;
+    profession?: string | null;
+    bio?: string | null;
+    avatar?: string | null;
+    subdomain?: string | null;
+    isLive: boolean;
+    isOAuthLinked: boolean;
+    isStrictlyGoogle: boolean;
+    isEmailVerified: boolean;
+    planExpiredAt?: Date | null;
+    role: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    plan: string;
+    profession?: string | null;
+    bio?: string | null;
+    avatar?: string | null;
+    subdomain?: string | null;
+    isLive: boolean;
+    isOAuthLinked: boolean;
+    isStrictlyGoogle: boolean;
+    isEmailVerified: boolean;
+    planExpiredAt?: Date | null;
+    role: string;
   }
 }
 
@@ -72,21 +107,21 @@ export const authOptions: NextAuthOptions = {
 
               if (!targetUser) throw new Error("Target user tidak ditemukan.");
 
-              const userData = targetUser as any;
               return {
-                id: userData.id,
-                name: targetUser.profile?.fullName || userData.name || "User",
-                email: userData.email,
-                image: targetUser.profile?.avatarUrl || userData.avatar || userData.image,
-                avatar: userData.avatar,
-                plan: userData.plan,
+                id: targetUser.id,
+                name: targetUser.profile?.fullName || "User",
+                email: targetUser.email,
+                image: targetUser.profile?.avatarUrl || targetUser.avatar || "",
+                avatar: targetUser.avatar,
+                plan: targetUser.plan,
                 profession: targetUser.profile?.profession,
                 bio: targetUser.profile?.bio,
                 subdomain: targetUser.profile?.subdomain,
-                isLive: userData.isLive,
-                isEmailVerified: userData.emailVerified !== null,
-                isOAuthLinked: userData.accounts && userData.accounts.length > 0,
-                isStrictlyGoogle: userData.password === "GOOGLE_LOGIN_NO_PASSWORD"
+                isLive: targetUser.isLive,
+                isEmailVerified: targetUser.emailVerified !== null,
+                isOAuthLinked: targetUser.accounts && targetUser.accounts.length > 0,
+                isStrictlyGoogle: targetUser.password === "GOOGLE_LOGIN_NO_PASSWORD",
+                role: targetUser.role || "USER"
               };
             }
           } catch (error) {
@@ -160,22 +195,21 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email }
         });
 
-        const userData = user as any;
-
         return {
-          id: userData.id,
-          name: user.profile?.fullName || userData.name || "User",
-          email: userData.email,
-          image: user.profile?.avatarUrl || userData.avatar || userData.image,
-          avatar: userData.avatar,
-          plan: userData.plan,
+          id: user.id,
+          name: user.profile?.fullName || "User",
+          email: user.email,
+          image: user.profile?.avatarUrl || user.avatar || "",
+          avatar: user.avatar,
+          plan: user.plan,
           profession: user.profile?.profession,
           bio: user.profile?.bio,
           subdomain: user.profile?.subdomain,
-          isLive: userData.isLive,
-          isEmailVerified: userData.emailVerified !== null,
-          isOAuthLinked: userData.accounts && userData.accounts.length > 0,
-          isStrictlyGoogle: userData.password === "GOOGLE_LOGIN_NO_PASSWORD"
+          isLive: user.isLive,
+          isEmailVerified: user.emailVerified !== null,
+          isOAuthLinked: user.accounts && user.accounts.length > 0,
+          isStrictlyGoogle: user.password === "GOOGLE_LOGIN_NO_PASSWORD",
+          role: user.role || "USER"
         };
       }
     })
@@ -190,18 +224,20 @@ export const authOptions: NextAuthOptions = {
     },
 
     // 1. SIGN IN CALLBACK: Auto-Register Google & Pengisian Tabel Account
-    async signIn({ user, account, profile }: any) {
+    async signIn({ user, account, profile }) {
+      if (!user.email) return false;
+      
       if (account?.provider === "github") {
         try {
           const existingUser = await prisma.user.findUnique({
-            where: { email: user.email },
+            where: { email: user.email as string },
           });
 
           if (!existingUser) {
             return "/login?error=Silakan login dengan Email atau Google terlebih dahulu untuk menghubungkan GitHub.";
           }
 
-          const githubUsername = profile?.login;
+          const githubUsername = (profile as Record<string, unknown>)?.login as string | undefined;
 
           if (githubUsername) {
             await prisma.integration.upsert({
@@ -231,7 +267,7 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "google") {
         try {
           const existingUser = await prisma.user.findUnique({
-            where: { email: user.email },
+            where: { email: user.email as string },
             include: { profile: true, siteAppearance: true }
           });
 
@@ -239,7 +275,7 @@ export const authOptions: NextAuthOptions = {
             // USER BARU DIBUAT
             await prisma.user.create({
               data: {
-                email: user.email,
+                email: user.email as string,
                 password: "GOOGLE_LOGIN_NO_PASSWORD",
                 avatar: user.image || "",
                 emailVerified: new Date(),
@@ -341,7 +377,7 @@ export const authOptions: NextAuthOptions = {
     },
 
     // 2. JWT CALLBACK: Sinkronisasi Akurat Tanpa Spam Database
-    async jwt({ token, user, trigger, session, account }: any) {
+    async jwt({ token, user, trigger, session, account }) {
       // Jika ada trigger update dari client (misal ubah profile), langsung perbarui tokennya
       if (trigger === "update" && session) {
         return { ...token, ...session };
@@ -355,7 +391,7 @@ export const authOptions: NextAuthOptions = {
           token.name = user.name;
           token.email = user.email;
           token.plan = user.plan;
-          token.planExpiredAt = (user as any).planExpiredAt || null;
+          token.planExpiredAt = user.planExpiredAt || null;
           token.profession = user.profession;
           token.bio = user.bio;
           token.avatar = user.avatar;
@@ -363,15 +399,16 @@ export const authOptions: NextAuthOptions = {
           token.subdomain = user.subdomain;
           token.isLive = user.isLive;
           token.isEmailVerified = user.isEmailVerified;
-          token.isOAuthLinked = (user as any).isOAuthLinked || false;
-          token.isStrictlyGoogle = (user as any).isStrictlyGoogle || false;
+          token.isOAuthLinked = user.isOAuthLinked || false;
+          token.isStrictlyGoogle = user.isStrictlyGoogle || false;
+          token.role = user.role || "USER";
           return token;
         }
 
         // Jika login via OAuth (Google, GitHub, dll), tarik datanya pakai SELECT agar sangat ringan
         if (account?.provider && account.provider !== "credentials") {
           const dbUser = await prisma.user.findUnique({
-            where: { email: user.email },
+            where: { email: user.email as string },
             select: {
               id: true,
               email: true,
@@ -381,6 +418,7 @@ export const authOptions: NextAuthOptions = {
               password: true,
               isLive: true,
               emailVerified: true,
+              role: true,
               profile: { select: { fullName: true, profession: true, bio: true, avatarUrl: true, subdomain: true } },
               accounts: { select: { id: true } }
             }
@@ -401,6 +439,7 @@ export const authOptions: NextAuthOptions = {
             token.isEmailVerified = dbUser.emailVerified !== null;
             token.isOAuthLinked = dbUser.accounts.length > 0;
             token.isStrictlyGoogle = dbUser.password === "GOOGLE_LOGIN_NO_PASSWORD";
+            token.role = dbUser.role || "USER";
           }
         }
       }
@@ -428,19 +467,20 @@ export const authOptions: NextAuthOptions = {
     },
 
     // 3. SESSION CALLBACK: Oper status ke Frontend dengan instan
-    async session({ session, token }: any) {
+    async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
-        session.user.plan = token.plan as string;
-        session.user.profession = token.profession as string;
-        session.user.bio = token.bio as string;
-        session.user.avatar = token.avatar as string;
-        session.user.image = token.picture as string;
-        session.user.subdomain = token.subdomain as string;
-        session.user.isLive = token.isLive as boolean;
-        session.user.isEmailVerified = token.isEmailVerified as boolean;
-        session.user.isOAuthLinked = token.isOAuthLinked as boolean;
-        session.user.isStrictlyGoogle = token.isStrictlyGoogle as boolean;
+        session.user.id = token.id;
+        session.user.plan = token.plan;
+        session.user.profession = token.profession || "";
+        session.user.bio = token.bio || "";
+        session.user.avatar = token.avatar || "";
+        session.user.image = (token.picture as string) || "";
+        session.user.subdomain = token.subdomain || "";
+        session.user.isLive = token.isLive;
+        session.user.isEmailVerified = token.isEmailVerified;
+        session.user.isOAuthLinked = token.isOAuthLinked;
+        session.user.isStrictlyGoogle = token.isStrictlyGoogle;
+        session.user.role = token.role;
       }
       return session;
     }

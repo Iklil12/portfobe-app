@@ -71,6 +71,25 @@ export async function GET(req: Request) {
   }
 }
 
+// In-memory rate limiter untuk proteksi DoS (Berfungsi per-instance container)
+const rateLimitMap = new Map<string, { count: number, resetTime: number }>();
+
+function isRateLimited(userId: string) {
+  const now = Date.now();
+  const windowMs = 60 * 1000; // 1 menit
+  const maxRequests = 30; // Maksimal 30 request per menit
+
+  let record = rateLimitMap.get(userId);
+  if (!record || now > record.resetTime) {
+    record = { count: 1, resetTime: now + windowMs };
+    rateLimitMap.set(userId, record);
+    return false;
+  }
+
+  record.count++;
+  return record.count > maxRequests;
+}
+
 // MENYIMPAN PERUBAHAN TEMA
 export async function PATCH(req: Request) {
   try {
@@ -82,6 +101,10 @@ export async function PATCH(req: Request) {
       include: { profile: true }
     });
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+    if (isRateLimited(user.id)) {
+      return NextResponse.json({ error: "Terlalu banyak permintaan (Spam Detected). Harap tunggu beberapa saat." }, { status: 429 });
+    }
 
     const body = await req.json();
     

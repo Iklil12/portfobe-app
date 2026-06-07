@@ -56,13 +56,13 @@ export function useDashboardLayout() {
   
   const userName = syncData?.fullName || session?.user?.name || "Creator";
   const userEmail = session?.user?.email || "user@portfo.be";
-  const userPlan = syncData?.plan ? String(syncData.plan).toUpperCase() : (typeof (session?.user as any)?.plan === 'string' ? (session?.user as any)?.plan.toUpperCase() : "FREE");
-  const isWebLive = syncData && syncData.isLive !== undefined ? syncData.isLive : ((session?.user as any)?.isLive !== false);
-  const userSubdomain = syncData ? syncData.subdomain : (session?.user as any)?.subdomain;
-  const userProfession = syncData ? syncData.profession : (session?.user as any)?.profession;
-  const userBio = syncData ? syncData.bio : (session?.user as any)?.bio;
-  const userAvatar = syncData ? syncData.avatar : ((session?.user as any)?.avatar || session?.user?.image);
-  const userRole = syncData?.role || (session?.user as any)?.role || "USER";
+  const userPlan = syncData?.plan ? String(syncData.plan).toUpperCase() : (typeof session?.user?.plan === 'string' ? session?.user?.plan.toUpperCase() : "FREE");
+  const isWebLive = syncData && syncData.isLive !== undefined ? syncData.isLive : (session?.user?.isLive !== false);
+  const userSubdomain = syncData ? syncData.subdomain : session?.user?.subdomain;
+  const userProfession = syncData ? syncData.profession : session?.user?.profession;
+  const userBio = syncData ? syncData.bio : session?.user?.bio;
+  const userAvatar = syncData ? syncData.avatar : (session?.user?.avatar || session?.user?.image);
+  const userRole = syncData?.role || session?.user?.role || "USER";
   const canClaimTrial = syncData?.canClaimTrial === true;
 
   const isSubdomainEmpty = !userSubdomain || String(userSubdomain).trim() === '' || String(userSubdomain) === 'null';

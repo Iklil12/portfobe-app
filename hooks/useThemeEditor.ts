@@ -7,7 +7,21 @@ import { safeParseJson, safeStringifyJson } from '@/lib/safeJson';
 
 const UNIVERSAL_BLOCK_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SKILLS', 'EXPERIENCE', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'PENPOT', 'CANVA', 'GITHUB', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
 
+export interface PageBlock {
+  id: string;
+  blockType: string;
+  orderIndex: number;
+  isVisible: boolean;
+  isLocked?: boolean;
+}
 
+export interface DraftBlocksConfig {
+  id: string;
+  isLocked: boolean;
+  blockType?: string;
+  orderIndex?: number;
+  isVisible?: boolean;
+}
 const THEME_BLOCK_PRESETS: Record<string, string[]> = {
   'spatial': UNIVERSAL_BLOCK_ORDER,
   'minimalist': UNIVERSAL_BLOCK_ORDER,
@@ -32,7 +46,7 @@ const THEME_BLOCK_PRESETS: Record<string, string[]> = {
   'default': UNIVERSAL_BLOCK_ORDER
 };
 
-const applyPresetToBlocks = (blocks: any[], themeId: string) => {
+const applyPresetToBlocks = (blocks: PageBlock[], themeId: string) => {
   const preset = THEME_BLOCK_PRESETS[themeId] || THEME_BLOCK_PRESETS['default'];
   const newBlocks = [...blocks].sort((a, b) => {
     const indexA = preset.indexOf(a.blockType);
@@ -83,7 +97,7 @@ export function useThemeEditor() {
   const [customTexts, setCustomTexts] = useState<Record<string, string>>({});
   const customTextsRef = useRef(customTexts);
   useEffect(() => { customTextsRef.current = customTexts; }, [customTexts]);
-  const [pageBlocks, setPageBlocks] = useState<any[]>([]);
+  const [pageBlocks, setPageBlocks] = useState<PageBlock[]>([]);
   const dataLoaded = useRef(false);
 
   // --- STATE DRAFTS & PUBLISHING ---
@@ -96,6 +110,100 @@ export function useThemeEditor() {
   
   // Menandakan apakah ada draft yang sudah disimpan tapi belum dipublish di sesi ini
   const [hasUnpublishedChanges, setHasUnpublishedChanges] = useState(false);
+
+  // --- STATE UNDO/REDO ---
+  type EditorStateSnapshot = {
+    activeTheme: string;
+    themeColor: string;
+    fontHeading: string;
+    fontBody: string;
+    buttonShape: string;
+    cardStyle: string;
+    splashScreen: boolean;
+    customTexts: Record<string, string>;
+    pageBlocks: PageBlock[];
+  };
+
+  const pastStatesRef = useRef<EditorStateSnapshot[]>([]);
+  const futureStatesRef = useRef<EditorStateSnapshot[]>([]);
+  const [historyTick, setHistoryTick] = useState(0);
+  const isRestoring = useRef(false);
+  const prevCombinedState = useRef<EditorStateSnapshot | null>(null);
+
+  const currentSnapshot: EditorStateSnapshot = {
+    activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks
+  };
+
+  useEffect(() => {
+    // Inisialisasi awal begitu data selesai diloading agar BASELINE terekam
+    if (!isLoading && !prevCombinedState.current) {
+      prevCombinedState.current = currentSnapshot;
+      return;
+    }
+
+    if (isRestoring.current || isLoading) return;
+
+    const timer = setTimeout(() => {
+      if (prevCombinedState.current) {
+        const prevStr = safeStringifyJson(prevCombinedState.current);
+        const currStr = safeStringifyJson(currentSnapshot);
+        
+        if (prevStr !== currStr) {
+          pastStatesRef.current.push(prevCombinedState.current);
+          if (pastStatesRef.current.length > 30) pastStatesRef.current.shift();
+          futureStatesRef.current = [];
+          setHistoryTick(t => t + 1);
+        }
+      }
+      prevCombinedState.current = currentSnapshot;
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, pageBlocks, isLoading]);
+
+  const undo = () => {
+    if (pastStatesRef.current.length === 0) return;
+    isRestoring.current = true;
+    
+    const previousState = pastStatesRef.current.pop()!;
+    futureStatesRef.current.push(currentSnapshot);
+    setHistoryTick(t => t + 1);
+    
+    setActiveTheme(previousState.activeTheme);
+    setThemeColor(previousState.themeColor);
+    setFontHeading(previousState.fontHeading);
+    setFontBody(previousState.fontBody);
+    setButtonShape(previousState.buttonShape);
+    setCardStyle(previousState.cardStyle);
+    setSplashScreen(previousState.splashScreen);
+    setCustomTexts(previousState.customTexts);
+    setPageBlocks(previousState.pageBlocks);
+    
+    prevCombinedState.current = previousState;
+    setTimeout(() => { isRestoring.current = false; }, 100);
+  };
+
+  const redo = () => {
+    if (futureStatesRef.current.length === 0) return;
+    isRestoring.current = true;
+    
+    const nextState = futureStatesRef.current.pop()!;
+    pastStatesRef.current.push(currentSnapshot);
+    setHistoryTick(t => t + 1);
+    
+    setActiveTheme(nextState.activeTheme);
+    setThemeColor(nextState.themeColor);
+    setFontHeading(nextState.fontHeading);
+    setFontBody(nextState.fontBody);
+    setButtonShape(nextState.buttonShape);
+    setCardStyle(nextState.cardStyle);
+    setSplashScreen(nextState.splashScreen);
+    setCustomTexts(nextState.customTexts);
+    setPageBlocks(nextState.pageBlocks);
+    
+    prevCombinedState.current = nextState;
+    setTimeout(() => { isRestoring.current = false; }, 100);
+  };
 
   // Track clean state for Anti-Spam
   const [lastSavedState, setLastSavedState] = useState<any>(null);
@@ -114,8 +222,8 @@ export function useThemeEditor() {
     bio !== lastSavedState.bio ||
     location !== lastSavedState.location ||
     safeStringifyJson(customTexts) !== safeStringifyJson(lastSavedState.customTexts) ||
-    safeStringifyJson(pageBlocks.map(b => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible}))) !== 
-    safeStringifyJson(lastSavedState.pageBlocks?.map((b: any) => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible})))
+    safeStringifyJson(pageBlocks.map(b => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked}))) !== 
+    safeStringifyJson(lastSavedState.pageBlocks?.map((b: PageBlock) => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked})))
   ) : false;
 
   useEffect(() => {
@@ -172,9 +280,17 @@ export function useThemeEditor() {
               
               // Set lastSavedState for dirty tracking
               // PENTING: Gunakan blok yang sudah difilter (tanpa legacy INTEGRATIONS)
-              // agar isDirty tidak salah deteksi setelah refresh halaman
+              let cleanBlocks = (appData.pageBlocks || []).filter((b: PageBlock) => !b.blockType.includes('INTEGRATIONS'));
+              
               const texts = sa.customTexts ? safeParseJson(sa.customTexts, {}) : {};
-              const cleanBlocks = (appData.pageBlocks || []).filter((b: any) => !b.blockType.includes('INTEGRATIONS'));
+              const textsObj = texts as Record<string, any>;
+              if (textsObj?.draftBlocksConfig) {
+                 cleanBlocks = cleanBlocks.map((b: PageBlock) => {
+                    const config = textsObj.draftBlocksConfig.find((d: DraftBlocksConfig) => d.id === b.id);
+                    return config ? { ...b, isLocked: config.isLocked } : b;
+                 });
+              }
+
               setLastSavedState({
                 activeTheme: sa.themeTemplate || 'minimalist',
                 themeColor: sa.themeColor || '#000000',
@@ -196,8 +312,18 @@ export function useThemeEditor() {
 
         setDbData(appData);
         if (appData.pageBlocks) {
-          // FILTER OUT LEGACY BLOCKS TO PREVENT RED BOX BUGS
-          const validBlocks = appData.pageBlocks.filter((b: any) => !b.blockType.includes('INTEGRATIONS'));
+          let validBlocks = (appData.pageBlocks || []).filter((b: PageBlock) => !b.blockType.includes('INTEGRATIONS'));
+          if (appData.siteAppearance?.customTexts) {
+             const texts = safeParseJson(appData.siteAppearance.customTexts, {});
+             const textsObj = texts as Record<string, any>;
+             if (textsObj?.draftBlocksConfig) {
+                validBlocks = validBlocks.map((b: PageBlock) => {
+                   const config = textsObj.draftBlocksConfig.find((d: DraftBlocksConfig) => d.id === b.id);
+                   return config ? { ...b, isLocked: config.isLocked } : b;
+                });
+             }
+          }
+
           if (previewTheme) {
             // Jika masuk dari halaman Tema, terapkan preset tema tujuan
             const presetBlocks = applyPresetToBlocks(validBlocks, previewTheme);
@@ -277,6 +403,9 @@ export function useThemeEditor() {
   // Listener untuk pesan dari iframe preview (Inline Editing)
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
+      // SECURITY: Cegah injeksi dari domain asing
+      if (event.origin !== window.location.origin) return;
+
       if (event.data?.type === 'INLINE_EDIT' && event.data?.entity === 'profile') {
         const { field, value } = event.data;
         
@@ -338,6 +467,29 @@ export function useThemeEditor() {
           const updated = prev.map(b => b.id === blockId ? { ...b, isVisible: !currentVisibility } : b);
           return updated;
         });
+      } else if (event.data?.type === 'BLOCK_TOGGLE_LOCK') {
+        const { blockId, currentLockState } = event.data;
+        setPageBlocks(prev => {
+          const updated = prev.map(b => b.id === blockId ? { ...b, isLocked: !currentLockState } : b);
+          return updated;
+        });
+      } else if (event.data?.type === 'BLOCK_DELETE') {
+        const { blockId } = event.data;
+        setPageBlocks(prev => prev.filter(b => b.id !== blockId));
+      } else if (event.data?.type === 'BLOCK_ADD') {
+        const { blockType, insertIndex } = event.data;
+        const newId = `blk-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        setPageBlocks(prev => {
+          const newBlock = { id: newId, blockType, orderIndex: prev.length, isVisible: true, isLocked: false };
+          let newBlocks = [...prev];
+          if (typeof insertIndex === 'number' && insertIndex >= 0 && insertIndex <= prev.length) {
+            newBlocks.splice(insertIndex, 0, newBlock);
+          } else {
+            newBlocks.push(newBlock);
+          }
+          // Re-index all blocks to ensure orderIndex is correct
+          return newBlocks.map((b, i) => ({ ...b, orderIndex: i }));
+        });
       }
     };
     
@@ -345,24 +497,39 @@ export function useThemeEditor() {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
+  const generateFreshBlocks = (themeId: string, currentBlocks: PageBlock[]) => {
+    const targetPreset = THEME_BLOCK_PRESETS[themeId] || THEME_BLOCK_PRESETS['default'];
+    
+    const freshBlocks = targetPreset.map((type, index) => {
+      const existingBlock = currentBlocks.find(b => b.blockType === type);
+      if (existingBlock) {
+        return { ...existingBlock, orderIndex: index, isLocked: false, isVisible: true };
+      }
+      return {
+        id: `blk-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+        blockType: type,
+        orderIndex: index,
+        isVisible: true,
+        isLocked: false
+      };
+    });
+
+    // PERMINTAAN USER: Blok opsional seperti FAQ harus benar-benar hilang saat pindah tema, bukan di-hide
+    return freshBlocks;
+  };
+
   const changeThemeWithPreset = (themeId: string) => {
     setActiveTheme(themeId);
     
-    // Soft Reorder: Jika di luar draf, susun ulang blok sesuai preset bawaan tema
-    if (!activeDraftId && pageBlocks.length > 0) {
-      const presetBlocks = applyPresetToBlocks(pageBlocks, themeId);
-      setPageBlocks(presetBlocks);
-    }
+    // PERMINTAAN USER: saat pindah tema, tidak mewarisi kondisi opsional apapun (FAQ benar-benar hilang)
+    setPageBlocks(prev => generateFreshBlocks(themeId, prev));
   };
 
   const resetToThemePreset = () => {
-    if (pageBlocks.length > 0) {
-      const presetBlocks = applyPresetToBlocks(pageBlocks, activeTheme);
-      setPageBlocks(presetBlocks);
-      toast.success('Urutan blok dikembalikan ke bawaan tema!', {
-        style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
-      });
-    }
+    setPageBlocks(prev => generateFreshBlocks(activeTheme, prev));
+    toast.success('Susunan blok dikembalikan ke setelan pabrik (segar)!', {
+      style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+    });
   };
 
   const updateCustomText = (field: string, value: string) => {
@@ -389,11 +556,12 @@ export function useThemeEditor() {
         splashScreen,
         customTexts: {
           ...customTexts,
-          draftBlocksConfig: pageBlocks.map((b: any) => ({ 
+          draftBlocksConfig: pageBlocks.map((b: PageBlock) => ({ 
             id: b.id, 
             blockType: b.blockType, 
             orderIndex: b.orderIndex, 
-            isVisible: b.isVisible 
+            isVisible: b.isVisible,
+            isLocked: b.isLocked
           }))
         } 
       };
@@ -458,7 +626,16 @@ export function useThemeEditor() {
         buttonShape, 
         cardStyle, 
         splashScreen,
-        customTexts,
+        customTexts: {
+          ...customTexts,
+          draftBlocksConfig: pageBlocks.map((b: PageBlock) => ({ 
+            id: b.id, 
+            blockType: b.blockType, 
+            orderIndex: b.orderIndex, 
+            isVisible: b.isVisible,
+            isLocked: b.isLocked
+          }))
+        },
         publishedDraftId: activeDraftId || null // Set pelacak draft yang sedang tayang
       };
       
@@ -479,7 +656,7 @@ export function useThemeEditor() {
       const blocksPromise = fetch('/api/blocks/bulk', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ blocks: pageBlocks.map((b: any) => ({ id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible })) })
+        body: JSON.stringify({ blocks: pageBlocks.map((b: PageBlock) => ({ id: b.id, blockType: b.blockType, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked })) })
       });
 
       const [resApp, resProf, resBlocks] = await Promise.all([appearancePromise, profilePromise, blocksPromise, delayPromise]);
@@ -535,19 +712,19 @@ export function useThemeEditor() {
     const baseBlocks = dbData.pageBlocks || pageBlocks;
     
     if (parsedTexts.draftBlocksConfig) {
-      const updatedBlocks = baseBlocks.map((b: any) => {
+      const updatedBlocks = baseBlocks.map((b: PageBlock) => {
         // Coba cocokkan berdasarkan ID. Jika tidak ketemu (misal karena migrasi), coba cocokkan berdasarkan blockType
-        const draftCfg = parsedTexts.draftBlocksConfig.find((d: any) => 
+        const draftCfg = parsedTexts.draftBlocksConfig.find((d: DraftBlocksConfig) => 
           d.id === b.id || (d.blockType && d.blockType === b.blockType)
         );
         
         if (draftCfg) {
-          return { ...b, orderIndex: draftCfg.orderIndex, isVisible: draftCfg.isVisible };
+          return { ...b, orderIndex: draftCfg.orderIndex, isVisible: draftCfg.isVisible, isLocked: draftCfg.isLocked };
         }
         
         // Jika tidak ada di draft, kembali ke susunan asli dari database, jangan pakai susunan memori yang bocor
         return { ...b };
-      }).sort((a: any, b: any) => a.orderIndex - b.orderIndex);
+      }).sort((a: PageBlock, b: PageBlock) => a.orderIndex - b.orderIndex);
       
       setPageBlocks(updatedBlocks);
       draftBlocks = updatedBlocks;
@@ -581,6 +758,7 @@ export function useThemeEditor() {
     setHasUnpublishedChanges(false);
 
     // Kembalikan ke state Live DB
+    let parsedTexts: any = {};
     if (dbData.siteAppearance) {
       setActiveTheme(dbData.siteAppearance.themeTemplate || 'minimalist');
       setThemeColor(dbData.siteAppearance.themeColor || '#000000');
@@ -590,7 +768,7 @@ export function useThemeEditor() {
       setCardStyle(dbData.siteAppearance.cardStyle || 'flat');
       setSplashScreen(dbData.siteAppearance.splashScreen || false);
       
-      const parsedTexts: any = safeParseJson(dbData.siteAppearance.customTexts, {});
+      parsedTexts = safeParseJson(dbData.siteAppearance.customTexts, {});
       setCustomTexts(parsedTexts);
       
       // Update dirty tracking
@@ -609,9 +787,21 @@ export function useThemeEditor() {
     }
 
     if (dbData.pageBlocks) {
+      // PERMINTAAN USER: Ketika keluar dari draft, kembalikan kondisi default.
+      // Blok opsional (seperti FAQ) benar-benar hilang (dihapus), bukan hanya disembunyikan.
+      let validBlocks = dbData.pageBlocks.filter((b: PageBlock) => {
+        return THEME_BLOCK_PRESETS['default'].includes(b.blockType);
+      }).map((b: PageBlock) => {
+        return { 
+          ...b, 
+          isLocked: false, 
+          isVisible: true 
+        };
+      });
+      
       // Karena "Luar Draft" adalah playground, selalu terapkan preset bawaan tema saat ini
       const currentTheme = dbData.siteAppearance?.themeTemplate || 'minimalist';
-      const presetBlocks = applyPresetToBlocks(dbData.pageBlocks, currentTheme);
+      const presetBlocks = applyPresetToBlocks(validBlocks, currentTheme);
       setPageBlocks(presetBlocks);
     }
   };
@@ -666,7 +856,9 @@ export function useThemeEditor() {
       isDirty,
       hasUnpublishedChanges,
       pageBlocks,
-      previewMode
+      previewMode,
+      canUndo: pastStatesRef.current.length > 0,
+      canRedo: futureStatesRef.current.length > 0
     },
     actions: {
       setIsEditorCollapsed,
@@ -690,7 +882,9 @@ export function useThemeEditor() {
       toggleFavorite,
       updateCustomText,
       setPageBlocks,
-      resetToThemePreset
+      resetToThemePreset,
+      undo,
+      redo
     }
   };
 }
