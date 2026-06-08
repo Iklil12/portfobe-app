@@ -57,6 +57,11 @@ export async function generateMetadata({
     authors: [{ name }],
     creator: name,
     publisher: name,
+    category: 'portfolio',
+    other: user.profile.location ? {
+      'geo.placename': user.profile.location,
+      'geo.region': 'ID',
+    } : {},
     robots: {
       index: true,
       follow: true,
@@ -117,8 +122,44 @@ export default async function SubdomainLayout({
   // JANGAN biarkan Intercepting Route galeri aktif jika kita sedang berada di dashboard
   const isDashboard = subdomain === 'dashboard' || subdomain === 'settings' || subdomain === 'api';
 
+  // Ambil data untuk injeksi JSON-LD Structured Data
+  const user = !isDashboard ? await prisma.user.findFirst({
+    where: { profile: { subdomain } },
+    include: { profile: true },
+  }) : null;
+
+  const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://portfo.be';
+
+  let jsonLd = null;
+  if (user && user.profile) {
+    jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      "mainEntity": {
+        "@type": "Person",
+        "name": user.profile.fullName || subdomain,
+        "jobTitle": user.profile.profession || "Creative Professional",
+        "description": user.profile.bio || `Portfolio of ${user.profile.fullName}`,
+        "image": user.profile.avatarUrl || `${domain}/default-og-image.jpg`,
+        "url": `${domain}/${subdomain}`,
+        ...(user.profile.location && {
+          "homeLocation": {
+            "@type": "Place",
+            "name": user.profile.location
+          }
+        })
+      }
+    };
+  }
+
   return (
     <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
       <ClientTransition>
         {children}
       </ClientTransition>
