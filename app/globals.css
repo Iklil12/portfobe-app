@@ -10,6 +10,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-brand-accent: #D6FF00;
+  --font-display: var(--font-space-grotesk);
 }
 
 body {
@@ -186,10 +188,6 @@ body {
 
 .animate-hero-visual {
   /* Animation removed */
-}
-
-* {
-  font-family: 'Ubuntu', sans-serif;
 }
 
 .nav-system-font,

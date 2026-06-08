@@ -9,8 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Ubuntu"', 'sans-serif'],
+        sans: ['var(--font-inter)', '"Ubuntu"', 'sans-serif'],
+        display: ['var(--font-space-grotesk)', 'sans-serif'],
       },
+      colors: {
+        brand: {
+          accent: '#D6FF00',
+        }
+      }
     },
   },
   plugins: [],
