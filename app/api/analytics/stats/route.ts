@@ -103,60 +103,54 @@ export async function GET(req: NextRequest) {
       orderBy: { date: "asc" },
     });
 
-    // ── 4. Ambil raw Analytics dalam range (untuk hari ini + metrik) ────────
-    const rawLogs = await prisma.analytics.findMany({
-      where: {
-        userId,
-        createdAt: { gte: startDate },
-      },
-      select: {
-        id: true,
-        sessionId: true,
-        duration: true,
-        type: true,
-        referrer: true,
-        ipAddress: true,
-        createdAt: true,
-        userAgent: true,
-        deviceType: true,
-      },
-    });
+    // ── 4. AGREGASI LANGSUNG DARI DB (Mencegah Memory Bloat OOM) ────────────
 
-    // ── 5. Hitung Total Views ────────────────────────────────────────────────
+    // a. Total Views (Historical + Today)
     const historicalViews = historicalStats.reduce((s, d) => s + d.views, 0);
-    const rawViewLogs = rawLogs.filter((l) => l.type === "VIEW");
-    const todayViews = rawViewLogs.filter((l) => l.createdAt >= startOfToday).length;
-    const totalViews = historicalViews + todayViews;
+    const todayViewsCount = await prisma.analytics.count({
+      where: { userId, createdAt: { gte: startOfToday }, type: "VIEW" }
+    });
+    const totalViews = historicalViews + todayViewsCount;
 
-    // Unique Visitors
-    const uniqueIPs = new Set(rawLogs.map((l) => l.ipAddress).filter(Boolean));
+    // b. Unique Visitors
+    // Prisma tidak punya COUNT(DISTINCT), jadi kita pakai $queryRaw
+    const uniqueIPsResult: any = await prisma.$queryRaw`
+      SELECT COUNT(DISTINCT ipAddress) as count 
+      FROM Analytics 
+      WHERE userId = ${userId} 
+        AND createdAt >= ${startDate} 
+        AND type = 'VIEW'
+    `;
+    const uniqueIPsCount = Number(uniqueIPsResult[0]?.count || 0);
     const estimatedHistoric = Math.round(historicalViews * 0.7);
-    const uniqueVisitors = uniqueIPs.size + estimatedHistoric;
+    const uniqueVisitors = uniqueIPsCount + estimatedHistoric;
 
-    // ── 6. Avg. Time ─────────────────────────────────────────────────────────
-    const logsWithDuration = rawLogs.filter((l) => l.duration > 0);
-    const totalDuration = logsWithDuration.reduce((s, l) => s + l.duration, 0);
-    const avgSec =
-      logsWithDuration.length > 0
-        ? Math.round(totalDuration / logsWithDuration.length)
-        : 0;
-    const avgTimeStr =
-      avgSec >= 60 ? `${Math.floor(avgSec / 60)}m ${avgSec % 60}s` : `${avgSec}s`;
+    // c. Avg Time (Keseluruhan range)
+    const avgDurationObj = await prisma.analytics.aggregate({
+      where: { userId, createdAt: { gte: startDate }, duration: { gt: 0 } },
+      _avg: { duration: true }
+    });
+    const avgSec = Math.round(avgDurationObj._avg.duration || 0);
+    const avgTimeStr = avgSec >= 60 ? `${Math.floor(avgSec / 60)}m ${avgSec % 60}s` : `${avgSec}s`;
 
-    // ── 7. Bounce Rate ────────────────────────────────────────────────────────
-    // Definisi: kunjungan dianggap "bounce" jika durasi < 10 detik
-    // Ini lebih reliable daripada sessionId yang bisa fresh tiap load
-    const viewsWithDuration = rawLogs.filter((l) => l.duration > 0 || l.type === 'VIEW');
-    const bouncedViews = rawLogs.filter((l) => (l.duration >= 0 && l.duration < 10) || l.duration === 0).length;
-    const bounceRatePct =
-      viewsWithDuration.length > 0
-        ? Math.round((bouncedViews / viewsWithDuration.length) * 100)
-        : 0;
+    // d. Bounce Rate (Kunjungan < 10s)
+    const allViewsInRange = await prisma.analytics.count({
+      where: { userId, createdAt: { gte: startDate }, type: { in: ['VIEW', 'CLICK', 'PROJECT_OPEN'] } }
+    });
+    const bouncedViews = await prisma.analytics.count({
+      where: { userId, createdAt: { gte: startDate }, duration: { lt: 10 } }
+    });
+    const bounceRatePct = allViewsInRange > 0 ? Math.round((bouncedViews / allViewsInRange) * 100) : 0;
 
-    // ── 7.5 Devices ────────────────────────────────────────────────────────
+    // e. Devices
+    // Karena parsing logic manual untuk browser-specific, load field minimal:
+    const deviceLogs = await prisma.analytics.findMany({
+      where: { userId, createdAt: { gte: startDate }, type: "VIEW" },
+      select: { userAgent: true, deviceType: true }
+    });
     let desktop = 0, mobile = 0, tablet = 0;
-    rawViewLogs.forEach(l => {
-      const dev = parseUserAgent(l.userAgent || "");
+    deviceLogs.forEach(l => {
+      const dev = l.deviceType || parseUserAgent(l.userAgent || "");
       if (dev === "Mobile") mobile++;
       else if (dev === "Tablet") tablet++;
       else desktop++;
@@ -168,12 +162,19 @@ export async function GET(req: NextRequest) {
       tablet: Math.round((tablet / totalDevices) * 100),
     };
 
-    // ── 8. Traffic Sources ────────────────────────────────────────────────────
+    // f. Traffic Sources
+    // Kita gunakan groupBy referrer di DB lalu parsing host di server
+    const sourceGroups = await prisma.analytics.groupBy({
+      by: ['referrer'],
+      where: { userId, createdAt: { gte: startDate }, type: "VIEW" },
+      _count: { _all: true }
+    });
+    
     const sourcesMap: Record<string, number> = {};
-    rawViewLogs.forEach((log) => {
+    sourceGroups.forEach((g) => {
       let ref = "Direct";
-      if (log.referrer && log.referrer !== "Direct") {
-        const r = log.referrer.toLowerCase();
+      if (g.referrer && g.referrer !== "Direct") {
+        const r = g.referrer.toLowerCase();
         if (r.includes("portfo.be") || r.includes("localhost")) ref = "Direct";
         else if (r.includes("instagram")) ref = "Instagram";
         else if (r.includes("t.co") || r.includes("twitter")) ref = "Twitter / X";
@@ -185,17 +186,14 @@ export async function GET(req: NextRequest) {
         else if (r.includes("youtube") || r.includes("youtu.be")) ref = "YouTube";
         else {
           try {
-            const host = new URL(log.referrer).hostname.replace("www.", "");
-            ref =
-              host.includes("portfo.be") || host.includes("localhost")
-                ? "Direct"
-                : host;
+            const host = new URL(g.referrer).hostname.replace("www.", "");
+            ref = host.includes("portfo.be") || host.includes("localhost") ? "Direct" : host;
           } catch {
             /* tetap Direct */
           }
         }
       }
-      sourcesMap[ref] = (sourcesMap[ref] || 0) + 1;
+      sourcesMap[ref] = (sourcesMap[ref] || 0) + g._count._all;
     });
 
     const totalRefViews = Object.values(sourcesMap).reduce((s, v) => s + v, 0);
@@ -208,6 +206,12 @@ export async function GET(req: NextRequest) {
       .sort((a, b) => b.count - a.count)
       .slice(0, 6);
 
+    // g. Data Chart (Load HANYA createdAt & ipAddress, JAUH lebih efisien memori)
+    const chartLogs = await prisma.analytics.findMany({
+      where: { userId, createdAt: { gte: startDate }, type: "VIEW" },
+      select: { createdAt: true, ipAddress: true }
+    });
+
     // ── 9. Chart Data ─────────────────────────────────────────────────────────
     let chartData: { day: string; date: string; views: number; visitors: number }[];
 
@@ -216,7 +220,7 @@ export async function GET(req: NextRequest) {
       const hourlyMap: Record<number, number> = {};
       const hourlyIpMap: Record<number, Set<string>> = {};
       
-      rawViewLogs
+      chartLogs
         .filter((l) => l.createdAt >= startOfToday)
         .forEach((l) => {
           const userLogTime = shiftToUserTime(l.createdAt, userOffsetMinutes);
@@ -243,12 +247,11 @@ export async function GET(req: NextRequest) {
       historicalStats.forEach((stat) => {
         const key = toDateKey(stat.date, userOffsetMinutes);
         dailyMap[key] = (dailyMap[key] || 0) + stat.views;
-        // visitorsMap dari DailyStats tidak dipakai — kita hitung dari IP address di rawLogs
       });
 
       const dailyIpMap: Record<string, Set<string>> = {};
-      // Dari rawLogs (Semua hari dalam range untuk menghitung VISITORS dari IP address yang riil!)
-      rawViewLogs.forEach((l) => {
+      // Dari chartLogs (Semua hari dalam range untuk menghitung VISITORS dari IP address yang riil)
+      chartLogs.forEach((l) => {
         const key = toDateKey(l.createdAt, userOffsetMinutes);
         
         // Kita hanya tambahkan views ke dailyMap jika hari ini (karena hari sebelumnya sudah di-cover oleh DailyStats)
@@ -256,8 +259,6 @@ export async function GET(req: NextRequest) {
           dailyMap[key] = (dailyMap[key] || 0) + 1;
         }
 
-        // TAPI untuk visitors, kita hitung dari IP address riil di rawLogs untuk semua hari!
-        // (Ini untuk mengatasi data DailyStats lama yang kolom visitors-nya default 0)
         if (!dailyIpMap[key]) dailyIpMap[key] = new Set();
         if (l.ipAddress) dailyIpMap[key].add(l.ipAddress);
       });
@@ -283,19 +284,21 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // ── 9. Hitung "Today Only" Stats (Khusus untuk card 'Hari Ini' di Dashboard) ──
-    const todayRawLogs = rawLogs.filter(l => l.createdAt >= startOfToday);
-    
-    // Today Avg Time
-    const todayLogsWithDuration = todayRawLogs.filter(l => l.duration > 0);
-    const todayTotalDuration = todayLogsWithDuration.reduce((s, l) => s + l.duration, 0);
-    const todayAvgSec = todayLogsWithDuration.length > 0 ? Math.round(todayTotalDuration / todayLogsWithDuration.length) : 0;
+    // ── 10. Hitung "Today Only" Stats (Khusus untuk card 'Hari Ini' di Dashboard) ──
+    const todayAvgObj = await prisma.analytics.aggregate({
+      where: { userId, createdAt: { gte: startOfToday }, duration: { gt: 0 } },
+      _avg: { duration: true }
+    });
+    const todayAvgSec = Math.round(todayAvgObj._avg.duration || 0);
     const todayAvgTimeStr = todayAvgSec >= 60 ? `${Math.floor(todayAvgSec / 60)}m ${todayAvgSec % 60}s` : `${todayAvgSec}s`;
 
-    // Today Bounce Rate
-    const todayViewsWithDuration = todayRawLogs.filter(l => l.duration > 0 || l.type === 'VIEW');
-    const todayBouncedViews = todayRawLogs.filter(l => (l.duration >= 0 && l.duration < 10) || l.duration === 0).length;
-    const todayBounceRatePct = todayViewsWithDuration.length > 0 ? Math.round((todayBouncedViews / todayViewsWithDuration.length) * 100) : 0;
+    const todayAllEvents = await prisma.analytics.count({
+      where: { userId, createdAt: { gte: startOfToday }, type: { in: ['VIEW', 'CLICK', 'PROJECT_OPEN'] } }
+    });
+    const todayBouncedViews = await prisma.analytics.count({
+      where: { userId, createdAt: { gte: startOfToday }, duration: { lt: 10 } }
+    });
+    const todayBounceRatePct = todayAllEvents > 0 ? Math.round((todayBouncedViews / todayAllEvents) * 100) : 0;
 
     return NextResponse.json({
       stats: {

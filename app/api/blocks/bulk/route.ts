@@ -63,19 +63,7 @@ export async function PUT(req: Request) {
       });
     });
 
-    const incomingIds = blocks.map((b: any) => b.id);
-    
-    const deletePromise = prisma.pageBlock.deleteMany({
-      where: {
-        userId: session.user.id,
-        id: { notIn: incomingIds },
-        NOT: {
-          blockType: { contains: 'INTEGRATIONS' }
-        }
-      }
-    });
-
-    await prisma.$transaction([...updatePromises, deletePromise]);
+    await prisma.$transaction(updatePromises);
 
     return NextResponse.json({ success: true });
   } catch (error) {

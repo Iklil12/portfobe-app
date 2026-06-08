@@ -19,9 +19,13 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
     const { id } = params;
     const body = await req.json();
 
+    const dataToUpdate: any = {};
+    if (typeof body.isCompleted !== 'undefined') dataToUpdate.isCompleted = body.isCompleted;
+    if (typeof body.content !== 'undefined') dataToUpdate.content = body.content;
+
     const note = await prisma.adminNote.update({
       where: { id },
-      data: { isCompleted: body.isCompleted }
+      data: dataToUpdate
     });
 
     return NextResponse.json(note);

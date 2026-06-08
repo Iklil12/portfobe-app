@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import QRCode from 'react-qr-code';
 import { showToast } from '@/lib/customToast';
 
 interface ShareModalProps {
@@ -13,6 +14,7 @@ interface ShareModalProps {
 }
 
 export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModalProps) {
+  const [showQR, setShowQR] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -20,19 +22,11 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
     setMounted(true);
   }, []);
 
-  // Gunakan origin jika ada (browser), jika tidak fallback
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://portfo.be';
-  // Untuk local development, sesuaikan URL agar bisa dites. Jika di production, hapus port.
-  const baseUrl = origin.includes('localhost') ? origin : 'https://portfo.be';
-  
-  // URL portofolio yang dibagikan (menggunakan subdirektori untuk local/development, idealnya custom domain)
-  const shareUrl = `${baseUrl}/${subdomain}`;
-  const encodedUrl = encodeURIComponent(shareUrl);
-  const shareText = encodeURIComponent(`Lihat portofolio profesional saya di Portfo.be!`);
+  const url = `https://portfo.be/${subdomain}`;
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(url);
       setIsCopied(true);
       showToast({ id: 'copy-success', message: 'Tautan disalin ke clipboard!', icon: 'fa-check' });
       setTimeout(() => setIsCopied(false), 2000);
@@ -41,29 +35,17 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
     }
   };
 
-  const shareLinks = [
-    {
-      id: 'whatsapp',
-      name: 'WhatsApp',
-      icon: 'fab fa-whatsapp',
-      color: 'bg-[#25D366] text-white hover:bg-[#128C7E]',
-      url: `https://api.whatsapp.com/send?text=${shareText}%20${encodedUrl}`,
-    },
-    {
-      id: 'linkedin',
-      name: 'LinkedIn',
-      icon: 'fab fa-linkedin-in',
-      color: 'bg-[#0A66C2] text-white hover:bg-[#004182]',
-      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
-    },
-    {
-      id: 'twitter',
-      name: 'X (Twitter)',
-      icon: 'fab fa-x-twitter',
-      color: 'bg-black text-white hover:bg-slate-800',
-      url: `https://twitter.com/intent/tweet?text=${shareText}&url=${encodedUrl}`,
-    },
-  ];
+  const shareFacebook = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+  };
+
+  const shareTwitter = () => {
+    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=Lihat%20portofolio%20profesional%20saya%20di%20Portfo.be!`, '_blank');
+  };
+
+  const shareLinkedIn = () => {
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+  };
 
   if (!mounted) return null;
 
@@ -77,7 +59,7 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm"
             onClick={onClose}
           ></motion.div>
 
@@ -87,87 +69,105 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden p-6 md:p-8 border border-slate-100"
+            className="relative bg-white w-full max-w-2xl rounded-3xl shadow-xl overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <h3 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <i className="fas fa-share-nodes text-[#ff9e00]"></i> Bagikan Portofolio
-                </h3>
-                <p className="text-sm font-medium text-slate-500 mt-1">Tunjukkan karyamu ke dunia!</p>
+            <div className="p-6 border-b border-neutral-100 flex items-center justify-between relative">
+              <div className="flex-1 flex justify-center pr-8 sm:pr-0">
+                <h2 className="text-lg sm:text-xl font-bold text-neutral-900 tracking-tight text-center">Bagikan Portofolio</h2>
               </div>
               <button
+                type="button"
                 onClick={onClose}
-                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-900 hover:text-white transition-all active:scale-95"
+                className="absolute right-6 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:text-neutral-900 transition-colors active:scale-95"
               >
                 <i className="fas fa-times text-sm"></i>
               </button>
             </div>
 
-            {/* OG Preview Simulation */}
-            <div className="mb-6 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 group">
-                <div className="aspect-[1.91/1] w-full bg-slate-900 relative flex flex-col items-center justify-center text-center p-6">
-                    {/* Simplified OG Image content */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-purple-500/20"></div>
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-xl z-10 overflow-hidden border-2 border-white">
-                        {avatarUrl ? (
-                          <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-                        ) : (
-                          <i className="fas fa-rocket text-2xl text-indigo-600"></i>
-                        )}
-                    </div>
-                    <h4 className="text-white text-xl font-black z-10 drop-shadow-md tracking-tight">{subdomain} <br/><span className="text-sm font-medium text-white/70">Portofolio Profesional</span></h4>
-                </div>
-                <div className="p-3 bg-white">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Portfo.be</p>
-                    <p className="text-sm font-bold text-slate-800 line-clamp-1">{subdomain} | Professional Portfolio</p>
-                </div>
-            </div>
-
-            {/* Copy Link Input */}
-            <div className="mb-6">
-              <label className="block text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">
-                Tautan Langsung
-              </label>
-              <div className="flex gap-2">
-                <div className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center overflow-hidden">
-                  <p className="text-sm font-medium text-slate-600 truncate">{shareUrl}</p>
-                </div>
-                <button
-                  onClick={handleCopy}
-                  className={`px-4 rounded-xl font-bold text-sm transition-all shadow-sm active:scale-95 flex items-center justify-center w-[100px] shrink-0
-                    ${isCopied 
-                      ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' 
-                      : 'bg-slate-900 text-white hover:bg-slate-800'}`}
+            {/* Content */}
+            <div className="p-5 sm:p-8">
+              {/* URL Box */}
+              <div className="border border-neutral-200 rounded-2xl p-5 sm:p-6 bg-neutral-50/50 mb-6 sm:mb-8 flex flex-col items-center">
+                <a 
+                  href={url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-neutral-900 hover:text-blue-600 font-medium text-base sm:text-lg mb-4 sm:mb-6 transition-colors break-all text-center"
                 >
-                  {isCopied ? (
-                    <><i className="fas fa-check mr-2"></i> Disalin</>
-                  ) : (
-                    'Salin'
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Social Links */}
-            <div>
-              <label className="block text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-3 text-center">
-                Bagikan ke Media Sosial
-              </label>
-              <div className="flex items-center justify-center gap-4">
-                {shareLinks.map((link) => (
-                  <a
-                    key={link.id}
-                    href={link.url}
-                    target="_blank"
+                  {url}
+                </a>
+                
+                <div className="flex items-center justify-center w-full mt-2">
+                  <a 
+                    href={url} 
+                    target="_blank" 
                     rel="noopener noreferrer"
-                    className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all hover:scale-110 hover:shadow-lg active:scale-95 ${link.color}`}
-                    title={`Bagikan ke ${link.name}`}
+                    className="flex items-center justify-center gap-2 px-8 py-3 rounded-full border border-orange-200 text-orange-600 bg-orange-50 hover:bg-orange-100 transition-colors font-bold text-sm"
                   >
-                    <i className={link.icon}></i>
+                    <i className="fas fa-external-link-alt"></i> Lihat Website
                   </a>
-                ))}
+                </div>
+              </div>
+
+              {/* Share Section */}
+              <div className="flex flex-col items-center">
+                <p className="text-sm font-semibold text-neutral-900 mb-4">Bagikan ke Media Sosial</p>
+                <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+                  <button 
+                    onClick={shareFacebook}
+                    className="w-10 h-10 rounded-full border border-neutral-200 flex items-center justify-center text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all hover:border-[#1877F2]"
+                  >
+                    <i className="fab fa-facebook-f"></i>
+                  </button>
+                  <button 
+                    onClick={shareTwitter}
+                    className="w-10 h-10 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-900 hover:bg-neutral-900 hover:text-white transition-all hover:border-neutral-900"
+                  >
+                    <i className="fab fa-twitter"></i>
+                  </button>
+                  <button 
+                    onClick={shareLinkedIn}
+                    className="w-10 h-10 rounded-full border border-neutral-200 flex items-center justify-center text-[#0A66C2] hover:bg-[#0A66C2] hover:text-white transition-all hover:border-[#0A66C2]"
+                  >
+                    <i className="fab fa-linkedin-in"></i>
+                  </button>
+                  <button 
+                    onClick={handleCopy}
+                    className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all ${
+                      isCopied 
+                        ? 'border-orange-500 bg-orange-500 text-white' 
+                        : 'border-neutral-200 text-neutral-600 hover:bg-neutral-100'
+                    }`}
+                    title="Copy Link"
+                  >
+                    <i className={isCopied ? "fas fa-check" : "fas fa-link"}></i>
+                  </button>
+                  <button 
+                    onClick={() => setShowQR(!showQR)}
+                    className={`px-4 h-10 rounded-full border flex items-center justify-center gap-2 transition-all font-semibold text-sm ${
+                      showQR
+                        ? 'border-orange-500 bg-orange-500 text-white'
+                        : 'border-neutral-200 text-orange-600 hover:bg-orange-50 hover:border-orange-200'
+                    }`}
+                  >
+                    <i className="fas fa-qrcode"></i> Kode QR
+                  </button>
+                </div>
+
+                {/* QR Code Expansion */}
+                <AnimatePresence>
+                  {showQR && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      className="p-4 bg-white border border-neutral-200 rounded-2xl overflow-hidden"
+                    >
+                      <QRCode value={url} size={150} level="H" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </motion.div>

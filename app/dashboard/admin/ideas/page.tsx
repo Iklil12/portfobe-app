@@ -23,6 +23,8 @@ export default function IdeasPage() {
   const { data: notes, error, mutate } = useSWR<AdminNote[]>('/api/admin/notes?type=IDEA', fetcher);
   const [newIdea, setNewIdea] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState("");
 
   useEffect(() => {
     if (isLayoutLoading) return;
@@ -71,6 +73,21 @@ export default function IdeasPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ isCompleted: !currentStatus }),
     });
+    mutate();
+  };
+
+  const saveEdit = async (id: string) => {
+    if (!editContent.trim()) return;
+    
+    // Optimistic update
+    mutate(notes?.map(n => n.id === id ? { ...n, content: editContent } : n), false);
+    
+    await fetch(`/api/admin/notes/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: editContent }),
+    });
+    setEditingId(null);
     mutate();
   };
 
@@ -144,20 +161,64 @@ export default function IdeasPage() {
                     <i className="fas fa-check text-xs"></i>
                   </button>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-slate-800 font-medium ${note.isCompleted ? 'line-through text-slate-500' : ''}`}>
-                      {note.content}
-                    </p>
-                    <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">
-                      {new Date(note.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                    </p>
+                    {editingId === note.id ? (
+                      <div className="flex items-start gap-2 mt-1 mb-2">
+                        <textarea
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          className="w-full text-sm font-medium text-slate-800 bg-white border border-amber-300 focus:ring-2 focus:ring-amber-500 rounded-lg px-3 py-2 outline-none resize-none"
+                          rows={2}
+                          autoFocus
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              saveEdit(note.id);
+                            } else if (e.key === 'Escape') {
+                              setEditingId(null);
+                            }
+                          }}
+                        />
+                        <div className="flex flex-col gap-1 shrink-0">
+                          <button onClick={() => saveEdit(note.id)} className="w-8 h-8 rounded bg-amber-500 text-white flex items-center justify-center hover:bg-amber-600 transition-colors" title="Simpan (Enter)">
+                            <i className="fas fa-check text-xs"></i>
+                          </button>
+                          <button onClick={() => setEditingId(null)} className="w-8 h-8 rounded bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200 transition-colors" title="Batal (Esc)">
+                            <i className="fas fa-times text-xs"></i>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p className={`text-slate-800 font-medium ${note.isCompleted ? 'line-through text-slate-500' : ''}`}>
+                          {note.content}
+                        </p>
+                        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">
+                          {new Date(note.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </>
+                    )}
                   </div>
-                  <button 
-                    onClick={() => deleteNote(note.id)}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all shrink-0"
-                    title="Hapus"
-                  >
-                    <i className="fas fa-trash-alt text-sm"></i>
-                  </button>
+                  <div className="flex items-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shrink-0">
+                    {!note.isCompleted && (
+                      <button 
+                        onClick={() => {
+                          setEditingId(note.id);
+                          setEditContent(note.content);
+                        }}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition-colors"
+                        title="Edit Catatan"
+                      >
+                        <i className="fas fa-pen text-xs"></i>
+                      </button>
+                    )}
+                    <button 
+                      onClick={() => deleteNote(note.id)}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+                      title="Hapus"
+                    >
+                      <i className="fas fa-trash-alt text-sm"></i>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

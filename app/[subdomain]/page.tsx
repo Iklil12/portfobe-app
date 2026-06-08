@@ -21,6 +21,7 @@ export default function PublicPortfolioPage() {
   const [serverError, setServerError] = useState<Error | null>(null);
 
   const heartbeatRef = useRef<NodeJS.Timeout | null>(null);
+  const hasTrackedView = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -38,12 +39,21 @@ export default function PublicPortfolioPage() {
           const result = await res.json();
           setData(result);
 
-          if (result.id) {
-            const generateSessionId = () => {
-              if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
-              return Math.random().toString(36).substring(2) + Date.now().toString(36);
-            };
-            const sessionId = generateSessionId();
+          if (result.id && !hasTrackedView.current) {
+            hasTrackedView.current = true;
+            
+            let sessionId = '';
+            if (typeof window !== 'undefined') {
+              sessionId = sessionStorage.getItem('_pfSessionId') || '';
+              if (!sessionId) {
+                sessionId = typeof crypto !== 'undefined' && crypto.randomUUID 
+                  ? crypto.randomUUID() 
+                  : Math.random().toString(36).substring(2) + Date.now().toString(36);
+                sessionStorage.setItem('_pfSessionId', sessionId);
+              }
+            } else {
+              sessionId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+            }
             
             const trackRes = await fetch('/api/analytics/track', {
               method: 'POST',
