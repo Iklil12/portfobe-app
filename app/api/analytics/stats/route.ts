@@ -14,17 +14,33 @@ function parseUserAgent(ua: string) {
   return "Desktop";
 }
 
-/** Buat date key "YYYY-MM-DD" dari Date object secara konsisten (UTC) */
-function toDateKey(d: Date): string {
-  return d.toISOString().split("T")[0];
+/** Utility function to shift a Date to User's Timezone for safe UTC extraction */
+function shiftToUserTime(d: Date, userOffsetMinutes: number): Date {
+  return new Date(d.getTime() - userOffsetMinutes * 60000);
 }
 
-/** Format label tampil: DD Mon (id-ID) */
-function toDisplayLabel(d: Date, showWeekday = false): string {
+/** Buat date key "YYYY-MM-DD" dari Date object secara konsisten (User Time) */
+function toDateKey(d: Date, userOffsetMinutes: number): string {
+  const userTime = shiftToUserTime(d, userOffsetMinutes);
+  const yyyy = userTime.getUTCFullYear();
+  const mm = String(userTime.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(userTime.getUTCDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+/** Format label tampil: DD Mon (id-ID) (User Time) */
+function toDisplayLabel(d: Date, userOffsetMinutes: number, showWeekday = false): string {
+  const userTime = shiftToUserTime(d, userOffsetMinutes);
+  const dateStr = userTime.toUTCString(); 
+  const parts = dateStr.split(' ');
+  const dayName = parts[0].replace(',', '');
+  const day = parts[1];
+  const month = parts[2];
+  
   if (showWeekday) {
-    return d.toLocaleDateString("id-ID", { weekday: "short", day: "numeric" });
+    return `${dayName}, ${day}`;
   }
-  return d.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+  return `${day} ${month}`;
 }
 
 export async function GET(req: NextRequest) {
@@ -38,9 +54,14 @@ export async function GET(req: NextRequest) {
     const range = req.nextUrl.searchParams.get("range") || "7d";
 
     const now = new Date();
-    // Awal hari ini dalam UTC (Prisma menyimpan semua dalam UTC)
-    const startOfToday = new Date(now);
-    startOfToday.setUTCHours(0, 0, 0, 0);
+    const tzOffsetStr = req.nextUrl.searchParams.get("tzOffset");
+    const userOffsetMinutes = tzOffsetStr ? parseInt(tzOffsetStr) : now.getTimezoneOffset();
+
+    // Awal hari ini berdasarkan WAKTU LOKAL USER
+    // Shift current time to User's time in UTC, set UTC hours to 0, then shift back to real absolute time
+    const userNow = shiftToUserTime(now, userOffsetMinutes);
+    userNow.setUTCHours(0, 0, 0, 0);
+    const startOfToday = new Date(userNow.getTime() + userOffsetMinutes * 60000);
 
     // ── 1. Tentukan startDate berdasarkan range ────────────────────────────
     let startDate: Date;
@@ -67,8 +88,9 @@ export async function GET(req: NextRequest) {
         select: { date: true },
       });
       if (earliest) {
-        startDate = new Date(earliest.date);
-        startDate.setUTCHours(0, 0, 0, 0);
+        const userEarliest = shiftToUserTime(new Date(earliest.date), userOffsetMinutes);
+        userEarliest.setUTCHours(0, 0, 0, 0);
+        startDate = new Date(userEarliest.getTime() + userOffsetMinutes * 60000);
       }
     }
 
@@ -190,23 +212,25 @@ export async function GET(req: NextRequest) {
     let chartData: { day: string; date: string; views: number; visitors: number }[];
 
     if (range === "1d") {
-      // Tampilkan per JAM (0-23) untuk hari ini
+      // Tampilkan per JAM (0-23) untuk hari ini (User Time)
       const hourlyMap: Record<number, number> = {};
       const hourlyIpMap: Record<number, Set<string>> = {};
       
       rawViewLogs
         .filter((l) => l.createdAt >= startOfToday)
         .forEach((l) => {
-          const hour = l.createdAt.getUTCHours();
+          const userLogTime = shiftToUserTime(l.createdAt, userOffsetMinutes);
+          const hour = userLogTime.getUTCHours();
           hourlyMap[hour] = (hourlyMap[hour] || 0) + 1;
           if (!hourlyIpMap[hour]) hourlyIpMap[hour] = new Set();
           if (l.ipAddress) hourlyIpMap[hour].add(l.ipAddress);
         });
 
-      const currentHour = now.getUTCHours();
+      const userCurrentTime = shiftToUserTime(now, userOffsetMinutes);
+      const currentHour = userCurrentTime.getUTCHours();
       chartData = Array.from({ length: currentHour + 1 }, (_, h) => ({
         day: `${h.toString().padStart(2, "0")}:00`,
-        date: `${toDateKey(startOfToday)}-h${h}`,
+        date: `${toDateKey(startOfToday, userOffsetMinutes)}-h${h}`,
         views: hourlyMap[h] || 0,
         visitors: hourlyIpMap[h] ? hourlyIpMap[h].size : 0,
       }));
@@ -217,7 +241,7 @@ export async function GET(req: NextRequest) {
 
       // Dari DailyStats (hari-hari sebelum hari ini)
       historicalStats.forEach((stat) => {
-        const key = toDateKey(stat.date);
+        const key = toDateKey(stat.date, userOffsetMinutes);
         dailyMap[key] = (dailyMap[key] || 0) + stat.views;
         // visitorsMap dari DailyStats tidak dipakai — kita hitung dari IP address di rawLogs
       });
@@ -225,7 +249,7 @@ export async function GET(req: NextRequest) {
       const dailyIpMap: Record<string, Set<string>> = {};
       // Dari rawLogs (Semua hari dalam range untuk menghitung VISITORS dari IP address yang riil!)
       rawViewLogs.forEach((l) => {
-        const key = toDateKey(l.createdAt);
+        const key = toDateKey(l.createdAt, userOffsetMinutes);
         
         // Kita hanya tambahkan views ke dailyMap jika hari ini (karena hari sebelumnya sudah di-cover oleh DailyStats)
         if (l.createdAt >= startOfToday) {
@@ -243,14 +267,13 @@ export async function GET(req: NextRequest) {
 
       chartData = [];
       const cursor = new Date(startDate);
-      cursor.setUTCHours(0, 0, 0, 0);
       const endDay = new Date(startOfToday);
       let count = 0;
 
       while (cursor <= endDay && count < 90) {
-        const key = toDateKey(cursor);
+        const key = toDateKey(cursor, userOffsetMinutes);
         chartData.push({
-          day: toDisplayLabel(cursor, range === "7d"),
+          day: toDisplayLabel(cursor, userOffsetMinutes, range === "7d"),
           date: key,
           views: dailyMap[key] || 0,
           visitors: visitorsMap[key] || 0,

@@ -107,6 +107,7 @@ export function useThemeEditor() {
   const [publishedDraftId, setPublishedDraftId] = useState<string | null>(null);
   const [isDraftsModalOpen, setIsDraftsModalOpen] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   
   // Menandakan apakah ada draft yang sudah disimpan tapi belum dipublish di sesi ini
   const [hasUnpublishedChanges, setHasUnpublishedChanges] = useState(false);
@@ -360,7 +361,61 @@ export function useThemeEditor() {
               if (liveDraft) {
                 setActiveDraftId(liveDraft.id);
                 setActiveDraftName(liveDraft.name);
-                setHasUnpublishedChanges(false);
+                
+                // Deteksi apakah draft ini punya perubahan yang belum di-publish
+                const isDraftDifferent = 
+                  liveDraft.themeTemplate !== appData.siteAppearance.themeTemplate ||
+                  liveDraft.themeColor !== appData.siteAppearance.themeColor ||
+                  liveDraft.fontHeading !== appData.siteAppearance.fontHeading ||
+                  liveDraft.fontBody !== appData.siteAppearance.fontBody ||
+                  liveDraft.buttonShape !== appData.siteAppearance.buttonShape ||
+                  liveDraft.cardStyle !== appData.siteAppearance.cardStyle ||
+                  liveDraft.splashScreen !== appData.siteAppearance.splashScreen ||
+                  liveDraft.customTexts !== appData.siteAppearance.customTexts;
+                  
+                setHasUnpublishedChanges(isDraftDifferent);
+                // --- TERAPKAN DATA DRAFT KE STATE EDITOR AGAR PERUBAHAN TIDAK HILANG SAAT REFRESH ---
+                setActiveTheme(liveDraft.themeTemplate);
+                setThemeColor(liveDraft.themeColor);
+                setFontHeading(liveDraft.fontHeading);
+                setFontBody(liveDraft.fontBody);
+                setButtonShape(liveDraft.buttonShape);
+                setCardStyle(liveDraft.cardStyle);
+                setSplashScreen(liveDraft.splashScreen);
+                
+                const parsedTexts: any = safeParseJson(liveDraft.customTexts, {});
+                setCustomTexts(parsedTexts);
+                
+                const baseBlocks = appData.pageBlocks ? appData.pageBlocks.filter((b: PageBlock) => !b.blockType.includes('INTEGRATIONS')) : [];
+                let draftBlocks = baseBlocks;
+                
+                if (parsedTexts.draftBlocksConfig) {
+                  draftBlocks = baseBlocks.map((b: PageBlock) => {
+                    const draftCfg = parsedTexts.draftBlocksConfig.find((d: DraftBlocksConfig) => 
+                      d.id === b.id || (d.blockType && d.blockType === b.blockType)
+                    );
+                    if (draftCfg) {
+                      return { ...b, orderIndex: draftCfg.orderIndex, isVisible: draftCfg.isVisible, isLocked: draftCfg.isLocked };
+                    }
+                    return { ...b };
+                  }).sort((a: PageBlock, b: PageBlock) => a.orderIndex - b.orderIndex);
+                  
+                  setPageBlocks(draftBlocks);
+                }
+
+                // Update pelacak isDirty agar tidak "berubah" padahal baru di-load
+                setLastSavedState((prev: any) => ({
+                  ...prev,
+                  activeTheme: liveDraft.themeTemplate,
+                  themeColor: liveDraft.themeColor,
+                  fontHeading: liveDraft.fontHeading,
+                  fontBody: liveDraft.fontBody,
+                  buttonShape: liveDraft.buttonShape,
+                  cardStyle: liveDraft.cardStyle,
+                  splashScreen: liveDraft.splashScreen,
+                  customTexts: parsedTexts,
+                  pageBlocks: draftBlocks
+                }));
               }
             }
           }
@@ -659,12 +714,27 @@ export function useThemeEditor() {
         body: JSON.stringify({ blocks: pageBlocks.map((b: PageBlock) => ({ id: b.id, blockType: b.blockType, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked })) })
       });
 
-      const [resApp, resProf, resBlocks] = await Promise.all([appearancePromise, profilePromise, blocksPromise, delayPromise]);
+      const promises: Promise<any>[] = [appearancePromise, profilePromise, blocksPromise, delayPromise];
+
+      // JIKA SEDANG BERADA DI DALAM DRAFT, UPDATE DRAFT TERSEBUT JUGA!
+      if (activeDraftId) {
+        const draftPromise = fetch('/api/appearance/drafts', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, id: activeDraftId })
+        });
+        promises.push(draftPromise);
+      }
+
+      const results = await Promise.all(promises);
+      const resApp = results[0];
+      const resProf = results[1];
+      const resBlocks = results[2];
 
       if (resApp.ok && resProf.ok && resBlocks.ok) {
         mutate('/api/dashboard/sync');
         toast.dismiss(toastId);
-        showToast({ message: 'Desain berhasil dipublikasikan!', id: toastId, icon: 'fa-rocket' });
+        setIsPublishModalOpen(true);
         
         setPublishedDraftId(activeDraftId || null);
         setLastSavedState({
@@ -732,9 +802,18 @@ export function useThemeEditor() {
     
     setActiveDraftId(draft.id);
     setActiveDraftName(draft.name);
-    // Jika draft yang dimuat adalah draft yang sedang LIVE, kita asumsikan tidak ada perubahan yang belum dipublish
-    // (sampai pengguna mengubah sesuatu dan menyimpannya lagi)
-    setHasUnpublishedChanges(draft.id !== publishedDraftId);
+    // Hitung apakah draft ini memiliki perubahan yang belum dipublish dengan membandingkan dengan Live DB
+    const isDraftDifferent = 
+      draft.themeTemplate !== dbData.siteAppearance?.themeTemplate ||
+      draft.themeColor !== dbData.siteAppearance?.themeColor ||
+      draft.fontHeading !== dbData.siteAppearance?.fontHeading ||
+      draft.fontBody !== dbData.siteAppearance?.fontBody ||
+      draft.buttonShape !== dbData.siteAppearance?.buttonShape ||
+      draft.cardStyle !== dbData.siteAppearance?.cardStyle ||
+      draft.splashScreen !== dbData.siteAppearance?.splashScreen ||
+      draft.customTexts !== dbData.siteAppearance?.customTexts;
+      
+    setHasUnpublishedChanges(draft.id === publishedDraftId ? isDraftDifferent : true);
     
     setLastSavedState((prev: any) => ({
       ...prev,
@@ -787,22 +866,16 @@ export function useThemeEditor() {
     }
 
     if (dbData.pageBlocks) {
-      // PERMINTAAN USER: Ketika keluar dari draft, kembalikan kondisi default.
-      // Blok opsional (seperti FAQ) benar-benar hilang (dihapus), bukan hanya disembunyikan.
-      let validBlocks = dbData.pageBlocks.filter((b: PageBlock) => {
-        return THEME_BLOCK_PRESETS['default'].includes(b.blockType);
-      }).map((b: PageBlock) => {
-        return { 
-          ...b, 
-          isLocked: false, 
-          isVisible: true 
-        };
-      });
+      let validBlocks = dbData.pageBlocks.filter((b: PageBlock) => !b.blockType.includes('INTEGRATIONS'));
       
-      // Karena "Luar Draft" adalah playground, selalu terapkan preset bawaan tema saat ini
-      const currentTheme = dbData.siteAppearance?.themeTemplate || 'minimalist';
-      const presetBlocks = applyPresetToBlocks(validBlocks, currentTheme);
-      setPageBlocks(presetBlocks);
+      if (parsedTexts?.draftBlocksConfig) {
+        validBlocks = validBlocks.map((b: PageBlock) => {
+          const config = parsedTexts.draftBlocksConfig.find((d: DraftBlocksConfig) => d.id === b.id);
+          return config ? { ...b, isLocked: config.isLocked, orderIndex: config.orderIndex, isVisible: config.isVisible } : b;
+        }).sort((a: PageBlock, b: PageBlock) => a.orderIndex - b.orderIndex);
+      }
+      
+      setPageBlocks(validBlocks);
     }
   };
 
@@ -853,6 +926,7 @@ export function useThemeEditor() {
       publishedDraftId,
       isDraftsModalOpen,
       isSaveDraftModalOpen,
+      isPublishModalOpen,
       isDirty,
       hasUnpublishedChanges,
       pageBlocks,
@@ -874,6 +948,7 @@ export function useThemeEditor() {
       setShowProModal,
       setIsDraftsModalOpen,
       setIsSaveDraftModalOpen,
+      setIsPublishModalOpen,
       setPreviewMode,
       saveDraft,
       publishDesign,

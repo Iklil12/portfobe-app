@@ -60,7 +60,6 @@ export async function generateMetadata({
     category: 'portfolio',
     other: user.profile.location ? {
       'geo.placename': user.profile.location,
-      'geo.region': 'ID',
     } : {},
     robots: {
       index: true,
@@ -94,7 +93,7 @@ export async function generateMetadata({
           alt: `${name} - ${profession}`,
         },
       ],
-      locale: 'id_ID', // atau 'en_US' tergantung target
+      locale: 'en_US',
       type: 'website',
     },
     twitter: {

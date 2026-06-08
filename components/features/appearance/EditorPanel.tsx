@@ -341,8 +341,11 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               <span className="text-[11px] font-bold text-amber-700 tracking-tight">
                 Draft: {activeDraftName}
               </span>
-              {publishedDraftId === activeDraftId && (
+              {publishedDraftId === activeDraftId && !hasUnpublishedChanges && (
                 <span className="text-[8px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 uppercase tracking-widest font-black">LIVE</span>
+              )}
+              {publishedDraftId === activeDraftId && hasUnpublishedChanges && (
+                <span className="text-[8px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 uppercase tracking-widest font-black">PERLU PUBLISH</span>
               )}
             </div>
             <button
@@ -369,9 +372,19 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex flex-col">
                 <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500">Basis Tema</h3>
-                {isCurrentlyLive && !isDirty && (
+                {isCurrentlyLive && !isDirty && !hasUnpublishedChanges && (
                    <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-1 uppercase tracking-widest animate-pulse">
                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Sedang Live
+                   </span>
+                )}
+                {isCurrentlyLive && !isDirty && hasUnpublishedChanges && (
+                   <span className="text-[9px] font-bold text-amber-500 flex items-center gap-1 mt-1 uppercase tracking-widest animate-pulse">
+                     <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div> Perubahan Belum Tayang
+                   </span>
+                )}
+                {isDirty && (
+                   <span className="text-[9px] font-bold text-blue-500 flex items-center gap-1 mt-1 uppercase tracking-widest animate-pulse">
+                     <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div> Terdapat Perubahan
                    </span>
                 )}
               </div>

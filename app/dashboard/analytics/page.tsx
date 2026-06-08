@@ -72,19 +72,25 @@ export default function AnalyticsPage() {
   const [range, setRange] = useState('7d');
   const [isMounted, setIsMounted] = useState(false);
   const [animReady, setAnimReady] = useState(false);
+  const [tzOffset, setTzOffset] = useState<number | null>(null);
 
-  const { data, isLoading } = useSWR(`/api/analytics/stats?range=${range}`, fetcher, { refreshInterval: 30000 });
+  useEffect(() => { 
+    setIsMounted(true);
+    setTzOffset(new Date().getTimezoneOffset());
+  }, []);
+
+  const swrUrl = tzOffset !== null ? `/api/analytics/stats?range=${range}&tzOffset=${tzOffset}` : null;
+  const { data, isLoading } = useSWR(swrUrl, fetcher, { refreshInterval: 30000 });
   const { data: userData, isLoading: isUserLoading } = useSWR('/api/layout-sync', fetcher);
   // Default ke undefined dulu (bukan 'FREE') sampai data plan benar-benar loaded
   const userPlan = userData?.plan ?? undefined;
 
-  useEffect(() => { setIsMounted(true); }, []);
   useEffect(() => {
-    if (!isLoading && isMounted) {
+    if (!isLoading && isMounted && data) {
       const t = setTimeout(() => setAnimReady(true), 200);
       return () => clearTimeout(t);
     }
-  }, [isLoading, isMounted]);
+  }, [isLoading, isMounted, data]);
 
   const stats = data?.stats || { totalViews: 0, uniqueVisitors: 0, avgTime: '0s', bounceRate: '0%' };
   const chartData: { day: string; date: string; views: number }[] = data?.chartData || [];

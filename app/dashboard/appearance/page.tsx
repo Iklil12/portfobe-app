@@ -6,6 +6,7 @@ import { useThemeEditor } from '@/hooks/useThemeEditor';
 import { EditorPanel } from '@/components/features/appearance/EditorPanel';
 import { PreviewPanel } from '@/components/features/appearance/PreviewPanel';
 import { OfflineModal } from '@/components/features/appearance/OfflineModal';
+import { PublishSuccessModal } from '@/components/features/appearance/PublishSuccessModal';
 
 function AppearanceEditor() {
   const { state, actions } = useThemeEditor();
@@ -44,6 +45,14 @@ function AppearanceEditor() {
 
       {state.showOfflineModal && (
         <OfflineModal setShowOfflineModal={actions.setShowOfflineModal} />
+      )}
+
+      {state.isPublishModalOpen && (
+        <PublishSuccessModal 
+          isOpen={state.isPublishModalOpen}
+          onClose={() => actions.setIsPublishModalOpen(false)}
+          subdomain={state.subdomain}
+        />
       )}
 
       {/* PANEL KIRI: EDITOR TATA LETAK */}
