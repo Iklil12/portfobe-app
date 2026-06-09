@@ -1,31 +1,29 @@
+//app/dashboard/explore/page.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { Palette, UploadCloud, Star, Zap, Compass, Bell, Download, ChevronRight } from 'lucide-react';
 
 const features = [
   {
-    icon: 'fas fa-palette',
+    icon: Palette,
     title: 'Community Themes',
-    desc: 'Temukan dan gunakan tema portofolio yang dibuat oleh kreator lain di komunitas Portfo.be.',
-    color: 'bg-violet-50 text-violet-500 border-violet-100',
+    desc: 'Temukan dan gunakan tema portofolio unik yang dibuat oleh kreator lain di komunitas Portfo.be.',
   },
   {
-    icon: 'fas fa-upload',
+    icon: UploadCloud,
     title: 'Publish Desainmu',
-    desc: 'Bagikan tampilan portofoliomu ke komunitas dan dapatkan reputasi sebagai kreator terbaik.',
-    color: 'bg-blue-50 text-blue-500 border-blue-100',
+    desc: 'Bagikan tampilan kustom portofoliomu ke komunitas dan dapatkan reputasi sebagai kreator terbaik.',
   },
   {
-    icon: 'fas fa-star',
+    icon: Star,
     title: 'Rating & Ulasan',
-    desc: 'Beri penilaian dan ulasan jujur agar komunitas terus menghadirkan desain berkualitas.',
-    color: 'bg-amber-50 text-amber-500 border-amber-100',
+    desc: 'Beri penilaian dan ulasan jujur agar komunitas terus menghadirkan desain portofolio berkualitas.',
   },
   {
-    icon: 'fas fa-bolt',
+    icon: Zap,
     title: 'Terapkan 1 Klik',
-    desc: 'Gunakan desain apapun langsung ke portofoliomu — konten dan proyekmu tetap aman.',
-    color: 'bg-emerald-50 text-emerald-500 border-emerald-100',
+    desc: 'Gunakan desain apapun langsung ke portofoliomu — data konten dan proyekmu tetap aman.',
   },
 ];
 
@@ -44,23 +42,19 @@ export default function ExplorePage() {
   if (!mounted) return null;
 
   return (
-    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-24">
+    <main className="min-h-screen relative overflow-hidden pb-24 selection:bg-[#ff9e00]/30 selection:text-white">
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
         .animate-enter { opacity: 0; animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUpFade {
-          0% { opacity: 0; transform: translateY(24px) scale(0.98); filter: blur(2px); }
+          0% { opacity: 0; transform: translateY(20px) scale(0.99); filter: blur(2px); }
           100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
-        .skeleton-premium {
-          background: linear-gradient(110deg, #f1f5f9 8%, #e2e8f0 18%, #f1f5f9 33%);
+        .shimmer-dark {
+          background: linear-gradient(110deg, rgba(255,255,255,0.03) 8%, rgba(255,255,255,0.08) 18%, rgba(255,255,255,0.03) 33%);
           background-size: 200% 100%;
           animation: 1.5s shine linear infinite;
         }
         @keyframes shine { to { background-position-x: -200%; } }
-        .card-hover { transition: all 0.3s cubic-bezier(0.22,1,0.36,1); }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
       `}} />
 
       <div className="max-w-5xl mx-auto p-4 sm:p-6 md:p-10 relative z-10">
@@ -68,77 +62,80 @@ export default function ExplorePage() {
         {/* ── HEADER ── */}
         <div className="animate-enter mb-12" style={{animationDelay:'0ms'}}>
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-widest mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-zinc-900 border border-white/10 text-white/50 text-[9px] font-mono font-bold uppercase tracking-widest mb-6">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-400"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#ff9e00]"></span>
             </span>
             Dalam Pengembangan
           </div>
 
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-3">
-            Explore <span className="font-light text-slate-400">Community</span>
+          <h1 className="text-3xl font-mono font-bold text-white tracking-tight uppercase mb-3">
+            Explore <span className="text-white/40">Community</span>
           </h1>
-          <p className="text-slate-500 text-base font-medium max-w-lg leading-relaxed">
-            Segera hadir — marketplace desain portofolio dari sesama kreator Portfo.be. Temukan, gunakan, dan bagikan desain terbaikmu.
+          <p className="text-white/50 text-xs font-mono max-w-lg leading-relaxed">
+            Segera hadir — marketplace desain portofolio dari sesama kreator Portfo.be. Temukan, gunakan, dan bagikan karya desain terbaikmu.
           </p>
         </div>
 
         {/* ── FEATURE CARDS ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14 animate-enter" style={{animationDelay:'100ms'}}>
-          {features.map((f, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_12px_rgba(0,0,0,0.02)] card-hover"
-            >
-              <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-4 ${f.color}`}>
-                <i className={`${f.icon} text-[14px]`}></i>
+          {features.map((f, i) => {
+            const Icon = f.icon;
+            return (
+              <div
+                key={i}
+                className="bg-zinc-900/30 rounded-none border border-white/10 p-6 hover:border-[#ff9e00]/40 transition-all duration-300 group"
+              >
+                <div className="w-10 h-10 bg-zinc-950 border border-white/5 rounded-none flex items-center justify-center mb-4 group-hover:bg-[#ff9e00]/10 group-hover:border-[#ff9e00]/30 transition-colors text-white/30 group-hover:text-[#ff9e00]">
+                  <Icon className="w-4 h-4" />
+                </div>
+                <h3 className="font-mono font-bold text-white text-xs uppercase tracking-wider mb-2">{f.title}</h3>
+                <p className="text-white/40 text-[11px] font-mono leading-relaxed">{f.desc}</p>
               </div>
-              <h3 className="font-extrabold text-slate-900 text-[14px] mb-1.5">{f.title}</h3>
-              <p className="text-slate-500 text-[12px] leading-relaxed font-medium">{f.desc}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* ── PREVIEW BLUR SECTION ── */}
         <div className="animate-enter" style={{animationDelay:'200ms'}}>
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-end justify-between mb-5">
             <div>
-              <h2 className="font-extrabold text-slate-900 text-lg tracking-tight">Pratinjau Komunitas</h2>
-              <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest mt-0.5">Begini tampilannya nanti</p>
+              <h2 className="font-mono font-bold text-white text-xs uppercase tracking-wider">Pratinjau Komunitas</h2>
+              <p className="text-white/30 text-[9px] font-mono uppercase tracking-widest mt-1">Estimasi antarmuka rilis perdana</p>
             </div>
-            <span className="px-3 py-1.5 bg-slate-100 text-slate-400 text-[10px] font-extrabold rounded-full uppercase tracking-widest border border-slate-200">Segera</span>
+            <span className="px-2.5 py-1 bg-zinc-900 text-white/40 text-[9px] font-mono font-bold rounded-none uppercase tracking-widest border border-white/5">Segera</span>
           </div>
 
           {/* Blurred Grid Preview */}
-          <div className="relative rounded-3xl overflow-hidden border border-slate-100 shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
+          <div className="relative rounded-none overflow-hidden border border-white/10">
             {/* Blur Overlay */}
-            <div className="absolute inset-0 z-10 backdrop-blur-sm bg-white/60 flex flex-col items-center justify-center">
-              <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 shadow-lg flex items-center justify-center mb-4">
-                <i className="fas fa-compass text-2xl text-slate-300"></i>
+            <div className="absolute inset-0 z-10 backdrop-blur-md bg-black/70 flex flex-col items-center justify-center px-4">
+              <div className="w-14 h-14 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center mb-4 text-white/30">
+                <Compass className="w-6 h-6 animate-pulse text-[#ff9e00]" />
               </div>
-              <p className="font-extrabold text-slate-700 text-base mb-1">Komunitas Belum Dibuka</p>
-              <p className="text-slate-400 text-sm font-medium text-center max-w-xs">
-                Kami sedang membangun ekosistem komunitas terbaik untuk para kreator Portfo.be.
+              <p className="font-mono font-bold text-white text-xs uppercase tracking-wider mb-1.5">Komunitas Belum Dibuka</p>
+              <p className="text-white/40 font-mono text-[10px] text-center max-w-xs leading-relaxed">
+                Kami sedang merancang ekosistem pembagian tema paling mulus untuk para kreator Portfo.be.
               </p>
             </div>
 
             {/* Mock Grid (behind blur) */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-5 pointer-events-none select-none">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 p-5 pointer-events-none select-none">
               {mockCards.map((card, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+                <div key={i} className="bg-zinc-950 border border-white/5 rounded-none overflow-hidden flex flex-col">
                   {/* Mock thumbnail */}
-                  <div className="h-28 skeleton-premium"></div>
-                  <div className="p-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-extrabold text-slate-900 text-[12px]">{card.label}</span>
-                      <span className="text-[10px] font-bold text-slate-400">
-                        <i className="fas fa-download text-[8px] mr-0.5"></i>{card.uses}
+                  <div className="h-28 shimmer-dark border-b border-white/5"></div>
+                  <div className="p-3 flex flex-col gap-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono font-bold text-white/70 text-[10px] truncate">{card.label}</span>
+                      <span className="text-[9px] font-mono text-white/30 flex items-center gap-1 shrink-0">
+                        <Download className="w-2.5 h-2.5" />{card.uses}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-slate-400 font-medium">{card.user}</span>
-                      <span className="text-[9px] px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded-md font-bold">{card.tag}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[9px] text-white/40 font-mono truncate">{card.user}</span>
+                      <span className="text-[8px] px-1.5 py-0.5 bg-zinc-900 text-[#ff9e00] rounded-none font-mono font-bold uppercase tracking-wider border border-white/5 shrink-0">{card.tag}</span>
                     </div>
                   </div>
                 </div>
@@ -149,22 +146,19 @@ export default function ExplorePage() {
 
         {/* ── NOTIFY BANNER ── */}
         <div className="animate-enter mt-10" style={{animationDelay:'300ms'}}>
-          <div className="bg-slate-900 rounded-3xl p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -mr-16 -mt-16"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-12 -mb-12"></div>
+          <div className="bg-zinc-900/50 border border-white/10 rounded-none p-6 sm:p-8 relative overflow-hidden">
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/70 text-[10px] font-extrabold uppercase tracking-widest mb-3">
-                  <i className="fas fa-bell text-[#ff9e00]"></i> Dapatkan Notifikasi
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none bg-zinc-950 border border-white/10 text-white/60 text-[9px] font-mono font-bold uppercase tracking-wider mb-4">
+                  <Bell className="w-3 h-3 text-[#ff9e00]" /> Dapatkan Notifikasi
                 </div>
-                <h3 className="font-extrabold text-white text-xl mb-1">Jadilah Kreator Pertama</h3>
-                <p className="text-slate-400 text-sm font-medium">Saat Explore Community diluncurkan, desain kamu bisa langsung dikenal jutaan pengguna.</p>
+                <h3 className="font-mono font-bold text-white text-sm uppercase tracking-wider mb-1">Jadilah Kreator Pertama</h3>
+                <p className="text-white/40 font-mono text-xs leading-relaxed max-w-xl">Saat Explore Community diluncurkan, tema kustom buatanmu bisa langsung dikenal dan digunakan pengguna lain.</p>
               </div>
               <button
                 onClick={() => {}}
-                className="flex-shrink-0 bg-white text-slate-900 px-6 py-3 rounded-xl font-extrabold text-sm hover:bg-slate-100 active:scale-95 transition-all whitespace-nowrap"
+                className="flex-shrink-0 bg-[#ff9e00] hover:bg-[#ffaa22] text-black px-6 py-3.5 rounded-none font-mono font-bold text-xs uppercase tracking-widest active:scale-95 transition-all whitespace-nowrap"
               >
-                <i className="fas fa-compass mr-2 text-[#ff9e00]"></i>
                 Kabari Saya
               </button>
             </div>

@@ -3,6 +3,7 @@
 import React from 'react';
 import { AnimateOnScroll } from '@/components/ui/AnimateOnScroll';
 import Link from 'next/link';
+import { Palette, ExternalLink } from 'lucide-react';
 
 interface MiniLivePreviewProps {
   themeName: string;
@@ -13,58 +14,58 @@ interface MiniLivePreviewProps {
 export function MiniLivePreview({ themeName, subdomain, isLoading }: MiniLivePreviewProps) {
   if (isLoading) {
     return (
-      <div className="bg-white rounded-[2.5rem] border border-slate-200/60 h-full min-h-[250px] shimmer w-full"></div>
+      <div className="bg-zinc-950 border border-white/10 rounded-none h-full min-h-[250px] shimmer w-full"></div>
     );
   }
 
   return (
     <AnimateOnScroll delay={150} className="h-full">
-      <div className="bg-white border border-slate-200/60 p-6 md:p-8 h-full flex flex-col justify-between relative overflow-hidden group rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:border-slate-350 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-0.5 transition-all duration-300">
+      <div className="bg-zinc-950 border border-white/10 p-6 md:p-8 h-full flex flex-col justify-between relative overflow-hidden group rounded-none hover:border-white/20 transition-all duration-300">
         <div className="relative z-10 flex justify-between items-start mb-6">
           <div>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Tema Aktif</p>
-            <h3 className="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight capitalize">{themeName}</h3>
+            <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-1">Tema Aktif</p>
+            <h3 className="text-xl md:text-2xl font-display font-bold text-white tracking-tight uppercase">{themeName}</h3>
           </div>
           <Link
             href="/dashboard/appearance"
-            className="w-8 h-8 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-700 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+            className="w-8 h-8 rounded-none border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-white/5 hover:text-white transition-all shadow-sm"
           >
-            <i className="fas fa-palette text-xs"></i>
+            <Palette className="w-4 h-4" />
           </Link>
         </div>
 
         {/* Mockup Device */}
         <div className="relative z-10 mt-4 flex-1 min-h-[180px] flex items-center justify-center">
-          <div className="relative w-full max-w-[280px] aspect-[16/10] bg-slate-900 border border-slate-950 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.08)] flex flex-col overflow-hidden">
+          <div className="relative w-full max-w-[280px] aspect-[16/10] bg-black border border-white/10 rounded-none shadow-[0_15px_40px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden">
             {/* Browser Header */}
-            <div className="h-6 bg-slate-950 w-full flex items-center justify-between px-3 border-b border-slate-900 text-[9px] text-slate-400 shrink-0">
+            <div className="h-6 bg-zinc-950 w-full flex items-center justify-between px-3 border-b border-white/10 text-[8px] font-mono text-white/50 shrink-0">
               <span className="truncate">portfo.be/{subdomain}</span>
-              <div className="flex gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-slate-800"></div>
-                <div className="w-1.5 h-1.5 rounded-full bg-slate-800"></div>
+              <div className="flex gap-1">
+                <div className="w-1 h-1 bg-white/20 rounded-none"></div>
+                <div className="w-1 h-1 bg-white/20 rounded-none"></div>
               </div>
             </div>
             {/* Browser Content (Mock) */}
-            <div className="flex-1 bg-slate-50 p-3 relative overflow-hidden flex flex-col">
+            <div className="flex-1 bg-[#050505] p-3 relative overflow-hidden flex flex-col">
               {/* Skeleton for Portfolio */}
-              <div className="w-8 h-8 rounded-full bg-slate-200 mb-2"></div>
-              <div className="w-3/4 h-1.5 bg-slate-200 rounded-full mb-1"></div>
-              <div className="w-1/2 h-1.5 bg-slate-100 rounded-full mb-3"></div>
+              <div className="w-6 h-6 rounded-none bg-white/10 mb-2 border border-white/10"></div>
+              <div className="w-3/4 h-1.5 bg-white/10 rounded-none mb-1"></div>
+              <div className="w-1/2 h-1.5 bg-white/5 rounded-none mb-3"></div>
 
               <div className="grid grid-cols-2 gap-2">
-                <div className="h-10 bg-white border border-slate-200/60 rounded-lg"></div>
-                <div className="h-10 bg-white border border-slate-200/60 rounded-lg"></div>
+                <div className="h-8 bg-zinc-900 border border-white/5 rounded-none"></div>
+                <div className="h-8 bg-zinc-900 border border-white/5 rounded-none"></div>
               </div>
 
               {/* Overlay blur and view button */}
-              <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
+              <div className="absolute inset-0 bg-black/90 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
                 <a
                   href={`/${subdomain}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="px-4 py-2 bg-slate-900 text-white rounded-full text-[9px] font-bold uppercase tracking-widest transition-all duration-200 hover:shadow-[0_4px_12px_rgba(15,23,42,0.3)] hover:scale-105"
+                  className="px-4 py-2 bg-[#ff9e00] text-black rounded-none text-[9px] font-mono font-bold uppercase tracking-widest transition-all duration-200 hover:bg-[#ffaa22] hover:scale-105 flex items-center gap-1.5 shadow-md"
                 >
-                  Live Preview
+                  <ExternalLink className="w-3 h-3" /> Live Preview
                 </a>
               </div>
             </div>

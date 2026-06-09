@@ -1,4 +1,6 @@
+//components/features/settings/EmailCredentialCard.tsx
 import React from 'react';
+import { Mail, Globe } from 'lucide-react';
 
 interface EmailCredentialCardProps {
   state: any;
@@ -10,32 +12,39 @@ export function EmailCredentialCard({ state, actions }: EmailCredentialCardProps
   const { setShowEmailModal } = actions;
 
   return (
-    <div className="bg-white p-6 sm:p-8 md:p-10 rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.01)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:border-slate-200 transition-all duration-300 animate-enter" style={{animationDelay: '250ms'}}>
-      <h4 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight mb-2">Email Kredensial</h4>
-      <p className="text-xs sm:text-sm text-slate-500 font-medium mb-6 sm:mb-8 leading-relaxed max-w-md">Alamat email utama yang tertaut dengan akun Portfo.be Anda.</p>
+    <div className="bg-zinc-900/40 p-6 sm:p-8 md:p-10 rounded-none border border-white/10 shadow-none hover:border-[#ff9e00]/30 transition-all duration-300 animate-enter" style={{animationDelay: '250ms'}}>
+      <h4 className="text-sm font-mono font-bold text-white uppercase tracking-wider mb-2">Email Kredensial</h4>
+      <p className="text-xs font-mono text-white/40 mb-6 sm:mb-8 leading-relaxed max-w-md">Alamat email utama yang tertaut dengan akun Portfo.be Anda.</p>
       
       <div className="flex flex-col sm:flex-row items-center gap-4">
         <div className="relative w-full">
           <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-            <i className="fas fa-envelope text-slate-400 text-sm"></i>
+            <Mail className="text-white/20 w-4 h-4" />
           </div>
-          <input type="email" value={session?.user?.email || "Memuat..."} disabled className="w-full pl-12 pr-5 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-600 font-bold text-sm outline-none cursor-not-allowed" />
+          <input type="email" value={session?.user?.email || "Memuat..."} disabled className="w-full pl-12 pr-5 py-3.5 sm:py-4 rounded-none border border-white/5 bg-zinc-950 text-white/40 font-mono text-xs outline-none cursor-not-allowed" />
         </div>
         <button 
           onClick={() => setShowEmailModal(true)} 
           disabled={isOAuthLinked}
-          className={`w-full sm:w-auto px-8 py-3.5 sm:py-4 text-[11px] font-extrabold uppercase tracking-widest rounded-xl sm:rounded-2xl transition-all flex items-center justify-center shrink-0 shadow-sm
+          className={`w-full sm:w-auto px-8 py-3.5 sm:py-4 text-[11px] font-mono font-bold uppercase tracking-widest rounded-none transition-all flex items-center justify-center shrink-0
             ${isOAuthLinked 
-              ? 'bg-slate-50 text-slate-400 border border-slate-100 cursor-not-allowed' 
-              : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300 hover:text-slate-900 hover:bg-slate-50 active:scale-95'
+              ? 'bg-zinc-950 text-white/20 border border-white/5 cursor-not-allowed' 
+              : 'bg-zinc-950 text-white border border-white/10 hover:border-white/20 hover:bg-zinc-900 active:scale-95'
             }
           `}
         >
-          {isOAuthLinked ? <><i className="fab fa-google mr-2 text-slate-300"></i> Terkunci (Google)</> : 'Ubah Email'}
+          {isOAuthLinked ? (
+            <>
+              <Globe className="w-3.5 h-3.5 mr-2 text-[#ff9e00]" />
+              <span>Terkunci (Google)</span>
+            </>
+          ) : (
+            'Ubah Email'
+          )}
         </button>
       </div>
       {isOAuthLinked && (
-        <p className="text-[10px] text-slate-400 font-medium mt-3 italic">
+        <p className="text-[10px] text-white/30 font-mono mt-3 italic">
           *Akun ini ditautkan dengan kredensial Google OAuth. Email tidak dapat diubah.
         </p>
       )}

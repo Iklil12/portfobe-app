@@ -1,7 +1,11 @@
+//components/features/appearance/ThemeSelectionModal.tsx
+"use client";
+
 import React, { useState } from 'react';
 import { THEMES_DATA } from '@/lib/themes';
 import { ThemeGrid } from '../themes/ThemeGrid';
 import { AnimatePresence, motion } from 'framer-motion';
+import { LayoutGrid, Gift, Crown, Heart, X, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 
 interface ThemeSelectionModalProps {
   isOpen: boolean;
@@ -14,10 +18,10 @@ interface ThemeSelectionModalProps {
 }
 
 const FILTER_TABS = [
-  { id: 'all',       label: 'All Themes',   icon: 'fa-th-large' },
-  { id: 'free',      label: 'Free',         icon: 'fa-gift' },
-  { id: 'pro',       label: 'Pro',          icon: 'fa-crown' },
-  { id: 'favorites', label: 'Favorit',      icon: 'fa-heart' },
+  { id: 'all',       label: 'All Themes',   icon: LayoutGrid },
+  { id: 'free',      label: 'Free',         icon: Gift },
+  { id: 'pro',       label: 'Pro',          icon: Crown },
+  { id: 'favorites', label: 'Favorit',      icon: Heart },
 ] as const;
 
 export function ThemeSelectionModal({ 
@@ -43,7 +47,7 @@ export function ThemeSelectionModal({
     else if (activeFilter === 'pro')  list = availableThemes.filter(t => t.isPro);
     else if (activeFilter === 'favorites') list = favoriteThemes;
     
-    // Sort: Tema yang sedang aktif berada di urutan pertama
+    // Sort: Active theme is placed first
     return [...list].sort((a, b) => {
       if (a.id === activeTheme) return -1;
       if (b.id === activeTheme) return 1;
@@ -67,8 +71,8 @@ export function ThemeSelectionModal({
           setIsSwitching(false);
           setTargetTheme(null);
           onClose();
-        }, 600); // Wait for UI to update before closing
-      }, 800); // 800ms "fake" loading for premium feel
+        }, 600);
+      }, 800);
     },
     toggleFavorite: (themeId: string) => {
       if (onToggleFavorite) onToggleFavorite(themeId);
@@ -90,17 +94,17 @@ export function ThemeSelectionModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-zinc-950/80 backdrop-blur-md"
             onClick={!isSwitching ? onClose : undefined}
           ></motion.div>
 
           {/* Modal Content */}
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.98, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            exit={{ opacity: 0, scale: 0.98, y: 10 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-6xl h-[90vh] bg-[#FAFAFA] rounded-[2.5rem] shadow-2xl border border-white/50 overflow-hidden flex flex-col"
+            className="relative w-full max-w-6xl h-[90vh] bg-zinc-900 border border-white/10 rounded-none shadow-none overflow-hidden flex flex-col"
           >
             {/* Loading Overlay */}
             <AnimatePresence>
@@ -109,39 +113,39 @@ export function ThemeSelectionModal({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 z-50 bg-white/70 backdrop-blur-md flex flex-col items-center justify-center"
+                  className="absolute inset-0 z-50 bg-zinc-950/95 backdrop-blur-md flex flex-col items-center justify-center"
                 >
                   <motion.div 
-                    initial={{ scale: 0.8, opacity: 0, y: 10 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.1, duration: 0.4 }}
                     className="flex flex-col items-center"
                   >
                     <div className="w-16 h-16 relative flex items-center justify-center mb-6">
-                      <div className="absolute inset-0 rounded-full border-4 border-slate-100"></div>
-                      <div className="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin"></div>
-                      <i className="fas fa-magic text-indigo-600 text-xl animate-pulse"></i>
+                      <div className="absolute inset-0 rounded-none border-4 border-white/5"></div>
+                      <div className="absolute inset-0 rounded-none border-4 border-[#ff9e00] border-t-transparent animate-spin"></div>
+                      <Sparkles className="w-6 h-6 text-[#ff9e00] animate-pulse" />
                     </div>
-                    <h3 className="text-xl font-black text-slate-900 tracking-tight mb-2">Menerapkan Tema...</h3>
-                    <p className="text-sm font-medium text-slate-500">Menyesuaikan tata letak untuk {targetTheme}</p>
+                    <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider mb-2">Menerapkan Tema...</h3>
+                    <p className="text-[10px] font-mono text-white/40 uppercase">Menyesuaikan tata letak untuk {targetTheme}</p>
                   </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>
             
             {/* Header */}
-            <div className="p-6 md:p-8 border-b border-slate-200/60 shrink-0 bg-white/80 backdrop-blur-xl relative z-40">
+            <div className="p-6 md:p-8 border-b border-white/5 shrink-0 bg-zinc-900/90 backdrop-blur-md relative z-40">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="text-2xl font-black text-slate-900 tracking-tight">Pilih Tema Basis</h2>
-                  <p className="text-xs md:text-sm text-slate-500 font-medium mt-1">Eksplorasi berbagai gaya visual untuk portofolio Anda.</p>
+                  <h2 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Pilih Tema Basis</h2>
+                  <p className="text-[10px] text-white/40 font-mono mt-1 uppercase">Eksplorasi berbagai gaya visual untuk portofolio Anda.</p>
                 </div>
                 <button 
                   onClick={!isSwitching ? onClose : undefined}
                   disabled={isSwitching}
-                  className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-900 hover:text-white transition-all active:scale-90 disabled:opacity-50 disabled:hover:bg-slate-100 disabled:hover:text-slate-400"
+                  className="w-8 h-8 rounded-none bg-zinc-950 border border-white/10 flex items-center justify-center text-white/50 hover:text-white transition-all disabled:opacity-50"
                 >
-                  <i className="fas fa-times"></i>
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
@@ -149,6 +153,7 @@ export function ThemeSelectionModal({
               <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
                 {FILTER_TABS.map(tab => {
                   const isActive = activeFilter === tab.id;
+                  const TabIcon = tab.icon;
                   const count = tab.id === 'all'
                     ? THEMES_DATA.length
                     : tab.id === 'free'
@@ -161,17 +166,17 @@ export function ThemeSelectionModal({
                     <button
                       key={tab.id}
                       onClick={() => setActiveFilter(tab.id)}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-extrabold uppercase tracking-wider transition-all duration-300 border whitespace-nowrap shrink-0
+                      className={`flex items-center gap-2 px-5 py-2.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-300 border whitespace-nowrap shrink-0
                         ${isActive
                           ? tab.id === 'favorites'
-                            ? 'bg-rose-500 text-white border-rose-500 shadow-lg'
-                            : 'bg-slate-900 text-white border-slate-900 shadow-lg'
-                          : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:text-slate-900 hover:bg-slate-50'
+                            ? 'bg-rose-600 text-white border-rose-600'
+                            : 'bg-[#ff9e00] text-black border-[#ff9e00]'
+                          : 'bg-zinc-950 text-white/50 border-white/10 hover:border-[#ff9e00] hover:text-white'
                         }`}
                     >
-                      <i className={`fas ${tab.icon} text-[10px] ${isActive && tab.id === 'favorites' ? 'text-white' : tab.id === 'pro' && isActive ? 'text-[#ff9e00]' : ''}`}></i>
-                      {tab.label}
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded-lg font-black ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                      <TabIcon className={`w-3.5 h-3.5 ${isActive && tab.id === 'favorites' ? 'text-white' : tab.id === 'pro' && isActive ? 'text-black' : ''}`} />
+                      <span>{tab.label}</span>
+                      <span className={`text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-none ${isActive ? 'bg-black/20 text-black' : 'bg-zinc-900 border border-white/10 text-white/40'}`}>
                         {count}
                       </span>
                     </button>
@@ -184,13 +189,13 @@ export function ThemeSelectionModal({
             <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative z-30">
               {filteredThemes.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 text-center">
-                  <div className="w-16 h-16 rounded-3xl bg-slate-100 flex items-center justify-center mb-6">
-                    <i className={`fas ${activeFilter === 'favorites' ? 'fa-heart-broken' : 'fa-ghost'} text-2xl text-slate-300`}></i>
+                  <div className="w-16 h-16 rounded-none bg-zinc-950 border border-white/10 flex items-center justify-center mb-6">
+                    <AlertCircle className="w-6 h-6 text-white/30" />
                   </div>
-                  <p className="font-extrabold text-slate-700 text-lg mb-1">
+                  <p className="font-mono font-bold text-white text-xs uppercase tracking-wider mb-1">
                     {activeFilter === 'favorites' ? 'Belum ada favorit' : 'Tidak ada tema'}
                   </p>
-                  <p className="text-slate-400 text-[11px] font-medium max-w-[200px] mx-auto">
+                  <p className="text-white/40 text-[10px] font-mono max-w-[240px] mx-auto uppercase tracking-wide">
                     {activeFilter === 'favorites'
                       ? 'Klik ikon ♡ pada tema untuk menyimpannya.'
                       : 'Coba filter lain.'}

@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import useSWR from 'swr';
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
+import { Check, X } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -84,120 +87,93 @@ export default function PricingPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#FAFAFA] pb-24 relative overflow-hidden">
-      
-      {/* Background Decor */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-slate-200/30 to-transparent pointer-events-none z-0"></div>
-      <div className="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-[#ff9e00]/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+    <div className="min-h-screen bg-[#050505] text-white antialiased selection:bg-[#ff9e00] selection:text-black">
+      <Navbar isDarkBg={true} />
 
-      <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+      <main className="max-w-6xl mx-auto px-6 pt-32 pb-24 relative z-10">
         
-        .animate-enter { 
-            opacity: 0; 
-            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
-        }
-        @keyframes slideUpFade {
-            0% { opacity: 0; transform: translateY(30px); filter: blur(4px); }
-            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
-      `}} />
-
-      <div className="max-w-6xl mx-auto px-6 pt-10 md:pt-20 relative z-10">
-        
-        {/* Navigation */}
-        <div className="flex justify-between items-center mb-16">
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/portfo.be.png" alt="Logo" className="h-6 w-auto" />
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors">Login</Link>
-            <Link href="/register" className="text-xs font-bold text-white px-5 py-2.5 bg-slate-900 rounded-full hover:bg-slate-800 transition-all shadow-md">Register</Link>
-          </div>
-        </div>
-
         {/* Header */}
-        <div className="text-center mb-16 animate-enter">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#ff9e00]/10 border border-[#ff9e00]/20 text-[#ff9e00] text-[10px] font-black uppercase tracking-[0.2em] mb-6">
-            <i className="fas fa-crown"></i> Simple Pricing
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#ff9e00]/20 bg-[#ff9e00]/5 text-[#ff9e00] text-[10px] font-mono uppercase tracking-[0.2em] mb-6">
+            Simple Pricing
           </div>
-          <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter mb-6">
-            Choose the <span className="text-slate-400 font-light">Best Plan</span><br/>For Your Career.
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-[1.15] mb-6">
+            Choose the <span className="text-white/40 italic font-light">Best Plan</span><br/>For Your Career.
           </h1>
-          <p className="text-slate-500 max-w-xl mx-auto text-sm md:text-base font-medium leading-relaxed mb-10">
+          <p className="text-white/60 max-w-xl mx-auto text-sm md:text-base font-medium leading-relaxed mb-10">
             Start building your professional portfolio today. Choose a free forever plan or upgrade to Pro for unlimited features.
           </p>
 
-          {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-4">
-            <span className={`text-xs font-bold ${billingCycle === 'monthly' ? 'text-slate-900' : 'text-slate-400'}`}>Monthly</span>
+          {/* Billing Toggle (Wireframe style) */}
+          <div className="flex items-center justify-center gap-4 max-w-xs mx-auto mb-16">
+            <span className={`text-xs font-bold font-mono uppercase tracking-widest ${billingCycle === 'monthly' ? 'text-white' : 'text-white/40'}`}>Monthly</span>
             <button 
-                onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-                className="w-14 h-7 bg-slate-200 rounded-full p-1 relative transition-colors group"
+              onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+              className="w-14 h-7 bg-zinc-900 border border-white/10 rounded-full p-1 relative transition-colors group"
             >
-                <div className={`w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 transform ${billingCycle === 'yearly' ? 'translate-x-7' : 'translate-x-0'}`}></div>
+              <div className={`w-5 h-5 bg-white transition-all duration-300 rounded-full shadow-md transform ${billingCycle === 'yearly' ? 'translate-x-7 bg-[#ff9e00]' : 'translate-x-0'}`}></div>
             </button>
-            <span className={`text-xs font-bold ${billingCycle === 'yearly' ? 'text-slate-900' : 'text-slate-400'}`}>Yearly</span>
-            <span className="bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded-md animate-pulse">SAVE 20%</span>
+            <span className={`text-xs font-bold font-mono uppercase tracking-widest ${billingCycle === 'yearly' ? 'text-white' : 'text-white/40'}`}>Yearly</span>
+            <span className="bg-emerald-500 text-black text-[9px] font-mono font-bold px-2 py-0.5 animate-pulse">SAVE 20%</span>
           </div>
         </div>
 
         {/* Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
           {plans.map((plan, idx) => (
             <div 
               key={idx} 
-              className={`relative bg-white rounded-[2.5rem] border ${plan.isSupreme ? 'border-[#ff9e00] shadow-[#ff9e00]/20 shadow-2xl' : plan.isPro ? 'border-slate-900 shadow-2xl' : 'border-slate-100'} p-8 md:p-10 animate-enter group transition-all hover:-translate-y-2`}
-              style={{ animationDelay: `${idx * 150}ms` }}
+              className={`relative bg-zinc-950 border ${plan.isSupreme ? 'border-[#ff9e00]' : 'border-white/10'} p-8 md:p-10 flex flex-col justify-between transition-all hover:border-white/20`}
             >
               {plan.isPro && (
-                <div className={`absolute -top-4 left-1/2 -translate-x-1/2 ${plan.isSupreme ? 'bg-gradient-to-r from-[#ff9e00] to-amber-500' : 'bg-slate-900'} text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-widest shadow-xl whitespace-nowrap`}>
-                    {plan.badge}
+                <div className={`absolute top-0 left-0 right-0 ${plan.isSupreme ? 'bg-[#ff9e00]' : 'bg-white'} text-black text-[10px] font-mono font-bold py-1 text-center uppercase tracking-widest`}>
+                  {plan.badge}
                 </div>
               )}
               
-              <div className="mb-10">
-                <h3 className={`text-2xl font-black mb-2 ${plan.isPro ? 'text-slate-900' : 'text-slate-500'}`}>{plan.name}</h3>
-                <p className="text-sm text-slate-400 font-medium leading-relaxed">{plan.tagline}</p>
-              </div>
-
-              <div className="mb-10">
-                {plan.originalPrice && (
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm font-bold text-slate-400 line-through decoration-slate-300">{plan.originalPrice}</span>
-                    <span className="text-[10px] font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full uppercase tracking-wider border border-rose-100 font-mono">OFF</span>
-                  </div>
-                )}
-                <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-slate-900 tracking-tighter">{plan.price}</span>
-                  <span className="text-sm font-bold text-slate-400">{plan.period}</span>
+              <div className={plan.isPro ? 'mt-4' : ''}>
+                <div className="mb-6">
+                  <h3 className="text-2xl font-display font-bold text-white mb-2">{plan.name}</h3>
+                  <p className="text-xs text-white/50 font-mono tracking-wide leading-relaxed min-h-[32px]">{plan.tagline}</p>
                 </div>
-              </div>
 
-              <div className="space-y-4 mb-12">
-                {plan.features.map((feature, fidx) => (
-                  <div key={fidx} className={`flex items-center gap-3 ${feature.active ? 'opacity-100' : 'opacity-30'}`}>
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${feature.active ? (plan.isPro ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-900') : 'bg-slate-50 text-slate-300'}`}>
-                      <i className={`fas ${feature.active ? 'fa-check' : 'fa-times'} text-[8px]`}></i>
+                {/* Price block */}
+                <div className="mb-8 border-y border-white/10 py-6">
+                  {plan.originalPrice && (
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-sm font-mono text-white/30 line-through">{plan.originalPrice}</span>
+                      <span className="text-[9px] font-mono font-bold text-red-400 bg-red-400/10 px-2 py-0.5 border border-red-400/20">OFF</span>
                     </div>
-                    <span className="text-[13px] font-bold text-slate-700 flex items-center gap-2">
-                        {feature.text}
-                        {(feature as any).soon && <span className="text-[8px] px-1.5 py-0.5 bg-slate-100 text-slate-400 rounded">SOON</span>}
-                        {(feature as any).bonus && <span className="text-[8px] px-1.5 py-0.5 bg-emerald-100 text-emerald-600 rounded font-black animate-pulse">BONUS</span>}
-                    </span>
+                  )}
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight">{plan.price}</span>
+                    <span className="text-xs font-mono text-white/40">{plan.period}</span>
                   </div>
-                ))}
+                </div>
+
+                {/* Features list */}
+                <div className="space-y-4 mb-8">
+                  {plan.features.map((feature, fidx) => (
+                    <div key={fidx} className={`flex items-start gap-3 text-xs leading-relaxed ${feature.active ? 'text-white/80' : 'text-white/30'}`}>
+                      <span className={`mt-0.5 shrink-0 ${feature.active ? 'text-[#ff9e00]' : 'text-white/20'}`}>
+                        {feature.active ? <Check className="w-3.5 h-3.5" /> : <X className="w-3.5 h-3.5" />}
+                      </span>
+                      <span className="font-mono tracking-wide">
+                        {feature.text}
+                        {(feature as any).soon && <span className="ml-2 text-[8px] px-1.5 py-0.5 bg-white/10 text-white/60 font-mono">SOON</span>}
+                        {(feature as any).bonus && <span className="ml-2 text-[8px] px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 font-mono border border-emerald-500/30">BONUS</span>}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <Link 
                 href={plan.link}
-                className={`block w-full text-center py-5 rounded-2xl text-[11px] font-black uppercase tracking-[0.15em] transition-all active:scale-95 shadow-lg ${
-                    plan.isSupreme
-                      ? 'bg-gradient-to-r from-[#ff9e00] to-amber-500 text-white hover:shadow-[#ff9e00]/40'
-                      : plan.isPro 
-                        ? 'bg-slate-900 text-white hover:bg-slate-800' 
-                        : (isLoggedIn && userPlan === 'FREE' ? 'bg-slate-100 text-slate-400 cursor-default' : 'bg-white border border-slate-200 text-slate-900 hover:bg-slate-50')
+                className={`block w-full text-center py-4 text-xs font-mono font-bold uppercase tracking-widest transition-all active:scale-95 ${
+                  plan.isSupreme || plan.isPro
+                    ? 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'
+                    : 'bg-transparent border border-white/20 text-white hover:bg-white/5'
                 }`}
               >
                 {plan.buttonText}
@@ -207,49 +183,51 @@ export default function PricingPage() {
         </div>
 
         {/* Domain Advantages Section */}
-        <div className="max-w-5xl mx-auto mt-24 p-8 md:p-12 bg-white rounded-[2.5rem] border border-slate-100 shadow-xl animate-enter" style={{ animationDelay: '300ms' }}>
+        <div className="max-w-5xl mx-auto mt-24 p-8 md:p-12 border border-white/10 bg-zinc-950">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4">Yearly Subscription Benefits 🎁</h2>
-            <p className="text-slate-500 font-medium text-sm md:text-base">Here is why professional creators always choose the yearly plan.</p>
+            <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">Subscription Details & Advantages 🎁</h2>
+            <p className="text-white/50 font-mono text-xs md:text-sm">Compare benefits between monthly and yearly billing cycle subscriptions.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 transition-all hover:bg-slate-100">
-              <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-6 text-2xl">🗓️</div>
-              <h3 className="text-xl font-black text-slate-900 mb-4">Monthly Subscription</h3>
-              <ul className="space-y-4 text-sm font-semibold text-slate-600">
-                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-500 mt-1"></i><span>Allows linking custom domains.</span></li>
-                <li className="flex gap-4 items-start"><i className="fas fa-times text-rose-500 mt-1"></i><span>You must purchase your domain separately.</span></li>
-                <li className="flex gap-4 items-start"><i className="fas fa-times text-rose-500 mt-1"></i><span>Requires manual DNS settings configuration.</span></li>
+            <div className="p-8 border border-white/10 bg-black/40">
+              <div className="w-12 h-12 bg-white/5 border border-white/10 flex items-center justify-center mb-6 text-xl">🗓️</div>
+              <h3 className="text-lg font-display font-bold text-white mb-4">Monthly Subscription</h3>
+              <ul className="space-y-4 text-xs font-mono text-white/60">
+                <li className="flex gap-3 items-start"><Check className="w-4 h-4 text-white/40 mt-0.5" /><span>Allows linking custom domains.</span></li>
+                <li className="flex gap-3 items-start"><X className="w-4 h-4 text-red-500/60 mt-0.5" /><span>You must purchase your domain separately.</span></li>
+                <li className="flex gap-3 items-start"><X className="w-4 h-4 text-red-500/60 mt-0.5" /><span>Requires manual DNS settings configuration.</span></li>
               </ul>
             </div>
             
-            <div className="p-8 bg-slate-900 rounded-3xl text-white shadow-2xl relative overflow-hidden transition-all hover:shadow-[#ff9e00]/20">
-              <div className="absolute -right-10 -bottom-10 text-[120px] opacity-10 rotate-12">🎁</div>
-              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shadow-sm mb-6 text-2xl text-white border border-white/20">🌟</div>
-              <h3 className="text-xl font-black text-white mb-4">Yearly Subscription</h3>
-              <ul className="space-y-4 text-sm font-semibold text-slate-300 relative z-10">
-                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-400 mt-1"></i><span><strong className="text-white text-base">Free 1 Custom Domain</strong> (.com/.net/.me) for the first year.</span></li>
-                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-400 mt-1"></i><span>No need to buy a domain elsewhere.</span></li>
-                <li className="flex gap-4 items-start"><i className="fas fa-check text-emerald-400 mt-1"></i><span>Connected automatically (1-Click Setup) with zero DNS hassle.</span></li>
+            <div className="p-8 border border-[#ff9e00]/20 bg-white/[0.02] relative overflow-hidden">
+              <div className="absolute -right-6 -bottom-6 text-[80px] opacity-5 rotate-12 pointer-events-none select-none">🎁</div>
+              <div className="w-12 h-12 bg-[#ff9e00]/10 border border-[#ff9e00]/20 flex items-center justify-center mb-6 text-xl text-[#ff9e00]">🌟</div>
+              <h3 className="text-lg font-display font-bold text-white mb-4">Yearly Subscription</h3>
+              <ul className="space-y-4 text-xs font-mono text-white/80 relative z-10">
+                <li className="flex gap-3 items-start"><Check className="w-4 h-4 text-[#ff9e00] mt-0.5" /><span><strong className="text-white">Free 1 Custom Domain</strong> (.com/.net/.me) for the first year.</span></li>
+                <li className="flex gap-3 items-start"><Check className="w-4 h-4 text-[#ff9e00] mt-0.5" /><span>No need to buy a domain elsewhere.</span></li>
+                <li className="flex gap-3 items-start"><Check className="w-4 h-4 text-[#ff9e00] mt-0.5" /><span>Connected automatically (1-Click Setup) with zero DNS hassle.</span></li>
               </ul>
             </div>
           </div>
         </div>
 
         {/* Trust Section */}
-        <div className="mt-24 text-center animate-enter" style={{ animationDelay: '400ms' }}>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-10">Kickstart Your Digital Career Now</p>
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-30 grayscale items-center">
-                <i className="fab fa-google text-3xl"></i>
-                <i className="fab fa-instagram text-3xl"></i>
-                <i className="fab fa-spotify text-3xl"></i>
-                <i className="fab fa-dribbble text-3xl"></i>
-                <i className="fab fa-behance text-3xl"></i>
-            </div>
+        <div className="mt-24 text-center">
+          <p className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-[0.3em] mb-10">Kickstart Your Digital Career Now</p>
+          <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-30 grayscale items-center text-white/50">
+            <span className="font-mono tracking-widest text-xs">GOOGLE</span>
+            <span className="font-mono tracking-widest text-xs">INSTAGRAM</span>
+            <span className="font-mono tracking-widest text-xs">SPOTIFY</span>
+            <span className="font-mono tracking-widest text-xs">DRIBBBLE</span>
+            <span className="font-mono tracking-widest text-xs">BEHANCE</span>
+          </div>
         </div>
 
-      </div>
-    </main>
+      </main>
+
+      <Footer />
+    </div>
   );
 }

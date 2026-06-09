@@ -3,6 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import { motion } from 'framer-motion';
+import { 
+  Plug, 
+  Layers, 
+  Plus 
+} from 'lucide-react';
+import { GithubIcon } from '@/components/ui/Icons';
 
 // Import Modular Components
 import { ManualPenpotManager } from '@/components/features/integrations/ManualPenpotManager';
@@ -29,13 +35,13 @@ const Skeleton = () => (
     {[1, 2, 3].map(i => (
       <div key={i} className="space-y-4">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl skeleton-premium" />
+          <div className="w-10 h-10 rounded-none bg-white/5 border border-white/5 shimmer" />
           <div className="space-y-2">
-            <div className="h-4 w-32 skeleton-premium rounded-md" />
-            <div className="h-3 w-48 skeleton-premium rounded-md" />
+            <div className="h-4 w-32 bg-white/5 border border-white/5 rounded-none shimmer" />
+            <div className="h-3 w-48 bg-white/5 border border-white/5 rounded-none shimmer" />
           </div>
         </div>
-        <div className="h-40 rounded-[2rem] skeleton-premium" />
+        <div className="h-40 rounded-none bg-white/5 border border-white/5 shimmer" />
       </div>
     ))}
   </div>
@@ -51,7 +57,7 @@ export default function IntegrationsPage() {
   }, []);
 
   return (
-    <main className="min-h-screen relative pb-24 z-10">
+    <main className="min-h-screen relative pb-24 z-10 selection:bg-[#ff9e00]/30 selection:text-white">
       <div className="max-w-3xl mx-auto p-4 sm:p-6 md:p-10 relative z-20">
         
         {/* Header */}
@@ -60,11 +66,11 @@ export default function IntegrationsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-500 text-[10px] font-bold uppercase tracking-wider mb-6">
-            <i className="fas fa-plug text-[9px]"></i> Connected Works
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-none bg-zinc-900 border border-white/10 text-white/50 text-[9px] font-mono font-bold uppercase tracking-wider mb-6">
+            <Plug className="w-3.5 h-3.5" /> Connected Works
           </div>
-          <h1 className="text-4xl font-black text-zinc-900 tracking-tight mb-3">Connected Works</h1>
-          <p className="text-base text-zinc-500 font-medium max-w-xl leading-relaxed">Hubungkan platform favoritmu dan tampilkan karya langsung di portofolio.</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-white uppercase tracking-wider mb-3">Connected Works</h1>
+          <p className="text-xs text-white/40 font-mono leading-relaxed max-w-xl">Hubungkan platform favoritmu dan tampilkan karya langsung di portofolio.</p>
         </motion.div>
 
         {/* Sections */}
@@ -79,12 +85,12 @@ export default function IntegrationsPage() {
             {/* ── GITHUB ── */}
             <section className="space-y-6 relative z-30">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-white shadow-lg">
-                  <i className="fab fa-github text-xl"></i>
+                <div className="w-10 h-10 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-[#ff9e00]">
+                  <GithubIcon className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-zinc-900 tracking-tight">GitHub Repository</h3>
-                  <p className="text-xs text-zinc-500 font-medium">Sync your repositories and contribution stats.</p>
+                  <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">GitHub Repository</h3>
+                  <p className="text-[10px] text-white/40 font-mono">Sync your repositories and contribution stats.</p>
                 </div>
               </div>
               <GitHubManager />
@@ -94,16 +100,16 @@ export default function IntegrationsPage() {
             <section className="space-y-6 relative z-30">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-white shadow-lg">
+                  <div className="w-10 h-10 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-[#ff9e00]">
                     <PenpotIcon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-zinc-900 tracking-tight">Penpot Integration</h3>
-                    <p className="text-xs text-zinc-500 font-medium">Showcase your design prototypes via public links.</p>
+                    <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Penpot Integration</h3>
+                    <p className="text-[10px] text-white/40 font-mono">Showcase your design prototypes via public links.</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-1 rounded-md bg-zinc-100 text-zinc-500 text-[9px] font-bold uppercase tracking-wider border border-zinc-200">
+                  <span className="px-2.5 py-1 rounded-none bg-[#ff9e00]/10 border border-[#ff9e00]/30 text-[#ff9e00] text-[9px] font-mono font-bold uppercase tracking-wider">
                     Manual Mode
                   </span>
                 </div>
@@ -115,16 +121,16 @@ export default function IntegrationsPage() {
             <section className="space-y-6 relative z-30">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-white shadow-lg">
-                    <i className="fas fa-layer-group text-lg"></i>
+                  <div className="w-10 h-10 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-[#ff9e00]">
+                    <Layers className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-zinc-900 tracking-tight">Canva Showcase</h3>
-                    <p className="text-xs text-zinc-500 font-medium">Embed your Canva presentations and designs.</p>
+                    <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Canva Showcase</h3>
+                    <p className="text-[10px] text-white/40 font-mono">Embed your Canva presentations and designs.</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-1 rounded-md bg-zinc-100 text-zinc-600 text-[9px] font-bold uppercase tracking-wider border border-zinc-200">
+                  <span className="px-2.5 py-1 rounded-none bg-[#ff9e00]/10 border border-[#ff9e00]/30 text-[#ff9e00] text-[9px] font-mono font-bold uppercase tracking-wider">
                     Manual Mode
                   </span>
                 </div>
@@ -133,13 +139,13 @@ export default function IntegrationsPage() {
             </section>
 
             {/* ── More Coming Soon ── */}
-            <div className="rounded-[2rem] border border-dashed border-zinc-200 bg-zinc-50/30 p-8 flex items-center gap-6">
-              <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-400">
-                <i className="fas fa-plus text-xl"></i>
+            <div className="rounded-none border border-dashed border-white/10 bg-[#050505] p-8 flex items-center gap-6">
+              <div className="w-12 h-12 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-white/30">
+                <Plus className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-base font-bold text-zinc-800 tracking-tight">More connected works coming soon</p>
-                <p className="text-sm text-zinc-400 mt-0.5 font-medium leading-relaxed">Figma, Behance, Dribbble, dan lainnya sedang dalam pengembangan.</p>
+                <p className="text-sm font-mono font-bold text-white uppercase tracking-wider">More connected works coming soon</p>
+                <p className="text-xs text-white/40 mt-1.5 font-mono leading-relaxed">Figma, Behance, Dribbble, dan lainnya sedang dalam pengembangan.</p>
               </div>
             </div>
 

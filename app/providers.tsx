@@ -7,6 +7,7 @@ import { Toaster, resolveValue, toast } from 'react-hot-toast';
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { SystemErrorUI } from "@/components/errors/SystemErrorUI";
+import { Check, X, Loader2, AlertTriangle, Info } from 'lucide-react';
 
 const globalFetcher = (url: string) =>
   fetch(url, { cache: 'no-store' }).then((res) => {
@@ -55,68 +56,62 @@ export function Providers({ children }: { children: React.ReactNode }) {
           const message = resolveValue(t.message, t) as React.ReactNode;
           
           let title = "Info";
-          let iconClass = "fa-info";
-          let bgClass = "bg-[#eff6ff]";
-          let borderClass = "border-blue-400";
-          let iconBgClass = "bg-blue-500 text-white";
+          let IconComponent = Info;
+          let borderClass = "border-white/10";
+          let iconBgClass = "bg-white/5 text-white/70 border border-white/10";
           
           if (t.type === 'success') {
             title = "Berhasil!";
-            iconClass = "fa-check";
-            bgClass = "bg-[#f0fdf4]";
-            borderClass = "border-green-400";
-            iconBgClass = "bg-green-500 text-white";
+            IconComponent = Check;
+            borderClass = "border-emerald-500/30";
+            iconBgClass = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25";
           } else if (t.type === 'error') {
-            title = "Terjadi Kesalahan!";
-            iconClass = "fa-times";
-            bgClass = "bg-[#fef2f2]";
-            borderClass = "border-red-400";
-            iconBgClass = "bg-red-500 text-white";
+            title = "Kesalahan!";
+            IconComponent = X;
+            borderClass = "border-rose-500/30";
+            iconBgClass = "bg-rose-500/10 text-rose-400 border border-rose-500/25";
           } else if (t.type === 'loading') {
             title = "Memproses...";
-            iconClass = "fa-circle-notch animate-spin";
-            bgClass = "bg-slate-50";
-            borderClass = "border-slate-300";
-            iconBgClass = "bg-slate-500 text-white";
+            IconComponent = Loader2;
+            borderClass = "border-white/10";
+            iconBgClass = "bg-white/5 text-white/40 border border-white/10";
           } else if (t.className === 'warning') {
             title = "Peringatan!";
-            iconClass = "fa-exclamation";
-            bgClass = "bg-[#fffbeb]";
-            borderClass = "border-amber-400";
-            iconBgClass = "bg-amber-500 text-white";
+            IconComponent = AlertTriangle;
+            borderClass = "border-[#ff9e00]/30";
+            iconBgClass = "bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/25";
           }
 
           const renderIcon = () => {
             if (typeof t.icon === 'string') {
-              if (t.icon.includes('fa-')) {
-                const faClass = t.icon.match(/^(fas|far|fab)\b/) ? t.icon : `fas ${t.icon}`;
-                return <i className={`${faClass} text-[11px]`}></i>;
-              }
-              return <span className="text-[13px] leading-none flex items-center justify-center">{t.icon}</span>;
+              return <span className="text-[11px] font-mono font-bold leading-none">{t.icon}</span>;
             }
-            return <i className={`fas ${iconClass} text-[11px]`}></i>;
+            if (t.type === 'loading') {
+              return <IconComponent className="w-3.5 h-3.5 animate-spin" />;
+            }
+            return <IconComponent className="w-3.5 h-3.5" />;
           };
 
           return (
             <div 
-              className={`transition-all duration-300 ease-out flex items-start gap-2.5 w-[290px] md:w-[340px] max-w-full p-2.5 rounded-xl border ${bgClass} ${borderClass} shadow-[0_12px_40px_rgba(0,0,0,0.08)] backdrop-blur-md pointer-events-auto origin-top
+              className={`transition-all duration-300 ease-out flex items-start gap-3 w-[290px] md:w-[340px] max-w-full p-3 bg-zinc-950/95 border ${borderClass} rounded-none shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-md pointer-events-auto origin-top font-mono
               ${t.visible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-6 scale-95'}`}
             >
-              <div className={`transition-colors duration-300 w-7 h-7 rounded-full flex shrink-0 items-center justify-center ${iconBgClass}`}>
+              <div className={`transition-colors duration-300 w-7 h-7 rounded-none flex shrink-0 items-center justify-center ${iconBgClass}`}>
                 {renderIcon()}
               </div>
               
-              <div className="flex flex-col flex-1 mt-[3px]">
-                <p className="text-[13px] font-bold text-slate-900 leading-tight mb-0.5">{title}</p>
-                <p className="text-[11px] text-slate-600 font-medium leading-snug">{message}</p>
+              <div className="flex flex-col flex-1 mt-[2px]">
+                <p className="text-[11px] font-bold text-white uppercase tracking-wider leading-none mb-1">{title}</p>
+                <p className="text-[10px] text-white/50 leading-relaxed font-mono">{message}</p>
               </div>
               
               {t.type !== 'loading' && (
                 <button 
                   onClick={() => toast.dismiss(t.id)}
-                  className="w-6 h-6 rounded-full flex shrink-0 items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 active:scale-90 transition-all"
+                  className="w-7 h-7 rounded-none border border-transparent hover:border-white/10 flex shrink-0 items-center justify-center text-white/40 hover:text-white hover:bg-white/5 active:scale-95 transition-all"
                 >
-                  <i className="fas fa-times text-[10px]"></i>
+                  <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>

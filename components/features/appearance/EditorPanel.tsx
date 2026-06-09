@@ -1,3 +1,4 @@
+//components/features/appearance/EditorPanel.tsx
 "use client";
 
 import React, { useEffect } from 'react';
@@ -7,28 +8,35 @@ import { ProUpgradeModal } from '@/components/ProUpgradeModal';
 import { DraftManagerModal } from './DraftManagerModal';
 import { SaveDraftModal } from './SaveDraftModal';
 import { THEMES_DATA } from '@/lib/themes';
+import { 
+  Layout, Film, Bolt, Grid, Star, Layers, Box, Move, 
+  Columns, Newspaper, Moon, Waves, Square, Video, Image, Gem, 
+  ArrowLeft, Save, Loader2, Rocket, FileText, ChevronLeft, ChevronRight, 
+  Sparkles, FolderOpen, AlertTriangle, Play, MoveVertical, Undo2, Redo2, 
+  ExternalLink, Sliders, Monitor, Smartphone, X, Check
+} from 'lucide-react';
 
 import { ColorPicker, FontPicker, CardStylePicker, ButtonShapePicker } from '@/components/editor-controls/SharedControls';
 
-const THEME_ICONS: Record<string, string> = {
-  'minimalist': 'fa-align-left',
-  'cinematic': 'fa-film',
-  'acid': 'fa-bolt',
-  'bentogrid': 'fa-th-large',
-  'spatial': 'fa-star',
-  'monolith': 'fa-cubes',
-  'layered-monolith': 'fa-cubes',
-  'kinetic-avant-garde': 'fa-bolt',
-  'split': 'fa-columns',
-  'editorial': 'fa-newspaper',
-  'midnight-emulsion': 'fa-moon',
-  'aura-kinetic': 'fa-water',
-  'absolute-noir': 'fa-square',
-  'obsidian-reel': 'fa-video',
-  'split-screen-studio': 'fa-columns',
-  'cinematic-gallery': 'fa-images',
-  'horizontal-flow': 'fa-water',
-  'nexus-noir': 'fa-gem'
+const THEME_ICONS: Record<string, React.ComponentType<any>> = {
+  'minimalist': Layout,
+  'cinematic': Film,
+  'acid': Bolt,
+  'bentogrid': Grid,
+  'spatial': Star,
+  'monolith': Layers,
+  'layered-monolith': Layers,
+  'kinetic-avant-garde': Move,
+  'split': Columns,
+  'editorial': Newspaper,
+  'midnight-emulsion': Moon,
+  'aura-kinetic': Waves,
+  'absolute-noir': Square,
+  'obsidian-reel': Video,
+  'split-screen-studio': Columns,
+  'cinematic-gallery': Image,
+  'horizontal-flow': Waves,
+  'nexus-noir': Gem
 };
 
 export function EditorPanel({ state, actions }: { state: any, actions: any }) {
@@ -88,7 +96,6 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
   };
 
   const subdomain = stateSubdomain || livePreviewData?.subdomain;
-
   const userPlan = livePreviewData?.plan || 'FREE';
 
   const {
@@ -108,25 +115,25 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     publishDesign,
     loadDraft,
     toggleFavorite,
-    updateCustomText,
-    setPageBlocks
+    updateCustomText
   } = actions;
 
-  // Logika Anti-Spam & Status Tombol
   const isCurrentlyLive = activeDraftId ? activeDraftId === publishedDraftId : publishedDraftId === null;
   const canPublish = isDirty || !isCurrentlyLive || hasUnpublishedChanges;
-  // Cegah pengguna keluar/refresh jika ada perubahan yang belum disimpan
+
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isDirty) {
         e.preventDefault();
-        e.returnValue = ''; // Memicu prompt bawaan browser
+        e.returnValue = '';
       }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isDirty]);
+
+  const ActiveThemeIcon = THEME_ICONS[activeTheme] || Box;
 
   return (
     <>
@@ -184,8 +191,8 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
       {/* MOBILE FLOATING DOCK (Live Canvas First) */}
       <div className={`
         glass-noise lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] 
-        bg-slate-900/95 backdrop-blur-md text-white rounded-full px-5 py-2 
-        flex items-center gap-6 shadow-[0_10px_40px_rgba(0,0,0,0.3)] border border-slate-800
+        bg-zinc-900/95 backdrop-blur-md text-white rounded-none px-5 py-2 
+        flex items-center gap-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border border-white/10
         transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
         ${isMobileDrawerOpen ? 'translate-y-32 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}
       `}>
@@ -197,56 +204,56 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
           disabled={isSavingDraft || isPublishing || (activeDraftId ? !isDirty : false)}
           className={`flex flex-col items-center justify-center w-16 gap-1 transition-opacity ${activeDraftId && !isDirty ? 'opacity-30' : 'opacity-80 hover:opacity-100'}`}
         >
-          {isSavingDraft ? <i className="fas fa-spinner animate-spin text-[14px]"></i> : <i className="fas fa-save text-[14px]"></i>}
-          <span className="text-[7px] font-bold tracking-widest uppercase">Save</span>
+          {isSavingDraft ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+          <span className="text-[7px] font-mono font-bold tracking-widest uppercase">Save</span>
         </button>
 
         <div className="flex flex-col items-center justify-center -mt-[3.75rem]">
-          <div className="glass-noise bg-slate-900/90 backdrop-blur-md p-1 rounded-full border border-white/10 flex items-center mb-2 shadow-xl relative z-10">
+          <div className="glass-noise bg-zinc-900/90 backdrop-blur-md p-1 rounded-none border border-white/10 flex items-center mb-2 shadow-xl relative z-10">
             <button
               onClick={() => actions.setPreviewMode('desktop')}
-              className={`px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all flex items-center gap-1.5 ${state.previewMode === 'desktop' ? 'bg-white text-slate-900 shadow-sm' : 'text-white/50 hover:text-white hover:bg-white/10'}`}
+              className={`px-3 py-1.5 rounded-none text-[9px] font-mono font-bold uppercase tracking-widest transition-all flex items-center gap-1.5 ${state.previewMode === 'desktop' ? 'bg-[#ff9e00] text-black shadow-sm' : 'text-white/50 hover:text-white hover:bg-white/10'}`}
             >
-              <i className="fas fa-desktop text-[11px]"></i>
+              <Monitor className="w-3 h-3" />
             </button>
             <button
               onClick={() => actions.setPreviewMode('mobile')}
-              className={`px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all flex items-center gap-1.5 ${state.previewMode === 'mobile' ? 'bg-white text-slate-900 shadow-sm' : 'text-white/50 hover:text-white hover:bg-white/10'}`}
+              className={`px-3 py-1.5 rounded-none text-[9px] font-mono font-bold uppercase tracking-widest transition-all flex items-center gap-1.5 ${state.previewMode === 'mobile' ? 'bg-[#ff9e00] text-black shadow-sm' : 'text-white/50 hover:text-white hover:bg-white/10'}`}
             >
-              <i className="fas fa-mobile-alt text-[11px]"></i>
+              <Smartphone className="w-3 h-3" />
             </button>
           </div>
           <button 
             onClick={() => setIsMobileDrawerOpen(true)} 
-            className="flex flex-col items-center justify-center w-12 h-12 bg-white text-slate-900 rounded-full border-[4px] border-[#F8FAFC] shadow-lg hover:scale-105 transition-transform z-20 relative"
+            className="flex flex-col items-center justify-center w-12 h-12 bg-[#ff9e00] text-black rounded-none border-[4px] border-zinc-950 shadow-lg hover:scale-105 transition-transform z-20 relative"
           >
-            <i className="fas fa-sliders-h text-lg"></i>
+            <Sliders className="w-5 h-5" />
           </button>
         </div>
 
         <button 
           onClick={publishDesign} 
           disabled={!canPublish || isPublishing}
-          className={`flex flex-col items-center justify-center w-16 gap-1 transition-opacity ${canPublish ? 'text-emerald-400 hover:text-emerald-300' : 'text-slate-600'}`}
+          className={`flex flex-col items-center justify-center w-16 gap-1 transition-opacity ${canPublish ? 'text-emerald-400 hover:text-emerald-300' : 'text-zinc-600'}`}
         >
-          {isPublishing ? <i className="fas fa-spinner animate-spin text-[14px]"></i> : <i className="fas fa-rocket text-[14px]"></i>}
-          <span className="text-[7px] font-bold tracking-widest uppercase">Publish</span>
+          {isPublishing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Rocket className="w-3.5 h-3.5" />}
+          <span className="text-[7px] font-mono font-bold tracking-widest uppercase">Publish</span>
         </button>
       </div>
 
-      {/* MOBILE BACKDROP UNTUK MENUTUP SETTINGS KETIKA DIKLIK DI LUAR */}
+      {/* MOBILE BACKDROP */}
       <div 
-        className={`lg:hidden fixed inset-0 bg-black/40 z-[95] transition-opacity duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${isMobileDrawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        className={`lg:hidden fixed inset-0 bg-black/60 z-[95] transition-opacity duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${isMobileDrawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setIsMobileDrawerOpen(false)}
       />
 
-      {/* KONTROL EDITOR UTAMA (Sidebar di Desktop, Bottom Sheet di Mobile) */}
+      {/* KONTROL EDITOR UTAMA */}
       <div 
         className={`
-          glass-noise flex flex-col z-[100] bg-white 
+          glass-noise flex flex-col z-[100] bg-zinc-950 text-white
           ${isDragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'}
-          lg:relative lg:h-full lg:shrink-0 lg:border-r lg:border-neutral-200/70 lg:rounded-none lg:shadow-none lg:translate-y-0 lg:max-h-full
-          fixed left-0 right-0 bottom-0 rounded-t-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.15)] max-h-[85vh]
+          lg:relative lg:h-full lg:shrink-0 lg:border-r lg:border-white/10 lg:rounded-none lg:shadow-none lg:translate-y-0 lg:max-h-full
+          fixed left-0 right-0 bottom-0 rounded-t-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.5)] max-h-[85vh] border-t border-white/10 lg:border-t-0
           ${isEditorCollapsed ? 'lg:w-0 lg:opacity-0 lg:pointer-events-none' : 'lg:w-[420px] xl:w-[460px] lg:opacity-100'}
           ${isMobileDrawerOpen && !dragY ? 'translate-y-0' : dragY ? '' : 'translate-y-full'}
         `}
@@ -254,17 +261,17 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
       >
         {/* Mobile Drag Handle */}
         <div 
-          className="lg:hidden w-full flex justify-center pt-4 pb-2 cursor-pointer active:bg-neutral-50 rounded-t-3xl transition-colors" 
+          className="lg:hidden w-full flex justify-center pt-4 pb-2 cursor-pointer active:bg-zinc-900 rounded-t-3xl transition-colors" 
           onClick={() => setIsMobileDrawerOpen(false)}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="w-12 h-1.5 bg-neutral-200 rounded-full"></div>
+          <div className="w-12 h-1.5 bg-zinc-800 rounded-full"></div>
         </div>
 
         {/* Header Panel Editor */}
-        <div className="p-4 lg:p-6 border-b border-neutral-200/50 sticky top-0 z-20 shrink-0 bg-white/95 backdrop-blur-md">
+        <div className="p-4 lg:p-6 border-b border-white/5 sticky top-0 z-20 shrink-0 bg-zinc-950/95 backdrop-blur-md">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
             <div className="flex items-center gap-4 w-full">
               <Link 
@@ -276,26 +283,26 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                     }
                   }
                 }}
-                className="w-8 h-8 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-all duration-200 shrink-0" 
+                className="w-8 h-8 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-white/50 hover:text-[#ff9e00] hover:bg-zinc-850 transition-all duration-200 shrink-0" 
                 title="Kembali ke Dashboard"
               >
-                <i className="fas fa-arrow-left text-[10px]"></i>
+                <ArrowLeft className="w-3.5 h-3.5" />
               </Link>
               <div className="flex flex-col flex-1">
                 <div className="flex items-center gap-2">
-                  <h1 className="text-lg font-semibold text-neutral-900 tracking-tight leading-none">
+                  <h1 className="text-sm font-mono font-bold text-white uppercase tracking-wider leading-none">
                     Desain Visual
                   </h1>
                 </div>
-                <p className="text-[10px] text-neutral-500 font-medium mt-1 uppercase tracking-widest">
+                <p className="text-[9px] text-white/40 font-mono font-bold mt-1 uppercase tracking-widest">
                   Pengaturan Tampilan
                 </p>
               </div>
               <button 
                 onClick={() => setIsMobileDrawerOpen(false)} 
-                className="lg:hidden w-8 h-8 flex items-center justify-center bg-neutral-100 text-neutral-500 rounded-full shrink-0"
+                className="lg:hidden w-8 h-8 flex items-center justify-center bg-zinc-900 text-white/50 rounded-none shrink-0"
               >
-                <i className="fas fa-times text-sm"></i>
+                <X className="w-4 h-4" />
               </button>
             </div>
 
@@ -310,13 +317,13 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                 }}
                 disabled={isSavingDraft || isPublishing || (activeDraftId ? !isDirty : false)}
                 title={activeDraftId && !isDirty ? "Belum ada perubahan untuk disimpan" : undefined}
-                className={`flex-1 sm:flex-none justify-center px-4 py-2 rounded-full text-[11px] font-semibold tracking-wide transition-all duration-200 flex items-center gap-2 shrink-0 ${
+                className={`flex-1 sm:flex-none justify-center px-4 py-2 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-200 flex items-center gap-2 shrink-0 ${
                   activeDraftId && !isDirty 
-                    ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed opacity-50' 
-                    : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
+                    ? 'bg-zinc-900 border border-white/5 text-white/20 cursor-not-allowed opacity-40' 
+                    : 'bg-zinc-900 border border-white/10 hover:bg-zinc-800 text-white/80 hover:text-white'
                 } disabled:opacity-50`}
               >
-                {isSavingDraft ? <i className="fas fa-spinner animate-spin"></i> : <i className="fas fa-save"></i>}
+                {isSavingDraft ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                 <span className="truncate">{activeDraftId ? 'Simpan' : 'Draft'}</span>
               </button>
 
@@ -324,9 +331,13 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                 onClick={publishDesign}
                 disabled={isSavingDraft || isPublishing || !canPublish}
                 title={!canPublish ? "Desain ini sudah tayang di web" : "Publish ke Web"}
-                className={`flex-1 sm:flex-none justify-center px-5 py-2 rounded-full text-[11px] font-semibold tracking-wide transition-all duration-200 flex items-center gap-2 shrink-0 ${canPublish ? 'bg-neutral-900 hover:bg-black text-white' : 'bg-neutral-200 text-neutral-400 cursor-not-allowed'}`}
+                className={`flex-1 sm:flex-none justify-center px-5 py-2 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-200 flex items-center gap-2 shrink-0 ${
+                  canPublish 
+                    ? 'bg-[#ff9e00] hover:bg-[#ffaa22] text-black' 
+                    : 'bg-zinc-900 border border-white/5 text-white/20 cursor-not-allowed'
+                }`}
               >
-                {isPublishing ? <i className="fas fa-spinner animate-spin"></i> : <i className="fas fa-rocket"></i>}
+                {isPublishing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Rocket className="w-3.5 h-3.5" />}
                 <span>Publish</span>
               </button>
             </div>
@@ -335,22 +346,22 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
         {/* Indikator Draft Aktif */}
         {activeDraftName && (
-          <div className="px-6 py-2.5 bg-amber-50 border-b border-amber-200/50 flex items-center justify-between shrink-0">
+          <div className="px-6 py-2.5 bg-amber-950/20 border-b border-[#ff9e00]/20 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
-              <i className="fas fa-file-alt text-amber-500 text-[10px]"></i>
-              <span className="text-[11px] font-bold text-amber-700 tracking-tight">
+              <FileText className="w-3.5 h-3.5 text-[#ff9e00]" />
+              <span className="text-[10px] font-mono font-bold text-[#ff9e00] tracking-wider uppercase">
                 Draft: {activeDraftName}
               </span>
               {publishedDraftId === activeDraftId && !hasUnpublishedChanges && (
-                <span className="text-[8px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 uppercase tracking-widest font-black">LIVE</span>
+                <span className="text-[8px] px-1.5 py-0.5 rounded-none bg-emerald-950/20 text-emerald-400 border border-emerald-500/20 uppercase tracking-widest font-black">LIVE</span>
               )}
               {publishedDraftId === activeDraftId && hasUnpublishedChanges && (
-                <span className="text-[8px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 uppercase tracking-widest font-black">PERLU PUBLISH</span>
+                <span className="text-[8px] px-1.5 py-0.5 rounded-none bg-amber-950/20 text-[#ff9e00] border border-[#ff9e00]/20 uppercase tracking-widest font-black">PERLU PUBLISH</span>
               )}
             </div>
             <button
               onClick={actions.exitDraft}
-              className="text-[10px] font-medium text-amber-500 hover:text-amber-700 transition-colors"
+              className="text-[10px] font-mono font-bold text-white/40 hover:text-white transition-colors uppercase"
             >
               Keluar Draft
             </button>
@@ -359,8 +370,12 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
         {/* Tombol Collapse Panel Editor */}
         <div className="absolute top-1/2 -right-[14px] -translate-y-1/2 z-[100] hidden lg:flex">
-          <button onClick={() => setIsEditorCollapsed(true)} className="w-7 h-14 bg-white border border-neutral-200 shadow-sm rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-900 transition-all duration-200 hover:shadow-md" title="Sembunyikan Panel Editor">
-            <i className="fas fa-chevron-left text-[10px]"></i>
+          <button 
+            onClick={() => setIsEditorCollapsed(true)} 
+            className="w-7 h-14 bg-zinc-950 border border-white/10 shadow-sm rounded-r-full flex items-center justify-center text-white/40 hover:text-white transition-all duration-200" 
+            title="Sembunyikan Panel Editor"
+          >
+            <ChevronLeft className="w-4 h-4" />
           </button>
         </div>
 
@@ -368,52 +383,52 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 pb-32 relative z-10">
 
           {/* SECTION: TEMA AKTIF */}
-          <div className="mb-12">
+          <div className="mb-12 animate-in fade-in duration-500">
             <div className="flex items-center justify-between mb-4">
               <div className="flex flex-col">
-                <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500">Basis Tema</h3>
+                <h3 className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Basis Tema</h3>
                 {isCurrentlyLive && !isDirty && !hasUnpublishedChanges && (
-                   <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-1 uppercase tracking-widest animate-pulse">
-                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Sedang Live
+                   <span className="text-[9px] font-mono font-bold text-emerald-400 flex items-center gap-1 mt-1.5 uppercase tracking-widest">
+                     <span className="w-1.5 h-1.5 bg-emerald-400 rounded-none animate-pulse"></span> Sedang Live
                    </span>
                 )}
                 {isCurrentlyLive && !isDirty && hasUnpublishedChanges && (
-                   <span className="text-[9px] font-bold text-amber-500 flex items-center gap-1 mt-1 uppercase tracking-widest animate-pulse">
-                     <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div> Perubahan Belum Tayang
+                   <span className="text-[9px] font-mono font-bold text-[#ff9e00] flex items-center gap-1 mt-1.5 uppercase tracking-widest">
+                     <span className="w-1.5 h-1.5 bg-[#ff9e00] rounded-none animate-pulse"></span> Perubahan Belum Tayang
                    </span>
                 )}
                 {isDirty && (
-                   <span className="text-[9px] font-bold text-blue-500 flex items-center gap-1 mt-1 uppercase tracking-widest animate-pulse">
-                     <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div> Terdapat Perubahan
+                   <span className="text-[9px] font-mono font-bold text-sky-400 flex items-center gap-1 mt-1.5 uppercase tracking-widest">
+                     <span className="w-1.5 h-1.5 bg-sky-400 rounded-none animate-pulse"></span> Terdapat Perubahan
                    </span>
                 )}
               </div>
               {!isLoading && (
                 <button
                   onClick={() => setIsThemeModalOpen(true)}
-                  className="text-[10px] font-medium text-neutral-500 hover:text-neutral-900 transition-colors uppercase tracking-widest flex items-center gap-1"
+                  className="text-[10px] font-mono font-bold text-white/40 hover:text-[#ff9e00] transition-colors uppercase tracking-widest flex items-center gap-1"
                 >
-                  Ganti <i className="fas fa-chevron-right text-[8px]"></i>
+                  Ganti <ChevronRight className="w-3 h-3" />
                 </button>
               )}
             </div>
 
             {isLoading ? (
-              <div className="p-5 rounded-2xl border border-neutral-100 bg-neutral-50 animate-pulse h-20"></div>
+              <div className="p-5 rounded-none border border-white/5 bg-zinc-900/40 animate-pulse h-20"></div>
             ) : (
               <div 
-                className="group cursor-pointer p-4 rounded-2xl border border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-sm transition-all flex items-center justify-between"
+                className="group cursor-pointer p-4 rounded-none border border-white/10 bg-zinc-900/40 hover:border-[#ff9e00] transition-all flex items-center justify-between"
                 onClick={() => setIsThemeModalOpen(true)}
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center text-white transition-transform group-hover:scale-105">
-                    <i className={`fas ${THEME_ICONS[activeTheme] || 'fa-cube'} text-sm`}></i>
+                  <div className="w-10 h-10 rounded-none bg-zinc-950 border border-white/10 flex items-center justify-center text-white transition-transform group-hover:scale-105">
+                    <ActiveThemeIcon className="w-5 h-5 text-white/70" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-semibold text-neutral-900 text-sm tracking-tight">
+                    <span className="font-mono font-bold text-white text-xs uppercase">
                       {THEMES_DATA.find(t => t.id === activeTheme)?.name || 'Neo Brutalism'}
                     </span>
-                    <span className="text-[10px] text-neutral-400 font-medium mt-0.5">
+                    <span className="text-[9px] font-mono text-white/40 font-medium mt-0.5 uppercase tracking-wider">
                       Sedang Digunakan
                     </span>
                   </div>
@@ -425,21 +440,21 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               <div className="flex w-full gap-3 mt-3">
                 <button
                   onClick={actions.resetToThemePreset}
-                  className="flex-1 px-2 py-3 rounded-xl border border-neutral-200/60 bg-gradient-to-b from-white to-neutral-50 hover:from-neutral-50 hover:to-neutral-100 hover:border-neutral-300 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-neutral-600 hover:text-neutral-900 shadow-sm group"
+                  className="flex-1 px-2 py-3 rounded-none border border-white/10 bg-zinc-950 hover:bg-zinc-900 text-white/60 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-none group"
                   title="Reset susunan blok ke setelan pabrik (segar)"
                 >
-                  <i className="fas fa-magic text-[10px] text-[#ff9e00] group-hover:scale-110 transition-transform"></i>
-                  <span className="text-[10px] font-bold tracking-wide">Reset Tema</span>
+                  <Sparkles className="w-3.5 h-3.5 text-[#ff9e00] group-hover:scale-110 transition-transform" />
+                  <span className="text-[10px] font-mono font-bold tracking-wider uppercase">Reset Tema</span>
                 </button>
 
                 <button
                   onClick={() => setIsDraftsModalOpen(true)}
-                  className="flex-1 px-2 py-3 rounded-xl border border-dashed border-neutral-300/80 bg-neutral-50/50 hover:bg-neutral-100 hover:border-neutral-400 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group hover:shadow-sm"
+                  className="flex-1 px-2 py-3 rounded-none border border-dashed border-white/10 bg-zinc-950 hover:bg-zinc-900 hover:border-white/20 transition-all duration-300 flex items-center justify-center gap-2 group shadow-none"
                   title="Buka panel manajemen draft"
                 >
-                  <i className="fas fa-folder-open text-blue-500/80 group-hover:scale-110 text-[10px] transition-transform"></i>
-                  <span className="text-[10px] font-bold text-neutral-600 group-hover:text-neutral-800 tracking-wide transition-colors">
-                    Drafts {drafts.length > 0 ? <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md ml-0.5 border border-blue-200">{drafts.length}</span> : ''}
+                  <FolderOpen className="w-3.5 h-3.5 text-sky-400 group-hover:scale-110 transition-transform" />
+                  <span className="text-[10px] font-mono font-bold text-white/60 group-hover:text-white tracking-wider uppercase">
+                    Drafts {drafts.length > 0 ? <span className="bg-zinc-900 border border-white/10 text-[#ff9e00] px-1.5 py-0.5 rounded-none ml-1">{drafts.length}</span> : ''}
                   </span>
                 </button>
               </div>
@@ -448,33 +463,33 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
           {/* DIVIDER */}
           <div className="flex items-center justify-center mb-10 opacity-70 relative">
-            <div className="w-full h-px bg-neutral-200"></div>
-            <div className="absolute bg-white px-3 text-[9px] font-semibold text-neutral-400 uppercase tracking-widest">Kustomisasi Lanjutan</div>
+            <div className="w-full h-px bg-white/5"></div>
+            <div className="absolute bg-zinc-950 px-3 text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest">Kustomisasi Lanjutan</div>
           </div>
 
-          {/* KONTROL DINAMIS (TERSTANDARISASI) */}
+          {/* KONTROL DINAMIS */}
           <div className="mb-10">
             {activeTheme === 'absolute-noir' && (
-              <div className="p-4 mb-8 border border-neutral-200 bg-neutral-50 rounded-2xl flex items-start gap-3 animate-in fade-in duration-500">
-                <i className="fas fa-exclamation-triangle mt-1 text-neutral-400"></i>
+              <div className="p-4 mb-8 border border-white/10 bg-zinc-900/40 rounded-none flex items-start gap-3 animate-in fade-in duration-500">
+                <AlertTriangle className="text-white/40 mt-0.5 w-5 h-5 shrink-0" />
                 <div>
-                  <h4 className="font-bold text-xs uppercase tracking-widest text-neutral-800 mb-1">Strict Mode Active</h4>
-                  <p className="text-xs text-neutral-500 leading-relaxed">
+                  <h4 className="font-mono font-bold text-xs uppercase tracking-widest text-white mb-1">Strict Mode Active</h4>
+                  <p className="text-[11px] font-mono text-white/40 leading-relaxed">
                     Absolute Noir menerapkan desain grayscale brutalist murni. Palet warna, bayangan, dan bentuk elemen dikunci untuk mempertahankan estetika khasnya.
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Warna: Tersedia di semua tema kecuali Absolute Noir */}
+            {/* Warna */}
             {activeTheme !== 'absolute-noir' && (
               <ColorPicker themeColor={themeColor} setThemeColor={setThemeColor} />
             )}
 
-            {/* Font: Tersedia di semua tema */}
+            {/* Font */}
             <FontPicker fontHeading={fontHeading} setFontHeading={setFontHeading} setFontBody={setFontBody} />
 
-            {/* Kartu & Tombol: Tersedia di semua tema kecuali Absolute Noir */}
+            {/* Kartu & Tombol */}
             {activeTheme !== 'absolute-noir' && (
               <>
                 <CardStylePicker cardStyle={cardStyle} setCardStyle={setCardStyle} />
@@ -485,59 +500,59 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
 
           {/* TOGGLE SPLASH SCREEN */}
           {isLoading ? (
-            <div className="border border-neutral-100 rounded-2xl p-5 h-20 animate-pulse mb-6"></div>
+            <div className="border border-white/5 rounded-none p-5 h-20 animate-pulse mb-6"></div>
           ) : (
             <div 
-              className="cursor-pointer border border-neutral-200 rounded-2xl p-5 mb-6 transition-all duration-200 hover:border-neutral-300 hover:shadow-sm bg-white flex items-center justify-between"
+              className="cursor-pointer border border-white/10 rounded-none p-5 mb-6 transition-all duration-200 hover:border-white/20 bg-zinc-900/20 flex items-center justify-between"
               onClick={() => setSplashScreen(!splashScreen)}
             >
               <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${splashScreen ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-400'}`}>
-                  <i className="fas fa-play text-[10px] ml-0.5"></i>
+                <div className={`w-10 h-10 rounded-none flex items-center justify-center shrink-0 transition-colors ${splashScreen ? 'bg-[#ff9e00] text-black' : 'bg-zinc-950 border border-white/10 text-white/40'}`}>
+                  <Play className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold tracking-tight text-neutral-900 flex items-center gap-2">
+                  <h3 className="text-xs font-mono font-bold tracking-wider text-white uppercase flex items-center gap-2">
                     Cinematic Intro
-                    <span className="bg-neutral-100 border border-neutral-200 text-neutral-600 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">
+                    <span className="bg-zinc-900 border border-white/10 text-[#ff9e00] text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-none uppercase tracking-widest">
                       PRO
                     </span>
                   </h3>
-                  <p className="text-[11px] text-neutral-500 mt-0.5">Animasi pembuka portofolio.</p>
+                  <p className="text-[11px] font-mono text-white/40 mt-1">Animasi pembuka portofolio.</p>
                 </div>
               </div>
               
               {/* Minimalist Switch */}
-              <button className={`w-10 h-5 rounded-full relative transition-colors duration-300 shrink-0 outline-none ${splashScreen ? 'bg-neutral-900' : 'bg-neutral-200'}`}>
-                <div className={`w-4 h-4 rounded-full bg-white absolute top-[2px] transition-transform duration-300 shadow-sm ${splashScreen ? 'translate-x-[22px]' : 'translate-x-[2px]'}`}></div>
+              <button className={`w-10 h-5 rounded-none relative transition-colors duration-300 shrink-0 outline-none ${splashScreen ? 'bg-[#ff9e00]' : 'bg-zinc-950 border border-white/10'}`}>
+                <div className={`w-4 h-4 rounded-none absolute top-[2px] transition-transform duration-300 shadow-sm ${splashScreen ? 'bg-black translate-x-[22px]' : 'bg-white/20 translate-x-[2px]'}`}></div>
               </button>
             </div>
           )}
 
-          {/* TOGGLE SMOOTH SCROLL (LENIS) */}
+          {/* TOGGLE SMOOTH SCROLL */}
           {isLoading ? (
-            <div className="border border-neutral-100 rounded-2xl p-5 h-20 animate-pulse mb-6"></div>
+            <div className="border border-white/5 rounded-none p-5 h-20 animate-pulse mb-6"></div>
           ) : (
             <div 
-              className="cursor-pointer border border-neutral-200 rounded-2xl p-5 mb-6 transition-all duration-200 hover:border-neutral-300 hover:shadow-sm bg-white flex items-center justify-between"
+              className="cursor-pointer border border-white/10 rounded-none p-5 mb-6 transition-all duration-200 hover:border-white/20 bg-zinc-900/20 flex items-center justify-between"
               onClick={() => updateCustomText('smooth_scroll', state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'false' : 'true')}
             >
               <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-400'}`}>
-                  <i className="fas fa-arrows-alt-v text-[12px]"></i>
+                <div className={`w-10 h-10 rounded-none flex items-center justify-center shrink-0 transition-colors ${state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'bg-[#ff9e00] text-black' : 'bg-zinc-950 border border-white/10 text-white/40'}`}>
+                  <MoveVertical className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold tracking-tight text-neutral-900 flex items-center gap-2">
+                  <h3 className="text-xs font-mono font-bold tracking-wider text-white uppercase flex items-center gap-2">
                     Smooth Scroll
-                    <span className="bg-neutral-100 border border-neutral-200 text-neutral-600 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">
+                    <span className="bg-zinc-900 border border-white/10 text-[#ff9e00] text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-none uppercase tracking-widest">
                       PRO
                     </span>
                   </h3>
-                  <p className="text-[11px] text-neutral-500 mt-0.5">Efek gulir mulus seperti Webflow.</p>
+                  <p className="text-[11px] font-mono text-white/40 mt-1">Efek gulir mulus seperti Webflow.</p>
                 </div>
               </div>
               
-              <button className={`w-10 h-5 rounded-full relative transition-colors duration-300 shrink-0 outline-none ${state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'bg-neutral-900' : 'bg-neutral-200'}`}>
-                <div className={`w-4 h-4 rounded-full bg-white absolute top-[2px] transition-transform duration-300 shadow-sm ${state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'translate-x-[22px]' : 'translate-x-[2px]'}`}></div>
+              <button className={`w-10 h-5 rounded-none relative transition-colors duration-300 shrink-0 outline-none ${state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'bg-[#ff9e00]' : 'bg-zinc-950 border border-white/10'}`}>
+                <div className={`w-4 h-4 rounded-none absolute top-[2px] transition-transform duration-300 shadow-sm ${state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'bg-black translate-x-[22px]' : 'bg-white/20 translate-x-[2px]'}`}></div>
               </button>
             </div>
           )}
@@ -545,27 +560,27 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         </div>
       </div>
 
-      {/* MOBILE FLOATING CONTROLS (Top Left - Undo/Redo) */}
+      {/* MOBILE FLOATING CONTROLS (Top Left) */}
       {!isMobileDrawerOpen && (
-        <div className="lg:hidden fixed top-6 left-6 z-[90] bg-white/90 backdrop-blur-md p-1 rounded-full shadow-md flex items-center border border-slate-200">
+        <div className="lg:hidden fixed top-6 left-6 z-[90] bg-zinc-950/90 backdrop-blur-md p-1.5 rounded-none shadow-none flex items-center border border-white/10">
           <button
             onClick={actions.undo}
             disabled={!state.canUndo}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-              state.canUndo ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95' : 'text-slate-300 cursor-not-allowed'
+            className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
+              state.canUndo ? 'text-white/60 hover:bg-zinc-900 hover:text-white active:scale-95' : 'text-white/25 cursor-not-allowed'
             }`}
           >
-            <i className="fas fa-undo text-[12px]"></i>
+            <Undo2 className="w-3.5 h-3.5" />
           </button>
-          <div className="w-[1px] h-3 bg-slate-200 mx-0.5"></div>
+          <div className="w-[1px] h-3 bg-white/10 mx-1"></div>
           <button
             onClick={actions.redo}
             disabled={!state.canRedo}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-              state.canRedo ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95' : 'text-slate-300 cursor-not-allowed'
+            className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
+              state.canRedo ? 'text-white/60 hover:bg-zinc-900 hover:text-white active:scale-95' : 'text-white/25 cursor-not-allowed'
             }`}
           >
-            <i className="fas fa-redo text-[12px]"></i>
+            <Redo2 className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
@@ -576,9 +591,10 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
           href={`/${subdomain}`} 
           target="_blank" 
           rel="noreferrer"
-          className="lg:hidden fixed top-6 right-6 z-[90] px-4 py-2 bg-white/90 backdrop-blur-md text-slate-900 font-black uppercase text-[9px] tracking-widest rounded-full shadow-md flex items-center gap-2 border border-slate-200 hover:scale-105 transition-transform"
+          className="lg:hidden fixed top-6 right-6 z-[90] px-4 py-2 bg-zinc-950 border border-white/10 text-[#ff9e00] font-mono font-bold uppercase text-[9px] tracking-widest rounded-none shadow-none flex items-center gap-2 hover:scale-105 transition-transform"
         >
-          <i className="fas fa-external-link-alt text-slate-400"></i> Live View
+          <ExternalLink className="w-3.5 h-3.5" />
+          <span>Live View</span>
         </a>
       )}
     </>

@@ -1,3 +1,4 @@
+//app/dashboard/profile/page.tsx
 "use client";
 
 import React from 'react';
@@ -15,36 +16,23 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-24">
+    <main className="min-h-screen relative overflow-hidden selection:bg-[#ff9e00]/30 selection:text-white pb-24">
       
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
         .animate-enter { 
             opacity: 0; 
             animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
         }
         @keyframes slideUpFade {
-            0% { opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(3px); }
+            0% { opacity: 0; transform: translateY(20px) scale(0.99); filter: blur(2px); }
             100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
-
-        .animate-spin-slow { animation: spin 10s linear infinite; }
-
-        .bg-grid-slate {
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
-        }
       `}} />
-
-      {/* ELEMEN DEKORASI BACKGROUND DIHAPUS (Dipindah ke layout.tsx) */}
 
       <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-10 relative z-10">
         <ProfileHeader />
 
-        <div className="bg-white p-6 sm:p-10 md:p-12 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] transition-all duration-500 relative animate-enter overflow-hidden" style={{animationDelay: '200ms'}}>
+        <div className="bg-zinc-900/40 p-6 sm:p-10 md:p-12 rounded-none border border-white/10 shadow-none transition-all duration-500 relative animate-enter overflow-hidden" style={{animationDelay: '200ms'}}>
           <AvatarUpload state={state} actions={actions} />
           <ProfileForm state={state} actions={actions} />
         </div>

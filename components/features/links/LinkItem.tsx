@@ -2,6 +2,22 @@ import React, { useState, useRef, useEffect } from 'react';
 import { LinkData } from '@/hooks/useLinks';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  MessageCircle, 
+  Video, 
+  Link as LinkIcon, 
+  ChevronDown, 
+  Check, 
+  Trash2,
+  PhoneCall
+} from 'lucide-react';
+import {
+  InstagramIcon,
+  LinkedinIcon,
+  YoutubeIcon,
+  TwitterIcon,
+  GithubIcon
+} from '@/components/ui/Icons';
 
 interface LinkItemProps {
   link: LinkData;
@@ -10,14 +26,14 @@ interface LinkItemProps {
 }
 
 const PLATFORMS = [
-  { id: 'instagram', name: 'Instagram', icon: 'fa-brands fa-instagram', placeholder: 'https://instagram.com/username' },
-  { id: 'whatsapp', name: 'WhatsApp', icon: 'fa-brands fa-whatsapp', placeholder: 'https://wa.me/628...' },
-  { id: 'tiktok', name: 'TikTok', icon: 'fa-brands fa-tiktok', placeholder: 'https://tiktok.com/@username' },
-  { id: 'linkedin', name: 'LinkedIn', icon: 'fa-brands fa-linkedin', placeholder: 'https://linkedin.com/in/username' },
-  { id: 'youtube', name: 'YouTube', icon: 'fa-brands fa-youtube', placeholder: 'https://youtube.com/@channel' },
-  { id: 'x', name: 'X / Twitter', icon: 'fa-brands fa-x-twitter', placeholder: 'https://x.com/username' },
-  { id: 'github', name: 'GitHub', icon: 'fa-brands fa-github', placeholder: 'https://github.com/username' },
-  { id: 'custom', name: 'Website / Custom', icon: 'fa-solid fa-link', placeholder: 'https://yourwebsite.com' },
+  { id: 'instagram', name: 'Instagram', icon: InstagramIcon, placeholder: 'https://instagram.com/username' },
+  { id: 'whatsapp', name: 'WhatsApp', icon: PhoneCall, placeholder: 'https://wa.me/628...' },
+  { id: 'tiktok', name: 'TikTok', icon: Video, placeholder: 'https://tiktok.com/@username' },
+  { id: 'linkedin', name: 'LinkedIn', icon: LinkedinIcon, placeholder: 'https://linkedin.com/in/username' },
+  { id: 'youtube', name: 'YouTube', icon: YoutubeIcon, placeholder: 'https://youtube.com/@channel' },
+  { id: 'x', name: 'X / Twitter', icon: TwitterIcon, placeholder: 'https://x.com/username' },
+  { id: 'github', name: 'GitHub', icon: GithubIcon, placeholder: 'https://github.com/username' },
+  { id: 'custom', name: 'Website / Custom', icon: LinkIcon, placeholder: 'https://yourwebsite.com' },
 ];
 
 export function LinkItem({ link, index, actions }: LinkItemProps) {
@@ -26,9 +42,8 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const currentPlatform = PLATFORMS.find(p => p.id === link.platform) || PLATFORMS[PLATFORMS.length - 1];
-  const iconClass = currentPlatform.icon;
+  const IconComponent = currentPlatform.icon;
 
-  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -44,7 +59,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
       toast('Format WhatsApp sebaiknya menggunakan wa.me', {
         id: 'wa-hint',
         icon: '💡',
-        style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '12px' },
+        style: { borderRadius: '0px', background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '11px', fontFamily: 'monospace' },
         duration: 2000
       });
     }
@@ -58,57 +73,59 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
 
   return (
     <div 
-      className={`group bg-white p-5 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.06)] hover:border-slate-300 flex flex-col sm:flex-row gap-5 sm:gap-6 items-start sm:items-center transition-all duration-500 animate-enter relative ${isOpen ? 'z-[110]' : 'z-10'}`}
+      className={`group bg-zinc-950 p-5 sm:p-6 rounded-none border border-white/10 shadow-none hover:border-white/20 hover:bg-white/[0.01] flex flex-col sm:flex-row gap-5 sm:gap-6 items-start sm:items-center transition-all duration-300 animate-enter relative ${isOpen ? 'z-[110]' : 'z-10'}`}
       style={{animationDelay: `${index * 80}ms`, opacity: 0}}
     >
       <div className="flex w-full items-center gap-4 sm:gap-6">
 
         {/* Icon Box Premium */}
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 flex items-center justify-center text-2xl sm:text-3xl shrink-0 group-hover:scale-105 group-hover:rotate-3 group-hover:bg-slate-900 group-hover:text-white group-hover:shadow-md transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] relative overflow-hidden ml-1 sm:ml-2">
-          <i className={iconClass}></i>
-          <div className="absolute inset-0 bg-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-[20px]"></div>
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none bg-zinc-900 border border-white/10 text-white/50 flex items-center justify-center shrink-0 group-hover:bg-[#ff9e00]/10 group-hover:border-[#ff9e00]/30 group-hover:text-[#ff9e00] transition-all duration-300 ml-1 sm:ml-2">
+          <IconComponent className="w-6 h-6" />
         </div>
 
         {/* Input Fields */}
-        <div className="flex-1 min-w-0 flex flex-col gap-1 sm:gap-1.5 relative">
+        <div className="flex-1 min-w-0 flex flex-col gap-1.5 relative">
           
           {/* CUSTOM DROPDOWN */}
           <div className="relative" ref={dropdownRef}>
             <button 
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center gap-2 w-full text-left font-black text-slate-900 hover:text-slate-600 transition-colors text-lg sm:text-xl tracking-tight group/btn"
+              className="flex items-center gap-1.5 w-full text-left font-mono font-bold text-white hover:text-[#ff9e00] transition-colors text-sm uppercase tracking-wider group/btn"
             >
               {currentPlatform.name}
-              <motion.i 
-                animate={{ rotate: isOpen ? 180 : 0 }}
-                className="fas fa-chevron-down text-[10px] text-slate-300 group-hover/btn:text-slate-900 transition-colors"
-              />
+              <motion.div animate={{ rotate: isOpen ? 180 : 0 }}>
+                <ChevronDown className="w-3.5 h-3.5 text-white/30" />
+              </motion.div>
             </button>
 
             <AnimatePresence>
               {isOpen && (
                 <motion.div 
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute left-0 top-full mt-2 w-64 bg-white/90 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-2xl z-[100] overflow-hidden p-1.5"
+                  exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                  className="absolute left-0 top-full mt-2 w-64 bg-zinc-950 border border-white/10 rounded-none shadow-[0_10px_30px_rgba(0,0,0,0.8)] z-[100] overflow-hidden p-1.5"
                 >
                   <div className="max-h-60 overflow-y-auto custom-scrollbar">
-                    {PLATFORMS.map((p) => (
-                      <button
-                        key={p.id}
-                        onClick={() => selectPlatform(p.id)}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
-                          link.platform === p.id 
-                            ? 'bg-slate-900 text-white shadow-lg' 
-                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                        }`}
-                      >
-                        <i className={`${p.icon} w-5 text-center`}></i>
-                        {p.name}
-                        {link.platform === p.id && <i className="fas fa-check ml-auto text-[10px]"></i>}
-                      </button>
-                    ))}
+                    {PLATFORMS.map((p) => {
+                      const PIcon = p.icon;
+                      const isSel = link.platform === p.id;
+                      return (
+                        <button
+                          key={p.id}
+                          onClick={() => selectPlatform(p.id)}
+                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all ${
+                            isSel 
+                              ? 'bg-[#ff9e00] text-black shadow-none' 
+                              : 'text-white/50 hover:bg-white/5 hover:text-white'
+                          }`}
+                        >
+                          <PIcon className="w-4 h-4" />
+                          {p.name}
+                          {isSel && <Check className="w-3.5 h-3.5 ml-auto stroke-[2.5]" />}
+                        </button>
+                      );
+                    })}
                   </div>
                 </motion.div>
               )}
@@ -116,13 +133,13 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
           </div>
           
           {/* URL INPUT */}
-          <div className="flex items-center gap-2 text-slate-300 focus-within:text-slate-900 transition-colors relative z-10">
-              <i className="fas fa-link text-[10px] sm:text-xs"></i>
+          <div className="flex items-center gap-2 text-white/20 focus-within:text-white/50 transition-colors relative z-10">
+              <LinkIcon className="w-3.5 h-3.5 shrink-0" />
               <input 
                 type="url" 
                 value={link.url} 
                 onChange={(e) => handleUrlChange(e.target.value)}
-                className="w-full bg-transparent text-[11px] sm:text-xs font-semibold text-slate-500 focus:outline-none focus:text-slate-900 truncate placeholder:text-slate-300 transition-colors"
+                className="w-full bg-transparent text-xs font-mono font-bold text-white/40 focus:outline-none focus:text-white truncate placeholder:text-white/10 transition-colors"
                 placeholder={currentPlatform.placeholder}
               />
           </div>
@@ -130,36 +147,36 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
       </div>
 
       {/* ACTION BAR (Responsive) */}
-      <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+      <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5">
         
         {/* Switch Status */}
         <div className="flex items-center gap-3">
-            <span className={`text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest transition-colors ${link.isActive ? 'text-slate-900' : 'text-slate-400'}`}>
+            <span className={`text-[9px] font-mono font-bold uppercase tracking-wider transition-colors ${link.isActive ? 'text-white' : 'text-white/30'}`}>
               {link.isActive ? 'Visible' : 'Hidden'}
             </span>
 
           {/* Toggle Button iOS Style */}
           <button
             onClick={() => updateLocalLink(link.id, { isActive: !link.isActive })}
-            className={`relative inline-flex h-6 w-11 sm:h-7 sm:w-12 items-center rounded-full transition-all duration-300 focus:outline-none shadow-inner ${
-              link.isActive ? 'bg-slate-900' : 'bg-slate-200 hover:bg-slate-300'
+            className={`relative inline-flex h-6 w-11 items-center rounded-none transition-all duration-300 focus:outline-none ${
+              link.isActive ? 'bg-[#ff9e00]' : 'bg-zinc-900 border border-white/10'
             }`}
           >
-            <span className={`inline-block h-4 w-4 sm:h-5 sm:w-5 transform rounded-full transition-transform duration-300 shadow-sm ${
-                link.isActive ? 'translate-x-6 sm:translate-x-6 bg-white' : 'translate-x-1 bg-white'
+            <span className={`inline-block h-4 w-4 transform rounded-none transition-transform duration-300 ${
+                link.isActive ? 'translate-x-6 bg-black' : 'translate-x-1 bg-white/50'
             }`} />
           </button>
         </div>
 
-        <div className="w-px h-8 bg-slate-200 hidden sm:block"></div>
+        <div className="w-px h-8 bg-white/10 hidden sm:block"></div>
 
         {/* Delete Button Monokrom */}
         <button 
           onClick={() => setLinkToDelete(link.id)}
-          className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white border border-slate-200 text-slate-400 hover:text-rose-500 hover:bg-rose-50 hover:border-rose-100 flex items-center justify-center active:scale-90 transition-all duration-300 shrink-0 shadow-sm"
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-none bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30 flex items-center justify-center active:scale-95 transition-all duration-300 shrink-0"
           title="Hapus tautan"
         >
-          <i className="fas fa-trash-alt text-[11px] sm:text-xs"></i>
+          <Trash2 className="w-4 h-4" />
         </button>
         
       </div>

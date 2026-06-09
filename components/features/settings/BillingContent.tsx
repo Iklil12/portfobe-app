@@ -1,9 +1,14 @@
+//components/features/settings/BillingContent.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import useSWR from "swr";
 import Link from "next/link";
+import { 
+  Crown, Lock, Layers, Receipt, Gift, Loader2, Check, X, HelpCircle, 
+  Folder, Palette, User, BarChart2, Globe, ArrowRight 
+} from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -28,15 +33,15 @@ function formatGateway(gateway: string | null) {
 
 function StatusBadge({ status }: { status: string }) {
   const cfg: Record<string, string> = {
-    ACTIVE:    "bg-emerald-100 text-emerald-700 border-emerald-200",
-    EXPIRED:   "bg-slate-100   text-slate-500   border-slate-200",
-    CANCELLED: "bg-rose-100    text-rose-600    border-rose-200",
-    SUCCESS:   "bg-emerald-100 text-emerald-700 border-emerald-200",
-    FAILED:    "bg-rose-100    text-rose-600    border-rose-200",
-    PENDING:   "bg-amber-100   text-amber-700   border-amber-200",
+    ACTIVE:    "bg-emerald-950/20 text-emerald-400 border-emerald-500/20",
+    EXPIRED:   "bg-zinc-950 text-white/20 border-white/5",
+    CANCELLED: "bg-rose-950/20 text-rose-400 border-rose-500/20",
+    SUCCESS:   "bg-emerald-950/20 text-emerald-400 border-emerald-500/20",
+    FAILED:    "bg-rose-950/20 text-rose-400 border-rose-500/20",
+    PENDING:   "bg-amber-950/20 text-amber-400 border-amber-500/20",
   };
   return (
-    <span className={`inline-flex px-2 py-0.5 rounded-lg text-[9px] font-black tracking-widest uppercase border ${cfg[status] ?? "bg-slate-100 text-slate-500 border-slate-200"}`}>
+    <span className={`inline-flex px-2 py-0.5 rounded-none text-[9px] font-mono font-bold tracking-widest uppercase border ${cfg[status] ?? "bg-zinc-950 text-white/30 border-white/5"}`}>
       {status}
     </span>
   );
@@ -107,23 +112,23 @@ export default function BillingContent() {
         `}} />
         {/* Header Skeleton */}
         <div className="mb-8">
-          <div className="h-9 w-64 skeleton-premium rounded-lg mb-3" />
-          <div className="h-5 w-80 skeleton-premium rounded-md" />
+          <div className="h-9 w-64 shimmer-dark rounded-none mb-3" />
+          <div className="h-5 w-80 shimmer-dark rounded-none" />
         </div>
         
         {/* Main Grid Skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Card Skeleton */}
-          <div className="lg:col-span-2 h-[320px] skeleton-premium rounded-3xl" />
+          <div className="lg:col-span-2 h-[320px] shimmer-dark rounded-none" />
           
           {/* Right Card Skeleton */}
-          <div className="h-[320px] skeleton-premium rounded-3xl" />
+          <div className="h-[320px] shimmer-dark rounded-none" />
         </div>
         
         {/* Tabs & History Skeleton */}
         <div className="pt-2">
-          <div className="h-10 w-64 skeleton-premium rounded-xl mb-6" />
-          <div className="h-[300px] w-full skeleton-premium rounded-3xl" />
+          <div className="h-10 w-64 shimmer-dark rounded-none mb-6" />
+          <div className="h-[300px] w-full shimmer-dark rounded-none" />
         </div>
       </div>
     );
@@ -141,108 +146,110 @@ export default function BillingContent() {
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes billingFadeIn { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
         .animate-billing-fade { opacity: 0; animation: billingFadeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        .tab-active { background: white; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .tab-inactive { color: #64748b; }
-        .tab-inactive:hover { color: #0f172a; }
       `}} />
 
       {/* ── PAGE HEADER ── */}
       <div className="animate-billing-fade">
-        <h1 className="text-[28px] font-extrabold text-slate-900 tracking-tight">Billing & Langganan</h1>
-        <p className="text-slate-500 mt-2 font-medium text-[15px]">
+        <h1 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Billing & Langganan</h1>
+        <p className="text-white/40 mt-2 font-mono text-xs">
           Kelola paket akun, pantau sisa hari, dan unduh riwayat transaksi.
         </p>
       </div>
 
-      {/* ── MAIN GRID ── */}
       {/* ── TRIAL BANNER ── */}
       {!isPro && canClaimTrial && (
-        <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-lg shadow-amber-500/20 text-white animate-billing-fade">
+        <div className="bg-zinc-900/40 p-6 sm:p-8 rounded-none border border-[#ff9e00]/20 flex flex-col sm:flex-row items-center justify-between gap-6 text-white animate-billing-fade">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-xs font-bold uppercase tracking-widest mb-3">
-              <i className="fas fa-gift"></i> Hadiah Pengguna Baru
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#ff9e00]/10 border border-[#ff9e00]/20 rounded-none text-[9px] font-mono font-bold uppercase tracking-widest mb-3 text-[#ff9e00]">
+              <Gift className="w-3 h-3" /> Hadiah Pengguna Baru
             </div>
-            <h2 className="text-2xl font-black mb-1">Coba PRO Gratis 14 Hari!</h2>
-            <p className="text-white/80 text-sm font-medium">Buka semua batas tema, analitik, dan proyek. Tidak perlu kartu kredit.</p>
+            <h2 className="text-lg font-mono font-bold uppercase tracking-wider mb-1 text-white">Coba PRO Gratis 14 Hari!</h2>
+            <p className="text-white/40 text-xs font-mono">Buka semua batas tema, analitik, dan proyek. Tidak perlu kartu kredit.</p>
           </div>
           <button
             onClick={handleOpenTrialModal}
-            className="shrink-0 w-full sm:w-auto px-8 py-3.5 bg-white text-orange-600 font-black rounded-xl hover:bg-orange-50 transition-colors shadow-sm"
+            className="shrink-0 w-full sm:w-auto px-8 py-3 bg-[#ff9e00] text-black font-mono font-bold uppercase tracking-wider text-xs rounded-none hover:bg-[#ffaa22] transition-colors"
           >
             Klaim Trial Sekarang
           </button>
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-billing-fade delay-100">
+      {/* ── MAIN GRID ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-billing-fade">
         
         {/* LEFT CARD: Current Plan Overview */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden flex flex-col relative">
+        <div className="lg:col-span-2 bg-zinc-900/40 rounded-none border border-white/10 shadow-none overflow-hidden flex flex-col relative">
           
-          {/* Subtle background gradient if PRO */}
-          {isPro && <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl to-transparent opacity-50 rounded-bl-full pointer-events-none ${isSupreme ? 'from-violet-400/10' : 'from-amber-400/10'}`} />}
-
           <div className="p-8 flex-1 relative z-10">
             <div className="flex justify-between items-start mb-8">
               <div>
-                <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Paket Saat Ini</p>
+                <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest mb-2">Paket Saat Ini</p>
                 <div className="flex items-center gap-3">
-                  <h2 className="text-3xl font-black text-slate-900 tracking-tight">{isPro ? planLabel : "Starter"}</h2>
+                  <h2 className="text-sm font-mono font-bold text-white uppercase tracking-wider">{isPro ? planLabel : "Starter"}</h2>
                   {isPro && sub && (
-                    <span className="px-2.5 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px] font-extrabold uppercase tracking-widest rounded-md flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Active
+                    <span className="px-2 py-0.5 bg-zinc-950 border border-white/10 text-white/50 text-[9px] font-mono font-bold uppercase tracking-widest rounded-none flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-none animate-pulse"></span> Active
                     </span>
                   )}
                 </div>
               </div>
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border shadow-sm ${isPro ? (isSupreme ? "bg-gradient-to-br from-violet-100 to-violet-50 border-violet-200" : "bg-gradient-to-br from-amber-100 to-amber-50 border-amber-200") : "bg-slate-50 border-slate-100"}`}>
-                <i className={`fas ${isPro ? "fa-crown" : "fa-lock"} text-2xl ${isPro ? (isSupreme ? "text-violet-500" : "text-amber-500") : "text-slate-300"}`}></i>
+              <div className="w-14 h-14 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center shadow-none shrink-0">
+                {isPro ? (
+                  <Crown className="w-6 h-6 text-[#ff9e00]" />
+                ) : (
+                  <Lock className="w-6 h-6 text-white/30" />
+                )}
               </div>
             </div>
 
             <div className="space-y-1">
               {isPro && sub ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 mt-6">
-                  <div className="py-3 border-b border-slate-100">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Sisa Hari</p>
-                    <p className="font-extrabold text-slate-900 text-[15px]">
+                  <div className="py-3 border-b border-white/5">
+                    <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-wider mb-1">Sisa Hari</p>
+                    <div className="font-mono font-bold text-white text-xs">
                       {remainingDays === -1 ? (
-                        <span className={isSupreme ? 'text-violet-500' : 'text-amber-500'}>Seumur Hidup ♾️</span>
+                        <span className="text-[#ff9e00]">Seumur Hidup ♾️</span>
                       ) : (
-                        <span>
-                          {remainingDays} Hari 
+                        <span className="flex items-center gap-2">
+                          <span>{remainingDays} Hari</span>
                           {remainingDays !== null && remainingDays <= 7 && (
-                            <span className="text-[10px] bg-rose-500/10 text-rose-500 border border-rose-500/20 px-2 py-0.5 rounded-md ml-2 relative -top-0.5">Hampir Habis</span>
+                            <span className="text-[9px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded-none uppercase font-mono font-bold">Hampir Habis</span>
                           )}
                         </span>
                       )}
-                    </p>
+                    </div>
                   </div>
-                  <div className="py-3 border-b border-slate-100">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Berakhir Pada</p>
-                    <p className="font-bold text-slate-900 text-[15px]">
+                  <div className="py-3 border-b border-white/5">
+                    <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-wider mb-1">Berakhir Pada</p>
+                    <p className="font-mono font-bold text-white text-xs">
                       {sub.isLifetime ? "Selamanya" : formatDate(sub.expiredAt)}
                     </p>
                   </div>
-                  <div className="py-3 border-b border-slate-100 sm:col-span-2">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Siklus Penagihan (Mulai)</p>
-                    <p className="font-bold text-slate-900 text-[15px]">{formatDate(sub.startedAt)}</p>
+                  <div className="py-3 border-b border-white/5 sm:col-span-2">
+                    <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-wider mb-1">Siklus Penagihan (Mulai)</p>
+                    <p className="font-mono font-bold text-white text-xs">{formatDate(sub.startedAt)}</p>
                   </div>
                 </div>
               ) : (
                 <div className="pt-2 max-w-lg">
-                  <p className="text-[15px] text-slate-600 font-medium leading-relaxed mb-6">
+                  <p className="text-xs font-mono text-white/40 leading-relaxed mb-6">
                     Kamu menggunakan paket gratis. Upgrade ke PRO untuk membuka akses ke semua tema, analitik tingkat lanjut, dan menghapus batas proyek.
                   </p>
                   <div className="grid grid-cols-2 gap-4">
                     {[
-                      { label: "Batas 5 Proyek", icon: "fa-folder" },
-                      { label: "Tema Terbatas", icon: "fa-palette" },
-                    ].map((f) => (
-                      <div key={f.label} className="flex items-center gap-2.5 text-xs font-bold text-slate-500">
-                        <i className={`fas ${f.icon} text-slate-300`}></i> {f.label}
-                      </div>
-                    ))}
+                      { label: "Batas 5 Proyek", icon: Folder },
+                      { label: "Tema Terbatas", icon: Palette },
+                    ].map((f) => {
+                      const IconComp = f.icon;
+                      return (
+                        <div key={f.label} className="flex items-center gap-2.5 text-[11px] font-mono font-bold uppercase tracking-wider text-white/30">
+                          <IconComp className="w-3.5 h-3.5 text-white/20" />
+                          <span>{f.label}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -250,29 +257,30 @@ export default function BillingContent() {
           </div>
           
           {/* Card Footer Actions */}
-          <div className="bg-slate-50/50 p-6 sm:px-8 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-10">
+          <div className="bg-zinc-950/50 p-6 sm:px-8 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-10">
             {isPro ? (
               <>
-                <p className="text-xs text-slate-500 font-medium">
-                  Lisensi diberikan oleh: <span className="font-bold text-slate-700">{sub?.grantedBy || 'System Admin'}</span>
+                <p className="text-[10px] font-mono text-white/30">
+                  Lisensi diberikan oleh: <span className="font-bold text-white/50">{sub?.grantedBy || 'System Admin'}</span>
                 </p>
                 <a
                   href={`https://wa.me/628xxxxxxxxx?text=Halo%2C+saya+ingin+memperpanjang+paket+${plan}+saya.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-slate-900 text-white text-[13px] font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-md"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-zinc-900 border border-white/10 hover:bg-zinc-800 text-white text-xs font-mono font-bold uppercase tracking-wider rounded-none transition-colors"
                 >
                   Perpanjang {plan}
                 </a>
               </>
             ) : (
               <>
-                <p className="text-xs text-slate-500 font-medium">Tanpa biaya bulanan.</p>
+                <p className="text-[10px] font-mono text-white/30">Tanpa biaya bulanan.</p>
                 <Link
                   href="/pricing"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[#ff9e00] text-white text-[13px] font-bold rounded-xl hover:bg-amber-500 transition-colors shadow-md shadow-amber-500/20"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[#ff9e00] text-black text-xs font-mono font-bold uppercase tracking-wider rounded-none hover:bg-[#ffaa22] transition-colors"
                 >
-                  Upgrade ke PRO <i className="fas fa-arrow-right ml-1"></i>
+                  <span>Upgrade ke PRO</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </>
             )}
@@ -280,27 +288,27 @@ export default function BillingContent() {
         </div>
 
         {/* RIGHT CARD: Member Profile / Setup */}
-        <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden flex flex-col justify-between shadow-xl shadow-slate-900/10">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/20 blur-3xl rounded-full translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
+        <div className="bg-zinc-900/40 rounded-none p-8 text-white relative overflow-hidden flex flex-col justify-between border border-white/10 shadow-none">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/0 blur-3xl rounded-none translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
           
           <div className="relative z-10">
-            <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mb-8 border border-white/10 shadow-inner">
-              <i className="fas fa-user-astronaut text-xl text-white"></i>
+            <div className="w-12 h-12 bg-zinc-950 border border-white/5 rounded-none flex items-center justify-center mb-8">
+              <User className="w-5 h-5 text-white/40" />
             </div>
             
             <div>
-              <p className="text-white/50 text-[11px] font-extrabold uppercase tracking-widest mb-1.5">Member Sejak</p>
-              <p className="text-2xl font-black tracking-tight">{formatDate(data?.memberSince)}</p>
+              <p className="text-white/40 text-[10px] font-mono font-bold uppercase tracking-widest mb-1.5">Member Sejak</p>
+              <p className="text-lg font-mono font-bold tracking-wider">{formatDate(data?.memberSince)}</p>
             </div>
           </div>
           
-          <div className="mt-12 pt-6 border-t border-white/10 relative z-10">
-            <p className="text-white/50 text-[11px] font-extrabold uppercase tracking-widest mb-3">Platform Terhubung</p>
+          <div className="mt-12 pt-6 border-t border-white/5 relative z-10">
+            <p className="text-white/40 text-[10px] font-mono font-bold uppercase tracking-widest mb-3">Platform Terhubung</p>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center p-1.5">
-                <img src="/portfo.be.png" alt="Logo" className="w-full h-full object-contain brightness-0 invert opacity-90" />
+              <div className="w-8 h-8 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center p-1.5">
+                <img src="/portfo.be.png" alt="Logo" className="w-full h-full object-contain brightness-0 invert opacity-95" />
               </div>
-              <span className="text-[15px] font-bold tracking-wide">Portfobe</span>
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">Portfobe</span>
             </div>
           </div>
         </div>
@@ -308,15 +316,19 @@ export default function BillingContent() {
       </div>
 
       {/* ── TABS & HISTORY ── */}
-      <div className="animate-billing-fade delay-200">
+      <div className="animate-billing-fade">
         
         {/* Custom Pill Tabs */}
-        <div className="inline-flex p-1 bg-slate-100 rounded-xl mb-6">
+        <div className="inline-flex p-1 bg-zinc-950 border border-white/10 rounded-none mb-6">
           {(["subscriptions", "transactions"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-5 py-2.5 text-[13px] font-extrabold rounded-lg transition-all ${tab === t ? "tab-active" : "tab-inactive"}`}
+              className={`px-5 py-2.5 text-[11px] font-mono font-bold uppercase tracking-wider rounded-none transition-all ${
+                tab === t 
+                  ? "bg-zinc-900 border border-white/10 text-white" 
+                  : "text-white/40 hover:text-white"
+              }`}
             >
               {t === "subscriptions" ? "Riwayat Langganan" : "Invoices & Transaksi"}
             </button>
@@ -324,34 +336,34 @@ export default function BillingContent() {
         </div>
 
         {/* History Container */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
+        <div className="bg-zinc-900/40 rounded-none border border-white/10 shadow-none overflow-hidden">
           
           {/* SUBSCRIPTIONS VIEW */}
           {tab === "subscriptions" && (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-white/5">
               {subHistory.length === 0 ? (
-                <EmptyState icon="fa-layer-group" text="Belum ada riwayat langganan yang tercatat." />
+                <EmptyState icon={Layers} text="Belum ada riwayat langganan yang tercatat." />
               ) : (
                 subHistory.map((s: any) => (
-                  <div key={s.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-slate-50/50 transition-colors">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${s.status === "ACTIVE" ? (s.plan === "SUPREME" ? "bg-violet-50 border-violet-100" : "bg-amber-50 border-amber-100") : "bg-slate-50 border-slate-200"}`}>
-                      <i className={`fas fa-layer-group text-lg ${s.status === "ACTIVE" ? (s.plan === "SUPREME" ? "text-violet-500" : "text-amber-500") : "text-slate-300"}`} />
+                  <div key={s.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-zinc-950/20 transition-colors">
+                    <div className={`w-12 h-12 rounded-none flex items-center justify-center shrink-0 border ${s.status === "ACTIVE" ? "bg-zinc-950 border-white/10" : "bg-zinc-950 border-white/5"}`}>
+                      <Layers className={`w-5 h-5 ${s.status === "ACTIVE" ? "text-[#ff9e00]" : "text-white/20"}`} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1">
-                        <span className="text-[15px] font-extrabold text-slate-900">
-                          Portfobe {s.plan} {s.isLifetime && "♾️"}
+                        <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+                          Portfobe {s.plan} {s.isLifetime && "♾"}
                         </span>
                         <StatusBadge status={s.status} />
                       </div>
-                      <p className="text-[13px] text-slate-500 font-medium">
-                        {formatDate(s.startedAt)} <span className="mx-2 text-slate-300">→</span> {s.isLifetime ? "Seumur Hidup" : formatDate(s.expiredAt)}
+                      <p className="text-[11px] font-mono text-white/40">
+                        {formatDate(s.startedAt)} <span className="mx-2 text-white/20">→</span> {s.isLifetime ? "Seumur Hidup" : formatDate(s.expiredAt)}
                       </p>
-                      {s.notes && <p className="text-[11px] text-slate-400 mt-1.5 italic flex items-center gap-1.5"><i className="fas fa-info-circle"></i> {s.notes}</p>}
+                      {s.notes && <p className="text-[10px] font-mono text-white/30 mt-1.5 italic flex items-center gap-1.5"><HelpCircle className="w-3.5 h-3.5 text-white/20" /> {s.notes}</p>}
                     </div>
-                    <div className="text-right shrink-0 mt-2 sm:mt-0">
-                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Dibuat Pada</p>
-                      <p className="text-[13px] font-bold text-slate-700 mt-0.5">{formatDate(s.createdAt)}</p>
+                    <div className="text-left sm:text-right shrink-0 mt-2 sm:mt-0">
+                      <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest">Dibuat Pada</p>
+                      <p className="text-xs font-mono font-bold text-white mt-0.5">{formatDate(s.createdAt)}</p>
                     </div>
                   </div>
                 ))
@@ -361,40 +373,40 @@ export default function BillingContent() {
 
           {/* TRANSACTIONS VIEW */}
           {tab === "transactions" && (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-white/5">
               {transactions.length === 0 ? (
-                <EmptyState icon="fa-receipt" text="Belum ada riwayat transaksi." />
+                <EmptyState icon={Receipt} text="Belum ada riwayat transaksi." />
               ) : (
                 transactions.map((t: any) => (
-                  <div key={t.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-slate-50/50 transition-colors group">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${t.status === "SUCCESS" ? "bg-emerald-50 border-emerald-100" : "bg-slate-50 border-slate-200"}`}>
-                      <i className={`fas fa-receipt text-lg ${t.status === "SUCCESS" ? "text-emerald-500" : "text-slate-300"}`} />
+                  <div key={t.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-zinc-950/20 transition-colors group">
+                    <div className={`w-12 h-12 rounded-none flex items-center justify-center shrink-0 border ${t.status === "SUCCESS" ? "bg-zinc-950 border-white/10" : "bg-zinc-950 border-white/5"}`}>
+                      <Receipt className={`w-5 h-5 ${t.status === "SUCCESS" ? "text-emerald-400" : "text-white/20"}`} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1">
-                        <span className="text-[15px] font-extrabold text-slate-900">
+                        <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
                           {t.plan} Access — {t.durationDays >= 36500 ? "Lifetime" : `${t.durationDays} Days`}
                         </span>
                         <StatusBadge status={t.status} />
                       </div>
-                      <p className="text-[13px] text-slate-500 font-medium">
+                      <p className="text-[11px] font-mono text-white/40">
                         via {formatGateway(t.gateway)} · {formatDate(t.createdAt)}
                       </p>
                     </div>
                     <div className="flex flex-col sm:items-end gap-3 mt-4 sm:mt-0">
                       <div className="sm:text-right">
-                        <p className="text-base font-black text-slate-900">
-                          {t.amount === 0 ? <span className="text-emerald-600">Free / Granted</span> : `Rp ${t.amount.toLocaleString("id-ID")}`}
+                        <p className="text-sm font-mono font-bold text-white">
+                          {t.amount === 0 ? <span className="text-[#ff9e00]">Free / Granted</span> : `Rp ${t.amount.toLocaleString("id-ID")}`}
                         </p>
-                        <p className="text-[11px] text-slate-400 font-mono mt-0.5">{t.id.substring(0, 12).toUpperCase()}</p>
+                        <p className="text-[9px] text-white/30 font-mono mt-0.5">{t.id.substring(0, 12).toUpperCase()}</p>
                       </div>
                       {t.status === "SUCCESS" && (
                         <Link 
                           href={`/receipt/${t.id}`}
                           target="_blank"
-                          className="text-xs font-bold text-slate-500 hover:text-slate-900 bg-white border border-slate-200 hover:border-slate-300 shadow-sm px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 w-fit"
+                          className="text-[10px] font-mono font-bold text-white/50 hover:text-white bg-zinc-950 border border-white/10 hover:border-white/20 px-3 py-1.5 rounded-none transition-all flex items-center gap-1.5 w-fit"
                         >
-                          <i className="fas fa-download"></i> Receipt
+                          <span>Receipt</span>
                         </Link>
                       )}
                     </div>
@@ -422,23 +434,22 @@ export default function BillingContent() {
             .animate-float-trial { animation: floatTrial 4s ease-in-out infinite; }
             .animate-shimmer-trial { animation: shimmerTrial 2.5s infinite; }
           `}} />
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity" onClick={handleCloseTrialModal}></div>
-          <div className="relative w-full max-w-4xl bg-white rounded-[2rem] shadow-[0_20px_80px_-15px_rgba(0,0,0,0.5)] animate-enter-modal overflow-hidden flex flex-col md:flex-row">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={handleCloseTrialModal}></div>
+          <div className="relative w-full max-w-4xl bg-zinc-950 rounded-none shadow-[0_20px_80px_-15px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden flex flex-col md:flex-row">
             
             {/* Success State */}
             {isTrialSuccess ? (
-              <div className="p-12 md:p-20 flex flex-col items-center text-center w-full bg-white relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-50 via-white to-white opacity-50 pointer-events-none"></div>
-                <div className="w-24 h-24 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mb-8 animate-bounce relative z-10 shadow-lg shadow-emerald-500/20">
-                  <i className="fas fa-check text-4xl"></i>
+              <div className="p-12 md:p-20 flex flex-col items-center text-center w-full bg-zinc-950 relative overflow-hidden">
+                <div className="w-24 h-24 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-none flex items-center justify-center mb-8 relative z-10 shadow-none">
+                  <Check className="w-12 h-12" />
                 </div>
-                <h3 className="text-4xl font-black text-slate-900 mb-4 tracking-tight relative z-10">Selamat Datang di PRO! 🎉</h3>
-                <p className="text-slate-500 text-lg font-medium leading-relaxed mb-10 max-w-lg relative z-10">
+                <h3 className="text-lg font-mono font-bold text-white uppercase tracking-wider mb-4 relative z-10">Selamat Datang di PRO! 🎉</h3>
+                <p className="text-white/40 text-xs font-mono leading-relaxed mb-10 max-w-lg relative z-10">
                   Paket <strong>PRO Creator 14 Hari</strong> Anda sudah aktif. Sekarang Anda bebas mengeksplorasi seluruh fitur premium tanpa batas.
                 </p>
                 <button 
                   onClick={handleCloseTrialModal}
-                  className="w-full max-w-sm py-4 bg-slate-900 text-white font-black rounded-xl hover:bg-slate-800 transition-transform active:scale-95 shadow-xl relative z-10"
+                  className="w-full max-w-sm py-3 bg-[#ff9e00] text-black font-mono font-bold uppercase tracking-wider text-xs rounded-none hover:bg-[#ffaa22] transition-transform active:scale-95 relative z-10"
                 >
                   Mulai Gunakan PRO
                 </button>
@@ -447,75 +458,71 @@ export default function BillingContent() {
               /* Activation State (2 Columns) */
               <>
                 {/* Left Column (Graphic) */}
-                <div className="hidden md:flex md:w-5/12 bg-slate-900 p-10 flex-col relative overflow-hidden items-center justify-center text-center border-r border-slate-800">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-orange-600/20 opacity-50"></div>
-                  <div className="absolute top-[-50px] left-[-50px] w-48 h-48 bg-amber-500 rounded-full mix-blend-screen filter blur-[60px] opacity-30 animate-pulse"></div>
-                  <div className="absolute bottom-[-50px] right-[-50px] w-48 h-48 bg-orange-500 rounded-full mix-blend-screen filter blur-[60px] opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
-                  
-                  <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-orange-500/40 mb-8 animate-float-trial relative z-10">
-                    <i className="fas fa-crown text-5xl text-white"></i>
+                <div className="hidden md:flex md:w-5/12 bg-zinc-950 p-10 flex-col relative overflow-hidden items-center justify-center text-center border-r border-white/10">
+                  <div className="w-24 h-24 bg-zinc-900 border border-white/10 rounded-none flex items-center justify-center mb-8 animate-float-trial relative z-10">
+                    <Crown className="w-12 h-12 text-[#ff9e00]" />
                   </div>
                   
-                  <h3 className="text-white text-3xl font-black mb-3 relative z-10 tracking-tight leading-tight">Portfobe<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">PRO Creator</span></h3>
-                  <p className="text-slate-400 font-medium relative z-10">Tingkatkan karir profesionalmu dengan alat super lengkap.</p>
+                  <h3 className="text-white text-sm font-mono font-bold uppercase tracking-wider mb-3 relative z-10 tracking-tight leading-tight">Portfobe<br/><span className="text-[#ff9e00]">PRO Creator</span></h3>
+                  <p className="text-white/40 text-[11px] font-mono relative z-10">Tingkatkan karir profesionalmu dengan alat super lengkap.</p>
                 </div>
 
                 {/* Right Column (Content) */}
-                <div className="w-full md:w-7/12 p-8 md:p-12 flex flex-col bg-white">
+                <div className="w-full md:w-7/12 p-8 md:p-12 flex flex-col bg-zinc-950">
                   
                   {/* Mobile Header Graphic (Only shows on small screens) */}
-                  <div className="md:hidden h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center mb-6 relative overflow-hidden shadow-lg shadow-orange-500/20">
-                    <i className="fas fa-crown text-4xl text-white relative z-10 animate-float-trial"></i>
+                  <div className="md:hidden h-24 bg-zinc-900 rounded-none border border-white/10 flex items-center justify-center mb-6 relative overflow-hidden">
+                    <Crown className="w-10 h-10 text-[#ff9e00] relative z-10 animate-float-trial" />
                   </div>
 
                   <div className="mb-8 text-center md:text-left">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 border border-orange-100">
-                      <i className="fas fa-gift"></i> Penawaran Spesial
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#ff9e00]/10 border border-[#ff9e00]/20 text-[#ff9e00] rounded-none text-[9px] font-mono font-bold uppercase tracking-widest mb-4">
+                      <Gift className="w-3 h-3" /> Penawaran Spesial
                     </div>
-                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-3 tracking-tight">Klaim Trial 14 Hari</h3>
-                    <p className="text-slate-500 font-medium">Buka semua fitur tanpa batas. Tanpa perlu memasukkan kartu kredit. 100% Gratis selama masa percobaan.</p>
+                    <h3 className="text-lg font-mono font-bold text-white uppercase tracking-wider mb-3">Klaim Trial 14 Hari</h3>
+                    <p className="text-white/40 text-xs font-mono">Buka semua fitur tanpa batas. Tanpa perlu memasukkan kartu kredit. 100% Gratis selama masa percobaan.</p>
                   </div>
                   
                   {/* Features List */}
                   <div className="space-y-5 mb-10">
                     {[
-                      { icon: "fa-chart-pie", title: "Analitik Mendalam", desc: "Pantau pengunjung & performa portofolio." },
-                      { icon: "fa-globe", title: "Custom Domain Pribadi", desc: "Ubah URL menjadi namakamu.com." },
-                      { icon: "fa-layer-group", title: "Tanpa Batas Proyek", desc: "Upload karya sebanyak yang kamu mau." },
-                      { icon: "fa-palette", title: "Tema Eksklusif", desc: "Akses ke seluruh template premium." }
-                    ].map((feature, i) => (
-                      <div key={i} className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 text-slate-700 flex items-center justify-center shrink-0 shadow-sm">
-                          <i className={`fas ${feature.icon}`}></i>
+                      { icon: BarChart2, title: "Analitik Mendalam", desc: "Pantau pengunjung & performa portofolio." },
+                      { icon: Globe, title: "Custom Domain Pribadi", desc: "Ubah URL menjadi namakamu.com." },
+                      { icon: Layers, title: "Tanpa Batas Proyek", desc: "Upload karya sebanyak yang kamu mau." },
+                      { icon: Palette, title: "Tema Eksklusif", desc: "Akses ke seluruh template premium." }
+                    ].map((feature, i) => {
+                      const IconComp = feature.icon;
+                      return (
+                        <div key={i} className="flex items-start gap-4">
+                          <div className="w-10 h-10 rounded-none bg-zinc-900 border border-white/10 text-white flex items-center justify-center shrink-0">
+                            <IconComp className="w-4 h-4 text-white/50" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-mono font-bold text-white uppercase mb-0.5">{feature.title}</p>
+                            <p className="text-[10px] font-mono text-white/40">{feature.desc}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-900 mb-0.5">{feature.title}</p>
-                          <p className="text-xs text-slate-500">{feature.desc}</p>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
 
-                  <div className="flex gap-3 md:gap-4 mt-auto pt-4 border-t border-slate-100">
+                  <div className="flex gap-3 md:gap-4 mt-auto pt-4 border-t border-white/5">
                     <button 
                       onClick={handleCloseTrialModal}
                       disabled={isClaimingTrial}
-                      className="px-6 py-4 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50"
+                      className="px-6 py-3 bg-zinc-900 border border-white/10 text-white/50 font-mono font-bold uppercase tracking-wider rounded-none hover:bg-zinc-800 transition-colors disabled:opacity-50 text-xs"
                     >
                       Batal
                     </button>
                     <button 
                       onClick={handleClaimTrial}
                       disabled={isClaimingTrial}
-                      className="flex-1 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black rounded-xl hover:shadow-xl hover:shadow-orange-500/30 transition-all disabled:opacity-50 flex items-center justify-center gap-2 relative overflow-hidden group"
+                      className="flex-1 py-3 bg-[#ff9e00] text-black font-mono font-bold uppercase tracking-wider rounded-none hover:bg-[#ffaa22] transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-xs relative overflow-hidden group"
                     >
-                      {!isClaimingTrial && (
-                        <div className="absolute inset-0 bg-white/20 skew-x-12 -translate-x-full group-hover:animate-shimmer-trial pointer-events-none"></div>
-                      )}
                       {isClaimingTrial ? (
-                        <><i className="fas fa-circle-notch animate-spin"></i> Mengaktifkan...</>
+                        <><Loader2 className="w-4 h-4 animate-spin" /> Mengaktifkan...</>
                       ) : (
-                        <>Aktifkan Sekarang <i className="fas fa-arrow-right"></i></>
+                        <>Aktifkan Sekarang</>
                       )}
                     </button>
                   </div>
@@ -529,21 +536,21 @@ export default function BillingContent() {
       )}
 
       {/* ── SUPPORT BANNER ── */}
-      <div className="animate-billing-fade delay-300 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl p-6 sm:p-8 border border-blue-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div className="animate-billing-fade bg-zinc-900/40 p-6 sm:p-8 border border-white/10 rounded-none flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-white border border-blue-100 flex items-center justify-center shrink-0 shadow-sm">
-            <i className="fas fa-life-ring text-xl text-blue-500" />
+          <div className="w-12 h-12 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center shrink-0">
+            <HelpCircle className="w-5 h-5 text-white/40" />
           </div>
           <div>
-            <h3 className="text-base font-extrabold text-slate-900 mb-1">Punya kendala dengan tagihan?</h3>
-            <p className="text-[13px] text-slate-600 font-medium">
+            <h3 className="text-xs font-mono font-bold text-white uppercase mb-1">Punya kendala dengan tagihan?</h3>
+            <p className="text-[10px] font-mono text-white/40 leading-relaxed">
               Tim support kami siap membantu pertanyaan soal upgrade, pembayaran, atau perpanjangan.
             </p>
           </div>
         </div>
         <a
           href="/support"
-          className="shrink-0 px-6 py-2.5 bg-white border border-slate-200 text-slate-900 text-[13px] font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+          className="shrink-0 px-6 py-2.5 bg-zinc-950 border border-white/10 text-white text-[11px] font-mono font-bold uppercase tracking-wider rounded-none hover:bg-zinc-900 transition-colors"
         >
           Hubungi Support
         </a>
@@ -553,13 +560,18 @@ export default function BillingContent() {
   );
 }
 
-function EmptyState({ icon, text }: { icon: string; text: string }) {
+interface EmptyStateProps {
+  icon: React.ComponentType<any>;
+  text: string;
+}
+
+function EmptyState({ icon: IconComponent, text }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-14 text-center px-6">
-      <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-4">
-        <i className={`fas ${icon} text-xl text-slate-300`} />
+      <div className="w-14 h-14 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center mb-4 text-white/20">
+        <IconComponent className="w-6 h-6" />
       </div>
-      <p className="text-sm font-bold text-slate-400">{text}</p>
+      <p className="text-xs font-mono text-white/30">{text}</p>
     </div>
   );
 }

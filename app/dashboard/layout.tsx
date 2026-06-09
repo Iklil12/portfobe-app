@@ -62,13 +62,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (isEditorPage) return <>{children}</>;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#FAFAFA] font-sans text-slate-900 selection:bg-slate-200 selection:text-slate-900 relative">
+    <div className="flex h-screen overflow-hidden bg-[#050505] font-sans text-white selection:bg-[#ff9e00] selection:text-black relative">
       <style dangerouslySetInnerHTML={{
         __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .font-serif { font-family: 'Playfair Display', serif !important; }
-        .font-mono { font-family: 'Space Mono', monospace !important; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .animate-enter-modal { animation: modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -77,7 +73,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         @keyframes dropdownEnter { 0% { opacity: 0; transform: scale(0.95) translateY(-10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         .animate-page-load { opacity: 0; animation: smoothPageLoad 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
         @keyframes smoothPageLoad { 0% { opacity: 0; transform: translateY(15px); filter: blur(4px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
-        .skeleton-premium { background: linear-gradient(110deg, #f1f5f9 8%, #e2e8f0 18%, #f1f5f9 33%); background-size: 200% 100%; animation: 1.5s shine linear infinite; }
+        .skeleton-premium { background: linear-gradient(110deg, #18181b 8%, #27272a 18%, #18181b 33%); background-size: 200% 100%; animation: 1.5s shine linear infinite; }
         @keyframes shine { to { background-position-x: -200%; } }
         .delay-100 { animation-delay: 100ms; }
         .delay-200 { animation-delay: 200ms; }
@@ -94,13 +90,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         userRole={userRole}
       />
 
-      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
+      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#050505] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
 
-        {/* GLOBAL BACKGROUND STATIC - Tidak akan ikut tergeser oleh Notifikasi */}
+        {/* GLOBAL BACKGROUND STATIC */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="absolute inset-0" style={{ backgroundSize: '40px 40px', backgroundImage: 'linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px)', maskImage: 'linear-gradient(to bottom, white 40%, transparent)' }}></div>
-          <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-slate-200/50 rounded-full blur-[120px]"></div>
-          <div className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-amber-400/5 rounded-full blur-[120px]"></div>
+          <div className="absolute inset-0" style={{ backgroundSize: '40px 40px', backgroundImage: 'linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px)', maskImage: 'linear-gradient(to bottom, white 40%, transparent)' }}></div>
+          <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-[#ff9e00]/5 rounded-full blur-[120px]"></div>
+          <div className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-white/5 rounded-full blur-[120px]"></div>
         </div>
 
         <div className="relative z-40 w-full flex flex-col">
@@ -126,7 +122,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </main>
 
       {isSidebarOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 md:hidden transition-opacity" onClick={() => setIsSidebarOpen(false)}></div>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden transition-opacity" onClick={() => setIsSidebarOpen(false)}></div>
       )}
 
       {(!isLoading && isSubdomainEmpty && !isEditorPage) && (

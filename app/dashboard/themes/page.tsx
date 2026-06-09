@@ -6,12 +6,21 @@ import { ThemeSkeleton } from '@/components/features/themes/ThemeSkeleton';
 import { ThemeHeader } from '@/components/features/themes/ThemeHeader';
 import { ThemeGrid } from '@/components/features/themes/ThemeGrid';
 import { ProBanner } from '@/components/features/themes/ProBanner';
+import { 
+  LayoutGrid, 
+  Gift, 
+  Crown, 
+  Heart, 
+  Ghost, 
+  HeartOff, 
+  ChevronRight 
+} from 'lucide-react';
 
 const FILTER_TABS = [
-  { id: 'all',       label: 'All Themes',   icon: 'fa-th-large' },
-  { id: 'free',      label: 'Free',         icon: 'fa-gift' },
-  { id: 'pro',       label: 'Pro',          icon: 'fa-crown' },
-  { id: 'favorites', label: 'Favorit',      icon: 'fa-heart' },
+  { id: 'all',       label: 'All Themes',   icon: LayoutGrid },
+  { id: 'free',      label: 'Free',         icon: Gift },
+  { id: 'pro',       label: 'Pro',          icon: Crown },
+  { id: 'favorites', label: 'Favorit',      icon: Heart },
 ] as const;
 
 export default function ThemesPage() {
@@ -40,12 +49,9 @@ export default function ThemesPage() {
   })();
 
   return (
-    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-24">
+    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-[#ff9e00]/30 selection:text-white pb-24">
       
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
         .animate-enter { 
             opacity: 0;
             animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
@@ -70,18 +76,19 @@ export default function ThemesPage() {
           {/* scroll-hint: right fade + chevron — mobile only */}
           <div
             className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 z-10 md:hidden flex items-center justify-end pr-1.5"
-            style={{ background: 'linear-gradient(to left, rgba(248,250,252,0.98) 20%, transparent)' }}
+            style={{ background: 'linear-gradient(to left, rgba(9,9,11,0.98) 20%, transparent)' }}
           >
-            <i className="scroll-hint-icon fas fa-chevron-right text-[9px] text-slate-400" />
+            <ChevronRight className="scroll-hint-icon w-3.5 h-3.5 text-white/40" />
           </div>
 
           <div
             role="tablist"
-            className="flex items-center gap-1 bg-slate-100/80 rounded-2xl p-1.5
+            className="flex items-center gap-1 bg-zinc-900 border border-white/10 rounded-none p-1
               overflow-x-auto hide-scrollbar w-full md:w-auto md:inline-flex"
           >
             {FILTER_TABS.map(tab => {
               const isActive = activeFilter === tab.id;
+              const TabIcon = tab.icon;
               const count = tab.id === 'all'
                 ? themes.length
                 : tab.id === 'free'
@@ -98,22 +105,22 @@ export default function ThemesPage() {
                   onClick={() => setActiveFilter(tab.id)}
                   className={`
                     relative flex items-center gap-2
-                    px-4 py-2.5 rounded-xl
-                    text-[12px] font-bold tracking-wide whitespace-nowrap shrink-0
+                    px-4 py-2.5 rounded-none
+                    text-[10px] font-mono font-bold uppercase tracking-wider whitespace-nowrap shrink-0
                     transition-all duration-200 select-none
                     ${isActive
-                      ? 'bg-white text-slate-900 shadow-sm shadow-slate-200/80'
-                      : 'text-slate-500 hover:text-slate-700 hover:bg-white/60'
+                      ? 'bg-[#ff9e00] text-black'
+                      : 'text-white/40 hover:text-white hover:bg-white/5'
                     }
                   `}
                 >
-                  <i className={`fas ${tab.icon} text-[10px] ${isActive ? 'text-slate-600' : 'text-slate-400'}`} />
+                  <TabIcon className="w-3.5 h-3.5 shrink-0" />
                   {tab.label}
                   {count > 0 && (
                     <span className={`
-                      text-[10px] font-black min-w-[18px] h-[18px] px-1.5 rounded-md
+                      text-[9px] font-mono font-bold min-w-[18px] h-[18px] px-1.5 rounded-none
                       inline-flex items-center justify-center leading-none
-                      ${isActive ? 'bg-slate-100 text-slate-600' : 'bg-slate-200/60 text-slate-400'}
+                      ${isActive ? 'bg-black/10 text-black' : 'bg-white/5 border border-white/5 text-white/50'}
                     `}>
                       {count}
                     </span>
@@ -126,13 +133,17 @@ export default function ThemesPage() {
 
         {filteredThemes.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-20 h-20 rounded-3xl bg-slate-100 flex items-center justify-center mb-6">
-              <i className={`fas ${activeFilter === 'favorites' ? 'fa-heart-broken' : 'fa-ghost'} text-3xl text-slate-300`}></i>
+            <div className="w-16 h-16 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center mb-6 text-white/30">
+              {activeFilter === 'favorites' ? (
+                <HeartOff className="w-6 h-6" />
+              ) : (
+                <Ghost className="w-6 h-6" />
+              )}
             </div>
-            <p className="font-extrabold text-slate-700 text-xl mb-2">
+            <p className="font-mono font-bold text-white uppercase tracking-wider mb-2">
               {activeFilter === 'favorites' ? 'Belum ada favorit' : 'Tidak ada tema'}
             </p>
-            <p className="text-slate-400 text-sm font-medium">
+            <p className="text-white/40 text-xs font-mono max-w-xs">
               {activeFilter === 'favorites'
                 ? 'Klik ikon ♡ pada tema yang kamu suka untuk menyimpannya di sini.'
                 : 'Coba filter lain atau nantikan koleksi tema terbaru.'}

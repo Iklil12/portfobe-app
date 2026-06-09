@@ -2,6 +2,16 @@
 
 import Link from 'next/link';
 import { AnimateOnScroll } from '@/components/ui/AnimateOnScroll';
+import { 
+  ArrowRight, 
+  CheckCircle2, 
+  Link2, 
+  Palette, 
+  FolderOpen, 
+  Award, 
+  MessageSquare,
+  Clock
+} from 'lucide-react';
 
 interface RecentActivityProps {
   activities: any[];
@@ -26,55 +36,55 @@ function timeAgo(dateParam: string | Date) {
 }
 
 // --- HELPER: IKON & WARNA AKTIVITAS ---
-function getActivityIconProps(actionType: string) {
-  let icon = 'fa-check-circle';
-  if (actionType.includes('LINK')) icon = 'fa-link';
-  else if (actionType.includes('THEME')) icon = 'fa-palette';
-  else if (actionType.includes('PROJECT')) icon = 'fa-folder-open';
-  else if (actionType.includes('CERTIFICATE')) icon = 'fa-award';
-  else if (actionType.includes('TESTIMONIAL')) icon = 'fa-comment-dots';
-  return { icon, color: 'bg-white text-slate-700 border-slate-200' };
+function getActivityIcon(actionType: string) {
+  if (actionType.includes('LINK')) return <Link2 className="w-3.5 h-3.5" />;
+  if (actionType.includes('THEME')) return <Palette className="w-3.5 h-3.5" />;
+  if (actionType.includes('PROJECT')) return <FolderOpen className="w-3.5 h-3.5" />;
+  if (actionType.includes('CERTIFICATE')) return <Award className="w-3.5 h-3.5" />;
+  if (actionType.includes('TESTIMONIAL')) return <MessageSquare className="w-3.5 h-3.5" />;
+  return <CheckCircle2 className="w-3.5 h-3.5" />;
 }
 
 export function RecentActivity({ activities, isLoading }: RecentActivityProps) {
   return (
     <AnimateOnScroll delay={200}>
-      <div className="bg-white rounded-[2.5rem] p-6 md:p-8 border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 h-full">
+      <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-none transition-all hover:border-white/20 h-full">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">Aktivitas Terbaru</h3>
-            <p className="text-xs font-medium text-slate-500 mt-1">Timeline perubahan Anda</p>
+            <h3 className="text-lg font-display font-bold text-white uppercase tracking-wider">Aktivitas Terbaru</h3>
+            <p className="text-xs font-mono text-white/50 mt-1">Timeline perubahan Anda</p>
           </div>
-          <Link href="/dashboard/history" className="w-8 h-8 flex items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all group shadow-sm">
-            <i className="fas fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+          <Link href="/dashboard/history" className="w-8 h-8 flex items-center justify-center rounded-none border border-white/10 bg-zinc-900 text-white/70 hover:bg-white/5 hover:text-white transition-all group shadow-sm">
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
 
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute top-2 bottom-4 left-[18px] -translate-x-1/2 w-[2px] bg-slate-100 z-0"></div>
+          <div className="absolute top-2 bottom-4 left-[18px] -translate-x-1/2 w-[1px] bg-white/10 z-0"></div>
 
           <div className="space-y-6 relative z-10">
             {isLoading ? (
-              <div className="absolute inset-0 z-50 bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-slate-100 shimmer" style={{ margin: '-24px -32px' }}></div>
+              <div className="absolute inset-0 z-50 bg-zinc-950/40 backdrop-blur-md rounded-none border border-white/10 shimmer" style={{ margin: '-24px -32px' }}></div>
             ) : activities.length === 0 ? (
-              <div className="text-center py-10 text-slate-400 text-xs rounded-2xl border border-dashed border-slate-200 bg-slate-50">Belum ada aktivitas baru.</div>
+              <div className="text-center py-10 text-white/40 text-xs rounded-none border border-dashed border-white/10 bg-white/[0.01] font-mono">Belum ada aktivitas baru.</div>
             ) : (
               activities.slice(0, 5).map((activity, idx) => {
-                const { icon, color } = getActivityIconProps(activity.actionType);
                 return (
                   <AnimateOnScroll key={activity.id} delay={idx * 50}>
                     <div className="flex items-start gap-4 group cursor-default relative">
-                      <div className={`w-9 h-9 shrink-0 rounded-full ${color} flex items-center justify-center border relative z-20 shadow-sm`}>
-                        <i className={`fas ${icon} text-[10px]`}></i>
+                      <div className="w-9 h-9 shrink-0 rounded-none bg-zinc-900 text-white/80 border border-white/10 flex items-center justify-center relative z-20 shadow-sm">
+                        {getActivityIcon(activity.actionType)}
                       </div>
                       <div className="flex-1 min-w-0 pt-1">
-                        <p className="text-xs font-medium text-slate-700 leading-snug">
+                        <p className="text-xs font-mono text-white/80 leading-snug">
                           {activity.details.split(/"|'/).map((part: string, i: number) =>
-                            i % 2 === 0 ? part : <span key={i} className="text-slate-900 font-extrabold">"{part}"</span>
+                            i % 2 === 0 ? part : <span key={i} className="text-[#ff9e00] font-bold">"{part}"</span>
                           )}
                         </p>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5">{timeAgo(activity.createdAt)}</p>
+                        <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mt-1.5 flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {timeAgo(activity.createdAt)}
+                        </p>
                       </div>
                     </div>
                   </AnimateOnScroll>

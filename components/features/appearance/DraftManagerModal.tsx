@@ -1,6 +1,13 @@
+//components/features/appearance/DraftManagerModal.tsx
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { THEMES_DATA } from '@/lib/themes';
+import { 
+  X, Globe, FileText, CheckCircle, Clock, Trash2, 
+  Loader2, Palette, AlertTriangle, FileInput, ArrowRight 
+} from 'lucide-react';
 
 export function DraftManagerModal({ 
   isOpen, 
@@ -56,22 +63,22 @@ export function DraftManagerModal({
   const isViewingLive = selectedDraftId === 'live';
 
   return (
-    <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-8 bg-neutral-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-5xl h-[85vh] md:h-[75vh] min-h-[550px] rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-8 bg-zinc-950/80 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="bg-zinc-900 border border-white/10 w-full max-w-5xl h-[85vh] md:h-[75vh] min-h-[550px] rounded-none shadow-none overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-300">
         
         {/* === SIDEBAR (Master List) === */}
-        <div className="w-full md:w-[320px] h-[45%] md:h-auto bg-[#f9fafb] border-b md:border-b-0 md:border-r border-neutral-200 flex flex-col shrink-0">
+        <div className="w-full md:w-[320px] h-[45%] md:h-auto bg-zinc-950 border-b md:border-b-0 md:border-r border-white/5 flex flex-col shrink-0">
           
-          <div className="px-6 py-4 md:py-5 flex items-center justify-between shrink-0 border-b border-neutral-200">
+          <div className="px-6 py-4 md:py-5 flex items-center justify-between shrink-0 border-b border-white/5">
             <div>
-              <h2 className="text-[15px] font-semibold text-neutral-900 tracking-tight">Manajemen Draft</h2>
-              <p className="text-[11px] text-neutral-500 mt-0.5">{drafts.length} Tersimpan</p>
+              <h2 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Manajemen Draft</h2>
+              <p className="text-[10px] text-white/40 font-mono mt-0.5 uppercase tracking-widest">{drafts.length} Tersimpan</p>
             </div>
             <button 
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-900 hover:bg-neutral-200 transition-colors bg-neutral-100/50"
+              className="w-8 h-8 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors"
             >
-              <i className="fas fa-times text-sm"></i>
+              <X className="w-4 h-4" />
             </button>
           </div>
           
@@ -79,22 +86,26 @@ export function DraftManagerModal({
             {/* Opsi Live */}
             <button
               onClick={() => setSelectedDraftId('live')}
-              className={`w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 ${isViewingLive ? 'bg-white shadow-sm ring-1 ring-neutral-200 text-neutral-900' : 'hover:bg-neutral-100 text-neutral-600'}`}
+              className={`w-full text-left px-4 py-3 rounded-none transition-all flex items-center gap-3 ${
+                isViewingLive 
+                  ? 'bg-zinc-900 border border-white/10 text-white' 
+                  : 'hover:bg-zinc-900 text-white/40'
+              }`}
             >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isViewingLive ? 'bg-neutral-900 text-white' : 'bg-neutral-200 text-neutral-500'}`}>
-                <i className="fas fa-globe text-xs"></i>
+              <div className={`w-8 h-8 rounded-none flex items-center justify-center shrink-0 border border-white/5 bg-zinc-950 ${isViewingLive ? 'text-[#ff9e00]' : 'text-white/40'}`}>
+                <Globe className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-[13px] truncate">Versi Publik (Live)</h4>
-                <p className={`text-[11px] truncate ${isViewingLive ? 'text-neutral-500' : 'text-neutral-400'}`}>Desain utama</p>
+                <h4 className="font-mono font-bold text-xs uppercase truncate">Versi Publik (Live)</h4>
+                <p className="text-[9px] font-mono text-white/30 truncate mt-0.5">Desain utama</p>
               </div>
               {activeDraftId === null && (
-                <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></div>
+                <div className="w-1.5 h-1.5 rounded-none bg-emerald-400 shrink-0 animate-pulse"></div>
               )}
             </button>
 
             {/* Separator */}
-            <div className="h-px bg-neutral-200 my-2 mx-2"></div>
+            <div className="h-px bg-white/5 my-2 mx-2"></div>
 
             {/* List Draft */}
             {drafts.map((draft) => {
@@ -106,24 +117,28 @@ export function DraftManagerModal({
                 <button
                   key={draft.id}
                   onClick={() => setSelectedDraftId(draft.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 ${isSelected ? 'bg-white shadow-sm ring-1 ring-neutral-200 text-neutral-900' : 'hover:bg-neutral-100 text-neutral-600'}`}
+                  className={`w-full text-left px-4 py-3 rounded-none transition-all flex items-center gap-3 ${
+                    isSelected 
+                      ? 'bg-zinc-900 border border-white/10 text-white' 
+                      : 'hover:bg-zinc-900 text-white/40'
+                  }`}
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${isSelected ? 'bg-neutral-50 border-neutral-200 text-neutral-700' : 'bg-transparent border-neutral-200 text-neutral-400'}`}>
-                    <i className="fas fa-file-alt text-xs"></i>
+                  <div className={`w-8 h-8 rounded-none flex items-center justify-center shrink-0 border border-white/5 bg-zinc-950 ${isSelected ? 'text-[#ff9e00]' : 'text-white/40'}`}>
+                    <FileText className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h4 className="font-semibold text-[13px] truncate">{draft.name}</h4>
+                      <h4 className="font-mono font-bold text-xs uppercase truncate">{draft.name}</h4>
                       {isLive && (
-                        <span className="shrink-0 text-[8px] font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">LIVE</span>
+                        <span className="shrink-0 text-[8px] font-mono font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/30 px-1.5 py-0.5 border border-emerald-500/20">LIVE</span>
                       )}
                     </div>
-                    <p className={`text-[11px] mt-0.5 truncate ${isSelected ? 'text-neutral-500' : 'text-neutral-400'}`}>
+                    <p className="text-[9px] font-mono text-white/30 mt-0.5 truncate">
                       {new Date(draft.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </p>
                   </div>
                   {isActive && !isLive && (
-                    <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0"></div>
+                    <div className="w-1.5 h-1.5 rounded-none bg-sky-400 shrink-0 animate-pulse"></div>
                   )}
                 </button>
               );
@@ -132,30 +147,34 @@ export function DraftManagerModal({
         </div>
 
         {/* === MAIN CONTENT (Detail View) === */}
-        <div className="flex-1 bg-white flex flex-col relative overflow-hidden">
+        <div className="flex-1 bg-zinc-900/40 flex flex-col relative overflow-hidden">
           
           <div className="flex-1 overflow-y-auto">
             {isViewingLive ? (
               
               <div className="p-8 md:p-12 max-w-2xl mx-auto h-full flex flex-col justify-center">
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-neutral-50 border border-neutral-200 flex items-center justify-center mb-6">
-                  <i className="fas fa-globe text-2xl md:text-3xl text-neutral-400"></i>
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-none bg-zinc-950 border border-white/10 flex items-center justify-center mb-6 text-[#ff9e00]">
+                  <Globe className="w-8 h-8" />
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 tracking-tight mb-3">Versi Publik (Live)</h2>
-                <p className="text-[14px] md:text-[15px] text-neutral-500 leading-relaxed mb-8">
+                <h2 className="text-lg font-mono font-bold text-white uppercase tracking-wider mb-3">Versi Publik (Live)</h2>
+                <p className="text-[11px] font-mono text-white/40 leading-relaxed mb-8 uppercase tracking-wide">
                   Ini adalah desain utama yang saat ini sedang aktif dan dapat dilihat oleh semua pengunjung portfolio Anda. 
                   Semua perubahan pada mode live akan langsung terlihat di website publik.
                 </p>
                 
-                <div className="pt-8 border-t border-neutral-100">
+                <div className="pt-8 border-t border-white/5">
                   <button 
                     onClick={() => window.location.reload()}
                     disabled={activeDraftId === null}
-                    className={`px-6 py-3 rounded-xl text-[13px] font-semibold transition-all flex items-center gap-2 w-max ${activeDraftId === null ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 cursor-not-allowed' : 'bg-neutral-900 text-white hover:bg-neutral-800'}`}
+                    className={`px-6 py-3 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 w-max ${
+                      activeDraftId === null 
+                        ? 'bg-emerald-950/20 text-emerald-400 border border-emerald-500/20 cursor-not-allowed' 
+                        : 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'
+                    }`}
                   >
                     {activeDraftId === null ? (
                       <>
-                        <i className="fas fa-check-circle"></i> Sedang Terbuka di Editor
+                        <CheckCircle className="w-4 h-4" /> <span>Sedang Terbuka di Editor</span>
                       </>
                     ) : (
                       'Muat Mode Live ke Editor'
@@ -170,37 +189,41 @@ export function DraftManagerModal({
                 {/* Header Information */}
                 <div className="mb-8 md:mb-10">
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="px-2.5 py-1 bg-neutral-100 text-neutral-600 rounded text-[10px] font-bold uppercase tracking-widest">
+                    <span className="px-2.5 py-1 bg-zinc-950 border border-white/10 text-white/40 rounded-none text-[8px] font-mono font-bold uppercase tracking-widest">
                       Draft Tersimpan
                     </span>
                     {publishedDraftId === selectedDraft.id && (
-                      <span className="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded text-[10px] font-bold uppercase tracking-widest">
+                      <span className="px-2.5 py-1 bg-emerald-950/20 border border-emerald-500/20 text-emerald-400 rounded-none text-[8px] font-mono font-bold uppercase tracking-widest">
                         Tayang Live
                       </span>
                     )}
                   </div>
-                  <h2 className="text-4xl font-bold text-neutral-900 tracking-tight leading-tight mb-4">
+                  <h2 className="text-xl font-mono font-bold text-white uppercase tracking-wider leading-tight mb-4">
                     {selectedDraft.name}
                   </h2>
-                  <p className="text-[13px] text-neutral-400 flex items-center gap-2">
-                    <i className="far fa-clock"></i> Diperbarui pada {new Date(selectedDraft.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  <p className="text-[10px] text-white/40 font-mono flex items-center gap-2 uppercase tracking-wider">
+                    <Clock className="w-3.5 h-3.5" /> Diperbarui pada {new Date(selectedDraft.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 mb-8 md:mb-10 pb-6 md:pb-8 border-b border-neutral-100">
+                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 mb-8 md:mb-10 pb-6 md:pb-8 border-b border-white/5">
                   <button 
                     onClick={() => onLoadDraft(selectedDraft)}
                     disabled={activeDraftId === selectedDraft.id}
-                    className={`w-full sm:w-auto justify-center px-8 py-3 rounded-xl text-[13px] font-semibold transition-all flex items-center gap-2 ${activeDraftId === selectedDraft.id ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed' : 'bg-neutral-900 text-white hover:bg-neutral-800 shadow-lg shadow-neutral-900/10'}`}
+                    className={`w-full sm:w-auto justify-center px-8 py-3 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
+                      activeDraftId === selectedDraft.id 
+                        ? 'bg-zinc-950 border border-white/10 text-white/30 cursor-not-allowed' 
+                        : 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'
+                    }`}
                   >
                     {activeDraftId === selectedDraft.id ? (
                       <>
-                        <i className="fas fa-check-circle"></i> Sedang Terbuka
+                        <CheckCircle className="w-4 h-4" /> <span>Sedang Terbuka</span>
                       </>
                     ) : (
                       <>
-                        <i className="fas fa-file-import"></i> Muat ke Editor
+                        <ArrowRight className="w-4 h-4" /> <span>Muat ke Editor</span>
                       </>
                     )}
                   </button>
@@ -208,40 +231,40 @@ export function DraftManagerModal({
                   <button 
                     onClick={() => setDraftToDelete(selectedDraft.id)}
                     disabled={isDeleting === selectedDraft.id}
-                    className="w-full sm:w-auto justify-center px-5 py-3 rounded-xl text-[13px] font-semibold text-red-500 bg-red-50 hover:bg-red-100 hover:text-red-600 transition-colors flex items-center gap-2 disabled:opacity-50"
+                    className="w-full sm:w-auto justify-center px-5 py-3 rounded-none text-[10px] font-mono font-bold text-rose-500 bg-rose-950/10 border border-rose-500/20 hover:bg-rose-950/20 hover:text-rose-400 transition-colors flex items-center gap-2 disabled:opacity-50"
                   >
-                    {isDeleting === selectedDraft.id ? <i className="fas fa-spinner animate-spin"></i> : <i className="fas fa-trash-alt"></i>}
-                    Hapus
+                    {isDeleting === selectedDraft.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                    <span>Hapus</span>
                   </button>
                 </div>
 
                 {/* Details Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pb-6">
-                  <div className="p-5 bg-neutral-50/50 border border-neutral-100 rounded-2xl">
-                    <h5 className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Warna Aksen</h5>
+                  <div className="p-5 bg-zinc-950 border border-white/5 rounded-none">
+                    <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Warna Aksen</h5>
                     <div className="flex items-center gap-4">
                       <div 
-                        className="w-10 h-10 rounded-full border border-neutral-200/50 shadow-sm shrink-0" 
+                        className="w-10 h-10 rounded-none border border-white/10 shrink-0" 
                         style={{ backgroundColor: selectedDraft.themeColor }}
                       ></div>
                       <div>
-                        <p className="text-sm font-bold text-neutral-900 uppercase">{selectedDraft.themeColor}</p>
-                        <p className="text-[11px] text-neutral-500 mt-0.5">Kode Hex</p>
+                        <p className="text-xs font-mono font-bold text-white uppercase">{selectedDraft.themeColor}</p>
+                        <p className="text-[9px] font-mono text-white/30 mt-0.5 uppercase">Kode Hex</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-5 bg-neutral-50/50 border border-neutral-100 rounded-2xl">
-                    <h5 className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Basis Tema</h5>
+                  <div className="p-5 bg-zinc-950 border border-white/5 rounded-none">
+                    <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Basis Tema</h5>
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center shrink-0">
-                        <i className="fas fa-palette text-neutral-400"></i>
+                      <div className="w-10 h-10 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center shrink-0 text-white/50">
+                        <Palette className="w-4 h-4" />
                       </div>
                       <div>
-                        <p className="text-[13px] font-bold text-neutral-900 leading-tight">
+                        <p className="text-xs font-mono font-bold text-white leading-tight uppercase">
                           {THEMES_DATA.find(t => t.id === selectedDraft.themeTemplate)?.name || selectedDraft.themeTemplate}
                         </p>
-                        <p className="text-[11px] text-neutral-500 mt-0.5">Template Visual</p>
+                        <p className="text-[9px] font-mono text-white/30 mt-0.5 uppercase">Template Visual</p>
                       </div>
                     </div>
                   </div>
@@ -249,19 +272,19 @@ export function DraftManagerModal({
 
                 {/* Description Box */}
                 <div className="pb-8">
-                  <h5 className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Deskripsi / Catatan</h5>
+                  <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Deskripsi / Catatan</h5>
                   {selectedDraft.description ? (
-                    <p className="text-[14px] text-neutral-700 leading-relaxed max-w-2xl bg-neutral-50/50 p-4 rounded-xl border border-neutral-100">
+                    <p className="text-[11px] font-mono text-white/60 leading-relaxed max-w-2xl bg-zinc-950 p-4 rounded-none border border-white/5">
                       {selectedDraft.description}
                     </p>
                   ) : (
-                    <p className="text-[14px] text-neutral-400 italic">Tidak ada catatan untuk draft ini.</p>
+                    <p className="text-[11px] font-mono text-white/30 italic uppercase">Tidak ada catatan untuk draft ini.</p>
                   )}
                 </div>
 
               </div>
             ) : (
-              <div className="flex-1 h-full flex items-center justify-center text-neutral-400">
+              <div className="flex-1 h-full flex items-center justify-center text-white/40 font-mono uppercase text-[10px] tracking-wider">
                 <p>Pilih draft di sebelah kiri</p>
               </div>
             )}
@@ -269,60 +292,51 @@ export function DraftManagerModal({
         </div>
       </div>
 
-      {/* Confirmation Modal (Universal Style) */}
+      {/* Confirmation Modal */}
       {draftToDelete && (
         <div className="fixed inset-0 z-[1000000] flex items-center justify-center p-4">
-          {/* 1. Full Screen Blur */}
           <div 
-            className="absolute inset-0 bg-slate-900/30 backdrop-blur-md transition-opacity animate-in fade-in duration-300" 
+            className="absolute inset-0 bg-zinc-950/80 backdrop-blur-md transition-opacity animate-in fade-in duration-300" 
             onClick={() => isDeleting === null && setDraftToDelete(null)}
           ></div>
           
-          {/* Modal Container */}
-          <div className="relative z-10 w-full max-w-[310px] md:max-w-[400px] animate-enter mx-auto">
-            {/* 2. Outer Blurred Box */}
-            <div className="absolute inset-[-12px] md:inset-[-20px] bg-white/40 backdrop-blur-2xl rounded-[2rem] border border-white/50 shadow-2xl"></div>
-            
-            {/* 3. Main Inner White Box */}
-            <div className="relative bg-white rounded-[1.5rem] p-5 md:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.08)] flex flex-col text-center">
+          <div className="relative z-10 w-full max-w-[360px] animate-enter mx-auto">
+            <div className="relative bg-zinc-900 border border-white/10 rounded-none p-6 shadow-none flex flex-col text-center">
               
-              {/* Close Button */}
               <button 
                 onClick={() => isDeleting === null && setDraftToDelete(null)} 
-                className="absolute top-3 right-3 md:top-4 md:right-4 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+                className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-none text-white/40 hover:text-white bg-zinc-950 border border-white/10 transition-colors"
               >
-                 <i className="fas fa-times text-xs md:text-sm"></i>
+                 <X className="w-4 h-4" />
               </button>
 
-              {/* Rippling Orange Icon */}
-              <div className="relative flex items-center justify-center mx-auto mb-4 w-10 h-10 md:w-12 md:h-12">
-                <div className="absolute inset-0 bg-[#ff9e00]/20 rounded-full animate-ping opacity-70" style={{ animationDuration: '2s' }}></div>
-                <div className="absolute inset-1.5 bg-[#ff9e00]/10 rounded-full"></div>
-                <div className="relative w-5 h-5 md:w-6 md:h-6 bg-[#ff9e00] text-white rounded-full flex items-center justify-center shadow-md">
-                  <i className="fas fa-exclamation text-[8px] md:text-[10px]"></i>
+              <div className="relative flex items-center justify-center mx-auto mb-4 w-12 h-12">
+                <div className="absolute inset-0 bg-rose-500/10 rounded-none animate-pulse"></div>
+                <div className="relative w-8 h-8 bg-zinc-950 border border-white/10 text-rose-500 rounded-none flex items-center justify-center">
+                  <AlertTriangle className="w-4 h-4" />
                 </div>
               </div>
               
-              <h3 className="text-lg md:text-xl font-black text-slate-900 mb-1.5 md:mb-2 tracking-tight">Hapus Draft Ini?</h3>
-              <p className="text-xs md:text-sm font-medium text-slate-500 mb-5 md:mb-6 leading-relaxed px-1">
+              <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider mb-2">Hapus Draft Ini?</h3>
+              <p className="text-[10px] font-mono text-white/40 mb-6 leading-relaxed uppercase tracking-wide">
                 Draft yang dihapus tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?
               </p>
               
-              <div className="flex flex-row gap-2 md:gap-3 w-full">
+              <div className="flex flex-row gap-3 w-full">
                 <button 
                   onClick={() => {
                     handleDelete(draftToDelete);
                     setDraftToDelete(null); 
                   }}
                   disabled={isDeleting !== null} 
-                  className="flex-1 py-2.5 md:py-3 bg-[#ff9e00] hover:bg-[#e68e00] rounded-xl font-bold text-white shadow-lg shadow-[#ff9e00]/20 active:scale-95 transition-all flex items-center justify-center gap-2 text-xs md:text-sm disabled:opacity-50"
+                  className="flex-1 py-3 bg-rose-600 hover:bg-rose-500 rounded-none font-mono font-bold text-white text-xs uppercase tracking-wider flex items-center justify-center gap-2"
                 >
-                  <i className="fas fa-trash-alt text-[10px]"></i> Ya, Hapus
+                  <Trash2 className="w-3.5 h-3.5" /> Ya, Hapus
                 </button>
                 <button 
                   onClick={() => setDraftToDelete(null)} 
                   disabled={isDeleting !== null}
-                  className="flex-1 py-2.5 md:py-3 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl font-bold text-slate-700 active:scale-95 transition-all text-xs md:text-sm disabled:opacity-50"
+                  className="flex-1 py-3 bg-zinc-950 border border-white/10 hover:bg-zinc-900 rounded-none font-mono font-bold text-white/60 text-xs uppercase tracking-wider"
                 >
                   Cancel
                 </button>

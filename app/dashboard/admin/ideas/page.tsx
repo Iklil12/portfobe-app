@@ -1,9 +1,11 @@
+//app/dashboard/admin/ideas/page.tsx
 "use client";
 
 import React, { useEffect, useState } from 'react';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
+import { Lock, Loader2, Lightbulb, Check, X, Edit2, Trash2 } from 'lucide-react';
 
 interface AdminNote {
   id: string;
@@ -38,8 +40,8 @@ export default function IdeasPage() {
 
   if (isAuthorized === null || !isAuthorized) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
-        <div className="w-10 h-10 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+      <div className="flex h-full w-full items-center justify-center bg-zinc-950">
+        <Loader2 className="w-8 h-8 text-[#ff9e00] animate-spin" />
       </div>
     );
   }
@@ -102,63 +104,68 @@ export default function IdeasPage() {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto bg-slate-50">
+    <div className="flex flex-col h-full overflow-y-auto bg-zinc-950 font-mono">
       {/* Header */}
       <div className="px-6 md:px-8 pt-6 md:pt-8 max-w-3xl mx-auto w-full">
         <div className="flex items-center gap-2 mb-2">
-          <span className="bg-violet-100 text-violet-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest border border-violet-200">
-            <i className="fas fa-lock mr-1"></i> Admin Only
+          <span className="bg-zinc-900 border border-white/10 text-white/50 text-[9px] font-mono font-bold px-2.5 py-1 rounded-none uppercase tracking-widest flex items-center gap-1.5">
+            <Lock className="w-3 h-3 text-[#ff9e00]" />
+            <span>Admin Only</span>
           </span>
         </div>
-        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Feature Backlog</h1>
-        <p className="text-slate-500 mt-1 text-sm md:text-base">Daftar ide dan fitur yang akan dikembangkan selanjutnya.</p>
+        <h1 className="text-xl md:text-2xl font-bold text-white tracking-tight uppercase">Feature Backlog</h1>
+        <p className="text-white/40 mt-1 text-xs">Daftar ide dan fitur yang akan dikembangkan selanjutnya.</p>
       </div>
 
       {/* Content */}
       <div className="p-6 md:p-8 pb-24">
         <div className="max-w-3xl mx-auto">
           
-          <form onSubmit={handleAddIdea} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-8 flex flex-col sm:flex-row gap-3">
+          <form onSubmit={handleAddIdea} className="bg-zinc-900/40 rounded-none border border-white/10 p-4 mb-8 flex flex-col sm:flex-row gap-3">
             <input 
               type="text" 
               value={newIdea}
               onChange={(e) => setNewIdea(e.target.value)}
               placeholder="Ketik ide brilian Anda di sini..." 
-              className="flex-1 bg-transparent border-none focus:ring-0 text-slate-900 placeholder:text-slate-400 font-medium px-2 outline-none w-full"
+              className="flex-1 bg-transparent border-none focus:ring-0 text-white placeholder:text-white/20 font-mono text-xs px-2 outline-none w-full"
               disabled={isSubmitting}
             />
             <button 
               type="submit" 
               disabled={isSubmitting || !newIdea.trim()}
-              className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 disabled:opacity-50 hover:bg-slate-800 text-white text-sm font-bold rounded-xl transition-colors shrink-0"
+              className="w-full sm:w-auto px-5 py-2.5 bg-[#ff9e00] disabled:opacity-50 hover:bg-[#ffaa22] text-black text-xs font-bold rounded-none transition-colors shrink-0 flex items-center justify-center gap-2"
             >
-              {isSubmitting ? <i className="fas fa-spinner fa-spin"></i> : "Simpan Ide"}
+              {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Simpan Ide"}
             </button>
           </form>
 
           {(!notes && !error) ? (
             <div className="flex justify-center p-12">
-               <div className="w-8 h-8 border-4 border-slate-200 border-t-amber-500 rounded-full animate-spin"></div>
+               <Loader2 className="w-8 h-8 text-[#ff9e00] animate-spin" />
             </div>
           ) : !Array.isArray(notes) || notes.length === 0 ? (
-            <div className="mt-4 p-16 border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center bg-white shadow-sm">
-              <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mb-6 border border-amber-100 shadow-sm">
-                <i className="fas fa-lightbulb text-3xl text-amber-500"></i>
+            <div className="mt-4 p-16 border border-dashed border-white/10 rounded-none flex flex-col items-center justify-center bg-zinc-900/10 shadow-none">
+              <div className="w-20 h-20 bg-zinc-950 rounded-none flex items-center justify-center mb-6 border border-white/5 shadow-none text-[#ff9e00]">
+                <Lightbulb className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Belum Ada Catatan Ide</h3>
-              <p className="text-slate-500 text-center max-w-sm leading-relaxed">
+              <h3 className="text-xs font-mono font-bold text-white uppercase mb-2">Belum Ada Catatan Ide</h3>
+              <p className="text-white/40 text-xs text-center max-w-sm leading-relaxed">
                 Catat semua ide brilian Anda di sini agar tidak terlupa.
               </p>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden divide-y divide-slate-100">
+            <div className="bg-zinc-900/40 rounded-none border border-white/10 shadow-none overflow-hidden divide-y divide-white/5">
               {notes?.map(note => (
-                <div key={note.id} className={`p-4 flex items-start gap-4 hover:bg-slate-50 transition-colors group ${note.isCompleted ? 'opacity-60 bg-slate-50/50' : ''}`}>
+                <div key={note.id} className={`p-4 flex items-start gap-4 hover:bg-zinc-950/20 transition-colors group ${note.isCompleted ? 'opacity-60 bg-zinc-950/20' : ''}`}>
                   <button 
                     onClick={() => toggleComplete(note.id, note.isCompleted)}
-                    className={`mt-1 w-6 h-6 rounded-md flex items-center justify-center shrink-0 border transition-all ${note.isCompleted ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 hover:border-amber-400 text-transparent hover:text-amber-400 bg-white'}`}
+                    className={`mt-1 w-6 h-6 rounded-none flex items-center justify-center shrink-0 border transition-all ${
+                      note.isCompleted 
+                        ? 'bg-emerald-500 border-emerald-500 text-black' 
+                        : 'border-white/10 hover:border-[#ff9e00] text-transparent hover:text-[#ff9e00] bg-zinc-950'
+                    }`}
                   >
-                    <i className="fas fa-check text-xs"></i>
+                    <Check className="w-3.5 h-3.5" />
                   </button>
                   <div className="flex-1 min-w-0">
                     {editingId === note.id ? (
@@ -166,7 +173,7 @@ export default function IdeasPage() {
                         <textarea
                           value={editContent}
                           onChange={(e) => setEditContent(e.target.value)}
-                          className="w-full text-sm font-medium text-slate-800 bg-white border border-amber-300 focus:ring-2 focus:ring-amber-500 rounded-lg px-3 py-2 outline-none resize-none"
+                          className="w-full text-xs font-mono font-bold text-white bg-zinc-950 border border-[#ff9e00]/50 focus:ring-1 focus:ring-[#ff9e00]/50 rounded-none px-3 py-2 outline-none resize-none"
                           rows={2}
                           autoFocus
                           onKeyDown={(e) => {
@@ -179,20 +186,20 @@ export default function IdeasPage() {
                           }}
                         />
                         <div className="flex flex-col gap-1 shrink-0">
-                          <button onClick={() => saveEdit(note.id)} className="w-8 h-8 rounded bg-amber-500 text-white flex items-center justify-center hover:bg-amber-600 transition-colors" title="Simpan (Enter)">
-                            <i className="fas fa-check text-xs"></i>
+                          <button onClick={() => saveEdit(note.id)} className="w-8 h-8 rounded-none bg-[#ff9e00] text-black flex items-center justify-center hover:bg-[#ffaa22] transition-colors" title="Simpan (Enter)">
+                            <Check className="w-3.5 h-3.5" />
                           </button>
-                          <button onClick={() => setEditingId(null)} className="w-8 h-8 rounded bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200 transition-colors" title="Batal (Esc)">
-                            <i className="fas fa-times text-xs"></i>
+                          <button onClick={() => setEditingId(null)} className="w-8 h-8 rounded-none bg-zinc-900 border border-white/10 text-white/50 flex items-center justify-center hover:bg-zinc-800 transition-colors" title="Batal (Esc)">
+                            <X className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
                     ) : (
                       <>
-                        <p className={`text-slate-800 font-medium ${note.isCompleted ? 'line-through text-slate-500' : ''}`}>
+                        <p className={`text-white font-mono text-xs ${note.isCompleted ? 'line-through text-white/30' : ''}`}>
                           {note.content}
                         </p>
-                        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">
+                        <p className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">
                           {new Date(note.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </>
@@ -205,18 +212,18 @@ export default function IdeasPage() {
                           setEditingId(note.id);
                           setEditContent(note.content);
                         }}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition-colors"
+                        className="w-8 h-8 rounded-none flex items-center justify-center text-white/30 hover:text-[#ff9e00] hover:bg-zinc-950 transition-colors"
                         title="Edit Catatan"
                       >
-                        <i className="fas fa-pen text-xs"></i>
+                        <Edit2 className="w-3.5 h-3.5" />
                       </button>
                     )}
                     <button 
                       onClick={() => deleteNote(note.id)}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+                      className="w-8 h-8 rounded-none flex items-center justify-center text-white/30 hover:text-rose-500 hover:bg-zinc-950 transition-colors"
                       title="Hapus"
                     >
-                      <i className="fas fa-trash-alt text-sm"></i>
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>

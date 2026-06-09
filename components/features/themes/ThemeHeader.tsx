@@ -1,4 +1,5 @@
 import React from 'react';
+import { Layers, Palette, ExternalLink } from 'lucide-react';
 
 export function ThemeHeader({ state }: { state: any }) {
   const { subdomain } = state;
@@ -6,14 +7,14 @@ export function ThemeHeader({ state }: { state: any }) {
   return (
     <div className="mb-12 animate-enter flex flex-col md:flex-row md:justify-between md:items-end gap-6 mt-4">
       <div className="text-center md:text-left">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-6 shadow-sm">
-          <i className="fas fa-layer-group text-slate-400"></i> Desain Visual
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-none bg-zinc-900 border border-white/10 text-[9px] font-mono font-bold uppercase tracking-wider text-white/50 mb-6 shadow-sm">
+          <Layers className="w-3.5 h-3.5 text-white/40" /> Desain Visual
         </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 mb-4 flex items-center justify-center md:justify-start gap-3">
-          Koleksi Tema.
-          <i className="fas fa-palette text-slate-300 text-[1.5rem] md:text-[2rem] animate-spin-slow"></i>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold uppercase tracking-wider text-white mb-4 flex items-center justify-center md:justify-start gap-3">
+          Koleksi Tema
+          <Palette className="w-5 h-5 text-white/30 animate-spin-slow" />
         </h1>
-        <p className="text-slate-500 font-medium text-sm sm:text-base max-w-xl leading-relaxed">
+        <p className="text-white/40 font-mono text-xs max-w-xl leading-relaxed">
           Tentukan fondasi estetika portofoliomu. Klik salah satu tema untuk mulai merakit dan mendesain.
         </p>
       </div>
@@ -24,11 +25,9 @@ export function ThemeHeader({ state }: { state: any }) {
             href={`/${subdomain}`} 
             target="_blank" 
             rel="noreferrer"
-            className="group inline-flex items-center gap-3 px-7 py-4 bg-white border border-slate-200 text-slate-900 rounded-full text-[11px] font-extrabold uppercase tracking-widest hover:border-slate-300 hover:bg-slate-50 transition-all duration-500 shadow-sm hover:shadow-md active:scale-95"
+            className="group inline-flex items-center gap-2.5 px-6 py-3.5 bg-zinc-900 border border-white/10 text-white rounded-none text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors shadow-none active:scale-95"
           >
-            <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
-              <i className="fas fa-external-link-alt text-slate-500 group-hover:text-slate-800 transition-colors"></i>
-            </div>
+            <ExternalLink className="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-colors" />
             Lihat Portofolio
           </a>
         </div>

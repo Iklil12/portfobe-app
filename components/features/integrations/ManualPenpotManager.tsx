@@ -4,6 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import useSWR from 'swr';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  PenTool, 
+  Trash2, 
+  Plus, 
+  X, 
+  Check, 
+  Loader2 
+} from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -24,7 +32,6 @@ export function ManualPenpotManager() {
     }
   }, [data?.projects]);
 
-  // Fungsi internal untuk menyimpan ke database
   const persistData = async (updatedProjects: { title: string; url: string }[]) => {
     setIsSaving(true);
     const toastId = toast.loading('Menyimpan perubahan...');
@@ -67,7 +74,6 @@ export function ManualPenpotManager() {
     setDeleteConfirm(null);
     if (editingIndex === index) setEditingIndex(null);
     
-    // Langsung simpan setelah hapus
     await persistData(updated);
   };
 
@@ -81,12 +87,11 @@ export function ManualPenpotManager() {
 
   const handleDone = async () => {
     setEditingIndex(null);
-    // Langsung simpan setelah klik Done
     await persistData(projects);
   };
 
   return (
-    <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-8 relative z-40">
+    <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-none space-y-8 relative z-40">
       
       <div className="space-y-4">
         {projects.map((p, idx) => (
@@ -95,38 +100,38 @@ export function ManualPenpotManager() {
               {editingIndex === idx ? (
                 <motion.div 
                   key="edit"
-                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  initial={{ opacity: 0, scale: 0.98, y: 5 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                  className="flex flex-col gap-4 p-6 rounded-[1.5rem] border-2 border-slate-900 bg-white shadow-xl relative z-50"
+                  exit={{ opacity: 0, scale: 0.98, y: 5 }}
+                  className="flex flex-col gap-4 p-6 rounded-none border border-white/10 bg-[#0a0a0a] relative z-50 animate-enter"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-extrabold text-slate-400 uppercase tracking-[0.2em] ml-1">Project Title</label>
+                      <label className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 block">Project Title</label>
                       <input 
                         type="text" 
                         placeholder="e.g., Landing Page Design" 
-                        className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-slate-900 font-bold text-slate-800 transition-all"
+                        className="w-full bg-[#050505] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-bold text-white outline-none focus:border-[#ff9e00]/40 transition-colors"
                         value={p.title}
                         onChange={(e) => handleChange(idx, 'title', e.target.value)}
                         autoFocus
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-extrabold text-slate-400 uppercase tracking-[0.2em] ml-1">Public Share Link</label>
+                      <label className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 block">Public Share Link</label>
                       <input 
                         type="text" 
                         placeholder="https://design.penpot.app/..." 
-                        className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[10px] focus:outline-none focus:border-slate-900 font-medium text-slate-500 transition-all"
+                        className="w-full bg-[#050505] border border-white/10 rounded-none px-4 py-3 text-[10px] font-mono font-medium text-white/70 outline-none focus:border-[#ff9e00]/40 transition-colors"
                         value={p.url}
                         onChange={(e) => handleChange(idx, 'url', e.target.value)}
                       />
                     </div>
                   </div>
-                  <div className="flex justify-end gap-3 pt-2">
-                     <button type="button" onClick={() => setEditingIndex(null)} className="px-4 py-2 rounded-lg text-[10px] font-bold text-slate-400 hover:text-slate-900 transition-colors">Batal</button>
-                     <button type="button" onClick={handleDone} disabled={isSaving} className="px-5 py-2 rounded-lg bg-slate-900 text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-                       {isSaving ? <i className="fas fa-spinner animate-spin"></i> : <i className="fas fa-check"></i>}
+                  <div className="flex justify-end items-center gap-4 pt-2 border-t border-white/5">
+                     <button type="button" onClick={() => setEditingIndex(null)} className="text-[10px] font-mono font-bold text-white/45 hover:text-white uppercase tracking-wider">Batal</button>
+                     <button type="button" onClick={handleDone} disabled={isSaving} className="px-5 py-2.5 rounded-none bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-mono font-bold uppercase tracking-widest flex items-center gap-1.5 active:scale-95 transition-all">
+                       {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                        Simpan & Selesai
                      </button>
                   </div>
@@ -137,29 +142,29 @@ export function ManualPenpotManager() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   onClick={() => setActiveMenu(activeMenu === idx ? null : idx)}
-                  className="flex items-center justify-between p-4 sm:p-5 rounded-2xl border border-slate-50 bg-slate-50/30 hover:bg-white hover:border-slate-200 hover:shadow-md transition-all group cursor-pointer sm:cursor-default"
+                  className="flex items-center justify-between p-4 sm:p-5 rounded-none border border-white/5 bg-[#0a0a0a]/50 hover:bg-[#0a0a0a] hover:border-white/10 transition-all duration-300 group cursor-pointer sm:cursor-default"
                 >
                   <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0 pr-2">
-                    <div className="w-10 h-10 shrink-0 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-slate-900 text-xs font-black">
+                    <div className="w-10 h-10 shrink-0 rounded-none bg-zinc-950 border border-white/10 flex items-center justify-center text-white/50 text-xs font-mono font-bold">
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-black text-slate-900 tracking-tight truncate">{p.title || 'Untitled Project'}</p>
-                      <p className="text-[10px] text-slate-400 font-medium truncate">{p.url}</p>
+                      <p className="text-sm font-mono font-bold text-white tracking-wide truncate">{p.title || 'Untitled Project'}</p>
+                      <p className="text-[9px] font-mono text-white/30 truncate mt-1">{p.url}</p>
                     </div>
                   </div>
                   <div className={`flex items-center gap-2 transition-all ${activeMenu === idx ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2 sm:group-hover:opacity-100 sm:group-hover:translate-x-0'}`}>
-                    <button type="button" onClick={(e) => { e.stopPropagation(); setEditingIndex(idx); }} className="w-9 h-9 shrink-0 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-slate-900 hover:border-slate-300 flex items-center justify-center transition-all shadow-sm">
-                      <i className="fas fa-pencil-alt text-[10px]"></i>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setEditingIndex(idx); }} className="w-8.5 h-8.5 shrink-0 rounded-none bg-zinc-950 border border-white/10 text-white/40 hover:text-white flex items-center justify-center transition-colors">
+                      <PenTool className="w-3.5 h-3.5" />
                     </button>
                     {deleteConfirm === idx ? (
-                      <div className="flex items-center gap-1">
-                         <button type="button" onClick={(e) => { e.stopPropagation(); handleRemove(idx, e); }} className="px-3 py-2 rounded-lg bg-rose-500 text-white text-[9px] font-black uppercase tracking-widest shadow-lg">Ya, Hapus</button>
-                         <button type="button" onClick={(e) => { e.stopPropagation(); setDeleteConfirm(null); }} className="p-2 text-slate-400 hover:text-slate-900"><i className="fas fa-times"></i></button>
+                      <div className="flex items-center gap-1.5">
+                         <button type="button" onClick={(e) => { e.stopPropagation(); handleRemove(idx, e); }} className="px-3 py-1.5 rounded-none bg-rose-600 text-white text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-rose-700 transition-colors">Ya, Hapus</button>
+                         <button type="button" onClick={(e) => { e.stopPropagation(); setDeleteConfirm(null); }} className="p-1.5 text-white/40 hover:text-white transition-colors"><X className="w-4 h-4" /></button>
                       </div>
                     ) : (
-                      <button type="button" onClick={(e) => { e.stopPropagation(); setDeleteConfirm(idx); }} className="w-9 h-9 shrink-0 rounded-xl bg-white border border-slate-100 text-slate-300 hover:text-rose-500 hover:border-rose-100 flex items-center justify-center transition-all shadow-sm">
-                        <i className="fas fa-trash-alt text-[10px]"></i>
+                      <button type="button" onClick={(e) => { e.stopPropagation(); setDeleteConfirm(idx); }} className="w-8.5 h-8.5 shrink-0 rounded-none bg-zinc-950 border border-white/10 text-white/40 hover:text-rose-400 hover:border-rose-900/30 flex items-center justify-center transition-colors">
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
                   </div>
@@ -170,9 +175,9 @@ export function ManualPenpotManager() {
         ))}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-slate-50">
-        <button type="button" onClick={handleAdd} className="w-full py-4 px-6 rounded-2xl bg-white border border-slate-200 text-slate-900 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-3 shadow-sm active:scale-95">
-          <i className="fas fa-plus-circle text-xs text-slate-400"></i> Add New Penpot Project
+      <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-white/5">
+        <button type="button" onClick={handleAdd} className="w-full py-3.5 px-6 rounded-none bg-zinc-900 border border-white/10 text-white text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-zinc-800 hover:text-white transition-colors flex items-center justify-center gap-2 shadow-none active:scale-95">
+          <Plus className="w-4 h-4 text-white/40" /> Add New Penpot Project
         </button>
       </div>
     </div>

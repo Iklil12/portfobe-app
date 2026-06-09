@@ -5,6 +5,23 @@ import { createPortal } from 'react-dom';
 import { CldUploadWidget } from 'next-cloudinary';
 import { LazyImage } from '@/components/ui/LazyImage';
 import { showToast } from '@/lib/customToast';
+import { 
+  MessageSquare, 
+  Plus, 
+  X, 
+  PenTool, 
+  Camera, 
+  Star, 
+  Loader2, 
+  Check, 
+  Trash2, 
+  Eye, 
+  EyeOff, 
+  ChevronUp, 
+  ChevronDown, 
+  AlertTriangle,
+  MessageSquareOff
+} from 'lucide-react';
 
 export default function TestimonialsPage() {
   const [testimonials, setTestimonials] = useState<any[]>([]);
@@ -148,7 +165,7 @@ export default function TestimonialsPage() {
       if (!res.ok) {
         const data = await res.json();
         showToast({ message: data.error || "Terlalu banyak request, tunggu sebentar", id: "reorder-error", icon: "fa-hand-paper" });
-        fetchTestimonials(); // Revert ke data asli jika gagal
+        fetchTestimonials();
       }
     } catch (error) {
       console.error(error);
@@ -157,21 +174,13 @@ export default function TestimonialsPage() {
   };
 
   return (
-    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-orange-100 selection:text-orange-900 pb-24">
+    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-[#ff9e00]/30 selection:text-white pb-24">
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
         .animate-enter { opacity: 0; animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUpFade {
           0% { opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(3px); }
           100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
-        .skeleton-premium {
-          background: linear-gradient(110deg, #f1f5f9 8%, #e2e8f0 18%, #f1f5f9 33%);
-          background-size: 200% 100%;
-          animation: 1.5s shine linear infinite;
-        }
-        @keyframes shine { to { background-position-x: -200%; } }
       `}} />
 
       <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-10 relative z-10">
@@ -180,47 +189,43 @@ export default function TestimonialsPage() {
         {testimonialToDelete && createPortal(
           <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
             <div 
-              className="absolute inset-0 bg-slate-900/30 backdrop-blur-md transition-opacity animate-in fade-in duration-300" 
+              className="absolute inset-0 bg-black/85 backdrop-blur-sm transition-opacity" 
               onClick={() => !isDeleting && setTestimonialToDelete(null)}
             ></div>
             
-            <div className="relative z-10 w-full max-w-[310px] md:max-w-[400px] animate-enter mx-auto">
-              <div className="absolute inset-[-12px] md:inset-[-20px] bg-white/40 backdrop-blur-2xl rounded-[2rem] border border-white/50 shadow-2xl"></div>
-              
-              <div className="relative bg-white rounded-[1.5rem] p-5 md:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.08)] flex flex-col text-center">
-                <button onClick={() => !isDeleting && setTestimonialToDelete(null)} className="absolute top-3 right-3 md:top-4 md:right-4 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors">
-                   <i className="fas fa-times text-xs md:text-sm"></i>
-                </button>
+            <div className="relative z-10 w-full max-w-[320px] md:max-w-[400px] mx-auto bg-zinc-950 border border-white/10 rounded-none shadow-[0_45px_100px_rgba(0,0,0,0.9)] p-6 md:p-8 flex flex-col text-center">
+              <button 
+                onClick={() => !isDeleting && setTestimonialToDelete(null)} 
+                className="absolute top-3.5 right-3.5 w-7 h-7 flex items-center justify-center rounded-none border border-transparent text-white/40 hover:text-white hover:bg-white/5 transition-colors"
+              >
+                 <X className="w-4 h-4" />
+              </button>
 
-                <div className="relative flex items-center justify-center mx-auto mb-4 w-10 h-10 md:w-12 md:h-12">
-                  <div className="absolute inset-0 bg-[#ff9e00]/20 rounded-full animate-ping opacity-70" style={{ animationDuration: '2s' }}></div>
-                  <div className="absolute inset-1.5 bg-[#ff9e00]/10 rounded-full"></div>
-                  <div className="relative w-5 h-5 md:w-6 md:h-6 bg-[#ff9e00] text-white rounded-full flex items-center justify-center shadow-md">
-                    <i className="fas fa-exclamation text-[8px] md:text-[10px]"></i>
-                  </div>
-                </div>
-                
-                <h3 className="text-lg md:text-xl font-black text-slate-900 mb-1.5 md:mb-2 tracking-tight">Hapus Testimoni?</h3>
-                <p className="text-xs md:text-sm font-medium text-slate-500 mb-5 md:mb-6 leading-relaxed px-1">
-                  Data ini akan dihapus permanen dari sistem dan tidak dapat dikembalikan lagi.
-                </p>
-                
-                <div className="flex flex-row gap-2 md:gap-3 w-full">
-                  <button 
-                    onClick={confirmDelete} 
-                    disabled={isDeleting} 
-                    className="flex-1 py-2.5 md:py-3 bg-[#ff9e00] hover:bg-[#e68e00] rounded-xl font-bold text-white shadow-lg shadow-[#ff9e00]/20 active:scale-95 transition-all flex items-center justify-center gap-2 text-xs md:text-sm disabled:opacity-50"
-                  >
-                    {isDeleting ? <i className="fas fa-circle-notch animate-spin text-white"></i> : 'Delete'}
-                  </button>
-                  <button 
-                    onClick={() => setTestimonialToDelete(null)} 
-                    disabled={isDeleting}
-                    className="flex-1 py-2.5 md:py-3 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl font-bold text-slate-700 active:scale-95 transition-all text-xs md:text-sm disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                </div>
+              <div className="relative flex items-center justify-center mx-auto mb-4 w-10 h-10 md:w-12 md:h-12 bg-[#ff9e00]/10 border border-[#ff9e00]/20 rounded-none text-[#ff9e00]">
+                <AlertTriangle className="w-5 h-5 md:w-6 md:h-6" />
+              </div>
+              
+              <h3 className="text-base md:text-lg font-mono font-bold uppercase tracking-wider text-white mb-2">Hapus Testimoni?</h3>
+              <p className="text-xs font-mono text-white/50 mb-6 leading-relaxed px-1">
+                Data ini akan dihapus permanen dari sistem dan tidak dapat dikembalikan lagi.
+              </p>
+              
+              <div className="flex flex-row gap-2 md:gap-3 w-full">
+                <button 
+                  onClick={confirmDelete} 
+                  disabled={isDeleting} 
+                  className="flex-1 py-2.5 md:py-3 bg-[#ff9e00] hover:bg-[#ffaa22] rounded-none font-mono font-bold text-black uppercase tracking-widest active:scale-95 transition-all flex items-center justify-center gap-1.5 text-[10px] md:text-xs disabled:opacity-50"
+                >
+                  {isDeleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </button>
+                <button 
+                  onClick={() => setTestimonialToDelete(null)} 
+                  disabled={isDeleting}
+                  className="flex-1 py-2.5 md:py-3 bg-zinc-900 border border-white/10 hover:bg-zinc-800 rounded-none font-mono font-bold text-white/70 uppercase tracking-widest active:scale-95 transition-all text-[10px] md:text-xs disabled:opacity-50"
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>,
@@ -228,211 +233,209 @@ export default function TestimonialsPage() {
         )}
 
         {isLoading ? (
-          /* ─── FULL PAGE SKELETON ─── */
           <div className="space-y-4 animate-enter">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
               <div className="space-y-2.5">
-                <div className="h-9 w-52 skeleton-premium rounded-2xl"></div>
-                <div className="h-4 w-72 skeleton-premium rounded-lg"></div>
+                <div className="h-9 w-52 bg-white/5 border border-white/5 rounded-none animate-pulse shimmer"></div>
+                <div className="h-4 w-72 bg-white/5 border border-white/5 rounded-none animate-pulse shimmer"></div>
               </div>
-              <div className="h-10 w-44 skeleton-premium rounded-xl"></div>
+              <div className="h-10 w-44 bg-white/5 border border-white/5 rounded-none animate-pulse shimmer"></div>
             </div>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] flex flex-col sm:flex-row gap-5">
+              <div key={i} className="bg-zinc-950 p-5 sm:p-6 rounded-none border border-white/10 flex flex-col sm:flex-row gap-5">
                 <div className="flex-shrink-0">
-                  <div className="w-14 h-14 rounded-full skeleton-premium"></div>
+                  <div className="w-14 h-14 rounded-none bg-white/5 border border-white/5 animate-pulse shimmer"></div>
                 </div>
                 <div className="flex-1 space-y-3 py-1">
                   <div className="flex items-center gap-2">
-                    <div className="h-5 skeleton-premium rounded-lg w-36"></div>
-                    <div className="h-4 skeleton-premium rounded-md w-24"></div>
+                    <div className="h-5 bg-white/5 rounded-none w-36 animate-pulse shimmer"></div>
+                    <div className="h-4 bg-white/5 rounded-none w-24 animate-pulse shimmer"></div>
                   </div>
                   <div className="flex gap-1">
-                    {[...Array(5)].map((_, j) => <div key={j} className="w-3.5 h-3.5 skeleton-premium rounded-sm"></div>)}
+                    {[...Array(5)].map((_, j) => <div key={j} className="w-3.5 h-3.5 bg-white/5 rounded-none animate-pulse shimmer"></div>)}
                   </div>
                   <div className="space-y-2 pt-1">
-                    <div className="h-3.5 skeleton-premium rounded-md w-full"></div>
-                    <div className="h-3.5 skeleton-premium rounded-md w-4/5"></div>
-                    <div className="h-3.5 skeleton-premium rounded-md w-3/5"></div>
+                    <div className="h-3.5 bg-white/5 rounded-none w-full animate-pulse shimmer"></div>
+                    <div className="h-3.5 bg-white/5 rounded-none w-4/5 animate-pulse shimmer"></div>
                   </div>
                 </div>
-                <div className="hidden sm:flex flex-col gap-2 border-l border-slate-50 pl-5 w-[130px] shrink-0">
-                  <div className="h-9 skeleton-premium rounded-xl w-full"></div>
-                  <div className="h-9 skeleton-premium rounded-xl w-full"></div>
-                  <div className="h-9 skeleton-premium rounded-xl w-full"></div>
+                <div className="hidden sm:flex flex-col gap-2 border-l border-white/5 pl-5 w-[130px] shrink-0">
+                  <div className="h-9 bg-white/5 rounded-none w-full animate-pulse shimmer"></div>
+                  <div className="h-9 bg-white/5 rounded-none w-full animate-pulse shimmer"></div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          /* ─── REAL CONTENT ─── */
           <>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 animate-enter">
               <div>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                  <i className="fas fa-comment-quote text-orange-500"></i>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold uppercase tracking-wider text-white flex items-center gap-3">
+                  <MessageSquare className="w-6 h-6 text-[#ff9e00]" />
                   Testimonials
                 </h1>
-                <p className="text-sm font-medium text-slate-500 mt-2">Bangun kredibilitas portofoliomu dengan ulasan klien.</p>
+                <p className="text-xs font-mono text-white/40 mt-2">Bangun kredibilitas portofoliomu dengan ulasan klien.</p>
               </div>
               <button
                 onClick={() => { if (isFormOpen) resetForm(); else setIsFormOpen(true); }}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600 text-slate-700 text-sm font-bold shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all active:scale-95"
+                className="flex items-center gap-1.5 px-5 py-3 rounded-none border border-transparent bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-mono font-bold uppercase tracking-widest transition-all active:scale-95 shadow-md"
               >
-                <i className={`fas ${isFormOpen ? 'fa-times text-slate-400' : 'fa-plus text-orange-500'}`}></i>
+                {isFormOpen ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                 {isFormOpen ? 'Batal' : 'Tambah Testimoni'}
               </button>
             </div>
 
             {/* FORM TAMBAH / EDIT */}
             {isFormOpen && (
-          <div className="bg-white p-6 sm:p-8 md:p-10 rounded-[2rem] border border-slate-100 shadow-[0_15px_40px_rgba(0,0,0,0.04)] mb-10 animate-enter">
-            <h2 className="font-bold text-xl text-slate-900 mb-6 flex items-center gap-2">
-              <i className="fas fa-pen-nib text-orange-400"></i> {editingId ? 'Edit Ulasan' : 'Tulis Ulasan'}
-            </h2>
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
-              
-              <div className="flex flex-col sm:flex-row gap-8">
-                {/* Bagian Upload Foto */}
-                <div className="flex flex-col items-center sm:items-start gap-3">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Foto (Opsional)</label>
-                  <CldUploadWidget
-                    uploadPreset={cloudinaryPreset}
-                    options={{ maxFiles: 1, resourceType: "image", clientAllowedFormats: ["jpg", "png", "webp"], sources: ["local", "url"], showPoweredBy: false }}
-                    onSuccess={(result) => {
-                      if (typeof result.info === 'object' && 'secure_url' in result.info) {
-                        setFormData({...formData, avatarUrl: result.info.secure_url});
-                        showToast({ message: "Foto terunggah!", id: "up-ok", icon: "fa-check" });
-                      }
-                    }}
-                  >
-                    {({ open }) => (
-                      <div 
-                        onClick={() => open()}
-                        className="w-24 h-24 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center bg-slate-50 cursor-pointer hover:bg-orange-50 hover:border-orange-300 transition-all group overflow-hidden relative shadow-sm"
+              <div className="bg-zinc-950 p-6 sm:p-8 md:p-10 rounded-none border border-white/10 shadow-none mb-10 animate-enter">
+                <h2 className="font-mono font-bold text-sm uppercase tracking-wider text-white mb-6 flex items-center gap-2">
+                  <PenTool className="w-4 h-4 text-[#ff9e00]" /> {editingId ? 'Edit Ulasan' : 'Tulis Ulasan'}
+                </h2>
+                
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  
+                  <div className="flex flex-col sm:flex-row gap-8">
+                    {/* Bagian Upload Foto */}
+                    <div className="flex flex-col items-center sm:items-start gap-3">
+                      <label className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Foto (Opsional)</label>
+                      <CldUploadWidget
+                        uploadPreset={cloudinaryPreset}
+                        options={{ maxFiles: 1, resourceType: "image", clientAllowedFormats: ["jpg", "png", "webp"], sources: ["local", "url"], showPoweredBy: false }}
+                        onSuccess={(result) => {
+                          if (typeof result.info === 'object' && 'secure_url' in result.info) {
+                            setFormData({...formData, avatarUrl: result.info.secure_url});
+                            showToast({ message: "Foto terunggah!", id: "up-ok", icon: "fa-check" });
+                          }
+                        }}
                       >
-                        {formData.avatarUrl ? (
-                          <>
-                            <LazyImage src={formData.avatarUrl} alt="Avatar" className="w-full h-full object-cover group-hover:opacity-50 transition-opacity" />
-                            <i className="fas fa-camera absolute text-slate-900 opacity-0 group-hover:opacity-100 transition-opacity text-xl"></i>
-                          </>
-                        ) : (
-                          <div className="flex flex-col items-center text-slate-400 group-hover:text-orange-500 transition-colors">
-                            <i className="fas fa-camera text-xl mb-1"></i>
-                            <span className="text-[10px] font-bold uppercase tracking-wider">Upload</span>
+                        {({ open }) => (
+                          <div 
+                            onClick={() => open()}
+                            className="w-24 h-24 rounded-none border-2 border-dashed border-white/10 flex items-center justify-center bg-[#0a0a0a] cursor-pointer hover:bg-white/[0.01] hover:border-[#ff9e00]/40 transition-all group overflow-hidden relative"
+                          >
+                            {formData.avatarUrl ? (
+                              <>
+                                <LazyImage src={formData.avatarUrl} alt="Avatar" className="w-full h-full object-cover group-hover:opacity-40 transition-opacity" />
+                                <Camera className="w-6 h-6 absolute text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </>
+                            ) : (
+                              <div className="flex flex-col items-center text-white/40 group-hover:text-[#ff9e00] transition-colors">
+                                <Camera className="w-5 h-5 mb-1" />
+                                <span className="text-[8px] font-mono font-bold uppercase tracking-wider">Upload</span>
+                              </div>
+                            )}
                           </div>
                         )}
+                      </CldUploadWidget>
+                    </div>
+
+                    {/* Bagian Input Teks */}
+                    <div className="flex-1 space-y-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Nama Klien *</label>
+                          <input required type="text" value={formData.clientName} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-bold text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20" placeholder="Contoh: Budi Santoso" />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Posisi / Perusahaan</label>
+                          <input type="text" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-bold text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20" placeholder="Contoh: CEO, TechCorp" />
+                        </div>
                       </div>
-                    )}
-                  </CldUploadWidget>
-                </div>
+                      
+                      <div>
+                        <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Isi Testimoni *</label>
+                        <textarea required rows={4} value={formData.content} onChange={(e) => setFormData({...formData, content: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-medium text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20 resize-none" placeholder="Tuliskan apresiasi atau ulasan klien di sini..." />
+                      </div>
 
-                {/* Bagian Input Teks */}
-                <div className="flex-1 space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Nama Klien *</label>
-                      <input required type="text" value={formData.clientName} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-50 transition-all placeholder:font-normal placeholder:text-slate-400" placeholder="Contoh: Budi Santoso" />
+                      <div>
+                        <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Rating Bintang</label>
+                        <div className="flex gap-2">
+                          {[1,2,3,4,5].map((star) => (
+                            <button 
+                              key={star} type="button" 
+                              onClick={() => setFormData({...formData, rating: star})}
+                              className="w-10 h-10 rounded-none bg-[#0a0a0a] border border-white/10 flex items-center justify-center hover:bg-white/[0.02] transition-colors focus:outline-none"
+                            >
+                              <Star className={`w-4 h-4 ${formData.rating >= star ? 'text-[#ff9e00] fill-[#ff9e00]' : 'text-white/10'}`} />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Posisi / Perusahaan</label>
-                      <input type="text" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-50 transition-all placeholder:font-normal placeholder:text-slate-400" placeholder="Contoh: CEO, TechCorp" />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Isi Testimoni *</label>
-                    <textarea required rows={4} value={formData.content} onChange={(e) => setFormData({...formData, content: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-50 transition-all placeholder:font-normal placeholder:text-slate-400 resize-none" placeholder="Tuliskan apresiasi atau ulasan klien di sini..." />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Rating Bintang</label>
-                    <div className="flex gap-2">
-                      {[1,2,3,4,5].map((star) => (
-                        <button 
-                          key={star} type="button" 
-                          onClick={() => setFormData({...formData, rating: star})}
-                          className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-orange-50 transition-colors focus:outline-none"
-                        >
-                          <i className={`fa-star text-lg ${formData.rating >= star ? 'fas text-amber-400' : 'far text-slate-300'}`}></i>
-                        </button>
-                      ))}
-                    </div>
+                  <div className="pt-6 border-t border-white/5 flex justify-end">
+                    <button disabled={isAdding} type="submit" className="bg-[#ff9e00] hover:bg-[#ffaa22] text-black px-8 py-3.5 rounded-none font-mono font-bold text-xs uppercase tracking-widest active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1.5 shadow-md">
+                      {isAdding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                      {isAdding ? 'Menyimpan...' : 'Simpan Testimoni'}
+                    </button>
                   </div>
-                </div>
+                </form>
               </div>
+            )}
 
-              <div className="pt-6 border-t border-slate-100 flex justify-end">
-                <button disabled={isAdding} type="submit" className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-slate-800 active:scale-95 transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-slate-900/20">
-                  {isAdding ? <i className="fas fa-circle-notch fa-spin"></i> : <i className="fas fa-check"></i>}
-                  {isAdding ? 'Menyimpan...' : 'Simpan Testimoni'}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* LIST TESTIMONI */}
+            {/* LIST TESTIMONI */}
             <div className="space-y-4">
               {testimonials.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 border-dashed animate-enter">
-                  <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
-                    <i className="fas fa-comment-slash text-2xl text-slate-300"></i>
+                <div className="text-center py-16 bg-[#050505] rounded-none border border-white/10 border-dashed animate-enter">
+                  <div className="w-14 h-14 bg-zinc-900 border border-white/10 rounded-none flex items-center justify-center mx-auto mb-4 text-white/30 text-xl shadow-none">
+                    <MessageSquareOff className="w-6 h-6" />
                   </div>
-                  <h3 className="font-bold text-slate-900 mb-1">Belum ada testimoni</h3>
-                  <p className="text-slate-500 text-sm max-w-xs mx-auto mb-6">Kamu belum memiliki ulasan dari klien. Tambahkan sekarang untuk meningkatkan kepercayaan.</p>
-                  <button onClick={() => setIsFormOpen(true)} className="text-sm font-bold text-orange-500 hover:text-orange-600">
+                  <h3 className="font-mono font-bold text-white uppercase tracking-wider mb-1">Belum ada testimoni</h3>
+                  <p className="text-white/40 text-xs font-mono max-w-xs mx-auto mb-6">Kamu belum memiliki ulasan dari klien. Tambahkan sekarang untuk meningkatkan kepercayaan.</p>
+                  <button onClick={() => setIsFormOpen(true)} className="text-xs font-mono font-bold uppercase tracking-wider text-[#ff9e00] hover:text-[#ffaa22]">
                     + Tambah Testimoni Pertama
                   </button>
                 </div>
               ) : (
                 testimonials.map((t, index) => (
-                  <div key={t.id} className={`bg-white p-5 sm:p-6 rounded-3xl border transition-all duration-300 ${t.isVisible ? 'border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:border-slate-200' : 'border-slate-200 opacity-60 bg-slate-50'} flex flex-col sm:flex-row gap-5 animate-enter`} style={{animationDelay: `${index * 100}ms`}}>
+                  <div key={t.id} className={`bg-zinc-950 p-5 sm:p-6 rounded-none border transition-all duration-300 ${t.isVisible ? 'border-white/10 hover:border-white/20 hover:bg-white/[0.01]' : 'border-white/5 opacity-40 bg-zinc-900/50'} flex flex-col sm:flex-row gap-5 animate-enter`} style={{animationDelay: `${index * 100}ms`}}>
                     
                     <div className="flex-shrink-0 flex sm:flex-col items-center justify-between sm:justify-start gap-4 sm:gap-2">
                       <div className="flex flex-col gap-1 sm:hidden mr-2">
-                        <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="text-slate-300 hover:text-orange-500 disabled:opacity-30"><i className="fas fa-chevron-up text-xs"></i></button>
-                        <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="text-slate-300 hover:text-orange-500 disabled:opacity-30"><i className="fas fa-chevron-down text-xs"></i></button>
+                        <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="text-white/30 hover:text-[#ff9e00] disabled:opacity-30"><ChevronUp className="w-3.5 h-3.5" /></button>
+                        <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="text-white/30 hover:text-[#ff9e00] disabled:opacity-30"><ChevronDown className="w-3.5 h-3.5" /></button>
                       </div>
                       {t.avatarUrl ? (
-                        <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-14 h-14 rounded-full object-cover border border-slate-200" />
+                        <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-14 h-14 rounded-none object-cover border border-white/10" />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-orange-100 text-orange-600 border border-orange-200 flex items-center justify-center font-black text-xl">
-                          {t.clientName.charAt(0)}
+                        <div className="w-14 h-14 rounded-none bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/25 flex items-center justify-center font-mono font-bold text-lg">
+                          {t.clientName.charAt(0).toUpperCase()}
                         </div>
                       )}
                       <div className="flex sm:hidden gap-2">
-                        <button onClick={() => handleEditClick(t)} className="w-9 h-9 flex items-center justify-center bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-100 transition-all"><i className="fas fa-edit text-xs"></i></button>
-                        <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-50 ${t.isVisible ? 'bg-slate-100 text-slate-500 hover:bg-slate-200' : 'bg-slate-800 text-white'}`}>
-                          {processingId === t.id ? <i className="fas fa-spinner fa-spin text-xs"></i> : <i className={`fas ${t.isVisible ? 'fa-eye' : 'fa-eye-slash'} text-xs`}></i>}
+                        <button onClick={() => handleEditClick(t)} className="w-9 h-9 flex items-center justify-center bg-zinc-900 border border-white/10 text-white rounded-none hover:bg-white/5 transition-all"><PenTool className="w-3.5 h-3.5" /></button>
+                        <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`w-9 h-9 flex items-center justify-center rounded-none transition-all disabled:opacity-50 ${t.isVisible ? 'bg-zinc-900 border border-white/10 text-white/50 hover:bg-white/5' : 'bg-[#ff9e00] text-black'}`}>
+                          {processingId === t.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : (t.isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />)}
                         </button>
-                        <button onClick={() => handleDeleteClick(t.id)} className="w-9 h-9 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all"><i className="fas fa-trash text-xs"></i></button>
+                        <button onClick={() => handleDeleteClick(t.id)} className="w-9 h-9 flex items-center justify-center bg-zinc-900 border border-white/10 text-white rounded-none hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30 transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </div>
                     
                     <div className="flex-1 flex flex-col justify-center">
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2">
-                        <h3 className="font-black text-slate-900 text-lg">{t.clientName}</h3>
-                        {t.company && <span className="text-xs font-bold uppercase tracking-widest text-slate-400 px-2 py-0.5 bg-slate-100 rounded-md">{t.company}</span>}
+                        <h3 className="font-mono font-bold text-white text-base">{t.clientName}</h3>
+                        {t.company && <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-white/50 px-2 py-0.5 bg-white/5 border border-white/10 rounded-none">{t.company}</span>}
                       </div>
-                      <div className="flex mb-3">
-                        {[...Array(5)].map((_, i) => <i key={i} className={`${i < t.rating ? 'fas text-amber-400' : 'far text-slate-200'} fa-star text-xs mr-0.5`}></i>)}
+                      <div className="flex gap-0.5 mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className={`w-3 h-3 ${i < t.rating ? 'text-[#ff9e00] fill-[#ff9e00]' : 'text-white/10'}`} />
+                        ))}
                       </div>
-                      <p className="text-sm font-medium text-slate-600 leading-relaxed max-w-2xl italic">"{t.content}"</p>
+                      <p className="text-xs font-mono text-white/60 leading-relaxed max-w-2xl italic">"{t.content}"</p>
                     </div>
                     
                     <div className="hidden sm:flex flex-col justify-between items-center px-2">
-                      <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="p-1 text-slate-300 hover:text-orange-500 disabled:opacity-30 transition-colors"><i className="fas fa-chevron-up text-lg"></i></button>
-                      <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="p-1 text-slate-300 hover:text-orange-500 disabled:opacity-30 transition-colors"><i className="fas fa-chevron-down text-lg"></i></button>
+                      <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="p-1 text-white/30 hover:text-[#ff9e00] disabled:opacity-30 transition-colors"><ChevronUp className="w-4 h-4" /></button>
+                      <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="p-1 text-white/30 hover:text-[#ff9e00] disabled:opacity-30 transition-colors"><ChevronDown className="w-4 h-4" /></button>
                     </div>
                     
-                    <div className="hidden sm:flex flex-col gap-2 justify-start border-l border-slate-100 pl-5 w-[130px] shrink-0">
-                      <button onClick={() => handleEditClick(t)} className="px-3 py-2 flex items-center justify-center gap-2 rounded-xl transition-all text-xs font-bold w-full bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100"><i className="fas fa-edit"></i> Edit</button>
-                      <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`px-3 py-2 flex items-center justify-center gap-2 rounded-xl transition-all text-xs font-bold w-full disabled:opacity-50 ${t.isVisible ? 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200' : 'bg-slate-800 text-white hover:bg-slate-900 shadow-md'}`}>
-                        {processingId === t.id ? <i className="fas fa-spinner fa-spin"></i> : <i className={`fas ${t.isVisible ? 'fa-eye' : 'fa-eye-slash'}`}></i>} {t.isVisible ? 'Sembunyikan' : 'Tampilkan'}
+                    <div className="hidden sm:flex flex-col gap-2 justify-start border-l border-white/5 pl-5 w-[130px] shrink-0">
+                      <button onClick={() => handleEditClick(t)} className="px-3 py-2 flex items-center justify-center gap-1.5 rounded-none transition-all text-[10px] font-mono font-bold uppercase tracking-widest w-full bg-zinc-900 border border-white/10 text-white/70 hover:bg-zinc-800"><PenTool className="w-3.5 h-3.5" /> Edit</button>
+                      <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`px-3 py-2 flex items-center justify-center gap-1.5 rounded-none transition-all text-[10px] font-mono font-bold uppercase tracking-widest w-full disabled:opacity-50 ${t.isVisible ? 'bg-zinc-900 border border-white/10 text-white/70 hover:bg-zinc-800' : 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'}`}>
+                        {processingId === t.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : (t.isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />)} {t.isVisible ? 'Hide' : 'Show'}
                       </button>
-                      <button onClick={() => handleDeleteClick(t.id)} className="px-3 py-2 flex items-center justify-center gap-2 rounded-xl transition-all text-xs font-bold w-full bg-red-50 text-red-600 hover:bg-red-100 border border-red-100"><i className="fas fa-trash"></i> Hapus</button>
+                      <button onClick={() => handleDeleteClick(t.id)} className="px-3 py-2 flex items-center justify-center gap-1.5 rounded-none transition-all text-[10px] font-mono font-bold uppercase tracking-widest w-full bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30"><Trash2 className="w-3.5 h-3.5" /> Hapus</button>
                     </div>
                   </div>
                 ))

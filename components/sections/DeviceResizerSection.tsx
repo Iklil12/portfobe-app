@@ -23,22 +23,22 @@ export function DeviceResizerSection() {
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
 
   return (
-    <section className="relative min-h-[130vh] w-full bg-[#020202] text-white overflow-hidden pt-12 pb-32 sm:pt-16 md:pt-20 flex flex-col items-center justify-center font-sans">
+    <section className="relative min-h-[130vh] w-full bg-[#050505] text-white overflow-hidden pt-12 pb-32 sm:pt-16 md:pt-20 flex flex-col items-center justify-center font-sans border-t border-white/10">
 
       {/* ================= BACKGROUND ART ================= */}
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
         <motion.div
           layout
-          className="absolute rounded-full blur-[120px] opacity-20"
+          className="absolute rounded-full blur-[120px] opacity-10"
           animate={{
             width: previewMode === 'desktop' ? '80vw' : '40vw',
             height: previewMode === 'desktop' ? '40vw' : '80vw',
-            backgroundColor: previewMode === 'desktop' ? '#ff9e00' : '#3b82f6',
+            backgroundColor: previewMode === 'desktop' ? '#ff9e00' : '#ffffff',
           }}
           transition={{ duration: 1.5, ease: EASE }}
         />
 
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] mix-blend-overlay">
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.015] mix-blend-overlay">
           <AnimatePresence mode="wait">
             <motion.h1
               key={previewMode}
@@ -46,7 +46,7 @@ export function DeviceResizerSection() {
               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
               exit={{ opacity: 0, scale: 1.1, filter: 'blur(20px)' }}
               transition={{ duration: 1 }}
-              className="text-[20vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap"
+              className="text-[20vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap font-mono"
             >
               {previewMode}
             </motion.h1>
@@ -64,7 +64,7 @@ export function DeviceResizerSection() {
             [ DIMENSIONAL FLUIDITY ]
           </span>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tight">
-            Liquid <span className="text-transparent bg-clip-text bg-gradient-to-r from-white/50 to-white/10">Architecture</span>
+            Liquid <span className="text-[#ff9e00]">Architecture</span>
           </h2>
           <p className="text-white/40 font-mono text-[9px] md:text-xs tracking-[0.2em] max-w-lg mx-auto uppercase leading-relaxed">
             The interface bends to the vessel. Complete responsive precision without breaking the artistic narrative.
@@ -73,24 +73,24 @@ export function DeviceResizerSection() {
 
         {/* ================= THE CONTROLLER ================= */}
         <div
-          className="flex gap-4 mb-20 p-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl"
+          className="flex gap-2 mb-20 p-1 bg-black border border-white/10 rounded-none"
         >
           <button
             onClick={() => setPreviewMode('desktop')}
-            className={`relative px-8 py-3 rounded-full transition-colors duration-500 z-10 ${previewMode === 'desktop' ? 'text-black' : 'text-white/40 hover:text-white/80'}`}
+            className={`relative px-8 py-3 rounded-none transition-colors duration-500 z-10 ${previewMode === 'desktop' ? 'text-black font-bold' : 'text-white/40 hover:text-white/80 font-normal'}`}
           >
             <span className="relative z-20 font-mono text-[10px] uppercase tracking-widest font-bold">Desktop Layout</span>
             {previewMode === 'desktop' && (
-              <motion.div layoutId="pill-active" className="absolute inset-0 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.5)] z-10" />
+              <motion.div layoutId="pill-active" className="absolute inset-0 bg-[#ff9e00] rounded-none z-10" />
             )}
           </button>
           <button
             onClick={() => setPreviewMode('mobile')}
-            className={`relative px-8 py-3 rounded-full transition-colors duration-500 z-10 ${previewMode === 'mobile' ? 'text-black' : 'text-white/40 hover:text-white/80'}`}
+            className={`relative px-8 py-3 rounded-none transition-colors duration-500 z-10 ${previewMode === 'mobile' ? 'text-black font-bold' : 'text-white/40 hover:text-white/80 font-normal'}`}
           >
             <span className="relative z-20 font-mono text-[10px] uppercase tracking-widest font-bold">Mobile View</span>
             {previewMode === 'mobile' && (
-              <motion.div layoutId="pill-active" className="absolute inset-0 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.5)] z-10" />
+              <motion.div layoutId="pill-active" className="absolute inset-0 bg-[#ff9e00] rounded-none z-10" />
             )}
           </button>
         </div>
@@ -101,27 +101,27 @@ export function DeviceResizerSection() {
           {/* The Morphing Container */}
           <motion.div
             layout
-            className={`bg-white shadow-[0_0_80px_rgba(0,0,0,0.4)] overflow-hidden relative flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${previewMode === 'desktop'
-                ? 'w-full max-w-[960px] h-[480px] md:h-[640px] rounded-xl md:rounded-2xl'
-                : 'w-[315px] h-[600px] rounded-[3rem] border-[12px] border-neutral-900'
+            className={`bg-[#050505] shadow-[0_0_80px_rgba(0,0,0,0.6)] overflow-hidden relative flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] rounded-none border border-white/10 ${previewMode === 'desktop'
+                ? 'w-full max-w-[960px] h-[480px] md:h-[640px]'
+                : 'w-[325px] h-[600px] border-[1px] border-white/20'
               }`}
           >
             {/* Browser Header / Notch bar */}
             <div className="shrink-0 z-20">
               {previewMode === 'desktop' ? (
-                <div className="h-12 flex items-center px-4 gap-3 bg-slate-50/80 backdrop-blur-sm border-b border-slate-100 shrink-0">
+                <div className="h-12 flex items-center px-4 gap-3 bg-black/60 backdrop-blur-sm border-b border-white/10 shrink-0">
                   <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-slate-300"></div>
-                    <div className="w-3 h-3 rounded-full bg-slate-300"></div>
-                    <div className="w-3 h-3 rounded-full bg-slate-300"></div>
+                    <div className="w-2.5 h-2.5 rounded-none bg-white/20"></div>
+                    <div className="w-2.5 h-2.5 rounded-none bg-white/20"></div>
+                    <div className="w-2.5 h-2.5 rounded-none bg-white/20"></div>
                   </div>
-                  <div className="mx-auto px-6 py-1.5 bg-white text-[10px] font-mono text-slate-400 rounded-md flex items-center gap-2 font-bold shadow-sm border border-slate-200/50 truncate max-w-[250px]">
-                    <i className="fas fa-lock text-[8px]"></i>portfo.be/jamal
+                  <div className="mx-auto px-6 py-1 bg-[#0a0a0a] text-[9px] font-mono text-white/40 border border-white/10 rounded-none flex items-center gap-2 font-bold truncate max-w-[250px]">
+                    <i className="fas fa-lock text-[7px] text-[#ff9e00]"></i>portfo.be/jamal
                   </div>
                 </div>
               ) : (
-                <div className="absolute top-0 left-0 h-7 bg-transparent flex justify-center w-full z-50 pointer-events-none">
-                  <div className="w-24 h-5.5 bg-slate-900 rounded-b-2xl"></div>
+                <div className="absolute top-0 left-0 h-6 bg-transparent flex justify-center w-full z-50 pointer-events-none">
+                  <div className="w-20 h-4 bg-white/10 border-b border-x border-white/15"></div>
                 </div>
               )}
             </div>
@@ -160,7 +160,7 @@ export function DeviceResizerSection() {
                   }
                 `}} />
 
-              {/* --- SIDEBAR SECTION (Kiri Desktop, Atas Mobile) --- */}
+              {/* --- SIDEBAR SECTION --- */}
               <div className={`
                   bg-gray-50 border-gray-200 flex flex-col justify-between shrink-0
                   ${previewMode === 'desktop'
@@ -174,8 +174,8 @@ export function DeviceResizerSection() {
                       JAMAL<br />ARIFIN
                     </h1>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                      <span className="text-[7px] font-bold uppercase tracking-widest text-gray-500">Available</span>
+                      <span className="w-1.5 h-1.5 bg-[#ff9e00] rounded-full animate-pulse"></span>
+                      <span className="text-[7px] font-bold uppercase tracking-widest text-[#ff9e00]">Available</span>
                     </div>
                   </div>
 
@@ -205,7 +205,7 @@ export function DeviceResizerSection() {
                   </div>
                 </div>
 
-                {/* Links / Contact Info & Socials (Static & non-clickable for preview) */}
+                {/* Links / Contact Info & Socials */}
                 <div className="pt-6 border-t border-gray-200 mt-6 text-left pointer-events-none select-none">
                   <div className="block text-xs font-bold tracking-tight mb-3 text-black">
                     hello@jamal.co
@@ -219,7 +219,7 @@ export function DeviceResizerSection() {
                 </div>
               </div>
 
-              {/* --- MAIN CONTENT SECTION (Kanan Desktop, Bawah Mobile) --- */}
+              {/* --- MAIN CONTENT SECTION --- */}
               <div className={`bg-white flex-1 ${
                 previewMode === 'desktop' 
                   ? 'h-full overflow-y-auto custom-scrollbar p-3 md:p-6 pb-12 md:pb-16' 
@@ -244,21 +244,21 @@ export function DeviceResizerSection() {
                   <span className="text-[7px] text-gray-400">Archive</span>
                 </div>
 
-                {/* Projects Grid (Video & Photo types) */}
+                {/* Projects Grid */}
                 <div className={`
                     grid mb-8
                     ${previewMode === 'mobile' ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-3 md:gap-4'}
                   `}>
 
-                  {/* Project 1: Video type */}
+                  {/* Project 1 */}
                   <div className="group">
-                    <div className="aspect-[4/3] w-full overflow-hidden relative bg-white border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
+                    <div className="aspect-[4/3] w-full overflow-hidden relative bg-white border border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
                       <img
                         src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=200&auto=format&fit=crop"
                         className="w-full h-full object-cover grayscale"
                         alt="work"
                       />
-                      {/* Play Button Icon for Video */}
+                      {/* Play Button Icon */}
                       <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
                         <div className="w-8 h-8 bg-white border border-black text-black flex items-center justify-center rounded-none shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
                           <i className="fas fa-play text-[8px] ml-0.5"></i>
@@ -274,15 +274,15 @@ export function DeviceResizerSection() {
                     </div>
                   </div>
 
-                  {/* Project 2: Photo type */}
+                  {/* Project 2 */}
                   <div className="group">
-                    <div className="aspect-[4/3] w-full overflow-hidden relative bg-white border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
+                    <div className="aspect-[4/3] w-full overflow-hidden relative bg-white border border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
                       <img
                         src="https://images.unsplash.com/photo-1600132806370-bf17e65e942f?q=80&w=200&auto=format&fit=crop"
                         className="w-full h-full object-cover grayscale"
                         alt="work"
                       />
-                      {/* Arrow Icon for Photo */}
+                      {/* Arrow Icon */}
                       <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
                         <div className="w-8 h-8 bg-white border border-black text-black flex items-center justify-center rounded-none shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
                           <i className="fas fa-arrow-right -rotate-45 text-[8px]"></i>
@@ -321,8 +321,7 @@ export function DeviceResizerSection() {
                   </div>
 
                   {/* Simulated 3D Viewer box */}
-                  <div className="w-full aspect-[16/9] bg-zinc-50 border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] flex flex-col justify-between p-3 relative overflow-hidden">
-                    {/* 3D Static Render Image */}
+                  <div className="w-full aspect-[16/9] bg-zinc-50 border border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] flex flex-col justify-between p-3 relative overflow-hidden">
                     <div className="absolute inset-0 z-0">
                       <img
                         src="/minimalist_chair_3d.png"
@@ -331,7 +330,6 @@ export function DeviceResizerSection() {
                       />
                     </div>
 
-                    {/* Grid background for 3D simulation */}
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:10px_10px] opacity-30 z-10 pointer-events-none"></div>
 
                     <div className="flex justify-between z-20">
@@ -342,7 +340,6 @@ export function DeviceResizerSection() {
                       </div>
                     </div>
 
-                    {/* Spacer/Empty container for centering */}
                     <div className="flex-1 z-20"></div>
 
                     <div className="flex justify-between items-end z-20">
@@ -370,7 +367,7 @@ export function DeviceResizerSection() {
                   </div>
 
                   <div className="grid grid-cols-1 gap-3">
-                    <div className="flex items-center gap-3 p-3 border-2 border-black bg-white shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
+                    <div className="flex items-center gap-3 p-3 border border-black bg-white shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
                       <div className="w-8 h-8 shrink-0 bg-emerald-50 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
                         <PenpotIcon className="w-4 h-4" />
                       </div>
@@ -396,8 +393,7 @@ export function DeviceResizerSection() {
                       Logo Portfo.be
                     </h4>
 
-                    <div className="w-full aspect-video bg-[#18191b] border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none flex items-center justify-center p-4 relative overflow-hidden">
-                      {/* Slide center logo */}
+                    <div className="w-full aspect-video bg-[#18191b] border border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none flex items-center justify-center p-4 relative overflow-hidden">
                       <div className="w-3/5 h-auto flex items-center justify-center">
                         <img
                           src="/portfo.be.png"
@@ -406,7 +402,6 @@ export function DeviceResizerSection() {
                         />
                       </div>
 
-                      {/* Mock Canva interactive button overlay */}
                       <div className="absolute bottom-2 right-2 z-10 px-2 py-1 bg-black/60 backdrop-blur-sm text-white text-[6px] font-bold uppercase tracking-widest flex items-center gap-1">
                         <i className="fas fa-external-link-alt text-[5px]"></i> Use Template
                       </div>
@@ -423,7 +418,7 @@ export function DeviceResizerSection() {
 
                   <div className="grid grid-cols-1 gap-4 mb-4">
                     {/* Top Repo */}
-                    <div className="p-3 border-2 border-black bg-white shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
+                    <div className="p-3 border border-black bg-white shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
                       <div className="flex items-center gap-1.5 mb-1">
                         <i className="fab fa-github text-[10px]"></i>
                         <h4 className="text-[9px] font-bold">portfobe-app</h4>
@@ -465,7 +460,7 @@ export function DeviceResizerSection() {
 
                   {/* Mock Github Activity Feed Timeline */}
                   <div>
-                    <p className="text-[7px] font-bold text-amber-500 uppercase tracking-widest mb-3">Recent Activity</p>
+                    <p className="text-[7px] font-bold text-[#ff9e00] uppercase tracking-widest mb-3">Recent Activity</p>
                     <div className="space-y-3 relative">
                       {/* Vertical line */}
                       <div className="absolute left-[2.5px] top-1 bottom-[-8px] w-[1px] bg-slate-900" />
@@ -480,7 +475,7 @@ export function DeviceResizerSection() {
                         <div key={idx} className="flex gap-3 items-center relative">
                           {/* Dot */}
                           <div className="relative z-10">
-                            <div className={`w-1.5 h-1.5 rounded-full bg-amber-500 transition-all duration-300 ${act.highlight ? 'scale-150 shadow-[0_0_8px_rgba(245,158,11,0.6)]' : ''}`} />
+                            <div className={`w-1.5 h-1.5 rounded-full bg-[#ff9e00] transition-all duration-300 ${act.highlight ? 'scale-150 shadow-[0_0_8px_rgba(255,158,0,0.6)]' : ''}`} />
                           </div>
                           {/* Content */}
                           <div className="flex-1 flex justify-between items-center text-[7px] text-gray-500">
@@ -532,10 +527,10 @@ export function DeviceResizerSection() {
 
                   <div className="grid grid-cols-1 gap-4">
                     {/* Simulated Testimonial Card */}
-                    <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 text-left">
+                    <div className="p-4 rounded-none bg-gray-50 border border-gray-200 text-left">
                       <div className="flex items-center gap-3 mb-3">
                         {/* Circle Avatar (First Letter) */}
-                        <div className="w-8 h-8 rounded-full bg-black/10 flex items-center justify-center font-bold text-[10px] text-black">
+                        <div className="w-8 h-8 rounded-none bg-black/10 flex items-center justify-center font-bold text-[10px] text-black">
                           S
                         </div>
                         <div>
@@ -545,7 +540,7 @@ export function DeviceResizerSection() {
                       </div>
 
                       {/* Star Ratings */}
-                      <div className="flex gap-0.5 mb-2.5 text-amber-400 text-[8px]">
+                      <div className="flex gap-0.5 mb-2.5 text-[#ff9e00] text-[8px]">
                         <i className="fas fa-star"></i>
                         <i className="fas fa-star"></i>
                         <i className="fas fa-star"></i>

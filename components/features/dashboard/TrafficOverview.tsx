@@ -16,22 +16,20 @@ const safeDateFormatter = (dateStr: string) => {
   return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 };
 
-
-
 // Custom Tooltip component
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
-        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">{label}</p>
+      <div className="bg-zinc-950 p-3 rounded-none border border-white/15 shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
+        <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-2">{label}</p>
         <div className="space-y-1.5">
           {payload.map((entry: any, index: number) => (
             <div key={index} className="flex items-center gap-3 justify-between">
               <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }}></div>
-                <span className="text-xs font-bold text-slate-600 capitalize">{entry.name}</span>
+                <div className="w-2 h-2 rounded-none" style={{ backgroundColor: entry.color }}></div>
+                <span className="text-[10px] font-mono font-bold text-white/70 capitalize">{entry.name}</span>
               </div>
-              <span className="text-sm font-extrabold text-slate-900">{entry.value}</span>
+              <span className="text-xs font-mono font-bold text-white">{entry.value}</span>
             </div>
           ))}
         </div>
@@ -83,64 +81,64 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-[2.5rem] border border-slate-200/60 h-full min-h-[450px] shimmer w-full"></div>
+      <div className="bg-zinc-950 border border-white/10 rounded-none h-full min-h-[450px] shimmer w-full"></div>
     );
   }
 
   return (
     <AnimateOnScroll delay={100} className="h-full">
-      <div className="bg-white rounded-[2.5rem] p-6 md:p-8 border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 h-full flex flex-col">
+      <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-none transition-all hover:border-white/20 h-full flex flex-col">
         {/* Header & Filters */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
           <div>
-            <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">Traffic Overview</h3>
-            <p className="text-xs font-medium text-slate-500 mt-1">Performa portofolio Anda selama 7 hari terakhir</p>
+            <h3 className="text-lg font-display font-bold text-white uppercase tracking-wider">Traffic Overview</h3>
+            <p className="text-xs font-mono text-white/50 mt-1">Performa portofolio Anda selama 7 hari terakhir</p>
           </div>
 
-          <div className="px-4 py-1.5 rounded-full bg-slate-55 border border-slate-200 text-[10px] font-extrabold uppercase tracking-widest text-slate-600 self-start lg:self-auto">
+          <div className="px-4 py-1.5 border border-white/10 bg-white/5 text-[9px] font-mono font-bold uppercase tracking-widest text-white/70 self-start lg:self-auto rounded-none">
             7 Hari Terakhir
           </div>
         </div>
 
         {/* Summary Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-8">
-          <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-            <p className="text-[9px] font-extrabold text-slate-500 uppercase tracking-widest mb-1.5">Total Views</p>
-            <h4 className="text-xl md:text-2xl font-black text-slate-900">{summary.totalViews.toLocaleString()}</h4>
+          <div className="bg-white/[0.02] border border-white/5 rounded-none p-4">
+            <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-1.5">Total Views</p>
+            <h4 className="text-xl md:text-2xl font-display font-bold text-white">{summary.totalViews.toLocaleString()}</h4>
           </div>
-          <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-            <p className="text-[9px] font-extrabold text-slate-500 uppercase tracking-widest mb-1.5">Rata-rata Harian</p>
-            <h4 className="text-xl md:text-2xl font-black text-slate-900">{summary.avgDaily.toLocaleString()}</h4>
+          <div className="bg-white/[0.02] border border-white/5 rounded-none p-4">
+            <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-1.5">Rata-rata Harian</p>
+            <h4 className="text-xl md:text-2xl font-display font-bold text-white">{summary.avgDaily.toLocaleString()}</h4>
           </div>
-          <div className="bg-orange-50 rounded-2xl p-4 border border-orange-100">
-            <p className="text-[9px] font-extrabold text-orange-600 uppercase tracking-widest mb-1.5">Puncak Kunjungan</p>
+          <div className="bg-[#ff9e00]/5 border border-[#ff9e00]/25 rounded-none p-4">
+            <p className="text-[9px] font-mono font-bold text-[#ff9e00] uppercase tracking-widest mb-1.5">Puncak Kunjungan</p>
             <div className="flex items-baseline gap-2 truncate">
-              <h4 className="text-xl md:text-2xl font-black text-orange-700">{summary.peakDay}</h4>
-              <span className="text-xs font-bold text-orange-500">({summary.peakViews} views)</span>
+              <h4 className="text-xl md:text-2xl font-display font-bold text-[#ff9e00]">{summary.peakDay}</h4>
+              <span className="text-[10px] font-mono font-bold text-[#ff9e00]/70">({summary.peakViews} views)</span>
             </div>
           </div>
         </div>
 
         {/* Metric Toggles */}
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-4 mb-6">
           <button
             onClick={() => setActiveMetric(activeMetric === 'views' ? 'both' : 'views')}
             className="flex items-center gap-2 group"
           >
-            <div className={`w-3 h-3 rounded-full transition-colors ${activeMetric === 'views' || activeMetric === 'both' ? 'bg-[#ff9e00]' : 'bg-slate-200'}`}></div>
-            <span className={`text-[10px] font-extrabold uppercase tracking-widest transition-colors ${activeMetric === 'views' || activeMetric === 'both' ? 'text-slate-800' : 'text-slate-400 group-hover:text-slate-600'}`}>Page Views</span>
+            <div className={`w-2.5 h-2.5 rounded-none transition-colors ${activeMetric === 'views' || activeMetric === 'both' ? 'bg-[#ff9e00]' : 'bg-zinc-800 border border-white/10'}`}></div>
+            <span className={`text-[9px] font-mono font-bold uppercase tracking-widest transition-colors ${activeMetric === 'views' || activeMetric === 'both' ? 'text-white' : 'text-white/40 group-hover:text-white/60'}`}>Page Views</span>
           </button>
           <button
             onClick={() => setActiveMetric(activeMetric === 'visitors' ? 'both' : 'visitors')}
             className="flex items-center gap-2 group"
           >
-            <div className={`w-3 h-3 rounded-full transition-colors ${activeMetric === 'visitors' || activeMetric === 'both' ? 'bg-slate-900' : 'bg-slate-200'}`}></div>
-            <span className={`text-[10px] font-extrabold uppercase tracking-widest transition-colors ${activeMetric === 'visitors' || activeMetric === 'both' ? 'text-slate-800' : 'text-slate-400 group-hover:text-slate-600'}`}>Uniq. Visitors</span>
+            <div className={`w-2.5 h-2.5 rounded-none transition-colors ${activeMetric === 'visitors' || activeMetric === 'both' ? 'bg-white' : 'bg-zinc-800 border border-white/10'}`}></div>
+            <span className={`text-[9px] font-mono font-bold uppercase tracking-widest transition-colors ${activeMetric === 'visitors' || activeMetric === 'both' ? 'text-white' : 'text-white/40 group-hover:text-white/60'}`}>Uniq. Visitors</span>
           </button>
         </div>
 
         {/* Chart */}
-        <div className="w-full h-[300px] relative">
+        <div className="w-full h-[280px] relative mt-auto">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
@@ -149,24 +147,24 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
                   <stop offset="95%" stopColor="#ff9e00" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorVisitors" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0f172a" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#0f172a" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#ffffff" stopOpacity={0.1} />
+                  <stop offset="95%" stopColor="#ffffff" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0, 0, 0, 0.04)" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.03)" />
               <XAxis
                 dataKey="date"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fill: '#64748b', fontWeight: 600 }}
+                tick={{ fontSize: 9, fill: '#71717a', fontWeight: 600, fontFamily: 'monospace' }}
                 dy={10}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fill: '#64748b', fontWeight: 600 }}
+                tick={{ fontSize: 9, fill: '#71717a', fontWeight: 600, fontFamily: 'monospace' }}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(0, 0, 0, 0.05)', strokeWidth: 1 }} />
+              <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255, 255, 255, 0.05)', strokeWidth: 1 }} />
 
               {(activeMetric === 'both' || activeMetric === 'views') && (
                 <Area
@@ -174,10 +172,10 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
                   dataKey="views"
                   name="Views"
                   stroke="#ff9e00"
-                  strokeWidth={3}
+                  strokeWidth={2.5}
                   fillOpacity={1}
                   fill="url(#colorViews)"
-                  activeDot={{ r: 6, fill: '#ff9e00', stroke: '#fff', strokeWidth: 2 }}
+                  activeDot={{ r: 5, fill: '#ff9e00', stroke: '#000', strokeWidth: 1.5 }}
                 />
               )}
 
@@ -186,11 +184,11 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
                   type="monotone"
                   dataKey="visitors"
                   name="Visitors"
-                  stroke="#0f172a"
-                  strokeWidth={3}
+                  stroke="#ffffff"
+                  strokeWidth={2.5}
                   fillOpacity={1}
                   fill="url(#colorVisitors)"
-                  activeDot={{ r: 6, fill: '#0f172a', stroke: '#fff', strokeWidth: 2 }}
+                  activeDot={{ r: 5, fill: '#ffffff', stroke: '#000', strokeWidth: 1.5 }}
                 />
               )}
             </AreaChart>

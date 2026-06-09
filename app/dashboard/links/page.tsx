@@ -14,13 +14,10 @@ export default function LinksPage() {
   const { mounted, links, isLoading, isAdding } = state;
 
   return (
-    <main className="min-h-screen font-sans relative overflow-hidden selection:bg-slate-200 selection:text-slate-900 pb-20">
+    <main className="min-h-screen relative selection:bg-[#ff9e00]/30 selection:text-white pb-20">
       
       {/* Global Styles Injected for Animations & Fonts */}
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
         .animate-enter { 
             opacity: 0; 
             animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
@@ -32,7 +29,7 @@ export default function LinksPage() {
 
         .animate-spin-slow { animation: spin 10s linear infinite; }
 
-        .shimmer { background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        .shimmer { background: linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.02) 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
       `}} />
 

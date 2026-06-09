@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { ShareModal } from './ShareModal';
 import { AnimateOnScroll } from '@/components/ui/AnimateOnScroll';
+import { Share2, ExternalLink, Plus, Edit } from 'lucide-react';
 
 interface OverviewHeaderProps {
   subdomain: string;
@@ -19,17 +20,17 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
       <div className="animate-enter">
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="h-10 w-48 bg-white border border-slate-100 rounded-lg shimmer mb-3"></div>
-            <div className="h-4 w-72 bg-white border border-slate-100 rounded-lg shimmer"></div>
+            <div className="h-10 w-48 bg-zinc-900 border border-white/10 rounded-none shimmer mb-3"></div>
+            <div className="h-4 w-72 bg-zinc-900 border border-white/10 rounded-none shimmer"></div>
           </div>
           <div className="flex gap-2 w-full md:w-auto">
-            <div className="h-12 flex-1 md:w-32 bg-white border border-slate-100 rounded-2xl md:rounded-full shimmer"></div>
-            <div className="h-12 flex-1 md:w-32 bg-white border border-slate-100 rounded-2xl md:rounded-full shimmer"></div>
+            <div className="h-12 flex-1 md:w-32 bg-zinc-900 border border-white/10 rounded-none shimmer"></div>
+            <div className="h-12 flex-1 md:w-32 bg-zinc-900 border border-white/10 rounded-none shimmer"></div>
           </div>
         </div>
         <div className="mb-8 flex gap-3">
-          <div className="h-10 w-32 bg-white border border-slate-100 rounded-full shimmer"></div>
-          <div className="h-10 w-24 bg-white border border-slate-100 rounded-full shimmer"></div>
+          <div className="h-10 w-32 bg-zinc-900 border border-white/10 rounded-none shimmer"></div>
+          <div className="h-10 w-24 bg-zinc-900 border border-white/10 rounded-none shimmer"></div>
         </div>
       </div>
     );
@@ -40,10 +41,10 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
       <div className="mb-6 md:mb-8 animate-enter">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700 mb-1 md:mb-2">
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-white mb-1 md:mb-2 uppercase tracking-wide">
               Overview
             </h1>
-            <p className="text-xs md:text-sm font-medium text-slate-500">Ringkasan performa dan data portofolio Anda saat ini.</p>
+            <p className="text-xs md:text-sm font-mono text-white/50">Ringkasan performa dan data portofolio Anda saat ini.</p>
           </div>
 
           {/* Desktop: full label buttons */}
@@ -52,16 +53,16 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
               <>
                 <button
                   onClick={() => setIsShareModalOpen(true)}
-                  className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-full text-[11px] font-extrabold uppercase tracking-widest hover:border-slate-350 hover:bg-slate-50 hover:text-slate-950 transition-all duration-300 shadow-sm active:scale-95"
+                  className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[10px] font-mono font-bold uppercase tracking-widest hover:border-white/20 hover:bg-zinc-800 hover:text-white transition-all duration-300 shadow-sm active:scale-95"
                 >
-                  <i className="fas fa-share-nodes text-slate-400 group-hover:text-[#ff9e00] transition-colors"></i>
+                  <Share2 className="w-3.5 h-3.5 text-white/40 group-hover:text-[#ff9e00] transition-colors" />
                   Bagikan
                 </button>
                 <a
                   href={`/${subdomain}`} target="_blank" rel="noreferrer"
-                  className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-full text-[11px] font-extrabold uppercase tracking-widest hover:border-slate-350 hover:bg-slate-50 hover:text-slate-950 transition-all duration-300 shadow-sm active:scale-95"
+                  className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[10px] font-mono font-bold uppercase tracking-widest hover:border-white/20 hover:bg-zinc-800 hover:text-white transition-all duration-300 shadow-sm active:scale-95"
                 >
-                  <i className="fas fa-external-link-alt text-slate-400 group-hover:text-[#ff9e00] transition-colors"></i>
+                  <ExternalLink className="w-3.5 h-3.5 text-white/40 group-hover:text-[#ff9e00] transition-colors" />
                   Lihat Web
                 </a>
               </>
@@ -75,16 +76,17 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
         <div className="flex items-center gap-2 md:gap-3">
           <Link
             href="/dashboard/projects"
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#ff9e00] text-white font-extrabold text-xs md:text-sm shadow-[0_4px_14px_rgba(255,158,0,0.3)] hover:shadow-[0_6px_20px_rgba(255,158,0,0.4)] hover:scale-105 active:scale-95 transition-all duration-300"
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-none bg-[#ff9e00] text-black font-mono font-bold text-xs md:text-sm hover:bg-[#ffaa22] active:scale-95 transition-all duration-300"
           >
-            <i className="fas fa-plus text-[10px] md:hidden"></i>
-            <span className="whitespace-nowrap">Buat Proyek</span>
+            <Plus className="w-4 h-4 md:hidden" />
+            <span className="whitespace-nowrap uppercase tracking-wider">Buat Proyek</span>
           </Link>
           <Link
             href="/dashboard/appearance"
-            className="flex-1 md:flex-none flex items-center justify-center px-5 py-2.5 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all duration-300 font-extrabold text-xs md:text-sm"
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-none border border-white/10 bg-transparent text-white/80 hover:bg-white/5 hover:text-white transition-all duration-300 font-mono font-bold text-xs md:text-sm"
           >
-            <span className="whitespace-nowrap">Kanvas</span>
+            <Edit className="w-4 h-4" />
+            <span className="whitespace-nowrap uppercase tracking-wider">Kanvas</span>
           </Link>
 
           {/* Mobile: compact icon buttons for Bagikan & Lihat Web */}
@@ -92,15 +94,15 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
             <div className="flex md:hidden items-center gap-1.5 ml-auto shrink-0">
               <button
                 onClick={() => setIsShareModalOpen(true)}
-                className="w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-500 flex items-center justify-center hover:bg-slate-50 hover:text-[#ff9e00] hover:border-slate-300 transition-all active:scale-90 shadow-sm"
+                className="w-10 h-10 rounded-none border border-white/10 bg-zinc-900 text-white/70 flex items-center justify-center hover:bg-zinc-800 hover:text-[#ff9e00] hover:border-white/20 transition-all active:scale-90 shadow-sm"
               >
-                <i className="fas fa-share-nodes text-xs"></i>
+                <Share2 className="w-4 h-4" />
               </button>
               <a
                 href={`/${subdomain}`} target="_blank" rel="noreferrer"
-                className="w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-500 flex items-center justify-center hover:bg-slate-50 hover:text-[#ff9e00] hover:border-slate-300 transition-all active:scale-90 shadow-sm"
+                className="w-10 h-10 rounded-none border border-white/10 bg-zinc-900 text-white/70 flex items-center justify-center hover:bg-zinc-800 hover:text-[#ff9e00] hover:border-white/20 transition-all active:scale-90 shadow-sm"
               >
-                <i className="fas fa-external-link-alt text-xs"></i>
+                <ExternalLink className="w-4 h-4" />
               </a>
             </div>
           )}

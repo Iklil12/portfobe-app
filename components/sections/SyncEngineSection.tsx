@@ -67,22 +67,22 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
   };
 
   return (
-    <div className="relative p-4 sm:p-6 rounded-[2rem] w-full overflow-hidden bg-[#060608] border border-white/[0.05] shadow-[0_24px_80px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.06)] text-left font-sans group">
+    <div className="relative p-4 sm:p-6 rounded-none w-full overflow-hidden bg-[#0a0a0a] border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] text-left font-sans group">
       {/* Subtle radial spotlight */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-32 bg-gradient-to-b from-white/[0.03] to-transparent blur-2xl pointer-events-none"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-32 bg-gradient-to-b from-[#ff9e00]/5 to-transparent blur-2xl pointer-events-none"></div>
 
       {/* Grid Overlay with radial fade out */}
       <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] [mask-image:radial-gradient(ellipse_at_center,black_75%,transparent_100%)] opacity-80 pointer-events-none"></div>
 
       {/* Borderless Chart Area */}
-      <div className="relative z-10 h-32 sm:h-40 w-full mb-4 sm:mb-6 bg-neutral-950/20 border border-white/[0.02] rounded-2xl overflow-hidden p-2">
+      <div className="relative z-10 h-32 sm:h-40 w-full mb-4 sm:mb-6 bg-black/40 border border-white/10 rounded-none overflow-hidden p-2">
         {/* Clean Live Badge */}
-        <div className="absolute top-3 right-3 z-20 flex items-center gap-2 bg-[#060608]/80 border border-white/[0.06] backdrop-blur-md px-3 py-1 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+        <div className="absolute top-3 right-3 z-20 flex items-center gap-2 bg-black border border-[#ff9e00]/30 backdrop-blur-md px-3 py-1 rounded-none shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
           <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#ff9e00]"></span>
           </span>
-          <span className="text-[10px] font-mono text-neutral-300 font-bold uppercase tracking-wider">
+          <span className="text-[10px] font-mono text-[#ff9e00] font-bold uppercase tracking-wider">
             {liveVisitors} Live
           </span>
         </div>
@@ -121,7 +121,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
               repeat: Infinity,
               times: [0, 0.45, 0.55, 0.95, 1]
             }}
-            style={{ filter: `drop-shadow(0 2px 4px rgba(16,185,129,0.35))` }}
+            style={{ filter: `drop-shadow(0 2px 4px rgba(255,158,0,0.35))` }}
           />
           <motion.path
             d="M0,32 C10,22 18,34 30,24 C42,14 48,10 60,22 C72,34 80,12 90,26 C95,31.6 98,18 100,10 L100,35 L0,35 Z"
@@ -139,13 +139,13 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
           />
           <defs>
             <linearGradient id={`em-gradient-${instanceId}`} x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#10b981" />
-              <stop offset="50%" stopColor="#3b82f6" />
-              <stop offset="100%" stopColor="#8b5cf6" />
+              <stop offset="0%" stopColor="#ff9e00" />
+              <stop offset="50%" stopColor="#ffffff" />
+              <stop offset="100%" stopColor="#ff5e00" />
             </linearGradient>
             <linearGradient id={`em-fade-${instanceId}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#10b981" stopOpacity="0.08" />
-              <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+              <stop offset="0%" stopColor="#ff9e00" stopOpacity="0.08" />
+              <stop offset="100%" stopColor="#ff9e00" stopOpacity="0" />
             </linearGradient>
           </defs>
         </svg>
@@ -165,22 +165,22 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
           }}
         >
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff9e00]"></span>
           </span>
-          <span className="bg-neutral-900/90 border border-white/[0.08] backdrop-blur-md text-white font-mono text-[8px] font-bold px-2 py-0.5 rounded shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
+          <span className="bg-black border border-white/10 text-white font-mono text-[8px] font-bold px-2 py-0.5 rounded-none shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
             Peak: {(liveVisitors * 1.4).toFixed(0)} r/s
           </span>
         </motion.div>
       </div>
 
       {/* Metrics Row with thin divider */}
-      <div className="relative z-10 grid grid-cols-2 gap-6 border-t border-white/[0.03] pt-4 sm:pt-6 mb-4 sm:mb-6">
+      <div className="relative z-10 grid grid-cols-2 gap-6 border-t border-white/10 pt-4 sm:pt-6 mb-4 sm:mb-6">
         {/* Metric 1 */}
         <div className="flex flex-col">
           <div className="flex justify-between items-center mb-0.5 sm:mb-1">
             <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider">Total Views</span>
-            <span className="text-[#10b981] bg-[#10b981]/5 border border-[#10b981]/15 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded">
+            <span className="text-[#ff9e00] bg-[#ff9e00]/10 border border-[#ff9e00]/20 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-none">
               +14.8%
             </span>
           </div>
@@ -191,10 +191,10 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
         </div>
 
         {/* Metric 2 */}
-        <div className="flex flex-col border-l border-white/[0.03] pl-6">
+        <div className="flex flex-col border-l border-white/10 pl-6">
           <div className="flex justify-between items-center mb-0.5 sm:mb-1">
             <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider">Unique Visitors</span>
-            <span className="text-neutral-500 bg-white/5 border border-white/10 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded">
+            <span className="text-neutral-400 bg-white/5 border border-white/10 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-none">
               Est. IP
             </span>
           </div>
@@ -207,10 +207,10 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
 
       {/* Activity Log List */}
       <div className="relative z-10 flex flex-col gap-1.5 sm:gap-2.5">
-        <div className="flex justify-between items-center text-[9px] font-mono text-neutral-500 pb-2 border-b border-white/[0.03]">
+        <div className="flex justify-between items-center text-[9px] font-mono text-neutral-500 pb-2 border-b border-white/10">
           <span className="uppercase tracking-widest">Live Activity stream</span>
-          <span className="animate-pulse flex items-center gap-1 text-[#10b981]">
-            <span className="w-1 h-1 bg-[#10b981] rounded-full inline-block"></span>
+          <span className="animate-pulse flex items-center gap-1 text-[#ff9e00]">
+            <span className="w-1 h-1 bg-[#ff9e00] rounded-full inline-block"></span>
             Streaming
           </span>
         </div>
@@ -229,10 +229,10 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
                 <div className="flex gap-2.5 items-center min-w-0">
                   <span className="text-neutral-600 font-mono text-[9px] shrink-0">[{log.time}]</span>
                   <span className={`w-1 h-1 rounded-full shrink-0 ${
-                    log.type === 'CLICK' ? 'bg-[#10b981]' :
-                    log.type === 'VIEW' ? 'bg-blue-500' :
-                    log.type === 'REFER' ? 'bg-purple-500' :
-                    'bg-yellow-500'
+                    log.type === 'CLICK' ? 'bg-[#ff9e00]' :
+                    log.type === 'VIEW' ? 'bg-white' :
+                    log.type === 'REFER' ? 'bg-neutral-400' :
+                    'bg-neutral-600'
                   }`}></span>
                   <span className="text-neutral-300 font-mono truncate max-w-[150px] sm:max-w-[220px]">
                     {log.msg}
@@ -371,7 +371,7 @@ const PILLARS: Pillar[] = [
             {
               id: 'github',
               icon: 'fab fa-github',
-              iconBg: 'bg-[#2b3137]', // GitHub dark
+              iconBg: 'bg-neutral-800', // GitHub dark
               date: '28 Nov 2024',
               label: 'Code Repositories',
               title: 'GitHub',
@@ -382,7 +382,7 @@ const PILLARS: Pillar[] = [
             {
               id: 'penpot',
               icon: 'fas fa-pen-nib',
-              iconBg: 'bg-[#10b981]', // Penpot green feel
+              iconBg: 'bg-neutral-800', 
               date: '12 Oct 2024',
               label: 'UI/UX Design',
               title: 'Penpot',
@@ -393,7 +393,7 @@ const PILLARS: Pillar[] = [
             {
               id: 'canva',
               icon: 'fas fa-layer-group',
-              iconBg: 'bg-[#0ea5e9]', // Canva cyan/blue
+              iconBg: 'bg-neutral-800', 
               date: '30 Dec 2024',
               label: 'Presentations',
               title: 'Canva',
@@ -404,7 +404,7 @@ const PILLARS: Pillar[] = [
             {
               id: 'ai',
               icon: 'fas fa-robot',
-              iconBg: 'bg-[#9333ea]', // AI Purple
+              iconBg: 'bg-neutral-800', 
               date: '13 Aug 2024',
               label: 'Artificial Intelligence',
               title: 'AI Integration',
@@ -413,11 +413,11 @@ const PILLARS: Pillar[] = [
               pattern: <AIPattern />
             }
           ].map((item) => (
-            <div key={item.id} className="bg-[#141414] rounded-xl p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between group hover:bg-[#1a1a1a] transition-colors border border-white/5">
+            <div key={item.id} className="bg-[#0a0a0a] rounded-none p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between group hover:bg-[#111111] transition-colors border border-white/10">
               
               {/* Top Row: Logo */}
               <div className="flex justify-between items-start relative z-10">
-                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg ${item.iconBg} flex items-center justify-center shadow-lg`}>
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-none ${item.iconBg} flex items-center justify-center border border-white/10 shadow-lg`}>
                   <i className={`${item.icon} text-white text-[10px] sm:text-sm`}></i>
                 </div>
               </div>
@@ -450,7 +450,7 @@ const PILLARS: Pillar[] = [
     payloadStr: "{\n  \"renderer\": \"Bunny.net Edge\",\n  \"model\": \"architecture_v2.glb\",\n  \"polygons\": 142050,\n  \"materials\": \"PBR_Active\"\n}",
     renderComponent: (instanceId) => (
       <div className="w-full transition-all">
-        <div className="w-full aspect-square rounded-2xl bg-gradient-to-tr from-neutral-950 to-neutral-900 border border-white/5 relative overflow-hidden group">
+        <div className="w-full aspect-square rounded-none bg-gradient-to-tr from-neutral-950 to-neutral-900 border border-white/10 relative overflow-hidden group">
 
           <Abstract3DShowcase />
 
@@ -552,9 +552,9 @@ export function SyncEngineSection() {
   const activePillar = PILLARS[activeIndex];
 
   return (
-    <div className="bg-[#020202]">
+    <div className="bg-[#050505]">
       {/* MOBILE LAYOUT (lg:hidden) */}
-      <div className="lg:hidden w-full bg-[#020202] py-20 px-6 flex flex-col gap-16 relative z-20">
+      <div className="lg:hidden w-full bg-[#050505] py-20 px-6 flex flex-col gap-16 relative z-20">
         <div className="flex flex-col gap-2">
           <span className="text-[#ff9e00] font-mono text-[10px] tracking-[0.4em] uppercase block border-l-2 border-[#ff9e00] pl-4">
             [ PLATFORM PILLARS ]
@@ -597,7 +597,7 @@ export function SyncEngineSection() {
       </div>
 
       {/* DESKTOP LAYOUT (hidden lg:block) */}
-      <section ref={containerRef} className="relative w-full h-[200vh] bg-[#020202] font-sans hidden lg:block">
+      <section ref={containerRef} className="relative w-full h-[200vh] bg-[#050505] font-sans hidden lg:block">
 
         <div
           className="sticky top-0 h-screen w-full overflow-hidden flex items-center"
@@ -608,12 +608,12 @@ export function SyncEngineSection() {
             className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#ff9e00]/[0.02] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
           ></div>
           <div
-            className="absolute top-1/3 right-1/4 w-[40vw] h-[40vw] bg-blue-500/[0.02] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
+            className="absolute top-1/3 right-1/4 w-[40vw] h-[40vw] bg-[#ff9e00]/[0.01] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
           ></div>
 
           {/* LAYER 1: RAW CODE WATERMARK (Matrix Fade In) */}
           <div
-            className="absolute top-1/2 right-[10%] -translate-y-1/2 pointer-events-none z-0 select-none opacity-5"
+            className="absolute top-1/2 right-[10%] -translate-y-1/2 pointer-events-none z-0 select-none opacity-[0.03]"
             translate="no"
           >
             <AnimatePresence mode="popLayout">
@@ -624,7 +624,7 @@ export function SyncEngineSection() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 style={{ willChange: "transform, opacity" }}
-                className="text-[4vw] font-mono text-emerald-400 font-bold leading-none tracking-tighter"
+                className="text-[4vw] font-mono text-[#ff9e00] font-bold leading-none tracking-tighter"
               >
                 {activePillar.payloadStr}
               </motion.pre>

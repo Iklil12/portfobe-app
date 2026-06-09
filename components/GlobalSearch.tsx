@@ -5,32 +5,49 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import toast from "react-hot-toast";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { useSession, signOut } from "next-auth/react";
 import Fuse from "fuse.js";
 import { useDebounce } from "use-debounce";
+import { 
+  Search, 
+  Sparkles, 
+  Link as LinkIcon, 
+  Palette, 
+  FolderOpen, 
+  Award, 
+  MessageSquare, 
+  ShieldAlert, 
+  Copy, 
+  PlusCircle, 
+  Ghost, 
+  Info, 
+  ChevronRight,
+  Terminal,
+  ArrowRight
+} from "lucide-react";
 
 // =========================================================================
 // 1. DATA MENU STATIS
 // =========================================================================
 const APP_COMMANDS = [
-  { id: "nav-1", title: "Dashboard Overview", group: "Navigasi", icon: "fa-layer-group", link: "/dashboard", type: "link", keywords: "beranda utama home" },
-  { id: "nav-2", title: "Metrik & Analitik", group: "Navigasi", icon: "fa-chart-pie", link: "/dashboard/analytics", type: "link", keywords: "statistik grafik pengunjung views" },
-  { id: "nav-3", title: "Riwayat Pengunjung", group: "Navigasi", icon: "fa-history", link: "/dashboard/analytics?tab=history", type: "link", keywords: "log riwayat history siapa yang lihat" },
-  { id: "des-1", title: "Proyek & Karya", group: "Desain & Konten", icon: "fa-paint-roller", link: "/dashboard/projects", type: "link", keywords: "portfolio list karya desain" },
-  { id: "des-2", title: "Koleksi Tema", group: "Desain & Konten", icon: "fa-palette", link: "/dashboard/themes", type: "link", keywords: "warna tampilan baju warna-warni themes" },
-  { id: "des-3", title: "Atur Tautan (Links)", group: "Desain & Konten", icon: "fa-link", link: "/dashboard/links", type: "link", keywords: "sosmed sosial media url tautan" },
-  { id: "des-4", title: "Pengaturan SEO", group: "Desain & Konten", icon: "fa-search", link: "/dashboard/settings?tab=seo", type: "link", keywords: "google pencarian meta tag seo" },
-  { id: "app-1", title: "Ubah Bentuk Tombol", group: "Tampilan Web", icon: "fa-shapes", link: "/dashboard/themes?focus=buttonShape", type: "link", keywords: "button shape tombol kotak bulat pill" },
-  { id: "app-2", title: "Ganti Warna Utama", group: "Tampilan Web", icon: "fa-fill-drip", link: "/dashboard/themes?focus=themeColor", type: "link", keywords: "warna color theme aksen" },
-  { id: "app-3", title: "Ubah Font (Tipografi)", group: "Tampilan Web", icon: "fa-font", link: "/dashboard/themes?focus=fonts", type: "link", keywords: "font huruf tulisan tipografi" },
-  { id: "app-4", title: "Atur Gaya Kartu", group: "Tampilan Web", icon: "fa-id-card", link: "/dashboard/themes?focus=cardStyle", type: "link", keywords: "card kartu kotak bayangan glass" },
-  { id: "pro-1", title: "Ubah Nomor WhatsApp", group: "Pengaturan Akun", icon: "fa-whatsapp", link: "/dashboard/profile?focus=whatsapp", type: "link", keywords: "wa whatsapp nomor kontak hp" },
-  { id: "pro-2", title: "Status 'Available for Hire'", group: "Pengaturan Akun", icon: "fa-briefcase", link: "/dashboard/profile?focus=hire", type: "link", keywords: "hire kerja open freelance buka" },
-  { id: "set-1", title: "Edit Profil & Bio", group: "Pengaturan Akun", icon: "fa-user-edit", link: "/dashboard/profile", type: "link", keywords: "deskripsi tentang saya bio profil" },
-  { id: "set-2", title: "Keamanan & Password", group: "Pengaturan Akun", icon: "fa-key", link: "/dashboard/settings?tab=security", type: "link", keywords: "keamanan sandi kata kunci ubah password" },
-  { id: "act-1", title: "Buat Proyek Baru", group: "Aksi Cepat", icon: "fa-plus-circle", link: "/dashboard/projects?action=new", type: "link", keywords: "tambah bikin portofolio baru" },
-  { id: "act-2", title: "Salin Link Portofolio", group: "Aksi Cepat", icon: "fa-copy", action: "copy_link", type: "action", keywords: "copy share bagikan url salin" },
+  { id: "nav-1", title: "Dashboard Overview", group: "Navigasi", icon: "folder", link: "/dashboard", type: "link", keywords: "beranda utama home" },
+  { id: "nav-2", title: "Metrik & Analitik", group: "Navigasi", icon: "metrics", link: "/dashboard/analytics", type: "link", keywords: "statistik grafik pengunjung views" },
+  { id: "nav-3", title: "Riwayat Pengunjung", group: "Navigasi", icon: "history", link: "/dashboard/analytics?tab=history", type: "link", keywords: "log riwayat history siapa yang lihat" },
+  { id: "des-1", title: "Proyek & Karya", group: "Desain & Konten", icon: "folder", link: "/dashboard/projects", type: "link", keywords: "portfolio list karya desain" },
+  { id: "des-2", title: "Koleksi Tema", group: "Desain & Konten", icon: "palette", link: "/dashboard/themes", type: "link", keywords: "warna tampilan baju warna-warni themes" },
+  { id: "des-3", title: "Atur Tautan (Links)", group: "Desain & Konten", icon: "link", link: "/dashboard/links", type: "link", keywords: "sosmed sosial media url tautan" },
+  { id: "des-4", title: "Pengaturan SEO", group: "Desain & Konten", icon: "search", link: "/dashboard/settings?tab=seo", type: "link", keywords: "google pencarian meta tag seo" },
+  { id: "app-1", title: "Ubah Bentuk Tombol", group: "Tampilan Web", icon: "shapes", link: "/dashboard/themes?focus=buttonShape", type: "link", keywords: "button shape tombol kotak bulat pill" },
+  { id: "app-2", title: "Ganti Warna Utama", group: "Tampilan Web", icon: "fill", link: "/dashboard/themes?focus=themeColor", type: "link", keywords: "warna color theme aksen" },
+  { id: "app-3", title: "Ubah Font (Tipografi)", group: "Tampilan Web", icon: "font", link: "/dashboard/themes?focus=fonts", type: "link", keywords: "font huruf tulisan tipografi" },
+  { id: "app-4", title: "Atur Gaya Kartu", group: "Tampilan Web", icon: "card", link: "/dashboard/themes?focus=cardStyle", type: "link", keywords: "card kartu kotak bayangan glass" },
+  { id: "pro-1", title: "Ubah Nomor WhatsApp", group: "Pengaturan Akun", icon: "whatsapp", link: "/dashboard/profile?focus=whatsapp", type: "link", keywords: "wa whatsapp nomor kontak hp" },
+  { id: "pro-2", title: "Status 'Available for Hire'", group: "Pengaturan Akun", icon: "hire", link: "/dashboard/profile?focus=hire", type: "link", keywords: "hire kerja open freelance buka" },
+  { id: "set-1", title: "Edit Profil & Bio", group: "Pengaturan Akun", icon: "profile", link: "/dashboard/profile", type: "link", keywords: "deskripsi tentang saya bio profil" },
+  { id: "set-2", title: "Keamanan & Password", group: "Pengaturan Akun", icon: "key", link: "/dashboard/settings?tab=security", type: "link", keywords: "keamanan sandi kata kunci ubah password" },
+  { id: "act-1", title: "Buat Proyek Baru", group: "Aksi Cepat", icon: "plus", link: "/dashboard/projects?action=new", type: "link", keywords: "tambah bikin portofolio baru" },
+  { id: "act-2", title: "Salin Link Portofolio", group: "Aksi Cepat", icon: "copy", action: "copy_link", type: "action", keywords: "copy share bagikan url salin" },
 ];
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -39,7 +56,7 @@ export default function GlobalSearch() {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [debouncedQuery] = useDebounce(query, 500); // 1. IMPLEMENTASI DEBOUNCE
+  const [debouncedQuery] = useDebounce(query, 500);
   
   const [mounted, setMounted] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0); 
@@ -50,32 +67,25 @@ export default function GlobalSearch() {
 
   useEffect(() => { setMounted(true); }, []);
 
-  // 2. INISIALISASI FUSE.JS (Memoized untuk performa)
   const fuse = useMemo(() => new Fuse(APP_COMMANDS, {
     keys: ["title", "keywords", "group"],
-    threshold: 0.3, // 0.3 = toleran terhadap typo
+    threshold: 0.3,
   }), []);
 
-  // 3. FETCHING DATA DB (Hanya saat debouncedQuery berubah)
   const { data: dbResults, isLoading: isSearchingDB } = useSWR(
     debouncedQuery.length >= 2 ? `/api/search?q=${debouncedQuery}` : null,
     fetcher
   );
 
-  // 4. LOGIKA PENCARIAN GABUNGAN
   const filteredResults = useMemo(() => {
-    if (!query) return APP_COMMANDS; // Jika kosong tampilkan semua menu utama
+    if (!query) return APP_COMMANDS;
 
-    // Pencarian Fuzzy untuk Menu Lokal
     const fuseResults = fuse.search(query).map(res => res.item);
-    
-    // Gabungkan dengan hasil Database
     const remoteResults = dbResults && Array.isArray(dbResults) ? dbResults : [];
     
     return [...remoteResults, ...fuseResults];
   }, [query, dbResults, fuse]);
 
-  // Loading state (User sedang ngetik atau API sedang fetch)
   const isCurrentlyWaiting = query !== debouncedQuery || isSearchingDB;
 
   useEffect(() => { setSelectedIndex(0); }, [query]);
@@ -152,15 +162,28 @@ export default function GlobalSearch() {
     }
   };
 
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case "folder": return <FolderOpen className="w-4 h-4" />;
+      case "palette": return <Palette className="w-4 h-4" />;
+      case "link": return <LinkIcon className="w-4 h-4" />;
+      case "metrics": return <Sparkles className="w-4 h-4" />;
+      case "history": return <PlusCircle className="w-4 h-4" />;
+      case "copy": return <Copy className="w-4 h-4" />;
+      case "plus": return <PlusCircle className="w-4 h-4" />;
+      default: return <ChevronRight className="w-4 h-4" />;
+    }
+  };
+
   let globalItemIndex = 0;
 
   return (
     <>
       <div className="hidden md:flex relative group max-w-md w-full cursor-pointer" onClick={() => setIsOpen(true)}>
-        <div className="relative flex items-center w-full transition-all duration-300 bg-slate-100/40 border border-slate-200/40 rounded-2xl px-4 py-2.5 group-hover:bg-white group-hover:border-[#ff9e00]/40 group-hover:shadow-[0_0_15px_rgba(255,158,0,0.1)]">
-          <i className="fas fa-search text-xs text-slate-400 group-hover:text-[#ff9e00]"></i>
-          <div className="flex-1 text-[13px] font-bold text-slate-400/80 px-3 text-left truncate">Cari proyek, fitur, metrik...</div>
-          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white border border-slate-200 text-[10px] font-black text-slate-400">
+        <div className="relative flex items-center w-full transition-all duration-300 bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-2.5 group-hover:bg-zinc-900 group-hover:border-[#ff9e00]/30">
+          <Search className="w-4 h-4 text-white/40 group-hover:text-[#ff9e00] transition-colors" />
+          <div className="flex-1 text-[11px] font-mono font-bold text-white/40 px-3 text-left truncate uppercase tracking-wider">Cari proyek, fitur, metrik...</div>
+          <div className="flex items-center gap-1 px-2 py-1 bg-zinc-900 border border-white/10 text-[9px] font-mono font-bold text-white/50 rounded-none">
             <span>⌘</span><span>K</span>
           </div>
         </div>
@@ -170,20 +193,20 @@ export default function GlobalSearch() {
         <div className="fixed inset-0 z-[999999] flex items-start justify-center pt-[10vh] px-4 overflow-hidden">
           
           <style dangerouslySetInnerHTML={{__html: `
-            @keyframes searchPop { 0% { opacity: 0; transform: scale(0.96) translateY(-10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+            @keyframes searchPop { 0% { opacity: 0; transform: scale(0.98) translateY(-10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
             @keyframes fadeInOverlay { 0% { opacity: 0; } 100% { opacity: 1; } }
-            .animate-search-pop { animation: searchPop 0.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+            .animate-search-pop { animation: searchPop 0.15s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
           `}} />
 
-          <div className="absolute inset-0 bg-slate-900/40 animate-[fadeInOverlay_0.2s_forwards]" onClick={() => setIsOpen(false)}></div>
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-[fadeInOverlay_0.2s_forwards]" onClick={() => setIsOpen(false)}></div>
 
-          <div className="relative z-10 w-full max-w-2xl bg-white rounded-3xl shadow-[0_40px_100px_rgba(0,0,0,0.4)] border border-slate-200 overflow-hidden animate-search-pop flex flex-col max-h-[80vh]">
+          <div className="relative z-10 w-full max-w-2xl bg-zinc-950 border border-white/10 rounded-none shadow-[0_45px_100px_rgba(0,0,0,0.9)] overflow-hidden animate-search-pop flex flex-col max-h-[80vh]">
             
-            <div className="flex items-center px-6 py-5 border-b border-slate-100 shrink-0">
+            <div className="flex items-center px-6 py-5 border-b border-white/10 shrink-0 bg-zinc-950">
               {isCurrentlyWaiting ? (
-                <div className="w-5 h-5 border-2 border-[#ff9e00] border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-5 h-5 border-2 border-[#ff9e00] border-t-transparent rounded-none animate-spin shrink-0"></div>
               ) : (
-                <i className="fas fa-search text-[#ff9e00] text-xl"></i>
+                <Search className="w-5 h-5 text-[#ff9e00] shrink-0" />
               )}
               <input 
                 ref={inputRef}
@@ -191,78 +214,86 @@ export default function GlobalSearch() {
                 placeholder="Cari proyek, tautan, sertifikat, fitur..." 
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 bg-transparent border-none outline-none px-4 text-lg font-bold text-slate-800 placeholder:text-slate-300"
+                className="flex-1 bg-transparent border-none outline-none px-4 text-base font-mono font-bold text-white placeholder:text-white/20"
               />
-              <button onClick={() => setIsOpen(false)} className="px-2 py-1 bg-slate-100 text-slate-500 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-colors">
+              <button onClick={() => setIsOpen(false)} className="px-3 py-1.5 bg-zinc-900 border border-white/10 text-white/70 rounded-none text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors">
                 ESC
               </button>
             </div>
 
-            <div ref={resultsRef} className="overflow-y-auto p-2 custom-scrollbar bg-slate-50/50 flex-1">
+            <div ref={resultsRef} className="overflow-y-auto p-3 hide-scrollbar bg-[#050505] flex-1">
               {filteredResults.length === 0 ? (
-                <div className="py-20 text-center">
-                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                    <i className="fas fa-ghost text-2xl"></i>
+                <div className="py-20 text-center flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 bg-zinc-900 border border-white/10 rounded-none flex items-center justify-center mb-4 text-white/40">
+                    <Ghost className="w-6 h-6" />
                   </div>
-                  <p className="font-bold text-slate-500">Tidak ada hasil untuk "{query}"</p>
-                  <p className="text-xs text-slate-400 mt-1">Gunakan kata kunci atau jalankan perintah cepat.</p>
+                  <p className="font-mono font-bold text-white/80 uppercase tracking-wider text-xs">Tidak ada hasil untuk "{query}"</p>
+                  <p className="text-[10px] font-mono text-white/40 mt-1.5">Gunakan kata kunci atau jalankan perintah cepat.</p>
                 </div>
               ) : (
                 <>
                   {!query && (
-                    <div className="p-4 mb-4 mx-2 mt-2 bg-blue-50/50 border border-blue-100 rounded-2xl">
-                      <p className="text-xs font-bold text-blue-800 mb-2"><i className="fas fa-info-circle mr-1"></i> Apa yang bisa dicari di sini?</p>
+                    <div className="p-4 mb-4 mx-1.5 mt-1.5 bg-[#ff9e00]/5 border border-[#ff9e00]/25 rounded-none">
+                      <p className="text-[10px] font-mono font-bold text-[#ff9e00] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <Info className="w-3.5 h-3.5" /> Apa yang bisa dicari di sini?
+                      </p>
                       <div className="flex flex-wrap gap-2">
-                        <span className="px-2 py-1 bg-white border border-blue-200 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-wider"><i className="fas fa-paint-roller mr-1"></i> Proyek & Karya</span>
-                        <span className="px-2 py-1 bg-white border border-blue-200 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-wider"><i className="fas fa-link mr-1"></i> Tautan / Links</span>
-                        <span className="px-2 py-1 bg-white border border-blue-200 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-wider"><i className="fas fa-certificate mr-1"></i> Sertifikat</span>
-                        <span className="px-2 py-1 bg-white border border-blue-200 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-wider"><i className="fas fa-layer-group mr-1"></i> Menu Sistem</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Proyek & Karya</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Tautan / Links</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Sertifikat</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Menu Sistem</span>
                       </div>
                     </div>
                   )}
                   {Object.entries(groupedResults).map(([groupName, items]: [string, any]) => (
-                  <div key={groupName} className="mb-4 last:mb-0">
-                    <div className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] flex items-center gap-3">
-                      {groupName} <div className="h-px bg-slate-200 flex-1"></div>
-                    </div>
-                    <div className="space-y-1">
-                      {(items as any[]).map((item: any) => {
-                        const currentIndex = globalItemIndex; 
-                        const isSelected = currentIndex === selectedIndex;
-                        globalItemIndex++; 
-                        
-                        return (
-                          <button 
-                            key={item.id} 
-                            onClick={() => handleItemClick(item)}
-                            onMouseEnter={() => setSelectedIndex(currentIndex)}
-                            className={`w-full flex items-center justify-between p-3 rounded-2xl transition-all group border ${isSelected ? 'bg-white border-slate-200 shadow-sm selected-item' : 'border-transparent hover:bg-white hover:border-slate-200'}`}
-                          >
-                            <div className="flex items-center gap-4">
-                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isSelected ? 'bg-[#ff9e00]/10 text-[#ff9e00]' : 'bg-slate-100 text-slate-400'}`}>
-                                <i className={`fas ${item.icon} text-sm`}></i>
+                    <div key={groupName} className="mb-4 last:mb-0">
+                      <div className="px-3 py-2 text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] flex items-center gap-3">
+                        {groupName} <div className="h-px bg-white/10 flex-1"></div>
+                      </div>
+                      <div className="space-y-1">
+                        {(items as any[]).map((item: any) => {
+                          const currentIndex = globalItemIndex; 
+                          const isSelected = currentIndex === selectedIndex;
+                          globalItemIndex++; 
+                          
+                          return (
+                            <button 
+                              key={item.id} 
+                              onClick={() => handleItemClick(item)}
+                              onMouseEnter={() => setSelectedIndex(currentIndex)}
+                              className={`w-full flex items-center justify-between p-3 rounded-none transition-all group border ${
+                                isSelected 
+                                  ? 'bg-white/5 border-white/10 text-white selected-item' 
+                                  : 'border-transparent text-white/60 hover:bg-white/[0.01] hover:text-white'
+                              }`}
+                            >
+                              <div className="flex items-center gap-4">
+                                <div className={`w-9 h-9 rounded-none flex items-center justify-center border border-white/10 bg-zinc-900 transition-colors ${
+                                  isSelected ? 'border-[#ff9e00]/30 text-[#ff9e00]' : 'text-white/50'
+                                }`}>
+                                  {getIcon(item.icon)}
+                                </div>
+                                <div className="text-left">
+                                  <p className="text-xs font-mono font-bold text-white">{item.title}</p>
+                                  <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mt-0.5">
+                                    {item.type === 'action' ? '⚡ Jalankan Perintah' : `Buka ${item.link}`}
+                                  </p>
+                                </div>
                               </div>
-                              <div className="text-left">
-                                <p className="text-[14px] font-bold text-slate-800">{item.title}</p>
-                                <p className="text-[10px] font-medium text-slate-400">
-                                  {item.type === 'action' ? '⚡ Jalankan Perintah' : `Buka ${item.link}`}
-                                </p>
+                              <div className={`transition-opacity flex items-center gap-1.5 ${isSelected ? 'opacity-100' : 'opacity-0'}`}>
+                                 <span className="text-[8px] font-mono font-bold text-black bg-[#ff9e00] px-2 py-1 uppercase tracking-widest">Pilih ↵</span>
                               </div>
-                            </div>
-                            <div className={`transition-opacity flex items-center ${isSelected ? 'opacity-100' : 'opacity-0'}`}>
-                               <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-lg">Pilih ↵</span>
-                            </div>
-                          </button>
-                        );
-                      })}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
                 </>
               )}
             </div>
 
-            <div className="bg-white px-6 py-4 border-t border-slate-100 flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest shrink-0">
+            <div className="bg-zinc-950 px-6 py-4 border-t border-white/10 flex justify-between items-center text-[9px] font-mono font-bold text-white/30 uppercase tracking-widest shrink-0">
               <div className="flex gap-4">
                 <span className="flex items-center gap-1.5">⌘ K - Search</span>
                 <span className="flex items-center gap-1.5">↑↓ - Navigasi</span>

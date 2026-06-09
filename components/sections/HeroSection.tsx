@@ -1,135 +1,162 @@
 "use client";
 
-import Link from 'next/link';
-import { motion, Variants } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { ArrowRight } from 'lucide-react';
 
 export function HeroSection() {
-  const words = ["Work.", "Portfolio.", "Presence.", "Brand.", "Identity."];
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [currentText, setCurrentText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
+    const [inputValue, setInputValue] = useState('');
+    const [typed, setTyped] = useState('');
+    const names = ['sarah-chen', 'studio.noir', 'alex.dev', 'maya.foto', 'reza.ui'];
 
-  useEffect(() => {
-    const typingSpeed = 100;
-    const deletingSpeed = 50;
-    const pauseBeforeDelete = 2000;
+    useEffect(() => {
+        let nameIdx = 0, charIdx = 0, deleting = false;
+        let timer: ReturnType<typeof setTimeout>;
+        const tick = () => {
+            const name = names[nameIdx];
+            if (!deleting) { charIdx++; setTyped(name.slice(0, charIdx)); if (charIdx === name.length) { deleting = true; timer = setTimeout(tick, 2200); return; } }
+            else { charIdx--; setTyped(name.slice(0, charIdx)); if (charIdx === 0) { deleting = false; nameIdx = (nameIdx + 1) % names.length; } }
+            timer = setTimeout(tick, deleting ? 40 : 90);
+        };
+        timer = setTimeout(tick, 1200);
+        return () => clearTimeout(timer);
+    }, []);
 
-    let timer: NodeJS.Timeout;
-    const currentFullWord = words[currentWordIndex];
+    return (
+        <section className="relative w-full min-h-screen bg-[#050505] text-white overflow-hidden font-sans selection:bg-white selection:text-black flex flex-col">
+            
+            <style dangerouslySetInnerHTML={{__html: `
+                @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+                .animate-ticker { animation: ticker 25s linear infinite; }
+                .wire-b { border-bottom: 1px solid rgba(255,255,255,0.1); }
+                .wire-r { border-right: 1px solid rgba(255,255,255,0.1); }
+                .wire-t { border-top: 1px solid rgba(255,255,255,0.1); }
+                .wire-l { border-left: 1px solid rgba(255,255,255,0.1); }
+                .hover-invert:hover { background-color: white !important; color: black !important; }
+                @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+                .cursor-blink { animation: blink 1s step-end infinite; }
+                @keyframes rise { 0%{opacity:0;transform:translateY(30px)} 100%{opacity:1;transform:translateY(0)} }
+                .r1{animation:rise .8s cubic-bezier(.22,1,.36,1) .1s both}
+                .r2{animation:rise .8s cubic-bezier(.22,1,.36,1) .2s both}
+                .r3{animation:rise .8s cubic-bezier(.22,1,.36,1) .35s both}
+                .r4{animation:rise .8s cubic-bezier(.22,1,.36,1) .5s both}
+                .r5{animation:rise .8s cubic-bezier(.22,1,.36,1) .65s both}
+                @media (max-width: 767px) {
+                    .mobile-stroke { -webkit-text-stroke: 1px white !important; }
+                }
+            `}} />
 
-    if (isDeleting) {
-      if (currentText === "") {
-        setIsDeleting(false);
-        setCurrentWordIndex((prev) => (prev + 1) % words.length);
-      } else {
-        timer = setTimeout(() => {
-          setCurrentText(currentFullWord.substring(0, currentText.length - 1));
-        }, deletingSpeed);
-      }
-    } else {
-      if (currentText === currentFullWord) {
-        timer = setTimeout(() => {
-          setIsDeleting(true);
-        }, pauseBeforeDelete);
-      } else {
-        timer = setTimeout(() => {
-          setCurrentText(currentFullWord.substring(0, currentText.length + 1));
-        }, typingSpeed);
-      }
-    }
+            {/* ═══ BAND 1: MARQUEE ═══ */}
+            <div className="w-full wire-b overflow-hidden bg-[#ff9e00] text-black py-2 pt-20 md:pt-2 r1">
+                <div className="flex animate-ticker font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] whitespace-nowrap w-max">
+                    {[...Array(8)].map((_, i) => (
+                        <div key={i} className="flex items-center gap-4 md:gap-8 px-3 md:px-4 pr-4 md:pr-8">
+                            <span>PORTFO_BE V.2.0</span>
+                            <span>[ STATUS: ACTIVE ]</span>
+                            <span>PORTFOLIO ENGINE</span>
+                            <span className="hidden sm:inline">LOCATION: GLOBAL</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
 
-    return () => clearTimeout(timer);
-  }, [currentText, isDeleting, currentWordIndex]);
+            {/* ═══ BAND 2: FULL-WIDTH CENTERED HEADLINE ═══ */}
+            <div className="w-full wire-b r2 flex-1 flex flex-col items-center justify-center px-5 py-12 md:py-20 lg:py-28 text-center relative overflow-hidden">
+                {/* Crosshair decorations */}
+                <div className="absolute top-6 left-6 md:top-10 md:left-10 font-mono text-[10px] text-white/20 tracking-widest">
+                    <div className="flex items-center gap-2">
+                        <span className="w-4 h-px bg-white/20"></span>
+                        <span>00.HERO</span>
+                    </div>
+                </div>
+                <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 font-mono text-[10px] text-white/20 tracking-widest">
+                    <div className="flex items-center gap-2">
+                        <span>SECTION_01</span>
+                        <span className="w-4 h-px bg-white/20"></span>
+                    </div>
+                </div>
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.08, delayChildren: 0.3 }
-    }
-  };
+                <h1 className="font-sans font-black text-[14vw] md:text-[9vw] lg:text-[8vw] leading-[0.85] uppercase tracking-tighter text-white">
+                    YOUR WORK
+                </h1>
+                <h1 className="font-sans font-black text-[14vw] md:text-[9vw] lg:text-[8vw] leading-[0.85] uppercase tracking-tighter text-transparent mobile-stroke" style={{ WebkitTextStroke: '2px white' }}>
+                    DESERVES
+                </h1>
+                <h1 className="font-sans font-black text-[14vw] md:text-[9vw] lg:text-[8vw] leading-[0.85] uppercase tracking-tighter text-white">
+                    A STAGE.
+                </h1>
+            </div>
 
-  const wordVariants: Variants = {
-    hidden: { opacity: 0, y: 25, filter: "blur(8px)" },
-    visible: {
-      opacity: 1, y: 0, filter: "blur(0px)",
-      transition: { duration: 0.5, type: "spring", bounce: 0.35 }
-    }
-  };
+            {/* ═══ BAND 3: THREE-COLUMN INFO STRIP ═══ */}
+            <div className="w-full grid grid-cols-1 md:grid-cols-3 wire-b r3">
+                
+                {/* Col 1: Overview */}
+                <div className="px-5 py-5 md:p-8 wire-b md:wire-b-0 md:wire-r bg-[#050505] flex flex-col justify-between min-h-[120px] md:min-h-[180px]">
+                    <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ OVERVIEW ]</span>
+                    <p className="font-sans text-[13px] md:text-sm font-medium leading-relaxed mt-3 text-white/70">
+                        Premium portfolio engine for creators who refuse to compromise. Ship in minutes — not months.
+                    </p>
+                </div>
 
-  const fadeUpVariants: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(5px)" },
-    visible: {
-      opacity: 1, y: 0, filter: "blur(0px)",
-      transition: { duration: 0.7, type: "spring", bounce: 0.3 }
-    }
-  };
+                {/* Col 2: Live Preview */}
+                <div className="px-5 py-5 md:p-8 wire-b md:wire-b-0 md:wire-r bg-[#0a0a0a] flex flex-col justify-between min-h-[120px] md:min-h-[180px]">
+                    <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ LIVE PREVIEW ]</span>
+                    <div className="mt-3">
+                        <div className="font-mono text-[11px] text-white/30 mb-0.5">portfo.be/</div>
+                        <div className="font-sans text-2xl md:text-3xl font-black text-white uppercase tracking-tight">
+                            {typed}<span className="cursor-blink text-white/50 font-light">|</span>
+                        </div>
+                    </div>
+                </div>
 
-  return (
-    <section className="relative pt-36 pb-24 md:pt-36 md:pb-40 overflow-hidden bg-grid">
-      <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/80 to-[#FAFAFA] pointer-events-none z-0"></div>
+                {/* Col 3: Stats */}
+                <div className="px-5 py-5 md:p-8 bg-[#050505] flex flex-col justify-between min-h-[120px] md:min-h-[180px]">
+                    <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ METRICS ]</span>
+                    <div className="mt-3 grid grid-cols-2 gap-4">
+                        <div>
+                            <div className="font-sans text-2xl md:text-3xl font-black text-white">47K+</div>
+                            <div className="font-mono text-[10px] text-white/30 uppercase tracking-wider mt-1">DEPLOYED</div>
+                        </div>
+                        <div>
+                            <div className="font-sans text-2xl md:text-3xl font-black text-white">99.9<span className="text-white/40">%</span></div>
+                            <div className="font-mono text-[10px] text-white/30 uppercase tracking-wider mt-1">UPTIME</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-      {/* Animated Background Blobs */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[10%] w-[500px] h-[500px] bg-[#ff9e00]/20 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
-        <div className="absolute top-[10%] right-[5%] w-[600px] h-[600px] bg-blue-300/20 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-[-10%] left-[40%] w-[700px] h-[700px] bg-pink-300/20 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-4000"></div>
-      </div>
+            {/* ═══ BAND 4: FULL-WIDTH CLAIM INPUT ═══ */}
+            <div className="w-full wire-b r4 bg-[#0a0a0a]">
+                <div className="flex flex-col md:flex-row">
+                    {/* Label */}
+                    <div className="px-5 py-4 md:px-8 md:py-6 md:wire-r flex items-center shrink-0">
+                        <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ CLAIM YOUR DOMAIN ]</span>
+                    </div>
+                    {/* Input */}
+                    <form className="flex-1 flex items-center px-5 py-4 md:px-8 md:py-6 gap-2">
+                        <span className="font-mono text-xs md:text-sm text-white/30 select-none whitespace-nowrap">PORTFO.BE/</span>
+                        <input 
+                            type="text"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value.toLowerCase().replace(/[^a-z0-9-_.]/g, ''))}
+                            placeholder="YOURNAME"
+                            className="bg-transparent outline-none flex-1 text-white font-mono text-xs md:text-sm uppercase placeholder-white/15 tracking-wider min-h-[44px]"
+                            spellCheck={false}
+                            autoComplete="off"
+                        />
+                    </form>
+                </div>
+            </div>
 
-      <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
+            {/* ═══ BAND 5: DUAL ACTION BAR ═══ */}
+            <div className="w-full grid grid-cols-2 r5">
+                <button className="hover-invert px-5 py-5 md:px-8 md:py-6 wire-r font-sans text-base md:text-xl font-black uppercase tracking-tight flex items-center justify-center gap-2 md:gap-3 transition-colors min-h-[56px] active:bg-white active:text-black">
+                    GET STARTED <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
+                </button>
+                <div className="px-5 py-5 md:px-8 md:py-6 bg-white text-black font-mono text-xs text-center uppercase tracking-widest font-bold flex items-center justify-center min-h-[56px] hover:bg-black hover:text-white active:bg-black active:text-white transition-colors cursor-pointer">
+                    INITIATE_DEPLOYMENT →
+                </div>
+            </div>
 
-        {/* TEXT CONTAINER HERO — Full width, centered */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="w-full text-center flex flex-col items-center"
-        >
-
-
-
-          <motion.h1 className="text-5xl sm:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] tracking-tighter leading-[1.05] text-slate-900 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 md:gap-x-5 mb-8">
-            <motion.span variants={wordVariants} className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700">Showcase</motion.span>
-            <motion.div variants={wordVariants} className="w-24 md:w-40 h-12 md:h-[4.5rem] rounded-full overflow-hidden inline-block align-middle shadow-[0_8px_20px_rgba(0,0,0,0.12)] shrink-0 hover:scale-105 transition-transform duration-500 cursor-pointer">
-              <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=400&auto=format&fit=crop" className="w-full h-full object-cover" alt="Creative team" />
-            </motion.div>
-            <motion.span variants={wordVariants} className="font-light text-slate-400 italic relative inline-block" translate="no">
-              {/* Invisible longest word to reserve fixed width */}
-              <span className="invisible">Portfolio.</span>
-              {/* Visible typing text overlaid on top */}
-              <span className="absolute left-0 top-0 whitespace-nowrap">
-                {currentText}
-                <span className={`inline-block w-[3px] h-[0.75em] bg-slate-400 ml-[2px] align-middle ${currentText === words[currentWordIndex] ? 'animate-[blink_1s_step-end_infinite]' : ''}`}></span>
-              </span>
-            </motion.span>
-            <div className="w-full basis-full h-0"></div>
-            <motion.span variants={wordVariants} className="font-extrabold">Land More</motion.span>
-            <motion.span variants={wordVariants} className="font-light text-slate-400">Clients.</motion.span>
-          </motion.h1>
-
-          <motion.p variants={fadeUpVariants} className="text-slate-500 text-lg md:text-xl mb-12 leading-relaxed max-w-2xl mx-auto font-medium">
-            The quick brown fox minimalist portfolio builder designed exclusively for visual creators. Zero coding, lightning-fast, and unapologetically beautiful.
-          </motion.p>
-
-          <motion.div variants={fadeUpVariants} className="flex flex-col sm:flex-row items-center gap-4 relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-full bg-[#ff9e00]/50 blur-2xl rounded-full animate-pulse pointer-events-none"></div>
-            <Link href="/register" className="relative z-10 inline-flex items-center gap-4 pl-8 pr-2 py-2 rounded-full bg-[#ff9e00] hover:bg-[#e68e00] active:scale-95 transition-all group shadow-[0_10px_30px_rgba(255,158,0,0.3)]">
-              <span className="text-[11px] font-black uppercase tracking-widest text-black">Start Building</span>
-              <div className="bg-black w-10 h-10 rounded-full flex items-center justify-center text-white group-hover:bg-slate-800 transition-colors duration-300">
-                <i className="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
-              </div>
-            </Link>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 px-4 py-2">
-              <i className="fas fa-star text-yellow-400 animate-pulse"></i> Free Forever Plan
-            </span>
-          </motion.div>
-
-
-
-        </motion.div>
-
-      </div>
-    </section>
-  );
+        </section>
+    );
 }
