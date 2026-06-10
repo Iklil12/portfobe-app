@@ -43,7 +43,7 @@ export default function PrivacyPolicy() {
           </div>
         </motion.header>
 
-        {/* content container */}
+        {/* Content container */}
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -54,23 +54,31 @@ export default function PrivacyPolicy() {
             <section>
               <h2 className="text-xl font-display font-bold text-white mb-4 flex items-center gap-3">
                 <span className="text-[10px] w-6 h-6 border border-white/20 flex items-center justify-center text-white/40">01</span>
-                Pendahuluan & Autentikasi
+                Pendahuluan
               </h2>
-              <p className="pl-9 leading-loose">Selamat datang di Portfo.be. Kami menggunakan **NextAuth** untuk autentikasi yang aman berbasis Google. Kami hanya mengumpulkan data profil yang diperlukan (Email, Nama, Gambar) untuk mempersonalisasi pengalaman Anda dan mengelola portofolio Anda.</p>
+              <p className="pl-9 leading-loose">Selamat datang di Portfo.be. Privasi Anda adalah prioritas utama kami. Kebijakan Privasi ini menjelaskan secara komprehensif bagaimana kami mengumpulkan, menggunakan, menyimpan, dan melindungi informasi pribadi Anda saat Anda menggunakan layanan platform pembuatan portofolio kami. Dengan mengakses dan menggunakan Portfo.be, Anda menyetujui praktik yang dijelaskan dalam kebijakan ini.</p>
             </section>
 
             <section>
               <h2 className="text-xl font-display font-bold text-white mb-4 flex items-center gap-3">
                 <span className="text-[10px] w-6 h-6 border border-white/20 flex items-center justify-center text-white/40">02</span>
-                Penyimpanan Data & Aset
+                Informasi yang Kami Kumpulkan
               </h2>
               <div className="pl-9 space-y-4">
-                <p className="leading-loose">Data portofolio Anda (judul, deskripsi, tautan) disimpan di database aman kami yang dihosting di **Hostinger**. Semua aset media (Gambar, Sampul Portofolio) diunggah dan disajikan melalui **Cloudinary**.</p>
-                <div className="p-5 bg-black border border-white/10 text-xs space-y-2">
-                  <p className="text-white font-bold uppercase tracking-widest mb-2">Yang kami simpan:</p>
-                  <p>- Identifikasi akun Google (terenkripsi).</p>
-                  <p>- Konten & metadata portofolio.</p>
-                  <p>- Statistik harian yang diagregasikan.</p>
+                <p className="leading-loose">Kami mengumpulkan berbagai jenis informasi untuk memberikan dan meningkatkan layanan kami kepada Anda:</p>
+                <div className="p-5 bg-black border border-white/10 text-xs space-y-4">
+                  <div>
+                    <p className="text-white font-bold uppercase tracking-widest mb-2">A. Informasi Profil & Autentikasi</p>
+                    <p>Kami menggunakan **NextAuth** untuk integrasi Single Sign-On (SSO) melalui Google. Kami mengumpulkan alamat email, nama lengkap, dan foto profil Anda secara eksklusif untuk keperluan autentikasi dan identifikasi akun.</p>
+                  </div>
+                  <div>
+                    <p className="text-white font-bold uppercase tracking-widest mb-2">B. Konten Pengguna</p>
+                    <p>Segala materi yang Anda unggah, termasuk teks portofolio, tautan proyek, deskripsi, gambar sampul, serta widget yang disematkan (seperti Canva, Penpot, Github).</p>
+                  </div>
+                  <div>
+                    <p className="text-white font-bold uppercase tracking-widest mb-2">C. Data Analitik & Penggunaan</p>
+                    <p>Kami secara otomatis mengumpulkan log kunjungan portofolio Anda, interaksi klik pada tautan Anda, serta data performa halaman untuk disajikan kembali di Dashboard Analitik Anda.</p>
+                  </div>
                 </div>
               </div>
             </section>
@@ -78,38 +86,68 @@ export default function PrivacyPolicy() {
             <section>
               <h2 className="text-xl font-display font-bold text-white mb-4 flex items-center gap-3">
                 <span className="text-[10px] w-6 h-6 border border-white/20 flex items-center justify-center text-white/40">03</span>
-                Pelacakan Analisis Pengunjung
+                Bagaimana Kami Menggunakan Informasi Anda
               </h2>
               <div className="pl-9 space-y-4">
-                <p className="leading-loose">Untuk membantu Anda memahami audiens Anda, kami mengumpulkan data pengunjung anonim termasuk:</p>
+                <p className="leading-loose">Informasi yang dikumpulkan digunakan secara eksklusif untuk tujuan berikut:</p>
                 <ul className="list-none space-y-2">
                    <li className="flex gap-3 items-center">
                      <Check className="w-4 h-4 text-[#ff9e00]" />
-                     <span>**Views:** Setiap kunjungan ke halaman portofolio Anda.</span>
+                     <span>Membuat, mengelola, dan mempersonalisasi portofolio publik Anda.</span>
                    </li>
                    <li className="flex gap-3 items-center">
                      <Check className="w-4 h-4 text-[#ff9e00]" />
-                     <span>**Clicks:** Interaksi dengan tautan proyek Anda.</span>
+                     <span>Menyediakan wawasan (insights) analitik performa portofolio Anda.</span>
+                   </li>
+                   <li className="flex gap-3 items-center">
+                     <Check className="w-4 h-4 text-[#ff9e00]" />
+                     <span>Memverifikasi bukti pembayaran manual untuk aktivasi langganan Pro Anda.</span>
+                   </li>
+                   <li className="flex gap-3 items-center">
+                     <Check className="w-4 h-4 text-[#ff9e00]" />
+                     <span>Meningkatkan SEO dan visibilitas pencarian global portofolio Anda.</span>
                    </li>
                 </ul>
-                <p className="italic text-white/40 text-xs mt-4">Catatan: Alamat IP pengunjung diproses untuk keperluan agregasi tetapi tidak disimpan secara permanen dalam bentuk mentahnya.</p>
               </div>
             </section>
 
             <section>
               <h2 className="text-xl font-display font-bold text-white mb-4 flex items-center gap-3">
                 <span className="text-[10px] w-6 h-6 border border-white/20 flex items-center justify-center text-white/40">04</span>
-                Cookie & Sesi
+                Infrastruktur & Berbagi Data
               </h2>
-              <p className="pl-9 leading-loose">Kami menggunakan cookie penting untuk menjaga sesi login Anda. Kami tidak menggunakan cookie pelacakan pihak ketiga untuk tujuan periklanan.</p>
+              <p className="pl-9 leading-loose">Data Anda disimpan pada infrastruktur cloud yang dikelola dengan standar keamanan industri. Database kami beroperasi secara aman, dan semua aset media diunggah, dioptimalkan, serta disajikan melalui jaringan pengiriman konten (CDN) terpercaya seperti **Cloudinary**. Kami **tidak pernah menjual** data pribadi atau analitik lalu lintas Anda kepada pihak ketiga atau pengiklan.</p>
             </section>
 
             <section>
               <h2 className="text-xl font-display font-bold text-white mb-4 flex items-center gap-3">
                 <span className="text-[10px] w-6 h-6 border border-white/20 flex items-center justify-center text-white/40">05</span>
-                Kontak & Bantuan
+                Cookie & Sesi
               </h2>
-              <p className="pl-9 leading-loose">Untuk permintaan penghapusan data atau pertanyaan seputar privasi, hubungi kami di: <a href="mailto:ikliluluyun@ritions.com" className="text-[#ff9e00] hover:underline">ikliluluyun@ritions.com</a></p>
+              <p className="pl-9 leading-loose">Portfo.be hanya menggunakan cookie esensial (first-party cookies) dan penyimpanan lokal (session storage/local storage) yang mutlak diperlukan untuk menjaga sesi login Anda tetap aktif, mengamankan proses pembaruan data, dan mencegah manipulasi analitik (misalnya pencegahan double-counting kunjungan).</p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-display font-bold text-white mb-4 flex items-center gap-3">
+                <span className="text-[10px] w-6 h-6 border border-white/20 flex items-center justify-center text-white/40">06</span>
+                Hak & Kontrol Pengguna
+              </h2>
+              <div className="pl-9 space-y-4">
+                <p className="leading-loose">Anda memegang kendali penuh atas data Anda:</p>
+                <div className="p-5 bg-black border border-white/10 text-xs space-y-2">
+                  <p>- **Akses & Pembaruan:** Anda dapat mengedit profil dan portofolio Anda kapan saja melalui dashboard editor.</p>
+                  <p>- **Penghapusan Data:** Anda berhak menghapus akun Anda. Fitur &quot;Hapus Akun&quot; di dashboard kami akan menghapus profil Anda, semua portofolio, dan media terkait secara permanen.</p>
+                  <p>- **Visibilitas:** Anda menentukan publikasi karya Anda dan apakah mesin pencari diizinkan untuk mengindeks portofolio Anda.</p>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-display font-bold text-white mb-4 flex items-center gap-3">
+                <span className="text-[10px] w-6 h-6 border border-white/20 flex items-center justify-center text-white/40">07</span>
+                Hubungi Kami
+              </h2>
+              <p className="pl-9 leading-loose">Jika Anda memiliki pertanyaan mendalam mengenai kebijakan privasi ini atau ingin mengajukan permintaan terkait data pribadi Anda, silakan hubungi tim keamanan dan privasi kami di: <a href="mailto:ikliluluyun@ritions.com" className="text-[#ff9e00] hover:underline">ikliluluyun@ritions.com</a></p>
             </section>
           </div>
         </motion.div>
