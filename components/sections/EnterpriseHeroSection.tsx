@@ -15,13 +15,13 @@ export function EnterpriseHeroSection() {
     }, [totalWords]);
 
     const cards = [
-        { type: 'image', src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop' },
-        { type: 'color', bg: 'bg-[#18181b]', content: <span className="text-white font-bold text-6xl tracking-tighter flex items-center gap-1"><span className="w-10 h-10 border-4 border-white rounded-full"></span>HBO</span> },
-        { type: 'image', src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop' },
-        { type: 'color', bg: 'bg-[#0a0a0a] border border-white/10', content: <div className="w-24 h-24 rounded-full border-8 border-[#ff9e00] flex items-center justify-center"><span className="text-[#ff9e00] font-black text-2xl">LA</span></div> },
-        { type: 'image', src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop' },
-        { type: 'color', bg: 'bg-[#000000]', content: <span className="text-[#ff9e00] font-black text-7xl flex items-center justify-center"><span className="border-[12px] border-[#ff9e00] w-24 h-24 rounded-full border-r-transparent rotate-45"></span></span> },
-        { type: 'image', src: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=400&auto=format&fit=crop' },
+        { type: 'image', src: '/img/creative_portrait_1781107365968.png' },
+        { type: 'color', bg: 'bg-[#18181b]', content: <div className="flex flex-col items-center justify-center leading-none"><span className="text-white font-black text-5xl md:text-6xl tracking-tighter">CREATE</span><span className="text-[#ff9e00] font-bold text-lg md:text-xl tracking-[0.2em] mt-2">BEYOND</span></div> },
+        { type: 'image', src: '/img/abstract_shapes_1781107379628.png' },
+        { type: 'color', bg: 'bg-[#0a0a0a] border border-white/10', content: <div className="flex flex-col items-center justify-center"><span className="w-12 h-[2px] bg-white/50 mb-4"></span><span className="text-white font-mono text-xs md:text-sm tracking-[0.4em] uppercase">Vanguard</span><span className="w-12 h-[2px] bg-white/50 mt-4"></span></div> },
+        { type: 'image', src: '/img/studio_setup_1781107390091.png' },
+        { type: 'color', bg: 'bg-[#000000]', content: <span className="text-[#ff9e00] font-black text-[100px] leading-none opacity-80">✦</span> },
+        { type: 'image', src: '/img/hacker_code_1781107400239.png' },
     ];
 
     return (
