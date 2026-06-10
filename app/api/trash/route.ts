@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
+import { getEffectivePlan } from "@/lib/planUtils";
 
 const TRASH_RETENTION_DAYS = 30;
 const DEFAULT_LIMIT = 10;
@@ -92,11 +93,11 @@ export async function POST(req: Request) {
 
       if (type === "project") {
         // Cek kuota FREE
-        if (user.plan === "FREE") {
+        if (getEffectivePlan(user) === "FREE") {
           const activeCount = await prisma.project.count({ where: { userId: user.id, deletedAt: null } });
-          if (activeCount >= 5) {
+          if (activeCount >= 3) {
             return NextResponse.json({
-              error: "Kuota proyek FREE sudah penuh (5/5). Hapus proyek aktif atau upgrade ke PRO.",
+              error: "Kuota proyek FREE sudah penuh (3/3). Hapus proyek aktif atau upgrade ke PRO.",
               code: "QUOTA_EXCEEDED",
             }, { status: 403 });
           }
@@ -111,11 +112,11 @@ export async function POST(req: Request) {
       }
 
       if (type === "certificate") {
-        if (user.plan === "FREE") {
+        if (getEffectivePlan(user) === "FREE") {
           const activeCount = await prisma.certificate.count({ where: { userId: user.id, deletedAt: null } });
-          if (activeCount >= 2) {
+          if (activeCount >= 1) {
             return NextResponse.json({
-              error: "Kuota sertifikat FREE sudah penuh (2/2). Hapus sertifikat aktif atau upgrade ke PRO.",
+              error: "Kuota sertifikat FREE sudah penuh (1/1). Hapus sertifikat aktif atau upgrade ke PRO.",
               code: "QUOTA_EXCEEDED",
             }, { status: 403 });
           }

@@ -66,10 +66,42 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     handleSubmit
   } = actions;
 
-  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const [isDragActive, setIsDragActive] = useState(false);
 
+  const processImageUpload = async (f: File) => {
+    const maxImageSize = userPlan === 'SUPREME' ? 15 * 1024 * 1024 : userPlan === 'PRO' ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+    const maxImageLabel = userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB';
+    
+    if (f.size > maxImageSize) {
+      showToast({ message: `Maksimal ukuran gambar ${maxImageLabel}`, id: "err-img", icon: "fa-exclamation" });
+      return;
+    }
+
+    setIsUploadingImage(true);
+    const formData = new FormData();
+    formData.append('file', f);
+
+    try {
+      const res = await fetch('/api/projects/upload-image', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.secure_url) {
+        setMediaUrl(data.secure_url);
+        showToast({ message: "Aset berhasil dilampirkan", id: "upload-asset-success", icon: "fa-image" });
+      } else {
+        showToast({ message: data.error || "Gagal mengunggah gambar", id: "upload-asset-fail", icon: "fa-times" });
+      }
+    } catch (err) {
+      showToast({ message: "Terjadi kesalahan jaringan", id: "upload-asset-err", icon: "fa-wifi" });
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const processVideoUpload = async (f: File) => {
     if (userPlan === 'FREE') {
       setShowUpgradeModal(true);
       return;
@@ -78,7 +110,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     const maxVideoSize = userPlan === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
     const maxVideoSizeLabel = userPlan === 'SUPREME' ? '100MB' : '50MB';
 
-    if (file.size > maxVideoSize) {
+    if (f.size > maxVideoSize) {
       showToast({ message: `Ukuran video maksimal ${maxVideoSizeLabel}`, id: "err-video-size", icon: "fa-exclamation-triangle" });
       return;
     }
@@ -88,10 +120,9 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
 
     try {
       const formData = new FormData();
-      formData.append('title', projectTitle || file.name);
-      formData.append('file', file);
+      formData.append('title', projectTitle || f.name);
+      formData.append('file', f);
 
-      // Gunakan XMLHttpRequest untuk melacak progress upload ke backend kita
       const xhr = new XMLHttpRequest();
       xhr.open('POST', '/api/projects/upload-video', true);
 
@@ -138,6 +169,63 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
       showToast({ message: error.message || "Gagal memproses video", id: "upload-exception", icon: "fa-exclamation-triangle" });
       setIsUploadingVideo(false);
     }
+  };
+
+  const process3DFile = (f: File) => {
+    const max3DSize = userPlan === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
+    const max3DLabel = userPlan === 'SUPREME' ? '100MB' : '50MB';
+    if (f.size > max3DSize) {
+       showToast({ message: `Maksimal ${max3DLabel}`, id: "err-3d", icon: "fa-exclamation" });
+       return;
+    }
+    setFile3d(f);
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setIsDragActive(true);
+    } else if (e.type === "dragleave") {
+      setIsDragActive(false);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    if (projectType === 'photo') {
+      const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      if (!validMimeTypes.includes(file.type)) {
+        showToast({ message: "Format tidak didukung. Harap unggah JPG, PNG, WEBP, atau GIF.", id: "err-img-type", icon: "fa-exclamation" });
+        return;
+      }
+      await processImageUpload(file);
+    } else if (projectType === 'video') {
+      if (!file.type.startsWith('video/')) {
+        showToast({ message: "Harap unggah file video yang valid.", id: "err-video-type", icon: "fa-exclamation" });
+        return;
+      }
+      await processVideoUpload(file);
+    } else if (projectType === '3d') {
+      const isGlb = file.name.endsWith('.glb') || file.name.endsWith('.gltf');
+      if (!isGlb) {
+        showToast({ message: "Harap unggah file 3D berformat .GLB atau .GLTF.", id: "err-3d-type", icon: "fa-exclamation" });
+        return;
+      }
+      process3DFile(file);
+    }
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await processVideoUpload(file);
   };
 
   if (!isModalOpen) return null;
@@ -366,7 +454,11 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                             }} />
                             <div 
                               onClick={() => file3dInputRef.current?.click()}
-                              className="cursor-pointer border border-dashed border-white/10 hover:border-[#ff9e00]/60 bg-zinc-900/30 hover:bg-zinc-900/60 transition-all duration-300 rounded-none flex flex-col items-center justify-center overflow-hidden relative min-h-[160px] w-full group/upload"
+                              onDragEnter={handleDrag}
+                              onDragOver={handleDrag}
+                              onDragLeave={handleDrag}
+                              onDrop={handleDrop}
+                              className={`cursor-pointer border border-dashed transition-all duration-300 rounded-none flex flex-col items-center justify-center overflow-hidden relative min-h-[160px] w-full group/upload ${isDragActive ? 'border-[#ff9e00] bg-[#ff9e00]/10 shadow-[0_0_15px_rgba(255,158,0,0.15)]' : 'border-white/10 hover:border-[#ff9e00]/60 bg-zinc-900/30 hover:bg-zinc-900/60'}`}
                             >
                               {file3d ? (
                                 <div className="py-8 flex flex-col items-center text-center px-4">
@@ -427,7 +519,11 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                     if(userPlan === 'FREE') setShowUpgradeModal(true); 
                                     else fileInputRef.current?.click();
                                   }}
-                                  className="cursor-pointer border border-dashed border-white/10 hover:border-[#ff9e00]/60 bg-zinc-900/30 hover:bg-zinc-900/60 transition-all duration-300 rounded-none flex flex-col items-center justify-center overflow-hidden relative min-h-[160px] w-full group/upload"
+                                  onDragEnter={handleDrag}
+                                  onDragOver={handleDrag}
+                                  onDragLeave={handleDrag}
+                                  onDrop={handleDrop}
+                                  className={`cursor-pointer border border-dashed transition-all duration-300 rounded-none flex flex-col items-center justify-center overflow-hidden relative min-h-[160px] w-full group/upload ${isDragActive ? 'border-[#ff9e00] bg-[#ff9e00]/10 shadow-[0_0_15px_rgba(255,158,0,0.15)]' : 'border-white/10 hover:border-[#ff9e00]/60 bg-zinc-900/30 hover:bg-zinc-900/60'}`}
                                 >
                                   {isUploadingVideo ? (
                                     <div className="w-full px-8 flex flex-col items-center">
@@ -502,7 +598,11 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                             />
                             <div
                               onClick={() => !isUploadingImage && fileImageInputRef.current?.click()}
-                              className="cursor-pointer border border-dashed border-white/10 hover:border-[#ff9e00]/60 bg-zinc-900/30 hover:bg-zinc-900/60 transition-all duration-300 rounded-none flex flex-col items-center justify-center overflow-hidden relative group/upload min-h-[160px]"
+                              onDragEnter={handleDrag}
+                              onDragOver={handleDrag}
+                              onDragLeave={handleDrag}
+                              onDrop={handleDrop}
+                              className={`cursor-pointer border border-dashed transition-all duration-300 rounded-none flex flex-col items-center justify-center overflow-hidden relative group/upload min-h-[160px] ${isDragActive ? 'border-[#ff9e00] bg-[#ff9e00]/10 shadow-[0_0_15px_rgba(255,158,0,0.15)]' : 'border-white/10 hover:border-[#ff9e00]/60 bg-zinc-900/30 hover:bg-zinc-900/60'}`}
                             >
                               {isUploadingImage ? (
                                 <div className="py-8 flex flex-col items-center text-center px-4">

@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity"; 
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getEffectivePlan } from "@/lib/planUtils";
 
 // 1. GET: Menarik Semua Proyek
 export async function GET(req: Request) {
@@ -59,11 +60,11 @@ export async function POST(req: Request) {
     if (!user) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
 
     // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
-    if (user.plan === 'FREE') {
+    if (getEffectivePlan(user) === 'FREE') {
       const projectCount = await prisma.project.count({ where: { userId: user.id, deletedAt: null } });
-      if (projectCount >= 5) {
+      if (projectCount >= 3) {
         return NextResponse.json({ 
-          error: "Kuota FREE maksimal 5 proyek. Silakan upgrade ke PRO.",
+          error: "Kuota FREE maksimal 3 proyek. Silakan upgrade ke PRO.",
           code: "QUOTA_EXCEEDED"
         }, { status: 403 });
       }

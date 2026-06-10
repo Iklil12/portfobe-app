@@ -5,6 +5,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getEffectivePlan } from "@/lib/planUtils";
+
 
 // MENGAMBIL SERTIFIKAT USER DENGAN PAGINATION
 export async function GET(req: Request) {
@@ -69,11 +71,11 @@ export async function POST(req: Request) {
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
-    if (user.plan === 'FREE') {
+    if (getEffectivePlan(user) === 'FREE') {
       const certCount = await prisma.certificate.count({ where: { userId: user.id, deletedAt: null } });
-      if (certCount >= 2) {
+      if (certCount >= 1) {
         return NextResponse.json({ 
-          error: "Kuota FREE maksimal 2 sertifikat. Silakan upgrade ke PRO.",
+          error: "Kuota FREE maksimal 1 sertifikat. Silakan upgrade ke PRO.",
           code: "QUOTA_EXCEEDED"
         }, { status: 403 });
       }

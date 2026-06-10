@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { getEffectivePlan } from '@/lib/planUtils';
+
 
 export async function POST(req: Request) {
   try {
@@ -23,7 +25,7 @@ export async function POST(req: Request) {
     // 3. Otorisasi Plan/Tier
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { plan: true }
+      select: { plan: true, planExpiredAt: true }
     });
 
     if (!user) {
@@ -43,8 +45,9 @@ export async function POST(req: Request) {
     }
 
     // Tentukan batas maksimal ukuran gambar berdasarkan paket (Misal: FREE 5MB, PRO 10MB, SUPREME 15MB)
-    const maxImageSize = user.plan === 'SUPREME' ? 15 * 1024 * 1024 : user.plan === 'PRO' ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
-    const maxImageLabel = user.plan === 'SUPREME' ? '15MB' : user.plan === 'PRO' ? '10MB' : '5MB';
+    const effectivePlan = getEffectivePlan(user);
+    const maxImageSize = effectivePlan === 'SUPREME' ? 15 * 1024 * 1024 : effectivePlan === 'PRO' ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+    const maxImageLabel = effectivePlan === 'SUPREME' ? '15MB' : effectivePlan === 'PRO' ? '10MB' : '5MB';
     
     if (file.size > maxImageSize) {
       return NextResponse.json({ error: `Ukuran maksimal gambar adalah ${maxImageLabel}` }, { status: 400 });
@@ -75,21 +78,28 @@ export async function POST(req: Request) {
     cloudinaryFormData.append('file', file);
     cloudinaryFormData.append('upload_preset', uploadPreset);
 
-    const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-      method: 'POST',
-      body: cloudinaryFormData
-    });
+    let secureUrl = '';
+    try {
+      const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body: cloudinaryFormData
+      });
 
-    if (!uploadRes.ok) {
-      const errTxt = await uploadRes.text();
-      console.error("Cloudinary Upload Error:", errTxt);
-      return NextResponse.json({ error: "Gagal mengunggah gambar ke CDN" }, { status: 500 });
+      if (!uploadRes.ok) {
+        const errTxt = await uploadRes.text();
+        console.error("Cloudinary Upload Error:", errTxt);
+        throw new Error("Gagal mengunggah gambar ke CDN");
+      }
+
+      const data = await uploadRes.json();
+      secureUrl = data.secure_url;
+    } catch (fetchErr) {
+      console.error("Cloudinary upload failed or timeout:", fetchErr);
+      return NextResponse.json({ error: "Layanan CDN sedang sibuk atau gangguan. Silakan coba lagi beberapa saat." }, { status: 503 });
     }
 
-    const data = await uploadRes.json();
-
     // Return the secure_url
-    return NextResponse.json({ secure_url: data.secure_url });
+    return NextResponse.json({ secure_url: secureUrl });
 
   } catch (error: any) {
     console.error('Upload Image Error:', error);

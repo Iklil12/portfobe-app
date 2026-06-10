@@ -13,7 +13,7 @@ export default function PreviewPage() {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       // SECURITY: Cegah injeksi dari domain asing
-      if (event.origin !== window.location.origin) return;
+      if (event.origin !== window.location.origin && !event.origin.includes('localhost') && !event.origin.includes('127.0.0.1')) return;
 
       if (event.data?.type === 'PREVIEW_UPDATE') {
         setData(event.data.data);
@@ -27,7 +27,7 @@ export default function PreviewPage() {
 
     // Beritahu parent (PreviewPanel) bahwa iframe sudah siap menerima data
     if (window.parent) {
-      window.parent.postMessage({ type: 'PREVIEW_READY' }, '*');
+      window.parent.postMessage({ type: 'PREVIEW_READY' }, window.location.origin);
     }
 
     return () => {

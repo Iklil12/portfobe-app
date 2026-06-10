@@ -62,7 +62,7 @@ export default function ExplorePage() {
         {/* ── HEADER ── */}
         <div className="animate-enter mb-12" style={{animationDelay:'0ms'}}>
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-zinc-900 border border-white/10 text-white/50 text-[9px] font-mono font-bold uppercase tracking-widest mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-zinc-900 border border-white/10 text-white/50 text-[9px] font-sans font-bold uppercase  mb-6">
             <span className="relative flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#ff9e00]"></span>
@@ -70,10 +70,10 @@ export default function ExplorePage() {
             Dalam Pengembangan
           </div>
 
-          <h1 className="text-3xl font-mono font-bold text-white tracking-tight uppercase mb-3">
+          <h1 className="text-3xl font-sans font-bold text-white tracking-tight uppercase mb-3">
             Explore <span className="text-white/40">Community</span>
           </h1>
-          <p className="text-white/50 text-xs font-mono max-w-lg leading-relaxed">
+          <p className="text-white/50 text-xs font-sans max-w-lg leading-relaxed">
             Segera hadir — marketplace desain portofolio dari sesama kreator Portfo.be. Temukan, gunakan, dan bagikan karya desain terbaikmu.
           </p>
         </div>
@@ -90,8 +90,8 @@ export default function ExplorePage() {
                 <div className="w-10 h-10 bg-zinc-950 border border-white/5 rounded-none flex items-center justify-center mb-4 group-hover:bg-[#ff9e00]/10 group-hover:border-[#ff9e00]/30 transition-colors text-white/30 group-hover:text-[#ff9e00]">
                   <Icon className="w-4 h-4" />
                 </div>
-                <h3 className="font-mono font-bold text-white text-xs uppercase tracking-wider mb-2">{f.title}</h3>
-                <p className="text-white/40 text-[11px] font-mono leading-relaxed">{f.desc}</p>
+                <h3 className="font-sans font-bold text-white text-xs uppercase  mb-2">{f.title}</h3>
+                <p className="text-white/40 text-[11px] font-sans leading-relaxed">{f.desc}</p>
               </div>
             );
           })}
@@ -101,10 +101,10 @@ export default function ExplorePage() {
         <div className="animate-enter" style={{animationDelay:'200ms'}}>
           <div className="flex items-end justify-between mb-5">
             <div>
-              <h2 className="font-mono font-bold text-white text-xs uppercase tracking-wider">Pratinjau Komunitas</h2>
-              <p className="text-white/30 text-[9px] font-mono uppercase tracking-widest mt-1">Estimasi antarmuka rilis perdana</p>
+              <h2 className="font-sans font-bold text-white text-xs uppercase ">Pratinjau Komunitas</h2>
+              <p className="text-white/30 text-[9px] font-sans uppercase  mt-1">Estimasi antarmuka rilis perdana</p>
             </div>
-            <span className="px-2.5 py-1 bg-zinc-900 text-white/40 text-[9px] font-mono font-bold rounded-none uppercase tracking-widest border border-white/5">Segera</span>
+            <span className="px-2.5 py-1 bg-zinc-900 text-white/40 text-[9px] font-sans font-bold rounded-none uppercase  border border-white/5">Segera</span>
           </div>
 
           {/* Blurred Grid Preview */}
@@ -114,8 +114,8 @@ export default function ExplorePage() {
               <div className="w-14 h-14 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center mb-4 text-white/30">
                 <Compass className="w-6 h-6 animate-pulse text-[#ff9e00]" />
               </div>
-              <p className="font-mono font-bold text-white text-xs uppercase tracking-wider mb-1.5">Komunitas Belum Dibuka</p>
-              <p className="text-white/40 font-mono text-[10px] text-center max-w-xs leading-relaxed">
+              <p className="font-sans font-bold text-white text-xs uppercase  mb-1.5">Komunitas Belum Dibuka</p>
+              <p className="text-white/40 font-sans text-[10px] text-center max-w-xs leading-relaxed">
                 Kami sedang merancang ekosistem pembagian tema paling mulus untuk para kreator Portfo.be.
               </p>
             </div>
@@ -128,14 +128,14 @@ export default function ExplorePage() {
                   <div className="h-28 shimmer-dark border-b border-white/5"></div>
                   <div className="p-3 flex flex-col gap-2">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono font-bold text-white/70 text-[10px] truncate">{card.label}</span>
-                      <span className="text-[9px] font-mono text-white/30 flex items-center gap-1 shrink-0">
+                      <span className="font-sans font-bold text-white/70 text-[10px] truncate">{card.label}</span>
+                      <span className="text-[9px] font-sans text-white/30 flex items-center gap-1 shrink-0">
                         <Download className="w-2.5 h-2.5" />{card.uses}
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[9px] text-white/40 font-mono truncate">{card.user}</span>
-                      <span className="text-[8px] px-1.5 py-0.5 bg-zinc-900 text-[#ff9e00] rounded-none font-mono font-bold uppercase tracking-wider border border-white/5 shrink-0">{card.tag}</span>
+                      <span className="text-[9px] text-white/40 font-sans truncate">{card.user}</span>
+                      <span className="text-[8px] px-1.5 py-0.5 bg-zinc-900 text-[#ff9e00] rounded-none font-sans font-bold uppercase  border border-white/5 shrink-0">{card.tag}</span>
                     </div>
                   </div>
                 </div>
@@ -149,15 +149,15 @@ export default function ExplorePage() {
           <div className="bg-zinc-900/50 border border-white/10 rounded-none p-6 sm:p-8 relative overflow-hidden">
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none bg-zinc-950 border border-white/10 text-white/60 text-[9px] font-mono font-bold uppercase tracking-wider mb-4">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none bg-zinc-950 border border-white/10 text-white/60 text-[9px] font-sans font-bold uppercase  mb-4">
                   <Bell className="w-3 h-3 text-[#ff9e00]" /> Dapatkan Notifikasi
                 </div>
-                <h3 className="font-mono font-bold text-white text-sm uppercase tracking-wider mb-1">Jadilah Kreator Pertama</h3>
-                <p className="text-white/40 font-mono text-xs leading-relaxed max-w-xl">Saat Explore Community diluncurkan, tema kustom buatanmu bisa langsung dikenal dan digunakan pengguna lain.</p>
+                <h3 className="font-sans font-bold text-white text-sm uppercase  mb-1">Jadilah Kreator Pertama</h3>
+                <p className="text-white/40 font-sans text-xs leading-relaxed max-w-xl">Saat Explore Community diluncurkan, tema kustom buatanmu bisa langsung dikenal dan digunakan pengguna lain.</p>
               </div>
               <button
                 onClick={() => {}}
-                className="flex-shrink-0 bg-[#ff9e00] hover:bg-[#ffaa22] text-black px-6 py-3.5 rounded-none font-mono font-bold text-xs uppercase tracking-widest active:scale-95 transition-all whitespace-nowrap"
+                className="flex-shrink-0 bg-[#ff9e00] hover:bg-[#ffaa22] text-black px-6 py-3.5 rounded-none font-sans font-bold text-xs uppercase  active:scale-95 transition-all whitespace-nowrap"
               >
                 Kabari Saya
               </button>

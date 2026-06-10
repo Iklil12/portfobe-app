@@ -81,7 +81,7 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
           entity,
           field,
           value: newText
-        }, '*');
+        }, window.location.origin);
       }
     } else if (newText === "") {
       // Revert if empty

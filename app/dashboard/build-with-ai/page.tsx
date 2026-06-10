@@ -210,7 +210,7 @@ export default function BuildWithAIPage() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff9e00]"></span>
             </span>
-            <span className="text-[10px] font-mono font-bold text-[#ff9e00] uppercase tracking-wider">Coming Soon · Dalam Pengembangan</span>
+            <span className="text-[10px] font-sans font-bold text-[#ff9e00] uppercase ">Coming Soon · Dalam Pengembangan</span>
           </div>
         </div>
 
@@ -233,7 +233,7 @@ export default function BuildWithAIPage() {
 
         {/* ── HEADLINE ──────────────────────────────────────────── */}
         <div className="ai-slide-up ai-delay-200 text-center mb-6">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold uppercase tracking-wider text-white leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold uppercase  text-white leading-tight">
             Portofolio yang{' '}
             <span
               className={`inline-block ai-shimmer-text ai-word ${fade ? 'ai-word-visible' : 'ai-word-hidden'}`}
@@ -242,13 +242,13 @@ export default function BuildWithAIPage() {
               {words[wordIndex]}
             </span>
             <br />
-            <span className="text-white/40 font-mono font-bold text-lg sm:text-xl md:text-2xl mt-2 block tracking-widest uppercase">Dibangun oleh AI</span>
+            <span className="text-white/40 font-sans font-bold text-lg sm:text-xl md:text-2xl mt-2 block  uppercase">Dibangun oleh AI</span>
           </h1>
         </div>
 
         {/* ── SUBHEADLINE ─────────────────────────────────────── */}
         <div className="ai-slide-up ai-delay-300 text-center mb-14 max-w-lg">
-          <p className="text-white/40 font-mono text-xs leading-relaxed">
+          <p className="text-white/40 font-sans text-xs leading-relaxed">
             Cukup ceritakan siapa kamu — AI kami akan menyusun portofolio yang memukau, teroptimasi SEO, dan siap menarik klien impianmu.
           </p>
         </div>
@@ -267,8 +267,8 @@ export default function BuildWithAIPage() {
                     <Icon className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="font-mono font-bold text-xs uppercase tracking-wider text-white mb-1.5">{f.label}</p>
-                    <p className="text-white/40 font-mono text-[10px] leading-relaxed">{f.desc}</p>
+                    <p className="font-sans font-bold text-xs uppercase  text-white mb-1.5">{f.label}</p>
+                    <p className="text-white/40 font-sans text-[10px] leading-relaxed">{f.desc}</p>
                   </div>
                 </div>
               </div>
@@ -281,10 +281,10 @@ export default function BuildWithAIPage() {
           <div className="bg-zinc-950 border border-white/10 rounded-none p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 rounded-full -mr-12 -mt-12"
               style={{ background: 'radial-gradient(circle, rgba(255,158,0,0.08), transparent 70%)' }} />
-            <p className="text-[9px] font-mono font-bold uppercase tracking-widest text-[#ff9e00] mb-2">
+            <p className="text-[9px] font-sans font-bold uppercase  text-[#ff9e00] mb-2">
               Dapatkan Akses Pertama
             </p>
-            <p className="font-mono font-bold text-sm text-white uppercase tracking-wider mb-5">
+            <p className="font-sans font-bold text-sm text-white uppercase  mb-5">
               Daftarkan Email-mu, Jadilah yang Pertama Mencoba ✨
             </p>
 
@@ -295,7 +295,7 @@ export default function BuildWithAIPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="emailmu@example.com"
-                  className="ai-input flex-1 rounded-none px-4 py-3 text-xs font-mono font-bold"
+                  className="ai-input flex-1 rounded-none px-4 py-3 text-xs font-sans font-bold"
                 />
                 <button
                   onClick={() => { if (email) setSubmitted(true); }}
@@ -307,7 +307,7 @@ export default function BuildWithAIPage() {
             ) : (
               <div className="flex items-center gap-2.5 py-3 px-4 rounded-none bg-emerald-950/20 border border-emerald-900/30 text-emerald-400">
                 <CheckCircle className="w-4 h-4 shrink-0" />
-                <p className="text-[11px] font-mono font-bold">
+                <p className="text-[11px] font-sans font-bold">
                   Berhasil! Kami akan kabari kamu duluan 🎉
                 </p>
               </div>
@@ -317,7 +317,7 @@ export default function BuildWithAIPage() {
 
         {/* ── TIMELINE ──────────────────────────────────────────── */}
         <div className="ai-slide-up ai-delay-600 w-full max-w-md">
-          <p className="text-center text-[9px] font-mono font-bold uppercase tracking-widest text-white/30 mb-6">Roadmap</p>
+          <p className="text-center text-[9px] font-sans font-bold uppercase  text-white/30 mb-6">Roadmap</p>
           <div className="space-y-4 relative">
             <div className="absolute left-[19px] top-4 bottom-4 w-px bg-white/5" />
             {[
@@ -326,18 +326,18 @@ export default function BuildWithAIPage() {
               { phase: 'v1.0', label: 'SEO Optimizer + Translator', done: false, active: false },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-4 relative">
-                <div className={`w-10 h-10 rounded-none flex items-center justify-center flex-shrink-0 text-[9px] font-mono font-bold z-10 
+                <div className={`w-10 h-10 rounded-none flex items-center justify-center flex-shrink-0 text-[9px] font-sans font-bold z-10 
                   ${item.active 
                     ? 'bg-[#ff9e00]/10 border border-[#ff9e00]/30 text-[#ff9e00] ai-badge-glow' 
                     : 'bg-zinc-900 border border-white/10 text-white/40'}`}
                 >
                   {item.phase}
                 </div>
-                <p className={`text-xs font-mono font-bold ${item.active ? 'text-white' : 'text-white/30'}`}>
+                <p className={`text-xs font-sans font-bold ${item.active ? 'text-white' : 'text-white/30'}`}>
                   {item.label}
                 </p>
                 {item.active && (
-                  <span className="ml-auto text-[9px] px-2 py-0.5 rounded-none font-mono font-bold bg-[#ff9e00] text-black uppercase tracking-wider">
+                  <span className="ml-auto text-[9px] px-2 py-0.5 rounded-none font-sans font-bold bg-[#ff9e00] text-black uppercase ">
                     Next
                   </span>
                 )}
@@ -347,7 +347,7 @@ export default function BuildWithAIPage() {
         </div>
 
         {/* ── FOOTER ────────────────────────────────────────────── */}
-        <p className="mt-16 text-[9px] font-mono text-white/20 text-center">
+        <p className="mt-16 text-[9px] font-sans text-white/20 text-center">
           © 2025 Portfo.be · Semua fitur AI akan tersedia secara bertahap
         </p>
       </div>

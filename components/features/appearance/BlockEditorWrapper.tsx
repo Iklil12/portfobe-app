@@ -31,7 +31,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
         blockId: block.id,
         currentVisibility: block.isVisible,
         currentLockState: block.isLocked
-      }, '*');
+      }, window.location.origin);
     }
   };
 
@@ -160,7 +160,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
           <button
             onClick={(e) => {
               e.stopPropagation();
-              window.postMessage({ type: 'OPEN_LIBRARY', insertIndex: block.orderIndex + 1 }, '*');
+              window.postMessage({ type: 'OPEN_LIBRARY', insertIndex: block.orderIndex + 1 }, window.location.origin);
             }}
             className="relative px-4 py-1.5 rounded-none bg-zinc-950 border border-[#ff9e00] text-[#ff9e00] text-[9px] font-mono font-bold tracking-widest uppercase flex items-center gap-2 hover:bg-[#ff9e00] hover:text-black hover:scale-105 transition-all shadow-none z-10 pointer-events-auto"
           >
@@ -179,7 +179,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
           <button
             onClick={(e) => {
               e.stopPropagation();
-              window.postMessage({ type: 'OPEN_LIBRARY', insertIndex: block.orderIndex + 1 }, '*');
+              window.postMessage({ type: 'OPEN_LIBRARY', insertIndex: block.orderIndex + 1 }, window.location.origin);
             }}
             className="relative w-8 h-8 rounded-none bg-zinc-950 border border-[#ff9e00] text-[#ff9e00] text-xs font-bold flex items-center justify-center hover:bg-[#ff9e00] hover:text-black hover:scale-110 transition-all shadow-none z-10 pointer-events-auto"
             title="Tambah Section di Sini"

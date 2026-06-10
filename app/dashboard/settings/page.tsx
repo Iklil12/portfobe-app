@@ -31,21 +31,57 @@ function SettingsContent() {
   const initialTab = (searchParams.get('tab') as TabId) || 'account';
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
 
-  const [isMinimumLoadTimeMet, setIsMinimumLoadTimeMet] = useState(false);
-
-  useEffect(() => {
-    setIsMinimumLoadTimeMet(false);
-    const timeout = setTimeout(() => setIsMinimumLoadTimeMet(true), 1200);
-    return () => clearTimeout(timeout);
-  }, []);
+  const [isTabLoading, setIsTabLoading] = useState(false);
 
   // Sync tab state with URL
   const handleTabChange = (tab: TabId) => {
+    if (tab === activeTab) return;
     const target = TABS.find(t => t.id === tab);
     if (target && 'comingSoon' in target && target.comingSoon) return;
+    
+    setIsTabLoading(true);
     setActiveTab(tab);
     router.replace(`/dashboard/settings?tab=${tab}`, { scroll: false });
+    
+    // Fake loading for visual feedback
+    setTimeout(() => {
+      setIsTabLoading(false);
+    }, 600);
   };
+
+  if (!state.mounted || state.isLoadingStatus || !state.session) {
+    return (
+      <main className="min-h-screen relative overflow-hidden pb-24 bg-zinc-950">
+        <div className="max-w-5xl mx-auto p-4 sm:p-6 md:p-10 relative z-10">
+          <div className="mb-8 sm:mb-10 text-center md:text-left animate-enter">
+            <div className="h-5 w-24 bg-zinc-900 border border-white/10 shimmer rounded-none mb-5 inline-block md:block mx-auto md:mx-0"></div>
+            <div className="h-8 w-48 bg-zinc-900 border border-white/10 shimmer rounded-none mb-3 mx-auto md:mx-0"></div>
+            <div className="h-3 w-72 bg-zinc-900 border border-white/10 shimmer rounded-none mx-auto md:mx-0"></div>
+          </div>
+          <div className="flex gap-2 mb-8 animate-enter" style={{animationDelay: '100ms'}}>
+            <div className="h-10 w-32 bg-zinc-900 border border-white/10 shimmer rounded-none"></div>
+            <div className="h-10 w-40 bg-zinc-900 border border-white/10 shimmer rounded-none"></div>
+            <div className="h-10 w-32 bg-zinc-900 border border-white/10 shimmer rounded-none hidden md:block"></div>
+          </div>
+          <div className="space-y-5 sm:space-y-6 max-w-4xl animate-enter" style={{animationDelay: '200ms'}}>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-zinc-950 border border-white/10 p-5 sm:p-6 rounded-none">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <div className="h-5 w-40 bg-zinc-900 shimmer rounded-none mb-3"></div>
+                    <div className="h-3 w-64 bg-zinc-900 shimmer rounded-none"></div>
+                  </div>
+                  <div className="h-8 w-24 bg-zinc-900 shimmer rounded-none"></div>
+                </div>
+                <div className="h-12 w-full max-w-md bg-zinc-900 shimmer rounded-none mb-4"></div>
+                <div className="h-8 w-32 bg-zinc-900 shimmer rounded-none"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen relative overflow-hidden pb-24 bg-zinc-950">
@@ -98,43 +134,50 @@ function SettingsContent() {
         {/* TAB CONTENT */}
         <div className="animate-enter" style={{animationDelay: '300ms'}}>
           
-          {/* ACCOUNT & SECURITY TAB */}
-          {activeTab === 'account' && (
-            !isMinimumLoadTimeMet ? (
-              <div className="space-y-5 sm:space-y-6 max-w-4xl animate-billing-fade">
-                <style dangerouslySetInnerHTML={{__html: `
-                  @keyframes billingFadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
-                  .animate-billing-fade { opacity: 0; animation: billingFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-                `}} />
-                <div className="h-[180px] w-full shimmer-dark rounded-none" />
-                <div className="h-[200px] w-full shimmer-dark rounded-none" />
-                <div className="h-[200px] w-full shimmer-dark rounded-none" />
-                <div className="h-[180px] w-full shimmer-dark rounded-none" />
-              </div>
-            ) : (
-              <div className="space-y-5 sm:space-y-6 max-w-4xl">
-                <PortfolioStatusCard state={state} actions={actions} />
-                <EmailCredentialCard state={state} actions={actions} />
-                <SecurityCard state={state} actions={actions} />
-                <DangerZoneCard state={state} actions={actions} />
-              </div>
-            )
-          )}
-
-          {/* BILLING TAB */}
-          {activeTab === 'billing' && (
-            <BillingContent />
-          )}
-
-          {/* INTEGRATIONS TAB (COMING SOON) */}
-          {activeTab === 'integrations' && (
-            <div className="flex flex-col items-center justify-center py-24 text-center border border-dashed border-white/10 rounded-none bg-zinc-900/10">
-              <div className="w-16 h-16 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center mb-6 text-white/20 animate-pulse">
-                <Plug className="w-6 h-6 text-white/30" />
-              </div>
-              <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider mb-2">Segera Hadir</h3>
-              <p className="text-[10px] font-mono text-white/40 max-w-md leading-relaxed">Hubungkan layanan pihak ketiga seperti Google Analytics, Calendly, dan Webhook untuk memperkuat portofoliomu.</p>
+          {isTabLoading ? (
+            <div className="space-y-5 sm:space-y-6 max-w-4xl animate-enter">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-zinc-950 border border-white/10 p-5 sm:p-6 rounded-none">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <div className="h-5 w-40 bg-zinc-900 shimmer rounded-none mb-3"></div>
+                      <div className="h-3 w-64 bg-zinc-900 shimmer rounded-none"></div>
+                    </div>
+                    <div className="h-8 w-24 bg-zinc-900 shimmer rounded-none"></div>
+                  </div>
+                  <div className="h-12 w-full max-w-md bg-zinc-900 shimmer rounded-none mb-4"></div>
+                  <div className="h-8 w-32 bg-zinc-900 shimmer rounded-none"></div>
+                </div>
+              ))}
             </div>
+          ) : (
+            <>
+              {/* ACCOUNT & SECURITY TAB */}
+              {activeTab === 'account' && (
+                <div className="space-y-5 sm:space-y-6 max-w-4xl">
+                  <PortfolioStatusCard state={state} actions={actions} />
+                  <EmailCredentialCard state={state} actions={actions} />
+                  <SecurityCard state={state} actions={actions} />
+                  <DangerZoneCard state={state} actions={actions} />
+                </div>
+              )}
+
+              {/* BILLING TAB */}
+              {activeTab === 'billing' && (
+                <BillingContent />
+              )}
+
+              {/* INTEGRATIONS TAB (COMING SOON) */}
+              {activeTab === 'integrations' && (
+                <div className="flex flex-col items-center justify-center py-24 text-center border border-dashed border-white/10 rounded-none bg-zinc-900/10">
+                  <div className="w-16 h-16 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center mb-6 text-white/20 animate-pulse">
+                    <Plug className="w-6 h-6 text-white/30" />
+                  </div>
+                  <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider mb-2">Segera Hadir</h3>
+                  <p className="text-[10px] font-mono text-white/40 max-w-md leading-relaxed">Hubungkan layanan pihak ketiga seperti Google Analytics, Calendly, dan Webhook untuk memperkuat portofoliomu.</p>
+                </div>
+              )}
+            </>
           )}
 
         </div>

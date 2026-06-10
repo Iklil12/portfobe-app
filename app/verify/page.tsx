@@ -1,21 +1,40 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import { Check, X, Clock, ArrowRight } from "lucide-react";
 
 export default async function VerifyPage(props: { searchParams: Promise<{ token?: string }> }) {
   const searchParams = await props.searchParams;
   const token = searchParams.token;
 
+  const containerStyles = "min-h-screen flex items-center justify-center bg-[#050505] text-white relative overflow-hidden font-sans selection:bg-[#ff9e00] selection:text-black";
+  const gridBackground = "absolute inset-0 z-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none";
+
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <style dangerouslySetInnerHTML={{__html: `@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');`}} />
-        <div className="bg-white p-8 rounded-2xl shadow-sm text-center max-w-md border border-slate-100">
-          <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <i className="fas fa-times text-xl"></i>
+      <div className={containerStyles}>
+        <style dangerouslySetInnerHTML={{__html: `
+          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
+          * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        `}} />
+        <div className={gridBackground}></div>
+        
+        {/* Glow effect */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-rose-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div className="relative bg-zinc-950 border border-white/10 p-8 md:p-10 max-w-md w-full shadow-2xl text-center z-10 rounded-none animate-enter-modal">
+          <div className="w-16 h-16 bg-rose-500/10 text-rose-500 border border-rose-500/20 rounded-none flex items-center justify-center mx-auto mb-6">
+            <X className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800 mb-2">Token Tidak Valid</h1>
-          <p className="text-slate-500 mb-8 text-sm leading-relaxed">Tautan verifikasi tidak lengkap atau rusak. Pastikan Anda menyalin tautan secara penuh dari email.</p>
-          <Link href="/dashboard" className="block w-full bg-slate-900 text-white px-6 py-3.5 rounded-xl font-bold hover:bg-slate-800 transition">Ke Dashboard</Link>
+          <h1 className="text-xl font-display font-bold text-white mb-2 uppercase tracking-wider">Token Tidak Valid</h1>
+          <p className="text-white/40 mb-8 text-xs font-mono leading-relaxed">
+            Tautan verifikasi tidak lengkap atau rusak. Pastikan Anda menyalin tautan secara penuh dari email.
+          </p>
+          <Link 
+            href="/dashboard" 
+            className="w-full py-4 bg-zinc-900 border border-white/10 text-white font-mono font-bold uppercase tracking-widest text-[11px] rounded-none hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 active:scale-95"
+          >
+            Ke Dashboard <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     );
@@ -27,15 +46,30 @@ export default async function VerifyPage(props: { searchParams: Promise<{ token?
 
   if (!verification || new Date() > verification.expires) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <style dangerouslySetInnerHTML={{__html: `@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');`}} />
-        <div className="bg-white p-8 rounded-2xl shadow-sm text-center max-w-md border border-slate-100">
-          <div className="w-16 h-16 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <i className="fas fa-clock text-xl"></i>
+      <div className={containerStyles}>
+        <style dangerouslySetInnerHTML={{__html: `
+          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
+          * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        `}} />
+        <div className={gridBackground}></div>
+        
+        {/* Glow effect */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div className="relative bg-zinc-950 border border-white/10 p-8 md:p-10 max-w-md w-full shadow-2xl text-center z-10 rounded-none animate-enter-modal">
+          <div className="w-16 h-16 bg-amber-500/10 text-[#ff9e00] border border-[#ff9e00]/20 rounded-none flex items-center justify-center mx-auto mb-6">
+            <Clock className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800 mb-2">Tautan Kedaluwarsa</h1>
-          <p className="text-slate-500 mb-8 text-sm leading-relaxed">Tautan verifikasi ini sudah tidak berlaku (lebih dari 24 jam). Silakan minta tautan baru dari dashboard Anda.</p>
-          <Link href="/dashboard" className="block w-full bg-slate-900 text-white px-6 py-3.5 rounded-xl font-bold hover:bg-slate-800 transition">Ke Dashboard</Link>
+          <h1 className="text-xl font-display font-bold text-white mb-2 uppercase tracking-wider">Tautan Kedaluwarsa</h1>
+          <p className="text-white/40 mb-8 text-xs font-mono leading-relaxed">
+            Tautan verifikasi ini sudah tidak berlaku (lebih dari 24 jam). Silakan minta tautan baru dari dashboard Anda.
+          </p>
+          <Link 
+            href="/dashboard" 
+            className="w-full py-4 bg-zinc-900 border border-white/10 text-white font-mono font-bold uppercase tracking-widest text-[11px] rounded-none hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 active:scale-95"
+          >
+            Ke Dashboard <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     );
@@ -54,15 +88,30 @@ export default async function VerifyPage(props: { searchParams: Promise<{ token?
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <style dangerouslySetInnerHTML={{__html: `@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');`}} />
-      <div className="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/40 text-center max-w-md border border-slate-100">
-        <div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-          <i className="fas fa-check text-3xl"></i>
+    <div className={containerStyles}>
+      <style dangerouslySetInnerHTML={{__html: `
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
+        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+      `}} />
+      <div className={gridBackground}></div>
+      
+      {/* Glow effect */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+      <div className="relative bg-zinc-950 border border-white/10 p-8 md:p-10 max-w-md w-full shadow-2xl text-center z-10 rounded-none animate-enter-modal">
+        <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-none flex items-center justify-center mx-auto mb-6">
+          <Check className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl font-extrabold text-slate-800 mb-3">Email Terverifikasi!</h1>
-        <p className="text-slate-500 mb-8 text-sm leading-relaxed font-medium">Terima kasih. Akun Anda kini sepenuhnya terverifikasi dan Anda sudah bisa mempublikasikan portofolio Anda.</p>
-        <Link href="/dashboard" className="block w-full bg-[#ff9e00] text-black px-6 py-4 rounded-2xl font-bold tracking-wide hover:-translate-y-1 hover:shadow-lg hover:shadow-[#ff9e00]/20 transition-all duration-300">Luncurkan Portofolio</Link>
+        <h1 className="text-xl font-display font-bold text-white mb-2 uppercase tracking-wider">Email Terverifikasi!</h1>
+        <p className="text-white/40 mb-8 text-xs font-mono leading-relaxed">
+          Terima kasih. Akun Anda kini sepenuhnya terverifikasi dan Anda sudah bisa mempublikasikan portofolio Anda.
+        </p>
+        <Link 
+          href="/dashboard" 
+          className="w-full py-4 bg-[#ff9e00] text-black font-mono font-bold uppercase tracking-widest text-[11px] rounded-none hover:bg-[#ffaa22] transition-colors flex items-center justify-center gap-2 active:scale-95"
+        >
+          Luncurkan Portofolio <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
     </div>
   );

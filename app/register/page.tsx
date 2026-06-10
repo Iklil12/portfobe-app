@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { registerUser } from "@/app/actions/auth";
 import { signIn } from 'next-auth/react';
 import ReCAPTCHA from "react-google-recaptcha";
+import { Eye, EyeOff, ArrowRight, AlertTriangle, User, Mail, ShieldAlert } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -56,131 +57,132 @@ export default function RegisterPage() {
     }
   };
 
-  // Fungsi baru untuk menangani pendaftaran/login via Google
   const handleGoogleRegister = async () => {
     setIsGoogleLoading(true);
-    // Menggunakan NextAuth untuk redirect ke Google
     await signIn('google', { callbackUrl: '/dashboard' });
   };
 
   return (
-    <div className="bg-[#FAFAFA] text-slate-900 flex min-h-screen font-sans selection:bg-[#ff9e00]/30 selection:text-slate-900">
+    <div className="bg-[#050505] text-white flex min-h-screen font-sans selection:bg-[#ff9e00] selection:text-black overflow-hidden relative">
       
       {/* INJEKSI CSS */}
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
-        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+        * { font-family: 'Space Grotesk', sans-serif; }
+        input, button, pre, code, .font-mono, label, placeholder { font-family: 'Space Mono', monospace !important; }
         
         @keyframes blob {
           0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
+          33% { transform: translate(30px, -50px) scale(1.05); }
+          66% { transform: translate(-20px, 20px) scale(0.95); }
           100% { transform: translate(0px, 0px) scale(1); }
         }
-        .animate-blob { animation: blob 8s infinite ease-in-out; }
+        .animate-blob { animation: blob 10s infinite ease-in-out; }
         .animation-delay-2000 { animation-delay: 2s; }
       `}} />
 
       {/* SISI KIRI: DESAIN MINIMALIS & PRESTIGE */}
-      <div className="hidden lg:flex lg:w-[45%] relative bg-[#0a0a0a] items-center justify-center p-16 overflow-hidden">
+      <div className="hidden lg:flex lg:w-[45%] relative bg-black items-center justify-center p-16 overflow-hidden border-r border-white/5">
         {/* Abstract Background Decor */}
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/noise-pattern-with-subtle-cross-lines.png')] opacity-[0.03] pointer-events-none"></div>
-        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-purple-500/20 rounded-full blur-[100px] animate-blob"></div>
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[120px] animate-blob"></div>
         <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-[#ff9e00]/10 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
         
         <div className="relative z-10 w-full max-w-md">
           <Link href="/">
-            <img src="/portfo.be.png" alt="Logo" className="h-8 mb-24 brightness-0 invert opacity-90 hover:opacity-100 transition-opacity cursor-pointer" />
+            <img src="/portfo.be.png" alt="Logo" className="h-6 mb-24 invert brightness-0 opacity-90 hover:opacity-100 transition-opacity cursor-pointer" />
           </Link>
           
-          <h2 className="text-4xl lg:text-5xl font-extrabold text-white leading-[1.1] tracking-tight mb-6">
-            Pamerkan karya terbaikmu <br /> <span className="text-[#ff9e00] italic font-medium">dalam 5 menit.</span>
+          <h2 className="text-4xl font-display font-bold text-white leading-tight tracking-tight mb-6">
+            Pamerkan karya terbaikmu <br /> <span className="text-[#ff9e00] font-mono text-xl tracking-wider uppercase block mt-3">dalam 5 menit.</span>
           </h2>
-          <p className="text-slate-400 text-lg max-w-sm leading-relaxed font-medium">
-            Bergabunglah dengan komunitas kreator visual paling eksklusif di dunia tanpa perlu menulis kode.
+          <p className="text-white/50 text-xs font-mono max-w-sm leading-relaxed">
+            Bergabunglah dengan komunitas kreator visual paling eksklusif tanpa perlu menulis baris kode apapun.
           </p>
           
           {/* Testimonial Kecil agar Terlihat Pro */}
-          <div className="mt-24 pt-12 border-t border-white/10 flex items-center gap-5">
-            <div className="flex -space-x-4">
-              {[1,2,3].map(i => (
-                <div key={i} className="w-12 h-12 rounded-full border-2 border-[#0a0a0a] bg-slate-800 flex items-center justify-center overflow-hidden hover:scale-110 hover:z-10 transition-transform">
-                  <img src={`https://i.pravatar.cc/100?img=${i+20}`} alt="user" className="w-full h-full object-cover" />
+          <div className="mt-24 pt-12 border-t border-white/15 flex items-center gap-5">
+            <div className="flex -space-x-3">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="w-10 h-10 border border-[#050505] bg-zinc-900 flex items-center justify-center overflow-hidden rounded-none hover:scale-110 hover:z-10 transition-transform">
+                  <img src={`https://i.pravatar.cc/100?img=${i+20}`} alt="user" className="w-full h-full object-cover rounded-none" />
                 </div>
               ))}
             </div>
             <div>
-               <p className="text-sm text-white font-bold tracking-wide">+1.2k Kreator</p>
-               <p className="text-xs text-slate-500 font-medium">bergabung bulan ini</p>
+               <p className="text-xs font-mono font-bold text-white tracking-wide">+1.2k Kreator</p>
+               <p className="text-[10px] font-mono text-white/40">telah bergabung bulan ini</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* SISI KANAN: FORM REFINED DENGAN GOOGLE BUTTON */}
-      <div className="w-full lg:w-[55%] bg-white flex flex-col justify-center px-6 sm:px-16 md:px-24 xl:px-40 relative shadow-[-20px_0_50px_rgba(0,0,0,0.03)] z-10">
-        
+      <div className="w-full lg:w-[55%] bg-[#050505] flex flex-col justify-center px-6 sm:px-16 md:px-24 xl:px-40 relative z-10">
+        {/* Grid Background */}
+        <div className="absolute inset-0 z-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none"></div>
+
         {/* Logo for mobile only */}
-        <Link href="/" className="absolute top-10 left-8 sm:left-16 lg:hidden group">
-          <img src="/portfo.be.png" alt="Logo" className="h-7 w-auto object-contain group-hover:scale-105 transition-transform" />
+        <Link href="/" className="absolute top-10 left-8 sm:left-16 lg:hidden group z-20">
+          <img src="/portfo.be.png" alt="Logo" className="h-6 w-auto object-contain invert brightness-0 group-hover:scale-105 transition-transform" />
         </Link>
 
-        <div className="w-full max-w-md mx-auto py-12 mt-12 lg:mt-0">
-          <div className="mb-10 text-center lg:text-left">
-             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 text-slate-900">Buat Akun</h1>
-             <p className="text-slate-500 text-sm font-medium">Gratis selamanya, tanpa perlu kartu kredit.</p>
+        <div className="w-full max-w-md mx-auto py-12 mt-12 lg:mt-0 relative z-10">
+          <div className="mb-10 text-left">
+             <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#ff9e00]/20 bg-[#ff9e00]/5 text-[#ff9e00] text-[9px] font-mono uppercase tracking-[0.2em] mb-4">
+               Register Account
+             </div>
+             <h1 className="text-3xl font-display font-bold text-white tracking-tight">Buat Akun Portfo.be</h1>
+             <p className="text-white/40 text-xs font-mono mt-2">Gratis selamanya, tanpa perlu kartu kredit.</p>
           </div>
 
           {/* Elegant Error Alert */}
           {errorMsg && (
-            <div className="mb-6 flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-bold animate-in fade-in slide-in-from-top-2 duration-300 shadow-sm">
-              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 text-red-500">
-                 <i className="fas fa-exclamation-triangle text-xs"></i>
-              </div>
-              {errorMsg}
+            <div className="mb-6 flex items-start gap-3 p-4 bg-rose-500/5 border border-rose-500/15 text-rose-400 text-xs font-mono font-bold animate-in fade-in slide-in-from-top-2 duration-300">
+               <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
+               <p className="leading-relaxed">{errorMsg}</p>
             </div>
           )}
 
           <form onSubmit={handleRegister} className="space-y-6">
             <div className="group">
-              <label className="block text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Nama Lengkap</label>
+              <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Nama Lengkap</label>
               <input 
                 name="fullName" 
                 type="text" 
                 placeholder="Iklil Uyun" 
-                className="w-full px-5 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-[#ff9e00] focus:ring-[4px] focus:ring-[#ff9e00]/15 outline-none transition-all text-sm font-bold text-slate-800 placeholder:text-slate-300" 
+                className="w-full px-4 py-4 rounded-none border border-white/15 bg-black focus:border-l-4 focus:border-l-[#ff9e00] focus:border-[#ff9e00] focus:ring-0 outline-none transition-all text-xs font-mono font-bold text-white placeholder:text-white/25" 
                 required 
               />
             </div>
 
             <div className="group">
-              <label className="block text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Alamat Email</label>
+              <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Alamat Email</label>
               <input 
                 name="email" 
                 type="email" 
-                placeholder="hello@creator.com" 
-                className="w-full px-5 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-[#ff9e00] focus:ring-[4px] focus:ring-[#ff9e00]/15 outline-none transition-all text-sm font-bold text-slate-800 placeholder:text-slate-300" 
+                placeholder="halo@kreator.com" 
+                className="w-full px-4 py-4 rounded-none border border-white/15 bg-black focus:border-l-4 focus:border-l-[#ff9e00] focus:border-[#ff9e00] focus:ring-0 outline-none transition-all text-xs font-mono font-bold text-white placeholder:text-white/25" 
                 required 
               />
             </div>
 
             <div className="group">
-              <label className="block text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Password</label>
+              <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Password</label>
               <div className="relative">
                 <input 
                   name="password" 
                   type={showPassword ? "text" : "password"} 
                   placeholder="Min. 8 karakter" 
-                  className="w-full px-5 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-[#ff9e00] focus:ring-[4px] focus:ring-[#ff9e00]/15 outline-none transition-all text-sm font-bold text-slate-800 placeholder:text-slate-300 tracking-widest" 
+                  className="w-full px-4 py-4 rounded-none border border-white/15 bg-black focus:border-l-4 focus:border-l-[#ff9e00] focus:border-[#ff9e00] focus:ring-0 outline-none transition-all text-xs font-mono font-bold text-white placeholder:text-white/25 tracking-widest" 
                   required 
                 />
                 <button 
                   type="button" 
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#ff9e00] transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-orange-50"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-[#ff9e00] transition-colors w-8 h-8 flex items-center justify-center rounded-none"
                 >
-                  <i className={`far ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
@@ -189,11 +191,12 @@ export default function RegisterPage() {
             <div className="flex justify-center my-2">
               {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
                 <ReCAPTCHA
+                  theme="dark"
                   sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
                   onChange={(token) => setCaptchaToken(token)}
                 />
               ) : (
-                <div className="text-[10px] text-red-500 font-bold p-3 bg-red-50 rounded-xl border border-red-200 text-center w-full">
+                <div className="text-[10px] text-red-400 font-mono font-bold p-3 bg-red-500/5 rounded-none border border-red-500/10 text-center w-full">
                   ⚠️ ReCAPTCHA Site Key belum diset di .env
                 </div>
               )}
@@ -202,17 +205,16 @@ export default function RegisterPage() {
             <button 
               type="submit" 
               disabled={isLoading || isGoogleLoading || (!captchaToken && !!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)}
-              className={`w-full relative bg-slate-900 text-white py-4 rounded-2xl text-[13px] font-bold tracking-wide overflow-hidden transition-all duration-300 transform active:scale-[0.98] ${(isLoading || (!captchaToken && !!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)) ? 'bg-slate-800 opacity-70 cursor-not-allowed' : 'hover:bg-[#ff9e00] hover:text-black hover:shadow-[0_15px_30px_rgba(255,158,0,0.3)] hover:-translate-y-0.5'}`}
+              className={`w-full relative bg-[#ff9e00] text-black py-4.5 rounded-none text-[11px] font-mono font-bold uppercase tracking-widest transition-all duration-300 transform active:scale-[0.98] hover:shadow-[4px_4px_0px_rgba(255,255,255,0.15)] ${(isLoading || (!captchaToken && !!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)) ? 'bg-zinc-800 text-white/40 opacity-70 cursor-not-allowed' : 'hover:bg-[#ffaa22]'}`}
             >
               <div className={`flex items-center justify-center gap-2 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
-                Buat Akun Sekarang
-                <i className="fas fa-arrow-right text-[10px] ml-1"></i>
+                Buat Akun Sekarang <ArrowRight className="w-4 h-4" />
               </div>
               
               {/* Spinner Overlay */}
               {isLoading && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
                 </div>
               )}
             </button>
@@ -220,9 +222,9 @@ export default function RegisterPage() {
 
           {/* DIVIDER: ATAU LANJUTKAN DENGAN */}
           <div className="flex items-center my-8">
-            <div className="flex-grow border-t border-slate-100"></div>
-            <span className="px-4 text-[10px] font-bold text-slate-300 uppercase tracking-widest">Or Continue With</span>
-            <div className="flex-grow border-t border-slate-100"></div>
+            <div className="flex-grow border-t border-white/5"></div>
+            <span className="px-4 text-[9px] font-mono font-bold text-white/20 uppercase tracking-widest">Atau daftar dengan</span>
+            <div className="flex-grow border-t border-white/5"></div>
           </div>
 
           {/* TOMBOL GOOGLE */}
@@ -230,23 +232,23 @@ export default function RegisterPage() {
             type="button"
             onClick={handleGoogleRegister}
             disabled={isLoading || isGoogleLoading}
-            className={`w-full relative bg-white border border-slate-200 text-slate-700 py-4 rounded-2xl text-[13px] font-bold tracking-wide overflow-hidden transition-all duration-300 transform active:scale-[0.98] ${isGoogleLoading ? 'bg-slate-50' : 'hover:bg-slate-50 hover:border-slate-300 hover:shadow-md'}`}
+            className={`w-full relative bg-transparent border border-white/15 text-white py-4 rounded-none text-[11px] font-mono font-bold uppercase tracking-wider transition-all duration-300 transform active:scale-[0.98] hover:shadow-[4px_4px_0px_rgba(255,158,0,0.15)] ${isGoogleLoading ? 'bg-white/5' : 'hover:bg-white/5 hover:border-white/25'}`}
           >
             <div className={`flex items-center justify-center gap-3 transition-opacity duration-300 ${isGoogleLoading ? 'opacity-0' : 'opacity-100'}`}>
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4 h-4" />
-              Sign up with Google
+              Google Authentication
             </div>
             
             {/* Google Spinner */}
             {isGoogleLoading && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-5 h-5 border-2 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
               </div>
             )}
           </button>
 
-          <p className="text-center text-sm text-slate-500 mt-10 font-medium">
-            Sudah punya akun? <Link href="/login" className="text-slate-900 font-extrabold hover:text-[#ff9e00] transition-colors ml-1">Masuk</Link>
+          <p className="text-center text-xs text-white/40 mt-10 font-mono">
+            Sudah memiliki akun? <Link href="/login" className="text-white font-bold hover:text-[#ff9e00] transition-colors ml-1 uppercase tracking-wider">Masuk</Link>
           </p>
         </div>
       </div>

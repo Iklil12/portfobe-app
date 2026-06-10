@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { getEffectivePlan } from '@/lib/planUtils';
+
 
 export async function POST(req: Request) {
   try {
@@ -23,10 +25,10 @@ export async function POST(req: Request) {
     // 3. Otorisasi Plan/Tier
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { plan: true }
+      select: { plan: true, planExpiredAt: true }
     });
 
-    if (!user || user.plan === 'FREE') {
+    if (!user || getEffectivePlan(user) === 'FREE') {
       return NextResponse.json({ error: 'Upgrade ke PRO untuk mengunggah model 3D.' }, { status: 403 });
     }
 
@@ -43,10 +45,10 @@ export async function POST(req: Request) {
        return NextResponse.json({ error: 'Hanya format .glb / .gltf yang diizinkan' }, { status: 400 });
     }
 
-    const max3DSize = user.plan === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
+    const max3DSize = getEffectivePlan(user) === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
 
     if (file.size > max3DSize) {
-      return NextResponse.json({ error: `Ukuran maksimal file 3D adalah ${user.plan === 'SUPREME' ? '100MB' : '50MB'}` }, { status: 400 });
+      return NextResponse.json({ error: `Ukuran maksimal file 3D adalah ${getEffectivePlan(user) === 'SUPREME' ? '100MB' : '50MB'}` }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());

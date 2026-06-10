@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { safeStringifyJson } from "@/lib/safeJson";
+import { getEffectivePlan } from "@/lib/planUtils";
+
 
 export const dynamic = 'force-dynamic';
 
@@ -35,15 +37,16 @@ export async function POST(req: Request) {
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     // Cek Batasan Plan
-    if (user.plan === 'FREE') {
+    const effectivePlan = getEffectivePlan(user);
+    if (effectivePlan === 'FREE') {
       return NextResponse.json({ error: "Fitur Draft eksklusif untuk PRO/SUPREME.", code: "FEATURE_LOCKED" }, { status: 403 });
     }
 
     const draftCount = await prisma.themeDraft.count({ where: { userId: user.id } });
-    const maxDrafts = user.plan === 'SUPREME' ? 5 : 2;
+    const maxDrafts = effectivePlan === 'SUPREME' ? 5 : 2;
 
     if (draftCount >= maxDrafts) {
-      return NextResponse.json({ error: `Batas maksimal draft (${maxDrafts}) telah tercapai untuk paket ${user.plan}.` }, { status: 400 });
+      return NextResponse.json({ error: `Batas maksimal draft (${maxDrafts}) telah tercapai untuk paket ${effectivePlan}.` }, { status: 400 });
     }
 
     const body = await req.json();

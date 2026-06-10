@@ -9,7 +9,11 @@ export function Footer() {
         <style dangerouslySetInnerHTML={{__html: `
             .wire-b-ft { border-bottom: 1px solid rgba(255,255,255,0.1); }
             .wire-r-ft { border-right: 1px solid rgba(255,255,255,0.1); }
-            .hover-invert-ft:hover { background-color: white !important; color: black !important; }
+            .hover-invert-ft:hover { background-color: white !important; }
+            .hover-invert-ft:hover h2 { color: black !important; }
+            .hover-invert-ft:hover p { color: rgba(0, 0, 0, 0.75) !important; }
+            .hover-invert-ft:hover span { color: rgba(0, 0, 0, 0.6) !important; }
+            .hover-invert-ft:hover div { color: black !important; border-color: rgba(0, 0, 0, 0.35) !important; }
         `}} />
 
         {/* CTA Banner — Full Width Noir Style */}
@@ -78,7 +82,12 @@ export function Footer() {
 
         {/* Giant Fading Wordmark */}
         <div className="overflow-hidden flex items-end justify-center text-center border-t border-white/10">
-            <h2 className="font-display font-bold text-[15vw] leading-[0.75] tracking-tighter text-white/[0.08] translate-y-4 md:translate-y-6 uppercase select-none">PORTFO.BE</h2>
+            <h2 
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              className="font-bold text-[15vw] leading-[0.75] tracking-tighter text-white/[0.08] translate-y-4 md:translate-y-6 uppercase select-none"
+            >
+              PORTFO.BE
+            </h2>
         </div>
     </footer>
   );

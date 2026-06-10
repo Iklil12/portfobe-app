@@ -24,7 +24,7 @@ export default function BentogridFaq({ data, theme, isEditor }: { data: any, the
 
   const updateFaqs = (newFaqs: any[]) => {
     if (!isEditor) return;
-    window.parent.postMessage({ type: 'INLINE_EDIT', entity: 'appearance', field: 'faq_items', value: JSON.stringify(newFaqs) }, '*');
+    window.parent.postMessage({ type: 'INLINE_EDIT', entity: 'appearance', field: 'faq_items', value: JSON.stringify(newFaqs) }, window.location.origin);
   };
 
   const handleUpdateItem = (index: number, key: 'q' | 'a', value: string) => {

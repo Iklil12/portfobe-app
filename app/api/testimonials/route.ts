@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getEffectivePlan } from "@/lib/planUtils";
+
 
 // GET ALL TESTIMONIALS FOR USER
 export async function GET(req: Request) {
@@ -30,7 +32,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
   // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
-  if (user.plan === 'FREE') {
+  if (getEffectivePlan(user) === 'FREE') {
     const testimonialCount = await prisma.testimonial.count({ where: { userId: user.id } });
     if (testimonialCount >= 2) {
       return NextResponse.json({ 

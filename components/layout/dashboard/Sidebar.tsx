@@ -70,7 +70,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                <div className="w-10 h-10 skeleton-premium rounded-none"></div>
             ) : (
               <Link href="/dashboard" className="flex items-center justify-center w-full h-full cursor-pointer hover:scale-105 transition-transform">
-                 <LazyImage src="/portfobe.png" alt="Logo" className="w-9 h-9 object-contain invert brightness-0" />
+                 <img src="/portfobe.png" alt="Logo" className="w-9 h-9 object-contain invert brightness-0" />
               </Link>
             )}
           </div>
@@ -238,7 +238,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
               <div className="h-8 w-28 skeleton-premium rounded-none"></div>
             ) : (
               <Link href="/" className="flex items-center group cursor-pointer">
-                 <LazyImage src="/portfo.be.png" alt="Portfo.be Logo" className="h-9 w-auto object-contain invert brightness-0" />
+                 <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-9 w-auto object-contain invert brightness-0" />
               </Link>
             )}
           </div>

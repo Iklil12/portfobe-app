@@ -29,7 +29,7 @@ export default function MinimalistFaq({ data, theme, isEditor }: { data: any, th
       entity: 'appearance',
       field: 'faq_items',
       value: JSON.stringify(newFaqs)
-    }, '*');
+    }, window.location.origin);
   };
 
   const handleUpdateItem = (index: number, key: 'q' | 'a', value: string) => {

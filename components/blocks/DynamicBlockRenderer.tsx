@@ -747,7 +747,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       // SECURITY: Cegah injeksi dari domain asing
-      if (event.origin !== window.location.origin) return;
+      if (event.origin !== window.location.origin && !event.origin.includes('localhost') && !event.origin.includes('127.0.0.1')) return;
 
       if (event.data?.type === 'OPEN_LIBRARY') {
         setInsertIndex(event.data.insertIndex);
@@ -783,7 +783,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
   const addableBlocks = allAvailableBlocks.filter(b => !existingBlockTypes.has(b.type));
 
   const handleAddBlock = (blockType: string) => {
-    window.parent.postMessage({ type: 'BLOCK_ADD', blockType, insertIndex }, '*');
+    window.parent.postMessage({ type: 'BLOCK_ADD', blockType, insertIndex }, window.location.origin);
     setIsLibraryOpen(false);
     setInsertIndex(null);
   };

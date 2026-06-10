@@ -9,6 +9,8 @@ import { revalidateTag } from "next/cache";
 
 import { THEMES_DATA } from "@/lib/themes";
 import { ensureUniversalBlocks } from "@/lib/blockSeeder";
+import { getEffectivePlan } from "@/lib/planUtils";
+
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
@@ -30,6 +32,7 @@ export async function GET(req: Request) {
         select: {
           id: true,
           plan: true,
+          planExpiredAt: true,
           profile: { select: { subdomain: true, fullName: true } },
           siteAppearance: { select: { themeTemplate: true, favoriteThemes: true } }
         }
@@ -141,7 +144,7 @@ export async function PATCH(req: Request) {
       const isProSplash = splashScreen === true;
       const isProSmoothScroll = customTexts?.smooth_scroll === 'true';
 
-      if ((isProTheme || isProSplash || isProSmoothScroll) && user.plan === 'FREE') {
+      if ((isProTheme || isProSplash || isProSmoothScroll) && getEffectivePlan(user) === 'FREE') {
         return NextResponse.json({ 
           error: isProTheme 
             ? "Tema ini eksklusif untuk PRO Creator." 

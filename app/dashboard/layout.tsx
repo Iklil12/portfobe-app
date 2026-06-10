@@ -94,7 +94,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* GLOBAL BACKGROUND STATIC */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="absolute inset-0" style={{ backgroundSize: '40px 40px', backgroundImage: 'linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px)', maskImage: 'linear-gradient(to bottom, white 40%, transparent)' }}></div>
           <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-[#ff9e00]/5 rounded-full blur-[120px]"></div>
           <div className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-white/5 rounded-full blur-[120px]"></div>
         </div>

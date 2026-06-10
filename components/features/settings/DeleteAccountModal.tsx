@@ -1,6 +1,6 @@
 //components/features/settings/DeleteAccountModal.tsx
-import React from 'react';
-import { X, AlertTriangle, Loader2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Loader2 } from 'lucide-react';
 
 interface DeleteAccountModalProps {
   state: any;
@@ -8,8 +8,9 @@ interface DeleteAccountModalProps {
 }
 
 export function DeleteAccountModal({ state, actions }: DeleteAccountModalProps) {
-  const { isDeleting, showDeleteModal } = state;
+  const { isDeleting, showDeleteModal, session } = state;
   const { setShowDeleteModal, confirmDeletion } = actions;
+  const [emailInput, setEmailInput] = useState('');
 
   if (!showDeleteModal) return null;
 
@@ -22,48 +23,57 @@ export function DeleteAccountModal({ state, actions }: DeleteAccountModalProps) 
       ></div>
       
       {/* Modal Container */}
-      <div className="relative z-10 w-full max-w-[320px] md:max-w-[400px] animate-enter mx-auto">
-        {/* 2. Outer Blurred Box */}
-        <div className="absolute inset-[-8px] md:inset-[-12px] bg-zinc-900/40 backdrop-blur-2xl rounded-none border border-white/10 shadow-2xl"></div>
+      <div className="relative z-10 w-full max-w-[500px] animate-enter mx-auto bg-zinc-950 border border-white/10 rounded-none shadow-2xl flex flex-col text-left font-sans">
         
-        {/* 3. Main Inner Box */}
-        <div className="relative bg-zinc-950 rounded-none border border-white/10 p-5 md:p-8 flex flex-col text-center">
-          
-          {/* Close Button */}
-          <button onClick={() => !isDeleting && setShowDeleteModal(false)} className="absolute top-3 right-3 md:top-4 md:right-4 w-8 h-8 flex items-center justify-center text-white/30 hover:text-white hover:bg-white/5 transition-colors rounded-none">
-             <X className="w-4 h-4" />
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 pb-4 border-b border-white/5">
+          <h3 className="text-sm font-bold text-white tracking-widest uppercase">Delete Account</h3>
+          <button onClick={() => !isDeleting && setShowDeleteModal(false)} className="text-white/40 hover:text-white hover:bg-white/5 p-1 transition-colors rounded-none">
+            <X className="w-4 h-4" />
           </button>
+        </div>
 
-          {/* Rippling Red Icon */}
-          <div className="relative flex items-center justify-center mx-auto mb-4 w-10 h-10 md:w-12 md:h-12">
-            <div className="absolute inset-0 bg-rose-500/20 rounded-none animate-ping opacity-70" style={{ animationDuration: '2s' }}></div>
-            <div className="absolute inset-1.5 bg-rose-500/10 rounded-none"></div>
-            <div className="relative w-7 h-7 bg-rose-600 text-white rounded-none flex items-center justify-center shadow-md">
-              <AlertTriangle className="w-4 h-4 text-white" />
-            </div>
-          </div>
-          
-          <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider mb-1.5 md:mb-2">Hapus Akun?</h3>
-          <p className="text-xs font-mono text-white/40 mb-5 md:mb-6 leading-relaxed px-1">
-            Data ini akan dihapus permanen dari sistem dan tidak dapat dikembalikan lagi.
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          <p className="text-xs text-white/50 leading-relaxed uppercase tracking-wide">
+            Sistem akan <strong className="text-white font-bold">menghapus permanen seluruh proyek Anda</strong>, beserta gambar, pengaturan, dan aset lain yang tertaut.
           </p>
           
-          <div className="flex flex-row gap-2 md:gap-3 w-full">
-            <button 
-              onClick={confirmDeletion} 
-              disabled={isDeleting} 
-              className="flex-1 py-2.5 md:py-3 bg-rose-600 hover:bg-rose-700 rounded-none font-mono font-bold uppercase tracking-wider text-white active:scale-95 transition-all flex items-center justify-center gap-2 text-xs disabled:opacity-50"
-            >
-              {isDeleting ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : 'Delete'}
-            </button>
-            <button 
-              onClick={() => setShowDeleteModal(false)} 
-              disabled={isDeleting} 
-              className="flex-1 py-2.5 md:py-3 bg-zinc-900 border border-white/10 hover:bg-zinc-800 rounded-none font-mono font-bold uppercase tracking-wider text-white/50 active:scale-95 transition-all text-xs disabled:opacity-50"
-            >
-              Cancel
-            </button>
+          <div className="bg-rose-950/20 border-l-2 border-rose-600 p-4 rounded-none text-rose-500 text-[10px] uppercase tracking-widest font-bold flex items-center gap-3">
+            <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></div>
+            Tindakan ini tidak dapat dibatalkan.
           </div>
+          
+          <div className="space-y-3 pt-2">
+            <label className="text-[10px] text-white/50 uppercase tracking-widest block">
+              Untuk verifikasi, ketik email <strong className="text-white">{session?.user?.email}</strong> di bawah:
+            </label>
+            <input 
+              type="email"
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              className="w-full bg-black border border-white/10 rounded-none px-4 py-3 text-xs text-white placeholder-white/20 outline-none focus:border-rose-500/50 transition-colors uppercase"
+              spellCheck={false}
+            />
+          </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="flex justify-end gap-3 p-5 bg-[#050505] border-t border-white/5">
+          <button 
+            onClick={() => setShowDeleteModal(false)} 
+            disabled={isDeleting} 
+            className="px-6 py-3 bg-zinc-900 border border-white/10 hover:bg-zinc-800 rounded-none font-bold uppercase tracking-wider text-white/50 transition-all text-[10px] disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={() => confirmDeletion(emailInput)} 
+            disabled={isDeleting || !emailInput || emailInput.toLowerCase() !== session?.user?.email?.toLowerCase()} 
+            className="px-6 py-3 bg-rose-600 hover:bg-rose-700 disabled:bg-zinc-800 disabled:text-white/20 rounded-none font-bold uppercase tracking-wider text-white transition-all flex items-center justify-center gap-2 text-[10px] disabled:cursor-not-allowed"
+          >
+            {isDeleting ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white" /> : 'Confirm_Delete'}
+          </button>
         </div>
       </div>
     </div>

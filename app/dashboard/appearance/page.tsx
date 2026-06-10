@@ -16,13 +16,13 @@ function AppearanceEditor() {
     return (
       <div className="h-screen w-screen flex flex-col items-center justify-center bg-zinc-950 animate-in fade-in duration-500 m-0 p-0 absolute inset-0 z-[999999]">
         <Loader2 className="w-10 h-10 text-[#ff9e00] animate-spin mb-4" />
-        <p className="text-white/40 text-[9px] font-mono font-bold uppercase tracking-widest animate-pulse">Memuat Editor Canvas...</p>
+        <p className="text-white/40 text-[9px] font-sans font-bold uppercase  animate-pulse">Memuat Editor Canvas...</p>
       </div>
     );
   }
 
   return (
-    <main className="h-screen w-screen m-0 p-0 flex flex-col lg:flex-row bg-zinc-950 font-mono overflow-hidden fixed inset-0 z-[99999]">
+    <main className="h-screen w-screen m-0 p-0 flex flex-col lg:flex-row bg-zinc-950 font-sans overflow-hidden fixed inset-0 z-[99999]">
 
       <style dangerouslySetInnerHTML={{
         __html: `
@@ -33,9 +33,7 @@ function AppearanceEditor() {
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.1); border-radius: 0px; }
         
         .bg-grid-slate {
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-image: none;
         }
 
         :global(body > aside),
@@ -49,7 +47,7 @@ function AppearanceEditor() {
       )}
 
       {state.isPublishModalOpen && (
-        <PublishSuccessModal 
+        <PublishSuccessModal
           isOpen={state.isPublishModalOpen}
           onClose={() => actions.setIsPublishModalOpen(false)}
           subdomain={state.subdomain}
@@ -61,7 +59,7 @@ function AppearanceEditor() {
 
       {/* PANEL KANAN: LIVE PREVIEW AREA */}
       <PreviewPanel state={state} actions={actions} />
-      
+
     </main>
   );
 }
@@ -71,7 +69,7 @@ export default function AppearancePage() {
     <Suspense fallback={
       <div className="h-screen w-screen flex flex-col items-center justify-center bg-zinc-950">
         <Loader2 className="w-10 h-10 text-[#ff9e00] animate-spin mb-4" />
-        <p className="text-white/40 text-[9px] font-mono font-bold uppercase tracking-widest">Sinkronisasi Canvas...</p>
+        <p className="text-white/40 text-[9px] font-sans font-bold uppercase ">Sinkronisasi Canvas...</p>
       </div>
     }>
       <AppearanceEditor />

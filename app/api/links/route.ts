@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity"; 
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getEffectivePlan } from "@/lib/planUtils";
+
 
 // AMBIL SEMUA LINK USER
 export async function GET(req: Request) {
@@ -48,7 +50,7 @@ export async function POST() {
   const user = await prisma.user.findUnique({ where: { email: session.user.email } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-  if (user.plan === 'FREE') {
+  if (getEffectivePlan(user) === 'FREE') {
     const linkCount = await prisma.link.count({ where: { userId: user.id } });
     if (linkCount >= 1) {
       return NextResponse.json({ 

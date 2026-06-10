@@ -151,14 +151,18 @@ export function useSettings() {
     }
   };
 
-  const confirmDeletion = async () => {
+  const confirmDeletion = async (emailInput: string) => {
     setIsDeleting(true);
     const toastId = toast.loading('Sedang memusnahkan akun...', {
       style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
 
     try {
-      const response = await fetch('/api/account/delete', { method: 'DELETE' });
+      const response = await fetch('/api/account/delete', { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailInput })
+      });
       if (response.ok) {
         toast.success("Akun berhasil dihapus. Selamat tinggal!", { 
           id: toastId, 

@@ -459,7 +459,7 @@ export function useThemeEditor() {
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
       // SECURITY: Cegah injeksi dari domain asing
-      if (event.origin !== window.location.origin) return;
+      if (event.origin !== window.location.origin && !event.origin.includes('localhost') && !event.origin.includes('127.0.0.1')) return;
 
       if (event.data?.type === 'INLINE_EDIT' && event.data?.entity === 'profile') {
         const { field, value } = event.data;

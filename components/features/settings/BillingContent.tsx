@@ -55,14 +55,10 @@ export default function BillingContent() {
   const [isClaimingTrial, setIsClaimingTrial] = useState(false);
   const [isTrialModalOpen, setIsTrialModalOpen] = useState(false);
   const [isTrialSuccess, setIsTrialSuccess] = useState(false);
-  const [isMinimumLoadTimeMet, setIsMinimumLoadTimeMet] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Artificial delay to show the beautiful skeleton for a professional feel
   useEffect(() => {
     setMounted(true);
-    const timer = setTimeout(() => setIsMinimumLoadTimeMet(true), 1200);
-    return () => clearTimeout(timer);
   }, []);
 
   const plan: string           = data?.plan ?? "FREE";
@@ -103,32 +99,43 @@ export default function BillingContent() {
   };
 
   // Skeleton shimmer
-  if (isLoading || !isMinimumLoadTimeMet) {
+  if (isLoading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 py-12 space-y-8 animate-billing-fade">
-        <style dangerouslySetInnerHTML={{__html: `
-          @keyframes billingFadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
-          .animate-billing-fade { opacity: 0; animation: billingFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        `}} />
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 py-12 space-y-8 animate-enter">
         {/* Header Skeleton */}
         <div className="mb-8">
-          <div className="h-9 w-64 shimmer-dark rounded-none mb-3" />
-          <div className="h-5 w-80 shimmer-dark rounded-none" />
+          <div className="h-9 w-64 bg-zinc-900 border border-white/10 shimmer rounded-none mb-3" />
+          <div className="h-5 w-80 bg-zinc-900 border border-white/10 shimmer rounded-none" />
         </div>
         
         {/* Main Grid Skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Card Skeleton */}
-          <div className="lg:col-span-2 h-[320px] shimmer-dark rounded-none" />
+          <div className="lg:col-span-2 h-[320px] bg-zinc-950 border border-white/10 shimmer rounded-none p-8 flex flex-col justify-between">
+            <div className="flex justify-between items-start mb-8">
+              <div>
+                <div className="h-4 w-32 bg-zinc-900 shimmer rounded-none mb-3" />
+                <div className="h-6 w-48 bg-zinc-900 shimmer rounded-none" />
+              </div>
+              <div className="h-14 w-14 bg-zinc-900 shimmer rounded-none" />
+            </div>
+            <div className="h-24 w-full bg-zinc-900 shimmer rounded-none" />
+          </div>
           
           {/* Right Card Skeleton */}
-          <div className="h-[320px] shimmer-dark rounded-none" />
+          <div className="h-[320px] bg-zinc-950 border border-white/10 shimmer rounded-none p-8 flex flex-col justify-between">
+            <div className="h-12 w-12 bg-zinc-900 shimmer rounded-none mb-8" />
+            <div>
+              <div className="h-4 w-24 bg-zinc-900 shimmer rounded-none mb-3" />
+              <div className="h-6 w-32 bg-zinc-900 shimmer rounded-none" />
+            </div>
+          </div>
         </div>
         
         {/* Tabs & History Skeleton */}
         <div className="pt-2">
-          <div className="h-10 w-64 shimmer-dark rounded-none mb-6" />
-          <div className="h-[300px] w-full shimmer-dark rounded-none" />
+          <div className="h-10 w-64 bg-zinc-950 border border-white/10 shimmer rounded-none mb-6" />
+          <div className="h-[300px] w-full bg-zinc-950 border border-white/10 shimmer rounded-none" />
         </div>
       </div>
     );

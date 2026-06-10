@@ -75,13 +75,13 @@ export function HeroSection() {
                     </div>
                 </div>
 
-                <h1 className="font-sans font-black text-[14vw] md:text-[9vw] lg:text-[8vw] leading-[0.85] uppercase tracking-tighter text-white">
+                <h1 className="font-mono font-black text-[14vw] md:text-[9vw] lg:text-[8vw] leading-[0.85] uppercase tracking-tighter text-white">
                     YOUR WORK
                 </h1>
-                <h1 className="font-sans font-black text-[14vw] md:text-[9vw] lg:text-[8vw] leading-[0.85] uppercase tracking-tighter text-transparent mobile-stroke" style={{ WebkitTextStroke: '2px white' }}>
+                <h1 className="font-mono font-black text-[14vw] md:text-[9vw] lg:text-[8vw] leading-[0.85] uppercase tracking-tighter text-transparent mobile-stroke" style={{ WebkitTextStroke: '2px white' }}>
                     DESERVES
                 </h1>
-                <h1 className="font-sans font-black text-[14vw] md:text-[9vw] lg:text-[8vw] leading-[0.85] uppercase tracking-tighter text-white">
+                <h1 className="font-mono font-black text-[14vw] md:text-[9vw] lg:text-[8vw] leading-[0.85] uppercase tracking-tighter text-white">
                     A STAGE.
                 </h1>
             </div>

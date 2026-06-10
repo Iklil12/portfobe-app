@@ -114,7 +114,7 @@ export async function GET(req: Request) {
                   <p style="font-size: 16px; margin-top: 0;">Hei, <strong>${userName}</strong>!</p>
                   <p style="font-size: 16px;">Masa berlaku tambahan (Grace Period) Paket PRO kamu di <strong>Portfobe</strong> telah habis. Akun kamu sekarang kembali ke paket <strong>Starter (Gratis)</strong>.</p>
                   <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 16px; margin: 20px 0;">
-                    <p style="margin: 0; font-size: 14px; color: #92400e;">⚠️ Fitur PRO seperti analitik lanjutan, tema custom, dan batas 5 proyek tidak lagi tersedia. Data lama kamu tetap aman.</p>
+                    <p style="margin: 0; font-size: 14px; color: #92400e;">⚠️ Fitur PRO seperti analitik lanjutan, tema custom, dan batas 3 proyek tidak lagi tersedia. Data lama kamu tetap aman.</p>
                   </div>
                   <p style="font-size: 16px;">Hubungi kami untuk memperpanjang paket PRO kamu kapan saja.</p>
                   <br/>

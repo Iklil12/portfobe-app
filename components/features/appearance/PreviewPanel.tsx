@@ -52,7 +52,7 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
   // Listener untuk sinyal PREVIEW_READY dari iframe
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) return;
+      if (event.origin !== window.location.origin && !event.origin.includes('localhost') && !event.origin.includes('127.0.0.1')) return;
 
       if (event.data?.type === 'PREVIEW_READY') {
         iframeReady.current = true;
@@ -166,30 +166,7 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
           </button>
         </div>
 
-        {/* Save & Preview (when collapsed) */}
-        {isEditorCollapsed && (
-          <div className="bg-zinc-900/90 backdrop-blur-md p-1.5 rounded-none border border-white/10 flex items-center gap-1 shadow-none animate-in fade-in zoom-in duration-300">
-            <button
-              onClick={saveDesign}
-              disabled={isSaving}
-              className="px-4 py-2 bg-[#ff9e00] text-black rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 disabled:opacity-50"
-            >
-              {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-              <span>Simpan</span>
-            </button>
-            {subdomain && isLive && (
-              <a
-                href={`/${subdomain}`}
-                target="_blank"
-                rel="noreferrer"
-                className="w-9 h-9 rounded-none bg-zinc-950 border border-white/10 flex items-center justify-center text-white/60 hover:text-[#ff9e00] hover:bg-zinc-900 transition-all shadow-none"
-                title="Buka Portofolio di Tab Baru"
-              >
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            )}
-          </div>
-        )}
+
 
       </div>
 
