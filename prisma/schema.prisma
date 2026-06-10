@@ -21,6 +21,7 @@ model User {
   pendingEmail    String?
   planExpiredAt   DateTime?
   emailVerified   DateTime?
+  lastUsernameChange DateTime?
   accounts        Account[]
   activities      Activity[]
   adminNotes      AdminNote[]

@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getEffectivePlan } from "@/lib/planUtils";
+import DOMPurify from 'isomorphic-dompurify';
 
 
 // GET ALL TESTIMONIALS FOR USER
@@ -45,11 +46,21 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { clientName, company, content, rating, avatarUrl } = body;
+    let { clientName, company, content, rating, avatarUrl } = body;
 
     if (!clientName || !content) {
       return NextResponse.json({ error: "Nama dan isi testimoni wajib diisi" }, { status: 400 });
     }
+
+    // Validate image URL source for security
+    if (avatarUrl && !avatarUrl.startsWith('https://res.cloudinary.com/') && !avatarUrl.startsWith('https://ui-avatars.com/')) {
+      return NextResponse.json({ error: "URL gambar tidak valid atau tidak tepercaya" }, { status: 400 });
+    }
+
+    // Sanitize input strings to prevent XSS
+    clientName = DOMPurify.sanitize(clientName || "", { ALLOWED_TAGS: [] }).trim();
+    company = DOMPurify.sanitize(company || "", { ALLOWED_TAGS: [] }).trim();
+    content = DOMPurify.sanitize(content || "", { ALLOWED_TAGS: [] }).trim();
 
     const newTestimonial = await prisma.testimonial.create({
       data: {

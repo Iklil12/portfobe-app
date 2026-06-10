@@ -152,6 +152,11 @@ export default function AnalyticsPage() {
 
   const handleLocked = () => showToast({ message: "Upgrade ke PRO untuk membuka fitur analitik lengkap!", id: "range-lock", icon: "fa-lock" });
 
+  const handleComingSoon = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    showToast({ message: "Fitur analitik lanjutan akan tersedia segera!", id: "coming-soon-analytics", icon: "fa-clock" });
+  };
+
   const RANGES = [
     { id: '1d', label: 'Hari Ini', pro: false },
     { id: '7d', label: '7 Hari', pro: false },
@@ -496,7 +501,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* PRO BANNER */}
-      <div onClick={handleLocked}
+      <div onClick={(e) => handleComingSoon(e)}
         className="relative overflow-hidden bg-zinc-950 p-8 md:p-14 rounded-none border border-white/10 cursor-pointer group shadow-2xl animate-enter hover:border-[#ff9e00]/40 transition-all duration-500 max-w-5xl mx-auto"
         style={{ animationDelay: '500ms' }}
       >

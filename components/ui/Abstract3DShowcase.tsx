@@ -147,7 +147,7 @@ function CanvasPlaceholder() {
 // ============================================================================
 // MAIN EXPORT — Canvas only mounts when visible in viewport
 // ============================================================================
-export function Abstract3DShowcase() {
+export function Abstract3DShowcase({ isActive = true }: { isActive?: boolean }) {
   const { ref: containerRef, isInView } = useInView('200px');
 
   return (
@@ -164,6 +164,7 @@ export function Abstract3DShowcase() {
         <Canvas 
           camera={{ position: [0, 0, 6], fov: 45 }} 
           dpr={[1, 1.5]} // Clamp pixel ratio to max 1.5 to prevent massive lag on high-DPI screens
+          frameloop={isActive ? 'always' : 'demand'} // Stop WebGL render loop when not active
           gl={{ 
             antialias: true,
             powerPreference: "high-performance",

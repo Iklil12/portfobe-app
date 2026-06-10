@@ -22,7 +22,8 @@ import {
   UploadCloud, 
   AlertCircle,
   Lock,
-  Hand
+  Hand,
+  Clock
 } from 'lucide-react';
 
 const iconMap: Record<string, React.ComponentType<any>> = {
@@ -43,6 +44,7 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   'fa-cloud-upload-alt': UploadCloud,
   'fa-lock': Lock,
   'fa-hand-paper': Hand,
+  'fa-clock': Clock,
 };
 
 

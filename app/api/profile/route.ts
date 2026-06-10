@@ -20,7 +20,8 @@ export async function GET() {
         isLive: true,
         profile: true,
         siteAppearance: true,
-        integrations: true
+        integrations: true,
+        lastUsernameChange: true
       } 
     });
 

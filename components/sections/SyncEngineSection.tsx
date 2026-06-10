@@ -16,7 +16,7 @@ interface Pillar {
   name: string;
   type: string;
   payloadStr: string;
-  renderComponent: (instanceId?: string) => React.ReactNode;
+  renderComponent: (instanceId?: string, isActive?: boolean) => React.ReactNode;
 }
 
 export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
@@ -151,7 +151,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
         </svg>
 
         {/* Polished Tooltip Dot with synchronized loop */}
-        <motion.div 
+        <motion.div
           className="absolute top-1/2 left-[58%] -translate-y-1/2 flex items-center gap-1.5 z-20"
           initial={{ opacity: 0 }}
           animate={{
@@ -228,12 +228,11 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
               >
                 <div className="flex gap-2.5 items-center min-w-0">
                   <span className="text-neutral-600 font-mono text-[9px] shrink-0">[{log.time}]</span>
-                  <span className={`w-1 h-1 rounded-full shrink-0 ${
-                    log.type === 'CLICK' ? 'bg-[#ff9e00]' :
+                  <span className={`w-1 h-1 rounded-full shrink-0 ${log.type === 'CLICK' ? 'bg-[#ff9e00]' :
                     log.type === 'VIEW' ? 'bg-white' :
-                    log.type === 'REFER' ? 'bg-neutral-400' :
-                    'bg-neutral-600'
-                  }`}></span>
+                      log.type === 'REFER' ? 'bg-neutral-400' :
+                        'bg-neutral-600'
+                    }`}></span>
                   <span className="text-neutral-300 font-mono truncate max-w-[150px] sm:max-w-[220px]">
                     {log.msg}
                   </span>
@@ -362,8 +361,8 @@ const PILLARS: Pillar[] = [
     name: 'Integrations',
     type: 'External Data Sync',
     payloadStr: "{\n  \"action\": \"SYNC_ALL\",\n  \"targets\": [\"GitHub\", \"Penpot\", \"Canva\", \"AI Core\"]\n}",
-    renderComponent: (instanceId) => (
-      <div className="w-full h-[400px] lg:h-[480px] flex flex-col gap-4 sm:gap-6">
+    renderComponent: (instanceId, isActive) => (
+      <div className="w-full h-[400px] lg:h-[450px] flex flex-col gap-4 sm:gap-6">
 
         {/* 2x2 Grid Layout with responsive gaps */}
         <div className="grid grid-cols-2 grid-rows-2 gap-3 sm:gap-4 flex-1">
@@ -382,7 +381,7 @@ const PILLARS: Pillar[] = [
             {
               id: 'penpot',
               icon: 'fas fa-pen-nib',
-              iconBg: 'bg-neutral-800', 
+              iconBg: 'bg-neutral-800',
               date: '12 Oct 2024',
               label: 'UI/UX Design',
               title: 'Penpot',
@@ -393,7 +392,7 @@ const PILLARS: Pillar[] = [
             {
               id: 'canva',
               icon: 'fas fa-layer-group',
-              iconBg: 'bg-neutral-800', 
+              iconBg: 'bg-neutral-800',
               date: '30 Dec 2024',
               label: 'Presentations',
               title: 'Canva',
@@ -404,7 +403,7 @@ const PILLARS: Pillar[] = [
             {
               id: 'ai',
               icon: 'fas fa-robot',
-              iconBg: 'bg-neutral-800', 
+              iconBg: 'bg-neutral-800',
               date: '13 Aug 2024',
               label: 'Artificial Intelligence',
               title: 'AI Integration',
@@ -414,7 +413,7 @@ const PILLARS: Pillar[] = [
             }
           ].map((item) => (
             <div key={item.id} className="bg-[#0a0a0a] rounded-none p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between group hover:bg-[#111111] transition-colors border border-white/10">
-              
+
               {/* Top Row: Logo */}
               <div className="flex justify-between items-start relative z-10">
                 <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-none ${item.iconBg} flex items-center justify-center border border-white/10 shadow-lg`}>
@@ -448,11 +447,11 @@ const PILLARS: Pillar[] = [
     name: '3D Showcase',
     type: 'Immersive WebGL',
     payloadStr: "{\n  \"renderer\": \"Bunny.net Edge\",\n  \"model\": \"architecture_v2.glb\",\n  \"polygons\": 142050,\n  \"materials\": \"PBR_Active\"\n}",
-    renderComponent: (instanceId) => (
+    renderComponent: (instanceId, isActive) => (
       <div className="w-full transition-all">
         <div className="w-full aspect-square rounded-none bg-gradient-to-tr from-neutral-950 to-neutral-900 border border-white/10 relative overflow-hidden group">
 
-          <Abstract3DShowcase />
+          <Abstract3DShowcase isActive={isActive} />
 
           <div className="absolute bottom-6 left-6 font-mono text-[10px] text-white/50 tracking-widest pointer-events-none">
             [ WEBGL ACCELERATED ]
@@ -466,8 +465,8 @@ const PILLARS: Pillar[] = [
     name: 'Theme Engine',
     type: 'Architectural Layouts',
     payloadStr: "{\n  \"activeId\": \"morphic_hover\",\n  \"cssVariables\": {\n    \"--bg\": \"#000000\",\n    \"--text\": \"#ffffff\",\n    \"--radius\": \"0px\"\n  }\n}",
-    renderComponent: (instanceId) => (
-      <div className="w-full h-[380px] md:h-[500px]">
+    renderComponent: (instanceId, isActive) => (
+      <div className="w-full h-[380px] md:h-[450px]">
         <ThemeHoverShowcase />
       </div>
     )
@@ -477,7 +476,7 @@ const PILLARS: Pillar[] = [
     name: 'Analytics',
     type: 'Visitor Intelligence',
     payloadStr: "{\n  \"event\": \"SESSION_START\",\n  \"visitorId\": \"v_9f82x\",\n  \"device\": \"Desktop\",\n  \"country\": \"ID\",\n  \"duration\": 245\n}",
-    renderComponent: (instanceId) => (
+    renderComponent: (instanceId, isActive) => (
       <AnalyticsDashboard instanceId={instanceId} />
     )
   }
@@ -579,7 +578,7 @@ export function SyncEngineSection() {
                     {pillar.name}
                   </h3>
                 </div>
-                
+
 
               </div>
 
@@ -597,7 +596,7 @@ export function SyncEngineSection() {
       </div>
 
       {/* DESKTOP LAYOUT (hidden lg:block) */}
-      <section ref={containerRef} className="relative w-full h-[200vh] bg-[#050505] font-sans hidden lg:block">
+      <section ref={containerRef} className="relative w-full h-[320vh] bg-[#050505] font-sans hidden lg:block">
 
         <div
           className="sticky top-0 h-screen w-full overflow-hidden flex items-center"
@@ -613,22 +612,27 @@ export function SyncEngineSection() {
 
           {/* LAYER 1: RAW CODE WATERMARK (Matrix Fade In) */}
           <div
-            className="absolute top-1/2 right-[10%] -translate-y-1/2 pointer-events-none z-0 select-none opacity-[0.03]"
+            className="absolute top-1/2 right-[10%] -translate-y-1/2 pointer-events-none z-0 select-none opacity-[0.03] w-[50vw] h-[30vh] overflow-hidden"
             translate="no"
           >
-            <AnimatePresence mode="popLayout">
-              <motion.pre
-                key={activePillar.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                style={{ willChange: "transform, opacity" }}
-                className="text-[4vw] font-mono text-[#ff9e00] font-bold leading-none tracking-tighter"
-              >
-                {activePillar.payloadStr}
-              </motion.pre>
-            </AnimatePresence>
+            {PILLARS.map((pillar, idx) => {
+              const isActive = activeIndex === idx;
+              return (
+                <motion.pre
+                  key={pillar.id}
+                  initial={false}
+                  animate={{
+                    opacity: isActive ? 1 : 0,
+                    y: isActive ? 0 : (activeIndex > idx ? -20 : 20),
+                  }}
+                  transition={{ duration: 0.45, ease: "easeOut" }}
+                  style={{ willChange: "transform, opacity" }}
+                  className="text-[4vw] font-mono text-[#ff9e00] font-bold leading-none tracking-tighter absolute inset-0 flex items-center justify-end text-right"
+                >
+                  {pillar.payloadStr}
+                </motion.pre>
+              );
+            })}
           </div>
 
           {/* LAYER 2: VERTICAL LABEL (Slide in) */}
@@ -672,17 +676,17 @@ export function SyncEngineSection() {
                 <div className="hidden md:flex flex-col items-center relative w-1 select-none">
                   {/* Background Track Line */}
                   <div className="absolute top-2 bottom-2 w-[2px] bg-white/10 rounded-full" />
-                  
+
                   {/* Active Progress Fill Line */}
-                  <motion.div 
+                  <motion.div
                     className="absolute top-2 w-[2px] bg-gradient-to-b from-[#ff9e00] to-amber-500 rounded-full origin-top"
                     style={{ scaleY: scrollYProgress, originY: 0, height: 'calc(100% - 16px)' }}
                   />
-                  
+
                   {/* Floating Glowing Indicator Dot */}
-                  <div 
+                  <div
                     className="absolute w-3.5 h-3.5 rounded-full bg-[#ff9e00] border-2 border-neutral-950 shadow-[0_0_12px_rgba(255,158,0,0.6)] -left-[5px] -translate-y-1/2 transition-all duration-300 ease-out"
-                    style={{ 
+                    style={{
                       top: `calc(${activeIndex * (100 / (PILLARS.length - 1))}% + ${8 - activeIndex * 5.33}px)`,
                     }}
                   />
@@ -695,9 +699,8 @@ export function SyncEngineSection() {
                     return (
                       <div key={pillar.id}>
                         <div
-                          className={`flex flex-col justify-center relative origin-left transition-all duration-300 ease-out ${
-                            isActive ? 'opacity-100 scale-100' : 'opacity-30 scale-90'
-                          }`}
+                          className={`flex flex-col justify-center relative origin-left transition-all duration-300 ease-out ${isActive ? 'opacity-100 scale-100' : 'opacity-30 scale-90'
+                            }`}
                         >
                           <div className="flex items-center gap-4">
                             <h1
@@ -711,10 +714,9 @@ export function SyncEngineSection() {
                             </h1>
                           </div>
 
-                          <div 
-                            className={`overflow-hidden transition-all duration-300 ease-out ${
-                              isActive ? 'h-8 md:h-12 opacity-100' : 'h-0 opacity-0'
-                            }`}
+                          <div
+                            className={`overflow-hidden transition-all duration-300 ease-out ${isActive ? 'h-8 md:h-12 opacity-100' : 'h-0 opacity-0'
+                              }`}
                           >
                             <span className="font-mono text-[9px] md:text-[10px] tracking-widest uppercase text-neutral-500 ml-1 block mt-1 md:mt-3">
                               ARCHITECTURE // {pillar.type}
@@ -732,30 +734,59 @@ export function SyncEngineSection() {
             <div
               className="w-full lg:w-2/5 flex items-center justify-end relative z-30 min-h-[400px]"
             >
-              <AnimatePresence mode="popLayout">
-                <motion.div
-                  key={activePillar.id}
-                  translate="no"
-                  initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -40, scale: 0.95 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  style={{ willChange: "transform, opacity" }}
-                  className="w-full max-w-lg absolute right-0"
-                >
+              {/* CYBERPUNK VIEWPORT WINDOW FRAME */}
+              <div className="w-full max-w-lg relative bg-[#070708] border border-white/10 p-1 sm:p-2 shadow-[0_0_50px_rgba(255,158,0,0.02)]">
+                {/* Tech Corner Brackets */}
+                <div className="absolute -top-[2px] -left-[2px] w-4 h-4 border-t-2 border-l-2 border-[#ff9e00]"></div>
+                <div className="absolute -top-[2px] -right-[2px] w-4 h-4 border-t-2 border-r-2 border-[#ff9e00]"></div>
+                <div className="absolute -bottom-[2px] -left-[2px] w-4 h-4 border-b-2 border-l-2 border-[#ff9e00]"></div>
+                <div className="absolute -bottom-[2px] -right-[2px] w-4 h-4 border-b-2 border-r-2 border-[#ff9e00]"></div>
 
-
-
-                  {activePillar.renderComponent('desktop')}
-
-                  <div className="absolute -bottom-10 right-0">
-                    <span className="font-mono text-[9px] text-neutral-600 tracking-widest uppercase">
-                      INSTANT ARCHITECTURE
-                    </span>
+                {/* Mock OS Header Bar */}
+                <div className="w-full flex items-center justify-between px-3 py-1.5 border-b border-white/5 bg-black/40 font-mono text-[9px] text-neutral-500 mb-3 select-none">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500/50"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500/50"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/50"></span>
+                    <span className="ml-2 uppercase tracking-widest text-white/40">CORE_MONITOR.sys</span>
                   </div>
+                  <div className="flex items-center gap-3">
+                    <span>BUFF: 99.4%</span>
+                    <span className="animate-pulse text-[#ff9e00]">● LIVE</span>
+                  </div>
+                </div>
 
-                </motion.div>
-              </AnimatePresence>
+                {/* Main Content Area */}
+                <div className="w-full relative h-[400px] lg:h-[450px] overflow-hidden bg-black/30">
+                  {PILLARS.map((pillar, idx) => {
+                    const isActive = activeIndex === idx;
+                    return (
+                      <motion.div
+                        key={pillar.id}
+                        translate="no"
+                        initial={false}
+                        animate={{
+                          opacity: isActive ? 1 : 0,
+                          y: isActive ? 0 : (activeIndex > idx ? -30 : 30),
+                          scale: isActive ? 1 : 0.96,
+                          pointerEvents: isActive ? 'auto' : 'none'
+                        }}
+                        transition={{ duration: 0.5, ease: EASE }}
+                        style={{ willChange: "transform, opacity" }}
+                        className="w-full absolute inset-0 flex flex-col justify-center p-3 sm:p-5"
+                      >
+                        {pillar.renderComponent('desktop', isActive)}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {/* Viewport Footer */}
+                <div className="w-full flex justify-between items-center px-3 py-1.5 border-t border-white/5 bg-black/40 font-mono text-[8px] text-neutral-500 select-none mt-2">
+                  <span className="tracking-widest uppercase">SYS_REF: {activePillar.id.toUpperCase()}</span>
+                  <span>OP_CODE: 0x8F92</span>
+                </div>
+              </div>
             </div>
 
           </div>

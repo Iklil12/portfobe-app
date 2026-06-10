@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import useSWR, { mutate } from 'swr';
 import { showToast } from '@/lib/customToast';
 import toast from 'react-hot-toast';
+import { updateUsername } from '@/app/actions/username';
 
 export function useProfile() {
   const { data: session, status, update } = useSession();
@@ -18,8 +19,28 @@ export function useProfile() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [githubUsername, setGithubUsername] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [lastUsernameChange, setLastUsernameChange] = useState<string | null>(null);
 
-  const isFormValid = firstName.trim() !== "" && profession.trim() !== "" && subdomainStatus !== 'taken';
+  // Cek apakah perubahan username diblokir (14 hari limit)
+  const isUsernameChangeBlocked = (() => {
+    if (!lastUsernameChange) return false;
+    const lastChange = new Date(lastUsernameChange);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - lastChange.getTime());
+    return diffTime < 14 * 24 * 60 * 60 * 1000;
+  })();
+
+  const remainingDays = (() => {
+    if (!lastUsernameChange) return 0;
+    const lastChange = new Date(lastUsernameChange);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - lastChange.getTime());
+    const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
+    if (diffTime >= fourteenDaysMs) return 0;
+    return Math.ceil((fourteenDaysMs - diffTime) / (1000 * 60 * 60 * 24));
+  })();
+
+  const isFormValid = firstName.trim() !== "" && profession.trim() !== "" && (subdomainStatus !== 'taken' || isUsernameChangeBlocked);
 
   // ✅ Gunakan useSWR — dilindungi SWRConfig global (focusThrottleInterval, dedupingInterval)
   // null key saat belum authenticated = tidak fetch sama sekali
@@ -50,6 +71,12 @@ export function useProfile() {
 
     const githubIntegration = profileData.integrations?.find((i: any) => i.provider === 'GITHUB');
     setGithubUsername(githubIntegration ? githubIntegration.providerId : null);
+
+    if (profileData.lastUsernameChange) {
+      setLastUsernameChange(profileData.lastUsernameChange);
+    } else {
+      setLastUsernameChange(null);
+    }
   }, [profileData]); // ← HANYA bereaksi ke data, bukan session object
 
   useEffect(() => {
@@ -103,13 +130,23 @@ export function useProfile() {
     });
 
     try {
+      // Jika subdomain diubah, kita gunakan Server Action updateUsername
+      if (subdomain !== initialSubdomain && !isUsernameChangeBlocked) {
+        const usernameRes = await updateUsername(subdomain);
+        if (usernameRes.error) {
+          toast.error(usernameRes.error, { id: toastId });
+          setIsSaving(false);
+          return;
+        }
+      }
+
       const response = await fetch('/api/profile/update', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           firstName,
           lastName,
-          subdomain,
+          subdomain: isUsernameChangeBlocked ? undefined : subdomain,
           profession,
           bio,
           avatar: avatarUrl
@@ -126,6 +163,7 @@ export function useProfile() {
         setInitialSubdomain(subdomain);
 
         mutate('/api/dashboard/sync');
+        mutate('/api/profile'); // Refetch profile data to update lastUsernameChange
 
         await update({
           ...session,
@@ -167,6 +205,9 @@ export function useProfile() {
       isSaving,
       isLoadingData,
       isFormValid,
+      isUsernameChangeBlocked,
+      remainingDays,
+      lastUsernameChange,
     },
     actions: {
       setFirstName,

@@ -10,7 +10,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ state, actions }: ProfileFormProps) {
-  const { firstName, lastName, profession, bio, isSaving, isFormValid, subdomain, subdomainStatus, session } = state;
+  const { firstName, lastName, profession, bio, isSaving, isFormValid, subdomain, subdomainStatus, session, isUsernameChangeBlocked, remainingDays } = state;
   const { setFirstName, setLastName, setProfession, setBio, handleSave, setSubdomain } = actions;
   
   const email = session?.user?.email || "user@example.com";
@@ -26,7 +26,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       .replace(/[<>]/g, '');
   };
 
-  const copyLink = () => {
+  const copyLink = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     navigator.clipboard.writeText(`portfo.be/${subdomain}`);
     showToast({ message: "Tautan berhasil disalin!", id: "copy-link", icon: "fa-link" });
   };
@@ -92,25 +93,45 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
           <p className="text-[10px] font-mono text-white/30">Tautan portofolio Anda.</p>
         </div>
         <div className="w-full flex flex-col">
-          <div className={`relative flex items-center text-xs font-mono text-white/50 pl-4 pr-[70px] py-3 rounded-none border transition-all overflow-hidden w-full ${
-            subdomainStatus === 'taken' ? 'border-rose-500/40 bg-rose-950/20' :
-            subdomainStatus === 'available' ? 'border-emerald-500/40 bg-emerald-950/20' :
-            'border-white/10 bg-zinc-950 focus-within:border-[#ff9e00]/50'
-          }`}>
-             <span className="opacity-45 select-none shrink-0 whitespace-nowrap">portfo.be/</span>
+          <div 
+            onClick={() => {
+              if (isUsernameChangeBlocked) {
+                showToast({
+                  message: `Ganti subdomain dikunci (Tersisa ${remainingDays} hari)`,
+                  id: "username-locked",
+                  icon: "fa-lock"
+                });
+              }
+            }}
+            className={`relative flex items-center text-xs font-mono text-white/50 pl-4 pr-[70px] py-3 rounded-none border transition-all overflow-hidden w-full ${
+              isUsernameChangeBlocked ? 'border-white/10 bg-zinc-950 cursor-pointer' :
+              subdomainStatus === 'taken' ? 'border-rose-500/40 bg-rose-950/20' :
+              subdomainStatus === 'available' ? 'border-emerald-500/40 bg-emerald-950/20' :
+              'border-white/10 bg-zinc-950 focus-within:border-[#ff9e00]/50'
+            }`}
+          >
+             <span className="opacity-90 text-white/90 select-none shrink-0 whitespace-nowrap">portfo.be/</span>
              <input
                type="text"
                maxLength={15}
                value={subdomain} 
                onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                placeholder={defaultUsername}
-               className="bg-transparent outline-none text-white w-full p-0 border-none focus:ring-0 truncate font-mono"
+               readOnly={isUsernameChangeBlocked}
+               onClick={(e) => {
+                 if (isUsernameChangeBlocked) {
+                   e.preventDefault();
+                 }
+               }}
+               className={`bg-transparent outline-none text-white w-full p-0 border-none focus:ring-0 truncate font-mono ${
+                 isUsernameChangeBlocked ? 'cursor-pointer select-none' : ''
+               }`}
              />
              
              {/* Tombol Copy Link (Di dalam kolom input) */}
              <button 
                 type="button" 
-                onClick={copyLink} 
+                onClick={(e) => copyLink(e)} 
                 className="absolute right-10 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-white/30 hover:text-white hover:bg-white/5 rounded-none transition-colors" 
                 title="Salin Tautan"
              >
@@ -120,11 +141,11 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
              {/* Ikon Loading/Status */}
              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
                 {subdomainStatus === 'checking' && <Loader2 className="w-3.5 h-3.5 text-white/30 animate-spin" />}
-                {subdomainStatus === 'available' && <Check className="w-4 h-4 text-emerald-400" />}
-                {subdomainStatus === 'taken' && <XCircle className="w-4 h-4 text-rose-400" />}
+                {subdomainStatus === 'available' && !isUsernameChangeBlocked && <Check className="w-4 h-4 text-emerald-400" />}
+                {subdomainStatus === 'taken' && !isUsernameChangeBlocked && <XCircle className="w-4 h-4 text-rose-400" />}
              </div>
           </div>
-          {subdomainStatus === 'taken' && (
+          {subdomainStatus === 'taken' && !isUsernameChangeBlocked && (
             <span className="text-[10px] font-mono font-bold text-rose-400 mt-2">Username ini sudah digunakan orang lain.</span>
           )}
         </div>

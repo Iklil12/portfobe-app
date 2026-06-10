@@ -1,11 +1,10 @@
 //components/features/profile/AvatarUpload.tsx
-import React from 'react';
-import { CldUploadWidget } from 'next-cloudinary';
+import React, { useRef, useState } from 'react';
 import { showToast } from '@/lib/customToast';
 import Link from 'next/link';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import { LazyImage } from '@/components/ui/LazyImage';
-import { Camera, Check, Mail, FolderArchive } from 'lucide-react';
+import { Camera, Check, Mail, FolderArchive, Loader2 } from 'lucide-react';
 
 interface AvatarUploadProps {
   state: any;
@@ -19,13 +18,57 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
   // Ambil userPlan langsung dari layout hook (sinkron dengan Topbar)
   const { userPlan } = useDashboardLayout();
 
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const fullName = session?.user?.name || "User Portfo";
   const email = session?.user?.email || "user@example.com";
-  const cloudinaryPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "paperions_preset";
 
   // Deteksi status PRO
   const isPro = userPlan !== 'FREE';
   const isSupreme = userPlan === 'SUPREME';
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // limit format
+    const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validMimeTypes.includes(file.type)) {
+      showToast({ message: "Format tidak didukung. Harap unggah JPG, PNG, atau WEBP.", id: "err-avatar-type", icon: "fa-exclamation" });
+      return;
+    }
+
+    // size limit
+    const maxImageSize = userPlan === 'SUPREME' ? 15 * 1024 * 1024 : userPlan === 'PRO' ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+    const maxImageLabel = userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB';
+    if (file.size > maxImageSize) {
+      showToast({ message: `Maksimal ukuran gambar adalah ${maxImageLabel}`, id: "err-avatar-size", icon: "fa-exclamation" });
+      return;
+    }
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/projects/upload-image', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (res.ok && data.secure_url) {
+        setAvatarUrl(data.secure_url);
+        showToast({ message: "Foto terunggah! Jangan lupa klik Simpan.", id: "upload-success-toast", icon: "fa-check-circle" });
+      } else {
+        showToast({ message: data.error || "Gagal mengunggah foto", id: "upload-avatar-fail", icon: "fa-times" });
+      }
+    } catch (err) {
+      showToast({ message: "Terjadi kesalahan jaringan", id: "upload-avatar-err", icon: "fa-wifi" });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <div className="relative mb-8 border-b border-white/10 pb-8 sm:pb-10 pt-32 sm:pt-40">
@@ -53,38 +96,40 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
       <div className="flex flex-col sm:flex-row items-end justify-between gap-4 relative z-10">
         {/* Avatar & Info Area */}
         <div className="flex flex-col items-center sm:items-start w-full sm:w-auto">
-          <CldUploadWidget
-            uploadPreset={cloudinaryPreset}
-            options={{ maxFiles: 1, resourceType: "image", clientAllowedFormats: ["jpg", "png", "webp"], sources: ["local", "camera", "url"], showPoweredBy: false }}
-            onSuccess={(result) => {
-              if (typeof result.info === 'object' && 'secure_url' in result.info) {
-                setAvatarUrl(result.info.secure_url);
-                showToast({ message: "Foto terunggah! Jangan lupa klik Simpan.", id: "upload-success-toast", icon: "fa-cloud-upload-alt" });
-              }
-            }}
+          <input 
+            type="file" 
+            accept="image/png,image/jpeg,image/jpg,image/webp" 
+            className="hidden" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+          />
+          <div 
+            className="relative w-28 h-28 sm:w-32 sm:h-32 group cursor-pointer -mt-16 sm:-mt-20 mb-4 z-20" 
+            onClick={() => !isUploading && fileInputRef.current?.click()}
           >
-            {({ open }) => (
-              <div className="relative w-28 h-28 sm:w-32 sm:h-32 group cursor-pointer -mt-16 sm:-mt-20 mb-4 z-20" onClick={() => open()}>
-                <div className="absolute -inset-1 bg-white/10 rounded-none blur-md opacity-0 group-hover:opacity-10 transition duration-500"></div>
-                <div className="relative w-full h-full rounded-none border-2 border-zinc-950 overflow-hidden bg-zinc-900">
-                  <LazyImage
-                    src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName + ' ' + lastName || fullName)}&background=18181b&color=ff9e00&bold=true`}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
-                    alt="Profile Avatar"
-                  />
-                  <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px]">
-                    <Camera className="w-5 h-5 text-white/80" />
-                  </div>
+            <div className="absolute -inset-1 bg-white/10 rounded-none blur-md opacity-0 group-hover:opacity-10 transition duration-500"></div>
+            <div className="relative w-full h-full rounded-none border-2 border-zinc-950 overflow-hidden bg-zinc-900">
+              {isUploading && (
+                <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
+                  <Loader2 className="w-5 h-5 animate-spin text-[#ff9e00]" />
                 </div>
-                {/* Verified Badge - HANYA MUNCUL JIKA PRO/SUPREME */}
-                {isPro && (
-                  <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-none border border-zinc-950 flex items-center justify-center text-black z-40 ${isSupreme ? 'bg-purple-400' : 'bg-[#ff9e00]'}`}>
-                    <Check className="w-3.5 h-3.5 stroke-[3]" />
-                  </div>
-                )}
+              )}
+              <LazyImage
+                src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName + ' ' + lastName || fullName)}&background=18181b&color=ff9e00&bold=true`}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+                alt="Profile Avatar"
+              />
+              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px]">
+                <Camera className="w-5 h-5 text-white/80" />
+              </div>
+            </div>
+            {/* Verified Badge - HANYA MUNCUL JIKA PRO/SUPREME */}
+            {isPro && (
+              <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-none border border-zinc-950 flex items-center justify-center text-black z-40 ${isSupreme ? 'bg-purple-400' : 'bg-[#ff9e00]'}`}>
+                <Check className="w-3.5 h-3.5 stroke-[3]" />
               </div>
             )}
-          </CldUploadWidget>
+          </div>
 
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 mb-1.5">

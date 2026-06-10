@@ -1,36 +1,36 @@
 export const SYSTEM_RESERVED = [
   // 1. Halaman Sistem & Dasbor
-  "dashboard", "admin", "login", "register", "signup", "signin", "logout", "auth", 
+  "dashboard", "admin", "login", "register", "signup", "signin", "logout", "auth",
   "settings", "account", "profile", "billing", "pricing", "plan", "upgrade",
-  
+
   // 2. Fitur & Halaman Publik
-  "document", "docs", "explore", "community", "templates", "themes", "showcase", 
+  "document", "docs", "explore", "community", "templates", "themes", "showcase",
   "features", "blog", "news", "update", "changelog",
-  
+
   // 3. Legalitas & Dukungan
   "about", "contact", "support", "help", "faq", "terms", "privacy", "policy", "legal",
-  
+
   // 4. Teknis & API
   "api", "graphql", "static", "_next", "assets", "images", "root", "superadmin",
 
   // 5. Kategori Transaksi & Monetisasi
-  "checkout", "invoice", "payment", "cart", "store", "shop", "premium", 
-  "enterprise", "downgrade", "plans","system",
+  "checkout", "invoice", "payment", "cart", "store", "shop", "premium",
+  "enterprise", "downgrade", "plans", "system",
 
   "www", "mail", "ftp", "localhost", "cdn", "media", "webhook", "oauth", "socket", "ws",
-  "inbox", "messages", "notifications", "security", "trust", "abuse", "report", 
-  "dmca", "privacy-policy", "terms-of-service","jobs", "careers", "teams", "partners", "affiliate", "forum", "cv", "resume", 
-  "hire", "hire-me","portfo", "admin-portfo", "support-portfo", "portfobe-admin"
+  "inbox", "messages", "notifications", "security", "trust", "abuse", "report",
+  "dmca", "privacy-policy", "terms-of-service", "jobs", "careers", "teams", "partners", "affiliate", "forum", "cv", "resume",
+  "hire", "hire-me", "portfo", "admin-portfo", "support-portfo", "portfobe-admin"
 ];
 
 export const PROFANITY_LIST = [
   // Filter Kata-Kata Kasar Bahasa Indonesia & Daerah
-  "anjing", "babi", "bangsat", "jancok", "tolol", "goblok", "kontol", "memek", 
+  "anjing", "babi", "bangsat", "jancok", "tolol", "goblok", "kontol", "memek",
   "ngentot", "peler", "kampret", "bajingan", "pantek", "kimak", "lonte", "sundel",
-  "bego", "tai", "bgst", "anjg", "cok", "cokcok", "cokgiat", "taik", "ajg","entot","sange","crot",
-  
+  "bego", "tai", "bgst", "anjg", "cok", "cokcok", "cokgiat", "taik", "ajg", "entot", "sange", "crot",
+
   // Filter Kata-Kata Kasar Bahasa Inggris
-  "bitch", "fuck", "shit", "asshole", "dick", "pussy", "cunt", "motherfucker", 
+  "bitch", "fuck", "shit", "asshole", "dick", "pussy", "cunt", "motherfucker",
   "bastard", "slut", "whore", "nigger", "nigga", "faggot", "bullshit"
 ];
 
@@ -45,7 +45,7 @@ export function isForbiddenUsername(username: string): { forbidden: boolean, rea
   if (!username) return { forbidden: false };
 
   const lower = username.toLowerCase();
-  const normalized = lower.replace(/(.)\1+/g, '$1'); 
+  const normalized = lower.replace(/(.)\1+/g, '$1');
 
   // 1. Cek Reserved System (Pengecekan Tepat / Exact Match)
   if (SYSTEM_RESERVED.includes(lower) || SYSTEM_RESERVED.includes(normalized)) {

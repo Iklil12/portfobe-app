@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { checkRateLimit } from "@/lib/rate-limit";
+import DOMPurify from 'isomorphic-dompurify';
 
 // UPDATE TESTIMONIAL
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -27,7 +28,17 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: "Testimonial tidak ditemukan atau akses ditolak" }, { status: 404 });
     }
 
-    const { clientName, company, content, rating, avatarUrl, isVisible, order } = body;
+    let { clientName, company, content, rating, avatarUrl, isVisible, order } = body;
+
+    // Validate image URL source for security
+    if (avatarUrl && !avatarUrl.startsWith('https://res.cloudinary.com/') && !avatarUrl.startsWith('https://ui-avatars.com/')) {
+      return NextResponse.json({ error: "URL gambar tidak valid atau tidak tepercaya" }, { status: 400 });
+    }
+
+    // Sanitize input strings to prevent XSS
+    if (clientName !== undefined) clientName = DOMPurify.sanitize(clientName || "", { ALLOWED_TAGS: [] }).trim();
+    if (company !== undefined) company = DOMPurify.sanitize(company || "", { ALLOWED_TAGS: [] }).trim();
+    if (content !== undefined) content = DOMPurify.sanitize(content || "", { ALLOWED_TAGS: [] }).trim();
 
     const updatedTestimonial = await prisma.testimonial.update({
       where: { id },

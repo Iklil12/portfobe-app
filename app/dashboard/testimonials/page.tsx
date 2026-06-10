@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { CldUploadWidget } from 'next-cloudinary';
 import { LazyImage } from '@/components/ui/LazyImage';
 import { showToast } from '@/lib/customToast';
 import { 
@@ -33,8 +32,48 @@ export default function TestimonialsPage() {
   const [testimonialToDelete, setTestimonialToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [formData, setFormData] = useState({ clientName: '', company: '', content: '', rating: 5, avatarUrl: '' });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
-  const cloudinaryPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || "paperions_preset";
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validMimeTypes.includes(file.type)) {
+      showToast({ message: "Format tidak didukung. Harap unggah JPG, PNG, atau WEBP.", id: "err-testimonial-img-type", icon: "fa-exclamation" });
+      return;
+    }
+
+    const maxImageSize = 5 * 1024 * 1024;
+    if (file.size > maxImageSize) {
+      showToast({ message: "Maksimal ukuran gambar adalah 5MB", id: "err-testimonial-img-size", icon: "fa-exclamation" });
+      return;
+    }
+
+    setIsUploadingImage(true);
+    const formDataObj = new FormData();
+    formDataObj.append('file', file);
+
+    try {
+      const res = await fetch('/api/projects/upload-image', {
+        method: 'POST',
+        body: formDataObj
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.secure_url) {
+        setFormData(prev => ({ ...prev, avatarUrl: data.secure_url }));
+        showToast({ message: "Foto terunggah!", id: "up-ok", icon: "fa-check-circle" });
+      } else {
+        showToast({ message: data.error || "Gagal mengunggah gambar", id: "up-fail", icon: "fa-times" });
+      }
+    } catch (err) {
+      showToast({ message: "Terjadi kesalahan jaringan", id: "up-err", icon: "fa-wifi" });
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
 
   useEffect(() => {
     fetchTestimonials();
@@ -298,35 +337,34 @@ export default function TestimonialsPage() {
                     {/* Bagian Upload Foto */}
                     <div className="flex flex-col items-center sm:items-start gap-3">
                       <label className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Foto (Opsional)</label>
-                      <CldUploadWidget
-                        uploadPreset={cloudinaryPreset}
-                        options={{ maxFiles: 1, resourceType: "image", clientAllowedFormats: ["jpg", "png", "webp"], sources: ["local", "url"], showPoweredBy: false }}
-                        onSuccess={(result) => {
-                          if (typeof result.info === 'object' && 'secure_url' in result.info) {
-                            setFormData({...formData, avatarUrl: result.info.secure_url});
-                            showToast({ message: "Foto terunggah!", id: "up-ok", icon: "fa-check" });
-                          }
-                        }}
+                      <input 
+                        type="file" 
+                        accept="image/png,image/jpeg,image/jpg,image/webp" 
+                        className="hidden" 
+                        ref={fileInputRef} 
+                        onChange={handleFileChange} 
+                      />
+                      <div 
+                        onClick={() => !isUploadingImage && fileInputRef.current?.click()}
+                        className="w-24 h-24 rounded-none border-2 border-dashed border-white/10 flex items-center justify-center bg-[#0a0a0a] cursor-pointer hover:bg-white/[0.01] hover:border-[#ff9e00]/40 transition-all group overflow-hidden relative"
                       >
-                        {({ open }) => (
-                          <div 
-                            onClick={() => open()}
-                            className="w-24 h-24 rounded-none border-2 border-dashed border-white/10 flex items-center justify-center bg-[#0a0a0a] cursor-pointer hover:bg-white/[0.01] hover:border-[#ff9e00]/40 transition-all group overflow-hidden relative"
-                          >
-                            {formData.avatarUrl ? (
-                              <>
-                                <LazyImage src={formData.avatarUrl} alt="Avatar" className="w-full h-full object-cover group-hover:opacity-40 transition-opacity" />
-                                <Camera className="w-6 h-6 absolute text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </>
-                            ) : (
-                              <div className="flex flex-col items-center text-white/40 group-hover:text-[#ff9e00] transition-colors">
-                                <Camera className="w-5 h-5 mb-1" />
-                                <span className="text-[8px] font-mono font-bold uppercase tracking-wider">Upload</span>
-                              </div>
-                            )}
+                        {isUploadingImage ? (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30 animate-pulse">
+                            <Loader2 className="w-5 h-5 animate-spin text-[#ff9e00]" />
+                          </div>
+                        ) : null}
+                        {formData.avatarUrl ? (
+                          <>
+                            <LazyImage src={formData.avatarUrl} alt="Avatar" className="w-full h-full object-cover group-hover:opacity-40 transition-opacity" />
+                            <Camera className="w-6 h-6 absolute text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </>
+                        ) : (
+                          <div className="flex flex-col items-center text-white/40 group-hover:text-[#ff9e00] transition-colors">
+                            <Camera className="w-5 h-5 mb-1" />
+                            <span className="text-[8px] font-mono font-bold uppercase tracking-wider">Upload</span>
                           </div>
                         )}
-                      </CldUploadWidget>
+                      </div>
                     </div>
 
                     {/* Bagian Input Teks */}

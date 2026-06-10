@@ -20,6 +20,11 @@ export async function PATCH(req: Request) {
     const body = await req.json();
     let { firstName, lastName, subdomain, profession, bio, avatar } = body; 
     
+    // Validate image URL source for security
+    if (avatar && !avatar.startsWith('https://res.cloudinary.com/') && !avatar.startsWith('https://ui-avatars.com/')) {
+      return NextResponse.json({ error: "URL gambar tidak valid atau tidak tepercaya" }, { status: 400 });
+    }
+
     // XSS PROTECTION: Sanitize input pengguna di sisi server sebelum masuk database
     firstName = DOMPurify.sanitize(firstName || "", { ALLOWED_TAGS: [] }).trim();
     lastName = DOMPurify.sanitize(lastName || "", { ALLOWED_TAGS: [] }).trim();
@@ -37,6 +42,15 @@ export async function PATCH(req: Request) {
 
     // VALIDASI SUBDOMAIN: Cek kata cadangan dan apakah sudah dipakai user lain
     if (subdomain && subdomain !== currentUser.profile?.subdomain) {
+      if (currentUser.lastUsernameChange) {
+        const lastChange = new Date(currentUser.lastUsernameChange);
+        const now = new Date();
+        const diffTime = Math.abs(now.getTime() - lastChange.getTime());
+        if (diffTime < 14 * 24 * 60 * 60 * 1000) {
+          return NextResponse.json({ error: "Anda hanya dapat mengganti subdomain sekali dalam 14 hari." }, { status: 400 });
+        }
+      }
+
       const forbiddenCheck = isForbiddenUsername(subdomain);
       if (forbiddenCheck.forbidden) {
         return NextResponse.json({ error: forbiddenCheck.reason }, { status: 400 });
@@ -59,6 +73,9 @@ export async function PATCH(req: Request) {
       where: { email: session.user.email },
       data: {
         avatar: avatar, // Simpan url foto di tabel User
+        ...(subdomain && subdomain !== currentUser.profile?.subdomain && {
+          lastUsernameChange: new Date()
+        }),
         profile: {
           upsert: {
             create: { 
