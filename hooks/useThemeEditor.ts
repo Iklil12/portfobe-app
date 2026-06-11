@@ -589,8 +589,9 @@ export function useThemeEditor() {
 
   const resetToThemePreset = () => {
     setPageBlocks(prev => generateFreshBlocks(activeTheme, prev));
-    toast.success('Susunan blok dikembalikan ke setelan pabrik (segar)!', {
-      style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+    toast.success('BERHASIL! Susunan blok dikembalikan ke setelan pabrik (segar)!', {
+      id: 'reset-theme-toast', // ID UNIK ANTI-SPAM: Akan mereplace toast lama yang punya ID sama, bukan menumpuk
+      style: { borderRadius: '0px', background: '#09090b', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '11px', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '0.05em' }
     });
   };
 

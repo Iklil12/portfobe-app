@@ -35,6 +35,22 @@ export default function PreviewPage() {
     };
   }, []);
 
+  // Sinyal "Handshake" ke parent bahwa tema telah selesai di-render
+  useEffect(() => {
+    if (isReady && theme?.themeTemplate) {
+      // Memberi sedikit waktu (buffer) agar React & Framer Motion selesai merakit DOM
+      const timer = setTimeout(() => {
+        if (window.parent) {
+          window.parent.postMessage({ 
+            type: 'PREVIEW_RENDERED', 
+            templateId: theme.themeTemplate 
+          }, window.location.origin);
+        }
+      }, 100); 
+      return () => clearTimeout(timer);
+    }
+  }, [theme?.themeTemplate, isReady]);
+
   if (!isReady || !data) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#050505]">

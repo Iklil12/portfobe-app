@@ -67,6 +67,22 @@ export async function GET(req: Request) {
       });
     }
 
+    // TANDA TANGANI URL VIDEO UNTUK PREVIEW EDITOR
+    const tokenKey = process.env.BUNNY_API_KEY || 'default_secret';
+    const { signBunnyUrl } = require("@/lib/bunnySign");
+
+    if (userData.projects && userData.projects.length > 0) {
+      userData.projects = userData.projects.map((proj: any) => {
+        if (proj.projectType === 'video' && proj.mediaUrl) {
+          return {
+            ...proj,
+            mediaUrl: signBunnyUrl(proj.mediaUrl, tokenKey)
+          };
+        }
+        return proj;
+      });
+    }
+
     return NextResponse.json(userData);
   } catch (error) {
     console.error("GET Appearance Error:", error);

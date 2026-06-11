@@ -1,7 +1,7 @@
 //components/features/appearance/ThemeSelectionModal.tsx
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { THEMES_DATA } from '@/lib/themes';
 import { ThemeGrid } from '../themes/ThemeGrid';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -36,6 +36,30 @@ export function ThemeSelectionModal({
   const [isSwitching, setIsSwitching] = useState(false);
   const [targetTheme, setTargetTheme] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'pro' | 'favorites'>('all');
+  const [isModalLoading, setIsModalLoading] = useState(true);
+  const filterTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Memicu Skeleton Loading saat ganti tab filter
+  const handleTabChange = (tabId: 'all' | 'free' | 'pro' | 'favorites') => {
+    if (activeFilter === tabId) return;
+    
+    setIsModalLoading(true);
+    setActiveFilter(tabId);
+    
+    if (filterTimeoutRef.current) clearTimeout(filterTimeoutRef.current);
+    filterTimeoutRef.current = setTimeout(() => {
+      setIsModalLoading(false);
+    }, 400); // 400ms flash skeleton
+  };
+
+  // Memicu Skeleton Loading setiap kali modal dibuka
+  useEffect(() => {
+    if (isOpen) {
+      setIsModalLoading(true);
+      const timer = setTimeout(() => setIsModalLoading(false), 600);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   // Filter logic
   const availableThemes = THEMES_DATA.filter(t => t.isAvailable !== false);
@@ -113,21 +137,30 @@ export function ThemeSelectionModal({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 z-50 bg-zinc-950/95 backdrop-blur-md flex flex-col items-center justify-center"
+                  transition={{ duration: 0.3 }}
+                  className="absolute inset-0 z-50 bg-zinc-950/95 backdrop-blur-xl flex flex-col items-center justify-center"
                 >
                   <motion.div 
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.1, duration: 0.4 }}
-                    className="flex flex-col items-center"
+                    initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                    className="flex flex-col items-center justify-center text-center"
                   >
-                    <div className="w-16 h-16 relative flex items-center justify-center mb-6">
-                      <div className="absolute inset-0 rounded-none border-4 border-white/5"></div>
-                      <div className="absolute inset-0 rounded-none border-4 border-[#ff9e00] border-t-transparent animate-spin"></div>
-                      <Sparkles className="w-6 h-6 text-[#ff9e00] animate-pulse" />
+                    {/* Clean Enterprise Spinner */}
+                    <div className="relative w-12 h-12 flex items-center justify-center mb-6">
+                      <svg className="animate-spin w-10 h-10 text-white/20" viewBox="0 0 24 24">
+                        <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2.5" fill="none" />
+                        <path className="opacity-90 text-white" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
                     </div>
-                    <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider mb-2">Menerapkan Tema...</h3>
-                    <p className="text-[10px] font-mono text-white/40 uppercase">Menyesuaikan tata letak untuk {targetTheme}</p>
+
+                    <h3 className="text-xs font-mono font-bold text-white uppercase tracking-[0.2em] mb-2 drop-shadow-md">
+                      Menerapkan Tema...
+                    </h3>
+                    
+                    <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">
+                      Menyesuaikan tata letak untuk {targetTheme}
+                    </p>
                   </motion.div>
                 </motion.div>
               )}
@@ -165,7 +198,7 @@ export function ThemeSelectionModal({
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveFilter(tab.id)}
+                      onClick={() => handleTabChange(tab.id)}
                       className={`flex items-center gap-2 px-5 py-2.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-300 border whitespace-nowrap shrink-0
                         ${isActive
                           ? tab.id === 'favorites'
@@ -187,7 +220,31 @@ export function ThemeSelectionModal({
 
             {/* Grid Area */}
             <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative z-30">
-              {filteredThemes.length === 0 ? (
+              {isModalLoading ? (
+                /* Skeleton Loading Grid (Cangkok Identik dari ThemeSkeleton & ThemeGrid) */
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="flex flex-col gap-3">
+                      {/* Visual Card 4:3 */}
+                      <div className="relative w-full aspect-[4/3] bg-[#050505] rounded-none border border-white/10 overflow-hidden">
+                        <div className="absolute inset-0 bg-white/5 shimmer"></div>
+                      </div>
+                      
+                      {/* Footer Metadata */}
+                      <div className="flex justify-between items-center px-1">
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 bg-white/5 border border-white/5 rounded-none shimmer"></div>
+                          <div className="w-24 h-4 bg-white/5 border border-white/5 rounded-none shimmer"></div>
+                        </div>
+                        <div className="flex gap-2">
+                          <div className="w-8 h-3 bg-white/5 border border-white/5 rounded-none shimmer"></div>
+                          <div className="w-8 h-3 bg-white/5 border border-white/5 rounded-none shimmer"></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : filteredThemes.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 text-center">
                   <div className="w-16 h-16 rounded-none bg-zinc-950 border border-white/10 flex items-center justify-center mb-6">
                     <AlertCircle className="w-6 h-6 text-white/30" />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, Suspense } from 'react';
 import { LazyImage } from '@/components/ui/LazyImage';
 import PortfolioView from '@/components/PortfolioView';
 import useSWR from 'swr';
@@ -11,7 +11,8 @@ import {
   Sparkles, 
   Lock, 
   Palette, 
-  Clock 
+  Clock,
+  Loader2
 } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
@@ -63,56 +64,17 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: an
                                             'border border-white/5 opacity-80 z-0'} 
                         `}>
 
-                            {/* BACKGROUND / CROSSFADE LIVE PREVIEW VS STATIC IMAGE */}
+                            {/* BACKGROUND STATIC IMAGE */}
                             <div className="absolute inset-0 bg-[#050505] overflow-hidden">
-                                <AnimatePresence mode="sync">
-                                    {isHovered && fullProfileData && theme.isAvailable ? (
-                                        // LIVE PREVIEW STATE
-                                        <motion.div
-                                            key="live-preview"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.25, ease: 'easeInOut' }}
-                                            className="absolute inset-0 z-10 origin-top-left pointer-events-none"
-                                            style={{ width: '400%', height: '400%', transform: 'scale(0.25)' }}
-                                        >
-                                            <PortfolioView
-                                                data={fullProfileData}
-                                                theme={{
-                                                    themeTemplate: theme.id,
-                                                    themeColor: fullProfileData.siteAppearance?.themeColor || '#000000',
-                                                    fontHeading: fullProfileData.siteAppearance?.fontHeading || 'Space Mono',
-                                                    fontBody: fullProfileData.siteAppearance?.fontBody || 'Inter',
-                                                    buttonShape: fullProfileData.siteAppearance?.buttonShape || 'hard',
-                                                    cardStyle: fullProfileData.siteAppearance?.cardStyle || 'hard-shadow',
-                                                    splashScreen: false
-                                                }}
-                                                isCardPreview={true}
-                                            />
-                                        </motion.div>
-                                    ) : (
-                                        // STATIC IMAGE STATE
-                                        <motion.div
-                                            key="static-image"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.25, ease: 'easeInOut' }}
-                                            className="absolute inset-0 z-0"
-                                        >
-                                            {theme.img ? (
-                                                <LazyImage
-                                                    src={theme.img}
-                                                    className={`w-full h-full object-cover transition-transform duration-[10s] ease-linear group-hover:scale-[1.03] ${!theme.isAvailable && 'blur-[2px] grayscale opacity-40'}`}
-                                                    alt={theme.name}
-                                                />
-                                            ) : (
-                                                theme.content
-                                            )}
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+                                {theme.img ? (
+                                    <LazyImage
+                                        src={theme.img}
+                                        className={`w-full h-full object-cover transition-transform duration-[10s] ease-linear group-hover:scale-[1.05] ${!theme.isAvailable ? 'blur-[2px] grayscale opacity-40' : ''}`}
+                                        alt={theme.name}
+                                    />
+                                ) : (
+                                    theme.content
+                                )}
                             </div>
 
                             {/* HOVER OVERLAY */}
