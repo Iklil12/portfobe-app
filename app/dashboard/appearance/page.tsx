@@ -3,11 +3,12 @@
 
 import React, { Suspense } from 'react';
 import { useThemeEditor } from '@/hooks/useThemeEditor';
+import Link from 'next/link';
 import { EditorPanel } from '@/components/features/appearance/EditorPanel';
 import { PreviewPanel } from '@/components/features/appearance/PreviewPanel';
 import { OfflineModal } from '@/components/features/appearance/OfflineModal';
 import { PublishSuccessModal } from '@/components/features/appearance/PublishSuccessModal';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft, Undo2, Redo2, Monitor, Smartphone, ExternalLink, Minus, Plus } from 'lucide-react';
 
 function AppearanceEditor() {
   const { state, actions } = useThemeEditor();
@@ -21,8 +22,11 @@ function AppearanceEditor() {
     );
   }
 
+  const isCurrentlyLive = state.activeDraftId ? state.activeDraftId === state.publishedDraftId : state.publishedDraftId === null;
+  const canPublish = state.isDirty || !isCurrentlyLive || state.hasUnpublishedChanges;
+
   return (
-    <main className="h-screen w-screen m-0 p-0 flex flex-col lg:flex-row bg-zinc-950 font-sans overflow-hidden fixed inset-0 z-[99999]">
+    <main className="h-screen w-screen m-0 p-0 flex flex-col bg-zinc-950 font-sans overflow-hidden fixed inset-0 z-[99999]">
 
       <style dangerouslySetInnerHTML={{
         __html: `
@@ -54,11 +58,145 @@ function AppearanceEditor() {
         />
       )}
 
-      {/* PANEL KIRI: EDITOR TATA LETAK */}
-      <EditorPanel state={state} actions={actions} />
+      {/* FULL WIDTH NAVBAR */}
+      <div className="w-full h-14 bg-zinc-950 border-b border-white/10 shrink-0 flex items-center justify-between px-4 lg:px-6 z-[100] relative">
+        {/* Left: Back & Title */}
+        <div className="flex items-center gap-4">
+          <Link 
+            href="/dashboard" 
+            onClick={(e) => {
+              if (state.isDirty) {
+                if (!window.confirm("Keluar dari Editor? Perubahan yang Anda lakukan mungkin tidak disimpan.")) {
+                  e.preventDefault();
+                }
+              }
+            }}
+            className="w-8 h-8 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-white/50 hover:text-[#ff9e00] hover:bg-zinc-850 transition-all duration-200" 
+            title="Kembali ke Dashboard"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Link>
+          <div className="hidden sm:flex items-center gap-2">
+            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">Website Builder</span>
+            <span className="px-1.5 py-0.5 bg-zinc-900 border border-white/10 text-white/40 text-[9px] uppercase tracking-widest font-bold">Pro</span>
+          </div>
+        </div>
 
-      {/* PANEL KANAN: LIVE PREVIEW AREA */}
-      <PreviewPanel state={state} actions={actions} />
+        {/* Center: Mode & Undo & Zoom */}
+        <div className="flex items-center gap-4 absolute left-1/2 -translate-x-1/2">
+          {/* Mode Switcher */}
+          <div className="hidden lg:flex items-center gap-1 bg-zinc-900 border border-white/10 p-0.5 rounded-sm">
+            <button
+              onClick={() => actions.setPreviewMode('desktop')}
+              className={`px-4 py-1.5 text-[10px] font-mono font-bold uppercase transition-all flex items-center gap-2 rounded-sm ${
+                state.previewMode === 'desktop' ? 'bg-[#ff9e00] text-black' : 'text-white/40 hover:text-white'
+              }`}
+            >
+              <Monitor className="w-3.5 h-3.5" /> Desktop
+            </button>
+            <button
+              onClick={() => actions.setPreviewMode('mobile')}
+              className={`px-4 py-1.5 text-[10px] font-mono font-bold uppercase transition-all flex items-center gap-2 rounded-sm ${
+                state.previewMode === 'mobile' ? 'bg-[#ff9e00] text-black' : 'text-white/40 hover:text-white'
+              }`}
+            >
+              <Smartphone className="w-3.5 h-3.5" /> Mobile
+            </button>
+          </div>
+
+          <div className="w-[1px] h-4 bg-white/10 hidden lg:block"></div>
+
+          {/* Undo / Redo */}
+          <div className="flex items-center gap-1 bg-zinc-900 border border-white/10 p-0.5 rounded-sm">
+            <button
+              onClick={actions.undo}
+              disabled={!state.canUndo}
+              className={`w-8 h-7 flex items-center justify-center transition-all rounded-sm ${
+                state.canUndo ? 'text-white/60 hover:bg-white/10 hover:text-white' : 'text-white/20 cursor-not-allowed'
+              }`}
+            >
+              <Undo2 className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={actions.redo}
+              disabled={!state.canRedo}
+              className={`w-8 h-7 flex items-center justify-center transition-all rounded-sm ${
+                state.canRedo ? 'text-white/60 hover:bg-white/10 hover:text-white' : 'text-white/20 cursor-not-allowed'
+              }`}
+            >
+              <Redo2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Zoom Controls (Desktop Only) */}
+          {state.previewMode === 'desktop' && (
+            <>
+              <div className="w-[1px] h-4 bg-white/10 hidden lg:block"></div>
+              <div className="hidden lg:flex items-center gap-1 bg-zinc-900 border border-white/10 p-0.5 rounded-sm">
+                <button
+                  onClick={actions.zoomOut}
+                  disabled={state.desktopZoom <= state.ZOOM_MIN}
+                  className="w-8 h-7 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-20 transition-all rounded-sm"
+                  title="Zoom Out"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <span className="text-[10px] font-mono font-bold text-white/70 w-9 text-center tabular-nums">
+                  {Math.round(state.desktopZoom * 100)}%
+                </span>
+                <button
+                  onClick={actions.zoomIn}
+                  disabled={state.desktopZoom >= state.ZOOM_MAX}
+                  className="w-8 h-7 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-20 transition-all rounded-sm"
+                  title="Zoom In"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Right: Actions */}
+        <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden xl:flex px-3 py-1.5 bg-zinc-900 border border-white/10 text-[10px] font-mono text-white/40 items-center gap-2">
+            portfo.be/{state.subdomain || 'username'}
+            <a href={`/${state.subdomain || 'username'}`} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+
+          <button
+            onClick={() => {
+              if (state.activeDraftId) actions.saveDraft();
+              else actions.setIsSaveDraftModalOpen(true);
+            }}
+            disabled={state.isSavingDraft || state.isPublishing || (state.activeDraftId ? !state.isDirty : false)}
+            className="px-4 py-1.5 bg-zinc-900 border border-white/10 text-white/80 hover:bg-white/5 hover:text-white text-[10px] font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-50 flex items-center gap-2"
+          >
+            {state.isSavingDraft ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+            Simpan
+          </button>
+
+          <button
+            onClick={actions.publishDesign}
+            disabled={state.isSavingDraft || state.isPublishing || !canPublish}
+            className="px-4 py-1.5 bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-50 flex items-center gap-2"
+          >
+            {state.isPublishing ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+            Publish
+          </button>
+        </div>
+      </div>
+
+      {/* WORKSPACE AREA */}
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+        {/* PANEL KIRI: EDITOR TATA LETAK */}
+        <EditorPanel state={state} actions={actions} />
+
+        {/* PANEL KANAN: LIVE PREVIEW AREA */}
+        <PreviewPanel state={state} actions={actions} />
+      </div>
 
     </main>
   );

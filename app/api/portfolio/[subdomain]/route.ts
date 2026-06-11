@@ -5,6 +5,8 @@ import { unstable_cache } from "next/cache";
 // Hilangkan revalidate route level yang gagal, kita gunakan Data-Level Caching
 // export const revalidate = 60;
 
+export const dynamic = 'force-dynamic'; // WAJIB agar Token Keamanan tidak di-cache sampai kedaluwarsa
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ subdomain: string }> }
@@ -16,8 +18,7 @@ export async function GET(
     // 2. Bersihkan teks
     const userSubdomain = resolvedParams.subdomain.trim().toLowerCase();
 
-    // 3. Data-Level Caching (Menambal kebocoran Next.js)
-    // Walaupun rute ini dinamis, query database akan di-cache keras selama 60 detik
+    // 3. Data-Level Caching
     const getCachedUserData = unstable_cache(
       async () => {
         return await prisma.user.findFirst({
@@ -64,7 +65,6 @@ export async function GET(
     }
 
     // 5. SOFT LOCK: Batasi data berdasarkan plan untuk halaman publik
-    // Data ke-6 dst tetap AMAN di database, hanya tidak ditampilkan ke publik
     const isFree = userData.plan === 'FREE';
     const publicProjects     = isFree ? userData.projects.slice(0, 5)     : userData.projects;
     const publicLinks        = isFree ? userData.links.slice(0, 1)        : userData.links;
@@ -76,7 +76,9 @@ export async function GET(
     const { signBunnyUrl } = require("@/lib/bunnySign");
     
     const signedProjects = publicProjects.map((proj: any) => {
-      if (proj.projectType === '3d' || proj.projectType === 'video') {
+      // HANYA Video yang ditandatangani untuk Bunny Stream (Melindungi Video dari pembajakan)
+      // File 3D (glb/gltf) dibiarkan murni karena model-viewer membutuhkan akses CORS murni
+      if (proj.projectType === 'video') {
         return {
           ...proj,
           mediaUrl: signBunnyUrl(proj.mediaUrl, tokenKey)

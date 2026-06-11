@@ -60,6 +60,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly' as const,
       priority: 0.6,
     },
+    {
+      url: `${baseUrl}/blog/mengapa-profil-linkedin-saja-tidak-cukup-untuk-bersaing-di-tahun-2026`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    },
   ];
 // ... (lanjutan kode database dynamicRoutes)
 // 2. Daftarkan Halaman Dinamis (Profil Kreator dari Database)

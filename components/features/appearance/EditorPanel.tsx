@@ -72,6 +72,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
   const [dragY, setDragY] = React.useState(0);
   const [isDragging, setIsDragging] = React.useState(false);
   const touchStartY = React.useRef(0);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
@@ -93,6 +94,27 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
       setIsMobileDrawerOpen(false);
     }
     setDragY(0);
+  };
+
+  const handleContentTouchStart = (e: React.TouchEvent) => {
+    if (scrollContainerRef.current && scrollContainerRef.current.scrollTop <= 0) {
+      touchStartY.current = e.touches[0].clientY;
+      setIsDragging(true);
+    }
+  };
+
+  const handleContentTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - touchStartY.current;
+    
+    // Tarik panel ke bawah hanya jika di ujung atas konten
+    if (diff > 0 && scrollContainerRef.current && scrollContainerRef.current.scrollTop <= 0) {
+      setDragY(diff);
+    } else if (diff < 0) {
+      setIsDragging(false);
+      setDragY(0);
+    }
   };
 
   const subdomain = stateSubdomain || livePreviewData?.subdomain;
@@ -270,79 +292,6 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
           <div className="w-12 h-1.5 bg-zinc-800 rounded-full"></div>
         </div>
 
-        {/* Header Panel Editor */}
-        <div className="p-4 lg:p-6 border-b border-white/5 sticky top-0 z-20 shrink-0 bg-zinc-950/95 backdrop-blur-md">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
-            <div className="flex items-center gap-4 w-full">
-              <Link 
-                href="/dashboard" 
-                onClick={(e) => {
-                  if (isDirty) {
-                    if (!window.confirm("Keluar dari Editor? Perubahan yang Anda lakukan mungkin tidak disimpan.")) {
-                      e.preventDefault();
-                    }
-                  }
-                }}
-                className="w-8 h-8 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-white/50 hover:text-[#ff9e00] hover:bg-zinc-850 transition-all duration-200 shrink-0" 
-                title="Kembali ke Dashboard"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </Link>
-              <div className="flex flex-col flex-1">
-                <div className="flex items-center gap-2">
-                  <h1 className="text-sm font-mono font-bold text-white uppercase tracking-wider leading-none">
-                    Desain Visual
-                  </h1>
-                </div>
-                <p className="text-[9px] text-white/40 font-mono font-bold mt-1 uppercase tracking-widest">
-                  Pengaturan Tampilan
-                </p>
-              </div>
-              <button 
-                onClick={() => setIsMobileDrawerOpen(false)} 
-                className="lg:hidden w-8 h-8 flex items-center justify-center bg-zinc-900 text-white/50 rounded-none shrink-0"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="hidden lg:flex items-center gap-2 w-full sm:w-auto">
-              <button
-                onClick={() => {
-                  if (activeDraftId) {
-                    saveDraft();
-                  } else {
-                    setIsSaveDraftModalOpen(true);
-                  }
-                }}
-                disabled={isSavingDraft || isPublishing || (activeDraftId ? !isDirty : false)}
-                title={activeDraftId && !isDirty ? "Belum ada perubahan untuk disimpan" : undefined}
-                className={`flex-1 sm:flex-none justify-center px-4 py-2 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-200 flex items-center gap-2 shrink-0 ${
-                  activeDraftId && !isDirty 
-                    ? 'bg-zinc-900 border border-white/5 text-white/20 cursor-not-allowed opacity-40' 
-                    : 'bg-zinc-900 border border-white/10 hover:bg-zinc-800 text-white/80 hover:text-white'
-                } disabled:opacity-50`}
-              >
-                {isSavingDraft ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                <span className="truncate">{activeDraftId ? 'Simpan' : 'Draft'}</span>
-              </button>
-
-              <button
-                onClick={publishDesign}
-                disabled={isSavingDraft || isPublishing || !canPublish}
-                title={!canPublish ? "Desain ini sudah tayang di web" : "Publish ke Web"}
-                className={`flex-1 sm:flex-none justify-center px-5 py-2 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-200 flex items-center gap-2 shrink-0 ${
-                  canPublish 
-                    ? 'bg-[#ff9e00] hover:bg-[#ffaa22] text-black' 
-                    : 'bg-zinc-900 border border-white/5 text-white/20 cursor-not-allowed'
-                }`}
-              >
-                {isPublishing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Rocket className="w-3.5 h-3.5" />}
-                <span>Publish</span>
-              </button>
-            </div>
-          </div>
-        </div>
 
         {/* Indikator Draft Aktif */}
         {activeDraftName && (
@@ -380,7 +329,13 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         </div>
 
         {/* Konten Menu Editor */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 pb-32 relative z-10">
+        <div 
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 pb-32 relative z-10"
+          onTouchStart={handleContentTouchStart}
+          onTouchMove={handleContentTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
 
           {/* SECTION: TEMA AKTIF */}
           <div className="mb-12 animate-in fade-in duration-500">
@@ -560,43 +515,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         </div>
       </div>
 
-      {/* MOBILE FLOATING CONTROLS (Top Left) */}
-      {!isMobileDrawerOpen && (
-        <div className="lg:hidden fixed top-6 left-6 z-[90] bg-zinc-950/90 backdrop-blur-md p-1.5 rounded-none shadow-none flex items-center border border-white/10">
-          <button
-            onClick={actions.undo}
-            disabled={!state.canUndo}
-            className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
-              state.canUndo ? 'text-white/60 hover:bg-zinc-900 hover:text-white active:scale-95' : 'text-white/25 cursor-not-allowed'
-            }`}
-          >
-            <Undo2 className="w-3.5 h-3.5" />
-          </button>
-          <div className="w-[1px] h-3 bg-white/10 mx-1"></div>
-          <button
-            onClick={actions.redo}
-            disabled={!state.canRedo}
-            className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
-              state.canRedo ? 'text-white/60 hover:bg-zinc-900 hover:text-white active:scale-95' : 'text-white/25 cursor-not-allowed'
-            }`}
-          >
-            <Redo2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
 
-      {/* MOBILE FLOATING PREVIEW URL (Top Right) */}
-      {!isMobileDrawerOpen && subdomain && (
-        <a 
-          href={`/${subdomain}`} 
-          target="_blank" 
-          rel="noreferrer"
-          className="lg:hidden fixed top-6 right-6 z-[90] px-4 py-2 bg-zinc-950 border border-white/10 text-[#ff9e00] font-mono font-bold uppercase text-[9px] tracking-widest rounded-none shadow-none flex items-center gap-2 hover:scale-105 transition-transform"
-        >
-          <ExternalLink className="w-3.5 h-3.5" />
-          <span>Live View</span>
-        </a>
-      )}
     </>
   );
 }

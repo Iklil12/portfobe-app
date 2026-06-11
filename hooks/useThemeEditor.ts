@@ -72,6 +72,13 @@ export function useThemeEditor() {
   const [showProModal, setShowProModal] = useState(false);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
 
+  const ZOOM_MIN = 0.4;
+  const ZOOM_MAX = 1.0;
+  const ZOOM_STEP = 0.1;
+  const [desktopZoom, setDesktopZoom] = useState(0.75);
+  const zoomIn = () => setDesktopZoom(z => Math.min(ZOOM_MAX, parseFloat((z + ZOOM_STEP).toFixed(2))));
+  const zoomOut = () => setDesktopZoom(z => Math.max(ZOOM_MIN, parseFloat((z - ZOOM_STEP).toFixed(2))));
+
   // --- STATE UNTUK DATA PROFIL ---
   const [fullName, setFullName] = useState("Nama Anda");
   const fullNameRef = useRef(fullName);
@@ -931,6 +938,9 @@ export function useThemeEditor() {
       hasUnpublishedChanges,
       pageBlocks,
       previewMode,
+      desktopZoom,
+      ZOOM_MIN,
+      ZOOM_MAX,
       canUndo: pastStatesRef.current.length > 0,
       canRedo: futureStatesRef.current.length > 0
     },
@@ -950,6 +960,8 @@ export function useThemeEditor() {
       setIsSaveDraftModalOpen,
       setIsPublishModalOpen,
       setPreviewMode,
+      zoomIn,
+      zoomOut,
       saveDraft,
       publishDesign,
       loadDraft,
