@@ -6,10 +6,10 @@ type RateLimitRecord = {
   resetAt: number;
 };
 
-// In-memory rate limit store for persistent VPS/PM2 hosting
+// In-memory rate limit store for persistent VPS/Hosting (Sangat stabil di Node.js runtime Next 16)
 const rateLimitMap = new Map<string, RateLimitRecord>();
 
-// Garbage collection ringan tiap 5 menit agar RAM tidak penuh dengan IP usang
+// Garbage collection ringan tiap 5 menit
 setInterval(() => {
   const now = Date.now();
   for (const [ip, record] of rateLimitMap.entries()) {
@@ -17,11 +17,14 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
-// ── Helper: Ambil IP dari request ────────────────────────────────────────────
+// ── PERBAIKAN: Ambil IP asli dari balik Cloudflare ─────────────────────────
 function getClientIp(req: NextRequest): string {
-  return req.headers.get("x-real-ip")
-    || req.headers.get("x-forwarded-for")?.split(",").pop()?.trim()
-    || "unknown";
+  return (
+    req.headers.get("cf-connecting-ip") || // Prioritas utama: Header Cloudflare
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || // Ambil IP pertama (pengunjung asli)
+    req.headers.get("x-real-ip") ||
+    "unknown"
+  );
 }
 
 // ── Helper: Rate limiter ─────────────────────────────────────────────────────
@@ -50,12 +53,12 @@ function checkRate(ip: string, limit: number, windowMs: number): boolean {
 
 // ── API Routes yang TIDAK butuh autentikasi (publik) ─────────────────────────
 const PUBLIC_API_ROUTES = [
-  "/api/auth",           // NextAuth endpoints (login, callback, session, dll.)
-  "/api/portfolio",      // Halaman portofolio publik
-  "/api/analytics/track",// Tracking visitor (tanpa login)
-  "/api/pricing",        // Info harga publik
-  "/api/search",         // Pencarian publik
-  "/api/support",        // Form kontak publik
+  "/api/auth",
+  "/api/portfolio",
+  "/api/analytics/track",
+  "/api/pricing",
+  "/api/search",
+  "/api/support",
 ];
 
 // ── API Routes khusus ADMIN ──────────────────────────────────────────────────
@@ -65,7 +68,7 @@ const ADMIN_API_ROUTES = [
 ];
 
 // ══════════════════════════════════════════════════════════════════════════════
-// PROXY FUNCTION — Named export sesuai konvensi Next.js 16
+// NAMA FUNGSI TETAP PROXY (Sesuai Aturan Next.js 16)
 // ══════════════════════════════════════════════════════════════════════════════
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
@@ -81,8 +84,7 @@ export async function proxy(req: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    // Dashboard admin — hanya role ADMIN
-    if (pathname.startsWith("/dashboard/admin") && token.role !== "ADMIN") {
+    if (pathname.startsWith("/dashboard/admin") && token?.role !== "ADMIN") {
       return NextResponse.rewrite(new URL("/not-found", req.url));
     }
 
@@ -91,17 +93,11 @@ export async function proxy(req: NextRequest) {
 
   // ── 2. PROTEKSI API ROUTES ─────────────────────────────────────────────
   if (pathname.startsWith("/api")) {
-
-    // 2a. API publik → loloskan langsung (tanpa cek auth)
     const isPublic = PUBLIC_API_ROUTES.some(route => pathname.startsWith(route));
-    if (isPublic) {
-      return NextResponse.next();
-    }
+    if (isPublic) return NextResponse.next();
 
-    // 2b. API admin/cron → cek role ADMIN atau CRON_SECRET
     const isAdminRoute = ADMIN_API_ROUTES.some(route => pathname.startsWith(route));
     if (isAdminRoute) {
-      // Cron jobs menggunakan ?key= atau Bearer token, bukan session
       if (pathname.startsWith("/api/cron")) {
         const key = req.nextUrl.searchParams.get("key");
         const bearer = req.headers.get("authorization")?.replace("Bearer ", "");
@@ -113,7 +109,6 @@ export async function proxy(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
 
-      // Admin API → cek session + role
       const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
       if (!token || token.role !== "ADMIN") {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -121,35 +116,36 @@ export async function proxy(req: NextRequest) {
       return NextResponse.next();
     }
 
-    // 2c. API privat (projects, profile, appearance, dll.) → cek session
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Rate limit API privat: 150 request/menit/IP (Lebih ketat, tapi tetap aman untuk editor)
+    // Rate limit API privat: 150 request/menit/IP
     if (checkRate(ip, 150, 60 * 1000)) {
-      return NextResponse.json(
+      // PERBAIKAN: Tambah Cache-Control agar blokir tidak nyangkut
+      const response = NextResponse.json(
         { error: "Terlalu banyak permintaan. Silakan tunggu sebentar." },
         { status: 429 }
       );
+      response.headers.set('Cache-Control', 'no-store, max-age=0');
+      return response;
     }
 
     return NextResponse.next();
   }
 
-  // ── 3. RATE LIMITER HALAMAN PUBLIK (500 req/menit/IP - Cukup untuk prefetching Next.js) ───────────────────
+  // ── 3. RATE LIMITER HALAMAN PUBLIK (500 req/menit/IP) ───────────────────
   if (checkRate(ip, 500, 60 * 1000)) {
-    return NextResponse.rewrite(new URL("/rate-limited", req.url));
+    // PERBAIKAN: Tambah Cache-Control agar blokir tidak nyangkut
+    const response = NextResponse.rewrite(new URL("/rate-limited", req.url));
+    response.headers.set('Cache-Control', 'no-store, max-age=0');
+    return response;
   }
 
   return NextResponse.next();
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// MATCHER — Sekarang mencakup SEMUA routes (halaman + API)
-// Hanya mengecualikan: static files, image optimization, dan assets statis
-// ══════════════════════════════════════════════════════════════════════════════
 export const config = {
   matcher: [
     "/((?!_next/static|_next/image|favicon.ico|icon.svg|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.gif|.*\\.svg|.*\\.webp|portfo\\.be\\.png|portfo\\.be2\\.png).*)",
