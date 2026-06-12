@@ -112,6 +112,7 @@ model SiteAppearance {
   customTexts      String  @default("{}") @db.Text
   publishedDraftId String?
   user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects         LiveThemeProject[]
 }
 
 model ThemeDraft {
@@ -130,6 +131,7 @@ model ThemeDraft {
   updatedAt     DateTime @updatedAt
   description   String?  @db.Text
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects      ThemeDraftProject[]
 
   @@index([userId])
 }
@@ -170,6 +172,8 @@ model Project {
   deletedAt   DateTime?
   user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   detail3D    Project3DDetail?
+  themeDrafts ThemeDraftProject[]
+  liveThemes  LiveThemeProject[]
 
   @@index([createdAt])
   @@index([deletedAt])
@@ -509,6 +513,36 @@ model AdminNote {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model ThemeDraftProject {
+  id            String     @id @default(uuid())
+  themeDraftId  String
+  projectId     String
+  orderIndex    Int        @default(0)
+  createdAt     DateTime   @default(now())
+
+  themeDraft    ThemeDraft @relation(fields: [themeDraftId], references: [id], onDelete: Cascade)
+  project       Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([themeDraftId, projectId])
+  @@index([themeDraftId, orderIndex])
+  @@index([projectId])
+}
+
+model LiveThemeProject {
+  id                String         @id @default(uuid())
+  siteAppearanceId  String
+  projectId         String
+  orderIndex        Int            @default(0)
+  createdAt         DateTime       @default(now())
+
+  siteAppearance    SiteAppearance @relation(fields: [siteAppearanceId], references: [id], onDelete: Cascade)
+  project           Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([siteAppearanceId, projectId])
+  @@index([siteAppearanceId, orderIndex])
+  @@index([projectId])
 }
 
 enum PlanType {

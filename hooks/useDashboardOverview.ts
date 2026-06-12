@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from 'swr';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 // Fetcher standar menggunakan fetch bawaan
 const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then((res) => {
@@ -10,6 +10,12 @@ const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then((res) =>
 });
 
 export function useDashboardOverview() {
+  const [tzOffset, setTzOffset] = useState<number | null>(null);
+
+  useEffect(() => {
+    setTzOffset(new Date().getTimezoneOffset());
+  }, []);
+
   // 1. Sync: layout, announcements, overview counts, activities
   const { data: dashboardSyncData, isLoading: isLoadingSync } = useSWR('/api/dashboard/sync', fetcher, {
     revalidateOnFocus: true,
@@ -18,8 +24,9 @@ export function useDashboardOverview() {
   });
 
   // 2. Analytics: SATU sumber kebenaran yang sama dengan halaman Metrics
+  const swrUrl = tzOffset !== null ? `/api/analytics/stats?range=7d&tzOffset=${tzOffset}` : null;
   const { data: analyticsData, isLoading: isLoadingAnalytics } = useSWR(
-    '/api/analytics/stats?range=7d',
+    swrUrl,
     fetcher,
     { refreshInterval: 30000, dedupingInterval: 15000 }
   );

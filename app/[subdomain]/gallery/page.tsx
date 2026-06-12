@@ -1,20 +1,53 @@
 import React from 'react';
-import Link from 'next/link';
+import prisma from '@/lib/prisma';
+import GalleryModalView from '@/components/features/gallery/GalleryModalView';
 
-export default async function FullGalleryPage({ params }: { params: { subdomain: string } }) {
+export default async function FullGalleryPage({ 
+  params 
+}: { 
+  params: { subdomain: string } 
+}) {
   const { subdomain } = await params;
 
-  return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center">
-      <h1 className="text-white text-4xl font-black mb-6 uppercase tracking-tighter">Halaman Galeri Penuh</h1>
-      <p className="text-white/40 mb-10">Eksplorasi karya-karya terbaik dari {subdomain}.</p>
+  // Fetch Data dari Prisma di Sisi Server (Lebih Cepat)
+  const userData = await prisma.user.findFirst({
+    where: { 
+      profile: { subdomain: subdomain } 
+    },
+    include: {
+      siteAppearance: {
+        include: {
+          projects: {
+            orderBy: { orderIndex: 'asc' }
+          }
+        }
+      },
+      projects: {
+        where: { deletedAt: null },
+        orderBy: { createdAt: 'desc' }
+      }
+    }
+  });
+
+  let finalProjects = userData?.projects || [];
+  if (userData?.siteAppearance?.projects && userData.siteAppearance.projects.length > 0) {
+    const projectMap = new Map();
+    userData.projects.forEach((p: any) => projectMap.set(p.id, p));
+    
+    const curatedProjects = userData.siteAppearance.projects
+      .map((pivot: any) => projectMap.get(pivot.projectId))
+      .filter(Boolean);
       
-      <Link 
-        href={`/${subdomain}`}
-        className="px-8 py-4 bg-white text-black font-bold rounded-full text-xs uppercase tracking-widest hover:bg-slate-200 transition-all"
-      >
-        Kembali ke Portofolio
-      </Link>
-    </div>
+    finalProjects = curatedProjects;
+  }
+
+  // Filter 3D jika diperlukan agar tidak rusak di LazyImage
+  const projects = finalProjects.filter((p: any) => p.projectType !== '3d');
+
+  return (
+    <GalleryModalView 
+      projects={projects} 
+      subdomain={subdomain} 
+    />
   );
 }

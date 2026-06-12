@@ -27,6 +27,8 @@ export function DraftManagerModal({
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [draftToDelete, setDraftToDelete] = useState<string | null>(null);
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(activeDraftId);
+  const [isSimulatingLoad, setIsSimulatingLoad] = useState(true);
+  const hasLoadedOnce = React.useRef(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -34,6 +36,16 @@ export function DraftManagerModal({
         setSelectedDraftId(activeDraftId);
       } else {
         setSelectedDraftId('live');
+      }
+      
+      if (!hasLoadedOnce.current) {
+        const timer = setTimeout(() => {
+          setIsSimulatingLoad(false);
+          hasLoadedOnce.current = true;
+        }, 500);
+        return () => clearTimeout(timer);
+      } else {
+        setIsSimulatingLoad(false);
       }
     }
   }, [isOpen, activeDraftId]);
@@ -82,67 +94,83 @@ export function DraftManagerModal({
             </button>
           </div>
           
-          <div className="overflow-y-auto flex-1 p-3 space-y-1 custom-scrollbar">
-            {/* Opsi Live */}
-            <button
-              onClick={() => setSelectedDraftId('live')}
-              className={`w-full text-left px-4 py-3 rounded-none transition-all flex items-center gap-3 ${
-                isViewingLive 
-                  ? 'bg-zinc-900 border border-white/10 text-white' 
-                  : 'hover:bg-zinc-900 text-white/40'
-              }`}
-            >
-              <div className={`w-8 h-8 rounded-none flex items-center justify-center shrink-0 border border-white/5 bg-zinc-950 ${isViewingLive ? 'text-[#ff9e00]' : 'text-white/40'}`}>
-                <Globe className="w-4 h-4" />
+          <div className="overflow-y-auto flex-1 p-3 space-y-1 custom-scrollbar relative">
+            {isSimulatingLoad ? (
+              <div className="space-y-2 animate-pulse">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={`skel-draft-${i}`} className="w-full px-4 py-3 border border-white/5 bg-zinc-900/30 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-white/5 shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3 w-3/4 bg-white/5" />
+                      <div className="h-2 w-1/2 bg-white/5" />
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-mono font-bold text-xs uppercase truncate">Versi Publik (Live)</h4>
-                <p className="text-[9px] font-mono text-white/30 truncate mt-0.5">Desain utama</p>
-              </div>
-              {activeDraftId === null && (
-                <div className="w-1.5 h-1.5 rounded-none bg-emerald-400 shrink-0 animate-pulse"></div>
-              )}
-            </button>
-
-            {/* Separator */}
-            <div className="h-px bg-white/5 my-2 mx-2"></div>
-
-            {/* List Draft */}
-            {drafts.map((draft) => {
-              const isSelected = selectedDraftId === draft.id;
-              const isLive = publishedDraftId === draft.id;
-              const isActive = activeDraftId === draft.id;
-              
-              return (
+            ) : (
+              <div className="animate-in fade-in duration-300">
+                {/* Opsi Live */}
                 <button
-                  key={draft.id}
-                  onClick={() => setSelectedDraftId(draft.id)}
+                  onClick={() => setSelectedDraftId('live')}
                   className={`w-full text-left px-4 py-3 rounded-none transition-all flex items-center gap-3 ${
-                    isSelected 
+                    isViewingLive 
                       ? 'bg-zinc-900 border border-white/10 text-white' 
                       : 'hover:bg-zinc-900 text-white/40'
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded-none flex items-center justify-center shrink-0 border border-white/5 bg-zinc-950 ${isSelected ? 'text-[#ff9e00]' : 'text-white/40'}`}>
-                    <FileText className="w-4 h-4" />
+                  <div className={`w-8 h-8 rounded-none flex items-center justify-center shrink-0 border border-white/5 bg-zinc-950 ${isViewingLive ? 'text-[#ff9e00]' : 'text-white/40'}`}>
+                    <Globe className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-mono font-bold text-xs uppercase truncate">{draft.name}</h4>
-                      {isLive && (
-                        <span className="shrink-0 text-[8px] font-mono font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/30 px-1.5 py-0.5 border border-emerald-500/20">LIVE</span>
-                      )}
-                    </div>
-                    <p className="text-[9px] font-mono text-white/30 mt-0.5 truncate">
-                      {new Date(draft.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </p>
+                    <h4 className="font-mono font-bold text-xs uppercase truncate">Versi Publik (Live)</h4>
+                    <p className="text-[9px] font-mono text-white/30 truncate mt-0.5">Desain utama</p>
                   </div>
-                  {isActive && !isLive && (
-                    <div className="w-1.5 h-1.5 rounded-none bg-sky-400 shrink-0 animate-pulse"></div>
+                  {activeDraftId === null && (
+                    <div className="w-1.5 h-1.5 rounded-none bg-emerald-400 shrink-0 animate-pulse"></div>
                   )}
                 </button>
-              );
-            })}
+
+                {/* Separator */}
+                <div className="h-px bg-white/5 my-2 mx-2"></div>
+
+                {/* List Draft */}
+                {drafts.map((draft) => {
+                  const isSelected = selectedDraftId === draft.id;
+                  const isLive = publishedDraftId === draft.id;
+                  const isActive = activeDraftId === draft.id;
+                  
+                  return (
+                    <button
+                      key={draft.id}
+                      onClick={() => setSelectedDraftId(draft.id)}
+                      className={`w-full text-left px-4 py-3 rounded-none transition-all flex items-center gap-3 ${
+                        isSelected 
+                          ? 'bg-zinc-900 border border-white/10 text-white' 
+                          : 'hover:bg-zinc-900 text-white/40'
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-none flex items-center justify-center shrink-0 border border-white/5 bg-zinc-950 ${isSelected ? 'text-[#ff9e00]' : 'text-white/40'}`}>
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-mono font-bold text-xs uppercase truncate">{draft.name}</h4>
+                          {isLive && (
+                            <span className="shrink-0 text-[8px] font-mono font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/30 px-1.5 py-0.5 border border-emerald-500/20">LIVE</span>
+                          )}
+                        </div>
+                        <p className="text-[9px] font-mono text-white/30 mt-0.5 truncate">
+                          {new Date(draft.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </p>
+                      </div>
+                      {isActive && !isLive && (
+                        <div className="w-1.5 h-1.5 rounded-none bg-sky-400 shrink-0 animate-pulse"></div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
@@ -150,7 +178,15 @@ export function DraftManagerModal({
         <div className="flex-1 bg-zinc-900/40 flex flex-col relative overflow-hidden">
           
           <div className="flex-1 overflow-y-auto">
-            {isViewingLive ? (
+            {isSimulatingLoad ? (
+              <div className="p-8 md:p-12 max-w-2xl mx-auto h-full flex flex-col justify-center animate-pulse">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-white/5 rounded-none mb-6"></div>
+                <div className="h-6 w-1/2 bg-white/5 mb-4"></div>
+                <div className="h-3 w-full bg-white/5 mb-2"></div>
+                <div className="h-3 w-5/6 bg-white/5 mb-8"></div>
+                <div className="h-10 w-48 bg-white/5"></div>
+              </div>
+            ) : isViewingLive ? (
               
               <div className="p-8 md:p-12 max-w-2xl mx-auto h-full flex flex-col justify-center">
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-none bg-zinc-950 border border-white/10 flex items-center justify-center mb-6 text-[#ff9e00]">

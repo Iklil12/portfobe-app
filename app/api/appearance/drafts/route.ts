@@ -18,7 +18,12 @@ export async function GET(req: Request) {
 
     const drafts = await prisma.themeDraft.findMany({
       where: { userId: user.id },
-      orderBy: { updatedAt: 'desc' }
+      orderBy: { updatedAt: 'desc' },
+      include: {
+        projects: {
+          orderBy: { orderIndex: 'asc' }
+        }
+      }
     });
 
     return NextResponse.json(drafts);
@@ -60,7 +65,8 @@ export async function POST(req: Request) {
         buttonShape, 
         cardStyle,
         splashScreen,
-        customTexts
+        customTexts,
+        selectedProjects
     } = body;
 
     // === SANITASI INPUT ===
@@ -82,6 +88,16 @@ export async function POST(req: Request) {
       }
     }
 
+    let finalSelectedProjects = selectedProjects;
+    if (Array.isArray(selectedProjects) && selectedProjects.length > 0) {
+      const validProjects = await prisma.project.findMany({
+        where: { userId: user.id, id: { in: selectedProjects }, deletedAt: null },
+        select: { id: true }
+      });
+      const validIds = validProjects.map(p => p.id);
+      finalSelectedProjects = selectedProjects.filter((id: string) => validIds.includes(id));
+    }
+
     const newDraft = await prisma.themeDraft.create({
       data: {
         userId: user.id,
@@ -94,7 +110,13 @@ export async function POST(req: Request) {
         buttonShape: buttonShape || 'rounded',
         cardStyle: cardStyle || 'flat',
         splashScreen: splashScreen || false,
-        customTexts: stringifiedCustomTexts
+        customTexts: stringifiedCustomTexts,
+        projects: Array.isArray(finalSelectedProjects) && finalSelectedProjects.length > 0 ? {
+          create: finalSelectedProjects.map((projectId: string, index: number) => ({
+            projectId: projectId,
+            orderIndex: index
+          }))
+        } : undefined
       }
     });
 
@@ -125,7 +147,8 @@ export async function PUT(req: Request) {
         buttonShape, 
         cardStyle,
         splashScreen,
-        customTexts
+        customTexts,
+        selectedProjects
     } = body;
 
     if (!id) return NextResponse.json({ error: "ID Draft diperlukan" }, { status: 400 });
@@ -151,6 +174,16 @@ export async function PUT(req: Request) {
     const safeName = name !== undefined ? sanitize(String(name), 50) : undefined;
     const safeDescription = description !== undefined ? sanitize(String(description), 200) : undefined;
 
+    let finalSelectedProjects = selectedProjects;
+    if (Array.isArray(selectedProjects) && selectedProjects.length > 0) {
+      const validProjects = await prisma.project.findMany({
+        where: { userId: user.id, id: { in: selectedProjects }, deletedAt: null },
+        select: { id: true }
+      });
+      const validIds = validProjects.map(p => p.id);
+      finalSelectedProjects = selectedProjects.filter((id: string) => validIds.includes(id));
+    }
+
     const updatedDraft = await prisma.themeDraft.update({
       where: { id },
       data: {
@@ -163,7 +196,16 @@ export async function PUT(req: Request) {
         ...(buttonShape !== undefined && { buttonShape }),
         ...(cardStyle !== undefined && { cardStyle }),
         ...(splashScreen !== undefined && { splashScreen }),
-        customTexts: stringifiedCustomTexts
+        customTexts: stringifiedCustomTexts,
+        ...(Array.isArray(finalSelectedProjects) && {
+          projects: {
+            deleteMany: {},
+            create: finalSelectedProjects.map((projectId: string, index: number) => ({
+              projectId: projectId,
+              orderIndex: index
+            }))
+          }
+        })
       }
     });
 

@@ -38,6 +38,7 @@ export function ThemeSelectionModal({
   const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'pro' | 'favorites'>('all');
   const [isModalLoading, setIsModalLoading] = useState(true);
   const filterTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasLoadedOnce = useRef(false);
 
   // Memicu Skeleton Loading saat ganti tab filter
   const handleTabChange = (tabId: 'all' | 'free' | 'pro' | 'favorites') => {
@@ -52,12 +53,18 @@ export function ThemeSelectionModal({
     }, 400); // 400ms flash skeleton
   };
 
-  // Memicu Skeleton Loading setiap kali modal dibuka
+  // Memicu Skeleton Loading HANYA di pembukaan pertama
   useEffect(() => {
     if (isOpen) {
-      setIsModalLoading(true);
-      const timer = setTimeout(() => setIsModalLoading(false), 600);
-      return () => clearTimeout(timer);
+      if (!hasLoadedOnce.current) {
+        const timer = setTimeout(() => {
+          setIsModalLoading(false);
+          hasLoadedOnce.current = true;
+        }, 600);
+        return () => clearTimeout(timer);
+      } else {
+        setIsModalLoading(false);
+      }
     }
   }, [isOpen]);
 

@@ -127,8 +127,8 @@ export async function proxy(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Rate limit API privat: 60 request/menit/IP
-    if (checkRate(ip, 60, 60 * 1000)) {
+    // Rate limit API privat: 150 request/menit/IP (Lebih ketat, tapi tetap aman untuk editor)
+    if (checkRate(ip, 150, 60 * 1000)) {
       return NextResponse.json(
         { error: "Terlalu banyak permintaan. Silakan tunggu sebentar." },
         { status: 429 }
@@ -138,8 +138,8 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // ── 3. RATE LIMITER HALAMAN PUBLIK (30 req/menit/IP) ───────────────────
-  if (checkRate(ip, 30, 60 * 1000)) {
+  // ── 3. RATE LIMITER HALAMAN PUBLIK (500 req/menit/IP - Cukup untuk prefetching Next.js) ───────────────────
+  if (checkRate(ip, 500, 60 * 1000)) {
     return NextResponse.rewrite(new URL("/rate-limited", req.url));
   }
 

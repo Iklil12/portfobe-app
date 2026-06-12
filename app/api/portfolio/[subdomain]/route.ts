@@ -29,7 +29,13 @@ export async function GET(
           },
           include: {
             profile: true,
-            siteAppearance: true,
+            siteAppearance: {
+              include: {
+                projects: {
+                  orderBy: { orderIndex: 'asc' }
+                }
+              }
+            },
             links: { 
               where: { isActive: true }, 
               orderBy: { order: 'asc' } 
@@ -64,7 +70,24 @@ export async function GET(
       return NextResponse.json({ error: "Portfolio tidak ditemukan" }, { status: 404 });
     }
 
-    // 5. SOFT LOCK: Batasi data berdasarkan plan untuk halaman publik
+    // 5. KURASI PROJECT: Filter & Urutkan berdasarkan LiveThemeProject jika ada
+    let finalProjects = userData.projects;
+    if (userData.siteAppearance?.projects && userData.siteAppearance.projects.length > 0) {
+      const projectMap = new Map();
+      userData.projects.forEach((p: any) => projectMap.set(p.id, p));
+      
+      const curatedProjects = userData.siteAppearance.projects
+        .map((pivot: any) => projectMap.get(pivot.projectId))
+        .filter(Boolean);
+        
+      // WAJIB: Pastikan tipe 3D tetap lolos karena blok 3D butuh datanya dan sengaja disembunyikan dari Kurasi
+      const nonCurated3D = userData.projects.filter((p: any) => p.projectType === '3d' && !curatedProjects.some((cp: any) => cp.id === p.id));
+      
+      finalProjects = [...curatedProjects, ...nonCurated3D];
+    }
+    userData.projects = finalProjects;
+
+    // 6. SOFT LOCK: Batasi data berdasarkan plan untuk halaman publik
     const isFree = userData.plan === 'FREE';
     const publicProjects     = isFree ? userData.projects.slice(0, 5)     : userData.projects;
     const publicLinks        = isFree ? userData.links.slice(0, 1)        : userData.links;

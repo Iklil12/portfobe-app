@@ -45,7 +45,13 @@ export async function GET(req: Request) {
       where: { email: session.user.email },
       include: {
         profile: true,
-        siteAppearance: true,
+        siteAppearance: {
+          include: {
+            projects: {
+              orderBy: { orderIndex: 'asc' }
+            }
+          }
+        },
         links: { orderBy: { order: 'asc' } },
         projects: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
         certificates: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
@@ -138,7 +144,8 @@ export async function PATCH(req: Request) {
         splashScreen,
         favoriteThemes,
         customTexts,
-        publishedDraftId
+        publishedDraftId,
+        selectedProjects
     } = body;
 
     // OPTIMASI: Jika hanya update favorit, lewati pengecekan plan dan logging
@@ -175,6 +182,17 @@ export async function PATCH(req: Request) {
     const currentAppearance = await prisma.siteAppearance.findUnique({ where: { userId: user.id } });
     const isThemeChanged = themeTemplate && currentAppearance?.themeTemplate !== themeTemplate;
 
+    // VALIDASI INTEGRITAS: Pastikan project yang akan disimpan benar-benar masih ada (untuk menghindari FK Error jika dihapus dari tab lain)
+    let finalSelectedProjects = selectedProjects;
+    if (Array.isArray(selectedProjects) && selectedProjects.length > 0) {
+      const validProjects = await prisma.project.findMany({
+        where: { userId: user.id, id: { in: selectedProjects }, deletedAt: null },
+        select: { id: true }
+      });
+      const validIds = validProjects.map(p => p.id);
+      finalSelectedProjects = selectedProjects.filter((id: string) => validIds.includes(id));
+    }
+
     // UPDATE ATAU CREATE KE TABEL SITE_APPEARANCE
     const updatedAppearance = await prisma.siteAppearance.upsert({
       where: { userId: user.id },
@@ -188,7 +206,16 @@ export async function PATCH(req: Request) {
         ...(splashScreen !== undefined && { splashScreen }),
         ...(favoriteThemes !== undefined && { favoriteThemes: safeStringifyJson(favoriteThemes) }),
         ...(stringifiedCustomTexts !== undefined && { customTexts: stringifiedCustomTexts }),
-        ...(publishedDraftId !== undefined && { publishedDraftId })
+        ...(publishedDraftId !== undefined && { publishedDraftId }),
+        ...(Array.isArray(finalSelectedProjects) && {
+          projects: {
+            deleteMany: {},
+            create: finalSelectedProjects.map((projectId: string, index: number) => ({
+              projectId: projectId,
+              orderIndex: index
+            }))
+          }
+        })
       },
       create: {
         userId: user.id,
@@ -201,7 +228,13 @@ export async function PATCH(req: Request) {
         splashScreen,
         favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : "[]",
         customTexts: stringifiedCustomTexts !== undefined ? stringifiedCustomTexts : "{}",
-        publishedDraftId: publishedDraftId !== undefined ? publishedDraftId : null
+        publishedDraftId: publishedDraftId !== undefined ? publishedDraftId : null,
+        projects: Array.isArray(finalSelectedProjects) && finalSelectedProjects.length > 0 ? {
+          create: finalSelectedProjects.map((projectId: string, index: number) => ({
+            projectId: projectId,
+            orderIndex: index
+          }))
+        } : undefined
       }
     });
 

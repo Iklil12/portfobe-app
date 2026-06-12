@@ -7,12 +7,13 @@ import { ThemeSelectionModal } from './ThemeSelectionModal';
 import { ProUpgradeModal } from '@/components/ProUpgradeModal';
 import { DraftManagerModal } from './DraftManagerModal';
 import { SaveDraftModal } from './SaveDraftModal';
+import { ProjectSelectionModal } from './ProjectSelectionModal';
 import { THEMES_DATA } from '@/lib/themes';
 import { 
   Layout, Film, Bolt, Grid, Star, Layers, Box, Move, 
   Columns, Newspaper, Moon, Waves, Square, Video, Image, Gem, 
   ArrowLeft, Save, Loader2, Rocket, FileText, ChevronLeft, ChevronRight, 
-  Sparkles, FolderOpen, AlertTriangle, Play, MoveVertical, Undo2, Redo2, 
+  Sparkles, RotateCcw, FolderOpen, AlertTriangle, Play, MoveVertical, Undo2, Redo2, 
   ExternalLink, Sliders, Monitor, Smartphone, X, Check
 } from 'lucide-react';
 
@@ -65,10 +66,12 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     hasUnpublishedChanges,
     isSaveDraftModalOpen,
     pageBlocks,
+    selectedProjects,
     subdomain: stateSubdomain
   } = state;
 
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
+  const [isProjectModalOpen, setIsProjectModalOpen] = React.useState(false);
   const [dragY, setDragY] = React.useState(0);
   const [isDragging, setIsDragging] = React.useState(false);
   const touchStartY = React.useRef(0);
@@ -137,7 +140,8 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     publishDesign,
     loadDraft,
     toggleFavorite,
-    updateCustomText
+    updateCustomText,
+    setSelectedProjects
   } = actions;
 
   const isCurrentlyLive = activeDraftId ? activeDraftId === publishedDraftId : publishedDraftId === null;
@@ -208,6 +212,15 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         onClose={() => setIsSaveDraftModalOpen(false)}
         onSave={(name, desc) => saveDraft(name, desc)}
         isSaving={isSavingDraft}
+      />
+      <ProjectSelectionModal
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
+        allProjects={(state.rawProjects || []).filter((p: any) => p.projectType !== '3d')}
+        selectedProjects={selectedProjects || []}
+        onSaveSelection={(newSelected) => {
+          setSelectedProjects(newSelected);
+        }}
       />
 
       {/* MOBILE FLOATING DOCK (Live Canvas First) */}
@@ -398,7 +411,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                   className="flex-1 px-2 py-3 rounded-none border border-white/10 bg-zinc-950 hover:bg-zinc-900 text-white/60 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-none group"
                   title="Reset susunan blok ke setelan pabrik (segar)"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-[#ff9e00] group-hover:scale-110 transition-transform" />
+                  <RotateCcw className="w-3.5 h-3.5 text-[#ff9e00] group-hover:-rotate-90 transition-transform duration-300" />
                   <span className="text-[10px] font-mono font-bold tracking-wider uppercase">Reset Tema</span>
                 </button>
 
@@ -452,6 +465,34 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               </>
             )}
           </div>
+
+          {/* KURASI PROJECT */}
+          {!isLoading && (
+            <div 
+              className="cursor-pointer border border-white/10 rounded-none p-5 mb-6 transition-all duration-200 hover:border-white/20 bg-zinc-900/20 flex items-center justify-between"
+              onClick={() => setIsProjectModalOpen(true)}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-10 h-10 rounded-none flex items-center justify-center shrink-0 transition-colors ${selectedProjects?.length > 0 ? 'bg-[#ff9e00] text-black' : 'bg-zinc-950 border border-white/10 text-white/40'}`}>
+                  <Image className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-mono font-bold tracking-wider text-white uppercase flex items-center gap-2">
+                    Kurasi Project
+                  </h3>
+                  <p className="text-[11px] font-mono text-white/40 mt-1">
+                    {selectedProjects?.length > 0 
+                      ? `${selectedProjects.length} project dipilih khusus untuk tema ini.` 
+                      : `Semua project ditampilkan. (Default)`}
+                  </p>
+                </div>
+              </div>
+              
+              <button className="w-8 h-8 flex items-center justify-center bg-zinc-950 border border-white/10 text-white/40 hover:text-white transition-colors rounded-none">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
 
           {/* TOGGLE SPLASH SCREEN */}
           {isLoading ? (

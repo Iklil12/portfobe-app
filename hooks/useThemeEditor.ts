@@ -105,6 +105,7 @@ export function useThemeEditor() {
   const customTextsRef = useRef(customTexts);
   useEffect(() => { customTextsRef.current = customTexts; }, [customTexts]);
   const [pageBlocks, setPageBlocks] = useState<PageBlock[]>([]);
+  const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const dataLoaded = useRef(false);
 
   // --- STATE DRAFTS & PUBLISHING ---
@@ -130,6 +131,7 @@ export function useThemeEditor() {
     splashScreen: boolean;
     customTexts: Record<string, string>;
     pageBlocks: PageBlock[];
+    selectedProjects: string[];
   };
 
   const pastStatesRef = useRef<EditorStateSnapshot[]>([]);
@@ -139,7 +141,7 @@ export function useThemeEditor() {
   const prevCombinedState = useRef<EditorStateSnapshot | null>(null);
 
   const currentSnapshot: EditorStateSnapshot = {
-    activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks
+    activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks, selectedProjects
   };
 
   useEffect(() => {
@@ -167,7 +169,7 @@ export function useThemeEditor() {
     }, 50);
 
     return () => clearTimeout(timer);
-  }, [activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, pageBlocks, isLoading]);
+  }, [activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, pageBlocks, selectedProjects, isLoading]);
 
   const undo = () => {
     if (pastStatesRef.current.length === 0) return;
@@ -186,6 +188,7 @@ export function useThemeEditor() {
     setSplashScreen(previousState.splashScreen);
     setCustomTexts(previousState.customTexts);
     setPageBlocks(previousState.pageBlocks);
+    setSelectedProjects(previousState.selectedProjects);
     
     prevCombinedState.current = previousState;
     setTimeout(() => { isRestoring.current = false; }, 100);
@@ -208,6 +211,7 @@ export function useThemeEditor() {
     setSplashScreen(nextState.splashScreen);
     setCustomTexts(nextState.customTexts);
     setPageBlocks(nextState.pageBlocks);
+    setSelectedProjects(nextState.selectedProjects);
     
     prevCombinedState.current = nextState;
     setTimeout(() => { isRestoring.current = false; }, 100);
@@ -230,6 +234,7 @@ export function useThemeEditor() {
     bio !== lastSavedState.bio ||
     location !== lastSavedState.location ||
     safeStringifyJson(customTexts) !== safeStringifyJson(lastSavedState.customTexts) ||
+    safeStringifyJson(selectedProjects) !== safeStringifyJson(lastSavedState.selectedProjects) ||
     safeStringifyJson(pageBlocks.map(b => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked}))) !== 
     safeStringifyJson(lastSavedState.pageBlocks?.map((b: PageBlock) => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked})))
   ) : false;
@@ -286,6 +291,12 @@ export function useThemeEditor() {
               
               if (sa.publishedDraftId) setPublishedDraftId(sa.publishedDraftId);
               
+              if (sa.projects) {
+                setSelectedProjects(sa.projects.map((p: any) => p.projectId));
+              } else {
+                setSelectedProjects([]);
+              }
+              
               // Set lastSavedState for dirty tracking
               // PENTING: Gunakan blok yang sudah difilter (tanpa legacy INTEGRATIONS)
               let cleanBlocks = (appData.pageBlocks || []).filter((b: PageBlock) => !b.blockType.includes('INTEGRATIONS'));
@@ -309,6 +320,7 @@ export function useThemeEditor() {
                 splashScreen: sa.splashScreen || false,
                 customTexts: texts,
                 pageBlocks: cleanBlocks,
+                selectedProjects: sa.projects ? sa.projects.map((p: any) => p.projectId) : [],
                 fullName: appData.profile?.fullName || "Nama Anda",
                 profession: appData.profile?.profession || "Profesi / Bio Singkat",
                 bio: appData.profile?.bio || "",
@@ -393,6 +405,9 @@ export function useThemeEditor() {
                 const parsedTexts: any = safeParseJson(liveDraft.customTexts, {});
                 setCustomTexts(parsedTexts);
                 
+                const draftProjects = liveDraft.projects ? liveDraft.projects.map((p: any) => p.projectId) : [];
+                setSelectedProjects(draftProjects);
+                
                 const baseBlocks = appData.pageBlocks ? appData.pageBlocks.filter((b: PageBlock) => !b.blockType.includes('INTEGRATIONS')) : [];
                 let draftBlocks = baseBlocks;
                 
@@ -421,7 +436,8 @@ export function useThemeEditor() {
                   cardStyle: liveDraft.cardStyle,
                   splashScreen: liveDraft.splashScreen,
                   customTexts: parsedTexts,
-                  pageBlocks: draftBlocks
+                  pageBlocks: draftBlocks,
+                  selectedProjects: draftProjects
                 }));
               }
             }
@@ -626,7 +642,8 @@ export function useThemeEditor() {
             isVisible: b.isVisible,
             isLocked: b.isLocked
           }))
-        } 
+        },
+        selectedProjects
       };
 
       const method = activeDraftId ? 'PUT' : 'POST';
@@ -652,7 +669,7 @@ export function useThemeEditor() {
         setActiveDraftName(data.name);
         setIsSaveDraftModalOpen(false);
         setLastSavedState({
-          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks: [...pageBlocks],
+          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks: [...pageBlocks], selectedProjects: [...selectedProjects],
           fullName, profession, bio, location
         });
         
@@ -699,7 +716,8 @@ export function useThemeEditor() {
             isLocked: b.isLocked
           }))
         },
-        publishedDraftId: activeDraftId || null // Set pelacak draft yang sedang tayang
+        publishedDraftId: activeDraftId || null, // Set pelacak draft yang sedang tayang
+        selectedProjects
       };
       
       const delayPromise = new Promise(resolve => setTimeout(resolve, 2000));
@@ -746,7 +764,7 @@ export function useThemeEditor() {
         
         setPublishedDraftId(activeDraftId || null);
         setLastSavedState({
-          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks: [...pageBlocks],
+          activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks: [...pageBlocks], selectedProjects: [...selectedProjects],
           fullName, profession, bio, location
         });
         setHasUnpublishedChanges(false);
@@ -785,6 +803,12 @@ export function useThemeEditor() {
     
     const parsedTexts: any = safeParseJson(draft.customTexts, {});
     setCustomTexts(parsedTexts);
+    
+    if (draft.projects && Array.isArray(draft.projects)) {
+      setSelectedProjects(draft.projects.map((p: any) => p.projectId));
+    } else {
+      setSelectedProjects([]);
+    }
     
     let draftBlocks = pageBlocks;
     const baseBlocks = dbData.pageBlocks || pageBlocks;
@@ -833,7 +857,8 @@ export function useThemeEditor() {
       cardStyle: draft.cardStyle,
       splashScreen: draft.splashScreen,
       customTexts: parsedTexts,
-      pageBlocks: draftBlocks
+      pageBlocks: draftBlocks,
+      selectedProjects: draft.projects ? draft.projects.map((p: any) => p.projectId) : []
     }));
 
     setIsLoading(false);
@@ -858,6 +883,12 @@ export function useThemeEditor() {
       parsedTexts = safeParseJson(dbData.siteAppearance.customTexts, {});
       setCustomTexts(parsedTexts);
       
+      if (dbData.siteAppearance.projects && Array.isArray(dbData.siteAppearance.projects)) {
+        setSelectedProjects(dbData.siteAppearance.projects.map((p: any) => p.projectId));
+      } else {
+        setSelectedProjects([]);
+      }
+      
       // Update dirty tracking
       setLastSavedState((prev: any) => ({
         ...prev,
@@ -869,7 +900,8 @@ export function useThemeEditor() {
         cardStyle: dbData.siteAppearance.cardStyle || 'flat',
         splashScreen: dbData.siteAppearance.splashScreen || false,
         customTexts: parsedTexts,
-        pageBlocks: dbData.pageBlocks || []
+        pageBlocks: dbData.pageBlocks || [],
+        selectedProjects: dbData.siteAppearance.projects ? dbData.siteAppearance.projects.map((p: any) => p.projectId) : []
       }));
     }
 
@@ -888,10 +920,26 @@ export function useThemeEditor() {
   };
 
   // Persiapan data untuk Live Preview
+  let previewProjects = dbData.projects || [];
+  if (selectedProjects && selectedProjects.length > 0) {
+    const projectMap = new Map();
+    (dbData.projects || []).forEach((p: any) => projectMap.set(p.id, p));
+    
+    const curatedProjects = selectedProjects
+      .map(id => projectMap.get(id))
+      .filter(Boolean);
+      
+    // 3D projects must remain
+    const nonCurated3D = (dbData.projects || []).filter((p: any) => p.projectType === '3d' && !curatedProjects.some(cp => cp.id === p.id));
+    
+    previewProjects = [...curatedProjects, ...nonCurated3D];
+  }
+
   const livePreviewData = {
     ...dbData,
     profile: { fullName, profession, bio, avatarUrl, subdomain, location },
-    pageBlocks
+    pageBlocks,
+    projects: previewProjects
   };
   
   const livePreviewTheme = { 
@@ -938,6 +986,8 @@ export function useThemeEditor() {
       isDirty,
       hasUnpublishedChanges,
       pageBlocks,
+      selectedProjects,
+      rawProjects: dbData.projects || [],
       previewMode,
       desktopZoom,
       ZOOM_MIN,
@@ -970,6 +1020,7 @@ export function useThemeEditor() {
       toggleFavorite,
       updateCustomText,
       setPageBlocks,
+      setSelectedProjects,
       resetToThemePreset,
       undo,
       redo
