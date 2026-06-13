@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import OnboardingModal from "@/components/OnboardingModal";
 import WelcomeBannerModal from "@/components/WelcomeBannerModal";
@@ -13,12 +13,29 @@ import { GlobalAnnouncementBanner } from '@/components/features/announcements/Gl
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Tutup sidebar mobile otomatis saat pindah rute/menu
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [pathname]);
+
+  // Global Hotkey: CMD/CTRL + E to open Theme Editor
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
+      
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'e') {
+        e.preventDefault();
+        router.push('/dashboard/appearance');
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [router]);
 
   const {
     isLoading,

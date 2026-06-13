@@ -93,7 +93,7 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
 
                            {/* Right Column */}
                            <div className="flex-1 flex flex-col gap-6">
-                              <Link href="#" className="group/item flex gap-4 items-start">
+                              <Link href="/learn/knowledge-base" className="group/item flex gap-4 items-start">
                                  <div className="w-10 h-10 bg-neutral-900 border border-white/10 rounded-none flex items-center justify-center text-white/40 group-hover/item:text-[#ff9e00] group-hover/item:bg-neutral-800 group-hover/item:border-[#ff9e00]/40 transition-all duration-300 shrink-0">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                                  </div>
@@ -103,7 +103,7 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
                                  </div>
                               </Link>
 
-                              <Link href="#" className="group/item flex gap-4 items-start">
+                              <Link href="/learn/guide" className="group/item flex gap-4 items-start">
                                  <div className="w-10 h-10 bg-neutral-900 border border-white/10 rounded-none flex items-center justify-center text-white/40 group-hover/item:text-[#ff9e00] group-hover/item:bg-neutral-800 group-hover/item:border-[#ff9e00]/40 transition-all duration-300 shrink-0">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
                                  </div>
@@ -194,8 +194,8 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
                   
                   {/* Sub menu items for mobile */}
                   <div className={`flex flex-col gap-4 pl-4 border-l border-white/10 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[400px] mt-2 opacity-100' : 'max-h-0 opacity-0'}`}>
-                     <Link href="#" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-white/50 hover:text-white transition-colors">Knowledge Base</Link>
-                     <Link href="#" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-white/50 hover:text-white transition-colors">Platform Guide</Link>
+                     <Link href="/learn/knowledge-base" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-white/50 hover:text-white transition-colors">Knowledge Base</Link>
+                     <Link href="/learn/guide" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-white/50 hover:text-white transition-colors">Platform Guide</Link>
                      <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-white/50 hover:text-white flex items-center gap-3 transition-colors">Engineering Blog <span className="text-[9px] bg-[#ff9e00] text-black px-1.5 py-0.5 font-bold tracking-widest font-mono">NEW</span></Link>
                      <Link href="#" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-white/50 hover:text-white transition-colors">Creator Showcases</Link>
                   </div>

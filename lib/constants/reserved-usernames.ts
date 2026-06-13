@@ -5,7 +5,7 @@ export const SYSTEM_RESERVED = [
 
   // 2. Fitur & Halaman Publik
   "document", "docs", "explore", "community", "templates", "themes", "showcase",
-  "features", "blog", "news", "update", "changelog",
+  "features", "blog", "news", "update", "changelog", "learn",
 
   // 3. Legalitas & Dukungan
   "about", "contact", "support", "help", "faq", "terms", "privacy", "policy", "legal",

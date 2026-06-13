@@ -82,7 +82,7 @@ export default function SupportPage() {
               <h3 className="text-lg font-display font-bold text-white mb-3">Pusat Bantuan</h3>
               <p className="text-xs text-white/50 font-mono tracking-wide leading-relaxed mb-8">Cari jawaban cepat untuk pertanyaan umum seputar fitur dan pengaturan.</p>
             </div>
-            <Link href="#" className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#ff9e00] hover:text-white transition-colors flex items-center gap-2">
+            <Link href="/learn/knowledge-base" className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#ff9e00] hover:text-white transition-colors flex items-center gap-2">
               Buka Artikel <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
