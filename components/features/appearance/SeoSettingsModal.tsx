@@ -41,102 +41,110 @@ export function SeoSettingsModal({ state, actions }: { state: any, actions: any 
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 lg:p-0">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-        onClick={() => actions.setIsSeoModalOpen(false)}
-      />
+    <div className="fixed inset-0 z-[999999] bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+      {/* Scrollable Overlay Area */}
+      <div className="absolute inset-0 overflow-y-auto" onClick={() => actions.setIsSeoModalOpen(false)}>
+        <div className="min-h-full flex items-center justify-center p-4 sm:p-6">
+          
+          {/* Modal Container */}
+          <div 
+            className="relative w-full max-w-4xl bg-[#111111] border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 ease-out flex flex-col md:flex-row"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Glow effect in background */}
+            <div className="absolute -top-[200px] -left-[200px] w-[400px] h-[400px] bg-[#0099ff]/20 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute -bottom-[200px] -right-[200px] w-[400px] h-[400px] bg-[#ff9e00]/10 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Modal Container */}
-      <div className="relative w-full max-w-4xl bg-[#111111] border border-white/10 rounded-2xl shadow-2xl flex flex-col lg:flex-row overflow-hidden animate-in zoom-in-95 duration-200">
-        
-        {/* LEFT COLUMN: Controls */}
-        <div className="flex-1 p-6 lg:p-8 flex flex-col border-b lg:border-b-0 lg:border-r border-white/5">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[#0099ff]/10 text-[#0099ff] flex items-center justify-center">
-                <Globe className="w-4 h-4" />
-              </div>
-              <div>
-                <h2 className="text-sm font-semibold text-white">SEO & Social Card</h2>
-                <p className="text-[11px] text-white/40">Atur tampilan link portofolio Anda di media sosial.</p>
-              </div>
-            </div>
-            <button onClick={() => actions.setIsSeoModalOpen(false)} className="lg:hidden text-white/40 hover:text-white">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="space-y-5 flex-1">
-            {/* Title Input */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-medium text-white/70 uppercase tracking-wider">Meta Title</label>
-              <input 
-                type="text"
-                value={seoTitle}
-                onChange={(e) => setSeoTitle(e.target.value)}
-                placeholder={fallbackTitle}
-                className="w-full bg-zinc-900/50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#0099ff] transition-colors"
-              />
-              <p className="text-[10px] text-white/30 text-right">{seoTitle.length}/60 karakter</p>
-            </div>
-
-            {/* Description Input */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-medium text-white/70 uppercase tracking-wider">Meta Description</label>
-              <textarea 
-                value={seoDescription}
-                onChange={(e) => setSeoDescription(e.target.value)}
-                placeholder={fallbackDescription}
-                rows={3}
-                className="w-full bg-zinc-900/50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#0099ff] transition-colors resize-none"
-              />
-              <p className="text-[10px] text-white/30 text-right">{seoDescription.length}/160 karakter</p>
-            </div>
-
-          </div>
-
-          <div className="mt-8 flex items-center justify-between pt-6 border-t border-white/5">
+            {/* Close Button */}
             <button
-              onClick={() => {
-                setSeoTitle('');
-                setSeoDescription('');
-              }}
-              className="px-4 py-2 text-xs font-medium text-red-400/80 hover:text-red-400 transition-colors flex items-center gap-2"
+              type="button"
+              onClick={() => actions.setIsSeoModalOpen(false)}
+              className="absolute right-6 top-6 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-all"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Reset ke Default
+              <X className="w-4 h-4" />
             </button>
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => actions.setIsSeoModalOpen(false)}
-                className="px-4 py-2 text-xs font-medium text-white/60 hover:text-white transition-colors"
+
+            {/* LEFT COLUMN: Controls */}
+            <div className="flex-1 p-6 md:p-8 lg:p-10 flex flex-col border-b md:border-b-0 md:border-r border-white/5 relative z-10">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 rounded-xl bg-[#0099ff]/10 text-[#0099ff] flex items-center justify-center border border-[#0099ff]/20 shadow-[0_0_15px_rgba(0,153,255,0.2)]">
+                  <Globe className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">SEO & Social Card</h2>
+                  <p className="text-xs text-white/50">Atur tampilan link portofolio Anda di media sosial.</p>
+                </div>
+              </div>
+
+            <div className="space-y-6 flex-1 relative z-10">
+              {/* Title Input */}
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-white/70 uppercase tracking-widest">Meta Title</label>
+                <input 
+                  type="text"
+                  value={seoTitle}
+                  onChange={(e) => setSeoTitle(e.target.value)}
+                  placeholder={fallbackTitle}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#0099ff] hover:border-white/20 transition-all"
+                />
+                <p className="text-[10px] text-white/30 text-right">{seoTitle.length}/60 karakter</p>
+              </div>
+
+              {/* Description Input */}
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-white/70 uppercase tracking-widest">Meta Description</label>
+                <textarea 
+                  value={seoDescription}
+                  onChange={(e) => setSeoDescription(e.target.value)}
+                  placeholder={fallbackDescription}
+                  rows={3}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#0099ff] hover:border-white/20 transition-all resize-none"
+                />
+                <p className="text-[10px] text-white/30 text-right">{seoDescription.length}/160 karakter</p>
+              </div>
+
+          </div>
+
+            <div className="mt-8 flex items-center justify-between pt-6 border-t border-white/5 relative z-10">
+              <button
+                onClick={() => {
+                  setSeoTitle('');
+                  setSeoDescription('');
+                }}
+                className="px-4 py-2 text-xs font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 rounded-lg hover:bg-white/5"
               >
-                Batal
+                <RotateCcw className="w-3.5 h-3.5" />
+                Reset ke Default
               </button>
-              <button 
-                onClick={handleSave}
-                className="px-6 py-2 bg-[#0099ff] hover:bg-[#0077cc] text-white text-xs font-medium rounded-lg transition-colors shadow-lg"
-              >
-                Simpan SEO
-              </button>
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => actions.setIsSeoModalOpen(false)}
+                  className="px-4 py-2 text-xs font-bold text-white/60 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                >
+                  Batal
+                </button>
+                <button 
+                  onClick={handleSave}
+                  className="px-6 py-2.5 bg-[#0099ff] hover:bg-[#0077cc] text-white text-xs font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:shadow-[0_0_30px_rgba(0,153,255,0.5)]"
+                >
+                  Simpan SEO
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* RIGHT COLUMN: Live Preview */}
-        <div className="flex-1 bg-zinc-900 p-6 lg:p-8 flex flex-col">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-xs font-medium text-white/50 uppercase tracking-wider">Live Preview</h3>
-            <div className="flex gap-2">
+          {/* RIGHT COLUMN: Live Preview */}
+          <div className="w-full md:w-[360px] lg:w-[400px] bg-zinc-900/50 p-6 md:p-8 lg:p-10 flex flex-col relative z-10 backdrop-blur-xl">
+            <div className="mb-6 flex items-center justify-between">
+              <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Live Preview</h3>
               <Share2 className="w-4 h-4 text-white/30" />
             </div>
-          </div>
 
-          <div className="flex-1 flex items-center justify-center">
-            {/* Social Card Mockup */}
-            <div className="w-full max-w-sm bg-black border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+            <div className="flex-1 flex flex-col items-center justify-center relative">
+              <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent blur-xl pointer-events-none" />
+              
+              {/* Social Card Mockup */}
+              <div className="w-full bg-[#111111] border border-white/10 rounded-2xl overflow-hidden shadow-2xl relative group transform hover:-translate-y-1 transition-transform duration-300">
               <div className="aspect-[1.91/1] w-full bg-zinc-800 relative overflow-hidden">
                 {displayImage ? (
                   <img src={displayImage} alt="SEO Preview" className="w-full h-full object-cover" />
@@ -146,19 +154,21 @@ export function SeoSettingsModal({ state, actions }: { state: any, actions: any 
                   </div>
                 )}
               </div>
-              <div className="p-4">
-                <p className="text-[11px] text-white/40 mb-1">portfo.be/{state.subdomain || 'username'}</p>
-                <h4 className="text-sm font-semibold text-white mb-1 truncate">{displayTitle}</h4>
+              <div className="p-4 md:p-5">
+                <p className="text-[10px] text-white/40 mb-1.5 uppercase tracking-wide">portfo.be/{state.subdomain || 'username'}</p>
+                <h4 className="text-sm md:text-base font-bold text-white mb-1.5 truncate">{displayTitle}</h4>
                 <p className="text-xs text-white/50 line-clamp-2 leading-relaxed">{displayDescription}</p>
               </div>
             </div>
+            
+            <div className="mt-8 text-center relative z-10">
+              <p className="text-[10px] text-white/30 font-medium">Tampilan ini adalah simulasi saat link Anda dibagikan di Twitter, LinkedIn, WhatsApp, dll.</p>
+            </div>
           </div>
-          
-          <div className="mt-6 text-center">
-            <p className="text-[10px] text-white/30">Tampilan ini adalah simulasi saat link Anda dibagikan di Twitter, LinkedIn, WhatsApp, dll.</p>
+
+        </div>
           </div>
         </div>
-
       </div>
     </div>
   );

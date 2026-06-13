@@ -63,6 +63,7 @@ function AppearanceEditor() {
           isOpen={state.isPublishModalOpen}
           onClose={() => actions.setIsPublishModalOpen(false)}
           subdomain={state.subdomain}
+          isLive={state.isLive}
         />
       )}
 
