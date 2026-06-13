@@ -70,6 +70,7 @@ export function useThemeEditor() {
   const [showOfflineModal, setShowOfflineModal] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [showProModal, setShowProModal] = useState(false);
+  const [isSeoModalOpen, setIsSeoModalOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
 
   const ZOOM_MIN = 0.4;
@@ -169,7 +170,7 @@ export function useThemeEditor() {
     }, 50);
 
     return () => clearTimeout(timer);
-  }, [activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, pageBlocks, selectedProjects, isLoading]);
+  }, [activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks, selectedProjects, isLoading]);
 
   const undo = () => {
     if (pastStatesRef.current.length === 0) return;
@@ -238,6 +239,18 @@ export function useThemeEditor() {
     safeStringifyJson(pageBlocks.map(b => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked}))) !== 
     safeStringifyJson(lastSavedState.pageBlocks?.map((b: PageBlock) => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked})))
   ) : false;
+
+  // Protect against accidental tab close/refresh if there are unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = ''; // Required by modern browsers to trigger the native warning dialog
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -982,6 +995,7 @@ export function useThemeEditor() {
       publishedDraftId,
       isDraftsModalOpen,
       isSaveDraftModalOpen,
+      isSeoModalOpen,
       isPublishModalOpen,
       isDirty,
       hasUnpublishedChanges,
@@ -1009,6 +1023,7 @@ export function useThemeEditor() {
       setShowProModal,
       setIsDraftsModalOpen,
       setIsSaveDraftModalOpen,
+      setIsSeoModalOpen,
       setIsPublishModalOpen,
       setPreviewMode,
       zoomIn,

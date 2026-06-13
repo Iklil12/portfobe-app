@@ -28,7 +28,10 @@ export async function generateMetadata({
 
   const user = await prisma.user.findFirst({
     where: { profile: { subdomain } },
-    include: { profile: true },
+    include: { 
+      profile: true,
+      siteAppearance: true
+    },
   });
 
   if (!user || !user.profile) {
@@ -37,9 +40,22 @@ export async function generateMetadata({
     };
   }
 
+  // Parse customTexts from SiteAppearance to check for custom SEO settings
+  let customSeo: any = {};
+  if (user.siteAppearance?.customTexts) {
+    try {
+      customSeo = JSON.parse(user.siteAppearance.customTexts);
+    } catch (e) {
+      console.error('Failed to parse customTexts for SEO', e);
+    }
+  }
+
   const name = user.profile.fullName || subdomain;
   const profession = user.profile.profession || 'Creative Professional';
-  const bio = user.profile.bio || `Welcome to the creative portfolio of ${name}, a ${profession}. Explore my latest works and experiences.`;
+  
+  // SEO Logic: Use custom SEO if available, otherwise fallback to Profile data
+  const finalTitle = customSeo.seo_title || `${name} - ${profession}`;
+  const finalDescription = customSeo.seo_description || user.profile.bio || `Welcome to the creative portfolio of ${name}, a ${profession}. Explore my latest works and experiences.`;
   const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://portfo.be';
   const canonicalUrl = `${domain}/${subdomain}`;
   
@@ -49,10 +65,10 @@ export async function generateMetadata({
   return {
     metadataBase: new URL(domain),
     title: {
-      default: `${name} | ${profession}`,
+      default: finalTitle,
       template: `%s | ${name}`,
     },
-    description: bio,
+    description: finalDescription,
     keywords: [name, profession, 'Portfolio', 'Creative', 'Portfobe', subdomain],
     authors: [{ name }],
     creator: name,
@@ -81,8 +97,8 @@ export async function generateMetadata({
       apple: optimizedIcon,
     },
     openGraph: {
-      title: `${name} | ${profession}`,
-      description: bio,
+      title: finalTitle,
+      description: finalDescription,
       url: canonicalUrl,
       siteName: `${name} Portfolio`,
       images: [
@@ -90,7 +106,7 @@ export async function generateMetadata({
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: `${name} - ${profession}`,
+          alt: finalTitle,
         },
       ],
       locale: 'en_US',
@@ -98,8 +114,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${name} | ${profession}`,
-      description: bio,
+      title: finalTitle,
+      description: finalDescription,
       images: [ogImage],
       creator: `@${subdomain}`,
     },

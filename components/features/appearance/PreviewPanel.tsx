@@ -120,18 +120,16 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
   return (
     <div ref={containerRef} className={`flex-1 h-full w-full relative flex flex-col items-center justify-center overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] z-10 ${previewMode === 'mobile' ? 'p-0 lg:p-4 lg:sm:p-6 lg:md:p-10' : 'p-0'}`}>
 
-      {/* Tombol Re-open Panel Editor */}
-      <div className={`hidden lg:block absolute top-1/2 left-0 -translate-y-1/2 z-40 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isEditorCollapsed ? 'translate-x-0' : '-translate-x-full'}`}>
-        <button 
-          onClick={() => setIsEditorCollapsed(false)} 
-          className="w-7 h-20 bg-zinc-900 border border-white/10 border-l-0 rounded-r-2xl shadow-[5px_0_20px_rgba(0,0,0,0.5)] flex items-center justify-center text-white/50 hover:text-[#ff9e00] hover:w-9 transition-all active:scale-95" 
-          title="Tampilkan Panel Editor"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
 
-      <div className="absolute inset-0 bg-grid-slate pointer-events-none z-0 hidden lg:block"></div>
+
+      {/* Editor Grid Pattern */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-0 hidden lg:block"
+        style={{
+          backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
+        }}
+      />
 
 
       {/* CONTAINER MOCKUP DEVICE */}

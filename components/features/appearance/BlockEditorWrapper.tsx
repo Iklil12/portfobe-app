@@ -53,10 +53,10 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
 
       {/* Floating Toolbar */}
       <div
-        className={`glass-noise absolute right-4 top-4 z-[100] flex items-center bg-zinc-950/95 backdrop-blur-xl text-white rounded-none border border-white/10 transition-all duration-400 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden ${isHovered ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95 pointer-events-none'}`}
+        className={`absolute right-4 top-4 z-[100] flex items-center bg-black/60 backdrop-blur-md text-white rounded-lg border border-white/10 shadow-lg transition-all duration-400 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden ${isHovered ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95 pointer-events-none'}`}
       >
-        <div className="px-3 py-1.5 border-r border-white/5 flex items-center bg-zinc-900">
-          <span className="text-[9px] font-mono font-bold tracking-widest uppercase text-white/90 whitespace-nowrap">
+        <div className="px-4 py-2 border-r border-white/10 flex items-center bg-white/5">
+          <span className="text-[11px] font-medium text-white/90 whitespace-nowrap capitalize">
             {getBlockName(block.blockType)}
           </span>
         </div>
@@ -66,7 +66,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
             <button
               onClick={() => !block.isLocked && sendAction('BLOCK_MOVE_UP')}
               disabled={block.isLocked}
-              className={`px-2.5 py-1.5 transition-colors flex items-center justify-center text-[11px] ${block.isLocked ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10'}`}
+              className={`px-3 py-2 transition-colors flex items-center justify-center text-[11px] ${block.isLocked ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
               title={isHorizontalFlow ? "Geser ke Kiri" : "Pindah ke Atas"}
             >
               {isHorizontalFlow ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}
@@ -74,7 +74,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
             <button
               onClick={() => !block.isLocked && sendAction('BLOCK_MOVE_DOWN')}
               disabled={block.isLocked}
-              className={`px-2.5 py-1.5 transition-colors flex items-center justify-center text-[11px] border-r border-white/5 ${block.isLocked ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10'}`}
+              className={`px-3 py-2 transition-colors flex items-center justify-center text-[11px] border-r border-white/10 ${block.isLocked ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
               title={isHorizontalFlow ? "Geser ke Kanan" : "Pindah ke Bawah"}
             >
               {isHorizontalFlow ? <ArrowRight className="w-3.5 h-3.5" /> : <ArrowDown className="w-3.5 h-3.5" />}
@@ -82,18 +82,18 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
 
             <button
               onClick={() => sendAction('BLOCK_TOGGLE_LOCK')}
-              className={`px-2.5 py-1.5 hover:bg-white/10 transition-colors flex items-center justify-center text-[11px] border-r border-white/5 ${block.isLocked ? 'text-[#ff9e00]' : 'text-white/80'}`}
+              className={`px-3 py-2 transition-colors flex items-center justify-center text-[11px] border-r border-white/10 ${block.isLocked ? 'bg-[#ff9e00]/10 text-[#ff9e00]' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
               title={block.isLocked ? "Buka Kunci Blok" : "Kunci Blok"}
             >
-              {block.isLocked ? <Lock className="w-3.5 h-3.5 text-[#ff9e00]" /> : <Unlock className="w-3.5 h-3.5" />}
+              {block.isLocked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
             </button>
             <button
               onClick={() => !block.isLocked && sendAction('BLOCK_TOGGLE_VISIBILITY')}
               disabled={block.isLocked}
-              className={`px-3 py-1.5 transition-colors flex items-center justify-center text-[11px] border-r border-white/5 ${block.isLocked ? 'opacity-30 cursor-not-allowed text-white' : (!block.isVisible ? 'text-red-400 hover:bg-white/10' : 'hover:bg-white/10')}`}
+              className={`px-3 py-2 transition-colors flex items-center justify-center text-[11px] border-r border-white/10 ${block.isLocked ? 'opacity-30 cursor-not-allowed text-white' : (!block.isVisible ? 'bg-rose-500/10 text-rose-400' : 'hover:bg-white/10 text-white/70 hover:text-white')}`}
               title={block.isVisible ? "Sembunyikan Blok" : "Tampilkan Blok"}
             >
-              {block.isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-rose-500" />}
+              {block.isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
             </button>
             <button
               onClick={() => {
@@ -102,14 +102,14 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
                 }
               }}
               disabled={block.isLocked}
-              className={`px-3 py-1.5 transition-colors flex items-center justify-center text-[11px] ${block.isLocked ? 'opacity-30 cursor-not-allowed text-white' : 'text-white/80 hover:text-white hover:bg-rose-600'}`}
+              className={`px-3 py-2 transition-colors flex items-center justify-center text-[11px] ${block.isLocked ? 'opacity-30 cursor-not-allowed text-white' : 'text-white/70 hover:text-white hover:bg-rose-500'}`}
               title="Hapus Blok"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </>
         ) : (
-          <div className="px-3 py-1.5 flex items-center justify-center text-[11px] text-white/20 bg-black/40 cursor-not-allowed" title="Blok Utama (Tidak bisa dipindah atau disembunyikan)">
+          <div className="px-4 py-2 flex items-center justify-center text-[11px] text-white/30 bg-black/20 cursor-not-allowed" title="Blok Utama (Tidak bisa dipindah atau disembunyikan)">
             <Lock className="w-3.5 h-3.5" />
           </div>
         )}
@@ -155,16 +155,16 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
       {!isHorizontalFlow && isEditor && (
         <div className={`absolute left-0 right-0 -bottom-3 h-6 flex items-center justify-center transition-opacity z-[100] ${isHovered ? 'opacity-100' : 'opacity-0 group-hover/block:opacity-100'}`}>
           <div className="absolute inset-0 flex items-center pointer-events-none">
-            <div className="w-full border-t border-dashed border-[#ff9e00]/30"></div>
+            <div className="w-full border-t border-dashed border-[#0099ff]/30"></div>
           </div>
           <button
             onClick={(e) => {
               e.stopPropagation();
               window.postMessage({ type: 'OPEN_LIBRARY', insertIndex: block.orderIndex + 1 }, window.location.origin);
             }}
-            className="relative px-4 py-1.5 rounded-none bg-zinc-950 border border-[#ff9e00] text-[#ff9e00] text-[9px] font-mono font-bold tracking-widest uppercase flex items-center gap-2 hover:bg-[#ff9e00] hover:text-black hover:scale-105 transition-all shadow-none z-10 pointer-events-auto"
+            className="relative px-5 py-2 rounded-full bg-[#0099ff] text-white text-[11px] font-semibold tracking-wide flex items-center gap-2 hover:bg-[#0077cc] hover:scale-105 transition-all shadow-md shadow-[#0099ff]/20 z-10 pointer-events-auto"
           >
-            <Plus className="w-3 h-3" />
+            <Plus className="w-3.5 h-3.5" />
             <span>Tambah Section</span>
           </button>
         </div>
@@ -174,14 +174,14 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
       {isHorizontalFlow && isEditor && (
         <div className={`absolute top-0 bottom-0 -right-3 w-6 flex items-center justify-center transition-opacity z-[100] ${isHovered ? 'opacity-100' : 'opacity-0 group-hover/block:opacity-100'}`}>
           <div className="absolute inset-0 flex justify-center pointer-events-none">
-            <div className="h-full border-l border-dashed border-[#ff9e00]/30"></div>
+            <div className="h-full border-l border-dashed border-[#0099ff]/30"></div>
           </div>
           <button
             onClick={(e) => {
               e.stopPropagation();
               window.postMessage({ type: 'OPEN_LIBRARY', insertIndex: block.orderIndex + 1 }, window.location.origin);
             }}
-            className="relative w-8 h-8 rounded-none bg-zinc-950 border border-[#ff9e00] text-[#ff9e00] text-xs font-bold flex items-center justify-center hover:bg-[#ff9e00] hover:text-black hover:scale-110 transition-all shadow-none z-10 pointer-events-auto"
+            className="relative w-8 h-8 rounded-full bg-[#0099ff] text-white flex items-center justify-center hover:bg-[#0077cc] hover:scale-110 transition-all shadow-md shadow-[#0099ff]/20 z-10 pointer-events-auto"
             title="Tambah Section di Sini"
           >
             <Plus className="w-4 h-4" />
