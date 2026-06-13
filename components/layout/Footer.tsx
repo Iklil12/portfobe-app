@@ -39,7 +39,7 @@ export function Footer() {
                     <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-8 md:h-10 w-auto object-contain brightness-0 invert" />
                 </div>
                 <p className="text-sm font-medium leading-relaxed text-white/60 max-w-sm mb-8">
-                    The premier hub for visual creators to showcase work, share links, and land high-paying clients without writing a single line of code.
+                    A premium portfolio building platform for visual creators. Launch your professional website to showcase work, manage your profile, and land high-paying clients—all without writing a single line of code.
                 </p>
                 <div className="flex gap-3">
                     <a href="https://web.facebook.com/profile.php?id=61589094247534" target="_blank" rel="noopener noreferrer" className="w-10 h-10 border border-white/20 flex items-center justify-center text-white/60 hover:bg-white hover:text-black hover:border-white transition-all duration-300">

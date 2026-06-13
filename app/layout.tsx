@@ -56,6 +56,7 @@ export default function RootLayout({
     <html
       lang="en"
       className="h-full antialiased font-sans"
+      suppressHydrationWarning
     >
       <head>
         <script
@@ -68,7 +69,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
         <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,700,400,900&f[]=satoshi@900,700,500,300,400&display=swap" rel="stylesheet" />
       </head>
-      <body className="min-h-full flex flex-col text-gray-900 bg-white transition-colors duration-300 overflow-x-clip w-full relative">
+      <body className="min-h-full flex flex-col text-gray-900 bg-white transition-colors duration-300 overflow-x-clip w-full relative" suppressHydrationWarning>
         <Providers>
           {children}
         </Providers>
