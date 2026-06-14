@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import {
   AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Cell
+  ResponsiveContainer, Cell, TooltipContentProps
 } from 'recharts';
 import { 
   Eye, User, Clock, LogOut, BarChart3, Trophy, Calendar, 
@@ -62,7 +62,11 @@ function SkeletonBlock({ className = '' }: { className?: string }) {
   return <div className={`shimmer-dark rounded-none ${className}`} />;
 }
 
-const CustomAreaTooltip = ({ active, payload, label, isHourly }: any) => {
+interface CustomTooltipProps extends TooltipContentProps<number, string> {
+  isHourly?: boolean;
+}
+
+const CustomAreaTooltip = ({ active, payload, label, isHourly }: CustomTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-zinc-900 border border-white/10 rounded-none shadow-2xl px-4 py-3 min-w-[140px] font-mono">
@@ -70,13 +74,13 @@ const CustomAreaTooltip = ({ active, payload, label, isHourly }: any) => {
         {isHourly ? `Pukul ${label}` : label}
       </p>
       <div className="space-y-1.5">
-        {payload.map((entry: any, i: number) => (
+        {payload.map((entry, i) => (
           <div key={i} className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-none" style={{ backgroundColor: entry.color }} />
               <span className="text-[10px] font-bold text-white/70 capitalize">{entry.name}</span>
             </div>
-            <span className="text-xs font-bold text-white">{entry.value.toLocaleString()}</span>
+            <span className="text-xs font-bold text-white">{entry.value?.toLocaleString() || 0}</span>
           </div>
         ))}
       </div>
@@ -88,18 +92,19 @@ export default function AnalyticsPage() {
   const [range, setRange] = useState('7d');
   const [isMounted, setIsMounted] = useState(false);
   const [animReady, setAnimReady] = useState(false);
-  const [tzOffset, setTzOffset] = useState<number | null>(null);
+  
+  // Ambil tzOffset secara sinkron (karena string url swr tidak akan menyebabkan hydration mismatch)
+  const tzOffset = typeof window !== 'undefined' ? new Date().getTimezoneOffset() : 0;
 
   useEffect(() => { 
     setIsMounted(true);
-    setTzOffset(new Date().getTimezoneOffset());
   }, []);
 
-  const swrUrl = tzOffset !== null ? `/api/analytics/stats?range=${range}&tzOffset=${tzOffset}` : null;
+  const swrUrl = `/api/analytics/stats?range=${range}&tzOffset=${tzOffset}`;
   const { data, isLoading } = useSWR(swrUrl, fetcher, { refreshInterval: 30000 });
   const { data: userData, isLoading: isUserLoading } = useSWR('/api/layout-sync', fetcher);
   
-  const userPlan = userData?.plan ?? undefined;
+  const userPlan = userData ? (userData.plan || 'FREE') : undefined;
 
   useEffect(() => {
     if (!isLoading && isMounted && data) {
@@ -116,9 +121,12 @@ export default function AnalyticsPage() {
   const peakEntry = chartData.reduce((a, b) => (b.views > a.views ? b : a), { day: '-', date: '', views: 0 });
   const totalPeriod = chartData.reduce((s, d) => s + d.views, 0);
   const avgDaily = chartData.length > 0 ? Math.round(totalPeriod / chartData.length) : 0;
+  const todayViews = chartData.length > 0 ? chartData[chartData.length - 1].views : 0;
+  const yesterdayViews = chartData.length >= 2 ? chartData[chartData.length - 2].views : 0;
   const growth = chartData.length >= 2
-    ? chartData[chartData.length - 2].views === 0 ? 0
-      : Math.round(((chartData[chartData.length - 1].views - chartData[chartData.length - 2].views) / chartData[chartData.length - 2].views) * 100)
+    ? yesterdayViews === 0 
+        ? (todayViews > 0 ? 100 : 0) 
+        : Math.round(((todayViews - yesterdayViews) / yesterdayViews) * 100)
     : 0;
 
   const isFree = userPlan === 'FREE';
@@ -310,7 +318,7 @@ export default function AnalyticsPage() {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
                   <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }} dy={10} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }} />
-                  <Tooltip content={<CustomAreaTooltip isHourly={range === '1d'} />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
+                  <Tooltip content={(props: any) => <CustomAreaTooltip {...props} isHourly={range === '1d'} />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
                   <Area type="monotone" dataKey="views" name="Page Views" stroke="#ff9e00" strokeWidth={2} fill="url(#viewsGrad)" dot={false} activeDot={{ r: 4, fill: '#ff9e00', stroke: '#000', strokeWidth: 2 }} animationDuration={1500} />
                   <Area type="monotone" dataKey="visitors" name="Uniq. Visitors" stroke="rgba(255,255,255,0.4)" strokeWidth={2} fill="transparent" dot={false} activeDot={{ r: 4, fill: 'rgba(255,255,255,0.4)', stroke: '#000', strokeWidth: 2 }} animationDuration={1500} />
                 </AreaChart>
@@ -484,7 +492,7 @@ export default function AnalyticsPage() {
           </div>
 
           {!isLoading && chartData.length > 0 && (
-            <div className="flex gap-4 mt-4 pt-4 border-t border-white/5">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 pt-4 border-t border-white/5">
               <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40">
                 <span className="w-2.5 h-2.5 bg-[#ff9e00] inline-block" /> Puncak
               </span>

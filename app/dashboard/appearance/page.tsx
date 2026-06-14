@@ -1,7 +1,7 @@
 //app/dashboard/appearance/page.tsx
 "use client";
 
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect, useState, useRef } from 'react';
 import { useThemeEditor } from '@/hooks/useThemeEditor';
 import Link from 'next/link';
 import { LeftPanel } from '@/components/features/appearance/LeftPanel';
@@ -10,10 +10,26 @@ import { PreviewPanel } from '@/components/features/appearance/PreviewPanel';
 import { SeoSettingsModal } from '@/components/features/appearance/SeoSettingsModal';
 import { OfflineModal } from '@/components/features/appearance/OfflineModal';
 import { PublishSuccessModal } from '@/components/features/appearance/PublishSuccessModal';
-import { Loader2, ArrowLeft, Undo2, Redo2, Monitor, Smartphone, ExternalLink, Minus, Plus, Maximize, Minimize, Globe } from 'lucide-react';
+import { Loader2, ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Columns, ExternalLink, Minus, Plus, Maximize, Minimize, Globe, ChevronDown } from 'lucide-react';
 
 function AppearanceEditor() {
   const { state, actions } = useThemeEditor();
+  const [isModeDropdownOpen, setIsModeDropdownOpen] = useState(false);
+  const modeDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (modeDropdownRef.current && !modeDropdownRef.current.contains(event.target as Node)) {
+        setIsModeDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   // Sinkronisasi Keyboard Shortcut untuk Undo / Redo
   useEffect(() => {
@@ -53,8 +69,8 @@ function AppearanceEditor() {
     );
   }
 
-  const isCurrentlyLive = state.activeDraftId ? state.activeDraftId === state.publishedDraftId : state.publishedDraftId === null;
-  const canPublish = state.isDirty || !isCurrentlyLive || state.hasUnpublishedChanges;
+  const isCurrentlyLive = state.activeDraftId === state.publishedDraftId;
+  const canPublish = state.isDirty || (state.activeDraftId && state.activeDraftId !== state.publishedDraftId) || state.hasUnpublishedChanges;
 
   return (
     <main className="h-screen w-screen m-0 p-0 flex flex-col bg-[#111111] font-sans overflow-hidden fixed inset-0 z-[99999]">
@@ -117,28 +133,36 @@ function AppearanceEditor() {
         {/* Center: Mode & Undo & Zoom */}
         <div className="flex items-center gap-3 lg:gap-6 absolute left-1/2 -translate-x-1/2">
           {/* Mode Switcher */}
-          <div className="flex items-center bg-white/5 p-1 rounded-lg">
-            <button
-              onClick={() => actions.setPreviewMode('desktop')}
-              className={`px-2.5 lg:px-3 py-1 text-[11px] font-medium transition-all flex items-center gap-1.5 rounded-md ${
-                state.previewMode === 'desktop' ? 'bg-white/10 text-white shadow-sm' : 'text-white/40 hover:text-white'
-              }`}
-              title="Desktop View"
+          <div className="relative flex items-center justify-center" ref={modeDropdownRef}>
+            <button 
+              onClick={() => setIsModeDropdownOpen(!isModeDropdownOpen)}
+              className={`flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg transition-all text-[11px] font-medium w-[140px] ${isModeDropdownOpen ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-white/80'}`}
             >
-              <Monitor className="w-3.5 h-3.5" /> <span className="hidden lg:inline">Desktop</span>
+              <div className="flex items-center gap-2">
+                {state.previewMode === 'desktop' && <Monitor className="w-3.5 h-3.5 shrink-0" />}
+                {state.previewMode === 'mobile' && <Smartphone className="w-3.5 h-3.5 shrink-0" />}
+                {state.previewMode === 'split' && <Columns className="w-3.5 h-3.5 shrink-0" />}
+                <span className="whitespace-nowrap text-left flex-1">Device: {state.previewMode.charAt(0).toUpperCase() + state.previewMode.slice(1)}</span>
+              </div>
+              <ChevronDown className={`w-3 h-3 opacity-50 shrink-0 transition-transform duration-200 ${isModeDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
-            <button
-              onClick={() => actions.setPreviewMode('mobile')}
-              className={`px-2.5 lg:px-3 py-1 text-[11px] font-medium transition-all flex items-center gap-1.5 rounded-md ${
-                state.previewMode === 'mobile' ? 'bg-white/10 text-white shadow-sm' : 'text-white/40 hover:text-white'
-              }`}
-              title="Mobile View"
-            >
-              <Smartphone className="w-3.5 h-3.5" /> <span className="hidden lg:inline">Mobile</span>
-            </button>
+            
+            <div className={`absolute top-[calc(100%-2px)] left-0 w-32 pt-2 transition-all duration-200 z-50 ${isModeDropdownOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-1'}`}>
+              <div className="py-1 bg-[#1a1a1a] border border-white/10 rounded-lg shadow-xl flex flex-col">
+                <button onClick={() => { actions.setPreviewMode('desktop'); setIsModeDropdownOpen(false); }} className={`flex items-center gap-2 px-3 py-2 text-[11px] font-medium hover:bg-white/5 w-full text-left transition-colors ${state.previewMode === 'desktop' ? 'text-white' : 'text-white/50'}`}>
+                  <Monitor className="w-3.5 h-3.5" /> Desktop
+                </button>
+                <button onClick={() => { actions.setPreviewMode('mobile'); setIsModeDropdownOpen(false); }} className={`flex items-center gap-2 px-3 py-2 text-[11px] font-medium hover:bg-white/5 w-full text-left transition-colors ${state.previewMode === 'mobile' ? 'text-white' : 'text-white/50'}`}>
+                  <Smartphone className="w-3.5 h-3.5" /> Mobile
+                </button>
+                <button onClick={() => { actions.setPreviewMode('split'); setIsModeDropdownOpen(false); }} className={`hidden lg:flex items-center gap-2 px-3 py-2 text-[11px] font-medium hover:bg-white/5 w-full text-left transition-colors ${state.previewMode === 'split' ? 'text-white' : 'text-white/50'}`}>
+                  <Columns className="w-3.5 h-3.5" /> Split
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="w-px h-4 bg-white/10 hidden lg:block"></div>
+          {/* Split Mode Toggle - Removed as per user request to default to Fixed */}
 
           {/* Undo / Redo */}
           <div className="flex items-center gap-0.5">
@@ -162,22 +186,22 @@ function AppearanceEditor() {
             </button>
           </div>
 
-          {/* Zoom Controls */}
-          <div className={`hidden lg:flex items-center gap-1 transition-opacity duration-300 ${state.previewMode === 'desktop' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          {/* Zoom Controls (Always present but invisible when not needed to prevent layout shift) */}
+          <div className={`hidden lg:flex items-center gap-1 transition-all duration-300 ${state.previewMode === 'desktop' ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
             <div className="w-px h-4 bg-white/10 mx-2"></div>
             <button
               onClick={actions.zoomOut}
-              disabled={state.desktopZoom <= state.ZOOM_MIN}
+              disabled={state.previewMode === 'desktop' ? state.desktopZoom <= state.ZOOM_MIN : state.mobileZoom <= state.ZOOM_MIN}
               className="w-7 h-7 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-20 transition-all rounded-md"
             >
               <Minus className="w-3.5 h-3.5" />
             </button>
             <span className="text-[11px] font-medium text-white/60 w-10 text-center tabular-nums">
-              {Math.round(state.desktopZoom * 100)}%
+              {Math.round((state.previewMode === 'desktop' || state.previewMode === 'split' ? state.desktopZoom : state.mobileZoom) * 100)}%
             </span>
             <button
               onClick={actions.zoomIn}
-              disabled={state.desktopZoom >= state.ZOOM_MAX}
+              disabled={state.previewMode === 'desktop' ? state.desktopZoom >= state.ZOOM_MAX : state.mobileZoom >= (state.ZOOM_MAX_MOBILE || 1.5)}
               className="w-7 h-7 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-20 transition-all rounded-md"
             >
               <Plus className="w-3.5 h-3.5" />

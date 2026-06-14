@@ -11,12 +11,13 @@ import {
   Layout, Film, Bolt, Grid, Star, Layers, Box, Move, 
   Columns, Newspaper, Moon, Waves, Square, Video, Image, Gem, 
   FileText, ChevronRight, RotateCcw, FolderOpen, Loader2, Save, Rocket, Monitor, Smartphone, Sliders,
-  Play, MoveVertical, AlertTriangle, MousePointer2
+  Play, MoveVertical, AlertTriangle, MousePointer2, LucideIcon
 } from 'lucide-react';
 
-import { ColorPicker, FontPicker, CardStylePicker, ButtonShapePicker, NavigationStylePicker } from '@/components/editor-controls/SharedControls';
+import { EditorControls } from './EditorControls';
+import type { ThemeEditorState, ThemeEditorActions } from '@/hooks/useThemeEditor';
 
-const THEME_ICONS: Record<string, React.ComponentType<any>> = {
+const THEME_ICONS: Record<string, LucideIcon> = {
   'minimalist': Layout, 'cinematic': Film, 'acid': Bolt, 'bentogrid': Grid,
   'spatial': Star, 'monolith': Layers, 'layered-monolith': Layers,
   'kinetic-avant-garde': Move, 'split': Columns, 'editorial': Newspaper,
@@ -25,7 +26,7 @@ const THEME_ICONS: Record<string, React.ComponentType<any>> = {
   'cinematic-gallery': Image, 'horizontal-flow': Waves, 'nexus-noir': Gem
 };
 
-export function LeftPanel({ state, actions }: { state: any, actions: any }) {
+export function LeftPanel({ state, actions }: { state: ThemeEditorState, actions: ThemeEditorActions }) {
   const {
     isEditorCollapsed, isSavingDraft, isPublishing, activeTheme, splashScreen,
     isThemeModalOpen, showProModal, isDraftsModalOpen, isLoading, livePreviewData,
@@ -117,7 +118,7 @@ export function LeftPanel({ state, actions }: { state: any, actions: any }) {
       />
       <ProjectSelectionModal
         isOpen={isProjectModalOpen} onClose={() => setIsProjectModalOpen(false)}
-        allProjects={(state.rawProjects || []).filter((p: any) => p.projectType !== '3d')}
+        allProjects={(state.rawProjects || []).filter((p: { projectType?: string }) => p.projectType !== '3d')}
         selectedProjects={selectedProjects || []} onSaveSelection={(newSelected) => setSelectedProjects(newSelected)}
       />
 
@@ -314,83 +315,8 @@ export function LeftPanel({ state, actions }: { state: any, actions: any }) {
             </div>
           </div>
 
-          {/* SECTION: STYLES (MOBILE ONLY) */}
-          <div className="mb-8 block lg:hidden">
-            <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase mb-3 px-1">Styles</h3>
-            {activeTheme === 'absolute-noir' && (
-              <div className="p-3 mb-6 bg-white/5 rounded-lg flex items-start gap-2.5">
-                <AlertTriangle className="text-white/40 mt-0.5 w-4 h-4 shrink-0" />
-                <div>
-                  <h4 className="font-medium text-[11px] text-white mb-0.5">Strict Mode</h4>
-                  <p className="text-[10px] text-white/40 leading-relaxed">
-                    Design system is locked for Absolute Noir to maintain its aesthetic.
-                  </p>
-                </div>
-              </div>
-            )}
-            {activeTheme !== 'absolute-noir' && (
-              <>
-                <ColorPicker themeColor={themeColor} setThemeColor={setThemeColor} />
-                <FontPicker fontHeading={fontHeading} setFontHeading={setFontHeading} setFontBody={setFontBody} />
-                <CardStylePicker cardStyle={cardStyle} setCardStyle={setCardStyle} />
-                <ButtonShapePicker buttonShape={buttonShape} setButtonShape={setButtonShape} />
-              </>
-            )}
-
-            <NavigationStylePicker navStyle={livePreviewTheme?.customTexts?.nav_style} setNavStyle={(val) => updateCustomText('nav_style', val)} />
-          </div>
-
-          {/* SECTION: EFFECTS (MOBILE ONLY) */}
-          <div className="mb-8 block lg:hidden">
-            <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase mb-3 px-1">Effects</h3>
-            {!isLoading && (
-              <div className="flex flex-col gap-2">
-                <button 
-                  onClick={() => setSplashScreen(!splashScreen)}
-                  className="w-full p-3 rounded-lg border border-transparent hover:border-white/5 bg-transparent hover:bg-white/5 transition-all flex items-center justify-between group text-sm"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Play className="w-4 h-4 text-white/40 group-hover:text-white/80" />
-                    <div className="flex flex-col items-start">
-                      <span className="text-[13px] text-white/80 group-hover:text-white">Cinematic Intro</span>
-                      <span className="text-[10px] text-[#ff9e00]">Premium</span>
-                    </div>
-                  </div>
-                  <div className={`w-8 h-4 rounded-full relative transition-colors duration-300 ${splashScreen ? 'bg-[#ff9e00]' : 'bg-white/10'}`}>
-                    <div className={`w-3 h-3 rounded-full absolute top-[2px] transition-transform duration-300 ${splashScreen ? 'bg-black translate-x-[18px]' : 'bg-white/40 translate-x-[2px]'}`}></div>
-                  </div>
-                </button>
-
-                <button 
-                  onClick={() => updateCustomText('smooth_scroll', livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'false' : 'true')}
-                  className="w-full p-3 rounded-lg border border-transparent hover:border-white/5 bg-transparent hover:bg-white/5 transition-all flex items-center justify-between group text-sm"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <MoveVertical className="w-4 h-4 text-white/40 group-hover:text-white/80" />
-                    <div className="flex flex-col items-start">
-                      <span className="text-[13px] text-white/80 group-hover:text-white">Smooth Scroll</span>
-                      <span className="text-[10px] text-[#ff9e00]">Premium</span>
-                    </div>
-                  </div>
-                  <div className={`w-8 h-4 rounded-full relative transition-colors duration-300 ${livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'bg-[#ff9e00]' : 'bg-white/10'}`}>
-                    <div className={`w-3 h-3 rounded-full absolute top-[2px] transition-transform duration-300 ${livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'bg-black translate-x-[18px]' : 'bg-white/40 translate-x-[2px]'}`}></div>
-                  </div>
-                </button>
-
-                <div className="w-full p-3 rounded-lg border border-transparent bg-transparent flex items-center justify-between opacity-50 cursor-not-allowed text-sm">
-                  <div className="flex items-center gap-2.5">
-                    <MousePointer2 className="w-4 h-4 text-white/40" />
-                    <div className="flex flex-col items-start">
-                      <span className="text-[13px] text-white/80">Custom Cursor</span>
-                      <span className="text-[10px] text-white/40">Coming Soon</span>
-                    </div>
-                  </div>
-                  <div className="px-2 py-0.5 rounded text-[9px] font-medium bg-white/5 text-white/40 border border-white/5">
-                    SOON
-                  </div>
-                </div>
-              </div>
-            )}
+          <div className="block lg:hidden">
+            <EditorControls state={state} actions={actions} />
           </div>
         </div>
       </div>

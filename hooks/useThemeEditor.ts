@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { mutate } from 'swr';
 import { useSearchParams } from 'next/navigation';
@@ -71,14 +71,33 @@ export function useThemeEditor() {
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [showProModal, setShowProModal] = useState(false);
   const [isSeoModalOpen, setIsSeoModalOpen] = useState(false);
-  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile' | 'split'>('desktop');
+  const [splitModeType, setSplitModeType] = useState<'flexible' | 'fixed'>('fixed');
 
   const ZOOM_MIN = 0.4;
   const ZOOM_MAX = 1.0;
+  const ZOOM_MAX_MOBILE = 1.5;
   const ZOOM_STEP = 0.1;
   const [desktopZoom, setDesktopZoom] = useState(0.75);
-  const zoomIn = () => setDesktopZoom(z => Math.min(ZOOM_MAX, parseFloat((z + ZOOM_STEP).toFixed(2))));
-  const zoomOut = () => setDesktopZoom(z => Math.max(ZOOM_MIN, parseFloat((z - ZOOM_STEP).toFixed(2))));
+  const [mobileZoom, setMobileZoom] = useState(1.0);
+  
+  const zoomIn = () => {
+    if (previewMode === 'desktop' || previewMode === 'split') {
+      setDesktopZoom(z => Math.min(ZOOM_MAX, parseFloat((z + ZOOM_STEP).toFixed(2))));
+    }
+    if (previewMode === 'mobile' || previewMode === 'split') {
+      setMobileZoom(z => Math.min(ZOOM_MAX_MOBILE, parseFloat((z + ZOOM_STEP).toFixed(2))));
+    }
+  };
+  
+  const zoomOut = () => {
+    if (previewMode === 'desktop' || previewMode === 'split') {
+      setDesktopZoom(z => Math.max(ZOOM_MIN, parseFloat((z - ZOOM_STEP).toFixed(2))));
+    }
+    if (previewMode === 'mobile' || previewMode === 'split') {
+      setMobileZoom(z => Math.max(ZOOM_MIN, parseFloat((z - ZOOM_STEP).toFixed(2))));
+    }
+  };
 
   // --- STATE UNTUK DATA PROFIL ---
   const [fullName, setFullName] = useState("Nama Anda");
@@ -221,24 +240,37 @@ export function useThemeEditor() {
   // Track clean state for Anti-Spam
   const [lastSavedState, setLastSavedState] = useState<any>(null);
 
+  // Memoize complex objects to prevent repeated stringification during other state changes
+  const customTextsStr = useMemo(() => safeStringifyJson(customTexts), [customTexts]);
+  const selectedProjectsStr = useMemo(() => safeStringifyJson(selectedProjects), [selectedProjects]);
+  const pageBlocksStr = useMemo(() => 
+    safeStringifyJson(pageBlocks.map(b => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked}))), 
+  [pageBlocks]);
+
   // Compute isDirty
-  const isDirty = lastSavedState ? (
-    activeTheme !== lastSavedState.activeTheme ||
-    themeColor !== lastSavedState.themeColor ||
-    fontHeading !== lastSavedState.fontHeading ||
-    fontBody !== lastSavedState.fontBody ||
-    buttonShape !== lastSavedState.buttonShape ||
-    cardStyle !== lastSavedState.cardStyle ||
-    splashScreen !== lastSavedState.splashScreen ||
-    fullName !== lastSavedState.fullName ||
-    profession !== lastSavedState.profession ||
-    bio !== lastSavedState.bio ||
-    location !== lastSavedState.location ||
-    safeStringifyJson(customTexts) !== safeStringifyJson(lastSavedState.customTexts) ||
-    safeStringifyJson(selectedProjects) !== safeStringifyJson(lastSavedState.selectedProjects) ||
-    safeStringifyJson(pageBlocks.map(b => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked}))) !== 
-    safeStringifyJson(lastSavedState.pageBlocks?.map((b: PageBlock) => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked})))
-  ) : false;
+  const isDirty = useMemo(() => {
+    if (!lastSavedState) return false;
+    return (
+      activeTheme !== lastSavedState.activeTheme ||
+      themeColor !== lastSavedState.themeColor ||
+      fontHeading !== lastSavedState.fontHeading ||
+      fontBody !== lastSavedState.fontBody ||
+      buttonShape !== lastSavedState.buttonShape ||
+      cardStyle !== lastSavedState.cardStyle ||
+      splashScreen !== lastSavedState.splashScreen ||
+      fullName !== lastSavedState.fullName ||
+      profession !== lastSavedState.profession ||
+      bio !== lastSavedState.bio ||
+      location !== lastSavedState.location ||
+      customTextsStr !== safeStringifyJson(lastSavedState.customTexts) ||
+      selectedProjectsStr !== safeStringifyJson(lastSavedState.selectedProjects) ||
+      pageBlocksStr !== safeStringifyJson(lastSavedState.pageBlocks?.map((b: PageBlock) => ({id: b.id, orderIndex: b.orderIndex, isVisible: b.isVisible, isLocked: b.isLocked})))
+    );
+  }, [
+    lastSavedState, activeTheme, themeColor, fontHeading, fontBody, buttonShape, 
+    cardStyle, splashScreen, fullName, profession, bio, location, 
+    customTextsStr, selectedProjectsStr, pageBlocksStr
+  ]);
 
   // Protect against accidental tab close/refresh if there are unsaved changes
   useEffect(() => {
@@ -250,6 +282,28 @@ export function useThemeEditor() {
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
+  // Protect against browser back button
+  useEffect(() => {
+    if (!isDirty) return;
+
+    // Push a dummy state so the back button triggers popstate instead of leaving immediately
+    window.history.pushState(null, '', window.location.href);
+
+    const handlePopState = () => {
+      if (window.confirm('Keluar dari Editor? Perubahan yang Anda lakukan mungkin tidak disimpan.')) {
+        window.history.back();
+      } else {
+        window.history.pushState(null, '', window.location.href);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, [isDirty]);
 
   useEffect(() => {
@@ -1003,9 +1057,12 @@ export function useThemeEditor() {
       selectedProjects,
       rawProjects: dbData.projects || [],
       previewMode,
+      splitModeType,
       desktopZoom,
+      mobileZoom,
       ZOOM_MIN,
       ZOOM_MAX,
+      ZOOM_MAX_MOBILE,
       canUndo: pastStatesRef.current.length > 0,
       canRedo: futureStatesRef.current.length > 0
     },
@@ -1026,6 +1083,7 @@ export function useThemeEditor() {
       setIsSeoModalOpen,
       setIsPublishModalOpen,
       setPreviewMode,
+      setSplitModeType,
       zoomIn,
       zoomOut,
       saveDraft,
@@ -1042,3 +1100,7 @@ export function useThemeEditor() {
     }
   };
 }
+
+export type ThemeEditorHook = ReturnType<typeof useThemeEditor>;
+export type ThemeEditorState = ThemeEditorHook['state'];
+export type ThemeEditorActions = ThemeEditorHook['actions'];
