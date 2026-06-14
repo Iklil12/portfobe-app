@@ -39,6 +39,8 @@ export function LeftPanel({ state, actions }: { state: any, actions: any }) {
   const [dragY, setDragY] = React.useState(0);
   const [isDragging, setIsDragging] = React.useState(false);
   const touchStartY = React.useRef(0);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const touchOrigin = React.useRef<'handle' | 'content'>('content');
 
   const subdomain = stateSubdomain || livePreviewData?.subdomain;
   const userPlan = livePreviewData?.plan || 'FREE';
@@ -53,6 +55,47 @@ export function LeftPanel({ state, actions }: { state: any, actions: any }) {
   const canPublish = isDirty || !isCurrentlyLive || hasUnpublishedChanges;
 
   const ActiveThemeIcon = THEME_ICONS[activeTheme] || Box;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+    setIsDragging(true);
+    
+    if (scrollContainerRef.current && scrollContainerRef.current.contains(e.target as Node)) {
+      touchOrigin.current = 'content';
+    } else {
+      touchOrigin.current = 'handle';
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const currentY = e.touches[0].clientY;
+    
+    // Boleh drag panel JIKA ditekan di handle ATAU konten sedang di posisi puncak (scrollTop 0)
+    const isAtTop = touchOrigin.current === 'handle' || !scrollContainerRef.current || scrollContainerRef.current.scrollTop <= 0;
+    
+    if (isAtTop) {
+      const diff = currentY - touchStartY.current;
+      if (diff > 0) {
+        setDragY(diff);
+      } else {
+        // Bergerak ke atas saat di puncak (kembali normal scroll)
+        setDragY(0);
+        touchStartY.current = currentY; // Terus reset agar saat ditarik ke bawah lagi hitungannya akurat
+      }
+    } else {
+      // Konten sedang di-scroll di tengah/bawah, panel tidak boleh ikut.
+      setDragY(0);
+      touchStartY.current = currentY; // Update terus koordinat awal agar siap transisi saat mentok ke atas
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    if (dragY > 80) setIsMobileDrawerOpen(false);
+    setDragY(0);
+  };
 
   return (
     <>
@@ -123,15 +166,27 @@ export function LeftPanel({ state, actions }: { state: any, actions: any }) {
       />
 
       {/* LEFT SIDEBAR UTAMA */}
-      <div className={`
-        flex flex-col z-[100] bg-[#111111] text-white border-r border-white/5
-        ${isEditorCollapsed ? 'lg:w-0 lg:opacity-0 lg:pointer-events-none lg:overflow-hidden' : 'lg:w-[280px] lg:opacity-100'}
-        fixed left-0 right-0 bottom-0 max-h-[85vh] lg:relative lg:max-h-full rounded-t-3xl lg:rounded-none
-        transition-all duration-300
-        ${isMobileDrawerOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'}
-      `}>
+      <div 
+        className={`
+          flex flex-col z-[100] bg-[#111111] text-white border-r border-white/5 overscroll-none
+          ${isEditorCollapsed ? 'lg:w-0 lg:opacity-0 lg:pointer-events-none lg:overflow-hidden' : 'lg:w-[280px] lg:opacity-100'}
+          fixed left-0 right-0 bottom-0 max-h-[85vh] lg:relative lg:max-h-full rounded-t-3xl lg:rounded-none
+          transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
+          ${isMobileDrawerOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'}
+        `}
+        style={{
+          transform: isDragging ? `translateY(${dragY}px)` : undefined,
+          transition: isDragging ? 'none' : undefined
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* Mobile Drag Handle */}
-        <div className="lg:hidden w-full flex justify-center pt-4 pb-2 cursor-pointer rounded-t-3xl" onClick={() => setIsMobileDrawerOpen(false)}>
+        <div 
+          className="lg:hidden w-full flex justify-center pt-4 pb-2 cursor-pointer rounded-t-3xl touch-none" 
+          onClick={() => setIsMobileDrawerOpen(false)}
+        >
           <div className="w-12 h-1.5 bg-zinc-800 rounded-full"></div>
         </div>
 
@@ -163,7 +218,7 @@ export function LeftPanel({ state, actions }: { state: any, actions: any }) {
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-5 min-w-[280px]">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overscroll-none custom-scrollbar p-5 min-w-[280px]">
           {/* SECTION: PAGES / THEMES (MIMICKING FRAMER) */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-3 px-1">

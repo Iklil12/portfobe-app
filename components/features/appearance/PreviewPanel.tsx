@@ -4,18 +4,22 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   ChevronRight, ChevronLeft, Undo2, Redo2, Monitor, 
-  Smartphone, Minus, Plus, Save, ExternalLink, Lock, Loader2 
+  Smartphone, Minus, Plus, Save, ExternalLink, Lock, Loader2, GripHorizontal 
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useDragControls, useMotionValue } from 'framer-motion';
 
 export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const dragControls = useDragControls();
   const iframeReady = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [mobileScale, setMobileScale] = useState(1);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [windowWidth, setWindowWidth] = useState(1024);
   const [isChangingTheme, setIsChangingTheme] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
   const prevThemeRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -37,6 +41,14 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
     livePreviewTheme,
     previewMode
   } = state;
+
+  // Reset posisi ketika pindah mode
+  useEffect(() => {
+    if (previewMode !== 'mobile') {
+      x.set(0);
+      y.set(0);
+    }
+  }, [previewMode, x, y]);
 
   const { setIsEditorCollapsed, saveDesign } = actions;
 
@@ -101,11 +113,11 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
       if (previewMode === 'mobile' && containerRef.current) {
         const targetWidth = 454;
         const targetHeight = 932;
-        const availableHeight = containerRef.current.clientHeight - 180;
-        const availableWidth = containerRef.current.clientWidth - 80;
+        const availableHeight = containerRef.current.clientHeight - 40;
+        const availableWidth = containerRef.current.clientWidth - 40;
         const scaleH = availableHeight / targetHeight;
         const scaleW = availableWidth / targetWidth;
-        setMobileScale(Math.min(1, scaleH, scaleW));
+        setMobileScale(Math.min(1.1, scaleH, scaleW));
       } else {
         setMobileScale(1);
       }
@@ -132,29 +144,71 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
       />
 
 
-      {/* CONTAINER MOCKUP DEVICE */}
-      <div
-        className={`relative z-10 flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden shrink-0
-          ${isMobileDevice && previewMode === 'mobile' ? 'w-full h-full bg-zinc-950 absolute inset-0' : ''}
-          ${isMobileDevice && previewMode === 'desktop' ? 'bg-zinc-950 w-[90vw] h-[60vh] rounded-none shadow-2xl border border-white/10' : ''}
-          ${!isMobileDevice ? (
-              previewMode === 'desktop' 
-                ? 'absolute inset-0 bg-zinc-950 w-full h-full border-0 rounded-none' 
-                : 'mt-14 shadow-[0_20px_60px_rgba(0,0,0,0.6)] border-[12px] border-zinc-900 bg-black rounded-[2.5rem] origin-center'
-            ) : ''
-          }
-        `}
+      {/* DRAGGABLE WRAPPER FOR MOBILE MOCKUP */}
+      <motion.div
+        drag={!isMobileDevice && previewMode === 'mobile'}
+        dragControls={dragControls}
+        dragListener={false}
+        dragConstraints={containerRef}
+        dragElastic={0.05}
+        dragMomentum={false}
+        onDragStart={() => setIsDragging(true)}
+        onDragEnd={() => setIsDragging(false)}
+        transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+        className={`z-10 flex flex-col shrink-0 ${
+          !isMobileDevice && previewMode === 'mobile' 
+            ? 'relative origin-top-left' 
+            : 'absolute inset-0 w-full h-full items-center justify-center'
+        }`}
         style={!isMobileDevice && previewMode === 'mobile' ? {
-          width: '454px',
-          height: '932px',
-          transform: `scale(${mobileScale})`
-        } : undefined}
+          x, y,
+          width: 454 * mobileScale,
+          height: 932 * mobileScale,
+          touchAction: 'none'
+        } : { x, y }}
       >
-        <div className="shrink-0 transition-all duration-700 z-20">
-        </div>
+        {/* CONTAINER MOCKUP DEVICE */}
+        <div
+          className={`flex flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-visible relative
+            ${isMobileDevice && previewMode === 'desktop' ? 'w-[90vw] h-[60vh]' : 'w-full h-full'}
+            ${isMobileDevice && previewMode === 'mobile' ? 'bg-zinc-950' : ''}
+            ${isMobileDevice && previewMode === 'desktop' ? 'bg-zinc-950 rounded-none shadow-2xl border border-white/10' : ''}
+            ${!isMobileDevice ? (
+                previewMode === 'desktop' 
+                  ? 'bg-zinc-950 border-0 rounded-none' 
+                  : 'shadow-[0_20px_60px_rgba(0,0,0,0.6)] border-[12px] border-zinc-900 bg-black rounded-[2.5rem]'
+              ) : ''
+            }
+          `}
+          style={!isMobileDevice && previewMode === 'mobile' ? {
+            width: '454px',
+            height: '932px',
+            transform: `scale(${mobileScale})`,
+            transformOrigin: 'top left',
+            position: 'absolute',
+            top: 0,
+            left: 0
+          } : undefined}
+        >
+          {/* DRAG HANDLE (DYNAMIC ISLAND STYLE) */}
+          {!isMobileDevice && previewMode === 'mobile' && (
+            <div 
+              className="absolute top-4 left-1/2 -translate-x-1/2 w-14 h-1.5 bg-white/30 hover:bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing transition-colors shadow-md z-[60] pointer-events-auto"
+              onPointerDown={(e) => dragControls.start(e)}
+              title="Tarik untuk memindahkan"
+            />
+          )}
 
-        {/* IFRAME PREVIEW */}
-        <div className={`flex-1 relative z-0 transition-all duration-700 overflow-hidden ${previewMode === 'desktop' || isMobileDevice ? 'bg-zinc-950' : 'bg-transparent'}`}>
+          {/* DRAG OVERLAY TO PREVENT IFRAME SWALLOWING */}
+          {isDragging && (
+            <div className="absolute inset-0 z-50 rounded-[2rem] cursor-grabbing" />
+          )}
+
+          <div className="shrink-0 transition-all duration-700 z-20">
+          </div>
+
+          {/* IFRAME PREVIEW */}
+          <div className={`flex-1 relative z-0 transition-all duration-700 overflow-hidden ${!isMobileDevice && previewMode === 'mobile' ? 'rounded-[1.5rem]' : ''} ${previewMode === 'desktop' || isMobileDevice ? 'bg-zinc-950' : 'bg-transparent'}`}>
           
           {/* THEME TRANSITION OVERLAY */}
           <AnimatePresence>
@@ -204,7 +258,8 @@ export function PreviewPanel({ state, actions }: { state: any, actions: any }) {
             }}
           />
         </div>
-      </div>
+        </div>
+      </motion.div>
 
 
     </div>

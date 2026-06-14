@@ -1,7 +1,7 @@
 //app/dashboard/appearance/page.tsx
 "use client";
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useThemeEditor } from '@/hooks/useThemeEditor';
 import Link from 'next/link';
 import { LeftPanel } from '@/components/features/appearance/LeftPanel';
@@ -14,6 +14,29 @@ import { Loader2, ArrowLeft, Undo2, Redo2, Monitor, Smartphone, ExternalLink, Mi
 
 function AppearanceEditor() {
   const { state, actions } = useThemeEditor();
+
+  // Sinkronisasi Keyboard Shortcut untuk Undo / Redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Jangan trigger jika user sedang mengetik di dalam input atau textarea
+      if (e.target instanceof HTMLElement && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)) {
+        return;
+      }
+
+      const modifier = e.ctrlKey || e.metaKey; // Mendukung Windows (Ctrl) & Mac (Cmd)
+      
+      if (modifier && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        if (state.canUndo) actions.undo();
+      } else if (modifier && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) {
+        e.preventDefault();
+        if (state.canRedo) actions.redo();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [state.canUndo, state.canRedo, actions]);
 
   if (state.isLoading) {
     return (
