@@ -270,11 +270,11 @@ function AppearanceEditor() {
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
         {/* LEFTMOST DOCK NAV (MATCHES REFERENCE IMAGE EXACTLY, ONLY THEME & PAGES) */}
         {!state.isEditorCollapsed && (
-          <div className="hidden lg:flex flex-col w-[56px] border-r border-white/5 bg-[#18181c] z-[101] shrink-0 items-center py-6 gap-5">
+          <div className="hidden lg:flex flex-col w-[56px] border-r border-white/5 bg-[#111111] z-[101] shrink-0 items-center pt-3 pb-6 gap-2">
             {/* Layers Button (Theme Settings) */}
             <button 
               onClick={() => setActiveTab('theme')}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center relative transition-all group ${
+              className={`w-10 h-10 rounded-md flex items-center justify-center relative transition-all group ${
                 activeTab === 'theme' ? 'bg-[#2c2c35] text-white' : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
               }`}
               title="Theme Settings"
@@ -286,7 +286,7 @@ function AppearanceEditor() {
             {/* Layout Button (Pages) */}
             <button 
               onClick={() => setActiveTab('pages')}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center relative transition-all group ${
+              className={`w-10 h-10 rounded-md flex items-center justify-center relative transition-all group ${
                 activeTab === 'pages' ? 'bg-[#2c2c35] text-white' : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
               }`}
               title="Layout / Pages"

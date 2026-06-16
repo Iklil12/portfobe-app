@@ -72,13 +72,18 @@ export default function PreviewPage() {
     const subdomain = data.profile?.subdomain || 'preview';
     
     let galleryTemplate = 'editorial';
+    let galleryDesign = 'classic';
+    let customTextsObj: any = {};
     if (theme?.customTexts) {
       try {
-        const customTextsObj = typeof theme.customTexts === 'string'
+        customTextsObj = typeof theme.customTexts === 'string'
           ? JSON.parse(theme.customTexts)
           : theme.customTexts;
         if (customTextsObj.galleryTemplate) {
           galleryTemplate = customTextsObj.galleryTemplate;
+        }
+        if (customTextsObj.galleryDesign) {
+          galleryDesign = customTextsObj.galleryDesign;
         }
       } catch (e) {
         console.error("Failed to parse customTexts in gallery preview", e);
@@ -94,6 +99,9 @@ export default function PreviewPage() {
           projects={projects} 
           subdomain={subdomain} 
           galleryTemplate={galleryTemplate}
+          galleryDesign={galleryDesign}
+          isEditor={true}
+          customTexts={customTextsObj}
         />
       </main>
     );

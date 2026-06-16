@@ -51,11 +51,16 @@ export default async function FullGalleryPage({
   const projects = finalProjects.filter((p: any) => p.projectType !== '3d');
 
   let galleryTemplate = 'editorial';
+  let galleryDesign = 'classic';
+  let customTextsObj: any = {};
   if (userData?.siteAppearance?.customTexts) {
     try {
-      const parsed = JSON.parse(userData.siteAppearance.customTexts as string);
-      if (parsed.galleryTemplate) {
-        galleryTemplate = parsed.galleryTemplate;
+      customTextsObj = JSON.parse(userData.siteAppearance.customTexts as string);
+      if (customTextsObj.galleryTemplate) {
+        galleryTemplate = customTextsObj.galleryTemplate;
+      }
+      if (customTextsObj.galleryDesign) {
+        galleryDesign = customTextsObj.galleryDesign;
       }
     } catch (e) {
       console.error("Failed to parse customTexts in gallery", e);
@@ -67,6 +72,8 @@ export default async function FullGalleryPage({
       projects={projects} 
       subdomain={subdomain} 
       galleryTemplate={galleryTemplate}
+      galleryDesign={galleryDesign}
+      customTexts={customTextsObj}
     />
   );
 }

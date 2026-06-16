@@ -11,7 +11,7 @@ import {
   Layout, Film, Bolt, Grid, Star, Layers, Box, Move, 
   Columns, Newspaper, Moon, Waves, Square, Video, Image, Gem, 
   FileText, ChevronRight, RotateCcw, FolderOpen, Loader2, Save, Rocket, Monitor, Smartphone, Sliders,
-  Play, MoveVertical, AlertTriangle, MousePointer2, LucideIcon
+  Play, MoveVertical, AlertTriangle, MousePointer2, LucideIcon, LogOut
 } from 'lucide-react';
 
 import { EditorControls } from './EditorControls';
@@ -207,48 +207,55 @@ export function LeftPanel({
 
         {/* Indikator Draft Aktif */}
         {activeDraftName && (
-          <div className="px-4 py-3 bg-[#16161a] border-b border-white/5 flex flex-col gap-2 shrink-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#ff9e00] shadow-[0_0_8px_rgba(255,158,0,0.6)] animate-pulse" />
-                <span className="text-[11px] font-bold text-zinc-300 tracking-wider uppercase truncate max-w-[140px]" title={activeDraftName}>
-                  {activeDraftName}
-                </span>
-              </div>
-              <button
-                onClick={actions.exitDraft}
-                className="text-[9px] font-semibold text-zinc-400 hover:text-white hover:bg-white/5 border border-white/10 px-2.5 py-1 rounded-md transition-all duration-200 uppercase tracking-wider"
-              >
-                Keluar
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
+          <div className="px-3.5 py-2.5 bg-[#111111] border-b border-white/5 flex items-center justify-between gap-3 shrink-0">
+            <div className="flex items-center gap-2.5 min-w-0">
+              {/* Draft Icon */}
+              <FileText className="w-3.5 h-3.5 text-[#ff9e00] shrink-0" />
+              
+              {/* Draft Name */}
+              <span className="text-[11px] font-semibold text-zinc-200 tracking-wide truncate max-w-[85px]" title={activeDraftName}>
+                {activeDraftName}
+              </span>
+
+              {/* Styled Status Badge */}
               {publishedDraftId === activeDraftId && !hasUnpublishedChanges && (
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 tracking-wider font-bold">
+                <span className="inline-flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold shrink-0">
+                  <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
                   LIVE
                 </span>
               )}
               {publishedDraftId === activeDraftId && hasUnpublishedChanges && (
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 tracking-wider font-bold">
-                  UNPUBLISHED CHANGES
+                <span className="inline-flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold shrink-0">
+                  <span className="w-1 h-1 rounded-full bg-amber-400 animate-pulse" />
+                  CHANGES
                 </span>
               )}
               {publishedDraftId !== activeDraftId && (
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-zinc-400 border border-white/5 tracking-wider font-bold">
-                  DRAFT VERSION
+                <span className="inline-flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-zinc-400 border border-white/5 font-bold shrink-0">
+                  <span className="w-1 h-1 rounded-full bg-zinc-500" />
+                  DRAFT
                 </span>
               )}
             </div>
+
+            {/* Exit/Keluar Button */}
+            <button
+              onClick={actions.exitDraft}
+              className="flex items-center gap-1.5 text-[10px] font-semibold text-zinc-400 hover:text-red-400 bg-white/5 hover:bg-red-500/10 px-2.5 py-1 rounded-md transition-all duration-200 border border-white/5 hover:border-red-500/20 shadow-sm"
+            >
+              <LogOut className="w-3 h-3" />
+              <span>Keluar</span>
+            </button>
           </div>
         )}
 
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overscroll-none custom-scrollbar p-5 min-w-[280px]">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overscroll-none custom-scrollbar px-3.5 py-5 min-w-[280px]">
           {activeTab === 'theme' ? (
             <>
               {/* SECTION: PAGES / THEMES (MIMICKING FRAMER) */}
-              <div className="mb-8">
+              <div className="mb-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
                 <div className="flex items-center justify-between mb-3 px-1">
-                  <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase">Templates</h3>
+                  <h3 className="text-[11px] font-semibold text-white/40 tracking-wider uppercase">Templates</h3>
                   {!isLoading && (
                     <button onClick={() => setIsThemeModalOpen(true)} className="w-5 h-5 rounded hover:bg-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors">
                       <PlusIcon />
@@ -257,40 +264,41 @@ export function LeftPanel({
                 </div>
 
                 {isLoading ? (
-                  <div className="p-4 rounded-xl border border-white/5 bg-zinc-900/40 animate-pulse h-16"></div>
+                  <div className="p-4 rounded-md border border-white/5 bg-zinc-900/40 animate-pulse h-16"></div>
                 ) : (
                   <div 
-                    className="group cursor-pointer p-3 rounded-lg border border-white/5 bg-[#1a1a1a] hover:bg-[#222] hover:border-white/10 transition-all flex items-center justify-between"
+                    className="group cursor-pointer p-3.5 rounded-md border border-white/5 bg-[#16161a] hover:bg-[#1f1f24] hover:border-white/10 transition-all flex items-center justify-between shadow-sm"
                     onClick={() => setIsThemeModalOpen(true)}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-md bg-[#222] border border-white/5 flex items-center justify-center text-white">
-                        <ActiveThemeIcon className="w-4 h-4 text-white/70" />
+                      <div className="w-9 h-9 rounded-md bg-white/5 border border-white/5 flex items-center justify-center text-white transition-all group-hover:bg-white/10 group-hover:border-white/10">
+                        <ActiveThemeIcon className="w-4 h-4 text-white/70 group-hover:scale-105 transition-transform" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-medium text-white text-[13px] leading-tight">
+                        <span className="font-semibold text-white text-[13px] leading-tight tracking-wide">
                           {THEMES_DATA.find(t => t.id === activeTheme)?.name || 'Theme'}
                         </span>
-                        <span className="text-[10px] text-white/40 mt-0.5">Active Template</span>
+                        <span className="text-[10px] text-white/45 mt-1">Active Template</span>
                       </div>
                     </div>
+                    <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/70 group-hover:translate-x-0.5 transition-all" />
                   </div>
                 )}
                 
                 {/* Status Perubahan / Live */}
-                <div className="mt-3 px-1">
+                <div className="mt-3.5 px-1.5 flex items-center justify-between">
                   {isCurrentlyLive && !isDirty && !hasUnpublishedChanges && (
-                     <span className="text-[10px] font-medium text-emerald-400 flex items-center gap-1.5 tracking-wide">
+                     <span className="text-[10px] font-semibold text-emerald-400 flex items-center gap-2 tracking-wide">
                        <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Sedang Live
                      </span>
                   )}
                   {isCurrentlyLive && !isDirty && hasUnpublishedChanges && (
-                     <span className="text-[10px] font-medium text-[#ff9e00] flex items-center gap-1.5 tracking-wide">
+                     <span className="text-[10px] font-semibold text-[#ff9e00] flex items-center gap-2 tracking-wide">
                        <span className="w-1.5 h-1.5 bg-[#ff9e00] rounded-full animate-pulse"></span> Perubahan Belum Tayang
                      </span>
                   )}
                   {isDirty && (
-                     <span className="text-[10px] font-medium text-sky-400 flex items-center gap-1.5 tracking-wide">
+                     <span className="text-[10px] font-semibold text-sky-400 flex items-center gap-2 tracking-wide">
                        <span className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-pulse"></span> Terdapat Perubahan
                      </span>
                   )}
@@ -299,42 +307,43 @@ export function LeftPanel({
                 {!isLoading && (
                   <button
                     onClick={actions.resetToThemePreset}
-                    className="mt-2 w-full px-3 py-2.5 rounded-lg border border-transparent hover:bg-white/5 text-white/60 hover:text-white transition-all text-xs flex items-center gap-2 group"
+                    className="mt-3.5 w-full px-3 py-2 border border-white/5 hover:border-white/10 bg-white/[0.02] hover:bg-white/5 rounded-md text-white/60 hover:text-white transition-all text-[11px] font-medium flex items-center justify-center gap-2 group shadow-sm"
                   >
-                    <RotateCcw className="w-3.5 h-3.5 text-white/40 group-hover:text-white" />
+                    <RotateCcw className="w-3.5 h-3.5 text-white/40 group-hover:text-white group-hover:rotate-[-45deg] transition-all duration-300" />
                     <span>Reset to Default</span>
                   </button>
                 )}
               </div>
 
+              {/* Line Separator */}
+              <div className="w-full h-px bg-white/5 my-6"></div>
+
               {/* SECTION: CONTENT (Projects & Drafts) */}
-              <div className="mb-8">
-                <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase mb-3 px-1">Content</h3>
+              <div className="mb-8 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">
+                <h3 className="text-[11px] font-semibold text-white/40 tracking-wider uppercase mb-3 px-1">Content</h3>
                 
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1.5">
                   <button 
                     onClick={() => setIsProjectModalOpen(true)}
-                    className="w-full px-3 py-2.5 rounded-lg hover:bg-white/5 text-white/60 hover:text-white transition-all flex items-center justify-between group text-sm"
+                    className="w-full px-3 py-2 rounded-md border border-transparent hover:border-white/5 bg-transparent hover:bg-white/[0.02] text-white/60 hover:text-white transition-all flex items-center justify-between group text-sm"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <Image className="w-4 h-4 text-white/40 group-hover:text-white/80" />
-                      <span>Projects</span>
-                    </div>
+                    <span className="text-xs font-medium tracking-wide">Projects</span>
                     {selectedProjects?.length > 0 && (
-                      <span className="bg-white/10 text-white/80 text-[10px] px-1.5 py-0.5 rounded">{selectedProjects.length}</span>
+                      <span className="bg-white/5 text-zinc-500 font-mono font-medium text-[10px] px-2 py-0.5 rounded-full min-w-[20px] text-center group-hover:bg-white/10 group-hover:text-zinc-200 transition-all">
+                        {selectedProjects.length}
+                      </span>
                     )}
                   </button>
 
                   <button 
                     onClick={() => setIsDraftsModalOpen(true)}
-                    className="w-full px-3 py-2.5 rounded-lg hover:bg-white/5 text-white/60 hover:text-white transition-all flex items-center justify-between group text-sm"
+                    className="w-full px-3 py-2 rounded-md border border-transparent hover:border-white/5 bg-transparent hover:bg-white/[0.02] text-white/60 hover:text-white transition-all flex items-center justify-between group text-sm"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <FolderOpen className="w-4 h-4 text-white/40 group-hover:text-white/80" />
-                      <span>Drafts</span>
-                    </div>
+                    <span className="text-xs font-medium tracking-wide">Drafts</span>
                     {drafts?.length > 0 && (
-                      <span className="bg-white/10 text-white/80 text-[10px] px-1.5 py-0.5 rounded">{drafts.length}</span>
+                      <span className="bg-white/5 text-zinc-500 font-mono font-medium text-[10px] px-2 py-0.5 rounded-full min-w-[20px] text-center group-hover:bg-white/10 group-hover:text-zinc-200 transition-all">
+                        {drafts.length}
+                      </span>
                     )}
                   </button>
                 </div>
@@ -349,13 +358,13 @@ export function LeftPanel({
                 {/* Home Page */}
                 <button 
                   onClick={() => setSelectedPage?.('home')}
-                  className={`w-full p-3 rounded-lg transition-all flex items-center gap-3 border text-left ${
+                  className={`w-full p-3 rounded-md transition-all flex items-center gap-3 border text-left ${
                     selectedPage === 'home' 
                       ? 'bg-[#2c2c35] border-white/10 text-white shadow-sm' 
                       : 'bg-transparent border-transparent text-white/60 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-md bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
                     <Layout className="w-4 h-4 text-white/70" />
                   </div>
                   <div className="flex flex-col">
@@ -367,13 +376,13 @@ export function LeftPanel({
                 {/* Gallery Page */}
                 <button 
                   onClick={() => setSelectedPage?.('gallery')}
-                  className={`w-full p-3 rounded-lg transition-all flex items-center gap-3 border text-left ${
+                  className={`w-full p-3 rounded-md transition-all flex items-center gap-3 border text-left ${
                     selectedPage === 'gallery' 
                       ? 'bg-[#2c2c35] border-white/10 text-white shadow-sm' 
                       : 'bg-transparent border-transparent text-white/60 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-md bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
                     <Grid className="w-4 h-4 text-[#ff9e00]" />
                   </div>
                   <div className="flex flex-col">

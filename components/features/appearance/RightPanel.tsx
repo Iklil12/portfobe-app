@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { EditorControls } from './EditorControls';
-import { GalleryLayoutPicker } from '@/components/editor-controls/SharedControls';
+import { GalleryLayoutPicker, GalleryDesignPicker } from '@/components/editor-controls/SharedControls';
 import type { ThemeEditorState, ThemeEditorActions } from '@/hooks/useThemeEditor';
 import { Grid, Layout, Info } from 'lucide-react';
 
@@ -25,7 +25,7 @@ export function RightPanel({
       transition-all duration-300
       ${isEditorCollapsed ? 'w-0 opacity-0 pointer-events-none' : 'w-[280px] opacity-100'}
     `}>
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-5 min-w-[280px]">
+      <div className="flex-1 overflow-y-auto custom-scrollbar px-3.5 py-5 min-w-[280px]">
         {activeTab === 'theme' ? (
           <EditorControls state={state} actions={actions} />
         ) : (
@@ -37,11 +37,17 @@ export function RightPanel({
                   <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase">Gallery Options</h3>
                 </div>
 
-                <div className="mb-6">
+                <div>
+                  <GalleryDesignPicker 
+                    designStyle={livePreviewTheme?.customTexts?.galleryDesign} 
+                    setDesign={(val: string) => actions.updateCustomText('galleryDesign', val)} 
+                  />
                   <GalleryLayoutPicker 
                     layoutStyle={livePreviewTheme?.customTexts?.galleryTemplate} 
                     setLayout={(val: string) => actions.updateCustomText('galleryTemplate', val)} 
                   />
+
+
                 </div>
 
                 {/* Helpful tips */}
