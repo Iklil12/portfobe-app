@@ -58,7 +58,6 @@ export async function GET(req: NextRequest) {
     const userOffsetMinutes = tzOffsetStr ? parseInt(tzOffsetStr) : now.getTimezoneOffset();
 
     // Awal hari ini berdasarkan WAKTU LOKAL USER
-    // Shift current time to User's time in UTC, set UTC hours to 0, then shift back to real absolute time
     const userNow = shiftToUserTime(now, userOffsetMinutes);
     userNow.setUTCHours(0, 0, 0, 0);
     const startOfToday = new Date(userNow.getTime() + userOffsetMinutes * 60000);
@@ -112,49 +111,101 @@ export async function GET(req: NextRequest) {
     });
     const totalViews = historicalViews + todayViewsCount;
 
-    // b. Unique Visitors
-    // Prisma tidak punya COUNT(DISTINCT), jadi kita pakai $queryRaw
-    const uniqueIPsResult: any = await prisma.$queryRaw`
+    // b. Unique Visitors (Today's unique IPs + Historical sessions)
+    const todayUniqueIPsResult: any = await prisma.$queryRaw`
       SELECT COUNT(DISTINCT ipAddress) as count 
       FROM Analytics 
       WHERE userId = ${userId} 
-        AND createdAt >= ${startDate} 
+        AND createdAt >= ${startOfToday} 
         AND type = 'VIEW'
     `;
-    const uniqueIPsCount = Number(uniqueIPsResult[0]?.count || 0);
-    const estimatedHistoric = Math.round(historicalViews * 0.7);
-    const uniqueVisitors = uniqueIPsCount + estimatedHistoric;
+    const todayUniqueIPsCount = Number(todayUniqueIPsResult[0]?.count || 0);
 
-    // c. Avg Time (Keseluruhan range)
-    const avgDurationObj = await prisma.analytics.aggregate({
-      where: { userId, createdAt: { gte: startDate }, duration: { gt: 0 } },
+    const historicalSessionCount = await prisma.visitorSession.count({
+      where: {
+        userId,
+        createdAt: { gte: startDate, lt: startOfToday }
+      }
+    });
+
+    // Cari session tertua untuk mengevaluasi apakah ada data sebelum retention 30 hari
+    const oldestSession = await prisma.visitorSession.findFirst({
+      where: { userId },
+      orderBy: { createdAt: "asc" },
+      select: { createdAt: true }
+    });
+
+    let estimatedHistoric = 0;
+    if (oldestSession && startDate < oldestSession.createdAt) {
+      const olderStats = await prisma.dailyStats.findMany({
+        where: {
+          userId,
+          date: { gte: startDate, lt: oldestSession.createdAt }
+        },
+        select: { views: true }
+      });
+      const olderViews = olderStats.reduce((s, d) => s + d.views, 0);
+      estimatedHistoric = Math.round(olderViews * 0.7);
+    } else if (!oldestSession) {
+      estimatedHistoric = Math.round(historicalViews * 0.7);
+    }
+
+    const uniqueVisitors = todayUniqueIPsCount + historicalSessionCount + estimatedHistoric;
+
+    // c. Avg Time (Menggunakan data VisitorSession yang bertahan 30 hari)
+    const avgDurationObj = await prisma.visitorSession.aggregate({
+      where: { 
+        userId, 
+        createdAt: { gte: startDate }, 
+        duration: { gt: 0 } 
+      },
       _avg: { duration: true }
     });
     const avgSec = Math.round(avgDurationObj._avg.duration || 0);
     const avgTimeStr = avgSec >= 60 ? `${Math.floor(avgSec / 60)}m ${avgSec % 60}s` : `${avgSec}s`;
 
-    // d. Bounce Rate (Kunjungan < 10s)
-    const allViewsInRange = await prisma.analytics.count({
-      where: { userId, createdAt: { gte: startDate }, type: { in: ['VIEW', 'CLICK', 'PROJECT_OPEN'] } }
+    // d. Bounce Rate (Kunjungan dengan isBounced: true dari VisitorSession)
+    const totalSessions = await prisma.visitorSession.count({
+      where: { userId, createdAt: { gte: startDate } }
     });
-    const bouncedViews = await prisma.analytics.count({
-      where: { userId, createdAt: { gte: startDate }, duration: { lt: 10 } }
+    const bouncedSessions = await prisma.visitorSession.count({
+      where: { userId, createdAt: { gte: startDate }, isBounced: true }
     });
-    const bounceRatePct = allViewsInRange > 0 ? Math.round((bouncedViews / allViewsInRange) * 100) : 0;
+    const bounceRatePct = totalSessions > 0 ? Math.round((bouncedSessions / totalSessions) * 100) : 0;
 
-    // e. Devices
-    // Karena parsing logic manual untuk browser-specific, load field minimal:
-    const deviceLogs = await prisma.analytics.findMany({
-      where: { userId, createdAt: { gte: startDate }, type: "VIEW" },
+    // e. Devices (Historical DailyDeviceStats + Today's Analytics)
+    const historicalDeviceStats = await prisma.dailyDeviceStats.findMany({
+      where: {
+        userId,
+        date: { gte: startDate, lt: startOfToday }
+      },
+      select: { deviceType: true, views: true }
+    });
+
+    const todayDeviceLogs = await prisma.analytics.findMany({
+      where: {
+        userId,
+        createdAt: { gte: startOfToday },
+        type: "VIEW"
+      },
       select: { userAgent: true, deviceType: true }
     });
+
     let desktop = 0, mobile = 0, tablet = 0;
-    deviceLogs.forEach(l => {
+
+    historicalDeviceStats.forEach(stat => {
+      if (stat.deviceType === "Mobile") mobile += stat.views;
+      else if (stat.deviceType === "Tablet") tablet += stat.views;
+      else desktop += stat.views;
+    });
+
+    todayDeviceLogs.forEach(l => {
       const dev = l.deviceType || parseUserAgent(l.userAgent || "");
       if (dev === "Mobile") mobile++;
       else if (dev === "Tablet") tablet++;
       else desktop++;
     });
+
     const totalDevices = desktop + mobile + tablet || 1;
     const devices = {
       desktop: Math.round((desktop / totalDevices) * 100),
@@ -162,16 +213,33 @@ export async function GET(req: NextRequest) {
       tablet: Math.round((tablet / totalDevices) * 100),
     };
 
-    // f. Traffic Sources
-    // Kita gunakan groupBy referrer di DB lalu parsing host di server
-    const sourceGroups = await prisma.analytics.groupBy({
+    // f. Traffic Sources (Historical DailyReferrerStats + Today's Analytics)
+    const historicalReferrerStats = await prisma.dailyReferrerStats.findMany({
+      where: {
+        userId,
+        date: { gte: startDate, lt: startOfToday }
+      },
+      select: { referrer: true, views: true }
+    });
+
+    const todayReferrerGroups = await prisma.analytics.groupBy({
       by: ['referrer'],
-      where: { userId, createdAt: { gte: startDate }, type: "VIEW" },
+      where: {
+        userId,
+        createdAt: { gte: startOfToday },
+        type: "VIEW"
+      },
       _count: { _all: true }
     });
-    
+
     const sourcesMap: Record<string, number> = {};
-    sourceGroups.forEach((g) => {
+
+    historicalReferrerStats.forEach(stat => {
+      const ref = stat.referrer;
+      sourcesMap[ref] = (sourcesMap[ref] || 0) + stat.views;
+    });
+
+    todayReferrerGroups.forEach((g) => {
       let ref = "Direct";
       if (g.referrer && g.referrer !== "Direct") {
         const r = g.referrer.toLowerCase();
@@ -189,7 +257,7 @@ export async function GET(req: NextRequest) {
             const host = new URL(g.referrer).hostname.replace("www.", "");
             ref = host.includes("portfo.be") || host.includes("localhost") ? "Direct" : host;
           } catch {
-            /* tetap Direct */
+            // tetap Direct
           }
         }
       }
@@ -206,29 +274,25 @@ export async function GET(req: NextRequest) {
       .sort((a, b) => b.count - a.count)
       .slice(0, 6);
 
-    // g. Data Chart (Load HANYA createdAt & ipAddress, JAUH lebih efisien memori)
-    const chartLogs = await prisma.analytics.findMany({
-      where: { userId, createdAt: { gte: startDate }, type: "VIEW" },
-      select: { createdAt: true, ipAddress: true }
-    });
-
     // ── 9. Chart Data ─────────────────────────────────────────────────────────
     let chartData: { day: string; date: string; views: number; visitors: number }[];
 
     if (range === "1d") {
-      // Tampilkan per JAM (0-23) untuk hari ini (User Time)
       const hourlyMap: Record<number, number> = {};
       const hourlyIpMap: Record<number, Set<string>> = {};
       
-      chartLogs
-        .filter((l) => l.createdAt >= startOfToday)
-        .forEach((l) => {
-          const userLogTime = shiftToUserTime(l.createdAt, userOffsetMinutes);
-          const hour = userLogTime.getUTCHours();
-          hourlyMap[hour] = (hourlyMap[hour] || 0) + 1;
-          if (!hourlyIpMap[hour]) hourlyIpMap[hour] = new Set();
-          if (l.ipAddress) hourlyIpMap[hour].add(l.ipAddress);
-        });
+      const todayLogs = await prisma.analytics.findMany({
+        where: { userId, createdAt: { gte: startOfToday }, type: "VIEW" },
+        select: { createdAt: true, ipAddress: true }
+      });
+
+      todayLogs.forEach((l) => {
+        const userLogTime = shiftToUserTime(l.createdAt, userOffsetMinutes);
+        const hour = userLogTime.getUTCHours();
+        hourlyMap[hour] = (hourlyMap[hour] || 0) + 1;
+        if (!hourlyIpMap[hour]) hourlyIpMap[hour] = new Set();
+        if (l.ipAddress) hourlyIpMap[hour].add(l.ipAddress);
+      });
 
       const userCurrentTime = shiftToUserTime(now, userOffsetMinutes);
       const currentHour = userCurrentTime.getUTCHours();
@@ -239,31 +303,44 @@ export async function GET(req: NextRequest) {
         visitors: hourlyIpMap[h] ? hourlyIpMap[h].size : 0,
       }));
     } else {
-      // Per hari dari startDate → hari ini
-      const dailyMap: Record<string, number> = {};
-      const visitorsMap: Record<string, number> = {};
+      const dailyViewsMap: Record<string, number> = {};
+      const dailyVisitorsMap: Record<string, number> = {};
 
-      // Dari DailyStats (hari-hari sebelum hari ini)
+      // Ringkasan Views dari DailyStats
       historicalStats.forEach((stat) => {
         const key = toDateKey(stat.date, userOffsetMinutes);
-        dailyMap[key] = (dailyMap[key] || 0) + stat.views;
+        dailyViewsMap[key] = (dailyViewsMap[key] || 0) + stat.views;
       });
 
-      const dailyIpMap: Record<string, Set<string>> = {};
-      // Dari chartLogs (Semua hari dalam range untuk menghitung VISITORS dari IP address yang riil)
-      chartLogs.forEach((l) => {
-        const key = toDateKey(l.createdAt, userOffsetMinutes);
-        
-        // Kita hanya tambahkan views ke dailyMap jika hari ini (karena hari sebelumnya sudah di-cover oleh DailyStats)
-        if (l.createdAt >= startOfToday) {
-          dailyMap[key] = (dailyMap[key] || 0) + 1;
-        }
-
-        if (!dailyIpMap[key]) dailyIpMap[key] = new Set();
-        if (l.ipAddress) dailyIpMap[key].add(l.ipAddress);
+      // Views Hari Ini dari Analytics
+      const todayViews = await prisma.analytics.count({
+        where: { userId, createdAt: { gte: startOfToday }, type: "VIEW" }
       });
-      Object.keys(dailyIpMap).forEach(key => {
-         visitorsMap[key] = Math.max(visitorsMap[key] || 0, dailyIpMap[key].size);
+      const todayKey = toDateKey(startOfToday, userOffsetMinutes);
+      dailyViewsMap[todayKey] = (dailyViewsMap[todayKey] || 0) + todayViews;
+
+      // Visitors Hari Ini dari Analytics (Unique IPs)
+      const todayUniqueIPsResult: any = await prisma.$queryRaw`
+        SELECT COUNT(DISTINCT ipAddress) as count 
+        FROM Analytics 
+        WHERE userId = ${userId} 
+          AND createdAt >= ${startOfToday} 
+          AND type = 'VIEW'
+      `;
+      dailyVisitorsMap[todayKey] = Number(todayUniqueIPsResult[0]?.count || 0);
+
+      // Visitors Historis dari VisitorSession (30 hari terakhir)
+      const historicalSessions = await prisma.visitorSession.findMany({
+        where: {
+          userId,
+          createdAt: { gte: startDate, lt: startOfToday }
+        },
+        select: { createdAt: true }
+      });
+
+      historicalSessions.forEach((sess) => {
+        const key = toDateKey(sess.createdAt, userOffsetMinutes);
+        dailyVisitorsMap[key] = (dailyVisitorsMap[key] || 0) + 1;
       });
 
       chartData = [];
@@ -273,11 +350,19 @@ export async function GET(req: NextRequest) {
 
       while (cursor <= endDay && count < 90) {
         const key = toDateKey(cursor, userOffsetMinutes);
+        const views = dailyViewsMap[key] || 0;
+        
+        let visitors = dailyVisitorsMap[key] || 0;
+        // Jika data VisitorSession sudah terhapus (> 30 hari), estimasikan unique visitors
+        if (visitors === 0 && views > 0 && cursor < startOfToday) {
+          visitors = Math.round(views * 0.7);
+        }
+
         chartData.push({
           day: toDisplayLabel(cursor, userOffsetMinutes, range === "7d"),
           date: key,
-          views: dailyMap[key] || 0,
-          visitors: visitorsMap[key] || 0,
+          views,
+          visitors,
         });
         cursor.setUTCDate(cursor.getUTCDate() + 1);
         count++;
@@ -320,3 +405,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+

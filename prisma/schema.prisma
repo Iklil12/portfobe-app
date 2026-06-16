@@ -31,6 +31,9 @@ model User {
   couponUsages    CouponUsage[]
   dailyStats      DailyStats[]
   hourlyStats     HourlyStats[]
+  dailyDeviceStats    DailyDeviceStats[]
+  dailyReferrerStats  DailyReferrerStats[]
+  dailyLocationStats  DailyLocationStats[]
   integrations    Integration[]
   links           Link[]
   pageBlocks      PageBlock[]
@@ -335,6 +338,52 @@ model DailyStats {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, date])
+  @@index([date])
+  @@index([userId])
+}
+
+model DailyDeviceStats {
+  id         String   @id @default(uuid())
+  userId     String
+  date       DateTime
+  deviceType String   @default("Desktop")
+  views      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, deviceType])
+  @@index([date])
+  @@index([userId])
+}
+
+model DailyReferrerStats {
+  id        String   @id @default(uuid())
+  userId    String
+  date      DateTime
+  referrer  String   @default("Direct")
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, referrer])
+  @@index([date])
+  @@index([userId])
+}
+
+model DailyLocationStats {
+  id        String   @id @default(uuid())
+  userId    String
+  date      DateTime
+  country   String   @default("Unknown")
+  city      String   @default("Unknown")
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, country, city])
   @@index([date])
   @@index([userId])
 }

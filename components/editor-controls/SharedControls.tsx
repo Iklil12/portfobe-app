@@ -264,13 +264,14 @@ export function GalleryLayoutPicker({ layoutStyle, setLayout }: { layoutStyle?: 
   const isEditorial = layoutStyle === 'editorial' || !layoutStyle;
   const isMasonry = layoutStyle === 'masonry';
   const isGrid = layoutStyle === 'grid';
+  const isFluid = layoutStyle === 'fluid';
 
   return (
     <div className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-300">
       <div className="mb-3 px-0.5">
         <h3 className="text-xs font-medium text-white/70">Gallery Layout</h3>
       </div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2">
         <button 
           onClick={() => setLayout('editorial')} 
           className={`group relative py-3 px-1 rounded-md border transition-all duration-300 flex flex-col items-center gap-2 active:scale-95 ${
@@ -319,6 +320,27 @@ export function GalleryLayoutPicker({ layoutStyle, setLayout }: { layoutStyle?: 
              <div className={`rounded-sm transition-all duration-300 ${isGrid ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
           </div>
           <span className="text-[10px] font-medium leading-tight text-center">Grid</span>
+        </button>
+
+        <button 
+          onClick={() => setLayout('fluid')} 
+          className={`group relative py-3 px-1 rounded-md border transition-all duration-300 flex flex-col items-center gap-2 active:scale-95 ${
+            isFluid 
+              ? 'bg-zinc-800/50 border-white/20 text-white' 
+              : 'bg-zinc-900/30 border-white/5 hover:border-white/20 text-white/50 hover:text-white hover:bg-zinc-800/30'
+          }`}
+        >
+          <div className="w-8 h-6 flex flex-col gap-[2px]">
+             <div className="flex gap-[2px] h-[45%] w-full">
+                <div className={`w-3/5 h-full rounded-sm transition-all duration-300 ${isFluid ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
+                <div className={`w-2/5 h-full rounded-sm transition-all duration-300 ${isFluid ? 'bg-white/50' : 'bg-white/10 group-hover:bg-white/30'}`}></div>
+             </div>
+             <div className="flex gap-[2px] h-[45%] w-full">
+                <div className={`w-2/5 h-full rounded-sm transition-all duration-300 ${isFluid ? 'bg-white/50' : 'bg-white/10 group-hover:bg-white/30'}`}></div>
+                <div className={`w-3/5 h-full rounded-sm transition-all duration-300 ${isFluid ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
+             </div>
+          </div>
+          <span className="text-[10px] font-medium leading-tight text-center">Fluid (Original)</span>
         </button>
       </div>
     </div>

@@ -25,6 +25,9 @@ export function SplitScreenStudioProjectsBlock({ data, theme, isEditor }: any) {
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const allProjects = data?.projects || data?.user?.projects || [];
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
+    const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+    const userPlan = data?.plan || data?.user?.plan || 'FREE';
+    const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
 
     const customTexts = theme?.customTexts || {};
     const getCustomText = (key: string, fallback: string) => customTexts[key] || fallback;
@@ -95,7 +98,7 @@ export function SplitScreenStudioProjectsBlock({ data, theme, isEditor }: any) {
                 );
             })}
 
-            {allProjects.filter((p: any) => p.projectType !== '3d').length > 4 && (
+            {showGalleryButton && (
                 <div className="w-full flex justify-center py-24 bg-[#050505]">
                     {isEditor ? (
                         <button className="cursor-not-allowed flex items-center justify-center px-8 py-4 rounded-full border border-white/20 hover:bg-white/5 transition-colors duration-300 font-display uppercase tracking-widest text-xs font-bold text-white/50" onClick={(e) => e.preventDefault()}>

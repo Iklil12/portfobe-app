@@ -1,6 +1,7 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
 import GalleryPageView from '@/components/features/gallery/GalleryPageView';
+import { redirect } from 'next/navigation';
 
 export default async function FullGalleryPage({ 
   params 
@@ -17,6 +18,11 @@ export default async function FullGalleryPage({
         profile: { subdomain: subdomain } 
       },
       include: {
+        profile: true,
+        links: {
+          where: { isActive: true },
+          orderBy: { order: 'asc' }
+        },
         siteAppearance: {
           include: {
             projects: {
@@ -47,8 +53,28 @@ export default async function FullGalleryPage({
     finalProjects = curatedProjects;
   }
 
+  // Cek apakah plan free atau jumlah projek foto/video <= 4
+  const galleryProjectsCount = finalProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+  const userPlan = userData?.plan || 'FREE';
+  if (userPlan === 'FREE' || galleryProjectsCount <= 4) {
+    redirect(`/${subdomain}`);
+  }
+
   // Filter 3D jika diperlukan agar tidak rusak di LazyImage
-  const projects = finalProjects.filter((p: any) => p.projectType !== '3d');
+  const filteredProjects = finalProjects.filter((p: any) => p.projectType !== '3d');
+
+  // Sign Bunny URL
+  const tokenKey = process.env.BUNNY_API_KEY || 'default_secret';
+  const { signBunnyUrl } = require("@/lib/bunnySign");
+  const projects = filteredProjects.map((proj: any) => {
+    if (proj.projectType === 'video') {
+      return {
+        ...proj,
+        mediaUrl: signBunnyUrl(proj.mediaUrl, tokenKey)
+      };
+    }
+    return proj;
+  });
 
   let galleryTemplate = 'editorial';
   let galleryDesign = 'classic';
@@ -74,6 +100,9 @@ export default async function FullGalleryPage({
       galleryTemplate={galleryTemplate}
       galleryDesign={galleryDesign}
       customTexts={customTextsObj}
+      profile={userData?.profile}
+      links={userData?.links}
+      email={userData?.email}
     />
   );
 }

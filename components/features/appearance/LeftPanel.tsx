@@ -374,22 +374,45 @@ export function LeftPanel({
                 </button>
 
                 {/* Gallery Page */}
-                <button 
-                  onClick={() => setSelectedPage?.('gallery')}
-                  className={`w-full p-3 rounded-md transition-all flex items-center gap-3 border text-left ${
-                    selectedPage === 'gallery' 
-                      ? 'bg-[#2c2c35] border-white/10 text-white shadow-sm' 
-                      : 'bg-transparent border-transparent text-white/60 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <div className="w-8 h-8 rounded bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
-                    <Grid className="w-4 h-4 text-[#ff9e00]" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-medium text-[13px] leading-tight">Gallery Showcase</span>
-                    <span className="text-[10px] opacity-50 mt-0.5">Curated Works Page</span>
-                  </div>
-                </button>
+                {(() => {
+                  const userPlan = livePreviewData?.plan || livePreviewData?.user?.plan || 'FREE';
+                  const allProjects = livePreviewData?.projects || [];
+                  const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+                  
+                  return (
+                    <button 
+                      onClick={() => {
+                        if (userPlan === 'FREE') {
+                          actions.setShowProModal(true);
+                          return;
+                        }
+                        if (galleryProjectsCount <= 4) {
+                          alert("Fitur Galeri membutuhkan minimal 5 proyek dengan tipe foto atau video.");
+                          return;
+                        }
+                        setSelectedPage?.('gallery');
+                      }}
+                      className={`w-full p-3 rounded-md transition-all flex items-center gap-3 border text-left relative ${
+                        selectedPage === 'gallery' 
+                          ? 'bg-[#2c2c35] border-white/10 text-white shadow-sm' 
+                          : 'bg-transparent border-transparent text-white/60 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      <div className="w-8 h-8 rounded bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
+                        <Grid className="w-4 h-4 text-[#ff9e00]" />
+                      </div>
+                      <div className="flex-1 flex flex-col">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-[13px] leading-tight">Gallery Showcase</span>
+                          {userPlan === 'FREE' && (
+                            <span className="bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">PRO</span>
+                          )}
+                        </div>
+                        <span className="text-[10px] opacity-50 mt-0.5">Curated Works Page</span>
+                      </div>
+                    </button>
+                  );
+                })()}
               </div>
             </div>
           )}

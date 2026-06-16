@@ -27,6 +27,10 @@ export function SpatialProjectsBlock({ data, theme, isMobileView, isCardPreview,
       ? { initial: "visible" as const, animate: "visible" as const }
       : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 } };
 
+  const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+  const userPlan = data?.plan || data?.user?.plan || 'FREE';
+  const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
   return (
     <div id="projects" className={`flex flex-col w-full px-8 gap-12`}>
         <motion.div {...viewAnim} variants={auraAnim} className="flex justify-between items-end mb-4">
@@ -90,14 +94,16 @@ export function SpatialProjectsBlock({ data, theme, isMobileView, isCardPreview,
         </div>
 
         {/* Explore More Button */}
-        <motion.div {...viewAnim} variants={auraAnim} className="w-full flex justify-center mt-8">
-            <Link href={`/${subdomain}/gallery`}  className={`${cardStyleClass} px-8 py-4 ${radiusClass} flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group`}>
-                <span className="font-medium text-white">
-                    <EditableText value={theme?.customTexts?.spatial_explore_archive || 'Explore Full Archive'} field="spatial_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
-                </span>
-                <i className="fas fa-arrow-right text-sm text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all"></i>
-            </Link>
-        </motion.div>
+        {showGalleryButton && (
+            <motion.div {...viewAnim} variants={auraAnim} className="w-full flex justify-center mt-8">
+                <Link href={`/${subdomain}/gallery`}  className={`${cardStyleClass} px-8 py-4 ${radiusClass} flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group`}>
+                    <span className="font-medium text-white">
+                        <EditableText value={theme?.customTexts?.spatial_explore_archive || 'Explore Full Archive'} field="spatial_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                    </span>
+                    <i className="fas fa-arrow-right text-sm text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all"></i>
+                </Link>
+            </motion.div>
+        )}
     </div>
   );
 }

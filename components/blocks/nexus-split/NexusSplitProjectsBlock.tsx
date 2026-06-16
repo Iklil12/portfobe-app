@@ -38,6 +38,10 @@ export function NexusSplitProjectsBlock({ data, theme, isEditor, isCardPreview }
       visible: { opacity: 1, x: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: nexusEase } }
   };
 
+  const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+  const userPlan = data?.plan || data?.user?.plan || 'FREE';
+  const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
   if (!archiveItems.length) return null;
 
   return (
@@ -132,11 +136,13 @@ export function NexusSplitProjectsBlock({ data, theme, isEditor, isCardPreview }
             })}
         </div>
 
-        <motion.div variants={itemFadeUp} className={`w-full flex mt-12 px-6 @md:px-12`}>
-            <Link href={`/${subdomain}/gallery`}  className="inline-flex items-center gap-3 font-sans font-bold text-sm uppercase tracking-widest text-white hover:text-[var(--hl)] transition-colors group">
-                <EditableText value={theme?.customTexts?.nexus_projects_link || 'View Full Archive'} field="nexus_projects_link" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /> <i className="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
-            </Link>
-        </motion.div>
+        {showGalleryButton && (
+            <motion.div variants={itemFadeUp} className={`w-full flex mt-12 px-6 @md:px-12`}>
+                <Link href={`/${subdomain}/gallery`}  className="inline-flex items-center gap-3 font-sans font-bold text-sm uppercase tracking-widest text-white hover:text-[var(--hl)] transition-colors group">
+                    <EditableText value={theme?.customTexts?.nexus_projects_link || 'View Full Archive'} field="nexus_projects_link" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /> <i className="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                </Link>
+            </motion.div>
+        )}
     </motion.section>
   );
 }

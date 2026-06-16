@@ -12,6 +12,10 @@ export function EditorialProjectsBlock({ data, theme, isEditor, isCardPreview }:
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
 
+    const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+    const userPlan = data?.plan || data?.user?.plan || 'FREE';
+    const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
     const cardRadiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[3rem]' : 'rounded-2xl';
     const cardStyle = theme?.cardStyle || 'soft';
     const cardStyleClassLight = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-white shadow-[0_30px_60px_rgba(0,0,0,0.08)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-white border-2 border-[#111] shadow-[8px_8px_0_0_#111]' : 'bg-[#fdfdfc] border border-[rgba(0,0,0,0.08)] shadow-sm';
@@ -93,12 +97,14 @@ export function EditorialProjectsBlock({ data, theme, isEditor, isCardPreview }:
                 })}
             </div>
 
-            <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className="w-full flex justify-center mt-20 @md:mt-32">
-                <Link href={`/${subdomain}/gallery`}  className={`group inline-flex items-center justify-center gap-4 px-8 py-4 ${radiusClass} border border-subtle hover:border-[var(--hl)] hover:bg-[var(--hl)] hover:text-white transition-all duration-300 font-sans font-medium text-sm @md:text-base text-[#111]`}>
-                    <EditableText value={theme?.customTexts?.editorial_archive || 'View Full Archive'} field="editorial_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
-                    <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                </Link>
-            </motion.div>
+            {showGalleryButton && (
+                <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className="w-full flex justify-center mt-20 @md:mt-32">
+                    <Link href={`/${subdomain}/gallery`}  className={`group inline-flex items-center justify-center gap-4 px-8 py-4 ${radiusClass} border border-subtle hover:border-[var(--hl)] hover:bg-[var(--hl)] hover:text-white transition-all duration-300 font-sans font-medium text-sm @md:text-base text-[#111]`}>
+                        <EditableText value={theme?.customTexts?.editorial_archive || 'View Full Archive'} field="editorial_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                        <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </Link>
+                </motion.div>
+            )}
         </section>
     );
 }

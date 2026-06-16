@@ -102,6 +102,9 @@ export default function PreviewPage() {
           galleryDesign={galleryDesign}
           isEditor={true}
           customTexts={customTextsObj}
+          profile={data.profile}
+          links={data.links}
+          email={data.email || (data.user && data.user.email)}
         />
       </main>
     );

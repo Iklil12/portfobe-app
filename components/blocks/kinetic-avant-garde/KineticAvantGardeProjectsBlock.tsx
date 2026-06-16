@@ -20,6 +20,10 @@ export function KineticAvantGardeProjectsBlock({ data, theme, isEditor, isCardPr
     const getCustomText = (key: string, fallback: string) => customTexts[key] || fallback;
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
 
+    const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+    const userPlan = data?.plan || data?.user?.plan || 'FREE';
+    const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
     useGSAP(() => {
         if (isCardPreview) return;
         
@@ -107,7 +111,7 @@ export function KineticAvantGardeProjectsBlock({ data, theme, isEditor, isCardPr
                 );
             })}
 
-            {allProjects.length > 3 && (
+            {showGalleryButton && (
                 <div className="kag-bg-void py-20 flex justify-center w-full relative z-20 border-t border-white/5 mt-10">
                     {isEditor ? (
                         <button className="border border-white/20 px-8 py-3 rounded-full font-kag-mono text-white/50 text-xs tracking-widest uppercase cursor-not-allowed">

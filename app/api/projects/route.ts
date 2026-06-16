@@ -62,9 +62,9 @@ export async function POST(req: Request) {
     // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
     if (getEffectivePlan(user) === 'FREE') {
       const projectCount = await prisma.project.count({ where: { userId: user.id, deletedAt: null } });
-      if (projectCount >= 3) {
+      if (projectCount >= 4) {
         return NextResponse.json({ 
-          error: "Kuota FREE maksimal 3 proyek. Silakan upgrade ke PRO.",
+          error: "Kuota FREE maksimal 4 proyek. Silakan upgrade ke PRO.",
           code: "QUOTA_EXCEEDED"
         }, { status: 403 });
       }

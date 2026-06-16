@@ -35,6 +35,9 @@ export default function TestimonialsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
+  const isSubmittingRef = useRef(false);
+  const isDeletingRef = useRef(false);
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -95,6 +98,8 @@ export default function TestimonialsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
     setIsAdding(true);
     try {
       const url = editingId ? `/api/testimonials/${editingId}` : '/api/testimonials';
@@ -119,6 +124,7 @@ export default function TestimonialsPage() {
       showToast({ message: "Terjadi kesalahan sistem", id: "save-error", icon: "fa-exclamation-triangle" });
     } finally {
       setIsAdding(false);
+      isSubmittingRef.current = false;
     }
   };
 
@@ -146,7 +152,8 @@ export default function TestimonialsPage() {
   };
 
   const confirmDelete = async () => {
-    if (!testimonialToDelete) return;
+    if (!testimonialToDelete || isDeletingRef.current) return;
+    isDeletingRef.current = true;
     setIsDeleting(true);
     try {
       const res = await fetch(`/api/testimonials/${testimonialToDelete}`, { method: 'DELETE' });
@@ -161,6 +168,7 @@ export default function TestimonialsPage() {
       console.error(error);
     } finally {
       setIsDeleting(false);
+      isDeletingRef.current = false;
       setTestimonialToDelete(null);
     }
   };

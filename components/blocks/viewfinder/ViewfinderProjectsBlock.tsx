@@ -35,6 +35,10 @@ export function ViewfinderProjectsBlock({ data, theme, isEditor, isCardPreview }
       if (scrollRef.current) scrollRef.current.scrollBy({ left: 500, behavior: 'smooth' });
   };
 
+  const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+  const userPlan = data?.plan || data?.user?.plan || 'FREE';
+  const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
   if (!archiveItems.length) return null;
 
   return (
@@ -113,27 +117,29 @@ export function ViewfinderProjectsBlock({ data, theme, isEditor, isCardPreview }
             <div className="flex-none w-6"></div>
         </div>
 
-        <motion.div
-            initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}
-            className="flex justify-center items-center w-full mt-12 px-6"
-        >
-            <Link href={`/${subdomain}/gallery`}  className="w-full @md:w-auto">
-                <motion.div
-                    whileHover="hover"
-                    initial="initial"
-                    className="group flex items-center justify-center gap-3 px-12 py-5 border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-[#050505] transition-all duration-300 cursor-pointer uppercase font-black tracking-[0.3em] text-xs @sm:text-sm w-full @md:min-w-[300px]"
-                >
-                    <span><EditableText value={theme?.customTexts?.vf_btn_archive || 'FULL ARCHIVE'} field="vf_btn_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /></span>
-                    <motion.i
-                        variants={{
-                            initial: { x: 0 },
-                            hover: { x: 5 }
-                        }}
-                        className="fas fa-arrow-right"
-                    ></motion.i>
-                </motion.div>
-            </Link>
-        </motion.div>
+        {showGalleryButton && (
+            <motion.div
+                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}
+                className="flex justify-center items-center w-full mt-12 px-6"
+            >
+                <Link href={`/${subdomain}/gallery`}  className="w-full @md:w-auto">
+                    <motion.div
+                        whileHover="hover"
+                        initial="initial"
+                        className="group flex items-center justify-center gap-3 px-12 py-5 border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-[#050505] transition-all duration-300 cursor-pointer uppercase font-black tracking-[0.3em] text-xs @sm:text-sm w-full @md:min-w-[300px]"
+                    >
+                        <span><EditableText value={theme?.customTexts?.vf_btn_archive || 'FULL ARCHIVE'} field="vf_btn_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /></span>
+                        <motion.i
+                            variants={{
+                                initial: { x: 0 },
+                                hover: { x: 5 }
+                            }}
+                            className="fas fa-arrow-right"
+                        ></motion.i>
+                    </motion.div>
+                </Link>
+            </motion.div>
+        )}
     </section>
   );
 }

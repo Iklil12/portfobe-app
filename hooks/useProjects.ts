@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import useSWR from 'swr';
 import toast from 'react-hot-toast';
 import { showToast } from '@/lib/customToast';
@@ -33,6 +33,9 @@ export function useProjects() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{id: string, title: string, type: string} | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const isSubmittingRef = useRef(false);
+  const isDeletingRef = useRef(false);
 
   const fetchAllData = async () => {
       try {
@@ -132,6 +135,8 @@ export function useProjects() {
       return;
     }
 
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
     const toastId = toast.loading(editingId ? 'Menyimpan perubahan...' : 'Mempublikasikan data...');
     const endpoint = projectType === 'certificate' ? '/api/certificates' : '/api/projects';
@@ -161,6 +166,7 @@ export function useProjects() {
       toast.error("Gagal terhubung ke server.", { id: toastId });
     } finally {
       setIsSubmitting(false);
+      isSubmittingRef.current = false;
     }
   };
 
@@ -175,7 +181,8 @@ export function useProjects() {
   };
 
   const executeDelete = async () => {
-    if (!itemToDelete) return;
+    if (!itemToDelete || isDeletingRef.current) return;
+    isDeletingRef.current = true;
     setIsDeleting(true);
     const endpoint = itemToDelete.type === 'certificate' 
       ? `/api/certificates?id=${itemToDelete.id}` 
@@ -194,6 +201,7 @@ export function useProjects() {
       showToast({ message: 'Gagal terhubung ke server.', id: 'del-net-err', icon: 'fa-wifi' });
     } finally {
       setIsDeleting(false);
+      isDeletingRef.current = false;
       setItemToDelete(null);
       document.body.style.overflow = 'unset';
     }

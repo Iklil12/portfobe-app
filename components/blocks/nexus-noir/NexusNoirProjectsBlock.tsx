@@ -12,6 +12,10 @@ export function NexusNoirProjectsBlock({ data, theme, isEditor, setSelectedMedia
 
     const allProjects = data?.projects || data?.user?.projects || [];
     const featuredProjects = allProjects.filter((p: any) => p.projectType?.toLowerCase() !== '3d').slice(0, 4);
+    const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+    const userPlan = data?.plan || data?.user?.plan || 'FREE';
+    const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
     const accentColor = theme?.themeColor || '#4F46E5'; 
 
     const customTexts = theme?.customTexts || {};
@@ -60,7 +64,7 @@ export function NexusNoirProjectsBlock({ data, theme, isEditor, setSelectedMedia
                     })}
                 </div>
                 
-                {allProjects.length > 4 && (
+                {showGalleryButton && (
                     <div className={`mt-32 text-center relative z-20 ${isEditor ? '' : 'gs-reveal'}`}>
                         {isEditor ? (
                             <button className="border border-white/20 px-8 py-3 rounded-full font-mono text-white/50 text-xs tracking-widest uppercase cursor-not-allowed">

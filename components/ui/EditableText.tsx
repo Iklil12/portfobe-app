@@ -161,7 +161,7 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
   };
 
   if (!isEditor) {
-    return <Component href={href} className={`break-words break-all [word-break:break-word] whitespace-pre-wrap ${className}`} style={{ fontFamily: 'inherit' }}>{content}</Component>;
+    return <Component href={href} className={`break-words [word-break:break-word] whitespace-pre-wrap ${className}`} style={{ fontFamily: 'inherit' }}>{content}</Component>;
   }
 
   return (
@@ -170,7 +170,7 @@ export function EditableText({ value, field, entity, isEditor, className = "", a
       ref={elementRef}
       contentEditable
       suppressContentEditableWarning
-      className={`outline-none cursor-text transition-all hover:shadow-[0_0_0_1px_#007bff] focus:shadow-[0_0_0_1px_#007bff] focus:bg-[#007bff]/5 rounded-[2px] break-words break-all [word-break:break-word] whitespace-pre-wrap ${className}`}
+      className={`outline-none cursor-text transition-all hover:shadow-[0_0_0_1px_#007bff] focus:shadow-[0_0_0_1px_#007bff] focus:bg-[#007bff]/5 rounded-[2px] break-words [word-break:break-word] whitespace-pre-wrap ${className}`}
       style={{ fontFamily: 'inherit' }}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}

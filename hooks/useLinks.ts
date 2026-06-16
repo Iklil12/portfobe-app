@@ -1,5 +1,4 @@
-//file hook/useLinks.ts
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import useSWR from 'swr';
 import toast from 'react-hot-toast';
 
@@ -24,6 +23,10 @@ export function useLinks() {
   const [isSaving, setIsSaving] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [linkCount, setLinkCount] = useState(0);
+
+  const isAddingRef = useRef(false);
+  const isSavingRef = useRef(false);
+  const isDeletingRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
@@ -68,6 +71,8 @@ export function useLinks() {
   };
 
   const saveAllChanges = async () => {
+    if (isSavingRef.current) return;
+    isSavingRef.current = true;
     setIsSaving(true);
     toast.loading('Menyimpan perubahan...', {
         id: 'save-links',
@@ -102,10 +107,13 @@ export function useLinks() {
       toast.error(error.message || "Gagal menyimpan", { id: 'save-links' });
     } finally {
       setIsSaving(false);
+      isSavingRef.current = false;
     }
   };
 
   const addLink = async () => {
+    if (isAddingRef.current) return;
+    isAddingRef.current = true;
     setIsAdding(true); 
     try {
       const res = await fetch('/api/links', { method: 'POST' });
@@ -128,11 +136,13 @@ export function useLinks() {
       toast.error("Masalah jaringan", { id: 'add-link' });
     } finally {
       setIsAdding(false); 
+      isAddingRef.current = false;
     }
   };
 
   const confirmDelete = async () => {
-    if (!linkToDelete) return;
+    if (!linkToDelete || isDeletingRef.current) return;
+    isDeletingRef.current = true;
     setIsDeleting(true);
     try {
       const res = await fetch(`/api/links/${linkToDelete}`, { method: 'DELETE' });
@@ -148,6 +158,7 @@ export function useLinks() {
       }
     } finally {
       setIsDeleting(false);
+      isDeletingRef.current = false;
       setLinkToDelete(null);
     }
   };

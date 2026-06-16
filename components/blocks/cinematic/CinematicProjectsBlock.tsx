@@ -14,8 +14,11 @@ export function CinematicProjectsBlock({ data, theme, isEditor, isCardPreview }:
 
     const allProjects = data?.projects || data?.user?.projects || [];
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
+    const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+    const userPlan = data?.plan || data?.user?.plan || 'FREE';
+    const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
-    
+
     const buttonShape = theme?.buttonShape || 'hard';
     const radiusClass = buttonShape === 'pill' ? 'rounded-full' : buttonShape === 'rounded' ? 'rounded-2xl' : 'rounded-none';
 
@@ -89,33 +92,35 @@ export function CinematicProjectsBlock({ data, theme, isEditor, isCardPreview }:
             </div>
 
             {/* Tombol Gallery Utama (Sleek Cinematic Style) */}
-            <div className={`w-full flex justify-center mb-20 px-6 mt-12`}>
-                <Link href={isEditor ? '#' : `/${subdomain}/gallery`}  className="group relative block w-full max-w-4xl no-underline overflow-hidden border-y border-[#1f1f1f] hover:border-white/30 transition-colors duration-700">
-                    {/* Background Glow Effect */}
-                    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-700"></div>
+            {showGalleryButton && (
+                <div className={`w-full flex justify-center mb-20 px-6 mt-12`}>
+                    <Link href={isEditor ? '#' : `/${subdomain}/gallery`}  className="group relative block w-full max-w-4xl no-underline overflow-hidden border-y border-[#1f1f1f] hover:border-white/30 transition-colors duration-700">
+                        {/* Background Glow Effect */}
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-700"></div>
 
-                    <div className={`relative z-10 flex items-center justify-between py-10 @md:py-14 px-2 @md:px-8`}>
-                        <div className="flex flex-col">
-                            <span className={`font-mono text-gray-500 uppercase tracking-[0.3em] group-hover:text-gray-300 transition-colors duration-500 text-[9px] @md:text-xs mb-3`}>
-                                <i className="fas fa-film mr-2"></i>
-                                <EditableText value={theme?.customTexts?.cinematic_btn_index || 'Full Index'} field="cinematic_btn_index" entity="appearance" isEditor={isEditor} as="span" />
-                            </span>
-                            <h3 className={`font-black uppercase tracking-tighter text-gray-300 group-hover:text-white transition-colors duration-500 cine-heading flex items-center gap-4 text-3xl @md:text-6xl`}>
-                                <EditableText value={theme?.customTexts?.cinematic_btn_explore || 'Explore Archive'} field="cinematic_btn_explore" entity="appearance" isEditor={isEditor} as="span" />
-                            </h3>
+                        <div className={`relative z-10 flex items-center justify-between py-10 @md:py-14 px-2 @md:px-8`}>
+                            <div className="flex flex-col">
+                                <span className={`font-mono text-gray-500 uppercase tracking-[0.3em] group-hover:text-gray-300 transition-colors duration-500 text-[9px] @md:text-xs mb-3`}>
+                                    <i className="fas fa-film mr-2"></i>
+                                    <EditableText value={theme?.customTexts?.cinematic_btn_index || 'Full Index'} field="cinematic_btn_index" entity="appearance" isEditor={isEditor} as="span" />
+                                </span>
+                                <h3 className={`font-black uppercase tracking-tighter text-gray-300 group-hover:text-white transition-colors duration-500 cine-heading flex items-center gap-4 text-3xl @md:text-6xl`}>
+                                    <EditableText value={theme?.customTexts?.cinematic_btn_explore || 'Explore Archive'} field="cinematic_btn_explore" entity="appearance" isEditor={isEditor} as="span" />
+                                </h3>
+                            </div>
+
+                            {/* Animated Arrow */}
+                            <div className={`flex items-center justify-center shrink-0 ${radiusClass} border border-[#1f1f1f] group-hover:border-white group-hover:bg-white group-hover:text-black transition-all duration-700 text-gray-500 w-12 h-12 @md:w-20 @md:h-20`}>
+                                <i className={`fas fa-arrow-right group-hover:-rotate-45 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] text-lg @md:text-2xl`}></i>
+                            </div>
                         </div>
 
-                        {/* Animated Arrow */}
-                        <div className={`flex items-center justify-center shrink-0 ${radiusClass} border border-[#1f1f1f] group-hover:border-white group-hover:bg-white group-hover:text-black transition-all duration-700 text-gray-500 w-12 h-12 @md:w-20 @md:h-20`}>
-                            <i className={`fas fa-arrow-right group-hover:-rotate-45 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] text-lg @md:text-2xl`}></i>
-                        </div>
-                    </div>
-
-                    {/* Scanning Line (Cinematic Lens Flare effect) */}
-                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1.5s] ease-in-out"></div>
-                    <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent translate-x-full group-hover:-translate-x-full transition-transform duration-[1.5s] ease-in-out"></div>
-                </Link>
-            </div>
+                        {/* Scanning Line (Cinematic Lens Flare effect) */}
+                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1.5s] ease-in-out"></div>
+                        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent translate-x-full group-hover:-translate-x-full transition-transform duration-[1.5s] ease-in-out"></div>
+                    </Link>
+                </div>
+            )}
         </section>
     );
 }

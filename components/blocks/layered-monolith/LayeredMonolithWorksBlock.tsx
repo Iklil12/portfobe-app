@@ -7,6 +7,10 @@ export function LayeredMonolithWorksBlock({ data, setSelectedMedia }: any) {
     const allProjects = data?.projects || data?.user?.projects || [];
     const featuredProjects = allProjects.filter((p: any) => p.projectType?.toLowerCase() !== '3d').slice(0, 4);
 
+    const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+    const userPlan = data?.plan || data?.user?.plan || 'FREE';
+    const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
     return (
         <div id="works" className="relative w-full">
             <div id="nav-works" className="absolute -top-20 w-full h-0 pointer-events-none invisible"></div>
@@ -64,7 +68,7 @@ export function LayeredMonolithWorksBlock({ data, setSelectedMedia }: any) {
             })}
             
             {/* View Gallery Card */}
-            {allProjects.length > featuredProjects.length && (
+            {showGalleryButton && (
                 <section className="stack-card bg-brand-accent text-white flex items-center justify-center relative cursor-pointer" >
                     <div className="noise mix-blend-overlay opacity-20"></div>
                     <Link href={`/${subdomain}/gallery`}  className="relative z-10 flex flex-col items-center justify-center w-full h-full cursor-hover group" data-cursor-text="ALL">

@@ -8,12 +8,19 @@ export function MidnightEmulsionFooterBlock({ data, theme, isEditor }: any) {
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
   const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
 
+  const allProjects = data?.projects || data?.user?.projects || [];
+  const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+  const userPlan = data?.plan || data?.user?.plan || 'FREE';
+  const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
   return (
     <footer className="w-full bg-[#05070a] border-t border-white/5 flex flex-col items-center pt-24 pb-12 shrink-0">
-      <Link href={`/${subdomain}/gallery`}  className="group relative overflow-hidden font-serif italic text-4xl @md:text-6xl text-slate-500 hover:text-white transition-colors duration-700 flex items-center gap-8 mb-32">
-        <EditableText value={theme?.customTexts?.midnight_archive || 'Open Full Archive'} field="midnight_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
-        <i className="fas fa-arrow-right text-[var(--hl)] -rotate-45 group-hover:rotate-0 transition-transform duration-700 text-3xl"></i>
-      </Link>
+      {showGalleryButton && (
+        <Link href={`/${subdomain}/gallery`}  className="group relative overflow-hidden font-serif italic text-4xl @md:text-6xl text-slate-500 hover:text-white transition-colors duration-700 flex items-center gap-8 mb-32">
+          <EditableText value={theme?.customTexts?.midnight_archive || 'Open Full Archive'} field="midnight_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+          <i className="fas fa-arrow-right text-[var(--hl)] -rotate-45 group-hover:rotate-0 transition-transform duration-700 text-3xl"></i>
+        </Link>
+      )}
 
       <div className="flex gap-8 @md:gap-12 font-sans text-xs font-bold uppercase tracking-[0.3em] text-slate-500 flex-wrap justify-center px-8">
         {links.map((l: any, i: number) => (

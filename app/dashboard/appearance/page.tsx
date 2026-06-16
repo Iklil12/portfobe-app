@@ -19,7 +19,7 @@ function AppearanceEditor() {
   
   // Dock & Page States
   const [activeTab, setActiveTab] = useState<'theme' | 'pages'>('theme');
-  const [selectedPage, setSelectedPage] = useState<'home' | 'gallery'>('gallery');
+  const [selectedPage, setSelectedPage] = useState<'home' | 'gallery'>('home');
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {

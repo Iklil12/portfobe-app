@@ -15,6 +15,10 @@ export function ObsidianProjectsBlock({ data, theme, isEditor }: any) {
   const allProjects = data?.projects || data?.user?.projects || [];
   const displayProjects = allProjects.filter((p: any) => p.projectType?.toLowerCase() !== '3d').slice(0, 4);
 
+  const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+  const userPlan = data?.plan || data?.user?.plan || 'FREE';
+  const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
   const getBtnShapeClass = (shape?: string) => {
       if (shape === 'hard' || shape === 'square') return 'rounded-none';
       if (shape === 'rounded') return 'rounded-md';
@@ -60,9 +64,11 @@ export function ObsidianProjectsBlock({ data, theme, isEditor }: any) {
                         <EditableText value={theme?.customTexts?.obs_portfolio_title || 'Selected Works'} field="obs_portfolio_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                     </h2>
                 </div>
-                <Link href={`/${subdomain}/gallery`} className="hidden md:block font-body text-sm hover:underline mt-4 md:mt-0 text-gray-300 hover-accent">
-                    <EditableText value={theme?.customTexts?.obs_portfolio_view_all || 'View all projects'} field="obs_portfolio_view_all" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
-                </Link>
+                {showGalleryButton && (
+                    <Link href={`/${subdomain}/gallery`} className="hidden md:block font-body text-sm hover:underline mt-4 md:mt-0 text-gray-300 hover-accent">
+                        <EditableText value={theme?.customTexts?.obs_portfolio_view_all || 'View all projects'} field="obs_portfolio_view_all" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                    </Link>
+                )}
             </motion.div>
 
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={staggerReveal} viewport={{ once: true, amount: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
@@ -99,14 +105,16 @@ export function ObsidianProjectsBlock({ data, theme, isEditor }: any) {
             </motion.div>
             
             {/* Explore Gallery Button */}
-            <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="mt-16 flex justify-center">
-                <Link href={`/${subdomain}/gallery`}  className={`group flex items-center gap-4 px-8 py-4 border border-[rgba(255,255,255,0.1)] ${btnShape} obsidian-btn-outline transition-all duration-300`}>
-                    <span className="font-heading font-medium text-lg">
-                        <EditableText value={theme?.customTexts?.obs_explore_archive || 'Explore Gallery'} field="obs_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
-                    </span>
-                    <i className="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
-                </Link>
-            </motion.div>
+            {showGalleryButton && (
+                <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="mt-16 flex justify-center">
+                    <Link href={`/${subdomain}/gallery`}  className={`group flex items-center gap-4 px-8 py-4 border border-[rgba(255,255,255,0.1)] ${btnShape} obsidian-btn-outline transition-all duration-300`}>
+                        <span className="font-heading font-medium text-lg">
+                            <EditableText value={theme?.customTexts?.obs_explore_archive || 'Explore Gallery'} field="obs_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                        </span>
+                        <i className="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
+                    </Link>
+                </motion.div>
+            )}
         </div>
     </section>
   );

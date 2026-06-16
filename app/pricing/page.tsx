@@ -33,8 +33,8 @@ export default function PricingPage() {
       buttonText: "Start Free",
       link: "/register",
       features: [
-        { text: "Max 1 Project", active: true },
-        { text: "Max 2 Certificates", active: true },
+        { text: "Max 4 Projects", active: true },
+        { text: "Max 1 Certificate", active: true },
         { text: "1 Public Bio Link", active: true },
         { text: "Basic Themes (3-5 Themes)", active: true },
         { text: "Portfobe Watermark", active: true },
@@ -349,7 +349,7 @@ export default function PricingPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="p-4 text-center border-l border-white/5 text-xs font-mono text-white/60">Max 2 Certificates</td>
+                  <td className="p-4 text-center border-l border-white/5 text-xs font-mono text-white/60">Max 4 Projects & 1 Cert</td>
                   <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-mono text-white/80 font-semibold">Unlimited</td>
                   <td className="p-4 text-center border-r border-white/5 text-xs font-mono text-white/80 font-semibold">Unlimited</td>
                 </tr>

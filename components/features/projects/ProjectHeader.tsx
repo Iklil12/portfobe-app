@@ -6,7 +6,7 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
   const { handleOpenModal } = actions;
   const { userPlan, projectCount, certCount, isLoading } = state;
   
-  const isProjectFull = userPlan === 'FREE' && projectCount >= 3;
+  const isProjectFull = userPlan === 'FREE' && projectCount >= 4;
   const isCertFull = userPlan === 'FREE' && certCount >= 1;
   const isQuotaFull = isProjectFull && isCertFull;
 
@@ -78,12 +78,12 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
               <div className="flex flex-col gap-1.5">
                 <div className="flex justify-between items-center">
                   <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-[0.1em]">Kapasitas Proyek</span>
-                  <span className={`text-[10px] font-mono font-bold ${isProjectFull ? 'text-rose-500' : 'text-white'}`}>{projectCount}/3</span>
+                  <span className={`text-[10px] font-mono font-bold ${isProjectFull ? 'text-rose-500' : 'text-white'}`}>{projectCount}/4</span>
                 </div>
                 <div className="w-full h-1 bg-zinc-900 border border-white/10 rounded-none overflow-hidden">
                   <motion.div 
                     initial={{ width: 0 }}
-                    animate={{ width: `${Math.min((projectCount / 3) * 100, 100)}%` }}
+                    animate={{ width: `${Math.min((projectCount / 4) * 100, 100)}%` }}
                     transition={{ duration: 1, ease: "easeOut" }}
                     className={`h-full ${isProjectFull ? 'bg-rose-500' : 'bg-[#ff9e00]'}`} 
                   ></motion.div>

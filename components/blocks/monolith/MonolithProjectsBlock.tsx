@@ -15,6 +15,10 @@ export function MonolithProjectsBlock({ data, theme, isEditor, isCardPreview, se
     const allProjects = data?.projects || data?.user?.projects || [];
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 5);
 
+    const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+    const userPlan = data?.plan || data?.user?.plan || 'FREE';
+    const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
     const buttonShape = theme?.buttonShape || 'rounded';
     const cardRadiusClass = buttonShape === 'hard' || buttonShape === 'square' ? 'rounded-none' : buttonShape === 'pill' ? 'rounded-[40px]' : 'rounded-2xl';
     const cardStyle = theme?.cardStyle || 'flat';
@@ -115,16 +119,18 @@ export function MonolithProjectsBlock({ data, theme, isEditor, isCardPreview, se
                 <div className={`shrink-0 w-12`}></div>
             </div>
 
-            <div className={`w-full flex justify-center mt-12 px-6 @md:px-12`}>
-                <Link href={`/${subdomain}/gallery`}  className="group flex items-center gap-4">
-                    <span className={`font-serif text-white group-hover:text-[var(--hl)] transition-colors italic text-2xl @md:text-3xl @lg:text-5xl`}>
-                        <EditableText value={theme?.customTexts?.monolith_projects_link || 'View Full Catalog'} field="monolith_projects_link" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
-                    </span>
-                    <div className={`rounded-full border border-white/20 flex items-center justify-center group-hover:border-[var(--hl)] transition-colors w-10 h-10 @md:w-12 @md:h-12`}>
-                        <i className="fas fa-arrow-right text-white group-hover:text-[var(--hl)]"></i>
-                    </div>
-                </Link>
-            </div>
+            {showGalleryButton && (
+                <div className={`w-full flex justify-center mt-12 px-6 @md:px-12`}>
+                    <Link href={`/${subdomain}/gallery`}  className="group flex items-center gap-4">
+                        <span className={`font-serif text-white group-hover:text-[var(--hl)] transition-colors italic text-2xl @md:text-3xl @lg:text-5xl`}>
+                            <EditableText value={theme?.customTexts?.monolith_projects_link || 'View Full Catalog'} field="monolith_projects_link" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                        </span>
+                        <div className={`rounded-full border border-white/20 flex items-center justify-center group-hover:border-[var(--hl)] transition-colors w-10 h-10 @md:w-12 @md:h-12`}>
+                            <i className="fas fa-arrow-right text-white group-hover:text-[var(--hl)]"></i>
+                        </div>
+                    </Link>
+                </div>
+            )}
         </section>
     );
 }

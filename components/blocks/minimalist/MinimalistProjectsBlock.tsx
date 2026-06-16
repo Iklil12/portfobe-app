@@ -40,6 +40,10 @@ export const MinimalistProjectsBlock = ({ data, theme, isEditor, blockConfig, se
   const cardStyle = theme?.cardStyle || 'flat';
   const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-white border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)]' : 'bg-gray-50 border border-gray-200 shadow-sm';
 
+  const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+  const userPlan = data?.plan || data?.user?.plan || 'FREE';
+  const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
   if (archiveItems.length === 0) return null;
 
   return (
@@ -103,25 +107,27 @@ export const MinimalistProjectsBlock = ({ data, theme, isEditor, blockConfig, se
           );
         })}
       </motion.div>
-      <motion.div
-        initial="hidden"
-        {...{ [animationTrigger]: "visible" }}
-        viewport={{ once: true }}
-        variants={cinematicBlurUp}
-        custom={0.3}
-        className="w-full flex justify-center mt-16 mb-20 relative z-10"
-      >
-        <Link href={`/${subdomain}/gallery`}  className="group inline-flex items-center gap-4 @md:gap-6 no-underline p-2">
-          <span className="text-[10px] @md:text-xs font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500 relative min-heading">
-            <EditableText value={theme?.customTexts?.min_explore_archive || 'EXPLORE ARCHIVE'} field="min_explore_archive" entity="appearance" isEditor={isEditor} maxLength={20} as="span" className="min-heading" />
-            <span className="absolute -bottom-2 left-0 w-0 h-px bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
-          </span>
-          <div className={`w-10 h-10 @md:w-12 @md:h-12 border border-gray-200 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-black group-hover:border-black shadow-sm group-hover:shadow-md overflow-hidden relative ${radiusClass}`}>
-            <i className="fas fa-arrow-right absolute transform -translate-x-[150%] text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 text-[10px] @md:text-xs"></i>
-            <i className="fas fa-arrow-right absolute transform translate-x-0 text-gray-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%] opacity-100 group-hover:opacity-0 text-[10px] @md:text-xs"></i>
-          </div>
-        </Link>
-      </motion.div>
+      {showGalleryButton && (
+        <motion.div
+          initial="hidden"
+          {...{ [animationTrigger]: "visible" }}
+          viewport={{ once: true }}
+          variants={cinematicBlurUp}
+          custom={0.3}
+          className="w-full flex justify-center mt-16 mb-20 relative z-10"
+        >
+          <Link href={`/${subdomain}/gallery`}  className="group inline-flex items-center gap-4 @md:gap-6 no-underline p-2">
+            <span className="text-[10px] @md:text-xs font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500 relative min-heading">
+              <EditableText value={theme?.customTexts?.min_explore_archive || 'EXPLORE ARCHIVE'} field="min_explore_archive" entity="appearance" isEditor={isEditor} maxLength={20} as="span" className="min-heading" />
+              <span className="absolute -bottom-2 left-0 w-0 h-px bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
+            </span>
+            <div className={`w-10 h-10 @md:w-12 @md:h-12 border border-gray-200 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-black group-hover:border-black shadow-sm group-hover:shadow-md overflow-hidden relative ${radiusClass}`}>
+              <i className="fas fa-arrow-right absolute transform -translate-x-[150%] text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 text-[10px] @md:text-xs"></i>
+              <i className="fas fa-arrow-right absolute transform translate-x-0 text-gray-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%] opacity-100 group-hover:opacity-0 text-[10px] @md:text-xs"></i>
+            </div>
+          </Link>
+        </motion.div>
+      )}
     </section>
   );
 };
