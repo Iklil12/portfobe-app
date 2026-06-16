@@ -22,7 +22,7 @@ export const AbsoluteNoirTestimonialsBlock = ({ data, theme, isEditor, isCardPre
     if (testimonials.length === 0) return null;
 
     return (
-        <motion.section initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerGrid} id="testimonials" className="w-full bg-[#050505] text-white">
+        <motion.section initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0, margin: "100px" }} variants={staggerGrid} id="testimonials" className="w-full bg-[#050505] text-white">
             <motion.div variants={wireframeReveal} className="w-full py-4 px-6 wire-border-b flex items-center bg-[#0a0a0a]">
                 <span className="font-mono text-sm uppercase tracking-widest">
                     <EditableText value={theme?.customTexts?.noir_testimonials_title || '[ CLIENT_ENDORSEMENTS ]'} field="noir_testimonials_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />

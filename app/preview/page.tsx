@@ -2,13 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import PortfolioView from '@/components/PortfolioView';
+import GalleryPageView from '@/components/features/gallery/GalleryPageView';
 
 export default function PreviewPage() {
   const [data, setData] = useState<any>(null);
   const [theme, setTheme] = useState<any>(null);
   const [isReady, setIsReady] = useState(false);
-
   const [isMobileView, setIsMobileView] = useState(false);
+  
+  const [activeTab, setActiveTab] = useState<'theme' | 'pages'>('theme');
+  const [selectedPage, setSelectedPage] = useState<'home' | 'gallery'>('home');
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -19,6 +22,8 @@ export default function PreviewPage() {
         setData(event.data.data);
         setTheme(event.data.theme);
         setIsMobileView(!!event.data.isMobileView);
+        if (event.data.activeTab) setActiveTab(event.data.activeTab);
+        if (event.data.selectedPage) setSelectedPage(event.data.selectedPage);
         setIsReady(true);
       }
     };
@@ -56,6 +61,41 @@ export default function PreviewPage() {
       <div className="flex items-center justify-center min-h-screen bg-[#050505]">
         <div className="w-6 h-6 border-2 border-slate-700 border-t-white rounded-full animate-spin"></div>
       </div>
+    );
+  }
+
+  const isGalleryView = activeTab === 'pages' && selectedPage === 'gallery';
+
+  if (isGalleryView) {
+    const rawProjects = data.projects || [];
+    const projects = rawProjects.filter((p: any) => p.projectType !== '3d');
+    const subdomain = data.profile?.subdomain || 'preview';
+    
+    let galleryTemplate = 'editorial';
+    if (theme?.customTexts) {
+      try {
+        const customTextsObj = typeof theme.customTexts === 'string'
+          ? JSON.parse(theme.customTexts)
+          : theme.customTexts;
+        if (customTextsObj.galleryTemplate) {
+          galleryTemplate = customTextsObj.galleryTemplate;
+        }
+      } catch (e) {
+        console.error("Failed to parse customTexts in gallery preview", e);
+      }
+    }
+
+    return (
+      <main className="min-h-screen relative overflow-x-clip bg-transparent">
+        <style dangerouslySetInnerHTML={{ __html: `
+          body { background: transparent !important; }
+        ` }} />
+        <GalleryPageView 
+          projects={projects} 
+          subdomain={subdomain} 
+          galleryTemplate={galleryTemplate}
+        />
+      </main>
     );
   }
 

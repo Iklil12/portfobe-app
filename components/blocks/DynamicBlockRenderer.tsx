@@ -314,6 +314,7 @@ const SplitScreenStudioFooterBlock = dynamic(() => import('./split-screen-studio
 
 const UniversalPlayer = dynamic(() => import('@/components/ui/UniversalPlayer').then(mod => mod.UniversalPlayer));
 const BlockEditorWrapper = dynamic(() => import('@/components/features/appearance/BlockEditorWrapper').then(mod => mod.BlockEditorWrapper));
+const VideoShowcaseRenderer = dynamic(() => import('./video-showcase/VideoShowcaseRenderer'));
 
 export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: any) => {
   const commonProps = { data, theme, isEditor, blockConfig: block, setSelectedMedia };
@@ -335,8 +336,10 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
   }
 
   // GLOBAL SMART BLOCKS
-  if (baseBlockType === 'FAQ') {
+  if (baseBlockType === 'FAQ' || block.blockType === 'FAQ') {
     content = <FaqRenderer themeId={activeThemeTemplate} data={data} theme={theme} isEditor={isEditor} />;
+  } else if (baseBlockType === 'SHOWCASE' || block.blockType === 'VIDEO_SHOWCASE') {
+    content = <VideoShowcaseRenderer themeId={activeThemeTemplate} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />;
   }
 
   // 1. SMART MAPPING: Render blok sesuai dengan tema yang sedang aktif
@@ -440,11 +443,14 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
       case 'EXPERIENCE': content = <NexusNoirExperienceBlock {...commonProps} />; break;
       case 'SERVICES': content = <NexusNoirServicesBlock {...commonProps} />; break;
       case 'STATS': content = <NexusNoirStatsBlock {...commonProps} />; break;
-      case 'PROJECTS': content = <NexusNoirProjectsBlock {...commonProps} />; break;
+      case 'PROJECTS': content = <NexusNoirProjectsBlock {...commonProps} setSelectedMedia={setSelectedMedia} />; break;
       case '3D': content = <NexusNoir3DBlock {...commonProps} />; break;
       case 'AWARDS': content = <NexusNoirAwardsBlock {...commonProps} />; break;
       case 'TESTIMONIALS': content = <NexusNoirTestimonialsBlock {...commonProps} />; break;
       case 'FOOTER': content = <NexusNoirFooterBlock {...commonProps} />; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><PenpotShowcase userId={userId} variant="nexus-noir" /></div> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><CanvaShowcase userId={userId} variant="nexus-noir" /></div> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><GithubStats userId={userId} variant="nexus-noir" /></div> : null; break;
     }
   } else if (activeThemeTemplate === 'horizontal-flow') {
     switch (baseBlockType) {
@@ -698,24 +704,6 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
       case 'CANVA': content = data?.id || data?.userId ? <div className="kag-bg-void kag-text-bone w-full border-t-8 border-black"><CanvaShowcase userId={userId} variant="kinetic-avant-garde" /></div> : null; break;
       case 'GITHUB': content = data?.id || data?.userId ? <div className="kag-bg-void kag-text-bone w-full border-t-8 border-black"><GithubStats userId={userId} variant="kinetic-avant-garde" /></div> : null; break;
     }
-  } else if (activeThemeTemplate === 'nexus-noir') {
-    switch (baseBlockType) {
-      case 'HERO': content = <NexusNoirHeroBlock {...commonProps} />; break;
-      case 'MARQUEE': content = <NexusNoirMarqueeBlock />; break;
-      case 'ABOUT': content = <NexusNoirAboutBlock {...commonProps} />; break;
-      case 'SKILLS': content = <NexusNoirSkillsBlock {...commonProps} />; break;
-      case 'EXPERIENCE': content = <NexusNoirExperienceBlock {...commonProps} />; break;
-      case 'SERVICES': content = <NexusNoirServicesBlock {...commonProps} />; break;
-      case 'STATS': content = <NexusNoirStatsBlock {...commonProps} />; break;
-      case 'PROJECTS': content = <NexusNoirProjectsBlock {...commonProps} setSelectedMedia={setSelectedMedia} />; break;
-      case '3D': content = <NexusNoir3DBlock {...commonProps} />; break;
-      case 'AWARDS': content = <NexusNoirAwardsBlock {...commonProps} />; break;
-      case 'TESTIMONIALS': content = <NexusNoirTestimonialsBlock {...commonProps} />; break;
-      case 'FOOTER': content = <NexusNoirFooterBlock {...commonProps} />; break;
-      case 'PENPOT': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><PenpotShowcase userId={userId} variant="nexus-noir" /></div> : null; break;
-      case 'CANVA': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><CanvaShowcase userId={userId} variant="nexus-noir" /></div> : null; break;
-      case 'GITHUB': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><GithubStats userId={userId} variant="nexus-noir" /></div> : null; break;
-    }
   }
 } // End of if (!content)
   if (content === undefined) {
@@ -773,10 +761,12 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
     { type: 'TESTIMONIALS', name: 'Testimoni', icon: 'fa-comment-alt' },
     { type: '3D', name: 'Showcase 3D', icon: 'fa-cube' },
     { type: 'FAQ', name: 'Tanya Jawab', icon: 'fa-question-circle' },
+    { type: 'VIDEO_SHOWCASE', name: 'Video Showcase', icon: 'fa-play-circle' },
     { type: 'FOOTER', name: 'Footer', icon: 'fa-shoe-prints' },
   ];
 
   const existingBlockTypes = new Set(blocks.map((b: any) => {
+    if (b.blockType === 'VIDEO_SHOWCASE') return 'VIDEO_SHOWCASE';
     const parts = b.blockType.split('_');
     return parts.length > 1 ? parts.slice(1).join('_') : b.blockType;
   }));

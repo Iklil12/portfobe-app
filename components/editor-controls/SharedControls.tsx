@@ -296,3 +296,71 @@ export function NavigationStylePicker({ navStyle, setNavStyle }: { navStyle?: st
   );
 }
 
+export function GalleryLayoutPicker({ layoutStyle, setLayout }: { layoutStyle?: string, setLayout?: (s: string) => void }) {
+  if (!setLayout) return null;
+  const isEditorial = layoutStyle === 'editorial' || !layoutStyle;
+  const isMasonry = layoutStyle === 'masonry';
+  const isGrid = layoutStyle === 'grid';
+
+  return (
+    <div className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-300">
+      <div className="flex items-center gap-2.5 mb-4">
+        <div className="w-6 h-6 rounded-md flex items-center justify-center text-white/50 bg-zinc-900/50 border border-white/5">
+          <LayoutGrid className="w-3.5 h-3.5" />
+        </div>
+        <h3 className="text-xs font-medium text-white/70">Gallery Layout</h3>
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        <button 
+          onClick={() => setLayout('editorial')} 
+          className={`group relative py-3 px-1 rounded-xl border transition-all duration-300 flex flex-col items-center gap-2 active:scale-95 ${
+            isEditorial 
+              ? 'bg-zinc-800/50 border-white/20 text-white' 
+              : 'bg-zinc-900/30 border-white/5 hover:border-white/20 text-white/50 hover:text-white hover:bg-zinc-800/30'
+          }`}
+        >
+          <div className="w-8 h-6 flex gap-1">
+            <div className={`w-3/5 h-full rounded-sm transition-all duration-300 ${isEditorial ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
+            <div className="flex flex-col gap-1 w-2/5 h-full">
+               <div className={`w-full h-1/2 rounded-sm transition-all duration-300 ${isEditorial ? 'bg-white/60' : 'bg-white/10 group-hover:bg-white/30'}`}></div>
+               <div className={`w-full h-1/2 rounded-sm transition-all duration-300 ${isEditorial ? 'bg-white/60' : 'bg-white/10 group-hover:bg-white/30'}`}></div>
+            </div>
+          </div>
+          <span className="text-[10px] font-medium leading-tight text-center">Editorial</span>
+        </button>
+
+        <button 
+          onClick={() => setLayout('masonry')} 
+          className={`group relative py-3 px-1 rounded-xl border transition-all duration-300 flex flex-col items-center gap-2 active:scale-95 ${
+            isMasonry 
+              ? 'bg-zinc-800/50 border-white/20 text-white' 
+              : 'bg-zinc-900/30 border-white/5 hover:border-white/20 text-white/50 hover:text-white hover:bg-zinc-800/30'
+          }`}
+        >
+          <div className="w-8 h-6 flex gap-1 items-start">
+            <div className={`w-1/2 h-full rounded-sm transition-all duration-300 ${isMasonry ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
+            <div className={`w-1/2 h-3/4 rounded-sm transition-all duration-300 ${isMasonry ? 'bg-white/60' : 'bg-white/10 group-hover:bg-white/30'}`}></div>
+          </div>
+          <span className="text-[10px] font-medium leading-tight text-center">Masonry</span>
+        </button>
+
+        <button 
+          onClick={() => setLayout('grid')} 
+          className={`group relative py-3 px-1 rounded-xl border transition-all duration-300 flex flex-col items-center gap-2 active:scale-95 ${
+            isGrid 
+              ? 'bg-zinc-800/50 border-white/20 text-white' 
+              : 'bg-zinc-900/30 border-white/5 hover:border-white/20 text-white/50 hover:text-white hover:bg-zinc-800/30'
+          }`}
+        >
+          <div className="w-8 h-6 grid grid-cols-2 grid-rows-2 gap-[2px]">
+             <div className={`rounded-sm transition-all duration-300 ${isGrid ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
+             <div className={`rounded-sm transition-all duration-300 ${isGrid ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
+             <div className={`rounded-sm transition-all duration-300 ${isGrid ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
+             <div className={`rounded-sm transition-all duration-300 ${isGrid ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
+          </div>
+          <span className="text-[10px] font-medium leading-tight text-center">Grid</span>
+        </button>
+      </div>
+    </div>
+  );
+}

@@ -94,7 +94,7 @@ export function EditorialProjectsBlock({ data, theme, isEditor, isCardPreview }:
             </div>
 
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className="w-full flex justify-center mt-20 @md:mt-32">
-                <Link href={`/${subdomain}/gallery`} scroll={false} className={`group inline-flex items-center justify-center gap-4 px-8 py-4 ${radiusClass} border border-subtle hover:border-[var(--hl)] hover:bg-[var(--hl)] hover:text-white transition-all duration-300 font-sans font-medium text-sm @md:text-base text-[#111]`}>
+                <Link href={`/${subdomain}/gallery`}  className={`group inline-flex items-center justify-center gap-4 px-8 py-4 ${radiusClass} border border-subtle hover:border-[var(--hl)] hover:bg-[var(--hl)] hover:text-white transition-all duration-300 font-sans font-medium text-sm @md:text-base text-[#111]`}>
                     <EditableText value={theme?.customTexts?.editorial_archive || 'View Full Archive'} field="editorial_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                     <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </Link>

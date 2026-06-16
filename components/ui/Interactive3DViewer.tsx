@@ -17,7 +17,7 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
           observer.disconnect();
         }
       },
-      { rootMargin: '100px' }
+      { rootMargin: '1500px' }
     );
 
     if (containerRef.current) {
@@ -36,10 +36,11 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
 
   return (
     <div ref={containerRef} className="w-full aspect-video min-h-[300px] @md:min-h-[400px] relative group/mv" style={bgColor ? { backgroundColor: bgColor } : {}}>
+      {/* Load library in background regardless of view state for better performance */}
+      <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js" strategy="lazyOnload" />
+      
       {inView ? (
         <>
-          <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js" />
-
           <ModelViewer
             src={mediaUrl}
             auto-rotate={autoRotate ? "" : null}
@@ -49,6 +50,7 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
             exposure={exposure}
             loading="eager"
             reveal="auto"
+            touch-action="pan-y"
             interaction-prompt="auto"
             style={{ width: '100%', height: '100%', '--poster-color': 'transparent' } as any}
           >

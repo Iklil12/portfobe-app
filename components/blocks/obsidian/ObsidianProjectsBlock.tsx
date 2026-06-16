@@ -100,7 +100,7 @@ export function ObsidianProjectsBlock({ data, theme, isEditor }: any) {
             
             {/* Explore Gallery Button */}
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="mt-16 flex justify-center">
-                <Link href={`/${subdomain}/gallery`} scroll={false} className={`group flex items-center gap-4 px-8 py-4 border border-[rgba(255,255,255,0.1)] ${btnShape} obsidian-btn-outline transition-all duration-300`}>
+                <Link href={`/${subdomain}/gallery`}  className={`group flex items-center gap-4 px-8 py-4 border border-[rgba(255,255,255,0.1)] ${btnShape} obsidian-btn-outline transition-all duration-300`}>
                     <span className="font-heading font-medium text-lg">
                         <EditableText value={theme?.customTexts?.obs_explore_archive || 'Explore Gallery'} field="obs_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                     </span>

@@ -10,12 +10,16 @@ import { PreviewPanel } from '@/components/features/appearance/PreviewPanel';
 import { SeoSettingsModal } from '@/components/features/appearance/SeoSettingsModal';
 import { OfflineModal } from '@/components/features/appearance/OfflineModal';
 import { PublishSuccessModal } from '@/components/features/appearance/PublishSuccessModal';
-import { Loader2, ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Columns, ExternalLink, Minus, Plus, Maximize, Minimize, Globe, ChevronDown } from 'lucide-react';
+import { Loader2, ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Columns, ExternalLink, Minus, Plus, Maximize, Minimize, Globe, ChevronDown, Layers, FileText, Settings, Search, SlidersHorizontal, Layout, Crop } from 'lucide-react';
 
 function AppearanceEditor() {
   const { state, actions } = useThemeEditor();
   const [isModeDropdownOpen, setIsModeDropdownOpen] = useState(false);
   const modeDropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Dock & Page States
+  const [activeTab, setActiveTab] = useState<'theme' | 'pages'>('theme');
+  const [selectedPage, setSelectedPage] = useState<'home' | 'gallery'>('gallery');
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -264,14 +268,63 @@ function AppearanceEditor() {
 
       {/* WORKSPACE AREA */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+        {/* LEFTMOST DOCK NAV (MATCHES REFERENCE IMAGE EXACTLY, ONLY THEME & PAGES) */}
+        {!state.isEditorCollapsed && (
+          <div className="hidden lg:flex flex-col w-[56px] border-r border-white/5 bg-[#18181c] z-[101] shrink-0 items-center py-6 gap-5">
+            {/* Layers Button (Theme Settings) */}
+            <button 
+              onClick={() => setActiveTab('theme')}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center relative transition-all group ${
+                activeTab === 'theme' ? 'bg-[#2c2c35] text-white' : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
+              }`}
+              title="Theme Settings"
+            >
+              <Layers className="w-[18px] h-[18px] stroke-[1.5]" />
+              <div className="absolute left-full ml-3 px-2 py-1 bg-[#222] border border-white/10 text-white text-[10px] whitespace-nowrap rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">Theme Settings</div>
+            </button>
+
+            {/* Layout Button (Pages) */}
+            <button 
+              onClick={() => setActiveTab('pages')}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center relative transition-all group ${
+                activeTab === 'pages' ? 'bg-[#2c2c35] text-white' : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
+              }`}
+              title="Layout / Pages"
+            >
+              <Layout className="w-[18px] h-[18px] stroke-[1.5]" />
+              <div className="absolute left-full ml-3 px-2 py-1 bg-[#222] border border-white/10 text-white text-[10px] whitespace-nowrap rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">Pages</div>
+            </button>
+          </div>
+        )}
+
         {/* PANEL KIRI: TEMA & DRAFTS */}
-        <LeftPanel state={state} actions={actions} />
+        <LeftPanel 
+          state={state} 
+          actions={actions} 
+          // @ts-ignore
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          selectedPage={selectedPage} 
+          setSelectedPage={setSelectedPage} 
+        />
 
         {/* PANEL TENGAH: LIVE PREVIEW AREA */}
-        <PreviewPanel state={state} actions={actions} />
+        <PreviewPanel 
+          state={state} 
+          actions={actions} 
+          // @ts-ignore
+          activeTab={activeTab}
+          selectedPage={selectedPage}
+        />
 
         {/* PANEL KANAN: PROPERTIES */}
-        <RightPanel state={state} actions={actions} />
+        <RightPanel 
+          state={state} 
+          actions={actions} 
+          // @ts-ignore
+          activeTab={activeTab} 
+          selectedPage={selectedPage} 
+        />
       </div>
 
       {state.isSeoModalOpen && <SeoSettingsModal state={state} actions={actions} />}

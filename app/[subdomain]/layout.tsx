@@ -26,13 +26,18 @@ export async function generateMetadata({
   const resolvedParams = await params;
   const subdomain = resolvedParams.subdomain.trim().toLowerCase();
 
-  const user = await prisma.user.findFirst({
-    where: { profile: { subdomain } },
-    include: { 
-      profile: true,
-      siteAppearance: true
-    },
-  });
+  let user = null;
+  try {
+    user = await prisma.user.findFirst({
+      where: { profile: { subdomain } },
+      include: { 
+        profile: true,
+        siteAppearance: true
+      },
+    });
+  } catch (error) {
+    console.error("🔥 DATABASE CONNECTION ERROR IN METADATA:", error);
+  }
 
   if (!user || !user.profile) {
     return {
@@ -124,11 +129,9 @@ export async function generateMetadata({
 
 export default async function SubdomainLayout({
   children,
-  modal,
   params,
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode;
   params: Promise<{ subdomain: string }>;
 }) {
   const resolvedParams = await params;
@@ -138,10 +141,18 @@ export default async function SubdomainLayout({
   const isDashboard = subdomain === 'dashboard' || subdomain === 'settings' || subdomain === 'api';
 
   // Ambil data untuk injeksi JSON-LD Structured Data
-  const user = !isDashboard ? await prisma.user.findFirst({
-    where: { profile: { subdomain } },
-    include: { profile: true },
-  }) : null;
+  let user = null;
+  if (!isDashboard) {
+    try {
+      user = await prisma.user.findFirst({
+        where: { profile: { subdomain } },
+        include: { profile: true },
+      });
+    } catch (error) {
+      console.error("🔥 DATABASE CONNECTION ERROR IN SUBDOMAIN LAYOUT:", error);
+      throw new Error("Gagal terhubung ke database Hostinger. Silakan periksa koneksi jaringan internet Anda, atau pastikan alamat IP Anda saat ini sudah di-whitelist di panel Hostinger (srv1786.hstgr.io).");
+    }
+  }
 
   const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://portfo.be';
 
@@ -178,12 +189,6 @@ export default async function SubdomainLayout({
       <ClientTransition>
         {children}
       </ClientTransition>
-      
-      {!isDashboard && (
-        <ClientTransition>
-          {modal}
-        </ClientTransition>
-      )}
     </>
   );
 }

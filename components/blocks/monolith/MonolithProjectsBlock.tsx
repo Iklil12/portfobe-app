@@ -116,7 +116,7 @@ export function MonolithProjectsBlock({ data, theme, isEditor, isCardPreview, se
             </div>
 
             <div className={`w-full flex justify-center mt-12 px-6 @md:px-12`}>
-                <Link href={`/${subdomain}/gallery`} scroll={false} className="group flex items-center gap-4">
+                <Link href={`/${subdomain}/gallery`}  className="group flex items-center gap-4">
                     <span className={`font-serif text-white group-hover:text-[var(--hl)] transition-colors italic text-2xl @md:text-3xl @lg:text-5xl`}>
                         <EditableText value={theme?.customTexts?.monolith_projects_link || 'View Full Catalog'} field="monolith_projects_link" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                     </span>

@@ -90,7 +90,7 @@ export function CinematicProjectsBlock({ data, theme, isEditor, isCardPreview }:
 
             {/* Tombol Gallery Utama (Sleek Cinematic Style) */}
             <div className={`w-full flex justify-center mb-20 px-6 mt-12`}>
-                <Link href={isEditor ? '#' : `/${subdomain}/gallery`} scroll={false} className="group relative block w-full max-w-4xl no-underline overflow-hidden border-y border-[#1f1f1f] hover:border-white/30 transition-colors duration-700">
+                <Link href={isEditor ? '#' : `/${subdomain}/gallery`}  className="group relative block w-full max-w-4xl no-underline overflow-hidden border-y border-[#1f1f1f] hover:border-white/30 transition-colors duration-700">
                     {/* Background Glow Effect */}
                     <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-700"></div>
 

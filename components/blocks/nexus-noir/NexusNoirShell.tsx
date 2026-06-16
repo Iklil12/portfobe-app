@@ -212,11 +212,7 @@ export function NexusNoirShell({ children, theme, isMobileView, isCardPreview, i
         .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
         .lenis.lenis-stopped { overflow: hidden; }
         
-        .nn-noise {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 10; opacity: 0.035;
-            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-        }
+
 
         .nn-bg-grid {
             position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -225,6 +221,8 @@ export function NexusNoirShell({ children, theme, isMobileView, isCardPreview, i
             background-size: 50px 50px;
             mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
             -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         .nn-cursor {
@@ -284,7 +282,6 @@ export function NexusNoirShell({ children, theme, isMobileView, isCardPreview, i
             <style dangerouslySetInnerHTML={{ __html: fontStyleString }} />
             
             {/* Background Elements */}
-            <div className="nn-noise fixed"></div>
             <div className="nn-bg-grid fixed"></div>
 
             {/* Custom Cursor */}

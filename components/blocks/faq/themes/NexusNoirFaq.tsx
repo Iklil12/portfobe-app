@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { EditableText } from '@/components/ui/EditableText';
 
 export default function NexusNoirFaq({ data, theme, isEditor }: { data: any, theme?: any, isEditor?: boolean }) {
@@ -98,47 +97,45 @@ export default function NexusNoirFaq({ data, theme, isEditor }: { data: any, the
             return (
               <div 
                 key={i} 
-                className={`relative border-l-2 duration-300 bg-black/40 group/item ${
-                  isOpen ? 'border-[#8b5cf6] bg-gradient-to-r from-[#8b5cf6]/10 to-transparent' : 'border-white/10 hover:border-white/30'
+                className={`relative border-l-2 transition-colors duration-300 group/item ${
+                  isOpen ? 'border-[#8b5cf6]' : 'border-white/10 hover:border-white/30'
                 }`}
               >
-                <button
-                  onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full p-6 md:p-8 flex justify-between items-center text-left focus:outline-none"
-                >
-                  <span className={`text-lg md:text-xl font-medium tracking-wide w-11/12 ${isOpen ? 'text-white' : 'text-white/60'}`} style={{ fontFamily: 'var(--font-heading)' }}>
-                    <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"rounded-none block w-full px-1"} />
-                  </span>
-                  <div className="text-white/40 font-mono text-sm shrink-0">
-                    {isOpen ? '[-]' : '[+]'}
-                  </div>
-                </button>
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
-                    >
+                {/* GPU-accelerated background transitions */}
+                <div className={`absolute inset-0 pointer-events-none transition-opacity duration-300 bg-gradient-to-r from-[#8b5cf6]/10 to-transparent ${isOpen ? 'opacity-100' : 'opacity-0'}`} />
+                <div className={`absolute inset-0 pointer-events-none transition-opacity duration-300 bg-black/40 ${isOpen ? 'opacity-0' : 'opacity-100'}`} />
+                
+                <div className="relative z-10">
+                  <button
+                    onClick={() => setOpenIndex(isOpen ? null : i)}
+                    className="w-full p-6 md:p-8 flex justify-between items-center text-left focus:outline-none"
+                  >
+                    <span className={`text-lg md:text-xl font-medium tracking-wide w-11/12 transition-colors duration-300 ${isOpen ? 'text-white' : 'text-white/60'}`} style={{ fontFamily: 'var(--font-heading)' }}>
+                      <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"rounded-none block w-full px-1"} />
+                    </span>
+                    <div className="text-white/40 font-mono text-sm shrink-0">
+                      {isOpen ? '[-]' : '[+]'}
+                    </div>
+                  </button>
+                  <div className={`grid transition-all duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'}`}>
+                    <div className="overflow-hidden">
                       <div className="px-6 md:px-8 pb-8 text-white/50 leading-relaxed font-light" style={{ fontFamily: 'var(--font-body)' }}>
                         <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={250} className={"rounded-none block w-full px-1 min-h-[2rem]"} />
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                  </div>
 
-                {/* Delete Button */}
-                {isEditor && (
-                  <button 
-                    onClick={(e) => handleRemoveItem(i, e)}
-                    className="absolute top-6 right-20 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center bg-black border border-red-500/30 hover:bg-red-500/20"
-                    title="Hapus Pertanyaan"
-                  >
-                    <i className="fas fa-trash text-xs"></i>
-                  </button>
-                )}
+                  {/* Delete Button */}
+                  {isEditor && (
+                    <button 
+                      onClick={(e) => handleRemoveItem(i, e)}
+                      className="absolute top-6 right-20 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center bg-black border border-red-500/30 hover:bg-red-500/20"
+                      title="Hapus Pertanyaan"
+                    >
+                      <i className="fas fa-trash text-xs"></i>
+                    </button>
+                  )}
+                </div>
               </div>
             );
           })}

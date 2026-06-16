@@ -96,7 +96,17 @@ const ResizeHandle = ({
 }
 import type { ThemeEditorState, ThemeEditorActions } from '@/hooks/useThemeEditor';
 
-export function PreviewPanel({ state, actions }: { state: ThemeEditorState, actions: ThemeEditorActions }) {
+export function PreviewPanel({ 
+  state, 
+  actions,
+  activeTab = 'theme',
+  selectedPage = 'gallery'
+}: { 
+  state: ThemeEditorState, 
+  actions: ThemeEditorActions,
+  activeTab?: 'theme' | 'pages',
+  selectedPage?: 'home' | 'gallery'
+}) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const mobileIframeRef = useRef<HTMLIFrameElement>(null);
   const dragControls = useDragControls();
@@ -118,6 +128,8 @@ export function PreviewPanel({ state, actions }: { state: ThemeEditorState, acti
   const splitMobileX = useMotionValue(0);
   const splitMobileY = useMotionValue(0);
   const prevThemeRef = useRef<string | null>(null);
+
+
 
   useEffect(() => {
     const checkMobile = () => {
@@ -169,24 +181,40 @@ export function PreviewPanel({ state, actions }: { state: ThemeEditorState, acti
     prevThemeRef.current = currentTemplate || null;
   }, [livePreviewTheme?.themeTemplate]);
 
+  const dataRef = useRef(livePreviewData);
+  const themeRef = useRef(livePreviewTheme);
+  const activeTabRef = useRef(activeTab);
+  const selectedPageRef = useRef(selectedPage);
+
+  useEffect(() => {
+    dataRef.current = livePreviewData;
+    themeRef.current = livePreviewTheme;
+    activeTabRef.current = activeTab;
+    selectedPageRef.current = selectedPage;
+  }, [livePreviewData, livePreviewTheme, activeTab, selectedPage]);
+
   const sendDataToIframe = useCallback(() => {
     if (iframeRef.current?.contentWindow && iframeReady.current) {
       iframeRef.current.contentWindow.postMessage({
         type: 'PREVIEW_UPDATE',
-        data: livePreviewData,
-        theme: livePreviewTheme,
-        isMobileView: false // Let CSS handle mobile layout via iframe width shrinking
+        data: dataRef.current,
+        theme: themeRef.current,
+        activeTab: activeTabRef.current,
+        selectedPage: selectedPageRef.current,
+        isMobileView: false
       }, window.location.origin);
     }
     if (mobileIframeRef.current?.contentWindow && mobileIframeReady.current) {
       mobileIframeRef.current.contentWindow.postMessage({
         type: 'PREVIEW_UPDATE',
-        data: livePreviewData,
-        theme: livePreviewTheme,
+        data: dataRef.current,
+        theme: themeRef.current,
+        activeTab: activeTabRef.current,
+        selectedPage: selectedPageRef.current,
         isMobileView: true
       }, window.location.origin);
     }
-  }, [livePreviewData, livePreviewTheme, previewMode]);
+  }, []);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -210,8 +238,11 @@ export function PreviewPanel({ state, actions }: { state: ThemeEditorState, acti
   }, [sendDataToIframe]);
 
   useEffect(() => {
-    sendDataToIframe();
-  }, [sendDataToIframe]);
+    const timer = setTimeout(() => {
+      sendDataToIframe();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [livePreviewData, livePreviewTheme, activeTab, selectedPage, sendDataToIframe]);
 
   useEffect(() => {
     const calculateScale = () => {

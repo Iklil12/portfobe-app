@@ -91,7 +91,7 @@ export function SpatialProjectsBlock({ data, theme, isMobileView, isCardPreview,
 
         {/* Explore More Button */}
         <motion.div {...viewAnim} variants={auraAnim} className="w-full flex justify-center mt-8">
-            <Link href={`/${subdomain}/gallery`} scroll={false} className={`${cardStyleClass} px-8 py-4 ${radiusClass} flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group`}>
+            <Link href={`/${subdomain}/gallery`}  className={`${cardStyleClass} px-8 py-4 ${radiusClass} flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group`}>
                 <span className="font-medium text-white">
                     <EditableText value={theme?.customTexts?.spatial_explore_archive || 'Explore Full Archive'} field="spatial_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                 </span>

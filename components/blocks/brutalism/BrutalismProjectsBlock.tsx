@@ -93,7 +93,7 @@ export function BrutalismProjectsBlock({ data, theme, isEditor, isCardPreview }:
             </motion.div>
 
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className={"p-6 @sm:p-12 flex justify-center bg-white border-t-[3px] border-black"}>
-                <Link href={`/${subdomain}/gallery`} scroll={false} onClick={(e) => { if(isEditor) e.preventDefault(); }}>
+                <Link href={`/${subdomain}/gallery`}  onClick={(e) => { if(isEditor) e.preventDefault(); }}>
                     <button className={`bg-[var(--hl)] text-black border-[3px] border-black font-mono font-black uppercase px-8 @sm:px-16 py-4 @sm:py-6 text-sm @sm:text-lg ${hardShadow} ${hardShadowHover} ${radiusClass} pointer-events-none`}>
                         <EditableText value={theme?.customTexts?.brutal_projects_cta || 'ACCESS FULL DATABASE'} field="brutal_projects_cta" entity="appearance" isEditor={isEditor} as="span" className="pointer-events-auto" />
                     </button>

@@ -9,19 +9,22 @@ import { motion } from 'framer-motion';
 import PortfolioView from '@/components/PortfolioView';
 import { NotFoundUI } from '@/components/errors/NotFoundUI';
 
+// Cache untuk menyimpan data portofolio per subdomain di memori client
+const portfolioCache: Record<string, any> = {};
+
 export default function PublicPortfolioPage() {
   const params = useParams();
   const subdomain = params.subdomain as string;
 
-  const [data, setData] = useState<any>(null);
-  const [isFetching, setIsFetching] = useState(true);
+  const [data, setData] = useState<any>(portfolioCache[subdomain] || null);
+  const [isFetching, setIsFetching] = useState(!portfolioCache[subdomain]);
   const [showSplash, setShowSplash] = useState(false); 
-  const [liftCurtain, setLiftCurtain] = useState(false);
-  const [removeSplash, setRemoveSplash] = useState(false);
+  const [liftCurtain, setLiftCurtain] = useState(!!portfolioCache[subdomain]);
+  const [removeSplash, setRemoveSplash] = useState(!!portfolioCache[subdomain]);
   const [serverError, setServerError] = useState<Error | null>(null);
 
   const heartbeatRef = useRef<NodeJS.Timeout | null>(null);
-  const hasTrackedView = useRef(false);
+  const hasTrackedView = useRef(!!portfolioCache[subdomain]);
 
   useEffect(() => {
     return () => {
@@ -37,6 +40,7 @@ export default function PublicPortfolioPage() {
 
         if (res.ok) {
           const result = await res.json();
+          portfolioCache[subdomain] = result; // Simpan ke cache
           setData(result);
 
           if (result.id && !hasTrackedView.current) {
@@ -114,11 +118,17 @@ export default function PublicPortfolioPage() {
             }
           }
           
-          if (result.siteAppearance?.splashScreen === true || result.splashScreen === true) {
+          const hasPlayedKey = `_pfIntroPlayed_${subdomain}`;
+          const hasPlayed = typeof window !== 'undefined' ? sessionStorage.getItem(hasPlayedKey) : false;
+
+          if ((result.siteAppearance?.splashScreen === true || result.splashScreen === true) && !hasPlayed) {
             setShowSplash(true);
             setTimeout(() => {
               setLiftCurtain(true);
-              setTimeout(() => setRemoveSplash(true), 800);
+              setTimeout(() => {
+                setRemoveSplash(true);
+                if (typeof window !== 'undefined') sessionStorage.setItem(hasPlayedKey, 'true');
+              }, 800);
             }, 1800);
           } else {
             setLiftCurtain(true);
@@ -138,7 +148,9 @@ export default function PublicPortfolioPage() {
     };
 
     if (subdomain) {
-      setIsFetching(true);
+      if (!portfolioCache[subdomain]) {
+        setIsFetching(true);
+      }
       fetchPortfolio();
     }
   }, [subdomain]);

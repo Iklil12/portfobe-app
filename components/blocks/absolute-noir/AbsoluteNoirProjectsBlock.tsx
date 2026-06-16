@@ -84,7 +84,7 @@ export const AbsoluteNoirProjectsBlock = ({ data, theme, isEditor, isCardPreview
             </div>
 
             <motion.div variants={wireframeReveal} className="w-full">
-                <Link href={isEditor ? "#" : `/${subdomain}/gallery`} scroll={false} className="w-full flex items-center justify-between p-8 @md:p-12 bg-white text-black hover:bg-black hover:text-white transition-colors duration-300 group border-b-2 border-transparent hover:border-white">
+                <Link href={isEditor ? "#" : `/${subdomain}/gallery`}  className="w-full flex items-center justify-between p-8 @md:p-12 bg-white text-black hover:bg-black hover:text-white transition-colors duration-300 group border-b-2 border-transparent hover:border-white">
                     <div className="flex flex-col items-start">
                         <span className="font-mono text-[10px] @md:text-xs font-bold uppercase tracking-[0.3em] mb-2 opacity-50 group-hover:opacity-100 transition-opacity">
                             <EditableText value={theme?.customTexts?.noir_explore_label || '[ DATA_OVERFLOW ]'} field="noir_explore_label" entity="appearance" isEditor={isEditor} maxLength={20} as="span" />

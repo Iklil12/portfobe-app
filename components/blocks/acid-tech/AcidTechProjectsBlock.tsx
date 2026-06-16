@@ -101,7 +101,7 @@ export function AcidTechProjectsBlock({ data, theme, isEditor, isCardPreview }: 
                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                 className={`w-full mt-8 mb-12 @md:mt-20 @md:mb-24 border-y-2 border-zinc-800`}
             >
-                <Link href={isEditor ? '#' : `/${subdomain}/gallery`} scroll={false} className="group block w-full no-underline relative overflow-hidden bg-[#09090b] hover:bg-zinc-900 transition-colors duration-300">
+                <Link href={isEditor ? '#' : `/${subdomain}/gallery`}  className="group block w-full no-underline relative overflow-hidden bg-[#09090b] hover:bg-zinc-900 transition-colors duration-300">
                     <div className={`flex items-center justify-between px-6 py-6 @md:px-12 @md:py-12 @lg:py-16`}>
                         <div className="flex flex-col relative z-10">
                             <span className="acid-text font-bold text-[10px] @md:text-xs uppercase tracking-[0.2em] acid-body mb-2 @md:mb-4 flex items-center gap-2">

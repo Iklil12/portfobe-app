@@ -26,7 +26,21 @@ const THEME_ICONS: Record<string, LucideIcon> = {
   'cinematic-gallery': Image, 'horizontal-flow': Waves, 'nexus-noir': Gem
 };
 
-export function LeftPanel({ state, actions }: { state: ThemeEditorState, actions: ThemeEditorActions }) {
+export function LeftPanel({ 
+  state, 
+  actions,
+  activeTab = 'theme',
+  setActiveTab,
+  selectedPage = 'gallery',
+  setSelectedPage
+}: { 
+  state: ThemeEditorState, 
+  actions: ThemeEditorActions,
+  activeTab?: 'theme' | 'pages',
+  setActiveTab?: (tab: 'theme' | 'pages') => void,
+  selectedPage?: 'home' | 'gallery',
+  setSelectedPage?: (page: 'home' | 'gallery') => void
+}) {
   const {
     isEditorCollapsed, isSavingDraft, isPublishing, activeTheme, splashScreen,
     isThemeModalOpen, showProModal, isDraftsModalOpen, isLoading, livePreviewData,
@@ -193,127 +207,183 @@ export function LeftPanel({ state, actions }: { state: ThemeEditorState, actions
 
         {/* Indikator Draft Aktif */}
         {activeDraftName && (
-          <div className="px-4 py-3 bg-[#ff9e00]/10 border-b border-[#ff9e00]/20 flex flex-col gap-2 shrink-0">
+          <div className="px-4 py-3 bg-[#16161a] border-b border-white/5 flex flex-col gap-2 shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FileText className="w-3.5 h-3.5 text-[#ff9e00]" />
-                <span className="text-[11px] font-medium text-[#ff9e00] tracking-wider uppercase">
-                  Draft: {activeDraftName}
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ff9e00] shadow-[0_0_8px_rgba(255,158,0,0.6)] animate-pulse" />
+                <span className="text-[11px] font-bold text-zinc-300 tracking-wider uppercase truncate max-w-[140px]" title={activeDraftName}>
+                  {activeDraftName}
                 </span>
               </div>
               <button
                 onClick={actions.exitDraft}
-                className="text-[10px] font-medium text-white/40 hover:text-white transition-colors uppercase bg-black/20 px-2 py-1 rounded"
+                className="text-[9px] font-semibold text-zinc-400 hover:text-white hover:bg-white/5 border border-white/10 px-2.5 py-1 rounded-md transition-all duration-200 uppercase tracking-wider"
               >
                 Keluar
               </button>
             </div>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               {publishedDraftId === activeDraftId && !hasUnpublishedChanges && (
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-950/40 text-emerald-400 border border-emerald-500/20 tracking-wide font-medium">LIVE</span>
+                <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 tracking-wider font-bold">
+                  LIVE
+                </span>
               )}
               {publishedDraftId === activeDraftId && hasUnpublishedChanges && (
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/40 text-[#ff9e00] border border-[#ff9e00]/20 tracking-wide font-medium">PERLU PUBLISH</span>
+                <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 tracking-wider font-bold">
+                  UNPUBLISHED CHANGES
+                </span>
+              )}
+              {publishedDraftId !== activeDraftId && (
+                <span className="text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-zinc-400 border border-white/5 tracking-wider font-bold">
+                  DRAFT VERSION
+                </span>
               )}
             </div>
           </div>
         )}
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overscroll-none custom-scrollbar p-5 min-w-[280px]">
-          {/* SECTION: PAGES / THEMES (MIMICKING FRAMER) */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-3 px-1">
-              <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase">Templates</h3>
-              {!isLoading && (
-                <button onClick={() => setIsThemeModalOpen(true)} className="w-5 h-5 rounded hover:bg-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors">
-                  <PlusIcon />
-                </button>
-              )}
-            </div>
+          {activeTab === 'theme' ? (
+            <>
+              {/* SECTION: PAGES / THEMES (MIMICKING FRAMER) */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase">Templates</h3>
+                  {!isLoading && (
+                    <button onClick={() => setIsThemeModalOpen(true)} className="w-5 h-5 rounded hover:bg-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors">
+                      <PlusIcon />
+                    </button>
+                  )}
+                </div>
 
-            {isLoading ? (
-              <div className="p-4 rounded-xl border border-white/5 bg-zinc-900/40 animate-pulse h-16"></div>
-            ) : (
-              <div 
-                className="group cursor-pointer p-3 rounded-lg border border-white/5 bg-[#1a1a1a] hover:bg-[#222] hover:border-white/10 transition-all flex items-center justify-between"
-                onClick={() => setIsThemeModalOpen(true)}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-md bg-[#222] border border-white/5 flex items-center justify-center text-white">
-                    <ActiveThemeIcon className="w-4 h-4 text-white/70" />
+                {isLoading ? (
+                  <div className="p-4 rounded-xl border border-white/5 bg-zinc-900/40 animate-pulse h-16"></div>
+                ) : (
+                  <div 
+                    className="group cursor-pointer p-3 rounded-lg border border-white/5 bg-[#1a1a1a] hover:bg-[#222] hover:border-white/10 transition-all flex items-center justify-between"
+                    onClick={() => setIsThemeModalOpen(true)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-md bg-[#222] border border-white/5 flex items-center justify-center text-white">
+                        <ActiveThemeIcon className="w-4 h-4 text-white/70" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-white text-[13px] leading-tight">
+                          {THEMES_DATA.find(t => t.id === activeTheme)?.name || 'Theme'}
+                        </span>
+                        <span className="text-[10px] text-white/40 mt-0.5">Active Template</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="font-medium text-white text-[13px] leading-tight">
-                      {THEMES_DATA.find(t => t.id === activeTheme)?.name || 'Theme'}
-                    </span>
-                    <span className="text-[10px] text-white/40 mt-0.5">Active Template</span>
-                  </div>
+                )}
+                
+                {/* Status Perubahan / Live */}
+                <div className="mt-3 px-1">
+                  {isCurrentlyLive && !isDirty && !hasUnpublishedChanges && (
+                     <span className="text-[10px] font-medium text-emerald-400 flex items-center gap-1.5 tracking-wide">
+                       <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Sedang Live
+                     </span>
+                  )}
+                  {isCurrentlyLive && !isDirty && hasUnpublishedChanges && (
+                     <span className="text-[10px] font-medium text-[#ff9e00] flex items-center gap-1.5 tracking-wide">
+                       <span className="w-1.5 h-1.5 bg-[#ff9e00] rounded-full animate-pulse"></span> Perubahan Belum Tayang
+                     </span>
+                  )}
+                  {isDirty && (
+                     <span className="text-[10px] font-medium text-sky-400 flex items-center gap-1.5 tracking-wide">
+                       <span className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-pulse"></span> Terdapat Perubahan
+                     </span>
+                  )}
+                </div>
+
+                {!isLoading && (
+                  <button
+                    onClick={actions.resetToThemePreset}
+                    className="mt-2 w-full px-3 py-2.5 rounded-lg border border-transparent hover:bg-white/5 text-white/60 hover:text-white transition-all text-xs flex items-center gap-2 group"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-white/40 group-hover:text-white" />
+                    <span>Reset to Default</span>
+                  </button>
+                )}
+              </div>
+
+              {/* SECTION: CONTENT (Projects & Drafts) */}
+              <div className="mb-8">
+                <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase mb-3 px-1">Content</h3>
+                
+                <div className="flex flex-col gap-1">
+                  <button 
+                    onClick={() => setIsProjectModalOpen(true)}
+                    className="w-full px-3 py-2.5 rounded-lg hover:bg-white/5 text-white/60 hover:text-white transition-all flex items-center justify-between group text-sm"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Image className="w-4 h-4 text-white/40 group-hover:text-white/80" />
+                      <span>Projects</span>
+                    </div>
+                    {selectedProjects?.length > 0 && (
+                      <span className="bg-white/10 text-white/80 text-[10px] px-1.5 py-0.5 rounded">{selectedProjects.length}</span>
+                    )}
+                  </button>
+
+                  <button 
+                    onClick={() => setIsDraftsModalOpen(true)}
+                    className="w-full px-3 py-2.5 rounded-lg hover:bg-white/5 text-white/60 hover:text-white transition-all flex items-center justify-between group text-sm"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <FolderOpen className="w-4 h-4 text-white/40 group-hover:text-white/80" />
+                      <span>Drafts</span>
+                    </div>
+                    {drafts?.length > 0 && (
+                      <span className="bg-white/10 text-white/80 text-[10px] px-1.5 py-0.5 rounded">{drafts.length}</span>
+                    )}
+                  </button>
                 </div>
               </div>
-            )}
-            
-            {/* Status Perubahan / Live */}
-            <div className="mt-3 px-1">
-              {isCurrentlyLive && !isDirty && !hasUnpublishedChanges && (
-                 <span className="text-[10px] font-medium text-emerald-400 flex items-center gap-1.5 tracking-wide">
-                   <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Sedang Live
-                 </span>
-              )}
-              {isCurrentlyLive && !isDirty && hasUnpublishedChanges && (
-                 <span className="text-[10px] font-medium text-[#ff9e00] flex items-center gap-1.5 tracking-wide">
-                   <span className="w-1.5 h-1.5 bg-[#ff9e00] rounded-full animate-pulse"></span> Perubahan Belum Tayang
-                 </span>
-              )}
-              {isDirty && (
-                 <span className="text-[10px] font-medium text-sky-400 flex items-center gap-1.5 tracking-wide">
-                   <span className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-pulse"></span> Terdapat Perubahan
-                 </span>
-              )}
+            </>
+          ) : (
+            /* SECTION: PAGES (MIMICKING FRAMER PAGES LIST) */
+            <div className="mb-8 animate-in fade-in duration-300">
+              <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase mb-4 px-1">Website Pages</h3>
+              
+              <div className="flex flex-col gap-2">
+                {/* Home Page */}
+                <button 
+                  onClick={() => setSelectedPage?.('home')}
+                  className={`w-full p-3 rounded-lg transition-all flex items-center gap-3 border text-left ${
+                    selectedPage === 'home' 
+                      ? 'bg-[#2c2c35] border-white/10 text-white shadow-sm' 
+                      : 'bg-transparent border-transparent text-white/60 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <div className="w-8 h-8 rounded-md bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
+                    <Layout className="w-4 h-4 text-white/70" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-medium text-[13px] leading-tight">Halaman Utama</span>
+                    <span className="text-[10px] opacity-50 mt-0.5">Landing & Sections</span>
+                  </div>
+                </button>
+
+                {/* Gallery Page */}
+                <button 
+                  onClick={() => setSelectedPage?.('gallery')}
+                  className={`w-full p-3 rounded-lg transition-all flex items-center gap-3 border text-left ${
+                    selectedPage === 'gallery' 
+                      ? 'bg-[#2c2c35] border-white/10 text-white shadow-sm' 
+                      : 'bg-transparent border-transparent text-white/60 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <div className="w-8 h-8 rounded-md bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
+                    <Grid className="w-4 h-4 text-[#ff9e00]" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-medium text-[13px] leading-tight">Gallery Showcase</span>
+                    <span className="text-[10px] opacity-50 mt-0.5">Curated Works Page</span>
+                  </div>
+                </button>
+              </div>
             </div>
-
-            {!isLoading && (
-              <button
-                onClick={actions.resetToThemePreset}
-                className="mt-2 w-full px-3 py-2.5 rounded-lg border border-transparent hover:bg-white/5 text-white/60 hover:text-white transition-all text-xs flex items-center gap-2 group"
-              >
-                <RotateCcw className="w-3.5 h-3.5 text-white/40 group-hover:text-white" />
-                <span>Reset to Default</span>
-              </button>
-            )}
-          </div>
-
-          {/* SECTION: CONTENT (Projects & Drafts) */}
-          <div className="mb-8">
-            <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase mb-3 px-1">Content</h3>
-            
-            <div className="flex flex-col gap-1">
-              <button 
-                onClick={() => setIsProjectModalOpen(true)}
-                className="w-full px-3 py-2.5 rounded-lg hover:bg-white/5 text-white/60 hover:text-white transition-all flex items-center justify-between group text-sm"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Image className="w-4 h-4 text-white/40 group-hover:text-white/80" />
-                  <span>Projects</span>
-                </div>
-                {selectedProjects?.length > 0 && (
-                  <span className="bg-white/10 text-white/80 text-[10px] px-1.5 py-0.5 rounded">{selectedProjects.length}</span>
-                )}
-              </button>
-
-              <button 
-                onClick={() => setIsDraftsModalOpen(true)}
-                className="w-full px-3 py-2.5 rounded-lg hover:bg-white/5 text-white/60 hover:text-white transition-all flex items-center justify-between group text-sm"
-              >
-                <div className="flex items-center gap-2.5">
-                  <FolderOpen className="w-4 h-4 text-white/40 group-hover:text-white/80" />
-                  <span>Drafts</span>
-                </div>
-                {drafts?.length > 0 && (
-                  <span className="bg-white/10 text-white/80 text-[10px] px-1.5 py-0.5 rounded">{drafts.length}</span>
-                )}
-              </button>
-            </div>
-          </div>
+          )}
 
           <div className="block lg:hidden">
             <EditorControls state={state} actions={actions} />

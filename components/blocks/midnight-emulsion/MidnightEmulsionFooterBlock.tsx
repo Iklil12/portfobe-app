@@ -10,7 +10,7 @@ export function MidnightEmulsionFooterBlock({ data, theme, isEditor }: any) {
 
   return (
     <footer className="w-full bg-[#05070a] border-t border-white/5 flex flex-col items-center pt-24 pb-12 shrink-0">
-      <Link href={`/${subdomain}/gallery`} scroll={false} className="group relative overflow-hidden font-serif italic text-4xl @md:text-6xl text-slate-500 hover:text-white transition-colors duration-700 flex items-center gap-8 mb-32">
+      <Link href={`/${subdomain}/gallery`}  className="group relative overflow-hidden font-serif italic text-4xl @md:text-6xl text-slate-500 hover:text-white transition-colors duration-700 flex items-center gap-8 mb-32">
         <EditableText value={theme?.customTexts?.midnight_archive || 'Open Full Archive'} field="midnight_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
         <i className="fas fa-arrow-right text-[var(--hl)] -rotate-45 group-hover:rotate-0 transition-transform duration-700 text-3xl"></i>
       </Link>

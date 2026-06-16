@@ -53,7 +53,7 @@ export function BentoGridStatsBlock({ data, theme, isEditor, isCardPreview }: an
             </motion.div>
 
             {/* COLORED CTA BOX */}
-            <Link href={`/${subdomain}/gallery`} scroll={false} className={`@lg:col-span-2 @lg:row-span-1`} onClick={(e) => { if(isEditor) e.preventDefault(); }}>
+            <Link href={`/${subdomain}/gallery`}  className={`@lg:col-span-2 @lg:row-span-1`} onClick={(e) => { if(isEditor) e.preventDefault(); }}>
                 <motion.div 
                     initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
                     className="bento-card bento-card-colored w-full h-full p-8 flex items-center justify-between group cursor-pointer"

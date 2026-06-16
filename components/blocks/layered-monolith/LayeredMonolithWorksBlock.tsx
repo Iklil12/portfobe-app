@@ -67,7 +67,7 @@ export function LayeredMonolithWorksBlock({ data, setSelectedMedia }: any) {
             {allProjects.length > featuredProjects.length && (
                 <section className="stack-card bg-brand-accent text-white flex items-center justify-center relative cursor-pointer" >
                     <div className="noise mix-blend-overlay opacity-20"></div>
-                    <Link href={`/${subdomain}/gallery`} scroll={false} className="relative z-10 flex flex-col items-center justify-center w-full h-full cursor-hover group" data-cursor-text="ALL">
+                    <Link href={`/${subdomain}/gallery`}  className="relative z-10 flex flex-col items-center justify-center w-full h-full cursor-hover group" data-cursor-text="ALL">
                         <h2 className="font-display text-6xl md:text-[8rem] font-bold uppercase leading-none tracking-tighter group-hover:scale-105 transition-transform duration-500">
                             EXPLORE<br/>ARCHIVE
                         </h2>

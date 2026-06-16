@@ -117,7 +117,7 @@ export function ViewfinderProjectsBlock({ data, theme, isEditor, isCardPreview }
             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}
             className="flex justify-center items-center w-full mt-12 px-6"
         >
-            <Link href={`/${subdomain}/gallery`} scroll={false} className="w-full @md:w-auto">
+            <Link href={`/${subdomain}/gallery`}  className="w-full @md:w-auto">
                 <motion.div
                     whileHover="hover"
                     initial="initial"

@@ -93,7 +93,7 @@ export function AuraKineticProjectsBlock({ data, theme, isEditor }: any) {
         </div>
 
         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="mt-16 flex justify-center">
-            <Link href={`/${subdomain}/gallery`} scroll={false} className={`group relative inline-flex items-center justify-center gap-4 px-8 py-4 bg-white/5 border border-white/10 hover:border-[var(--hl)] backdrop-blur-md transition-all duration-300 ${radiusClass} overflow-hidden shadow-lg`}>
+            <Link href={`/${subdomain}/gallery`}  className={`group relative inline-flex items-center justify-center gap-4 px-8 py-4 bg-white/5 border border-white/10 hover:border-[var(--hl)] backdrop-blur-md transition-all duration-300 ${radiusClass} overflow-hidden shadow-lg`}>
                 <div className="absolute inset-0 bg-[var(--hl)] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 <span className="font-sans text-xs uppercase tracking-widest font-bold text-white group-hover:text-[var(--hl)] transition-colors">
                     <EditableText value={theme?.customTexts?.aura_explore_archive || 'Explore Full Archive'} field="aura_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />

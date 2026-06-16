@@ -111,7 +111,7 @@ export const MinimalistProjectsBlock = ({ data, theme, isEditor, blockConfig, se
         custom={0.3}
         className="w-full flex justify-center mt-16 mb-20 relative z-10"
       >
-        <Link href={`/${subdomain}/gallery`} scroll={false} className="group inline-flex items-center gap-4 @md:gap-6 no-underline p-2">
+        <Link href={`/${subdomain}/gallery`}  className="group inline-flex items-center gap-4 @md:gap-6 no-underline p-2">
           <span className="text-[10px] @md:text-xs font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors duration-500 relative min-heading">
             <EditableText value={theme?.customTexts?.min_explore_archive || 'EXPLORE ARCHIVE'} field="min_explore_archive" entity="appearance" isEditor={isEditor} maxLength={20} as="span" className="min-heading" />
             <span className="absolute -bottom-2 left-0 w-0 h-px bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
