@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Play, MoveVertical, AlertTriangle, MousePointer2, ChevronDown, Check, Video } from 'lucide-react';
-import { ColorPicker, FontPicker, CardStylePicker, ButtonShapePicker, NavigationStylePicker, GalleryLayoutPicker } from '@/components/editor-controls/SharedControls';
+import { ColorPicker, FontPicker, CardStylePicker, ButtonShapePicker, GalleryLayoutPicker } from '@/components/editor-controls/SharedControls';
 import type { ThemeEditorState, ThemeEditorActions } from '@/hooks/useThemeEditor';
 
 export function EditorControls({ state, actions }: { state: ThemeEditorState, actions: ThemeEditorActions }) {
@@ -64,8 +64,6 @@ export function EditorControls({ state, actions }: { state: ThemeEditorState, ac
             <ButtonShapePicker buttonShape={buttonShape} setButtonShape={setButtonShape} />
           </>
         )}
-
-        <NavigationStylePicker navStyle={livePreviewTheme?.customTexts?.nav_style} setNavStyle={(val: string) => updateCustomText('nav_style', val)} />
       </div>
 
       <div className="w-full h-px bg-white/5 my-6"></div>
@@ -196,18 +194,78 @@ export function EditorControls({ state, actions }: { state: ThemeEditorState, ac
               </div>
             </button>
 
-            <div className="w-full p-3 rounded-md border border-transparent bg-transparent flex items-center justify-between opacity-50 cursor-not-allowed text-sm">
+            <button 
+              onClick={() => updateCustomText('custom_cursor_enabled', livePreviewTheme?.customTexts?.custom_cursor_enabled === 'true' ? 'false' : 'true')}
+              className="w-full p-3 rounded-md border border-transparent hover:border-white/5 bg-transparent hover:bg-white/5 transition-all flex items-center justify-between group text-sm"
+            >
               <div className="flex items-center gap-2.5">
-                <MousePointer2 className="w-4 h-4 text-white/40" />
+                <MousePointer2 className="w-4 h-4 text-white/40 group-hover:text-white/80" />
                 <div className="flex flex-col items-start">
-                  <span className="text-[13px] text-white/80">Custom Cursor</span>
-                  <span className="text-[10px] text-white/40">Coming Soon</span>
+                  <span className="text-[13px] text-white/80 group-hover:text-white">Custom Cursor</span>
+                  <span className="text-[10px] text-[#ff9e00]">Premium</span>
                 </div>
               </div>
-              <div className="px-2 py-0.5 rounded text-[9px] font-medium bg-white/5 text-white/40 border border-white/5">
-                SOON
+              <div className={`w-8 h-4 shrink-0 rounded-full relative transition-colors duration-300 ${livePreviewTheme?.customTexts?.custom_cursor_enabled === 'true' ? 'bg-[#ff9e00]' : 'bg-white/10'}`}>
+                <div className={`w-3 h-3 rounded-full absolute top-0.5 left-0.5 transition-transform duration-300 ${livePreviewTheme?.customTexts?.custom_cursor_enabled === 'true' ? 'bg-black translate-x-4' : 'bg-white/40 translate-x-0'}`}></div>
               </div>
-            </div>
+            </button>
+
+            {livePreviewTheme?.customTexts?.custom_cursor_enabled === 'true' && (
+              <div className="pl-9 pr-3 py-2 flex flex-col gap-2 bg-white/[0.02] rounded-lg mt-1 transition-all duration-300">
+                <span className="text-[10px] font-semibold text-white/40 uppercase tracking-wider">Cursor Type</span>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => updateCustomText('custom_cursor_type', 'circle-dot')}
+                    className={`py-2 px-2 border rounded text-[10.5px] font-mono flex items-center justify-center gap-1.5 transition-all ${
+                      (livePreviewTheme?.customTexts?.custom_cursor_type || 'circle-dot') === 'circle-dot'
+                        ? 'border-[#ff9e00] text-[#ff9e00] bg-[#ff9e00]/5'
+                        : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white bg-transparent'
+                    }`}
+                  >
+                    <div className="w-2 h-2 rounded-full border border-current flex items-center justify-center">
+                      <div className="w-0.5 h-0.5 rounded-full bg-current" />
+                    </div>
+                    Circle Dot
+                  </button>
+                  <button
+                    onClick={() => updateCustomText('custom_cursor_type', 'solid-dot')}
+                    className={`py-2 px-2 border rounded text-[10.5px] font-mono flex items-center justify-center gap-1.5 transition-all ${
+                      livePreviewTheme?.customTexts?.custom_cursor_type === 'solid-dot'
+                        ? 'border-[#ff9e00] text-[#ff9e00] bg-[#ff9e00]/5'
+                        : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white bg-transparent'
+                    }`}
+                  >
+                    <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                    Solid Dot
+                  </button>
+                  <button
+                    onClick={() => updateCustomText('custom_cursor_type', 'neon-pointer')}
+                    className={`py-2 px-2 border rounded text-[10.5px] font-mono flex items-center justify-center gap-1.5 transition-all ${
+                      livePreviewTheme?.customTexts?.custom_cursor_type === 'neon-pointer'
+                        ? 'border-[#ff0000] text-[#ff0000] bg-[#ff0000]/5 shadow-[0_0_8px_rgba(255,0,0,0.15)]'
+                        : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white bg-transparent'
+                    }`}
+                  >
+                    <MousePointer2 className="w-2.5 h-2.5 text-current" />
+                    Neon Red
+                  </button>
+                  <button
+                    onClick={() => updateCustomText('custom_cursor_type', 'paper-plane')}
+                    className={`py-2 px-2 border rounded text-[10.5px] font-mono flex items-center justify-center gap-1.5 transition-all ${
+                      livePreviewTheme?.customTexts?.custom_cursor_type === 'paper-plane'
+                        ? 'border-white text-white bg-white/10 shadow-[0_0_8px_rgba(255,255,255,0.1)]'
+                        : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white bg-transparent'
+                    }`}
+                  >
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" className="text-current">
+                      <path d="M2 2 L22 12 L12.5 13.5 L10 22 Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                      <path d="M2 2 L12.5 13.5" stroke="currentColor" strokeWidth="2" />
+                    </svg>
+                    Retro Plane
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

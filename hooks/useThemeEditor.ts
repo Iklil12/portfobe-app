@@ -48,13 +48,16 @@ const THEME_BLOCK_PRESETS: Record<string, string[]> = {
 
 const applyPresetToBlocks = (blocks: PageBlock[], themeId: string) => {
   const preset = THEME_BLOCK_PRESETS[themeId] || THEME_BLOCK_PRESETS['default'];
-  const newBlocks = [...blocks].sort((a, b) => {
+  
+  // Hanya masukkan blok yang ada di preset (menghapus blok opsional seperti FAQ/VIDEO_SHOWCASE)
+  const filteredBlocks = blocks.filter(b => preset.includes(b.blockType));
+  
+  const newBlocks = [...filteredBlocks].sort((a, b) => {
     const indexA = preset.indexOf(a.blockType);
     const indexB = preset.indexOf(b.blockType);
-    const finalA = indexA === -1 ? 999 : indexA;
-    const finalB = indexB === -1 ? 999 : indexB;
-    return finalA - finalB;
+    return indexA - indexB;
   });
+  
   return newBlocks.map((b, i) => ({ ...b, orderIndex: i }));
 };
 

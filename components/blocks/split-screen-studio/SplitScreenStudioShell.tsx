@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ReactLenis } from '@studio-freight/react-lenis';
 import { usePathname } from 'next/navigation';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
@@ -19,23 +19,7 @@ function SplitScreenStudioInner({ children, data, theme, isMobileView, isCardPre
     const pathname = usePathname();
     const isPreviewRoute = pathname?.includes('/preview/');
 
-    // Performance Optimized Cursor
-    const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
-    const mouseY = useMotionValue(typeof window !== "undefined" ? window.innerHeight / 2 : 0);
-    const smoothMouseX = useSpring(mouseX, { damping: 50, stiffness: 400 });
-    const smoothMouseY = useSpring(mouseY, { damping: 50, stiffness: 400 });
-    const ringX = useSpring(mouseX, { damping: 30, stiffness: 200 });
-    const ringY = useSpring(mouseY, { damping: 30, stiffness: 200 });
 
-    useEffect(() => {
-        if (isCardPreview) return;
-        const handleMouseMove = (e: MouseEvent) => {
-            mouseX.set(e.clientX);
-            mouseY.set(e.clientY);
-        };
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, [isCardPreview, mouseX, mouseY]);
 
     const rawHighlightColor = theme?.themeColor || '#ffffff';
     const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#ffffff';
@@ -62,7 +46,6 @@ function SplitScreenStudioInner({ children, data, theme, isMobileView, isCardPre
                 __html: `
         .split-screen-theme {
             color: #f4f4f4;
-            ${isMobileView || isCardPreview ? '' : 'cursor: none;'}
         }
         .split-screen-theme .font-display { font-family: ${customHeadingFont}; }
         .split-screen-theme .font-sans { font-family: ${customBodyFont}; }
@@ -74,44 +57,9 @@ function SplitScreenStudioInner({ children, data, theme, isMobileView, isCardPre
         .lenis.lenis-smooth { scroll-behavior: auto; }
         .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
         .lenis.lenis-stopped { overflow: hidden; }
-        
-        .cursor-hover-target { cursor: none; }
       `}} />
 
-            {/* Custom Cursor (Hidden on mobile/card preview) */}
-            {(!isMobileView && !isCardPreview) && (
-                <>
-                    <motion.div 
-                        className="fixed top-0 left-0 w-2 h-2 bg-white rounded-full pointer-events-none z-[10000] mix-blend-difference"
-                        style={{ x: smoothMouseX, y: smoothMouseY, translateX: "-50%", translateY: "-50%" }}
-                    />
-                    <motion.div 
-                        className="fixed top-0 left-0 border border-white/40 rounded-full pointer-events-none z-[9999] flex items-center justify-center overflow-hidden"
-                        style={{ x: ringX, y: ringY, translateX: "-50%", translateY: "-50%" }}
-                        animate={{ 
-                            width: cursorHovered ? 100 : 40,
-                            height: cursorHovered ? 100 : 40,
-                            backgroundColor: cursorHovered ? 'white' : 'transparent',
-                            borderColor: cursorHovered ? 'transparent' : 'rgba(255,255,255,0.4)',
-                            mixBlendMode: cursorHovered ? 'normal' : 'normal'
-                        }}
-                        transition={{ type: 'tween', ease: 'easeOut', duration: 0.2 }}
-                    >
-                        <AnimatePresence>
-                            {cursorHovered && (
-                                <motion.span 
-                                    initial={{ opacity: 0, scale: 0.5 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.5 }}
-                                    className="font-sans text-[10px] font-bold tracking-[0.2em] text-black uppercase"
-                                >
-                                    EXPLORE
-                                </motion.span>
-                            )}
-                        </AnimatePresence>
-                    </motion.div>
-                </>
-            )}
+
 
             {/* ================= LEFT PANEL ================= */}
             {heroBlock && (

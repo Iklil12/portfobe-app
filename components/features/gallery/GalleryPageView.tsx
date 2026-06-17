@@ -7,6 +7,8 @@ import { ArrowLeft, Terminal, X } from 'lucide-react';
 import { LazyImage } from '@/components/ui/LazyImage';
 import { EditableText } from '@/components/ui/EditableText';
 import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { GlobalCursor } from '@/components/features/GlobalCursor';
+import { ReactLenis } from '@studio-freight/react-lenis';
 
 // Import design layouts
 import ClassicGallery from './designs/ClassicGallery';
@@ -55,6 +57,30 @@ const getMasonryClass = (index: number) => {
   return `md:col-span-4 ${heights[index % heights.length]}`;
 };
 
+interface SmoothScrollWrapperProps {
+  enabled: boolean;
+  children: any;
+}
+
+function SmoothScrollWrapper({ enabled, children }: SmoothScrollWrapperProps) {
+  if (!enabled) return <>{children}</>;
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          html.lenis, html.lenis body { height: auto; }
+          .lenis.lenis-smooth { scroll-behavior: auto !important; }
+          .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+          .lenis.lenis-stopped { overflow: hidden; }
+        `
+      }} />
+      <ReactLenis root options={{ smoothWheel: true, duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) }}>
+        {children}
+      </ReactLenis>
+    </>
+  );
+}
+
 export default function GalleryPageView({
   projects,
   subdomain,
@@ -69,6 +95,22 @@ export default function GalleryPageView({
   const router = useRouter();
   const [systemTime, setSystemTime] = useState("");
   const [activeProject, setActiveProjectState] = useState<any | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const isSmoothScroll = !isMobile && (customTexts?.smooth_scroll === 'true');
 
   const handleSelectProject = (project: any) => {
     setActiveProjectState(project);
@@ -150,7 +192,8 @@ export default function GalleryPageView({
   };
 
   return (
-    <main className={`min-h-screen ${bgClass} selection:bg-[#F3F3F3] selection:text-[#030303] overflow-x-hidden relative transition-colors duration-500`}>
+    <SmoothScrollWrapper enabled={isSmoothScroll}>
+      <main className={`min-h-screen ${bgClass} selection:bg-[#F3F3F3] selection:text-[#030303] overflow-x-hidden relative transition-colors duration-500`}>
 
       {/* Premium Typography and Dynamic Keyframes */}
       <style dangerouslySetInnerHTML={{
@@ -383,6 +426,8 @@ export default function GalleryPageView({
           </div>
         )}
       </AnimatePresence>
+      <GlobalCursor enabled={customTexts?.custom_cursor_enabled === 'true'} type={customTexts?.custom_cursor_type || 'circle-dot'} />
     </main>
-  );
+  </SmoothScrollWrapper>
+);
 }

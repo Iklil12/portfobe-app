@@ -169,53 +169,7 @@ export const CinematicGalleryShell = ({ children, data, theme, isMobileView = fa
 
     }, { scope: containerRef, dependencies: [isMounted, isCardPreview, isEditor, children] });
 
-    // Custom Cursor Logic
-    const cursorRef = useRef<HTMLDivElement>(null);
-    
-    useEffect(() => {
-        if (isCardPreview) return;
-        
-        const cursor = cursorRef.current;
-        if (!cursor) return;
 
-        let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-        let cursorPos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-
-        const onMouseMove = (e: MouseEvent) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        };
-
-        window.addEventListener('mousemove', onMouseMove);
-
-        const ticker = gsap.ticker.add(() => {
-            cursorPos.x += (mouse.x - cursorPos.x) * 0.15;
-            cursorPos.y += (mouse.y - cursorPos.y) * 0.15;
-            gsap.set(cursor, { x: cursorPos.x, y: cursorPos.y });
-        });
-
-        // We use event delegation for hover triggers because blocks can mount dynamically
-        const handleMouseOver = (e: MouseEvent) => {
-            if ((e.target as Element)?.closest('.hover-trigger')) {
-                cursor.classList.add('active');
-            }
-        };
-        const handleMouseOut = (e: MouseEvent) => {
-            if ((e.target as Element)?.closest('.hover-trigger')) {
-                cursor.classList.remove('active');
-            }
-        };
-
-        document.body.addEventListener('mouseover', handleMouseOver);
-        document.body.addEventListener('mouseout', handleMouseOut);
-
-        return () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            gsap.ticker.remove(ticker);
-            document.body.removeEventListener('mouseover', handleMouseOver);
-            document.body.removeEventListener('mouseout', handleMouseOut);
-        };
-    }, [isCardPreview]);
 
     // Line indicator animation
     useEffect(() => {
@@ -272,20 +226,8 @@ export const CinematicGalleryShell = ({ children, data, theme, isMobileView = fa
             <main ref={containerRef} className="cinematic-gallery-root bg-[#050505] text-[#f5f5f0] min-h-screen relative overflow-x-hidden selection:bg-[#f5f5f0] selection:text-[#050505]">
                 <style dangerouslySetInnerHTML={{
                     __html: `
-                    .cinematic-gallery-root {
-                        ${!isCardPreview ? 'cursor: none;' : ''}
-                    }
                     .cinematic-gallery-root .font-serif, .cinematic-gallery-root .font-display { font-family: ${customHeadingFont} !important; }
                     .cinematic-gallery-root .font-sans, .cinematic-gallery-root .font-body { font-family: ${customBodyFont} !important; }
-
-                    /* Custom Cursor */
-                    .cg-cursor {
-                        position: fixed; top: 0; left: 0; width: 20px; height: 20px;
-                        border-radius: 50%; background-color: #f5f5f0; mix-blend-mode: difference;
-                        pointer-events: none; z-index: 10000; transform: translate(-50%, -50%);
-                        transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1), height 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-                    }
-                    .cg-cursor.active { width: 80px; height: 80px; }
 
                     /* Hide Scrollbar (Except in Editor) */
                     ${!isEditor ? `
@@ -351,9 +293,6 @@ export const CinematicGalleryShell = ({ children, data, theme, isMobileView = fa
                     `
                 }} />
 
-                {!isCardPreview && (
-                    <div className="cg-cursor" ref={cursorRef}></div>
-                )}
                 
                 {/* Fixed Headers */}
                 <header className="fixed top-6 left-6 md:top-8 md:left-8 z-50 mix-blend-difference pointer-events-none flex flex-col gap-1">

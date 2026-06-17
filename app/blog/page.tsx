@@ -100,11 +100,11 @@ export default function BlogPage() {
                                     <div className="grid grid-cols-2 gap-4 font-mono text-xs text-white/40">
                                         <div className="flex flex-col gap-2 p-4 border border-white/10 rounded-2xl bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
                                             <span className="opacity-50">ENTRI TERAKHIR</span>
-                                            <span className="text-white font-medium">11 JUNI 2026</span>
+                                            <span className="text-white font-medium">17 JUNI 2026</span>
                                         </div>
                                         <div className="flex flex-col gap-2 p-4 border border-[#ff9e00]/20 rounded-2xl bg-[#ff9e00]/5 hover:bg-[#ff9e00]/10 hover:border-[#ff9e00]/40 transition-all duration-300 group">
                                             <span className="opacity-50 text-[#ff9e00] group-hover:opacity-80 transition-opacity">TOTAL ARTIKEL</span>
-                                            <span className="text-[#ff9e00] font-bold text-lg">003</span>
+                                            <span className="text-[#ff9e00] font-bold text-lg">004</span>
                                         </div>
                                     </div>
                                 </div>
@@ -154,6 +154,40 @@ export default function BlogPage() {
 
                     {/* Article List (Tabular / Enterprise Style) */}
                     <div className="flex flex-col border-b border-white/10">
+
+                        {/* Item 4 */}
+                        <Link href="/blog/membangun-portofolio-digital-yang-menonjol-panduan-untuk-kreator-modern" className="group grid grid-cols-1 lg:grid-cols-12 border-b border-white/10 hover-accent transition-all duration-300 text-white">
+                            <div className="lg:col-span-1 p-6 lg:p-8 font-mono text-sm opacity-40 group-hover:opacity-100 flex items-start border-b lg:border-b-0 lg:border-r border-white/10 group-hover:border-black/20">
+                                004
+                            </div>
+                            <div className="lg:col-span-2 p-6 lg:p-8 font-mono text-sm border-b lg:border-b-0 lg:border-r border-white/10 group-hover:border-black/20 flex flex-col justify-between gap-4">
+                                <span>17 JUN 2026</span>
+                                <span className="uppercase font-bold tracking-widest">UI/UX DESIGN</span>
+                            </div>
+                            <div className="lg:col-span-3 p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-white/10 group-hover:border-black/20">
+                                <div className="relative w-full h-48 lg:h-full min-h-[140px] rounded-xl overflow-hidden border border-white/10 group-hover:border-black/20 bg-zinc-900">
+                                    <Image
+                                        src="/images/blog/digital-portfolio-showcase.png"
+                                        alt="Membangun Portofolio Digital yang Menonjol Thumbnail"
+                                        fill
+                                        className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out grayscale group-hover:grayscale-0"
+                                    />
+                                </div>
+                            </div>
+                            <div className="lg:col-span-6 p-6 lg:p-8 flex flex-col justify-between">
+                                <h3 className="font-display text-2xl md:text-4xl font-medium tracking-tight mb-6">
+                                    Membangun Portofolio Digital yang Menonjol: Panduan untuk Kreator Modern
+                                </h3>
+                                <div className="flex items-center justify-between w-full">
+                                    <p className="font-sans text-sm opacity-60 group-hover:opacity-100 max-w-md">
+                                        Membangun portofolio digital di era modern bukan sekadar memindahkan karya, melainkan menciptakan etalase profesional sekaligus alat negosiasi terkuat yang dimiliki seorang kreator.
+                                    </p>
+                                    <div className="w-10 h-10 rounded-full border border-current flex items-center justify-center -rotate-45 group-hover:rotate-0 transition-transform shrink-0">
+                                        <ArrowRight className="w-5 h-5" />
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>
 
                         {/* Item 3 */}
                         <Link href="/blog/mengapa-profil-linkedin-saja-tidak-cukup-untuk-bersaing-di-tahun-2026" className="group grid grid-cols-1 lg:grid-cols-12 border-b border-white/10 hover-accent transition-all duration-300 text-white">

@@ -16,9 +16,6 @@ if (typeof window !== 'undefined') {
 export function HorizontalFlowShell({ children, theme, isMobileView, isCardPreview, isEditor, data }: any) {
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const cursorDot = useRef<HTMLDivElement>(null);
-  const cursorRing = useRef<HTMLDivElement>(null);
-  const cursorText = useRef<HTMLSpanElement>(null);
   const floatingImg = useRef<HTMLImageElement>(null);
 
   const fullName = data?.profile?.fullName || data?.fullName || "Elevate Studio";
@@ -26,31 +23,6 @@ export function HorizontalFlowShell({ children, theme, isMobileView, isCardPrevi
 
   useGSAP(() => {
     if (isCardPreview) return;
-
-    // Cursor logic
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let ringX = mouseX;
-    let ringY = mouseY;
-
-    const onMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      if (cursorDot.current) {
-        gsap.set(cursorDot.current, { x: mouseX, y: mouseY });
-      }
-    };
-
-    window.addEventListener('mousemove', onMouseMove);
-    
-    const tickerFunc = () => {
-      ringX += (mouseX - ringX) * 0.15;
-      ringY += (mouseY - ringY) * 0.15;
-      if (cursorRing.current) {
-        gsap.set(cursorRing.current, { x: ringX, y: ringY }); 
-      }
-    };
-    gsap.ticker.add(tickerFunc);
 
     // Magnetic buttons
     const magneticBtns = document.querySelectorAll('.magnetic-btn');
@@ -71,29 +43,9 @@ export function HorizontalFlowShell({ children, theme, isMobileView, isCardPrevi
     magneticBtns.forEach(btn => {
       btn.addEventListener('mousemove', onBtnMove);
       btn.addEventListener('mouseleave', onBtnLeave);
-      btn.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-      btn.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
     });
 
-    // Data cursor injection
-    const cursorElems = document.querySelectorAll('[data-cursor]');
-    cursorElems.forEach(el => {
-      el.addEventListener('mouseenter', function(this: any) {
-        const text = this.getAttribute('data-cursor');
-        if (cursorText.current) cursorText.current.innerText = text;
-        document.body.classList.add('cursor-text-active');
-      });
-      el.addEventListener('mouseleave', function() {
-        document.body.classList.remove('cursor-text-active');
-        if (cursorText.current) cursorText.current.innerText = '';
-      });
-    });
-
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      gsap.ticker.remove(tickerFunc);
-      document.body.classList.remove('hovering', 'cursor-text-active');
-    };
+    return () => {};
   }, { scope: containerRef, dependencies: [isEditor, isMobileView, isCardPreview] });
 
   const lenis = useLenis();
@@ -122,7 +74,7 @@ export function HorizontalFlowShell({ children, theme, isMobileView, isCardPrevi
         background-color: var(--bg);
         color: var(--textMain);
         overflow-x: hidden;
-        ${!isCardPreview && !isMobileView && !isEditor ? 'cursor: none;' : ''}
+
     }
 
     .theme-hf .font-display { font-family: 'Clash Display', sans-serif; }
@@ -138,39 +90,7 @@ export function HorizontalFlowShell({ children, theme, isMobileView, isCardPrevi
 
     .theme-hf ::selection { background: var(--accent); color: #fff; }
 
-    #cursor-dot, #cursor-ring {
-        position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
-        border-radius: 50%; pointer-events: none; z-index: 10000;
-        ${isEditor ? 'display: none;' : ''}
-    }
-    #cursor-dot {
-        width: 8px; height: 8px; background-color: #FAFAFA;
-        transition: width 0.2s, height 0.2s, background-color 0.2s, opacity 0.2s;
-    }
-    #cursor-ring {
-        width: 40px; height: 40px; border: 1px solid rgba(250,250,250,0.5);
-        transition: width 0.3s, height 0.3s, border-color 0.3s, background-color 0.3s;
-        display: flex; align-items: center; justify-content: center;
-    }
-    
-    #cursor-text {
-        font-family: 'Inter', sans-serif;
-        font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
-        color: #FAFAFA; opacity: 0; transition: opacity 0.3s;
-        position: absolute; text-transform: uppercase;
-    }
 
-    body.hovering #cursor-dot { opacity: 0; }
-    body.hovering #cursor-ring {
-        width: 80px; height: 80px; border-color: var(--accent);
-        background-color: rgba(255, 51, 102, 0.1); backdrop-filter: blur(2px);
-    }
-    body.cursor-text-active #cursor-dot { opacity: 0; }
-    body.cursor-text-active #cursor-ring {
-        width: 80px; height: 80px; border-color: rgba(250,250,250,0.2);
-        background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-    }
-    body.cursor-text-active #cursor-text { opacity: 1; }
 
     .theme-hf ::-webkit-scrollbar { display: none; }
 
@@ -212,8 +132,8 @@ export function HorizontalFlowShell({ children, theme, isMobileView, isCardPrevi
     }
     
     @media (max-width: 768px) {
-        .theme-hf { cursor: auto; }
-        #cursor-dot, #cursor-ring, .floating-img { display: none; }
+        .theme-hf { }
+        .floating-img { display: none; }
         .horizontal-wrapper { height: auto; overflow: visible; }
         .horizontal-container { flex-direction: column; width: 100%; padding: 0 5vw; }
         .project-card { width: 100%; height: 50vh; margin-top: 5vh; margin-right: 0; margin-bottom: 5vh; }
@@ -233,8 +153,6 @@ export function HorizontalFlowShell({ children, theme, isMobileView, isCardPrevi
       <div className="noise"></div>
       {(!isCardPreview && !isMobileView) && (
         <>
-          <div id="cursor-dot" ref={cursorDot}></div>
-          <div id="cursor-ring" ref={cursorRing}><span id="cursor-text" ref={cursorText}></span></div>
           <img alt="Preview" className="floating-img" id="floating-image" ref={floatingImg} />
         </>
       )}

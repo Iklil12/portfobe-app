@@ -16,8 +16,6 @@ if (typeof window !== 'undefined') {
 
 export function LayeredMonolithShell({ children, data, theme, isMobileView = false, isCardPreview = false, isEditor = false, selectedMedia, setSelectedMedia }: any) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const cursorRef = useRef<HTMLDivElement>(null);
-    const cursorTextRef = useRef<HTMLSpanElement>(null);
     const lenisRef = useRef<any>(null);
 
     useEscapeKey(() => setSelectedMedia && setSelectedMedia(null), !!selectedMedia);
@@ -69,78 +67,7 @@ export function LayeredMonolithShell({ children, data, theme, isMobileView = fal
         return () => clearTimeout(timer);
     }, { scope: containerRef, dependencies: [isMobileView, isCardPreview, children] });
 
-    // Custom Cursor Logic
-    useEffect(() => {
-        if (isMobileView || isCardPreview) return;
-        
-        const cursor = cursorRef.current;
-        const cursorText = cursorTextRef.current;
-        if (!cursor || !cursorText) return;
 
-        let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-        let cursorPos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-
-        const onMouseMove = (e: MouseEvent) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        };
-
-        window.addEventListener('mousemove', onMouseMove);
-
-        const ticker = gsap.ticker.add(() => {
-            cursorPos.x += (mouse.x - cursorPos.x) * 0.2;
-            cursorPos.y += (mouse.y - cursorPos.y) * 0.2;
-            gsap.set(cursor, { x: cursorPos.x, y: cursorPos.y });
-        });
-
-        const hoverElements = document.querySelectorAll('.cursor-hover');
-        
-        const handleMouseEnter = (e: Event) => {
-            cursor.classList.add('hover-mode');
-            const target = e.currentTarget as HTMLElement;
-            const text = target.getAttribute('data-cursor-text');
-            if (text && cursorText) cursorText.innerText = text;
-        };
-
-        const onMouseLeave = () => {
-            cursor.classList.remove('hover-mode');
-            if (cursorText) cursorText.innerText = "VIEW";
-        };
-
-        hoverElements.forEach(el => {
-            el.addEventListener('mouseenter', handleMouseEnter);
-            el.addEventListener('mouseleave', onMouseLeave);
-        });
-
-        // Use MutationObserver to catch dynamically injected .cursor-hover elements
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach(mutation => {
-                if (mutation.addedNodes.length) {
-                    const newHoverElements = document.querySelectorAll('.cursor-hover');
-                    newHoverElements.forEach(el => {
-                        el.removeEventListener('mouseenter', handleMouseEnter);
-                        el.removeEventListener('mouseleave', onMouseLeave);
-                        el.addEventListener('mouseenter', handleMouseEnter);
-                        el.addEventListener('mouseleave', onMouseLeave);
-                    });
-                }
-            });
-        });
-        
-        if (containerRef.current) {
-            observer.observe(containerRef.current, { childList: true, subtree: true });
-        }
-
-        return () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            gsap.ticker.remove(ticker);
-            hoverElements.forEach(el => {
-                el.removeEventListener('mouseenter', handleMouseEnter);
-                el.removeEventListener('mouseleave', onMouseLeave);
-            });
-            observer.disconnect();
-        };
-    }, [isMobileView, isCardPreview]);
 
     const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
         e.preventDefault();
@@ -209,7 +136,7 @@ export function LayeredMonolithShell({ children, data, theme, isMobileView = fal
                 __html: `
                 .layered-monolith-root {
                     --brand-accent: ${accentColor};
-                    ${!isMobileView && !isCardPreview ? 'cursor: none;' : ''}
+
                 }
                 .layered-monolith-root .font-display { font-family: ${customHeadingFont} !important; }
                 .layered-monolith-root .font-body { font-family: ${customBodyFont} !important; }
@@ -223,26 +150,7 @@ export function LayeredMonolithShell({ children, data, theme, isMobileView = fal
                 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
                 .lenis.lenis-stopped { overflow: hidden; }
                 
-                #cursor {
-                    position: fixed; top: 0; left: 0; width: 12px; height: 12px;
-                    background-color: var(--brand-accent); border-radius: 50%;
-                    transform: translate(-50%, -50%);
-                    pointer-events: none; z-index: 99999;
-                    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-                                height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                                background-color 0.3s, mix-blend-mode 0.3s;
-                    display: flex; align-items: center; justify-content: center;
-                }
-                #cursor.hover-mode {
-                    width: 80px; height: 80px;
-                    background-color: #fff; mix-blend-mode: difference;
-                }
-                .custom-cursor-label {
-                    display: none; font-family: ${customHeadingFont};
-                    font-size: 10px; font-weight: 700; letter-spacing: 1px; 
-                    color: #000; text-transform: uppercase;
-                }
-                #cursor.hover-mode .custom-cursor-label { display: block; }
+
 
                 .stack-container { position: relative; width: 100%; }
                 /* Stacking cards */
@@ -285,8 +193,6 @@ export function LayeredMonolithShell({ children, data, theme, isMobileView = fal
                 .chip-dark { border-color: rgba(0,0,0,0.2); background: rgba(0,0,0,0.05); }
 
                 @media (max-width: 768px) {
-                    #cursor { display: none; }
-                    .layered-monolith-root { cursor: auto; }
                     .floating-dock { bottom: 1rem; width: 90%; gap: 1rem; justify-content: space-around; padding: 0.5rem; }
                     .floating-dock a { font-size: 0.65rem; gap: 0.5rem; }
                 }
@@ -297,9 +203,7 @@ export function LayeredMonolithShell({ children, data, theme, isMobileView = fal
                 }
             `}} />
 
-            {!isMobileView && !isCardPreview && (
-                <div id="cursor" ref={cursorRef}><span className="custom-cursor-label" ref={cursorTextRef}>VIEW</span></div>
-            )}
+
 
             {/* Floating Dock Navigation */}
             <nav className="floating-dock mix-blend-difference">

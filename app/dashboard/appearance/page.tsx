@@ -117,26 +117,28 @@ function AppearanceEditor() {
       )}
 
       {/* FULL WIDTH NAVBAR */}
-      <div className="w-full h-14 bg-[#111111] border-b border-white/5 shrink-0 flex items-center justify-between px-4 lg:px-6 z-[100] relative">
+      <div className="w-full h-14 bg-[#111111] border-b border-white/5 shrink-0 flex items-center justify-between px-4 lg:pl-0 lg:pr-6 z-[100] relative">
         {/* Left: Back & Title */}
-        <div className="flex items-center gap-4">
-          <Link 
-            href="/dashboard" 
-            onClick={(e) => {
-              if (state.isDirty) {
-                if (!window.confirm("Keluar dari Editor? Perubahan yang Anda lakukan mungkin tidak disimpan.")) {
-                  e.preventDefault();
+        <div className="flex items-center">
+          <div className="flex items-center justify-center w-12 lg:w-[56px] shrink-0">
+            <Link 
+              href="/dashboard" 
+              onClick={(e) => {
+                if (state.isDirty) {
+                  if (!window.confirm("Keluar dari Editor? Perubahan yang Anda lakukan mungkin tidak disimpan.")) {
+                    e.preventDefault();
+                  }
                 }
-              }
-            }}
-            className="w-8 h-8 rounded-md hover:bg-white/5 flex items-center justify-center text-white/50 hover:text-white transition-all duration-200" 
-            title="Kembali ke Dashboard"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Link>
-          <div className="hidden sm:flex items-center gap-2">
-            <span className="text-[13px] font-medium text-white/90">Website Builder</span>
-            <span className="px-1.5 py-0.5 bg-white/10 text-white/60 text-[9px] rounded font-medium">PRO</span>
+              }}
+              className="w-8 h-8 rounded-md hover:bg-white/5 flex items-center justify-center text-white/50 hover:text-white transition-all duration-200" 
+              title="Kembali ke Dashboard"
+            >
+              <ArrowLeft className="w-4 h-4 translate-y-[0.5px]" />
+            </Link>
+          </div>
+          <div className="hidden sm:flex items-center gap-2 translate-y-[-0.5px]">
+            <span className="text-[13px] font-medium text-white/90 leading-none">Website Builder</span>
+            <span className="px-1.5 py-0.5 bg-white/10 text-white/60 text-[9px] rounded font-medium leading-none flex items-center justify-center h-4">PRO</span>
           </div>
         </div>
 

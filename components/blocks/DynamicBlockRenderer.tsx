@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import Script from 'next/script';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReactLenis } from '@studio-freight/react-lenis';
+import { GlobalCursor } from '@/components/features/GlobalCursor';
 
 // Minimalist Blocks
 const MinimalistSkillsBlock = dynamic(() => import('./minimalist/MinimalistSkillsBlock').then(mod => mod.MinimalistSkillsBlock));
@@ -841,7 +842,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
       }
 
       // ── 2. DETEKSI KLIK KARTU PROYEK (KARYA) ──────────────────────────────────
-      const card = target.closest('.cursor-pointer, [class*="cursor-pointer"], [class*="group"], button, a');
+      const card = target.closest('.cursor-pointer, [class*="cursor-pointer"], .group, button, a');
       if (!card) {
         console.log("[Analytics Debug] No clickable card parent found.");
         return;
@@ -1310,8 +1311,14 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
     <div className="flex flex-col w-full min-h-screen">
       {content}
       {LibraryUI}
+      <GlobalCursor enabled={theme?.customTexts?.custom_cursor_enabled === 'true'} type={theme?.customTexts?.custom_cursor_type || 'circle-dot'} />
     </div>
-  ) : content;
+  ) : (
+    <>
+      {content}
+      <GlobalCursor enabled={theme?.customTexts?.custom_cursor_enabled === 'true'} type={theme?.customTexts?.custom_cursor_type || 'circle-dot'} />
+    </>
+  );
 
   if (isSmoothScroll) {
     return (

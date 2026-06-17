@@ -217,48 +217,6 @@ export function ButtonShapePicker({ buttonShape, setButtonShape }: { buttonShape
   );
 }
 
-export function NavigationStylePicker({ navStyle, setNavStyle }: { navStyle?: string, setNavStyle?: (s: string) => void }) {
-  if (!setNavStyle) return null;
-  const isFloating = navStyle === 'floating';
-  const isSticky = navStyle === 'sticky' || !navStyle; // default
-  const isMinimalist = navStyle === 'minimalist';
-
-  return (
-    <div className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
-      <div className="flex items-center mb-3 justify-between px-0.5">
-        <h3 className="text-xs font-medium text-white/70">Gaya Navigasi</h3>
-        <div className="px-2 py-0.5 rounded text-[9px] font-medium bg-white/5 text-white/40 border border-white/5">
-          SOON
-        </div>
-      </div>
-      <div className="grid grid-cols-3 gap-2 opacity-50 pointer-events-none">
-        <div className="group relative py-3 px-1 rounded-md border flex flex-col items-center gap-2 bg-zinc-900/30 border-white/5 text-white/40">
-          <div className="w-8 h-6 flex justify-center pt-1.5">
-            <div className="w-5 h-1.5 rounded-full bg-white/20"></div>
-          </div>
-          <span className="text-[10px] font-medium leading-tight text-center">Floating</span>
-        </div>
-        <div className="group relative py-3 px-1 rounded-md border flex flex-col items-center gap-2 bg-zinc-900/30 border-white/5 text-white/40">
-          <div className="w-8 h-6 flex justify-center">
-            <div className="w-full h-1.5 rounded-none bg-white/20"></div>
-          </div>
-          <span className="text-[10px] font-medium leading-tight text-center">Sticky</span>
-        </div>
-        <div className="group relative py-3 px-1 rounded-md border flex flex-col items-center gap-2 bg-zinc-900/30 border-white/5 text-white/40">
-          <div className="w-8 h-6 flex justify-end pr-1.5 pt-1.5">
-            <div className="flex flex-col gap-[2px]">
-              <div className="w-3 h-[1.5px] rounded-full bg-white/30"></div>
-              <div className="w-3 h-[1.5px] rounded-full bg-white/30"></div>
-              <div className="w-3 h-[1.5px] rounded-full bg-white/30"></div>
-            </div>
-          </div>
-          <span className="text-[10px] font-medium leading-tight text-center">Minimalist</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function GalleryLayoutPicker({ layoutStyle, setLayout }: { layoutStyle?: string, setLayout?: (s: string) => void }) {
   if (!setLayout) return null;
   const isEditorial = layoutStyle === 'editorial' || !layoutStyle;

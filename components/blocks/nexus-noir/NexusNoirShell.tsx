@@ -44,54 +44,13 @@ export function NexusNoirShell({ children, theme, isMobileView, isCardPreview, i
     useGSAP(() => {
         if (isCardPreview) return;
 
-        // Custom Cursor Animation
-        const cursorDot = document.getElementById('nn-cursor-dot');
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        let dotX = mouseX, dotY = mouseY;
-
-        const onMouseMove = (e: MouseEvent) => {
-            const container = containerRef.current;
-            if (!container) return;
-            const rect = container.getBoundingClientRect();
-            const scaleX = rect.width / container.offsetWidth || 1;
-            const scaleY = rect.height / container.offsetHeight || 1;
-            
-            mouseX = (e.clientX - rect.left) / scaleX;
-            mouseY = (e.clientY - rect.top) / scaleY;
-        };
-
-        window.addEventListener('mousemove', onMouseMove);
-
-        const animateCursor = () => {
-            if (!cursorDot) return;
-            const dt = 1.0 - Math.pow(1.0 - 0.25, gsap.ticker.deltaRatio()); 
-            dotX += (mouseX - dotX) * dt;
-            dotY += (mouseY - dotY) * dt;
-            
-            cursorDot.style.transform = `translate(calc(${dotX}px - 50%), calc(${dotY}px - 50%))`;
-            requestAnimationFrame(animateCursor);
-        };
-        let animFrame = requestAnimationFrame(animateCursor);
-
-        // Visibility Toggle
         const container = containerRef.current;
-        const showCursor = () => { if (cursorDot) cursorDot.style.opacity = '1'; };
-        const hideCursor = () => { if (cursorDot) cursorDot.style.opacity = '0'; };
-
-        if (container) {
-            container.addEventListener('mouseenter', showCursor);
-            container.addEventListener('mouseleave', hideCursor);
-        }
 
         // Magnetic Hover Effect
         const magneticElements = document.querySelectorAll('.magnetic, .magnetic-card, button, a, .hover-trigger');
         
-        const handleMouseEnter = () => {
-            if (cursorDot) cursorDot.classList.add('cursor-hover');
-        };
+        const handleMouseEnter = () => {};
         const handleMouseLeave = (e: Event) => {
-            if (cursorDot) cursorDot.classList.remove('cursor-hover');
             gsap.to(e.currentTarget, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.3)' });
         };
         const handleMagneticMove = (e: Event) => {
@@ -167,12 +126,6 @@ export function NexusNoirShell({ children, theme, isMobileView, isCardPreview, i
         }
 
         return () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            cancelAnimationFrame(animFrame);
-            if (container) {
-                container.removeEventListener('mouseenter', showCursor);
-                container.removeEventListener('mouseleave', hideCursor);
-            }
             magneticElements.forEach(el => {
                 el.removeEventListener('mouseenter', handleMouseEnter);
                 el.removeEventListener('mouseleave', handleMouseLeave);
@@ -202,7 +155,7 @@ export function NexusNoirShell({ children, theme, isMobileView, isCardPreview, i
         .nn-theme {
             background-color: #050505;
             color: #F5F5F5;
-            ${!isMobileView && !isCardPreview && !isEditor ? 'cursor: none;' : ''}
+
         }
         
         ::selection { background-color: #F5F5F5; color: #050505; }
@@ -225,20 +178,7 @@ export function NexusNoirShell({ children, theme, isMobileView, isCardPreview, i
             will-change: transform;
         }
 
-        .nn-cursor {
-            position: absolute; top: 0; left: 0; width: 10px; height: 10px;
-            background-color: #fff; border-radius: 50%;
-            pointer-events: none; z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, background-color 0.3s, mix-blend-mode 0.3s, opacity 0.3s;
-            opacity: 0;
-            ${isEditor ? 'display: none;' : ''}
-        }
-        .nn-cursor.cursor-hover {
-            width: 70px; height: 70px;
-            background-color: rgba(255, 255, 255, 1);
-            mix-blend-mode: difference;
-        }
+
 
         .marquee-wrap { overflow: hidden; display: flex; position: relative; }
         .marquee-inner { display: flex; white-space: nowrap; animation: marquee 20s linear infinite; }
@@ -284,10 +224,7 @@ export function NexusNoirShell({ children, theme, isMobileView, isCardPreview, i
             {/* Background Elements */}
             <div className="nn-bg-grid fixed"></div>
 
-            {/* Custom Cursor */}
-            {!isMobileView && !isCardPreview && (
-                <div className="nn-cursor" id="nn-cursor-dot"></div>
-            )}
+
 
             {/* Navigation */}
             <nav className="absolute w-full top-0 z-50 px-6 py-6 mix-blend-difference">

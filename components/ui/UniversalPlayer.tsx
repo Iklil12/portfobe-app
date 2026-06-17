@@ -22,6 +22,21 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
   const [progress, setProgress] = useState(0);
   const [timeText, setTimeText] = useState({ current: "0:00", duration: "0:00" });
   const [showControls, setShowControls] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement && document.fullscreenElement === containerRef.current);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   // Settings Menu States
   const hlsRef = useRef<Hls | null>(null);
@@ -231,18 +246,74 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
   };
 
   const toggleFullscreen = () => {
-    if (containerRef.current) {
+    const video = videoRef.current;
+    const container = containerRef.current;
+
+    // Untuk iOS/iPhone Safari: gunakan webkitEnterFullscreen langsung di video
+    if (video && (video as any).webkitEnterFullscreen) {
+      (video as any).webkitEnterFullscreen();
+      return;
+    }
+
+    if (container) {
       if (!document.fullscreenElement) {
-        containerRef.current.requestFullscreen().catch(err => console.log(err));
+        container.requestFullscreen().catch(err => {
+          if (video && video.requestFullscreen) {
+            video.requestFullscreen().catch(e => console.log(e));
+          }
+        });
       } else {
-        document.exitFullscreen();
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
       }
     }
   };
 
   return (
-    <div ref={containerRef} className="@container w-full h-full relative group bg-black rounded-2xl overflow-hidden border border-slate-800/60 shadow-2xl">
-      <div className={`w-full aspect-video transition-all duration-700 relative ${!isLoaded ? 'animate-pulse' : ''}`}>
+    <div ref={containerRef} className="mobile-landscape-wrapper @container w-full h-full relative group bg-black rounded-2xl overflow-hidden border border-slate-800/60 shadow-2xl">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @media (max-width: 1023px) and (orientation: landscape) {
+            .mobile-landscape-wrapper {
+              position: fixed !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100vw !important;
+              height: 100vh !important;
+              z-index: 99999 !important;
+              border-radius: 0 !important;
+              margin: 0 !important;
+              background-color: black !important;
+            }
+            .mobile-landscape-wrapper .aspect-video-wrapper {
+              height: 100vh !important;
+              width: 100vw !important;
+              aspect-ratio: auto !important;
+            }
+            .mobile-landscape-wrapper video {
+              object-fit: contain !important;
+            }
+          }
+          :fullscreen .aspect-video-wrapper {
+            height: 100% !important;
+            width: 100% !important;
+            aspect-ratio: auto !important;
+          }
+          :fullscreen video {
+            object-fit: contain !important;
+          }
+          :-webkit-full-screen .aspect-video-wrapper {
+            height: 100% !important;
+            width: 100% !important;
+            aspect-ratio: auto !important;
+          }
+          :-webkit-full-screen video {
+            object-fit: contain !important;
+          }
+        `
+      }} />
+      <div className={`aspect-video-wrapper w-full ${isFullscreen ? 'h-full' : 'aspect-video'} transition-all duration-700 relative ${!isLoaded ? 'animate-pulse' : ''}`}>
 
         {/* Loading Spinner */}
         {(!isLoaded || !inView) && (
@@ -319,7 +390,7 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
 
                 {/* Center Custom Logo / Play indicator (Snappy Spring Fading) */}
                 <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] pointer-events-none ${isPlaying ? 'opacity-0 scale-[1.5]' : 'opacity-100 scale-100'}`}>
-                  <Play className="w-16 h-16 text-white ml-2 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]" fill="currentColor" />
+                  <Play className="w-10 h-10 md:w-16 md:h-16 text-white ml-1.5 md:ml-2 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]" fill="currentColor" />
                 </div>
 
                 {/* Bottom Controls Bar (Sleek Inline Design) */}

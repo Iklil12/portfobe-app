@@ -43,6 +43,15 @@ export async function PUT(req: Request) {
       return new NextResponse("Payload terlalu besar. Maksimal 50 blok.", { status: 400 });
     }
 
+    // Hapus blok yang sudah tidak ada di payload (dihapus oleh pengguna di editor atau karena pindah tema)
+    const payloadIds = blocks.map((b: any) => b.id).filter(Boolean);
+    const deletePromise = prisma.pageBlock.deleteMany({
+      where: {
+        userId: session.user.id,
+        id: { notIn: payloadIds }
+      }
+    });
+
     // Eksekusi update secara bulk menggunakan transaksi
     const updatePromises = blocks.map((block: any) => {
       return prisma.pageBlock.upsert({
@@ -63,7 +72,7 @@ export async function PUT(req: Request) {
       });
     });
 
-    await prisma.$transaction(updatePromises);
+    await prisma.$transaction([deletePromise, ...updatePromises]);
 
     return NextResponse.json({ success: true });
   } catch (error) {
