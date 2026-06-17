@@ -196,6 +196,9 @@ model Activity {
   userId     String
   actionType String
   details    String   @db.Text
+  ipAddress  String?
+  userAgent  String?
+  location   String?
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 

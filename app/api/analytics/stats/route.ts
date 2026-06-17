@@ -274,6 +274,176 @@ export async function GET(req: NextRequest) {
       .sort((a, b) => b.count - a.count)
       .slice(0, 6);
 
+    // ── 8. Geo-Location Aggregation ───────────────────────────────────────────
+    const historicalGeoStats = await prisma.dailyLocationStats.findMany({
+      where: {
+        userId,
+        date: { gte: startDate, lt: startOfToday }
+      },
+      select: { country: true, city: true, views: true }
+    });
+
+    const todayGeoLogs = await prisma.analytics.groupBy({
+      by: ['country', 'city'],
+      where: {
+        userId,
+        createdAt: { gte: startOfToday },
+        type: "VIEW"
+      },
+      _count: { _all: true }
+    });
+
+    const countryMap: Record<string, number> = {};
+    const cityMap: Record<string, number> = {};
+
+    historicalGeoStats.forEach(stat => {
+      const countryName = stat.country || "Unknown";
+      const cityName = stat.city || "Unknown";
+      countryMap[countryName] = (countryMap[countryName] || 0) + stat.views;
+      cityMap[cityName] = (cityMap[cityName] || 0) + stat.views;
+    });
+
+    todayGeoLogs.forEach(g => {
+      const countryName = g.country || "Unknown";
+      const cityName = g.city || "Unknown";
+      const count = g._count._all;
+      countryMap[countryName] = (countryMap[countryName] || 0) + count;
+      cityMap[cityName] = (cityMap[cityName] || 0) + count;
+    });
+
+    const totalGeoViews = Object.values(countryMap).reduce((s, v) => s + v, 0) || 1;
+
+    const countries = Object.entries(countryMap)
+      .map(([name, count]) => ({
+        name,
+        count,
+        percentage: Math.round((count / totalGeoViews) * 100)
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    const cities = Object.entries(cityMap)
+      .map(([name, count]) => ({
+        name,
+        count,
+        percentage: Math.round((count / totalGeoViews) * 100)
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    // ── 8.5 Top Projects Aggregation (Project Popularity) ──────────────────────
+    const projectClicks = await prisma.analytics.groupBy({
+      by: ['targetId'],
+      where: {
+        userId,
+        createdAt: { gte: startDate },
+        type: "PROJECT_CLICK",
+        targetId: { not: null }
+      },
+      _count: { _all: true }
+    });
+
+    const targetProjectIds = projectClicks
+      .map(p => p.targetId)
+      .filter((id): id is string => typeof id === "string");
+
+    const projectsData = await prisma.project.findMany({
+      where: { 
+        id: { in: targetProjectIds },
+        deletedAt: null
+      },
+      select: { id: true, title: true }
+    });
+
+    const projectTitleMap = new Map<string, string>();
+    projectsData.forEach(p => projectTitleMap.set(p.id, p.title));
+
+    const topProjectsRaw = projectClicks
+      .filter(p => projectTitleMap.has(p.targetId as string))
+      .map(p => {
+        const title = projectTitleMap.get(p.targetId as string)!;
+        return {
+          id: p.targetId,
+          title,
+          count: p._count._all
+        };
+      })
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    const totalProjectClicks = topProjectsRaw.reduce((s, p) => s + p.count, 0) || 1;
+    const topProjects = topProjectsRaw.map(p => ({
+      ...p,
+      percentage: Math.round((p.count / totalProjectClicks) * 100)
+    }));
+
+    // Ambil link sosmed aktif milik user
+    const activeLinks = await prisma.link.findMany({
+      where: { userId, isActive: true },
+      select: { platform: true }
+    });
+    const activePlatforms = new Set(activeLinks.map(l => l.platform.toLowerCase()));
+
+    // ── 8.6 Sosial Media & Kontak Clicks Aggregation ──────────────────────────
+    const socialAndContactLogs = await prisma.analytics.findMany({
+      where: {
+        userId,
+        createdAt: { gte: startDate },
+        type: { in: ["SOCIAL_CLICK", "CONTACT_CLICK"] }
+      },
+      select: { type: true, metadata: true }
+    });
+
+    const socialClicksMap: Record<string, number> = {};
+    const contactClicksMap: Record<string, number> = {};
+
+    socialAndContactLogs.forEach(log => {
+      if (!log.metadata) return;
+      try {
+        let meta = typeof log.metadata === 'string' ? JSON.parse(log.metadata) : log.metadata;
+        if (typeof meta === 'string') {
+          meta = JSON.parse(meta);
+        }
+        if (log.type === "SOCIAL_CLICK" && meta && meta.platform) {
+          const platLower = meta.platform.toLowerCase();
+          const isExternal = platLower === "external link";
+          const isTwitterX = platLower.includes("twitter") || platLower.includes("x");
+          const hasTwitterXActive = Array.from(activePlatforms).some(p => p.includes("twitter") || p === "x");
+          
+          const isMatch = isExternal || activePlatforms.has(platLower) || (isTwitterX && hasTwitterXActive);
+
+          if (isMatch) {
+            socialClicksMap[meta.platform] = (socialClicksMap[meta.platform] || 0) + 1;
+          }
+        } else if (log.type === "CONTACT_CLICK" && meta && meta.platform) {
+          if (meta.platform === "WhatsApp" && !activePlatforms.has("whatsapp")) {
+            return;
+          }
+          contactClicksMap[meta.platform] = (contactClicksMap[meta.platform] || 0) + 1;
+        }
+      } catch (e) {
+        // Ignore parse error
+      }
+    });
+
+    const totalSocialClicks = Object.values(socialClicksMap).reduce((s, v) => s + v, 0) || 1;
+    const socialStats = Object.entries(socialClicksMap)
+      .map(([name, count]) => ({
+        name,
+        count,
+        percentage: Math.round((count / totalSocialClicks) * 100)
+      }))
+      .sort((a, b) => b.count - a.count);
+
+    const totalContactClicks = Object.values(contactClicksMap).reduce((s, v) => s + v, 0) || 1;
+    const contactStats = Object.entries(contactClicksMap)
+      .map(([name, count]) => ({
+        name,
+        count,
+        percentage: Math.round((count / totalContactClicks) * 100)
+      }))
+      .sort((a, b) => b.count - a.count);
+
     // ── 9. Chart Data ─────────────────────────────────────────────────────────
     let chartData: { day: string; date: string; views: number; visitors: number }[];
 
@@ -385,6 +555,45 @@ export async function GET(req: NextRequest) {
     });
     const todayBounceRatePct = todayAllEvents > 0 ? Math.round((todayBouncedViews / todayAllEvents) * 100) : 0;
 
+    const galleryClicks = await prisma.analytics.count({
+      where: {
+        userId,
+        createdAt: { gte: startDate },
+        type: "GALLERY_CLICK"
+      }
+    });
+
+    // Hitung Returning Visitors Rate (RVR)
+    const periodViews = await prisma.analytics.findMany({
+      where: {
+        userId,
+        createdAt: { gte: startDate },
+        type: "VIEW",
+        ipAddress: { not: null }
+      },
+      select: { ipAddress: true }
+    });
+
+    const uniqueIpsInPeriod = Array.from(new Set(periodViews.map(v => v.ipAddress).filter(Boolean))) as string[];
+    const totalUniquePeriod = uniqueIpsInPeriod.length;
+
+    let returningCount = 0;
+    if (totalUniquePeriod > 0) {
+      const olderLogs = await prisma.analytics.findMany({
+        where: {
+          userId,
+          createdAt: { lt: startDate },
+          type: "VIEW",
+          ipAddress: { in: uniqueIpsInPeriod }
+        },
+        select: { ipAddress: true }
+      });
+      const olderIps = new Set(olderLogs.map(l => l.ipAddress).filter(Boolean));
+      returningCount = olderIps.size;
+    }
+
+    const returningRate = totalUniquePeriod > 0 ? Math.round((returningCount / totalUniquePeriod) * 100) : 0;
+
     return NextResponse.json({
       stats: {
         totalViews,
@@ -392,6 +601,7 @@ export async function GET(req: NextRequest) {
         avgTime: avgTimeStr,
         bounceRate: `${bounceRatePct}%`,
         devices,
+        returningRate: `${returningRate}%`
       },
       todayStats: {
         avgTime: todayAvgTimeStr,
@@ -399,6 +609,14 @@ export async function GET(req: NextRequest) {
       },
       chartData,
       sources,
+      geo: {
+        countries,
+        cities,
+      },
+      topProjects,
+      socialStats,
+      contactStats,
+      galleryClicks
     });
   } catch (error) {
     console.error("Analytics Stats Error:", error);

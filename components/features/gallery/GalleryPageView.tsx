@@ -52,12 +52,12 @@ const getGridClass = (index: number) => {
 // Masonry Pattern Generator
 const getMasonryClass = (index: number) => {
   const heights = ['aspect-[3/4]', 'aspect-[4/3]', 'aspect-[3/5]', 'aspect-square'];
-  return `md:col-span-4 ${heights[index % heights.length]}`; 
+  return `md:col-span-4 ${heights[index % heights.length]}`;
 };
 
-export default function GalleryPageView({ 
-  projects, 
-  subdomain, 
+export default function GalleryPageView({
+  projects,
+  subdomain,
   galleryTemplate = 'editorial',
   galleryDesign = 'classic',
   isEditor = false,
@@ -68,7 +68,16 @@ export default function GalleryPageView({
 }: GalleryPageViewProps) {
   const router = useRouter();
   const [systemTime, setSystemTime] = useState("");
-  const [activeProject, setActiveProject] = useState<any | null>(null);
+  const [activeProject, setActiveProjectState] = useState<any | null>(null);
+
+  const handleSelectProject = (project: any) => {
+    setActiveProjectState(project);
+    if (project && project.id && !isEditor) {
+      import('@/lib/analyticsClient').then(({ trackProjectClick }) => {
+        trackProjectClick(subdomain, project.id, project.title);
+      }).catch(err => console.error('Failed to track gallery project click:', err));
+    }
+  };
 
   // Clock effect for Cyber design
   useEffect(() => {
@@ -131,7 +140,7 @@ export default function GalleryPageView({
     subdomain,
     isEditor,
     customTexts,
-    setActiveProject,
+    setActiveProject: handleSelectProject,
     getLayoutParts,
     premiumEase,
     systemTime,
@@ -142,9 +151,10 @@ export default function GalleryPageView({
 
   return (
     <main className={`min-h-screen ${bgClass} selection:bg-[#F3F3F3] selection:text-[#030303] overflow-x-hidden relative transition-colors duration-500`}>
-      
+
       {/* Premium Typography and Dynamic Keyframes */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap');
         @keyframes marquee {
           0% { transform: translateX(0%); }
@@ -179,7 +189,7 @@ export default function GalleryPageView({
 
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 md:px-12 flex items-center justify-between pointer-events-none">
-        <button 
+        <button
           onClick={(e) => {
             if (isEditor) {
               e.preventDefault();
@@ -199,57 +209,57 @@ export default function GalleryPageView({
           )}
           <span className="block w-full h-full">
             {isBrutalist ? (
-              <EditableText 
-                value={customTexts?.brutalistBackLabel || '← KEMBALI'} 
-                field="brutalistBackLabel" 
-                entity="appearance" 
-                isEditor={isEditor} 
-                maxLength={25} 
+              <EditableText
+                value={customTexts?.brutalistBackLabel || '← KEMBALI'}
+                field="brutalistBackLabel"
+                entity="appearance"
+                isEditor={isEditor}
+                maxLength={25}
                 as="span"
                 className="text-white group-hover:text-black transition-colors duration-100"
               />
             ) : (
-              <EditableText 
-                value={customTexts?.generalBackLabel || 'Back to Portfolio'} 
-                field="generalBackLabel" 
-                entity="appearance" 
-                isEditor={isEditor} 
-                maxLength={25} 
+              <EditableText
+                value={customTexts?.generalBackLabel || 'Back to Portfolio'}
+                field="generalBackLabel"
+                entity="appearance"
+                isEditor={isEditor}
+                maxLength={25}
                 as="span"
                 className="text-white/90 group-hover:text-white/70 transition-colors"
               />
             )}
           </span>
         </button>
-        
+
         <div className="text-[10px] md:text-xs font-gallery-mono font-bold uppercase tracking-[0.4em] text-white/50 pointer-events-auto flex items-center gap-2">
           {isCyber && <Terminal className="w-3.5 h-3.5 text-[#ff9e00] animate-pulse" />}
           <span>
             {isCyber ? (
-              <EditableText 
-                value={customTexts?.cyberNavLabel || 'SYS_MONITOR.ACTIVE'} 
-                field="cyberNavLabel" 
-                entity="appearance" 
-                isEditor={isEditor} 
-                maxLength={30} 
+              <EditableText
+                value={customTexts?.cyberNavLabel || 'SYS_MONITOR.ACTIVE'}
+                field="cyberNavLabel"
+                entity="appearance"
+                isEditor={isEditor}
+                maxLength={30}
                 as="span"
               />
             ) : isBrutalist ? (
-              <EditableText 
-                value={customTexts?.brutalistNavLabel || 'EXHIBITION // RAW'} 
-                field="brutalistNavLabel" 
-                entity="appearance" 
-                isEditor={isEditor} 
-                maxLength={30} 
+              <EditableText
+                value={customTexts?.brutalistNavLabel || 'EXHIBITION // RAW'}
+                field="brutalistNavLabel"
+                entity="appearance"
+                isEditor={isEditor}
+                maxLength={30}
                 as="span"
               />
             ) : (
-              <EditableText 
-                value={customTexts?.generalNavLabel || 'EXHIBITION.SYS'} 
-                field="generalNavLabel" 
-                entity="appearance" 
-                isEditor={isEditor} 
-                maxLength={30} 
+              <EditableText
+                value={customTexts?.generalNavLabel || 'EXHIBITION.SYS'}
+                field="generalNavLabel"
+                entity="appearance"
+                isEditor={isEditor}
+                maxLength={30}
                 as="span"
               />
             )}
@@ -273,10 +283,10 @@ export default function GalleryPageView({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setActiveProject(null)}
+              onClick={() => setActiveProjectState(null)}
               className="absolute inset-0 bg-black/85 backdrop-blur-md cursor-pointer"
             />
-            
+
             {/* Modal Box */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -318,10 +328,10 @@ export default function GalleryPageView({
                     {activeProject.title}
                   </h3>
                 </div>
-                
+
                 {/* Close Button inside header */}
-                <button 
-                  onClick={() => setActiveProject(null)}
+                <button
+                  onClick={() => setActiveProjectState(null)}
                   className={`flex items-center justify-center transition-all duration-300
                     ${isClassic ? 'w-8 h-8 rounded-full bg-white/10 hover:bg-white text-white hover:text-black border border-white/10' : ''}
                     ${isEditorialMag ? 'px-3 py-1 bg-black border border-white/10 hover:border-[#ff9e00] text-[#ff9e00] font-gallery-mono text-[9px] uppercase tracking-widest' : ''}
@@ -345,15 +355,15 @@ export default function GalleryPageView({
               {/* Media Content Container (Video or Photo) */}
               <div className="aspect-video w-full bg-black relative flex items-center justify-center overflow-hidden">
                 {activeProject.projectType === 'video' ? (
-                  <UniversalPlayer 
-                    mediaUrl={activeProject.mediaUrl} 
-                    title={activeProject.title} 
-                    autoPlayMode={false} 
+                  <UniversalPlayer
+                    mediaUrl={activeProject.mediaUrl}
+                    title={activeProject.title}
+                    autoPlayMode={false}
                   />
                 ) : (
-                  <LazyImage 
-                    src={activeProject.mediaUrl} 
-                    alt={activeProject.title} 
+                  <LazyImage
+                    src={activeProject.mediaUrl}
+                    alt={activeProject.title}
                     className="max-w-full max-h-full object-contain"
                   />
                 )}

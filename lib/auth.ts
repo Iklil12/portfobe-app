@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken";
 import { Resend } from 'resend';
 
 import GithubProvider from "next-auth/providers/github";
+import { logActivity } from "@/lib/activity";
 
 // Inisialisasi Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -146,6 +147,7 @@ export const authOptions: NextAuthOptions = {
           const ips = (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor).split(",").map((i: string) => i.trim());
           ip = ips[ips.length - 1];
         }
+        const ua = req?.headers?.["user-agent"];
 
         const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
         const attemptRecord = await prisma.loginAttempt.findFirst({
@@ -164,6 +166,14 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || !user.password || user.password === "GOOGLE_LOGIN_NO_PASSWORD") {
+          if (user) {
+            await logActivity(
+              user.id,
+              "LOGIN_FAILED",
+              "Percobaan masuk gagal: Akun terdaftar menggunakan Google atau Email tidak valid",
+              { ip, ua }
+            );
+          }
           throw new Error("Email tidak ditemukan atau gunakan Login Google.");
         }
 
@@ -171,6 +181,13 @@ export const authOptions: NextAuthOptions = {
 
         if (!isPasswordValid) {
           // --- Pencatatan Gagal ---
+          await logActivity(
+            user.id,
+            "LOGIN_FAILED",
+            "Percobaan masuk gagal: Password tidak sesuai",
+            { ip, ua }
+          );
+
           if (attemptRecord) {
             // Jika sudah lewat 15 menit, reset hitungan jadi 1, jika belum tambahkan 1
             const newCount = attemptRecord.updatedAt < fifteenMinutesAgo ? 1 : attemptRecord.count + 1;
@@ -486,6 +503,27 @@ export const authOptions: NextAuthOptions = {
     }
   },
 
+  events: {
+    async signIn({ user, account }) {
+      if (user?.id) {
+        await logActivity(
+          user.id, 
+          "LOGIN_SUCCESS", 
+          `Berhasil masuk menggunakan ${account?.provider || "Credentials"}`
+        );
+      }
+    },
+    async signOut({ token }) {
+      const userId = (token?.id || token?.sub) as string;
+      if (userId) {
+        await logActivity(
+          userId, 
+          "LOGOUT", 
+          "Pengguna keluar dari aplikasi"
+        );
+      }
+    }
+  },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",

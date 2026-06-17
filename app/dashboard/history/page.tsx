@@ -15,8 +15,35 @@ import {
   Edit3, 
   FolderHeart,
   CheckCircle2,
-  Clock
+  Clock,
+  Globe,
+  ShieldAlert,
+  KeyRound,
+  LogOut
 } from 'lucide-react';
+
+// Helper Browser & Device
+function getBrowserInfo(ua: string | null) {
+  if (!ua) return { name: 'Unknown', icon: <Globe className="w-3.5 h-3.5 text-white/30" /> };
+  const lower = ua.toLowerCase();
+  
+  if (lower.includes('chrome') || lower.includes('crios')) {
+    return { name: 'Chrome', icon: <Globe className="w-3.5 h-3.5 text-blue-400" /> };
+  }
+  if (lower.includes('safari') && !lower.includes('chrome') && !lower.includes('chromium')) {
+    return { name: 'Safari', icon: <Globe className="w-3.5 h-3.5 text-sky-400" /> };
+  }
+  if (lower.includes('firefox') || lower.includes('fxios')) {
+    return { name: 'Firefox', icon: <Globe className="w-3.5 h-3.5 text-orange-400" /> };
+  }
+  if (lower.includes('edge') || lower.includes('edg')) {
+    return { name: 'Edge', icon: <Globe className="w-3.5 h-3.5 text-cyan-400" /> };
+  }
+  if (lower.includes('opera') || lower.includes('opr')) {
+    return { name: 'Opera', icon: <Globe className="w-3.5 h-3.5 text-red-500" /> };
+  }
+  return { name: 'Browser', icon: <Globe className="w-3.5 h-3.5 text-white/40" /> };
+}
 
 // Helper Waktu
 function timeAgo(dateParam: string | Date) {
@@ -46,10 +73,14 @@ function getActivityIcon(actionType: string) {
     case 'CHANGE_THEME': return <Palette className="w-4 h-4" />;
     case 'UPLOAD_PROJECT': return <UploadCloud className="w-4 h-4" />;
     case 'UPDATE_PROJECT': return <Edit3 className="w-4 h-4" />;
+    case 'LOGIN_SUCCESS': return <KeyRound className="w-4 h-4 text-emerald-500" />;
+    case 'LOGIN_FAILED': return <ShieldAlert className="w-4 h-4 text-red-500 animate-pulse" />;
+    case 'LOGOUT': return <LogOut className="w-4 h-4 text-zinc-400" />;
     default:
       if (actionType.includes('LINK')) return <Link2 className="w-4 h-4" />;
       if (actionType.includes('THEME')) return <Palette className="w-4 h-4" />;
       if (actionType.includes('PROJECT')) return <FolderHeart className="w-4 h-4" />;
+      if (actionType.includes('LOGIN')) return <KeyRound className="w-4 h-4" />;
       return <CheckCircle2 className="w-4 h-4" />;
   }
 }
@@ -166,36 +197,66 @@ export default function HistoryPage() {
           </div>
         ) : (
           <div className="divide-y divide-white/5">
-            {filteredActivities.map((activity, index) => (
-              <div 
-                key={activity.id} 
-                className="flex items-center gap-5 p-6 hover:bg-white/[0.01] transition-colors group"
-              >
-                <div className="w-12 h-12 shrink-0 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-white/50 group-hover:text-[#ff9e00] group-hover:border-[#ff9e00]/30 transition-all">
-                    {getActivityIcon(activity.actionType)}
-                </div>
-                <div className="flex-1 min-w-0">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
-                        <div className="text-xs font-mono text-white/90 truncate">
-                          {activity.details.split(/"|'/).map((part: string, i: number) => (
-                             <React.Fragment key={`segment-${activity.id}-${i}`}>
-                               {i % 2 === 0 
-                                  ? highlightText(part, searchQuery, `text-${activity.id}-${i}`) 
-                                  : <span className="text-[#ff9e00] font-bold">"{highlightText(part, searchQuery, `quote-${activity.id}-${i}`)}"</span>
-                               }
-                             </React.Fragment>
-                          ))}
-                        </div>
-                        <span className={`text-[9px] font-mono font-bold uppercase tracking-widest shrink-0 transition-colors ${searchQuery && activity.actionType.toLowerCase().includes(searchQuery.toLowerCase()) ? 'text-[#ff9e00]' : 'text-white/30'}`}>
-                           {activity.actionType.replace(/_/g, ' ')}
+            {filteredActivities.map((activity, index) => {
+              const isFailed = activity.actionType.includes('FAIL') || activity.actionType === 'LOGIN_FAILED';
+              return (
+                <div 
+                  key={activity.id} 
+                  className="flex items-start gap-5 p-6 hover:bg-white/[0.01] transition-colors group border-b border-white/5 last:border-b-0"
+                >
+                  <div className={`w-12 h-12 shrink-0 rounded-none bg-zinc-900 border flex items-center justify-center transition-all ${
+                    isFailed 
+                      ? 'border-red-500/30 text-red-500 bg-red-950/10' 
+                      : 'border-white/10 text-white/50 group-hover:text-[#ff9e00] group-hover:border-[#ff9e00]/30'
+                  }`}>
+                      {getActivityIcon(activity.actionType)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div className="text-xs font-mono text-white/90 break-words leading-relaxed">
+                            {activity.details.split(/"|'/).map((part: string, i: number) => (
+                               <React.Fragment key={`segment-${activity.id}-${i}`}>
+                                 {i % 2 === 0 
+                                    ? highlightText(part, searchQuery, `text-${activity.id}-${i}`) 
+                                    : <span className="text-[#ff9e00] font-bold">"{highlightText(part, searchQuery, `quote-${activity.id}-${i}`)}"</span>
+                                 }
+                               </React.Fragment>
+                            ))}
+                          </div>
+                          <span className={`text-[9px] font-mono font-bold uppercase tracking-widest shrink-0 px-2 py-0.5 border ${
+                            isFailed 
+                              ? 'bg-red-500/10 text-red-500 border-red-500/25' 
+                              : searchQuery && activity.actionType.toLowerCase().includes(searchQuery.toLowerCase()) 
+                                ? 'bg-[#ff9e00]/10 text-[#ff9e00] border-[#ff9e00]/25' 
+                                : 'bg-white/[0.02] text-white/30 border-white/5'
+                          }`}>
+                             {activity.actionType.replace(/_/g, ' ')}
+                          </span>
+                      </div>
+                      <div className="text-[10px] font-mono text-white/40 mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+                        <span className="flex items-center gap-1.5 font-semibold">
+                          <Clock className="w-3.5 h-3.5" /> {timeAgo(activity.createdAt)}
                         </span>
-                    </div>
-                    <p className="text-[10px] font-mono font-bold text-white/40 mt-1.5 flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5" /> {timeAgo(activity.createdAt)}
-                    </p>
+                        
+                        {activity.ipAddress && (
+                          <span className="flex items-center gap-1.5 border-l border-white/10 pl-4" title={`User Agent: ${activity.userAgent || '-'}`}>
+                            {getBrowserInfo(activity.userAgent).icon}
+                            <span className="text-white/60">{getBrowserInfo(activity.userAgent).name}</span>
+                            <span className="text-white/20">({activity.ipAddress})</span>
+                          </span>
+                        )}
+
+                        {activity.location && (
+                          <span className="flex items-center gap-1.5 border-l border-white/10 pl-4 text-emerald-400/80">
+                            <Globe className="w-3.5 h-3.5 text-emerald-500/70" />
+                            <span>{activity.location}</span>
+                          </span>
+                        )}
+                      </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

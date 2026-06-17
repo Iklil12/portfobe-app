@@ -729,7 +729,24 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
 };
 
 export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: any) => {
-  const [selectedMedia, setSelectedMedia] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+  const [selectedMedia, setSelectedMediaState] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
+
+  const setSelectedMedia = (media: any) => {
+    setSelectedMediaState(media);
+    if (media && !isEditor) {
+      const allProjects = data?.projects || data?.user?.projects || [];
+      const matchedProject = allProjects.find((p: any) => p.mediaUrl === media.url || p.title === media.title);
+      if (matchedProject && matchedProject.id) {
+        const subdomain = data?.profile?.subdomain || data?.subdomain || "";
+        if (subdomain) {
+          import('@/lib/analyticsClient').then(({ trackProjectClick }) => {
+            trackProjectClick(subdomain, matchedProject.id, matchedProject.title);
+          }).catch(err => console.error('Failed to track project click:', err));
+        }
+      }
+    }
+  };
+
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [insertIndex, setInsertIndex] = useState<number | null>(null);
 
@@ -746,6 +763,150 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  useEffect(() => {
+    if (isEditor) return;
+
+    const handleGlobalClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      console.log("[Analytics Debug] Click target:", target);
+
+      const subdomain = data?.profile?.subdomain || data?.subdomain || "";
+      if (!subdomain) {
+        console.log("[Analytics Debug] Subdomain not found, skipping event tracking.");
+        return;
+      }
+
+      // ── 1. DETEKSI KLIK LINK SOSIAL MEDIA, KONTAK, DAN TOMBOL GALERI ──────────
+      const anchor = target.closest('a');
+      if (anchor) {
+        const href = anchor.getAttribute('href') || '';
+        
+        // a. Klik Tombol Galeri
+        if (href.includes('/gallery')) {
+          console.log("[Analytics Debug] Gallery button link clicked:", href);
+          import('@/lib/analyticsClient').then(({ trackCustomEvent }) => {
+            trackCustomEvent(subdomain, 'GALLERY_CLICK', undefined, { url: href });
+          }).catch(err => console.error('[Analytics Debug] Failed to track gallery click:', err));
+          return; // Stop di sini agar tidak memicu deteksi proyek
+        }
+        
+        // b. Klik Kontak (Email, Telepon, WhatsApp)
+        if (href.startsWith('mailto:')) {
+          console.log("[Analytics Debug] Contact Email clicked:", href);
+          import('@/lib/analyticsClient').then(({ trackCustomEvent }) => {
+            trackCustomEvent(subdomain, 'CONTACT_CLICK', undefined, { platform: 'Email', value: href });
+          }).catch(err => console.error('[Analytics Debug] Failed to track contact email click:', err));
+          return;
+        }
+        
+        if (href.startsWith('tel:')) {
+          console.log("[Analytics Debug] Contact Phone clicked:", href);
+          import('@/lib/analyticsClient').then(({ trackCustomEvent }) => {
+            trackCustomEvent(subdomain, 'CONTACT_CLICK', undefined, { platform: 'Phone', value: href });
+          }).catch(err => console.error('[Analytics Debug] Failed to track contact phone click:', err));
+          return;
+        }
+        
+        if (href.includes('wa.me') || href.includes('api.whatsapp.com') || href.includes('whatsapp:')) {
+          console.log("[Analytics Debug] Contact WhatsApp clicked:", href);
+          import('@/lib/analyticsClient').then(({ trackCustomEvent }) => {
+            trackCustomEvent(subdomain, 'CONTACT_CLICK', undefined, { platform: 'WhatsApp', value: href });
+          }).catch(err => console.error('[Analytics Debug] Failed to track contact whatsapp click:', err));
+          return;
+        }
+        
+        // c. Klik Outbound Link Sosmed
+        if (href.startsWith('http') && !href.includes(window.location.host)) {
+          const getSocialPlatform = (url: string): string => {
+            const lowercaseUrl = url.toLowerCase();
+            if (lowercaseUrl.includes('instagram.com')) return 'Instagram';
+            if (lowercaseUrl.includes('linkedin.com')) return 'LinkedIn';
+            if (lowercaseUrl.includes('github.com')) return 'GitHub';
+            if (lowercaseUrl.includes('twitter.com') || lowercaseUrl.includes('x.com')) return 'Twitter / X';
+            if (lowercaseUrl.includes('tiktok.com')) return 'TikTok';
+            if (lowercaseUrl.includes('facebook.com')) return 'Facebook';
+            if (lowercaseUrl.includes('youtube.com') || lowercaseUrl.includes('youtu.be')) return 'YouTube';
+            if (lowercaseUrl.includes('dribbble.com')) return 'Dribbble';
+            if (lowercaseUrl.includes('behance.net')) return 'Behance';
+            return 'External Link';
+          };
+          const platform = getSocialPlatform(href);
+          console.log(`[Analytics Debug] Social Outbound Link (${platform}) clicked:`, href);
+          import('@/lib/analyticsClient').then(({ trackCustomEvent }) => {
+            trackCustomEvent(subdomain, 'SOCIAL_CLICK', undefined, { platform, url: href });
+          }).catch(err => console.error('[Analytics Debug] Failed to track social click:', err));
+          return;
+        }
+      }
+
+      // ── 2. DETEKSI KLIK KARTU PROYEK (KARYA) ──────────────────────────────────
+      const card = target.closest('.cursor-pointer, [class*="cursor-pointer"], [class*="group"], button, a');
+      if (!card) {
+        console.log("[Analytics Debug] No clickable card parent found.");
+        return;
+      }
+      console.log("[Analytics Debug] Found card:", card);
+
+      const isProjectArea = card.closest('[id*="project" i], [id*="work" i], [class*="project" i], [class*="work" i], [class*="gallery" i], [id*="gallery" i]');
+      if (!isProjectArea) {
+        console.log("[Analytics Debug] Click is outside project area.");
+        return;
+      }
+      console.log("[Analytics Debug] Click is inside project area:", isProjectArea);
+
+      let projectTitle = '';
+
+      const imgEl = card.querySelector('img');
+      if (imgEl) {
+        projectTitle = imgEl.getAttribute('alt') || '';
+        console.log("[Analytics Debug] Extracted title from image alt:", projectTitle);
+      }
+
+      if (!projectTitle) {
+        const headingEl = card.querySelector('h2, h3, h4');
+        if (headingEl) {
+          projectTitle = headingEl.textContent?.trim() || '';
+          console.log("[Analytics Debug] Extracted title from heading:", projectTitle);
+        }
+      }
+
+      if (!projectTitle && target.tagName === 'IMG') {
+        projectTitle = target.getAttribute('alt') || '';
+        console.log("[Analytics Debug] Extracted title from direct img target:", projectTitle);
+      }
+
+      if (projectTitle) {
+        projectTitle = projectTitle.replace(/^(PRJ\s+)?\d+\.\s*/i, '').trim();
+      }
+
+      console.log("[Analytics Debug] Final processed title:", projectTitle);
+
+      if (projectTitle) {
+        const allProjects = data?.projects || data?.user?.projects || [];
+        console.log("[Analytics Debug] Total database projects available:", allProjects.length);
+
+        const matchedProject = allProjects.find((p: any) => {
+          const dbTitle = p.title.trim().toLowerCase();
+          const clickTitle = projectTitle.toLowerCase();
+          return dbTitle === clickTitle || clickTitle.includes(dbTitle) || dbTitle.includes(clickTitle);
+        });
+
+        if (matchedProject && matchedProject.id) {
+          console.log("[Analytics Debug] Match found in DB:", matchedProject);
+          import('@/lib/analyticsClient').then(({ trackProjectClick }) => {
+            console.log("[Analytics Debug] Triggering tracking client for project:", subdomain, matchedProject.id);
+            trackProjectClick(subdomain, matchedProject.id, matchedProject.title);
+          }).catch(err => console.error('[Analytics Debug] Failed to track project click globally:', err));
+        } else {
+          console.log("[Analytics Debug] No matching project found in database.");
+        }
+      }
+    };
+
+    document.addEventListener('click', handleGlobalClick, { capture: true });
+    return () => document.removeEventListener('click', handleGlobalClick, { capture: true });
+  }, [data, isEditor]);
 
   // Filter available blocks that are not currently in the layout
   const allAvailableBlocks = [

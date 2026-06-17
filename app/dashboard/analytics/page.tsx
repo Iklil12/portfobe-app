@@ -12,7 +12,7 @@ import {
 import { 
   Eye, User, Clock, LogOut, BarChart3, Trophy, Calendar, 
   Target, Ghost, Crown, Lock, Globe, MessageSquare, 
-  Play, Link2, AlertTriangle, Loader2 
+  Play, Link2, AlertTriangle, Loader2, Share2, Mail, Phone, FolderOpen, RefreshCw
 } from 'lucide-react';
 import { InstagramIcon, LinkedinIcon, YoutubeIcon, TwitterIcon } from '@/components/ui/Icons';
 
@@ -151,6 +151,53 @@ export default function AnalyticsPage() {
   ];
   const displaySources = isFree ? staticSources : sources;
 
+  const staticCountries = [
+    { name: 'Indonesia', count: 1240, percentage: 75 },
+    { name: 'Singapore', count: 248, percentage: 15 },
+    { name: 'Malaysia', count: 99, percentage: 6 },
+    { name: 'United States', count: 49, percentage: 3 },
+    { name: 'Japan', count: 16, percentage: 1 },
+  ];
+  const staticCities = [
+    { name: 'Jakarta', count: 620, percentage: 38 },
+    { name: 'Bandung', count: 295, percentage: 18 },
+    { name: 'Surabaya', count: 180, percentage: 11 },
+    { name: 'Singapore City', count: 248, percentage: 15 },
+    { name: 'Kuala Lumpur', count: 99, percentage: 6 },
+  ];
+
+  const countries: { name: string; count: number; percentage: number }[] = data?.geo?.countries || [];
+  const cities: { name: string; count: number; percentage: number }[] = data?.geo?.cities || [];
+
+  const displayCountries = isFree ? staticCountries : countries;
+  const displayCities = isFree ? staticCities : cities;
+
+  const staticProjects = [
+    { title: 'Interactive Cinematic Showreel', count: 421, percentage: 48 },
+    { title: 'Nexus Noir Theme Boilerplate', count: 219, percentage: 25 },
+    { title: 'Acid Tech 3D Playground', count: 130, percentage: 15 },
+    { title: 'Spatial Studio Landing Page', count: 68, percentage: 8 },
+    { title: 'Minimalist Portfolio Starter', count: 35, percentage: 4 },
+  ];
+
+  const topProjects: { title: string; count: number; percentage: number }[] = data?.topProjects || [];
+  const displayProjects = isFree ? staticProjects : topProjects;
+
+  const staticSocialStats = [
+    { name: 'Instagram', count: 184, percentage: 53 },
+    { name: 'LinkedIn', count: 98, percentage: 28 },
+    { name: 'GitHub', count: 42, percentage: 12 },
+    { name: 'Twitter / X', count: 24, percentage: 7 },
+  ];
+  const displaySocialStats = isFree ? staticSocialStats : (data?.socialStats || []);
+
+  const staticContactStats = [
+    { name: 'WhatsApp', count: 120, percentage: 65 },
+    { name: 'Email', count: 45, percentage: 24 },
+    { name: 'Phone', count: 20, percentage: 11 },
+  ];
+  const displayContactStats = isFree ? staticContactStats : (data?.contactStats || []);
+
   const lockedAvgTime = '2m 34s';
   const lockedBounceRate = '42%';
   const lockedAvgDaily = 127;
@@ -211,12 +258,13 @@ export default function AnalyticsPage() {
       </div>
 
       {/* TOP KPI CARDS */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 mb-8">
-        {(isLoading || isUserLoading || userPlan === undefined) ? [1,2,3,4].map(i => <SkeletonBlock key={i} className="h-[120px] md:h-[140px]" />) : [
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-5 mb-8">
+        {(isLoading || isUserLoading || userPlan === undefined) ? [1,2,3,4,5].map(i => <SkeletonBlock key={i} className="h-[120px] md:h-[140px]" />) : [
           { label: 'Total Views', val: stats.totalViews, icon: Eye, badge: `${growth > 0 ? '+' : ''}${growth}%`, badgeColor: growth >= 0 ? 'bg-[#ff9e00]/10 text-[#ff9e00]' : 'bg-rose-500/10 text-rose-400', locked: false },
           { label: 'Unique Visitors', val: stats.uniqueVisitors, icon: User, badge: 'Est.', badgeColor: 'bg-white/5 text-white/50 border border-white/5', locked: false },
           { label: 'Avg. Time', val: isFree ? lockedAvgTime : stats.avgTime, icon: Clock, badge: 'PRO', badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
           { label: 'Bounce Rate', val: isFree ? lockedBounceRate : stats.bounceRate, icon: LogOut, badge: 'PRO', badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
+          { label: 'Returning Rate', val: isFree ? '18%' : stats.returningRate, icon: RefreshCw, badge: 'PRO', badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
         ].map((card, i) => {
           const IconComponent = card.icon;
           return (
@@ -245,11 +293,12 @@ export default function AnalyticsPage() {
       </div>
 
       {/* SECONDARY METRIC STRIP */}
-      <div className="grid grid-cols-3 gap-3 md:gap-5 mb-8">
-        {(isLoading || isUserLoading || userPlan === undefined) ? [1,2,3].map(i => <SkeletonBlock key={i} className="h-20" />) : [
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 mb-8">
+        {(isLoading || isUserLoading || userPlan === undefined) ? [1,2,3,4].map(i => <SkeletonBlock key={i} className="h-20" />) : [
           { label: 'Rata-rata Harian', val: isFree ? lockedAvgDaily : avgDaily, suffix: isFree ? 'views/hari' : 'views/hari', icon: BarChart3 },
           { label: 'Puncak Kunjungan', val: isFree ? lockedPeakViews : peakEntry.views, suffix: isFree ? lockedPeakDay : peakEntry.day, icon: Trophy },
           { label: 'Total Periode', val: isFree ? lockedTotalPeriod : totalPeriod, suffix: isFree ? 'dalam 7 hari' : `dalam ${chartData.length} hari`, icon: Calendar },
+          { label: 'Klik Galeri', val: isFree ? 75 : (data?.galleryClicks || 0), suffix: 'kunjungan arsip', icon: FolderOpen },
         ].map((m, i) => {
           const IconComponent = m.icon;
           return (
@@ -388,6 +437,123 @@ export default function AnalyticsPage() {
         )}
       </div>
 
+      {/* GEOGRAPHIC GRID: Countries & Cities */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
+        {/* TOP COUNTRIES */}
+        {isLoading ? (
+          <div className="rounded-none shimmer-dark h-[340px]" />
+        ) : (
+          <div onClick={isFree ? handleLocked : undefined}
+            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
+            style={{ animationDelay: '380ms' }}
+          >
+            {isFree && (
+              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
+                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
+                  <Lock className="w-4 h-4 text-[#ff9e00]" />
+                </div>
+                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
+                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melihat lokasi negara pengunjung</p>
+              </div>
+            )}
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Top Negara</h3>
+                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Asal negara pengunjung</p>
+              </div>
+              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
+                <Globe className="w-4 h-4 text-[#ff9e00]" />
+              </div>
+            </div>
+            
+            {displayCountries.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-10 text-white/20">
+                <Ghost className="w-8 h-8 mb-3" />
+                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data negara</p>
+              </div>
+            ) : (
+              <div className="space-y-5">
+                {displayCountries.map((c, i) => (
+                  <div key={i} className="group/country">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-[11px] font-mono text-white/80">{c.name}</span>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs font-mono font-bold text-white">{c.percentage}%</p>
+                        <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{c.count} hits</p>
+                      </div>
+                    </div>
+                    <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
+                      <div className="h-full bg-white rounded-none group-hover/country:bg-[#ff9e00] transition-colors duration-300"
+                        style={{ width: animReady ? `${c.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TOP CITIES */}
+        {isLoading ? (
+          <div className="rounded-none shimmer-dark h-[340px]" />
+        ) : (
+          <div onClick={isFree ? handleLocked : undefined}
+            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
+            style={{ animationDelay: '390ms' }}
+          >
+            {isFree && (
+              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
+                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
+                  <Lock className="w-4 h-4 text-[#ff9e00]" />
+                </div>
+                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
+                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melihat lokasi kota pengunjung</p>
+              </div>
+            )}
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Top Kota</h3>
+                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Asal kota pengunjung</p>
+              </div>
+              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
+                <Globe className="w-4 h-4 text-[#ff9e00]" />
+              </div>
+            </div>
+            
+            {displayCities.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-10 text-white/20">
+                <Ghost className="w-8 h-8 mb-3" />
+                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data kota</p>
+              </div>
+            ) : (
+              <div className="space-y-5">
+                {displayCities.map((c, i) => (
+                  <div key={i} className="group/city">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-[11px] font-mono text-white/80">{c.name}</span>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs font-mono font-bold text-white">{c.percentage}%</p>
+                        <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{c.count} hits</p>
+                      </div>
+                    </div>
+                    <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
+                      <div className="h-full bg-white rounded-none group-hover/city:bg-[#ff9e00] transition-colors duration-300"
+                        style={{ width: animReady ? `${c.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* BOTTOM ROW: Top Sources + Bar Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
 
@@ -508,33 +674,250 @@ export default function AnalyticsPage() {
         )}
       </div>
 
-      {/* PRO BANNER */}
-      <div onClick={(e) => handleComingSoon(e)}
-        className="relative overflow-hidden bg-zinc-950 p-8 md:p-14 rounded-none border border-white/10 cursor-pointer group shadow-2xl animate-enter hover:border-[#ff9e00]/40 transition-all duration-500 max-w-5xl mx-auto"
-        style={{ animationDelay: '500ms' }}
-      >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[200px] bg-[#ff9e00]/5 blur-[80px] rounded-full group-hover:bg-[#ff9e00]/10 transition-all duration-700 pointer-events-none" />
-        <div className="relative z-10 flex flex-col items-center text-center max-w-xl mx-auto">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border border-white/10 bg-white/5 text-[9px] font-mono font-bold tracking-wider text-white/50 mb-6 uppercase">
-            <Crown className="w-3 h-3 text-[#ff9e00]" /> Pro Feature
-          </span>
-          <h4 className="text-xl md:text-2xl font-mono font-bold text-white mb-3 uppercase tracking-wider">
-            Advanced <span className="text-white/40">Insights.</span>
-          </h4>
-          <p className="text-white/40 text-xs font-mono leading-relaxed mb-8">
-            Dapatkan data geografis, peta panas klik pengunjung, rincian demografi, dan pelacakan konversi secara real-time.
-          </p>
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            {['Real-time Tracking','Visitor Demographics','Click Heatmaps','Conversion Funnel','Geo Analytics'].map(t => (
-              <span key={t} className="px-3 py-1 bg-zinc-900 text-white/50 text-[9px] font-mono font-bold rounded-none tracking-wider border border-white/5 uppercase">
-                {t}
-              </span>
-            ))}
+      {/* PROJECT POPULARITY WIDGET */}
+      <div className="grid grid-cols-1 gap-5 mb-8">
+        {/* TOP PROJECTS */}
+        {isLoading ? (
+          <div className="rounded-none shimmer-dark h-[340px]" />
+        ) : (
+          <div onClick={isFree ? handleLocked : undefined}
+            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
+            style={{ animationDelay: '480ms' }}
+          >
+            {isFree && (
+              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
+                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
+                  <Lock className="w-4 h-4 text-[#ff9e00]" />
+                </div>
+                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
+                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak interaksi dan klik proyek populer Anda</p>
+              </div>
+            )}
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Popularitas Proyek</h3>
+                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Jumlah klik media & karya Anda</p>
+              </div>
+              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
+                <BarChart3 className="w-4 h-4 text-[#ff9e00]" />
+              </div>
+            </div>
+            
+            {displayProjects.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-white/20">
+                <Ghost className="w-8 h-8 mb-3" />
+                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data interaksi proyek</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {displayProjects.map((p, i) => (
+                  <div key={i} className="group/proj">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-mono font-bold text-white/40 group-hover/proj:text-[#ff9e00] transition-colors">{String(i + 1).padStart(2, '0')}</span>
+                        <span className="text-[11px] font-mono text-white/80 truncate max-w-[200px] sm:max-w-md">{p.title}</span>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-xs font-mono font-bold text-white">{p.percentage}%</p>
+                        <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{p.count} klik</p>
+                      </div>
+                    </div>
+                    <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
+                      <div className="h-full bg-white rounded-none group-hover/proj:bg-[#ff9e00] transition-colors duration-300"
+                        style={{ width: animReady ? `${p.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="inline-flex items-center gap-2 px-6 py-3.5 bg-white text-black font-mono font-bold text-xs uppercase tracking-widest group-hover:bg-zinc-100 transition-all rounded-none shadow-lg">
-            <Lock className="w-3.5 h-3.5 text-zinc-400" /> Tersedia Segera
+        )}
+      </div>
+
+      {/* SOCIAL MEDIA & CONTACT CONVERSION WIDGETS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
+        
+        {/* SOCIAL MEDIA CLICKS */}
+        {isLoading ? (
+          <div className="rounded-none shimmer-dark h-[340px]" />
+        ) : (
+          <div onClick={isFree ? handleLocked : undefined}
+            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
+            style={{ animationDelay: '500ms' }}
+          >
+            {isFree && (
+              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
+                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
+                  <Lock className="w-4 h-4 text-[#ff9e00]" />
+                </div>
+                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
+                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak klik link sosial media</p>
+              </div>
+            )}
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Klik Sosial Media</h3>
+                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Klik pada link sosial media utama Anda</p>
+              </div>
+              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
+                <Share2 className="w-4 h-4 text-[#ff9e00]" />
+              </div>
+            </div>
+            
+            {displaySocialStats.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-white/20">
+                <Ghost className="w-8 h-8 mb-3" />
+                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada klik sosmed</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {displaySocialStats.map((src: any, i: number) => (
+                  <div key={i} className="group/social">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
+                          {getSourceIcon(src.name)}
+                        </div>
+                        <span className="text-[11px] font-mono text-white/80">{src.name}</span>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-xs font-mono font-bold text-white">{src.percentage}%</p>
+                        <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{src.count} klik</p>
+                      </div>
+                    </div>
+                    <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
+                      <div className="h-full bg-white rounded-none group-hover/social:bg-[#ff9e00] transition-colors duration-300"
+                        style={{ width: animReady ? `${src.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
+        )}
+
+        {/* CONTACT CONVERSIONS */}
+        {isLoading ? (
+          <div className="rounded-none shimmer-dark h-[340px]" />
+        ) : (
+          <div onClick={isFree ? handleLocked : undefined}
+            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
+            style={{ animationDelay: '540ms' }}
+          >
+            {isFree && (
+              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
+                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
+                  <Lock className="w-4 h-4 text-[#ff9e00]" />
+                </div>
+                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
+                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak konversi kontak</p>
+              </div>
+            )}
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Konversi Kontak</h3>
+                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Interaksi klik email / telepon / WA</p>
+              </div>
+              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
+                <MessageSquare className="w-4 h-4 text-[#ff9e00]" />
+              </div>
+            </div>
+            
+            {displayContactStats.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-white/20">
+                <Ghost className="w-8 h-8 mb-3" />
+                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data konversi</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {displayContactStats.map((c: any, i: number) => {
+                  const getContactIcon = (name: string) => {
+                    if (name === 'WhatsApp') return <MessageSquare className="w-3.5 h-3.5 text-green-500" />;
+                    if (name === 'Email') return <Mail className="w-3.5 h-3.5 text-blue-400" />;
+                    if (name === 'Phone') return <Phone className="w-3.5 h-3.5 text-amber-500" />;
+                    return <Link2 className="w-3.5 h-3.5 text-white/50" />;
+                  };
+                  return (
+                    <div key={i} className="group/contact">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
+                            {getContactIcon(c.name)}
+                          </div>
+                          <span className="text-[11px] font-mono text-white/80">{c.name}</span>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="text-xs font-mono font-bold text-white">{c.percentage}%</p>
+                          <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{c.count} klik</p>
+                        </div>
+                      </div>
+                      <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
+                        <div className="h-full bg-white rounded-none group-hover/contact:bg-[#ff9e00] transition-colors duration-300"
+                          style={{ width: animReady ? `${c.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+      </div>
+
+      {/* GALLERY BUTTON ACTIVITY WIDGET */}
+      <div className="grid grid-cols-1 gap-5 mb-8">
+        {isLoading ? (
+          <div className="rounded-none shimmer-dark h-[180px]" />
+        ) : (
+          <div onClick={isFree ? handleLocked : undefined}
+            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
+            style={{ animationDelay: '560ms' }}
+          >
+            {isFree && (
+              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
+                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
+                  <Lock className="w-4 h-4 text-[#ff9e00]" />
+                </div>
+                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
+                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak klik tombol Galeri</p>
+              </div>
+            )}
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Aktivitas Tombol Galeri</h3>
+                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Seberapa sering pengunjung mengklik tombol menuju halaman galeri/arsip</p>
+              </div>
+              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
+                <FolderOpen className="w-4 h-4 text-[#ff9e00]" />
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="text-center md:text-left">
+                <p className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-widest mb-1">Total Klik Menuju Galeri</p>
+                <h4 className="text-4xl md:text-5xl font-mono font-bold text-white tracking-tighter">
+                  <AnimatedCounter value={isFree ? 75 : (data?.galleryClicks || 0)} />
+                  <span className="text-xs font-mono font-bold text-white/30 ml-2 uppercase tracking-normal">klik</span>
+                </h4>
+              </div>
+              <div className="w-full md:max-w-md bg-zinc-900/40 border border-white/5 p-4 rounded-none flex items-center gap-4">
+                <div className="w-10 h-10 bg-zinc-950 border border-white/5 flex items-center justify-center shrink-0">
+                  <FolderOpen className="w-5 h-5 text-white/40" />
+                </div>
+                <div>
+                  <h5 className="text-[11px] font-mono font-bold text-white/80 uppercase tracking-wide">Minat Pengunjung</h5>
+                  <p className="text-[9px] font-mono text-white/40 leading-relaxed mt-1">
+                    Klik tombol ini menandakan ketertarikan tinggi pengunjung untuk melihat seluruh koleksi karya Anda.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
     </main>

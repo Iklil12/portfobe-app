@@ -11,7 +11,9 @@ interface UniversalPlayerProps {
 export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode = false }: UniversalPlayerProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [inView, setInView] = useState(false);
+  const [isActivated, setIsActivated] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Custom Player States
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -112,6 +114,27 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
   const ytId = getYouTubeId(mediaUrl);
   const vimeoId = getVimeoId(mediaUrl);
   const bunnyHlsUrl = isBunnyStream(mediaUrl) ? getHlsUrl(mediaUrl) : null;
+
+  const handleOverlayClick = () => {
+    setIsActivated(true);
+    if (autoPlayMode && iframeRef.current && iframeRef.current.contentWindow) {
+      try {
+        if (ytId) {
+          iframeRef.current.contentWindow.postMessage(
+            JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }),
+            '*'
+          );
+        } else if (vimeoId) {
+          iframeRef.current.contentWindow.postMessage(
+            JSON.stringify({ method: 'pause' }),
+            '*'
+          );
+        }
+      } catch (e) {
+        console.error("Failed to send pause command to iframe", e);
+      }
+    }
+  };
 
   // Initialize HLS.js
   useEffect(() => {
@@ -231,25 +254,43 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
         {inView && (
           <>
             {ytId ? (
-              <iframe
-                className="w-full h-full object-cover z-10 relative opacity-0 transition-opacity duration-700"
-                style={{ opacity: isLoaded ? 1 : 0 }}
-                src={`https://www.youtube.com/embed/${ytId}?modestbranding=1&rel=0&showinfo=0${autoPlayMode ? '&autoplay=1&mute=1' : ''}`}
-                title={title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                onLoad={() => setIsLoaded(true)}
-              ></iframe>
+              <div className="w-full h-full relative">
+                <iframe
+                  ref={iframeRef}
+                  className={`w-full h-full object-cover z-10 relative opacity-0 transition-opacity duration-700 ${!isActivated ? 'pointer-events-none' : ''}`}
+                  style={{ opacity: isLoaded ? 1 : 0 }}
+                  src={`https://www.youtube.com/embed/${ytId}?enablejsapi=1&modestbranding=1&rel=0&showinfo=0${autoPlayMode || isActivated ? '&autoplay=1' : ''}${autoPlayMode ? '&mute=1' : ''}`}
+                  title={title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  onLoad={() => setIsLoaded(true)}
+                ></iframe>
+                {!isActivated && (
+                  <div 
+                    onClick={handleOverlayClick}
+                    className="absolute inset-0 z-20 cursor-pointer bg-transparent"
+                  />
+                )}
+              </div>
             ) : vimeoId ? (
-              <iframe
-                className="w-full h-full object-cover z-10 relative opacity-0 transition-opacity duration-700"
-                style={{ opacity: isLoaded ? 1 : 0 }}
-                src={`https://player.vimeo.com/video/${vimeoId}?color=ffffff&title=0&byline=0&portrait=0${autoPlayMode ? '&autoplay=1&muted=1' : ''}`}
-                title={title}
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-                onLoad={() => setIsLoaded(true)}
-              ></iframe>
+              <div className="w-full h-full relative">
+                <iframe
+                  ref={iframeRef}
+                  className={`w-full h-full object-cover z-10 relative opacity-0 transition-opacity duration-700 ${!isActivated ? 'pointer-events-none' : ''}`}
+                  style={{ opacity: isLoaded ? 1 : 0 }}
+                  src={`https://player.vimeo.com/video/${vimeoId}?color=ffffff&title=0&byline=0&portrait=0${autoPlayMode || isActivated ? '&autoplay=1' : ''}${autoPlayMode ? '&muted=1' : ''}`}
+                  title={title}
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowFullScreen
+                  onLoad={() => setIsLoaded(true)}
+                ></iframe>
+                {!isActivated && (
+                  <div 
+                    onClick={handleOverlayClick}
+                    className="absolute inset-0 z-20 cursor-pointer bg-transparent"
+                  />
+                )}
+              </div>
             ) : bunnyHlsUrl ? (
               /* CUSTOM HEADLESS PLAYER ENTERPRISE */
               <div

@@ -2,6 +2,13 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 
+let geoip: any = null;
+try {
+  geoip = require("geoip-lite");
+} catch (e) {
+  console.warn("[Analytics Server] geoip-lite running in offline fallback mode (local IP database not found).");
+}
+
 function parseUserAgent(ua: string) {
   const uaLower = ua.toLowerCase();
   
@@ -123,8 +130,20 @@ export async function POST(req: Request) {
     if (realIp) ip = realIp;
     else if (forwardedFor) ip = forwardedFor.split(",").map(i => i.trim()).pop() || "unknown";
 
-    const country = headersList.get("x-vercel-ip-country") || headersList.get("cf-ipcountry") || null;
-    const city = headersList.get("x-vercel-ip-city") || headersList.get("cf-ipcity") || null;
+    let country = headersList.get("x-vercel-ip-country") || headersList.get("cf-ipcountry") || null;
+    let city = headersList.get("x-vercel-ip-city") || headersList.get("cf-ipcity") || null;
+
+    if (geoip && !country && ip && ip !== "unknown" && ip !== "127.0.0.1" && ip !== "::1") {
+      try {
+        const geo = geoip.lookup(ip);
+        if (geo) {
+          country = geo.country || null;
+          city = geo.city || null;
+        }
+      } catch (err) {
+        console.error("[Analytics Server] GeoIP lookup failed:", err);
+      }
+    }
 
     const userAgent = headersList.get("user-agent") || "unknown";
     const { deviceType, os, browser } = parseUserAgent(userAgent);
