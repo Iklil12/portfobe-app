@@ -46,7 +46,7 @@ export function BentoGridShell({ data, theme, children, isMobileView, isCardPrev
 
     return (
         <BentoGridContext.Provider value={{ selectedMedia, setSelectedMedia, highlightColor }}>
-            <main className={`min-h-screen bg-[#09090b] text-slate-200 font-sans selection:bg-white/20 overflow-hidden p-4 @md:p-6 @lg:p-8 bento-theme @container flex flex-col gap-4 @lg:gap-6 w-full max-w-[1800px] mx-auto`}>
+            <main className={`min-h-screen bg-[#09090b] text-slate-200 font-sans selection:bg-white/20 overflow-x-hidden p-4 @md:p-6 @lg:p-8 bento-theme @container flex flex-col gap-4 @lg:gap-6 w-full max-w-[1800px] mx-auto`}>
                 <style dangerouslySetInnerHTML={{
                     __html: `
                         .bento-theme { font-family: ${customBodyFont}; }

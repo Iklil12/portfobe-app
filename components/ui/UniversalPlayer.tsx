@@ -24,6 +24,14 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
   const [showControls, setShowControls] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  const [origin, setOrigin] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOrigin(window.location.origin);
+    }
+  }, []);
+
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement && document.fullscreenElement === containerRef.current);
@@ -328,16 +336,17 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
               <div className="w-full h-full relative">
                 <iframe
                   ref={iframeRef}
-                  className={`w-full h-full object-cover z-10 relative opacity-0 transition-opacity duration-700 ${!isActivated ? 'pointer-events-none' : ''}`}
+                  className={`w-full h-full z-10 relative opacity-0 transition-opacity duration-700 ${!isActivated ? 'pointer-events-none' : ''}`}
                   style={{ opacity: isLoaded ? 1 : 0 }}
-                  src={`https://www.youtube.com/embed/${ytId}?enablejsapi=1&modestbranding=1&rel=0&showinfo=0${autoPlayMode || isActivated ? '&autoplay=1' : ''}${autoPlayMode ? '&mute=1' : ''}`}
+                  src={`https://www.youtube.com/embed/${ytId}?enablejsapi=1&rel=0${origin ? `&origin=${encodeURIComponent(origin)}` : ''}${autoPlayMode || isActivated ? '&autoplay=1' : ''}${autoPlayMode ? '&mute=1' : ''}`}
                   title={title}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
                   onLoad={() => setIsLoaded(true)}
                 ></iframe>
                 {!isActivated && (
-                  <div 
+                  <div
                     onClick={handleOverlayClick}
                     className="absolute inset-0 z-20 cursor-pointer bg-transparent"
                   />
@@ -347,16 +356,17 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
               <div className="w-full h-full relative">
                 <iframe
                   ref={iframeRef}
-                  className={`w-full h-full object-cover z-10 relative opacity-0 transition-opacity duration-700 ${!isActivated ? 'pointer-events-none' : ''}`}
+                  className={`w-full h-full z-10 relative opacity-0 transition-opacity duration-700 ${!isActivated ? 'pointer-events-none' : ''}`}
                   style={{ opacity: isLoaded ? 1 : 0 }}
-                  src={`https://player.vimeo.com/video/${vimeoId}?color=ffffff&title=0&byline=0&portrait=0${autoPlayMode || isActivated ? '&autoplay=1' : ''}${autoPlayMode ? '&muted=1' : ''}`}
+                  src={`https://player.vimeo.com/video/${vimeoId}?color=ffffff&title=0&byline=0&portrait=0${origin ? `&origin=${encodeURIComponent(origin)}` : ''}${autoPlayMode || isActivated ? '&autoplay=1' : ''}${autoPlayMode ? '&muted=1' : ''}`}
                   title={title}
                   allow="autoplay; fullscreen; picture-in-picture"
                   allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
                   onLoad={() => setIsLoaded(true)}
                 ></iframe>
                 {!isActivated && (
-                  <div 
+                  <div
                     onClick={handleOverlayClick}
                     className="absolute inset-0 z-20 cursor-pointer bg-transparent"
                   />

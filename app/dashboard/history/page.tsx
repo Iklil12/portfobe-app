@@ -238,11 +238,10 @@ export default function HistoryPage() {
                           <Clock className="w-3.5 h-3.5" /> {timeAgo(activity.createdAt)}
                         </span>
                         
-                        {activity.ipAddress && (
+                        {activity.userAgent && (
                           <span className="flex items-center gap-1.5 border-l border-white/10 pl-4" title={`User Agent: ${activity.userAgent || '-'}`}>
                             {getBrowserInfo(activity.userAgent).icon}
                             <span className="text-white/60">{getBrowserInfo(activity.userAgent).name}</span>
-                            <span className="text-white/20">({activity.ipAddress})</span>
                           </span>
                         )}
 

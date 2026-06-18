@@ -39,7 +39,7 @@ export function SpatialShellContent({ data, theme, isMobileView, isCardPreview, 
   const firstName = fullName.split(' ')[0];
 
   return (
-    <main className={`min-h-screen bg-[#020202] text-slate-200 font-sans selection:bg-[var(--hl)] selection:text-white relative overflow-hidden pb-20 spatial-theme`} style={{ '--hl': highlightColor } as React.CSSProperties}>
+    <main className={`min-h-screen bg-[#020202] text-slate-200 font-sans selection:bg-[var(--hl)] selection:text-white relative overflow-x-hidden pb-20 spatial-theme`} style={{ '--hl': highlightColor } as React.CSSProperties}>
 
       <style dangerouslySetInnerHTML={{
           __html: `

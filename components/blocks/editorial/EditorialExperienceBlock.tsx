@@ -7,6 +7,44 @@ export function EditorialExperienceBlock({ theme, isEditor, isCardPreview }: any
     const customTexts = theme?.customTexts || {};
     const getCustomText = (key: string, fallback: string) => customTexts[key] || fallback;
 
+    let experiences = [];
+    try {
+        if (customTexts.experience_items) {
+            experiences = JSON.parse(customTexts.experience_items);
+        } else {
+            experiences = [
+                { role: 'Senior Lead Developer', company: 'Tech Corp', duration: '2022 - Present', description: 'Memimpin tim arsitek antarmuka dalam merumuskan ulang batasan antara seni digital dan pengalaman pengguna.' },
+                { role: 'Frontend Engineer', company: 'Startup Inc', duration: '2019 - 2022', description: 'Merancang sistem desain skala besar untuk perusahaan fintech, berfokus pada tipografi dan interaksi mikro.' },
+                { role: 'UI Designer', company: 'Creative Agency', duration: '2017 - 2019', description: 'Merancang aset visual kreatif untuk berbagai klien global terkemuka.' }
+            ];
+        }
+    } catch (e) {
+        experiences = [];
+    }
+
+    const updateExperiences = (newExps: any[]) => {
+        if (!isEditor) return;
+        window.parent.postMessage({ type: 'INLINE_EDIT', entity: 'appearance', field: 'experience_items', value: JSON.stringify(newExps) }, window.location.origin);
+    };
+
+    const handleUpdateItem = (index: number, key: 'role' | 'company' | 'duration' | 'description', value: string) => {
+        const newExps = [...experiences];
+        newExps[index][key] = value;
+        updateExperiences(newExps);
+    };
+
+    const handleAddItem = () => {
+        const newExps = [...experiences, { role: "Role Baru", company: "Perusahaan Baru", duration: "Tahun - Tahun", description: "Deskripsi pekerjaan baru." }];
+        updateExperiences(newExps);
+    };
+
+    const handleRemoveItem = (index: number, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const newExps = experiences.filter((_: any, i: number) => i !== index);
+        updateExperiences(newExps);
+    };
+
+
     const canvasEase = [0.22, 1, 0.36, 1] as any;
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
 
@@ -30,14 +68,15 @@ export function EditorialExperienceBlock({ theme, isEditor, isCardPreview }: any
                 </motion.div>
 
                 <div className="w-full @lg:w-2/3 flex flex-col border-t border-subtle">
-                    {[1, 2, 3].map((num) => {
-                        const defaultRole = num === 1 ? 'Senior Lead Developer' : num === 2 ? 'Frontend Engineer' : 'UI Designer';
-                        const defaultCompany = num === 1 ? 'Tech Corp' : num === 2 ? 'Startup Inc' : 'Creative Agency';
-                        const defaultDuration = num === 1 ? '2022 - Present' : num === 2 ? '2019 - 2022' : '2017 - 2019';
+                    {experiences.map((exp: any, index: number) => {
+                        const defaultRole = exp.role;
+                    const defaultCompany = exp.company;
+                    const defaultDuration = exp.duration;
+                    const defaultDescription = exp.description || '';
                         
                         return (
                             <motion.div
-                                key={num}
+                                key={index}
                                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                                 className="group flex flex-col @md:flex-row @md:items-start border-b border-subtle py-8 @md:py-12 relative overflow-hidden"
                             >
@@ -46,42 +85,58 @@ export function EditorialExperienceBlock({ theme, isEditor, isCardPreview }: any
                                 <div className="w-full @md:w-1/3 mb-4 @md:mb-0 pr-4">
                                     <span className="font-sans text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">
                                         <EditableText 
-                                            entity="appearance" 
-                                            field={`editorial_exp_duration_${num}`} 
-                                            value={getCustomText(`editorial_exp_duration_${num}`, defaultDuration)} 
-                                            isEditor={isEditor} 
-                                            maxLength={40} 
-                                            as="span" 
-                                        />
+                                             value={defaultDuration} 
+                                             onChange={(val) => handleUpdateItem(index, 'duration', val)} 
+                                             isEditor={isEditor} 
+                                             maxLength={40} 
+                                             as="span" 
+                                         />
                                     </span>
                                 </div>
                                 
                                 <div className="w-full @md:w-2/3">
                                     <h3 className="font-serif italic text-2xl @md:text-3xl text-[#111] mb-2 group-hover:text-[var(--hl)] transition-colors duration-300">
                                         <EditableText 
-                                            entity="appearance" 
-                                            field={`editorial_exp_role_${num}`} 
-                                            value={getCustomText(`editorial_exp_role_${num}`, defaultRole)} 
-                                            isEditor={isEditor} 
-                                            maxLength={50} 
-                                            as="span" 
-                                        />
+                                         value={defaultRole} 
+                                         onChange={(val) => handleUpdateItem(index, 'role', val)} 
+                                         isEditor={isEditor} 
+                                         maxLength={50} 
+                                         as="span" 
+                                     />
                                     </h3>
                                     <p className="font-sans text-sm @md:text-base text-slate-500 leading-relaxed uppercase tracking-wider">
                                         <EditableText 
-                                            entity="appearance" 
-                                            field={`editorial_exp_company_${num}`} 
-                                            value={getCustomText(`editorial_exp_company_${num}`, defaultCompany)} 
-                                            isEditor={isEditor} 
-                                            maxLength={50} 
-                                            as="span" 
-                                        />
+                                             value={defaultCompany} 
+                                             onChange={(val) => handleUpdateItem(index, 'company', val)} 
+                                             isEditor={isEditor} 
+                                             maxLength={50} 
+                                             as="span" 
+                                         />
                                     </p>
                                 </div>
+                                {isEditor && (
+                                    <button
+                                        onClick={(e) => handleRemoveItem(index, e)}
+                                        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
+                                        title="Hapus Pengalaman"
+                                    >
+                                        ✕
+                                    </button>
+                                )}
                             </motion.div>
                         );
                     })}
+            </div>
+            {isEditor && (
+                <div className="flex justify-center mt-12 w-full col-span-full">
+                    <button
+                        onClick={handleAddItem}
+                        className="px-6 py-3 border border-dashed border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-900 uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-gray-50 hover:bg-gray-100 rounded-lg"
+                    >
+                        + Tambah Pengalaman
+                    </button>
                 </div>
+            )}
 
             </div>
         </section>

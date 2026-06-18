@@ -16,9 +16,9 @@ export function Spatial3DBlock({ data, theme, isMobileView, isCardPreview, isEdi
   const cardStyle = theme?.cardStyle || 'flat';
   const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#0f1115] shadow-[0_30px_60px_rgba(0,0,0,0.8)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border border-white/20 shadow-[8px_8px_0_0_#ffffff]' : 'glass-panel border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]';
 
-  const auraAnim = isCardPreview
-      ? { hidden: { opacity: 1, y: 0, filter: "blur(0px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)" } }
-      : { hidden: { opacity: 0, y: 40, filter: "blur(10px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } } };
+   const auraAnim = isCardPreview
+      ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
+      : { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } } };
   const viewAnim = isCardPreview
       ? { initial: "visible" as const, animate: "visible" as const }
       : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 } };
@@ -49,12 +49,7 @@ export function Spatial3DBlock({ data, theme, isMobileView, isCardPreview, isEdi
                     <div className={`w-full aspect-[4/3] @md:aspect-video ${xlCardRadiusClass} overflow-hidden relative ${cardStyleClass} p-2 @md:p-3 transition-all duration-700 group-hover:shadow-[0_0_60px_rgba(var(--hl-rgb),0.2)] group-hover:border-[var(--hl)]/30`}>
                         <div className="w-full h-full rounded-[24px] @md:rounded-[36px] overflow-hidden relative bg-[#0a0a0a]">
                             <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0a" />
-                            {/* Hover Overlay */}
-                            <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center pointer-events-none">
-                                <div className="w-20 h-20 bg-white/10 backdrop-blur-md border-white/20 rounded-full flex items-center justify-center transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100 transition-all duration-500 shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-                                    <i className="fas fa-cube text-white text-2xl"></i>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                     <div className="flex flex-col px-4">

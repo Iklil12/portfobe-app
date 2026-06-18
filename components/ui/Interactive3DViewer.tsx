@@ -51,7 +51,7 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
             loading="eager"
             reveal="auto"
             touch-action="pan-y"
-            interaction-prompt="auto"
+            interaction-prompt="none"
             style={{ width: '100%', height: '100%', '--poster-color': 'transparent' } as any}
           >
             {/* Premium Loading Poster */}

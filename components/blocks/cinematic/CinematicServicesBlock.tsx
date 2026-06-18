@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { EditableText } from '@/components/ui/EditableText';
 
 export function CinematicServicesBlock({ theme, isEditor, isCardPreview }: any) {
+    const customTexts = theme?.customTexts || {};
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
 
     const defaultServices = [
@@ -43,26 +44,63 @@ export function CinematicServicesBlock({ theme, isEditor, isCardPreview }: any) 
         }
     ];
 
+    const toggleVisibility = (id: number, currentStatus: boolean) => {
+        if (!isEditor) return;
+        window.parent.postMessage({
+            type: 'INLINE_EDIT',
+            entity: 'appearance',
+            field: `cinematic_svc_${id}_visible`,
+            value: currentStatus ? 'false' : 'true'
+        }, window.location.origin);
+    };
+
     return (
         <section className={`py-20 @md:py-24 px-6 @md:px-12 border-b border-[#1f1f1f] bg-[#050505]`}>
             <div className="flex justify-between items-end mb-12">
-                <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8cqi,5rem)]`}>
-                    <EditableText value={theme?.customTexts?.cinematic_services_title || 'Services'} field="cinematic_services_title" entity="appearance" isEditor={isEditor} as="span" />
+                <h2 className={`font-black uppercase tracking-tighter text-[clamp(2.5rem,8cqi,5rem)]`}>
+                    <EditableText value={customTexts.cinematic_services_title || 'Services'} field="cinematic_services_title" entity="appearance" isEditor={isEditor} as="span" />
                 </h2>
             </div>
             <div className="grid grid-cols-1 @md:grid-cols-2 gap-8">
-                {defaultServices.map((s, i) => (
-                    <motion.div key={`service-${s.id}`} initial={{ opacity: 0, y: 20 }} {...{ [animationTrigger]: { opacity: 1, y: 0 } }} transition={{ duration: 0.5, delay: i * 0.1 }} className="border border-[#1f1f1f] p-8 hover:border-white/20 transition-colors flex flex-col justify-between">
-                        <div key={`content-${s.id}`}>
-                            <EditableText value={theme?.customTexts?.[s.titleKey] || s.defTitle} field={s.titleKey} entity="appearance" isEditor={isEditor} as="h3" className="font-bold uppercase tracking-tighter text-2xl cine-heading mb-4 text-white" />
-                            <EditableText value={theme?.customTexts?.[s.descKey] || s.defDesc} field={s.descKey} entity="appearance" isEditor={isEditor} as="p" className="cine-body text-gray-500 mb-6 leading-relaxed" />
-                        </div>
-                        <div key={`footer-${s.id}`} className="flex justify-between items-center font-mono text-sm mt-auto pt-4 border-t border-[#1f1f1f]/50">
-                            <EditableText value={theme?.customTexts?.[s.delivKey] || s.defDeliv} field={s.delivKey} entity="appearance" isEditor={isEditor} as="span" className="text-white/60" />
-                            <EditableText value={theme?.customTexts?.[s.priceKey] || s.defPrice} field={s.priceKey} entity="appearance" isEditor={isEditor} as="span" className="text-white font-bold" />
-                        </div>
-                    </motion.div>
-                ))}
+                {defaultServices.map((s, i) => {
+                    const isVisible = customTexts[`cinematic_svc_${s.id}_visible`] !== 'false';
+                    if (!isVisible && !isEditor) return null;
+
+                    return (
+                        <motion.div 
+                            key={`service-${s.id}`} 
+                            initial={{ opacity: 0, y: 20 }} 
+                            {...{ [animationTrigger]: { opacity: isVisible ? 1 : 0.4, y: 0 } }} 
+                            transition={{ duration: 0.5, delay: i * 0.1 }} 
+                            className={`border border-[#1f1f1f] p-8 hover:border-white/20 transition-all flex flex-col justify-between relative ${
+                                !isVisible ? 'opacity-40 bg-zinc-950/20' : ''
+                            }`}
+                        >
+                            {isEditor && (
+                                <button
+                                    onClick={() => toggleVisibility(s.id, isVisible)}
+                                    className={`absolute top-4 right-4 z-30 px-3 py-1 text-[10px] font-mono border transition-all ${
+                                        isVisible 
+                                            ? 'border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white' 
+                                            : 'border-green-500/50 text-green-400 hover:bg-green-500 hover:text-white'
+                                    }`}
+                                    title={isVisible ? "Sembunyikan Layanan" : "Tampilkan Layanan"}
+                                >
+                                    {isVisible ? "✕ Sembunyikan" : "➕ Tampilkan"}
+                                </button>
+                            )}
+
+                            <div>
+                                <EditableText value={customTexts[s.titleKey] || s.defTitle} field={s.titleKey} entity="appearance" isEditor={isEditor} as="h3" className="font-bold uppercase tracking-tighter text-2xl mb-4 text-white" />
+                                <EditableText value={customTexts[s.descKey] || s.defDesc} field={s.descKey} entity="appearance" isEditor={isEditor} as="p" className="text-gray-500 mb-6 leading-relaxed" />
+                            </div>
+                            <div className="flex justify-between items-center font-mono text-sm mt-auto pt-4 border-t border-[#1f1f1f]/50">
+                                <EditableText value={customTexts[s.delivKey] || s.defDeliv} field={s.delivKey} entity="appearance" isEditor={isEditor} as="span" className="text-white/60" />
+                                <EditableText value={customTexts[s.priceKey] || s.defPrice} field={s.priceKey} entity="appearance" isEditor={isEditor} as="span" className="text-white font-bold" />
+                            </div>
+                        </motion.div>
+                    );
+                })}
             </div>
         </section>
     );

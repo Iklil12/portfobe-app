@@ -290,7 +290,7 @@ export const authOptions: NextAuthOptions = {
 
           if (!existingUser) {
             // USER BARU DIBUAT
-            await prisma.user.create({
+            const newUser = await prisma.user.create({
               data: {
                 email: user.email as string,
                 password: "GOOGLE_LOGIN_NO_PASSWORD",
@@ -318,6 +318,13 @@ export const authOptions: NextAuthOptions = {
                 }
               },
             });
+
+            // Catat aktivitas untuk user baru
+            await logActivity(
+              newUser.id,
+              "LOGIN_SUCCESS",
+              "Berhasil masuk menggunakan google"
+            );
 
             // ==============================================================
             // EKSEKUSI WELCOME EMAIL KE USER BARU
@@ -383,6 +390,13 @@ export const authOptions: NextAuthOptions = {
                 }
               });
             }
+
+            // Catat aktivitas untuk user lama
+            await logActivity(
+              existingUser.id,
+              "LOGIN_SUCCESS",
+              "Berhasil masuk menggunakan google"
+            );
           }
           return true;
         } catch (error) {
@@ -505,11 +519,11 @@ export const authOptions: NextAuthOptions = {
 
   events: {
     async signIn({ user, account }) {
-      if (user?.id) {
+      if (user?.id && account?.provider === "credentials") {
         await logActivity(
           user.id, 
           "LOGIN_SUCCESS", 
-          `Berhasil masuk menggunakan ${account?.provider || "Credentials"}`
+          "Berhasil masuk menggunakan credentials"
         );
       }
     },

@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { EditableText } from '@/components/ui/EditableText';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,11 +9,47 @@ if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
 }
 
-export function KineticAvantGardeExperienceBlock({ data, theme, isEditor, isCardPreview }: any) {
+export function KineticAvantGardeExperienceBlock({ theme, isEditor, isCardPreview }: any) {
     const containerRef = useRef<HTMLDivElement>(null);
     const accentColor = theme?.themeColor || '#c92a2a';
     const customTexts = theme?.customTexts || {};
     const getCustomText = (key: string, fallback: string) => customTexts[key] || fallback;
+
+    let experiences = [];
+    try {
+        if (customTexts.experience_items) {
+            experiences = JSON.parse(customTexts.experience_items);
+        } else {
+            experiences = [
+                { role: 'Kepala Eksperimen Visual', company: 'Studio Monolith / Jakarta', duration: '2024 — SEKARANG', description: 'Memimpin tim arsitek antarmuka dalam merumuskan ulang batasan antara seni digital dan pengalaman pengguna.' },
+                { role: 'Desainer Produk Senior', company: 'Nexus Digital / Singapura', duration: '2021 — 2023', description: 'Merancang sistem desain skala besar untuk perusahaan fintech, berfokus pada tipografi dan interaksi mikro.' }
+            ];
+        }
+    } catch (e) {
+        experiences = [];
+    }
+
+    const updateExperiences = (newExps: any[]) => {
+        if (!isEditor) return;
+        window.parent.postMessage({ type: 'INLINE_EDIT', entity: 'appearance', field: 'experience_items', value: JSON.stringify(newExps) }, window.location.origin);
+    };
+
+    const handleUpdateItem = (index: number, key: 'role' | 'company' | 'duration' | 'description', value: string) => {
+        const newExps = [...experiences];
+        newExps[index][key] = value;
+        updateExperiences(newExps);
+    };
+
+    const handleAddItem = () => {
+        const newExps = [...experiences, { role: "Role Baru", company: "Perusahaan Baru", duration: "Tahun — Tahun", description: "Deskripsi pekerjaan baru." }];
+        updateExperiences(newExps);
+    };
+
+    const handleRemoveItem = (index: number, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const newExps = experiences.filter((_: any, i: number) => i !== index);
+        updateExperiences(newExps);
+    };
 
     useGSAP(() => {
         if (isCardPreview) return;
@@ -35,7 +71,7 @@ export function KineticAvantGardeExperienceBlock({ data, theme, isEditor, isCard
                 });
             }
         });
-    }, { scope: containerRef, dependencies: [isEditor, isCardPreview, accentColor] });
+    }, { scope: containerRef, dependencies: [isEditor, isCardPreview, accentColor, experiences] });
 
     return (
         <section ref={containerRef} className="relative kag-bg-void kag-text-bone py-32 px-6 md:px-20 z-10 overflow-hidden border-t border-white/20" id="chronology">
@@ -55,33 +91,64 @@ export function KineticAvantGardeExperienceBlock({ data, theme, isEditor, isCard
                 </div>
 
                 <div className="md:w-2/3 border-l border-white/20 relative mt-10 md:mt-0 pt-10">
-                    {data?.experiences?.length > 0 ? (
-                        data.experiences.map((exp: any, index: number) => (
-                            <div key={index} className="pl-10 pb-24 relative timeline-item group">
-                                <div className="absolute w-4 h-4 rounded-full border border-white/50 left-[-8.5px] top-2 kag-bg-void indicator transition-colors duration-300"></div>
-                                <span className="font-kag-mono kag-text-blood text-sm tracking-widest">{exp.startYear} — {exp.endYear || 'SEKARANG'}</span>
-                                <h4 className="font-kag-serif italic text-3xl md:text-5xl mt-2 kag-text-bone group-hover:kag-text-blood transition-colors duration-300">{exp.role}</h4>
-                                <p className="font-kag-mono text-white/50 text-sm mt-4">{exp.company}</p>
-                                <p className="font-kag-mono text-sm mt-4 leading-relaxed max-w-md text-white/80">{exp.description}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <>
-                            <div className="pl-10 pb-24 relative timeline-item group">
-                                <div className="absolute w-4 h-4 rounded-full border border-white/50 left-[-8.5px] top-2 kag-bg-void indicator transition-colors duration-300"></div>
-                                <span className="font-kag-mono kag-text-blood text-sm tracking-widest">SEKARANG — 2024</span>
-                                <h4 className="font-kag-serif italic text-3xl md:text-5xl mt-2 kag-text-bone group-hover:kag-text-blood transition-colors duration-300">Kepala Eksperimen Visual</h4>
-                                <p className="font-kag-mono text-white/50 text-sm mt-4">Studio Monolith / Jakarta</p>
-                                <p className="font-kag-mono text-sm mt-4 leading-relaxed max-w-md text-white/80">Memimpin tim arsitek antarmuka dalam merumuskan ulang batasan antara seni digital dan pengalaman pengguna.</p>
-                            </div>
-                            <div className="pl-10 pb-24 relative timeline-item group">
-                                <div className="absolute w-4 h-4 rounded-full border border-white/50 left-[-8.5px] top-2 kag-bg-void indicator transition-colors duration-300"></div>
-                                <span className="font-kag-mono kag-text-blood text-sm tracking-widest">2023 — 2021</span>
-                                <h4 className="font-kag-serif italic text-3xl md:text-5xl mt-2 kag-text-bone group-hover:kag-text-blood transition-colors duration-300">Desainer Produk Senior</h4>
-                                <p className="font-kag-mono text-white/50 text-sm mt-4">Nexus Digital / Singapura</p>
-                                <p className="font-kag-mono text-sm mt-4 leading-relaxed max-w-md text-white/80">Merancang sistem desain skala besar untuk perusahaan fintech, berfokus pada tipografi dan interaksi mikro.</p>
-                            </div>
-                        </>
+                    {experiences.map((exp: any, index: number) => (
+                        <div key={index} className="pl-10 pb-24 relative timeline-item group">
+                            {isEditor && (
+                                <button
+                                    onClick={(e) => handleRemoveItem(index, e)}
+                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
+                                    title="Hapus Pengalaman"
+                                >
+                                    ✕
+                                </button>
+                            )}
+                            <div className="absolute w-4 h-4 rounded-full border border-white/50 left-[-8.5px] top-2 kag-bg-void indicator transition-colors duration-300"></div>
+                            <span className="font-kag-mono kag-text-blood text-sm tracking-widest">
+                                <EditableText 
+                                    value={exp.duration} 
+                                    onChange={(val) => handleUpdateItem(index, 'duration', val)} 
+                                    isEditor={isEditor} 
+                                    maxLength={40} 
+                                    as="span" 
+                                />
+                            </span>
+                            <h4 className="font-kag-serif italic text-3xl md:text-5xl mt-2 kag-text-bone group-hover:kag-text-blood transition-colors duration-300">
+                                <EditableText 
+                                    value={exp.role} 
+                                    onChange={(val) => handleUpdateItem(index, 'role', val)} 
+                                    isEditor={isEditor} 
+                                    maxLength={50} 
+                                    as="span" 
+                                />
+                            </h4>
+                            <p className="font-kag-mono text-white/50 text-sm mt-4">
+                                <EditableText 
+                                    value={exp.company} 
+                                    onChange={(val) => handleUpdateItem(index, 'company', val)} 
+                                    isEditor={isEditor} 
+                                    maxLength={50} 
+                                    as="span" 
+                                />
+                            </p>
+                            <p className="font-kag-mono text-sm mt-4 leading-relaxed max-w-md text-white/80">
+                                <EditableText 
+                                    value={exp.description} 
+                                    onChange={(val) => handleUpdateItem(index, 'description', val)} 
+                                    isEditor={isEditor} 
+                                    as="span" 
+                                />
+                            </p>
+                        </div>
+                    ))}
+                    {isEditor && (
+                        <div className="flex justify-center mt-12 w-full col-span-full pl-10">
+                            <button
+                                onClick={handleAddItem}
+                                className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
+                            >
+                                + Tambah Pengalaman
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

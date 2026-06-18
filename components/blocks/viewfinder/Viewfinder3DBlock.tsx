@@ -37,8 +37,8 @@ export function Viewfinder3DBlock({ data, theme, isEditor, isCardPreview }: any)
         <div className="flex flex-col gap-24 @md:gap-32 px-6 @md:px-12">
             {items3D.map((p: any, idx: number) => (
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95, filter: "blur(5px)" }}
-                    whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, amount: 0 }}
                     transition={{ duration: 1.2, delay: (idx % 3) * 0.1, ease: cinematicEase }}
                     key={idx}
