@@ -47,8 +47,12 @@ const ShellContent = ({ children, theme, isMobileView, isCardPreview }: any) => 
             <main className="relative bg-[#050505] text-white font-sans selection:bg-white selection:text-black @container tracking-tight noir-theme">
                 <style dangerouslySetInnerHTML={{
                     __html: `
+                    .noir-theme { font-family: ${customBodyFont} !important; }
                     .noir-theme .font-sans { font-family: ${customHeadingFont} !important; }
                     .noir-theme .font-mono { font-family: ${customBodyFont} !important; }
+                    .noir-theme .font-serif { font-family: ${customHeadingFont} !important; }
+                    .noir-theme .font-heading { font-family: ${customHeadingFont} !important; }
+                    .noir-theme .font-body { font-family: ${customBodyFont} !important; }
                     @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
                     .animate-ticker { animation: ticker 30s linear infinite; }
                     .wire-border-b { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }

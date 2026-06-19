@@ -32,8 +32,11 @@ function MidnightEmulsionShellContent({ children, theme, isEditor, isCardPreview
     <div className="relative min-h-screen bg-[#030508] text-[#e2e8f0] font-sans selection:bg-[var(--hl)] selection:text-[#030508] @container flex flex-col midnight-theme" style={{ '--hl': highlightColor } as React.CSSProperties}>
       <style dangerouslySetInnerHTML={{
         __html: `
-        .midnight-theme .font-serif { font-family: ${customHeadingFont}; }
-        .midnight-theme .font-sans { font-family: ${customBodyFont}; }
+        .midnight-theme { font-family: ${customBodyFont} !important; }
+        .midnight-theme .font-serif { font-family: ${customHeadingFont} !important; }
+        .midnight-theme .font-sans { font-family: ${customBodyFont} !important; }
+        .midnight-theme .font-heading { font-family: ${customHeadingFont} !important; }
+        .midnight-theme .font-body { font-family: ${customBodyFont} !important; }
         .film-grain { background-image: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.05; }
         .text-stroke { -webkit-text-stroke: 1px rgba(255,255,255,0.2); color: transparent; }
         .text-stroke-hover:hover { -webkit-text-stroke: 1px var(--hl); }

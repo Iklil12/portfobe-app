@@ -24,7 +24,7 @@ export default function CinematicGalleryVideoShowcase({ data, theme, isEditor }:
       <div className="w-full max-w-7xl mx-auto flex flex-col items-center relative z-10 px-8">
         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }}
           variants={{ hidden: { opacity: 0, scale: 0.9 }, visible: { opacity: 1, scale: 1, transition: { duration: 1.2 } } }}
-          className="w-full aspect-[21/9] bg-black shadow-2xl relative z-20 pointer-events-auto overflow-hidden border border-white/10"
+          className="w-full aspect-video bg-black shadow-2xl relative z-20 pointer-events-auto overflow-hidden border border-white/10"
         >
            {isAutoPlay ? (
              <div className="w-full h-full opacity-90 hover:opacity-100 transition-all pointer-events-auto">

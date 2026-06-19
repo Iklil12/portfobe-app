@@ -413,9 +413,9 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
       case 'AWARDS': content = <AuraKineticAwardsBlock {...commonProps} />; break;
       case 'TESTIMONIALS': content = <AuraKineticTestimonialsBlock {...commonProps} />; break;
       case 'FOOTER': content = <AuraKineticFooterBlock {...commonProps} />; break;
-      case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
-      case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
-      case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="aura" themeColor={themeColor} /> : null; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <div className="w-full px-6 md:px-12"><div className="max-w-[1400px] mx-auto"><PenpotShowcase userId={userId} variant="aura" themeColor={themeColor} /></div></div> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <div className="w-full px-6 md:px-12"><div className="max-w-[1400px] mx-auto"><CanvaShowcase userId={userId} variant="aura" themeColor={themeColor} /></div></div> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <div className="w-full px-6 md:px-12"><div className="max-w-[1400px] mx-auto"><GithubStats userId={userId} variant="aura" themeColor={themeColor} /></div></div> : null; break;
     }
   } else if (activeThemeTemplate === 'editorial') {
     switch (baseBlockType) {
@@ -1022,6 +1022,10 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
             __html: `
             .min-heading { font-family: ${headingFont} !important; }
             .min-body { font-family: ${bodyFont} !important; }
+            .min-theme .font-sans { font-family: ${bodyFont} !important; }
+            .min-theme .font-serif { font-family: ${headingFont} !important; }
+            .min-theme .font-heading { font-family: ${headingFont} !important; }
+            .min-theme .font-body { font-family: ${bodyFont} !important; }
             .min-theme ::-webkit-scrollbar { width: 5px; height: 5px; }
             .min-theme ::-webkit-scrollbar-track { background: transparent; }
             .min-theme ::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }

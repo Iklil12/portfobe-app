@@ -37,24 +37,24 @@ export default function BentogridVideoShowcase({ data, theme, isEditor }: any) {
             hidden: { opacity: 0, y: 20 },
             visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
           }}
-          className="bg-[#f0f0f0] rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-[inset_0_4px_20px_rgba(0,0,0,0.05)] border border-white/50"
+          className="bg-[#121214] rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-2xl border border-white/5"
         >
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="lg:w-1/3 flex flex-col justify-center">
-              <span className="inline-block px-4 py-2 bg-black text-white rounded-full text-xs font-bold uppercase tracking-widest w-max mb-6">
+              <span className="inline-block px-4 py-2 bg-white/5 text-white border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest w-max mb-6">
                 <EditableText value={theme?.customTexts?.showcase_subtitle || 'Featured'} field="showcase_subtitle" entity="appearance" isEditor={isEditor} maxLength={20} />
               </span>
-              <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4 text-[#111]">
+              <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4 text-white">
                 <EditableText value={theme?.customTexts?.showcase_title || 'Video Showcase'} field="showcase_title" entity="appearance" isEditor={isEditor} maxLength={40} />
               </h2>
               {featuredVideo.description && (
-                <p className="text-[#555] font-medium leading-relaxed mb-6">{featuredVideo.description}</p>
+                <p className="text-slate-400 font-medium leading-relaxed mb-6">{featuredVideo.description}</p>
               )}
-              <h3 className="text-lg font-bold text-[#111]">{featuredVideo.title}</h3>
+              <h3 className="text-lg font-bold text-white">{featuredVideo.title}</h3>
             </div>
-
+ 
             <div className="lg:w-2/3">
-              <div className="w-full rounded-[1.5rem] overflow-hidden shadow-xl bg-black border-[6px] border-white">
+              <div className="w-full rounded-[1.5rem] overflow-hidden shadow-xl bg-black border border-white/10">
                 <div className="aspect-video w-full">
                   {isAutoPlay ? (
                     <div className="w-full h-full">

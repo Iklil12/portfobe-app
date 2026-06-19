@@ -46,10 +46,16 @@ function ViewfinderShellContent({ children, theme, isEditor, isCardPreview, data
       .vf-body, .vf-hud-text { font-family: ${customBodyFont} !important; }
       .viewfinder-theme ::selection { background-color: var(--primary); color: #fff; }
       .viewfinder-theme .font-cinema { font-family: ${customHeadingFont} !important; }
+      .viewfinder-theme .font-sans { font-family: ${customBodyFont} !important; }
+      .viewfinder-theme .font-serif { font-family: ${customHeadingFont} !important; }
+      .viewfinder-theme .font-heading { font-family: ${customHeadingFont} !important; }
+      .viewfinder-theme .font-body { font-family: ${customBodyFont} !important; }
 
       .viewfinder-theme .film-strip::-webkit-scrollbar { display: none; }
       .viewfinder-theme .film-strip { -ms-overflow-style: none; scrollbar-width: none; scroll-snap-type: x mandatory; }
       .viewfinder-theme .film-frame { scroll-snap-align: center; }
+      .viewfinder-theme .no-scrollbar::-webkit-scrollbar { display: none; }
+      .viewfinder-theme .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
       .viewfinder-theme .viewfinder-tl { border-top: 2px solid #F3F3F1; border-left: 2px solid #F3F3F1; }
       .viewfinder-theme .viewfinder-tr { border-top: 2px solid #F3F3F1; border-right: 2px solid #F3F3F1; }

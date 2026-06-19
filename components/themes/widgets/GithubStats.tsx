@@ -161,8 +161,8 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       calendarColorScheme: 'light' as const
     },
     cinematic: {
-      section: 'py-20 @md:py-24 px-6 @md:px-12 border-t border-[#1f1f1f]',
-      heading: 'font-black uppercase tracking-tighter text-white mb-12 text-4xl @md:text-6xl',
+      section: 'py-16 md:py-24 px-6 @md:px-12 border-t border-[#1f1f1f]',
+      heading: 'font-black uppercase tracking-tighter text-white text-4xl @md:text-6xl',
       label: 'text-[10px] @md:text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 inline-block',
       border: 'border-[#1f1f1f]',
       cardBg: 'bg-transparent border-y border-[#1f1f1f] py-8 rounded-none',
@@ -226,14 +226,14 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       calendarColorScheme: 'dark' as const
     },
     split: {
-      section: 'flex flex-col pt-16 @lg:pt-24 pb-16 border-b border-white/10 w-full',
-      heading: 'font-serif font-extrabold text-4xl @lg:text-6xl text-white mb-10 px-6 @md:px-12',
-      label: 'font-sans text-[10px] font-bold uppercase tracking-widest text-[var(--hl)] mb-2 block px-6 @md:px-12',
-      border: 'border-white/10',
-      cardBg: 'bg-white/5 backdrop-blur-md border border-white/10 rounded-xl mx-6 @md:mx-12 p-6 @md:p-8',
+      section: 'flex flex-col pt-16 @lg:pt-24 pb-16 border-b border-white/5 w-full px-6 @md:px-12',
+      heading: 'font-display font-black text-3xl @lg:text-5xl text-white mb-10',
+      label: 'font-mono text-[9px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2 block',
+      border: 'border-white/5',
+      cardBg: 'bg-white/[0.01] hover:bg-white/[0.03] border border-white/5 hover:border-white/10 rounded-xl p-5 transition-all duration-300',
       icon: 'text-white',
-      textPrimary: 'font-serif font-bold text-3xl @md:text-5xl text-white',
-      textSecondary: 'font-sans font-medium text-slate-400 text-sm mt-2',
+      textPrimary: 'font-sans text-sm @md:text-base font-bold text-white',
+      textSecondary: 'font-sans text-[10px] text-neutral-400 mt-1',
       progressBg: 'bg-white/10',
       progressFill: 'bg-[var(--hl)]',
       calendarColorScheme: 'dark' as const
@@ -277,7 +277,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       progressFill: 'bg-white',
       calendarColorScheme: 'dark' as const
     },
-  
+
     'horizontal-flow': {
       section: 'flex-shrink-0 w-[85vw] @md:w-[60vw] @lg:w-[45vw] h-full p-8 @md:p-12 border-r border-black/10 bg-white snap-center',
       heading: 'text-3xl font-bold tracking-tight text-black mb-6',
@@ -330,7 +330,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       progressFill: 'bg-gray-300',
       calendarColorScheme: 'dark' as const
     }
-  
+
   };
 
   const s = styles[variant] || styles.monochrome;
@@ -343,7 +343,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
 
   return (
     <section ref={sectionRef} className={s.section}>
-      <div ref={headingRef} className={`flex justify-between items-baseline mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-6 border-b'} ${s.border}`}>
+      <div ref={headingRef} className={`flex justify-between items-baseline mb-6 md:mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-4 md:pb-6 border-b'} ${s.border}`}>
         <h2 className={s.heading}>Open Source</h2>
         <span className={s.label} style={dynamicTextStyle}>GitHub</span>
       </div>
@@ -359,7 +359,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
           </div>
         ) : (
           <div className="grid grid-cols-1 @md:grid-cols-2 gap-8 md:gap-12">
-            
+
             {/* Repositories List */}
             {(data.topRepos || data.topRepo) && (
               <div ref={reposRef} className="flex flex-col gap-6">
@@ -369,9 +369,9 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
                 <div className="flex flex-col gap-8">
                   {(data.topRepos || [data.topRepo]).map((repo: any, index: number) => (
                     <div key={repo.name || index} className="flex flex-col">
-                      <a 
-                        href={repo.url} 
-                        target="_blank" 
+                      <a
+                        href={repo.url}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="group"
                       >
@@ -423,10 +423,10 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
                   {/* Multi-segment Progress Bar */}
                   <div ref={barRef} className={`w-full h-2.5 flex rounded-full overflow-hidden mb-6 ${s.progressBg}`}>
                     {data.languages.map((lang: any, idx: number) => (
-                      <div 
+                      <div
                         key={`bar-${lang.name}`}
-                        style={{ 
-                          width: barAnimated ? `${lang.percent}%` : '0%', 
+                        style={{
+                          width: barAnimated ? `${lang.percent}%` : '0%',
                           backgroundColor: lang.color,
                           transitionDelay: barAnimated ? `${idx * 80}ms` : '0ms'
                         }}
@@ -460,15 +460,15 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
         {/* Contribution Calendar */}
         {!isLoading && !hasNoPublicRepos && data?.username && (
           <div ref={calendarRef} className={`mt-12 pt-8 border-t ${s.border}`}>
-            <GithubCalendarWidget 
-              username={data.username} 
-              variant={variant as CalendarThemeVariant} 
+            <GithubCalendarWidget
+              username={data.username}
+              variant={variant as CalendarThemeVariant}
               colorScheme={s.calendarColorScheme}
               themeColor={themeColor}
             />
-            <GithubActivityFeed 
-              userId={userId} 
-              themeColor={themeColor} 
+            <GithubActivityFeed
+              userId={userId}
+              themeColor={themeColor}
             />
           </div>
         )}

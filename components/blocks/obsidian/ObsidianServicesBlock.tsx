@@ -36,7 +36,7 @@ export function ObsidianServicesBlock({ data, theme, isEditor }: any) {
   const animationTrigger = isEditor ? "animate" : "whileInView";
 
   return (
-    <section id="services" className="py-24 px-6 border-t border-[rgba(255,255,255,0.1)]">
+    <section id="services" className="py-16 md:py-24 px-6 border-t border-[rgba(255,255,255,0.1)]">
         <div className="max-w-screen-2xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
                 <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="md:col-span-4">

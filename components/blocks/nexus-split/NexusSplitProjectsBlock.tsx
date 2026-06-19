@@ -20,6 +20,7 @@ export function NexusSplitProjectsBlock({ data, theme, isEditor, isCardPreview }
 
   const buttonShape = theme?.buttonShape || 'rounded';
   const cardRadiusClass = buttonShape === 'square' || buttonShape === 'hard' ? 'rounded-none' : buttonShape === 'pill' ? 'rounded-3xl' : 'rounded-2xl';
+  const radiusClass = buttonShape === 'square' || buttonShape === 'hard' ? 'rounded-none' : buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';
 
   const nexusEase = [0.16, 1, 0.3, 1] as any;
   const staggerContainer = {
@@ -138,8 +139,14 @@ export function NexusSplitProjectsBlock({ data, theme, isEditor, isCardPreview }
 
         {showGalleryButton && (
             <motion.div variants={itemFadeUp} className={`w-full flex mt-12 px-6 @md:px-12`}>
-                <Link href={`/${subdomain}/gallery`}  className="inline-flex items-center gap-3 font-sans font-bold text-sm uppercase tracking-widest text-white hover:text-[var(--hl)] transition-colors group">
-                    <EditableText value={theme?.customTexts?.nexus_projects_link || 'View Full Archive'} field="nexus_projects_link" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /> <i className="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                <Link 
+                    href={`/${subdomain}/gallery`}  
+                    className={`inline-flex items-center gap-3 border border-white/10 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.06] active:scale-95 transition-all duration-300 ${radiusClass} px-6 py-3.5 font-mono font-bold text-[10px] uppercase tracking-[0.2em] text-white group shadow-xl`}
+                >
+                    <EditableText value={theme?.customTexts?.nexus_projects_link || 'View Full Archive'} field="nexus_projects_link" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /> 
+                    <svg className="w-3.5 h-3.5 text-white/50 group-hover:text-white group-hover:translate-x-1.5 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
                 </Link>
             </motion.div>
         )}

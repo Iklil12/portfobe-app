@@ -39,7 +39,7 @@ export function Obsidian3DBlock({ data, theme, isEditor }: any) {
   const animationTrigger = isEditor ? "animate" : "whileInView";
 
   return (
-    <section className="py-24 px-6 bg-[#0a0a0a] border-t border-[rgba(255,255,255,0.1)]">
+    <section className="py-16 md:py-24 px-6 bg-[#0a0a0a] border-t border-[rgba(255,255,255,0.1)]">
         <div className="max-w-screen-2xl mx-auto">
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="flex flex-col md:flex-row justify-between md:items-end mb-16">
                 <div>

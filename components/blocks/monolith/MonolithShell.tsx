@@ -50,8 +50,11 @@ export function MonolithShell({
         <div className="w-full bg-[#050505] text-[#f4f4f5] selection:bg-[var(--hl)] selection:text-white overflow-x-hidden @container monolith-theme" style={{ '--hl': highlightColor } as React.CSSProperties}>
             <style dangerouslySetInnerHTML={{
                 __html: `
-        .monolith-theme .font-serif { font-family: ${customHeadingFont}; }
-        .monolith-theme .font-sans { font-family: ${customBodyFont}; }
+        .monolith-theme { font-family: ${customBodyFont} !important; }
+        .monolith-theme .font-serif { font-family: ${customHeadingFont} !important; }
+        .monolith-theme .font-sans { font-family: ${customBodyFont} !important; }
+        .monolith-theme .font-heading { font-family: ${customHeadingFont} !important; }
+        .monolith-theme .font-body { font-family: ${customBodyFont} !important; }
         .monolith-theme .custom-heading { font-family: ${customHeadingFont} !important; }
         .monolith-theme .custom-body { font-family: ${customBodyFont} !important; }
 

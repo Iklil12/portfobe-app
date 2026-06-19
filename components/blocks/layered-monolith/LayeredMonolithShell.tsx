@@ -136,10 +136,13 @@ export function LayeredMonolithShell({ children, data, theme, isMobileView = fal
                 __html: `
                 .layered-monolith-root {
                     --brand-accent: ${accentColor};
-
+                    font-family: ${customBodyFont} !important;
                 }
                 .layered-monolith-root .font-display { font-family: ${customHeadingFont} !important; }
                 .layered-monolith-root .font-body { font-family: ${customBodyFont} !important; }
+                .layered-monolith-root .font-sans { font-family: ${customBodyFont} !important; }
+                .layered-monolith-root .font-serif { font-family: ${customHeadingFont} !important; }
+                .layered-monolith-root .font-heading { font-family: ${customHeadingFont} !important; }
                 .layered-monolith-root .text-brand-accent { color: var(--brand-accent) !important; }
                 .layered-monolith-root .bg-brand-accent { background-color: var(--brand-accent) !important; }
                 .layered-monolith-root .border-brand-accent { border-color: var(--brand-accent) !important; }

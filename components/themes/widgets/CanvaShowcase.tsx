@@ -116,8 +116,8 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       calendarColorScheme: 'light' as const
     },
     cinematic: {
-      section: 'py-20 @md:py-24 px-6 @md:px-12 border-t border-[#1f1f1f]',
-      heading: 'font-black uppercase tracking-tighter text-white mb-12 text-4xl @md:text-6xl',
+      section: 'py-16 md:py-24 px-6 @md:px-12 border-t border-[#1f1f1f]',
+      heading: 'font-black uppercase tracking-tighter text-white text-4xl @md:text-6xl',
       label: 'text-[10px] @md:text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 inline-block',
       border: 'border-[#1f1f1f]',
       cardBg: 'bg-transparent border-y border-[#1f1f1f] py-8 rounded-none',
@@ -207,16 +207,17 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       calendarColorScheme: 'dark' as const
     },
     minimalist: {
-      section: 'border-t border-gray-200 overflow-hidden w-full pb-8',
-      heading: 'text-2xl font-black uppercase tracking-tighter text-black px-8 @lg:px-12 pt-8 pb-2 min-heading',
-      label: 'text-[10px] font-bold uppercase tracking-widest text-gray-400 px-8 @lg:px-12 mb-6 block min-heading',
+      section: 'border-t border-gray-200 bg-white w-full py-20 @md:py-28 px-8 @md:px-12 @lg:px-16 flex flex-col',
+      heading: 'text-2xl font-black uppercase tracking-tighter text-black pb-2 min-heading',
+      label: 'text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-6 block min-heading',
       border: 'border-gray-200',
-      cardBg: 'bg-transparent border-y border-gray-200 py-8 px-8 @lg:px-12',
+      cardBg: 'bg-transparent border-none p-0',
       icon: 'text-black',
       textPrimary: 'text-2xl font-black tracking-tighter text-black',
       textSecondary: 'text-xs font-medium text-gray-500 mt-2',
       progressBg: 'bg-gray-200',
       progressFill: 'bg-black',
+      iframeBorder: 'border-none',
       calendarColorScheme: 'light' as const
     },
     'split-screen-studio': {
@@ -238,63 +239,89 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
   const isDynamic = ['acid', 'aura', 'noir', 'bento', 'brutalism', 'cinematic', 'editorial', 'midnight', 'monolith', 'spatial', 'split', 'viewfinder', 'minimalist', 'split-screen-studio', 'horizontal-flow', 'kinetic-avant-garde', 'layered-monolith', 'nexus-noir'].includes(variant);
   const dynamicTextStyle = isDynamic && themeColor ? { color: themeColor } : {};
 
+  const isSingleProject = projects.length === 1;
+
+  const containerClass = isSingleProject
+    ? "flex flex-col items-center justify-center w-full"
+    : (variant === 'noir' || variant === 'spatial'
+        ? "flex flex-wrap justify-center gap-10 w-full"
+        : "grid grid-cols-1 @lg:grid-cols-2 gap-10");
+
+  const cardWidthClass = isSingleProject
+    ? "w-full max-w-4xl mx-auto"
+    : (variant === 'noir' || variant === 'spatial'
+        ? "w-full max-w-xl"
+        : "w-full");
+
+  const skeletonContainerClass = isSingleProject
+    ? "flex flex-col items-center justify-center w-full"
+    : (variant === 'noir' || variant === 'spatial' ? "flex flex-wrap justify-center gap-10 w-full" : "grid grid-cols-1 @lg:grid-cols-2 gap-10");
+
+  const skeletonCardClass = isSingleProject
+    ? "w-full max-w-4xl mx-auto"
+    : (variant === 'noir' || variant === 'spatial' ? "w-full max-w-xl" : "w-full");
+
+  const skeletonItems = isSingleProject ? [1] : [1, 2];
+
   return (
     <section ref={sectionRef} className={s.section}>
-      <div className={`flex justify-between items-baseline mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-6 border-b'} ${s.border}`}>
-        <h2 className={s.heading}>Canva Showcase</h2>
-        <div className={`flex items-center gap-2 ${s.label}`} style={dynamicTextStyle}>
-          <span>Canva</span>
+      <div className={variant === 'minimalist' ? 'max-w-4xl w-full mx-auto' : ''}>
+        <div className={`flex ${variant === 'noir' || variant === 'spatial' ? 'flex-col items-center text-center gap-3' : 'justify-between items-baseline'} mb-6 md:mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-4 md:pb-6 border-b'} ${s.border}`}>
+          <h2 className={s.heading}>Canva Showcase</h2>
+          <div className={`flex items-center gap-2 ${s.label}`} style={dynamicTextStyle}>
+            <span>Canva</span>
+          </div>
         </div>
-      </div>
 
-      <div className="w-full font-sans">
-        {isLoading ? (
-          <div className="grid grid-cols-1 @lg:grid-cols-2 gap-10">
-            {[1, 2].map((i) => (
-              <div key={i} className={`animate-pulse rounded-3xl p-6 ${s.cardBg}`}>
-                <div className={`h-4 ${s.textPrimary} bg-current opacity-20 rounded w-1/3 mb-6`}></div>
-                <div className="w-full aspect-video bg-current opacity-10 rounded-xl"></div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 @lg:grid-cols-2 gap-10">
-            {projects.map((project: any) => {
-              let src = project.embedLink;
-              if (src.includes('<iframe') || src.includes('<div')) {
-                const match = src.match(/src="([^"]+)"/);
-                if (match) src = match[1];
-              }
-
-              if (src.startsWith('https://') && !src.includes('embed')) {
-                if (src.includes('?')) {
-                  src += '&embed';
-                } else {
-                  src += '?embed';
-                }
-              }
-
-              return (
-                <div key={project.id} className={s.cardBg}>
-                  <h3 className={`${s.textPrimary} mb-6 flex items-center gap-3`}>
-                    <span className="w-2 h-2 rounded-full bg-[var(--hl, #2563eb)]"></span>
-                    {project.title}
-                  </h3>
-
-                  <div className="relative w-full aspect-video overflow-hidden bg-slate-50/10 border border-current opacity-90 shadow-inner rounded-xl">
-                    <iframe
-                      src={src}
-                      className="absolute inset-0 w-full h-full border-0"
-                      allowFullScreen
-                      allow="clipboard-write"
-                      loading="lazy"
-                    ></iframe>
-                  </div>
+        <div className="w-full font-sans">
+          {isLoading ? (
+            <div className={skeletonContainerClass}>
+              {skeletonItems.map((i) => (
+                <div key={i} className={`animate-pulse rounded-3xl p-6 ${s.cardBg} ${skeletonCardClass}`}>
+                  <div className={`h-4 ${s.textPrimary} bg-current opacity-20 rounded w-1/3 mb-6`}></div>
+                  <div className="w-full aspect-video bg-current opacity-10 rounded-xl"></div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div className={containerClass}>
+              {projects.map((project: any) => {
+                let src = project.embedLink;
+                if (src.includes('<iframe') || src.includes('<div')) {
+                  const match = src.match(/src="([^"]+)"/);
+                  if (match) src = match[1];
+                }
+
+                if (src.startsWith('https://') && !src.includes('embed')) {
+                  if (src.includes('?')) {
+                    src += '&embed';
+                  } else {
+                    src += '?embed';
+                  }
+                }
+
+                return (
+                  <div key={project.id} className={`${s.cardBg} ${cardWidthClass}`}>
+                    <h3 className={`${s.textPrimary} mb-6 flex items-center ${variant === 'noir' || variant === 'spatial' || isSingleProject ? 'justify-center' : ''} gap-3`}>
+                      <span className="w-2 h-2 rounded-full bg-[var(--hl, #2563eb)]"></span>
+                      {project.title}
+                    </h3>
+
+                    <div className={`relative w-full aspect-video overflow-hidden bg-slate-50/10 ${s.iframeBorder || 'border border-current'} opacity-90 shadow-inner rounded-xl`}>
+                      <iframe
+                        src={src}
+                        className="absolute inset-0 w-full h-full border-0"
+                        allowFullScreen
+                        allow="clipboard-write"
+                        loading="lazy"
+                      ></iframe>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

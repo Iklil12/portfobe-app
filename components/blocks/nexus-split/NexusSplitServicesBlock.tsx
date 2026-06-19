@@ -48,10 +48,10 @@ export function NexusSplitServicesBlock({ data, theme, isEditor, isCardPreview }
   return (
     <motion.section 
         initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.2 }} variants={staggerContainer}
-        className="flex flex-col pt-16 @lg:pt-24 pb-16 border-b nexus-border"
+        className="flex flex-col pt-10 @lg:pt-24 pb-10 @lg:pb-16 border-b nexus-border"
     >
-        <motion.div variants={itemFadeUp} className="mb-10 px-6 @md:px-12 flex justify-between items-end">
-            <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white">
+        <motion.div variants={itemFadeUp} className="mb-6 @md:mb-10 px-4 @md:px-12 flex justify-between items-end">
+            <h2 className="font-display font-extrabold text-2xl @md:text-4xl @lg:text-6xl text-white">
                 <EditableText value={customTexts.nexus_services_title || 'Capabilities'} field="nexus_services_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
             </h2>
             <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500 hidden @sm:block">
@@ -68,7 +68,7 @@ export function NexusSplitServicesBlock({ data, theme, isEditor, isCardPreview }
                     <motion.div
                         key={s.id}
                         variants={gridItemVariants}
-                        className={`bg-[#050505] p-8 @md:p-12 hover:bg-white/5 transition-all group relative ${
+                        className={`bg-[#050505] p-5 @md:p-12 hover:bg-white/5 transition-all group relative ${
                             !isVisible ? 'opacity-40 bg-zinc-950/20' : ''
                         }`}
                     >
@@ -86,16 +86,16 @@ export function NexusSplitServicesBlock({ data, theme, isEditor, isCardPreview }
                             </button>
                         )}
 
-                        <div className="flex justify-between items-start mb-6">
+                        <div className="flex justify-between items-start mb-3 @md:mb-6">
                             <span className="font-sans text-xs font-bold text-white/30 tracking-[0.2em]">
                                 0{i + 1} {!isVisible && "[HIDDEN]"}
                             </span>
                             <div className="h-px w-12 bg-white/20 mt-2 group-hover:w-24 group-hover:bg-[var(--hl)] transition-all duration-700 ease-out"></div>
                         </div>
-                        <h3 className="font-display font-bold text-2xl @md:text-3xl text-white mb-4 group-hover:text-[var(--hl)] transition-colors">
+                        <h3 className="font-display font-bold text-lg @md:text-3xl text-white mb-2 @md:mb-4 group-hover:text-[var(--hl)] transition-colors">
                             <EditableText value={customTexts[`nexus_svc_${s.id}_title`] || s.defaultTitle} field={`nexus_svc_${s.id}_title`} entity="appearance" isEditor={isEditor} as="span" maxLength={40} />
                         </h3>
-                        <p className="font-sans text-sm @md:text-base text-slate-400 leading-relaxed mb-12 max-w-sm">
+                        <p className="font-sans text-xs @md:text-base text-slate-400 leading-relaxed mb-6 @md:mb-12 max-w-sm">
                             <EditableText value={customTexts[`nexus_svc_${s.id}_desc`] || s.defaultDesc} field={`nexus_svc_${s.id}_desc`} entity="appearance" isEditor={isEditor} as="span" maxLength={120} />
                         </p>
                         <div className="flex items-center gap-4 mt-auto">

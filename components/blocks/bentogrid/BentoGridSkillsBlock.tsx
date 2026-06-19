@@ -56,86 +56,129 @@ export function BentoGridSkillsBlock({ theme, isEditor, isCardPreview }: any) {
     const cardStyle = theme?.cardStyle || 'flat';
     const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#121214] border-transparent shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#1a1a1d] border-2 border-white shadow-[6px_6px_0_0_#fff]' : 'bg-[#1a1a1d] border border-white/5 shadow-md';
     const cardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-[24px]';
-
     const bentoAnim = {
         hidden: { opacity: 0, y: 30, scale: 0.97 },
         visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 90, damping: 20, mass: 1 } as any }
     };
 
     return (
-        <div className="grid auto-rows-[minmax(120px,auto)] gap-4 @lg:gap-6 grid-cols-1 w-full mb-4 @lg:mb-6">
+        <div className="grid gap-3 @lg:gap-6 grid-cols-2 @lg:grid-cols-3 w-full mb-4 @lg:mb-6">
+            
+            {/* Title Card */}
             <motion.div 
                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
-                className={`bento-card flex flex-col p-6 @lg:p-10 w-full`}
+                className={`bento-card ${cardStyleClass} ${cardRadiusClass} p-4 @md:p-8 flex flex-col justify-between min-h-[120px] @md:min-h-[180px] relative overflow-hidden col-span-2 @lg:col-span-1`}
             >
-                <h3 className="text-xl @md:text-2xl font-black text-white mb-6 flex items-center gap-3">
-                    <i className="fas fa-bolt text-[var(--hl)]"></i>
-                    <EditableText entity="appearance" field="bentogrid_skills_title" value={getCustomText('bentogrid_skills_title', 'Core Capabilities')} isEditor={isEditor} maxLength={40} as="span" />
-                </h3>
-                
-                <div className="grid gap-4 grid-cols-1 @md:grid-cols-2">
-                    {skills.map((skill: any, index: number) => {
-                        const defaultName = skill.name;
-                    const defaultProficiency = String(skill.level);
-                    const val = parseInt(defaultProficiency || '0', 10);
-                    const safeVal = isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
-                        
-                        return (
-                            <div key={index} className={`${cardStyleClass} ${cardRadiusClass} p-5 hover:bg-white/5 transition-colors relative`}>
-                                <div className="flex justify-between items-start gap-4 mb-4 text-base @md:text-lg font-bold text-white">
-                                    <span className="flex-1 break-words pr-2">
-                                        <EditableText 
-                                        value={defaultName} 
-                                        onChange={(val) => handleUpdateItem(index, 'name', val)} 
-                                        isEditor={isEditor} 
-                                        maxLength={40} 
-                                        as="span" 
-                                    />
-                                    </span>
-                                    <span className="text-[var(--hl)] whitespace-nowrap shrink-0 flex items-center">
-                                        <EditableText 
-                                        value={defaultProficiency} 
-                                        onChange={(val) => handleUpdateItem(index, 'level', val)} 
-                                        isEditor={isEditor} 
-                                        maxLength={3} 
-                                        as="span" 
-                                    />%
-                                    </span>
-                                </div>
-                                <div className={`w-full h-2 ${isEditor ? '' : 'overflow-hidden'} bg-white/10 rounded-full`}>
-                                    <motion.div 
-                                        initial={{ width: 0 }}
-                                        whileInView={{ width: `${safeVal}%` }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                                        className={`h-full bg-[var(--hl)] rounded-full`}
-                                        style={isEditor ? { width: `${safeVal}%` } : undefined}
-                                    ></motion.div>
-                                </div>
-                            
-                            {isEditor && (
-                                <button
-                                    onClick={(e) => handleRemoveItem(index, e)}
-                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
-                                    title="Hapus Skill"
-                                >
-                                    ✕
-                                </button>
-                            )}
-                        </div>
-                    );})}
-            </div>
-            {isEditor && (
-                <div className="flex justify-center mt-12 w-full col-span-full">
-                    <button
-                        onClick={handleAddItem}
-                        className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
-                    >
-                        + Tambah Skill
-                    </button>
+                <div className="absolute right-[-10%] bottom-[-10%] opacity-[0.02] pointer-events-none select-none text-[3rem] @md:text-[6rem] font-black tracking-widest uppercase font-mono">
+                    SKILL
                 </div>
-            )}
+                
+                <div className="flex items-center justify-between z-10">
+                    <div className="w-8 h-8 @md:w-10 @md:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[var(--hl)]">
+                        <i className="fas fa-bolt text-sm"></i>
+                    </div>
+                    <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">
+                        Node.04 // Skills
+                    </span>
+                </div>
+
+                <div className="mt-3 @md:mt-6 z-10">
+                    <h3 className="text-sm @md:text-xl font-sans font-black text-white leading-tight uppercase tracking-tight">
+                        <EditableText entity="appearance" field="bentogrid_skills_title" value={getCustomText('bentogrid_skills_title', 'Core Capabilities')} isEditor={isEditor} maxLength={40} as="span" />
+                    </h3>
+                    <p className="text-[7px] @md:text-[9px] font-mono text-slate-400 mt-1 @md:mt-2 uppercase tracking-wider">
+                        {skills.length} MODULES DETECTED // STABLE
+                    </p>
+                </div>
             </motion.div>
+
+            {/* Skill Cards */}
+            {skills.map((skill: any, index: number) => {
+                const defaultName = skill.name;
+                const defaultProficiency = String(skill.level);
+                const val = parseInt(defaultProficiency || '0', 10);
+                const safeVal = isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
+                
+                return (
+                    <motion.div 
+                        key={index}
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                        className={`bento-card ${cardStyleClass} ${cardRadiusClass} p-4 @md:p-6 flex flex-col justify-between min-h-[120px] @md:min-h-[180px] relative group overflow-hidden`}
+                    >
+                        {/* Glow effect matching skill level */}
+                        <div 
+                            className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl pointer-events-none opacity-[0.08] transition-opacity duration-300 group-hover:opacity-[0.12]"
+                            style={{ backgroundColor: 'var(--hl)' }}
+                        />
+
+                        <div className="flex justify-between items-start z-10">
+                            <span className="text-[7px] @md:text-[9px] font-mono text-slate-500 uppercase tracking-widest">
+                                MOD.0{index + 1}
+                            </span>
+                            <span className="text-base @md:text-xl font-black text-[var(--hl)] tracking-tighter">
+                                <EditableText 
+                                    value={defaultProficiency} 
+                                    onChange={(val) => handleUpdateItem(index, 'level', val)} 
+                                    isEditor={isEditor} 
+                                    maxLength={3} 
+                                    as="span" 
+                                />%
+                            </span>
+                        </div>
+
+                        <div className="mt-2 @md:mt-4 z-10">
+                            <h4 className="text-white font-extrabold text-xs @md:text-base tracking-tight leading-tight uppercase">
+                                <EditableText 
+                                    value={defaultName} 
+                                    onChange={(val) => handleUpdateItem(index, 'name', val)} 
+                                    isEditor={isEditor} 
+                                    maxLength={40} 
+                                    as="span" 
+                                />
+                            </h4>
+                        </div>
+
+                        {/* Custom visual indicator: High-end progress bar */}
+                        <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-2 @md:mt-4 z-10 relative">
+                            <motion.div 
+                                initial={{ width: 0 }}
+                                whileInView={{ width: `${safeVal}%` }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                                className="h-full bg-[var(--hl)] rounded-full"
+                                style={isEditor ? { width: `${safeVal}%` } : undefined}
+                            />
+                        </div>
+
+                        {isEditor && (
+                            <button
+                                onClick={(e) => handleRemoveItem(index, e)}
+                                className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-all opacity-0 group-hover:opacity-100 shadow-md"
+                                title="Hapus Skill"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </motion.div>
+                );
+            })}
+
+            {/* Add Skill Button Card */}
+            {isEditor && (
+                <motion.div 
+                    initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                    onClick={handleAddItem}
+                    className={`bento-card cursor-pointer border-2 border-dashed border-white/10 hover:border-[var(--hl)]/40 hover:bg-white/[0.01] transition-all duration-300 ${cardRadiusClass} p-4 @md:p-8 flex flex-col items-center justify-center min-h-[120px] @md:min-h-[180px] group`}
+                >
+                    <div className="w-10 h-10 rounded-full border border-dashed border-white/20 group-hover:border-[var(--hl)]/40 flex items-center justify-center text-slate-500 group-hover:text-[var(--hl)] transition-all mb-3">
+                        <i className="fas fa-plus text-xs"></i>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 group-hover:text-white transition-all">
+                        + Tambah Skill
+                    </span>
+                </motion.div>
+            )}
+
         </div>
     );
 }

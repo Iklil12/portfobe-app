@@ -50,74 +50,121 @@ export function ObsidianSkillsBlock({ theme, isEditor }: any) {
         updateSkills(newSkills);
     };
 
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-md';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
 
     return (
-        <section className="w-full py-24 px-6 md:px-12 bg-[#050505]">
-            <h2 className="text-4xl md:text-6xl font-black uppercase text-white tracking-tighter mb-12">
-                <EditableText entity="appearance" field="obsidian_skills_title" value={getCustomText('obsidian_skills_title', 'Core Capabilities')} isEditor={isEditor} maxLength={40} as="span" />
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {skills.map((skill: any, index: number) => {
-                    const defaultName = skill.name;
-                    const defaultProficiency = String(skill.level);
-                    const val = parseInt(defaultProficiency || '0', 10);
-                    const safeVal = isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
-                    
-                    return (
-                        <div key={index} className="border-l-2 border-white/20 pl-6 py-4 mb-8 hover:border-white transition-colors relative">
-                            <div className="flex justify-between items-center mb-4 text-2xl font-bold text-white uppercase">
-                                <span>
-                                    <EditableText 
-                                        value={defaultName} 
-                                        onChange={(val) => handleUpdateItem(index, 'name', val)} 
-                                        isEditor={isEditor} 
-                                        maxLength={40} 
-                                        as="span" 
-                                    />
-                                </span>
-                                <span>
-                                    <EditableText 
-                                        value={defaultProficiency} 
-                                        onChange={(val) => handleUpdateItem(index, 'level', val)} 
-                                        isEditor={isEditor} 
-                                        maxLength={3} 
-                                        as="span" 
-                                    />%
-                                </span>
-                            </div>
-                            <div className={`w-full h-2 ${isEditor ? '' : 'overflow-hidden'} bg-white/10`}>
-                                <motion.div 
-                                    initial={{ width: 0 }}
-                                    whileInView={{ width: `${safeVal}%` }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                                    className={`h-full bg-white`}
-                                    style={isEditor ? { width: `${safeVal}%` } : undefined}
-                                ></motion.div>
-                            </div>
-                        
-                            {isEditor && (
-                                <button
-                                    onClick={(e) => handleRemoveItem(index, e)}
-                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
-                                    title="Hapus Skill"
-                                >
-                                    ✕
-                                </button>
-                            )}
-                        </div>
-                    );})}
-            </div>
-            {isEditor && (
-                <div className="flex justify-center mt-12 w-full col-span-full">
-                    <button
-                        onClick={handleAddItem}
-                        className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
-                    >
-                        + Tambah Skill
-                    </button>
+        <section className="w-full py-16 md:py-24 px-4 md:px-8 bg-zinc-950 border-t border-white/5 relative">
+            {/* Ambient background highlight */}
+            <div className="absolute right-[5%] top-[10%] w-[300px] h-[300px] bg-white/[0.01] rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div className="max-w-screen-2xl mx-auto">
+                <div className="flex flex-col @sm:flex-row justify-between items-start @sm:items-end mb-8 md:mb-16 gap-4 @sm:gap-6">
+                    <div>
+                        <span className="text-[9px] md:text-[10px] font-mono text-zinc-500 uppercase tracking-[0.3em] block mb-2">
+                            CONSOLE // CHANNEL_METRICS
+                        </span>
+                        <h2 className="text-3xl md:text-6xl font-black uppercase text-white tracking-tighter">
+                            <EditableText entity="appearance" field="obsidian_skills_title" value={getCustomText('obsidian_skills_title', 'Core Capabilities')} isEditor={isEditor} maxLength={40} as="span" />
+                        </h2>
+                    </div>
+                    <div className="h-[1px] flex-1 bg-white/5 hidden @sm:block mx-8 mb-4"></div>
+                    <span className="text-[9px] md:text-[10px] font-mono text-zinc-400 uppercase tracking-widest bg-white/5 border border-white/10 px-2.5 py-1.5 rounded shrink-0">
+                        DECIBEL_SCALE // DIRECT_OUT
+                    </span>
                 </div>
-            )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                    {skills.map((skill: any, index: number) => {
+                        const defaultName = skill.name;
+                        const defaultProficiency = String(skill.level);
+                        const val = parseInt(defaultProficiency || '0', 10);
+                        const safeVal = isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
+                        
+                        return (
+                            <div 
+                              key={index} 
+                              className="border border-white/5 bg-zinc-900/20 p-4 md:p-6 rounded-2xl hover:border-white/15 hover:bg-zinc-900/30 transition-all duration-300 relative group flex flex-col justify-between min-h-[110px] md:min-h-[140px] overflow-hidden"
+                            >
+                                {/* Technical Corner Marks */}
+                                <div className="absolute top-2 left-2 w-1.5 h-1.5 border-t border-l border-white/20"></div>
+                                <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-white/20"></div>
+                                <div className="absolute bottom-2 left-2 w-1.5 h-1.5 border-b border-l border-white/20"></div>
+                                <div className="absolute bottom-2 right-2 w-1.5 h-1.5 border-b border-r border-white/20"></div>
+
+                                {/* Top Meta specs info */}
+                                <div className="flex justify-between items-center text-[8px] md:text-[9px] font-mono text-zinc-500 uppercase tracking-widest mb-2 md:mb-3">
+                                    <span>CHAN // 0{index + 1}</span>
+                                    <span>GAIN // +0.0dB</span>
+                                </div>
+
+                                <div className="flex justify-between items-end mb-2 md:mb-4">
+                                    <h4 className="text-sm @sm:text-base md:text-xl font-bold text-white uppercase tracking-tight pr-4 truncate">
+                                        <EditableText 
+                                            value={defaultName} 
+                                            onChange={(val) => handleUpdateItem(index, 'name', val)} 
+                                            isEditor={isEditor} 
+                                            maxLength={40} 
+                                            as="span" 
+                                        />
+                                    </h4>
+                                    <span className="text-sm @sm:text-base md:text-xl font-mono font-bold text-white shrink-0">
+                                        <EditableText 
+                                            value={defaultProficiency} 
+                                            onChange={(val) => handleUpdateItem(index, 'level', val)} 
+                                            isEditor={isEditor} 
+                                            maxLength={3} 
+                                            as="span" 
+                                        />%
+                                    </span>
+                                </div>
+
+                                {/* Audio Fader Segment Meter */}
+                                <div className="flex gap-0.5 w-full h-2 md:h-3 bg-zinc-950 p-0.5 rounded border border-white/5 select-none">
+                                    {Array.from({ length: 20 }).map((_, segmentIdx) => {
+                                        const segmentThreshold = (segmentIdx + 1) * 5;
+                                        const isLit = safeVal >= segmentThreshold;
+                                        return (
+                                            <div 
+                                                key={segmentIdx} 
+                                                className={`h-full rounded-[1px] transition-all duration-500 flex-1 ${
+                                                    isLit 
+                                                        ? 'bg-white shadow-[0_0_5px_rgba(255,255,255,0.7)]' 
+                                                        : 'bg-zinc-900'
+                                                }`}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            
+                                {isEditor && (
+                                    <button
+                                        onClick={(e) => handleRemoveItem(index, e)}
+                                        className="absolute top-2.5 right-2.5 bg-zinc-800 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[8px] z-30 transition-colors border border-white/10"
+                                        title="Hapus Skill"
+                                    >
+                                        ✕
+                                    </button>
+                                )}
+                            </div>
+                        );})}
+                </div>
+
+                {isEditor && (
+                    <div className="flex justify-center mt-12 w-full col-span-full">
+                        <button
+                            onClick={handleAddItem}
+                            className={`px-8 py-3.5 border border-dashed border-white/25 hover:border-white/50 text-white/70 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10 ${btnShape}`}
+                        >
+                            + Tambah Skill
+                        </button>
+                    </div>
+                )}
+            </div>
         </section>
     );
 }

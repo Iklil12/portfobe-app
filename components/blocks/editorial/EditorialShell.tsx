@@ -44,11 +44,11 @@ export function EditorialShellContent({ data, theme, isMobileView = false, isCar
         <div className="w-full bg-[#fdfdfc] text-[#111111] font-sans selection:bg-[var(--hl)] selection:text-white overflow-x-hidden @container editorial-theme" style={{ '--hl': highlightColor } as React.CSSProperties}>
             <style dangerouslySetInnerHTML={{
                 __html: `
-        .editorial-theme { font-family: ${customBodyFont}; }
-        .editorial-theme .font-sans { font-family: ${customBodyFont}; }
-        .editorial-theme .font-serif { font-family: ${customHeadingFont}; }
-        .editorial-theme .font-heading { font-family: ${customHeadingFont}; }
-        .editorial-theme .font-body { font-family: ${customBodyFont}; }
+        .editorial-theme { font-family: ${customBodyFont} !important; }
+        .editorial-theme .font-sans { font-family: ${customBodyFont} !important; }
+        .editorial-theme .font-serif { font-family: ${customHeadingFont} !important; }
+        .editorial-theme .font-heading { font-family: ${customHeadingFont} !important; }
+        .editorial-theme .font-body { font-family: ${customBodyFont} !important; }
 
         /* Custom Scrollbar — scoped ke editorial-theme */
         .editorial-theme ::-webkit-scrollbar { width: 6px; }

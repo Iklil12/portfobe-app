@@ -6,9 +6,10 @@ interface UniversalPlayerProps {
   mediaUrl: string;
   title?: string;
   autoPlayMode?: boolean;
+  className?: string;
 }
 
-export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode = false }: UniversalPlayerProps) {
+export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode = false, className }: UniversalPlayerProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [inView, setInView] = useState(false);
   const [isActivated, setIsActivated] = useState(false);
@@ -39,7 +40,7 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    
+
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
@@ -279,7 +280,7 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
   };
 
   return (
-    <div ref={containerRef} className="mobile-landscape-wrapper @container w-full h-full relative group bg-black rounded-2xl overflow-hidden border border-slate-800/60 shadow-2xl">
+    <div ref={containerRef} className={`mobile-landscape-wrapper @container w-full h-full relative group overflow-hidden ${className || 'bg-black rounded-2xl border border-slate-800/60 shadow-2xl'}`}>
       <style dangerouslySetInnerHTML={{
         __html: `
           @media (max-width: 1023px) and (orientation: landscape) {

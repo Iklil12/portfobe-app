@@ -43,17 +43,17 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
     <motion.div
       layout={!isHero}
       transition={!isHero ? { type: "spring", stiffness: 300, damping: 30 } : { duration: 0.2 }}
-      className={`relative group/block transition-opacity duration-500 ${isHovered ? 'z-50' : 'z-10'} ${!isHero && isHovered ? 'scale-[1.005]' : ''} ${!isHero && !isHovered ? 'scale-100' : ''} ${isHorizontalFlow ? 'flex flex-row flex-nowrap shrink-0 h-full items-stretch' : ''}`}
+      className={`relative group/block transition-opacity duration-500 ${isHovered ? 'z-50' : 'z-10'} ${!isHero && isHovered ? 'scale-[1.005]' : ''} ${!isHero && !isHovered ? 'scale-100' : ''} ${isHorizontalFlow ? 'flex flex-row flex-nowrap shrink-0 h-full items-stretch' : ''} ${isHero ? 'w-full h-full' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => setIsHovered(true)}
     >
       {/* Garis Border & Glow Hover */}
-      <div className={`absolute inset-0 border-2 border-[#ff9e00]/30 rounded-none pointer-events-none z-50 transition-all duration-700 ease-out shadow-[0_0_40px_rgba(255,158,0,0)] ${isHovered ? 'opacity-100 shadow-[0_0_40px_rgba(255,158,0,0.1)]' : 'opacity-0'}`} />
+      <div className={`absolute inset-0 border-2 border-[#ff9e00]/30 rounded-none pointer-events-none z-[210] transition-all duration-700 ease-out shadow-[0_0_40px_rgba(255,158,0,0)] ${isHovered ? 'opacity-100 shadow-[0_0_40px_rgba(255,158,0,0.1)]' : 'opacity-0'}`} />
 
       {/* Floating Toolbar */}
       <div
-        className={`absolute right-4 top-4 z-[100] flex items-center bg-black/60 backdrop-blur-md text-white rounded-lg border border-white/10 shadow-lg transition-all duration-400 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden ${isHovered ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95 pointer-events-none'}`}
+        className={`absolute right-4 top-4 z-[300] flex items-center bg-black/60 backdrop-blur-md text-white rounded-lg border border-white/10 shadow-lg transition-all duration-400 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden ${isHovered ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95 pointer-events-none'}`}
       >
         <div className="px-4 py-2 border-r border-white/10 flex items-center bg-white/5">
           <span className="text-[11px] font-medium text-white/90 whitespace-nowrap capitalize">
@@ -120,13 +120,13 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
         <>
           {/* Arsir Biru Diagonal */}
           <div
-            className="absolute inset-0 z-30 rounded-none cursor-not-allowed"
+            className="absolute inset-0 z-[180] rounded-none cursor-not-allowed"
             style={{
               background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.03) 10px, rgba(255, 255, 255, 0.03) 20px)'
             }}
           />
           {/* Badge Peringatan */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-zinc-950/90 text-white/80 px-4 py-2 rounded-none text-[9px] font-mono font-bold uppercase tracking-widest pointer-events-none flex items-center gap-2 backdrop-blur-md border border-white/10">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[185] bg-zinc-950/90 text-white/80 px-4 py-2 rounded-none text-[9px] font-mono font-bold uppercase tracking-widest pointer-events-none flex items-center gap-2 backdrop-blur-md border border-white/10">
             <EyeOff className="w-3.5 h-3.5 text-rose-500" />
             <span>Blok Disembunyikan</span>
           </div>
@@ -136,8 +136,8 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
       {/* Jika blok dikunci, berikan overlay border kuning/orange putus-putus dan badge kecil */}
       {block.isLocked && block.isVisible && (
         <>
-          <div className="absolute inset-0 z-30 rounded-none border-2 border-dashed border-[#ff9e00]/20 pointer-events-none" />
-          <div className="absolute top-4 left-4 z-40 bg-zinc-950/90 backdrop-blur-md text-[#ff9e00] px-3 py-1.5 rounded-none text-[8px] font-mono font-bold uppercase tracking-widest pointer-events-none flex items-center gap-1.5 border border-[#ff9e00]/20">
+          <div className="absolute inset-0 z-[190] rounded-none border-2 border-dashed border-[#ff9e00]/20 pointer-events-none" />
+          <div className="absolute top-4 left-4 z-[200] bg-zinc-950/90 backdrop-blur-md text-[#ff9e00] px-3 py-1.5 rounded-none text-[8px] font-mono font-bold uppercase tracking-widest pointer-events-none flex items-center gap-1.5 border border-[#ff9e00]/20">
             <Lock className="w-3 h-3" />
             <span>Terkunci</span>
           </div>
@@ -145,7 +145,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
       )}
 
       {/* Konten Asli */}
-      <div className={`transition-all duration-300 ${!block.isVisible ? 'pointer-events-none select-none blur-[1px] opacity-40 grayscale group-hover/block:opacity-70' : ''} ${block.isLocked ? 'pointer-events-none select-none' : ''} ${isHorizontalFlow ? 'flex flex-row flex-nowrap shrink-0 h-full w-full items-stretch' : ''}`}
+      <div className={`transition-all duration-300 ${!block.isVisible ? 'pointer-events-none select-none blur-[1px] opacity-40 grayscale group-hover/block:opacity-70' : ''} ${block.isLocked ? 'pointer-events-none select-none' : ''} ${isHorizontalFlow ? 'flex flex-row flex-nowrap shrink-0 h-full w-full items-stretch' : ''} ${isHero ? 'w-full h-full' : ''}`}
         {...(!block.isVisible || block.isLocked ? { inert: true } as any : {})}
       >
         {children}
@@ -153,7 +153,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
 
       {/* Tombol Tambah Bagian (Divider Line) */}
       {!isHorizontalFlow && isEditor && (
-        <div className={`absolute left-0 right-0 -bottom-3 h-6 flex items-center justify-center transition-opacity z-[100] ${isHovered ? 'opacity-100' : 'opacity-0 group-hover/block:opacity-100'}`}>
+        <div className={`absolute left-0 right-0 -bottom-3 h-6 flex items-center justify-center transition-opacity z-[220] ${isHovered ? 'opacity-100' : 'opacity-0 group-hover/block:opacity-100'}`}>
           <div className="absolute inset-0 flex items-center pointer-events-none">
             <div className="w-full border-t border-dashed border-[#0099ff]/30"></div>
           </div>
@@ -172,7 +172,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
 
       {/* Tombol Tambah Bagian Horizontal */}
       {isHorizontalFlow && isEditor && (
-        <div className={`absolute top-0 bottom-0 -right-3 w-6 flex items-center justify-center transition-opacity z-[100] ${isHovered ? 'opacity-100' : 'opacity-0 group-hover/block:opacity-100'}`}>
+        <div className={`absolute top-0 bottom-0 -right-3 w-6 flex items-center justify-center transition-opacity z-[220] ${isHovered ? 'opacity-100' : 'opacity-0 group-hover/block:opacity-100'}`}>
           <div className="absolute inset-0 flex justify-center pointer-events-none">
             <div className="h-full border-l border-dashed border-[#0099ff]/30"></div>
           </div>

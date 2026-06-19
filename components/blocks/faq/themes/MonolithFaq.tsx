@@ -45,83 +45,133 @@ export default function MonolithFaq({ data, theme, isEditor }: { data: any, them
     if (openIndex === index) setOpenIndex(null);
   };
 
+  const buttonShape = theme?.buttonShape || 'rounded';
+  const cardRadius = buttonShape === 'hard' || buttonShape === 'square' ? 'rounded-none' : buttonShape === 'pill' ? 'rounded-3xl' : 'rounded-2xl';
+
   return (
-    <div className="w-full max-w-6xl mx-auto py-24 px-4 group/faq bg-[#eae8e3]">
-      <div className="bg-[#dcdad4] p-12 md:p-24 shadow-[20px_20px_60px_#bcbbaf,-20px_-20px_60px_#ffffff]">
-        <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-neutral-800 mb-16 uppercase" style={{ fontFamily: 'var(--font-heading)' }}>
-          <EditableText 
-            value={theme?.customTexts?.faq_main_title || 'Answers'} 
-            field="faq_main_title" 
-            entity="appearance" 
-            isEditor={isEditor} 
-            as="span" 
-            maxLength={20} 
-          />
-        </h2>
-        
-        <div className="flex flex-col gap-8">
-          {faqs.map((faq: any, i: number) => {
-            const isOpen = openIndex === i;
-            return (
-              <div 
-                key={i} 
-                className={`relative bg-[#eae8e3] p-8 md:p-12 duration-300 group/item ${
-                  isOpen ? 'shadow-[inset_10px_10px_20px_#bcbbaf,inset_-10px_-10px_20px_#ffffff]' : 'shadow-[10px_10px_20px_#bcbbaf,-10px_-10px_20px_#ffffff] hover:translate-y-1 hover:translate-x-1'
-                }`}
-              >
-                <button
-                  onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full flex flex-col md:flex-row justify-between items-start md:items-center text-left focus:gap-6"
-                >
-                  <span className="text-2xl md:text-3xl font-black text-neutral-700 tracking-tight uppercase w-full md:w-5/6" style={{ fontFamily: 'var(--font-heading)' }}>
-                    <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"block w-full px-1"} />
-                  </span>
-                  <div className="w-12 h-12 shrink-0 bg-neutral-800 text-white flex items-center justify-center text-2xl font-light">
-                    {isOpen ? '—' : '+'}
-                  </div>
-                </button>
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="pt-8 text-neutral-600 font-medium text-lg md:text-xl leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
-                        <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={250} className={"block w-full px-1 min-h-[2rem]"} />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Delete Button */}
-                {isEditor && (
-                  <button 
-                    onClick={(e) => handleRemoveItem(i, e)}
-                    className="absolute top-4 right-4 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-10 h-10 flex items-center justify-center bg-red-100 hover:bg-red-200"
-                    title="Hapus Pertanyaan"
-                  >
-                    <i className="fas fa-trash text-sm"></i>
-                  </button>
-                )}
-              </div>
-            );
-          })}
+    <div className="w-full bg-[#050505] py-20 @md:py-32 px-6 @md:px-12 group/faq">
+      {/* Header */}
+      <div className="flex flex-col @md:flex-row @md:justify-between @md:items-end gap-4 mb-12 @md:mb-20">
+        <div className="flex flex-col gap-3">
+          <span className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--hl)]">
+            <EditableText 
+              value={theme?.customTexts?.faq_label || 'Knowledge Base'} 
+              field="faq_label" 
+              entity="appearance" 
+              isEditor={isEditor} 
+              as="span" 
+              maxLength={25} 
+            />
+          </span>
+          <h2 className="font-serif text-4xl @md:text-6xl @lg:text-[5.5cqi] leading-[0.9] text-white">
+            <EditableText 
+              value={theme?.customTexts?.faq_main_title || 'Frequently Asked'} 
+              field="faq_main_title" 
+              entity="appearance" 
+              isEditor={isEditor} 
+              as="span" 
+              maxLength={25} 
+            />
+            <br/>
+            <span className="italic text-[var(--hl)]">
+              <EditableText 
+                value={theme?.customTexts?.faq_main_subtitle || 'Questions'} 
+                field="faq_main_subtitle" 
+                entity="appearance" 
+                isEditor={isEditor} 
+                as="span" 
+                maxLength={20} 
+              />
+            </span>
+          </h2>
         </div>
-
-        {isEditor && (
-          <div className="mt-16 flex justify-center opacity-0 group-hover/faq:opacity-100 transition-opacity duration-300">
-            <button 
-              onClick={handleAddItem}
-              className="flex items-center justify-center gap-4 w-full py-8 bg-neutral-800 text-white font-bold text-2xl uppercase tracking-widest shadow-[10px_10px_20px_#bcbbaf,-10px_-10px_20px_#ffffff] hover:translate-y-1 hover:translate-x-1 transition-all"
-            >
-              <i className="fas fa-plus"></i> ADD BLOCK
-            </button>
-          </div>
-        )}
+        <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-white/20 hidden @md:block">
+          {String(faqs.length).padStart(2, '0')} items
+        </span>
       </div>
+      
+      {/* FAQ Items */}
+      <div className="flex flex-col w-full">
+        {faqs.map((faq: any, i: number) => {
+          const isOpen = openIndex === i;
+          return (
+            <div 
+              key={i} 
+              className="relative border-t border-white/[0.06] group/item"
+            >
+              <button
+                onClick={() => setOpenIndex(isOpen ? null : i)}
+                className="w-full flex items-center gap-4 @md:gap-8 py-6 @md:py-10 text-left transition-colors duration-300"
+              >
+                {/* Index */}
+                <span className="shrink-0 font-serif text-lg @md:text-2xl text-white/[0.08] group-hover/item:text-white/15 transition-colors duration-500 w-8 @md:w-12 tabular-nums select-none">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+
+                {/* Question */}
+                <span className="flex-1 font-serif text-lg @md:text-2xl @lg:text-3xl text-white group-hover/item:text-[var(--hl)] transition-colors duration-500 leading-snug">
+                  <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className="block w-full" />
+                </span>
+
+                {/* Toggle Icon */}
+                <div className={`shrink-0 w-8 h-8 @md:w-10 @md:h-10 flex items-center justify-center border transition-all duration-500 rounded-full ${isOpen ? 'border-[var(--hl)]/30 bg-[var(--hl)]/10 text-[var(--hl)]' : 'border-white/10 text-white/20 group-hover/item:border-white/20 group-hover/item:text-white/40'}`}>
+                  <svg 
+                    className={`w-3 h-3 @md:w-3.5 @md:h-3.5 transition-transform duration-500 ${isOpen ? 'rotate-180' : ''}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </button>
+
+              {/* Answer */}
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pb-8 @md:pb-12 pl-12 @md:pl-20 pr-12 @md:pr-20">
+                      <div className="font-sans text-sm @md:text-base text-white/30 leading-relaxed max-w-2xl">
+                        <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={250} className="block w-full min-h-[2rem]" />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Delete Button */}
+              {isEditor && (
+                <button 
+                  onClick={(e) => handleRemoveItem(i, e)}
+                  className="absolute top-6 right-0 text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity w-6 h-6 flex items-center justify-center bg-red-500/10 hover:bg-red-500/20 rounded-full"
+                  title="Hapus Pertanyaan"
+                >
+                  <i className="fas fa-times text-[10px]"></i>
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Bottom border */}
+      <div className="w-full h-[1px] bg-white/[0.06]"></div>
+
+      {/* Add Button (Editor Only) */}
+      {isEditor && (
+        <div className="mt-12 flex justify-center opacity-0 group-hover/faq:opacity-100 transition-opacity duration-300">
+          <button 
+            onClick={handleAddItem}
+            className="px-8 py-3 border border-dashed border-white/15 hover:border-[var(--hl)]/40 text-white/40 hover:text-[var(--hl)] uppercase tracking-[0.3em] text-[9px] font-sans font-bold transition-all duration-300 bg-white/[0.02] hover:bg-[var(--hl)]/[0.04]"
+          >
+            + Tambah FAQ
+          </button>
+        </div>
+      )}
     </div>
   );
 }

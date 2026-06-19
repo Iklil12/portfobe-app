@@ -27,7 +27,9 @@ export function CinematicStatsBlock({ data, theme, isEditor, isCardPreview }: an
                     <EditableText value={theme?.customTexts?.cinematic_stat2_label || 'Awards'} field="cinematic_stat2_label" entity="appearance" isEditor={isEditor} as="span" className="text-[9px] @md:text-xs uppercase tracking-widest font-bold cine-body" />
                 </motion.div>
                 <motion.div initial={{ opacity: 0 }} {...{ [animationTrigger]: { opacity: 1 } }} transition={{ duration: 0.5, delay: 0.3 }} className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 p-8 @md:p-16`}>
-                    <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>{links.length}</span>
+                    <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>
+                        <EditableText value={theme?.customTexts?.cinematic_stat3_value || String(links.length || '4')} field="cinematic_stat3_value" entity="appearance" isEditor={isEditor} as="span" maxLength={6} />
+                    </span>
                     <EditableText value={theme?.customTexts?.cinematic_stat3_label || 'Links'} field="cinematic_stat3_label" entity="appearance" isEditor={isEditor} as="span" className="text-[9px] @md:text-xs uppercase tracking-widest font-bold cine-body" />
                 </motion.div>
                 <motion.div initial={{ opacity: 0 }} {...{ [animationTrigger]: { opacity: 1 } }} transition={{ duration: 0.5, delay: 0.4 }} className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 group cursor-pointer p-8 @md:p-16`} onClick={() => !isEditor && (window.location.href = `mailto:${userEmail}`)}>

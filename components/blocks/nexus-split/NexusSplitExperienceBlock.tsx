@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { EditableText } from '@/components/ui/EditableText';
+import { motion } from 'framer-motion';
 
 export function NexusSplitExperienceBlock({ theme, isEditor }: any) {
     const customTexts = theme?.customTexts || {};
@@ -33,7 +34,7 @@ export function NexusSplitExperienceBlock({ theme, isEditor }: any) {
     };
 
     const handleAddItem = () => {
-        const newExps = [...experiences, { role: "Role Baru", company: "Perusahaan Baru", duration: "Tahun - Tahun", description: "Deskripsi pekerjaan baru." }];
+        const newExps = [...experiences, { role: "Role Baru", company: "Perusahaan Baru", duration: "2024 - Present", description: "Deskripsi pekerjaan baru." }];
         updateExperiences(newExps);
     };
 
@@ -43,13 +44,20 @@ export function NexusSplitExperienceBlock({ theme, isEditor }: any) {
         updateExperiences(newExps);
     };
 
+    const highlightColor = theme?.themeColor || '#4f46e5';
 
     return (
-        <section className="w-full py-24 md:py-32 px-8 border-b border-white/10 bg-black relative">
-            <h2 className="text-4xl md:text-5xl font-display font-bold uppercase text-white mb-16">
-                <EditableText entity="appearance" field="nexussplit_exp_title" value={getCustomText('nexussplit_exp_title', 'Professional Journey')} isEditor={isEditor} maxLength={40} as="span" />
-            </h2>
-            <div className="flex flex-col">
+        <section className="w-full pt-16 @lg:pt-24 pb-16 px-6 @md:px-12 border-b border-white/5 bg-black relative">
+            
+            {/* Minimal Title matching About block style */}
+            <div className="mb-12 select-none">
+                <span className="font-mono text-[10px] uppercase tracking-[0.25em]" style={{ color: highlightColor }}>
+                  [ 02 / JOURNEY ]
+                </span>
+            </div>
+
+            {/* Vertical Timeline container */}
+            <div className="relative pl-6 @md:pl-8 border-l border-white/10 flex flex-col gap-10 max-w-5xl">
                 {experiences.map((exp: any, index: number) => {
                     const defaultRole = exp.role;
                     const defaultCompany = exp.company;
@@ -57,44 +65,73 @@ export function NexusSplitExperienceBlock({ theme, isEditor }: any) {
                     const defaultDescription = exp.description || '';
                     
                     return (
-                        <div key={index} className="flex flex-col py-6 border-b border-white/10 hover:border-[var(--hl)] transition-colors group relative">
-                            <div className="flex-1">
-                                <h3 className="text-2xl font-bold uppercase text-white group-hover:text-[var(--hl)] transition-colors">
+                        <div key={index} className="group relative flex flex-col gap-2">
+                            {/* Dot node on the vertical timeline line */}
+                            <div 
+                                className="absolute -left-[30px] @md:-left-[38px] top-1.5 w-2.5 h-2.5 rounded-full border bg-black transition-all duration-300 group-hover:scale-125"
+                                style={{ 
+                                    borderColor: 'rgba(255,255,255,0.2)',
+                                    backgroundColor: 'black'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.borderColor = highlightColor;
+                                    e.currentTarget.style.backgroundColor = highlightColor;
+                                    e.currentTarget.style.boxShadow = `0 0 8px ${highlightColor}`;
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                                    e.currentTarget.style.backgroundColor = 'black';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                }}
+                            />
+                            
+                            {/* Time Period in Monospace */}
+                            <span className="font-mono text-[9px] uppercase tracking-widest text-neutral-500 group-hover:text-neutral-300 transition-colors select-none">
+                                <EditableText 
+                                     value={defaultDuration} 
+                                     onChange={(val) => handleUpdateItem(index, 'duration', val)} 
+                                     isEditor={isEditor} 
+                                     maxLength={40} 
+                                     as="span" 
+                                 />
+                            </span>
+
+                            {/* Role / Company */}
+                            <h3 className="text-base @md:text-lg font-bold uppercase text-neutral-200 group-hover:text-white transition-colors flex items-center gap-2">
+                                <EditableText 
+                                     value={defaultRole} 
+                                     onChange={(val) => handleUpdateItem(index, 'role', val)} 
+                                     isEditor={isEditor} 
+                                     maxLength={50} 
+                                     as="span" 
+                                 />
+                                <span className="text-neutral-600 font-light text-sm select-none">/</span>
+                                <span className="font-medium text-sm @md:text-base text-neutral-400 group-hover:text-neutral-200 transition-colors">
                                     <EditableText 
-                                         value={defaultRole} 
-                                         onChange={(val) => handleUpdateItem(index, 'role', val)} 
+                                         value={defaultCompany} 
+                                         onChange={(val) => handleUpdateItem(index, 'company', val)} 
                                          isEditor={isEditor} 
                                          maxLength={50} 
                                          as="span" 
                                      />
-                                </h3>
-                                <div className={`mt-2 flex flex-col md:flex-row md:items-center gap-2 text-xs text-white/50 tracking-widest font-sans mt-2`}>
-                                    <span>
-                                        <EditableText 
-                                             value={defaultCompany} 
-                                             onChange={(val) => handleUpdateItem(index, 'company', val)} 
-                                             isEditor={isEditor} 
-                                             maxLength={50} 
-                                             as="span" 
-                                         />
-                                    </span>
-                                    <span className="hidden md:inline">•</span>
-                                    <span>
-                                        <EditableText 
-                                             value={defaultDuration} 
-                                             onChange={(val) => handleUpdateItem(index, 'duration', val)} 
-                                             isEditor={isEditor} 
-                                             maxLength={40} 
-                                             as="span" 
-                                         />
-                                    </span>
-                                </div>
-                            </div>
-                        
+                                </span>
+                            </h3>
+
+                            {/* Job Description details */}
+                            <p className="text-xs @md:text-sm text-neutral-400 leading-relaxed font-light max-w-2xl mt-0.5">
+                                <EditableText 
+                                     value={defaultDescription} 
+                                     onChange={(val) => handleUpdateItem(index, 'description', val)} 
+                                     isEditor={isEditor} 
+                                     maxLength={200} 
+                                     as="span" 
+                                 />
+                            </p>
+
                             {isEditor && (
                                 <button
                                     onClick={(e) => handleRemoveItem(index, e)}
-                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
+                                    className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg opacity-0 group-hover:opacity-100"
                                     title="Hapus Pengalaman"
                                 >
                                     ✕
@@ -103,11 +140,12 @@ export function NexusSplitExperienceBlock({ theme, isEditor }: any) {
                         </div>
                     );})}
             </div>
+
             {isEditor && (
                 <div className="flex justify-center mt-12 w-full col-span-full">
                     <button
                         onClick={handleAddItem}
-                        className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
+                        className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[9px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
                     >
                         + Tambah Pengalaman
                     </button>

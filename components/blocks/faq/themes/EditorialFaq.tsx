@@ -46,9 +46,9 @@ export default function EditorialFaq({ data, theme, isEditor }: { data: any, the
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto py-24 px-6 md:px-12 bg-[#FDFBF7] dark:bg-[#1a1a1a] text-[#2c2c2c] dark:text-[#eaeaea] group/faq">
-      <div className="flex flex-col items-center mb-20 text-center">
-        <span className="uppercase tracking-[0.2em] text-[10px] font-semibold mb-6 pb-2 border-b border-black/20 dark:border-white/20">
+    <div className="w-full max-w-5xl mx-auto py-12 md:py-24 px-4 md:px-12 bg-[#fdfdfc] text-[#111111] group/faq">
+      <div className="flex flex-col items-center mb-12 md:mb-20 text-center">
+        <span className="uppercase tracking-[0.2em] text-[10px] font-semibold mb-4 md:mb-6 pb-2 border-b border-black/20">
           <EditableText 
             value={theme?.customTexts?.faq_tag || 'The Interview'} 
             field="faq_tag" 
@@ -58,7 +58,7 @@ export default function EditorialFaq({ data, theme, isEditor }: { data: any, the
             maxLength={30} 
           />
         </span>
-        <h2 className="text-5xl md:text-7xl font-serif italic mb-8" style={{ fontFamily: 'var(--font-heading)' }}>
+        <h2 className="text-4xl md:text-7xl font-serif italic mb-4 md:mb-8" style={{ fontFamily: 'var(--font-heading)' }}>
           <EditableText 
             value={theme?.customTexts?.faq_main_title || 'Curiosity & Clarity'} 
             field="faq_main_title" 
@@ -68,7 +68,7 @@ export default function EditorialFaq({ data, theme, isEditor }: { data: any, the
             maxLength={40} 
           />
         </h2>
-        <p className="max-w-xl text-lg font-light leading-relaxed opacity-70" style={{ fontFamily: 'var(--font-body)' }}>
+        <p className="max-w-xl text-sm md:text-lg font-light leading-relaxed opacity-70" style={{ fontFamily: 'var(--font-body)' }}>
           <EditableText 
             value={theme?.customTexts?.faq_sub_title || 'A deeper look into the creative process, structured as an intimate Q&A session. Discover the methodologies that drive exceptional results.'} 
             field="faq_sub_title" 
@@ -84,19 +84,19 @@ export default function EditorialFaq({ data, theme, isEditor }: { data: any, the
         {faqs.map((faq: any, i: number) => {
           const isOpen = openIndex === i;
           return (
-            <div key={i} className="border-t border-black/10 dark:border-white/10 relative group/item">
+            <div key={i} className="border-t border-black/10 relative group/item">
               <button
                 onClick={() => setOpenIndex(isOpen ? null : i)}
-                className="w-full py-8 flex flex-col md:flex-row justify-between items-start md:items-center text-left focus:group"
+                className="w-full py-5 md:py-8 flex flex-row justify-between items-center text-left focus:outline-none"
               >
-                <div className="flex items-baseline gap-8 w-full md:w-5/6">
-                  <span className="text-sm font-serif italic opacity-40 shrink-0">0{i + 1}</span>
-                  <span className={`text-2xl md:text-4xl font-serif transition-colors duration-500 w-full ${isOpen ? 'italic opacity-100' : 'opacity-80 group-hover:opacity-100'}`} style={{ fontFamily: 'var(--font-heading)' }}>
+                <div className="flex items-baseline gap-3 md:gap-8 w-11/12 md:w-5/6">
+                  <span className="text-xs md:text-sm font-serif italic opacity-40 shrink-0">0{i + 1}</span>
+                  <span className={`text-lg md:text-3xl font-serif transition-colors duration-500 w-full ${isOpen ? 'italic opacity-100' : 'opacity-80 group-hover:opacity-100'}`} style={{ fontFamily: 'var(--font-heading)' }}>
                     <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"rounded-[2px] block w-full px-1"} />
                   </span>
                 </div>
-                <div className="w-10 h-10 shrink-0 border border-black/20 dark:border-white/20 rounded-full flex items-center justify-center transition-transform duration-500 mt-4 md:mt-0" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-                  <i className="fas fa-arrow-down text-[10px] opacity-60"></i>
+                <div className="w-8 h-8 md:w-10 md:h-10 shrink-0 border border-black/20 rounded-full flex items-center justify-center transition-transform duration-500" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                  <i className="fas fa-arrow-down text-[8px] md:text-[10px] opacity-60"></i>
                 </div>
               </button>
               <AnimatePresence>
@@ -108,12 +108,12 @@ export default function EditorialFaq({ data, theme, isEditor }: { data: any, the
                     transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     className="overflow-hidden"
                   >
-                    <div className="pb-12 pl-12 md:pl-20 md:pr-24 max-w-4xl">
-                      <div className="text-xl md:text-2xl font-light leading-[1.8] opacity-80 border-l px-6 border-black/20 dark:border-white/20" style={{ fontFamily: 'var(--font-body)' }}>
+                    <div className="pb-8 md:pb-12 pl-6 md:pl-20 pr-4 md:pr-24 max-w-4xl">
+                      <div className="text-sm md:text-2xl font-light leading-[1.6] md:leading-[1.8] opacity-80 border-l px-4 md:px-6 border-black/20" style={{ fontFamily: 'var(--font-body)' }}>
                         <div className="relative">
-                          <span className="font-serif italic text-2xl absolute -left-4 top-0 opacity-50">"</span>
+                          <span className="font-serif italic text-lg md:text-2xl absolute -left-3 md:-left-4 top-0 opacity-50">"</span>
                           <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={250} className={"rounded-[2px] block w-full px-1 min-h-[2rem]"} />
-                          <span className="font-serif italic text-2xl absolute -right-4 bottom-0 opacity-50">"</span>
+                          <span className="font-serif italic text-lg md:text-2xl absolute -right-3 md:-right-4 bottom-0 opacity-50">"</span>
                         </div>
                       </div>
                     </div>
@@ -125,7 +125,7 @@ export default function EditorialFaq({ data, theme, isEditor }: { data: any, the
               {isEditor && (
                 <button 
                   onClick={(e) => handleRemoveItem(i, e)}
-                  className="absolute top-10 right-16 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center border border-red-500/20 rounded-full hover:bg-red-500/10"
+                  className="absolute top-6 right-12 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center border border-red-500/20 rounded-full hover:bg-red-500/10"
                   title="Hapus Pertanyaan"
                 >
                   <i className="fas fa-trash text-xs"></i>
@@ -134,14 +134,14 @@ export default function EditorialFaq({ data, theme, isEditor }: { data: any, the
             </div>
           );
         })}
-        <div className="border-t border-black/10 dark:border-white/10"></div>
+        <div className="border-t border-black/10"></div>
       </div>
 
       {isEditor && (
-        <div className="mt-12 flex justify-center opacity-0 group-hover/faq:opacity-100 transition-opacity duration-300">
+        <div className="mt-8 md:mt-12 flex justify-center opacity-0 group-hover/faq:opacity-100 transition-opacity duration-300">
           <button 
             onClick={handleAddItem}
-            className="flex items-center gap-2 px-6 py-3 border border-black/20 dark:border-white/20 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full font-serif italic text-sm transition-colors"
+            className="flex items-center gap-2 px-6 py-3 border border-black/20 hover:bg-black hover:text-white rounded-full font-serif italic text-sm transition-colors"
           >
             + New Inquiry
           </button>

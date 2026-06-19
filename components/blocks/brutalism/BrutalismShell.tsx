@@ -56,8 +56,13 @@ export function BrutalismShell({ data, theme, children, isMobileView, isCardPrev
             <main className={`relative w-full min-h-screen bg-[#f4f4f0] text-black font-sans selection:bg-black selection:text-white @container overflow-x-hidden brutal-theme flex flex-col ${isCardPreview ? '' : 'p-4 @sm:p-6'}`} style={{ '--hl': themeColor } as React.CSSProperties}>
                 <style dangerouslySetInnerHTML={{
                     __html: `
+                    .brutal-theme { font-family: ${customBodyFont} !important; }
                     .brutal-theme .custom-heading { font-family: ${customHeadingFont} !important; }
                     .brutal-theme .custom-body { font-family: ${customBodyFont} !important; }
+                    .brutal-theme .font-sans { font-family: ${customBodyFont} !important; }
+                    .brutal-theme .font-serif { font-family: ${customHeadingFont} !important; }
+                    .brutal-theme .font-heading { font-family: ${customHeadingFont} !important; }
+                    .brutal-theme .font-body { font-family: ${customBodyFont} !important; }
                     .brutal-theme *:not(i) { font-family: inherit; }
                     
                     .brutal-theme::-webkit-scrollbar { width: 10px; border-left: 3px solid black; }

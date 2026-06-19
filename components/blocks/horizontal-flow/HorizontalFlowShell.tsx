@@ -58,6 +58,17 @@ export function HorizontalFlowShell({ children, theme, isMobileView, isCardPrevi
       }
   };
 
+  const fontHeading = theme?.fontHeading || 'Clash Display';
+  const fontBody = theme?.fontBody || 'Inter';
+  const getFontFamily = (f: string) => {
+      if (!f) return "'Inter', sans-serif";
+      if (f.toLowerCase().includes('space') || f.toLowerCase().includes('mono')) return "'Space Mono', monospace";
+      if (f.toLowerCase().includes('serif') || f.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+      return `'${f}', sans-serif`;
+  };
+  const customHeadingFont = getFontFamily(fontHeading);
+  const customBodyFont = getFontFamily(fontBody);
+
   const fontStyleString = `
     @import url('https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
@@ -70,15 +81,18 @@ export function HorizontalFlowShell({ children, theme, isMobileView, isCardPrevi
         --textMuted: #888888;
         --accent: #FF3366;
         
-        font-family: 'Inter', sans-serif;
+        font-family: ${customBodyFont} !important;
         background-color: var(--bg);
         color: var(--textMain);
         overflow-x: hidden;
 
     }
 
-    .theme-hf .font-display { font-family: 'Clash Display', sans-serif; }
-    .theme-hf .font-body { font-family: 'Inter', sans-serif; }
+    .theme-hf .font-display { font-family: ${customHeadingFont} !important; }
+    .theme-hf .font-body { font-family: ${customBodyFont} !important; }
+    .theme-hf .font-sans { font-family: ${customBodyFont} !important; }
+    .theme-hf .font-serif { font-family: ${customHeadingFont} !important; }
+    .theme-hf .font-heading { font-family: ${customHeadingFont} !important; }
     .theme-hf .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
     
     .theme-hf .text-accent { color: var(--accent); }

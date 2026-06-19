@@ -32,51 +32,134 @@ export function MidnightEmulsionHeroBlock({ data, theme, isEditor, isCardPreview
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const canvasEase = [0.22, 1, 0.36, 1] as any;
+  const canvasEase = [0.16, 1, 0.3, 1] as any;
   const fadeUp = {
     hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 1, ease: canvasEase } }
+    visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: canvasEase } }
   };
 
   return (
-    <div className="relative w-full min-h-[90vh] flex flex-col justify-center p-8 @md:p-12 @lg:p-20 border-b border-white/5 overflow-hidden bg-[#030508]">
+    <div className="relative w-full min-h-screen flex flex-col justify-center p-8 @md:p-12 @lg:p-20 border-b border-white/5 overflow-hidden bg-[#030508]">
+      {/* Grid Pattern Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:40px_40px] z-0 pointer-events-none" />
+      
+      {/* Ambient Glows */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-60">
-        <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-[var(--hl)] opacity-10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-[var(--hl)] opacity-5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] bg-white/5 rounded-full blur-[100px]" />
       </div>
 
-      <header className="absolute top-8 left-8 right-8 @lg:top-12 @lg:left-20 @lg:right-20 z-10 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full overflow-hidden border border-white/20">
+      {/* Viewfinder Overlay Frame */}
+      <div className="absolute inset-4 @md:inset-6 pointer-events-none z-10 border border-white/5">
+        {/* Corner Viewfinder brackets */}
+        <div className="absolute top-0 left-0 border-t border-l border-white/20 w-3 h-3"></div>
+        <div className="absolute top-0 right-0 border-t border-r border-white/20 w-3 h-3"></div>
+        <div className="absolute bottom-0 left-0 border-b border-l border-white/20 w-3 h-3"></div>
+        <div className="absolute bottom-0 right-0 border-b border-r border-white/20 w-3 h-3"></div>
+
+        {/* Viewfinder metadata overlays */}
+        <div className="absolute top-4 left-4 font-mono text-[8px] text-[var(--hl)] uppercase tracking-[0.2em]">
+          SYS_ON // ACTIVE
+        </div>
+        <div className="absolute top-4 right-4 flex items-center gap-1.5 font-mono text-[8px] text-red-500 uppercase tracking-[0.2em]">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+          REC [RAW]
+        </div>
+
+        <div className="absolute bottom-4 left-4 font-mono text-[8px] text-slate-500 uppercase tracking-[0.2em] hidden @md:flex gap-4">
+          <span>FOCAL // 35MM</span>
+          <span>ISO // 400</span>
+        </div>
+        <div className="absolute bottom-4 right-4 font-mono text-[8px] text-slate-500 uppercase tracking-[0.2em] hidden @md:flex gap-4">
+          <span>24.00 FPS</span>
+          <span>SHUTTER // 1/125</span>
+        </div>
+      </div>
+
+      {/* Header Profile Info */}
+      <header className="absolute top-10 left-10 right-10 @lg:top-14 @lg:left-24 @lg:right-24 z-20 flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 shadow-lg relative">
             <LazyImage src={displayAvatar} alt={displayFirstName} className="w-full h-full object-cover grayscale" />
           </div>
-          <span className="font-sans font-bold tracking-[0.2em] text-white uppercase text-xs">
+          <span className="font-sans font-bold tracking-[0.25em] text-white uppercase text-[10px]">
             <EditableText value={displayFirstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
           </span>
         </div>
       </header>
 
-      <div className="relative z-10 mt-20 max-w-5xl mx-auto w-full">
-        <motion.p initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="font-sans text-xs font-bold uppercase tracking-widest text-[var(--hl)] mb-8 flex items-center gap-4">
-          <span className="w-12 h-[1px] bg-[var(--hl)] opacity-50"></span>
+      {/* Hero Typography Content */}
+      <div className="relative z-10 mt-16 max-w-5xl mx-auto w-full flex flex-col justify-center min-h-[60vh]">
+        <motion.p 
+          initial="hidden" 
+          {...{ [animationTrigger]: "visible" }} 
+          viewport={{ once: true, amount: 0 }} 
+          variants={fadeUp} 
+          className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-8 flex items-center gap-4"
+        >
+          <span className="w-10 h-[1.5px] bg-[var(--hl)]"></span>
           <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
         </motion.p>
-        <motion.h1 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="font-serif text-6xl @md:text-8xl @lg:text-[10rem] leading-[0.85] mb-12 uppercase tracking-tighter break-words">
+
+        <motion.h1 
+          initial="hidden" 
+          {...{ [animationTrigger]: "visible" }} 
+          viewport={{ once: true, amount: 0 }} 
+          variants={fadeUp} 
+          className="font-serif text-5xl @md:text-7xl @lg:text-[9.5rem] leading-[0.9] mb-12 uppercase tracking-tighter break-words select-none"
+        >
           <span className="block text-white">
             <EditableText value={displayFirstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
           </span>
-          <span className="block text-stroke text-stroke-hover transition-all duration-500 cursor-default">
+          <span 
+            className="block text-transparent hover:text-white transition-all duration-700 cursor-default"
+            style={{ 
+              WebkitTextStroke: '1px rgba(255, 255, 255, 0.2)',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style as any).WebkitTextStrokeColor = 'var(--hl)'}
+            onMouseLeave={(e) => (e.currentTarget.style as any).WebkitTextStrokeColor = 'rgba(255, 255, 255, 0.2)'}
+          >
             <EditableText value={displayLastName} field="lastName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
           </span>
         </motion.h1>
-        <div className="flex flex-col @md:flex-row @md:items-end gap-8 justify-between">
-            <motion.p initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="font-sans text-slate-400 font-medium leading-relaxed max-w-xl text-sm @md:text-base">
+
+        <div className="flex flex-col @md:flex-row @md:items-end gap-8 justify-between mt-4">
+          <motion.p 
+            initial="hidden" 
+            {...{ [animationTrigger]: "visible" }} 
+            viewport={{ once: true, amount: 0 }} 
+            variants={fadeUp} 
+            className="font-sans text-slate-400 font-medium leading-relaxed max-w-xl text-sm @md:text-base"
+          >
             <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={250} />
-            </motion.p>
-            <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="shrink-0">
-            <button onClick={handleCopyEmail} className={`px-8 py-4 border border-white/10 hover:border-[var(--hl)] bg-white/5 hover:bg-[var(--hl)]/10 text-white font-sans text-xs font-bold uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-3 backdrop-blur-md min-w-[200px] ${radiusClass}`}>
-                {isCopied ? 'Access Granted' : <EditableText value={theme?.customTexts?.midnight_btn_contact || 'Initiate Contact'} field="midnight_btn_contact" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />}
+          </motion.p>
+          
+          <motion.div 
+            initial="hidden" 
+            {...{ [animationTrigger]: "visible" }} 
+            viewport={{ once: true, amount: 0 }} 
+            variants={fadeUp} 
+            className="shrink-0"
+          >
+            <button 
+              onClick={handleCopyEmail} 
+              className={`group relative overflow-hidden px-8 py-4 bg-white/[0.02] hover:bg-[var(--hl)] border border-white/10 hover:border-[var(--hl)] text-white hover:text-[#030508] font-mono text-[10px] font-bold uppercase tracking-widest transition-all duration-500 min-w-[200px] flex items-center justify-center gap-3 backdrop-blur-md shadow-2xl ${radiusClass}`}
+            >
+              {/* Button light sweep */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none z-0" />
+              
+              <span className="relative z-10 flex items-center gap-2">
+                {isCopied ? (
+                  'Access Granted'
+                ) : (
+                  <>
+                    <EditableText value={theme?.customTexts?.midnight_btn_contact || 'Initiate Contact'} field="midnight_btn_contact" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                    <i className="fas fa-arrow-right text-[var(--hl)] group-hover:text-[#030508] transition-colors -rotate-45 group-hover:rotate-0 transition-transform duration-500" />
+                  </>
+                )}
+              </span>
             </button>
-            </motion.div>
+          </motion.div>
         </div>
       </div>
     </div>

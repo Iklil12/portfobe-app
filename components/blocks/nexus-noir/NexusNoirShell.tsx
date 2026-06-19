@@ -151,6 +151,10 @@ export function NexusNoirShell({ children, theme, isMobileView, isCardPreview, i
 
         .font-nn-heading { font-family: "${safeHeading}", 'Outfit', sans-serif; }
         .font-nn-sans { font-family: "${safeBody}", 'Inter', sans-serif; }
+        .nn-theme .font-sans { font-family: "${safeBody}", 'Inter', sans-serif !important; }
+        .nn-theme .font-serif { font-family: "${safeHeading}", 'Outfit', sans-serif !important; }
+        .nn-theme .font-heading { font-family: "${safeHeading}", 'Outfit', sans-serif !important; }
+        .nn-theme .font-body { font-family: "${safeBody}", 'Inter', sans-serif !important; }
         
         .nn-theme {
             background-color: #050505;

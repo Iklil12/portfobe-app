@@ -27,50 +27,84 @@ export function BentoGridStatsBlock({ data, theme, isEditor, isCardPreview }: an
     };
 
     return (
-        <div className="grid auto-rows-[minmax(120px,auto)] gap-4 @lg:gap-6 grid-cols-1 @md:grid-cols-2 @lg:grid-cols-4 w-full">
-            {/* STATS BOX */}
+        <div className="grid gap-3 @lg:gap-6 grid-cols-3 lg:grid-cols-4 w-full">
+            
+            {/* STATS BOX 1 */}
             <motion.div 
                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
-                className={`bento-card flex flex-col items-start justify-center p-8 group @lg:col-span-1 @lg:row-span-1`}
+                className={`bento-card flex flex-col justify-between p-3 @md:p-6 @lg:p-8 min-h-[100px] @md:min-h-[140px] group`}
             >
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">
+                <span className="text-[7px] @md:text-[9px] font-mono text-slate-500 uppercase tracking-widest truncate">
                     <EditableText value={theme?.customTexts?.bento_stat_archive || 'Total Archive'} field="bento_stat_archive" entity="appearance" isEditor={isEditor} as="span" />
                 </span>
-                <h3 className="text-6xl font-black text-white group-hover:text-[var(--hl)] transition-colors">{archiveItems.length}</h3>
+                <div className="flex flex-col @xs:flex-row items-baseline justify-between mt-2 @md:mt-4 gap-1">
+                    <h3 className="text-xl @xs:text-2xl @md:text-4xl @lg:text-5xl font-black text-white group-hover:text-[var(--hl)] transition-colors leading-none">{archiveItems.length}</h3>
+                    <span className="text-[7px] @md:text-[9px] font-mono text-slate-500 uppercase">
+                        <EditableText value={theme?.customTexts?.bento_stat_unit_1 || 'items'} field="bento_stat_unit_1" entity="appearance" isEditor={isEditor} as="span" />
+                    </span>
+                </div>
             </motion.div>
 
-            {/* SOCIAL BOX */}
+            {/* STATS BOX 2 */}
             <motion.div 
                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
-                className={`bento-card flex flex-row p-3 gap-3 @lg:col-span-1 @lg:row-span-1`}
+                className={`bento-card flex flex-col justify-between p-3 @md:p-6 @lg:p-8 min-h-[100px] @md:min-h-[140px] group`}
             >
-                <a href={githubLink?.url || '#'} target="_blank" rel="noreferrer" className={`flex-1 ${cardRadiusClass} bg-[#1a1a1d] border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors group cursor-pointer text-slate-400 min-h-[100px]`}>
-                    <i className={`fab fa-github text-4xl group-hover:scale-110 transition-transform ${!githubLink && 'opacity-20'}`}></i>
-                </a>
-                <a href={linkedinLink?.url || '#'} target="_blank" rel="noreferrer" className={`flex-1 ${cardRadiusClass} bg-[#1a1a1d] border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-[#0a66c2] hover:text-white transition-colors group cursor-pointer text-slate-400 min-h-[100px]`}>
-                    <i className={`fab fa-linkedin-in text-4xl group-hover:scale-110 transition-transform ${!linkedinLink && 'opacity-20'}`}></i>
-                </a>
+                <span className="text-[7px] @md:text-[9px] font-mono text-slate-500 uppercase tracking-widest truncate">
+                    <EditableText value={theme?.customTexts?.bento_stat_label_2 || 'Happy Clients'} field="bento_stat_label_2" entity="appearance" isEditor={isEditor} as="span" />
+                </span>
+                <div className="flex flex-col @xs:flex-row items-baseline justify-between mt-2 @md:mt-4 gap-1">
+                    <h3 className="text-xl @xs:text-2xl @md:text-4xl @lg:text-5xl font-black text-white group-hover:text-[var(--hl)] transition-colors leading-none">
+                        <EditableText value={theme?.customTexts?.bento_stat_val_2 || '12'} field="bento_stat_val_2" entity="appearance" isEditor={isEditor} as="span" />
+                    </h3>
+                    <span className="text-[7px] @md:text-[9px] font-mono text-slate-500 uppercase">
+                        <EditableText value={theme?.customTexts?.bento_stat_unit_2 || 'clients'} field="bento_stat_unit_2" entity="appearance" isEditor={isEditor} as="span" />
+                    </span>
+                </div>
+            </motion.div>
+
+            {/* STATS BOX 3 */}
+            <motion.div 
+                initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                className={`bento-card flex flex-col justify-between p-3 @md:p-6 @lg:p-8 min-h-[100px] @md:min-h-[140px] group`}
+            >
+                <span className="text-[7px] @md:text-[9px] font-mono text-slate-500 uppercase tracking-widest truncate">
+                    <EditableText value={theme?.customTexts?.bento_stat_label_3 || 'Experience'} field="bento_stat_label_3" entity="appearance" isEditor={isEditor} as="span" />
+                </span>
+                <div className="flex flex-col @xs:flex-row items-baseline justify-between mt-2 @md:mt-4 gap-1">
+                    <h3 className="text-xl @xs:text-2xl @md:text-4xl @lg:text-5xl font-black text-white group-hover:text-[var(--hl)] transition-colors leading-none">
+                        <EditableText value={theme?.customTexts?.bento_stat_val_3 || '5+'} field="bento_stat_val_3" entity="appearance" isEditor={isEditor} as="span" />
+                    </h3>
+                    <span className="text-[7px] @md:text-[9px] font-mono text-slate-500 uppercase">
+                        <EditableText value={theme?.customTexts?.bento_stat_unit_3 || 'years'} field="bento_stat_unit_3" entity="appearance" isEditor={isEditor} as="span" />
+                    </span>
+                </div>
             </motion.div>
 
             {/* COLORED CTA BOX */}
-            <Link href={`/${subdomain}/gallery`}  className={`@lg:col-span-2 @lg:row-span-1`} onClick={(e) => { if(isEditor) e.preventDefault(); }}>
+            <Link 
+                href={`/${subdomain}/gallery`} 
+                className="col-span-3 lg:col-span-1 h-full"
+                onClick={(e) => { if(isEditor) e.preventDefault(); }}
+            >
                 <motion.div 
                     initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
-                    className="bento-card bento-card-colored w-full h-full p-8 flex items-center justify-between group cursor-pointer"
+                    className="bento-card bento-card-colored w-full h-full p-3 @md:p-6 @lg:p-8 flex flex-col justify-between min-h-[100px] @md:min-h-[140px] group cursor-pointer"
                 >
-                    <div className="flex flex-col pointer-events-none">
-                        <span className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70">
+                    <div className="flex justify-between items-center opacity-70 group-hover:opacity-100 font-mono text-[7px] @md:text-[9px] uppercase tracking-widest text-black">
+                        <span className="truncate mr-1">
                             <EditableText value={theme?.customTexts?.bento_cta_sub || 'Complete Portfolio'} field="bento_cta_sub" entity="appearance" isEditor={isEditor} as="span" className="pointer-events-auto" />
                         </span>
-                        <h3 className="text-2xl @md:text-3xl font-black tracking-tight pointer-events-auto">
+                        <i className="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300 text-[10px] @md:text-xs shrink-0"></i>
+                    </div>
+                    <div className="mt-2 @md:mt-4 text-black">
+                        <h3 className="text-[10px] @xs:text-xs @md:text-lg @lg:text-xl font-sans font-black tracking-tight leading-tight uppercase line-clamp-2">
                             <EditableText value={theme?.customTexts?.bento_cta_title || 'View All Works'} field="bento_cta_title" entity="appearance" isEditor={isEditor} as="span" />
                         </h3>
                     </div>
-                    <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all duration-300">
-                        <i className="fas fa-arrow-right -rotate-45 text-xl group-hover:rotate-0 transition-transform duration-300"></i>
-                    </div>
                 </motion.div>
             </Link>
+
         </div>
     );
 }

@@ -27,17 +27,19 @@ export const AbsoluteNoir3DBlock = ({ data, theme, isEditor, isCardPreview }: an
         <motion.section initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerGrid} className="p-8 @md:p-12 border-t border-white/10 bg-[#050505] text-white wire-border-b grayscale">
             <motion.div
                 variants={wireframeReveal}
-                className="mb-10 flex justify-between items-end"
+                className="mb-10 flex flex-col items-center text-center gap-3"
             >
-                <div>
+                <div className="flex flex-col items-center">
                     <h2 className="font-sans font-black text-3xl @md:text-5xl tracking-tighter uppercase mb-2">
-                        <EditableText value={theme?.customTexts?.noir_models_title || '3D Models'} field="noir_models_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
+                        <EditableText value={theme?.customTexts?.noir_models_title || '3D Models'} field="noir_models_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" className="inline-block px-1" />
                     </h2>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50">
-                        <EditableText value={theme?.customTexts?.noir_models_subtitle || 'Interactive Viewer'} field="noir_models_subtitle" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50 block">
+                        <EditableText value={theme?.customTexts?.noir_models_subtitle || 'Interactive Viewer'} field="noir_models_subtitle" entity="appearance" isEditor={isEditor} maxLength={25} as="span" className="inline-block px-1" />
                     </span>
                 </div>
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50 bg-white/5 px-2 py-1 border border-white/10">{items3D.length} <EditableText value={theme?.customTexts?.noir_models_assets || 'ASSETS'} field="noir_models_assets" entity="appearance" isEditor={isEditor} maxLength={15} as="span" /></span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50 bg-white/5 px-2 py-1 border border-white/10 mt-1">
+                    {items3D.length} <EditableText value={theme?.customTexts?.noir_models_assets || 'ASSETS'} field="noir_models_assets" entity="appearance" isEditor={isEditor} maxLength={15} as="span" className="inline-block px-1" />
+                </span>
             </motion.div>
 
             <motion.div

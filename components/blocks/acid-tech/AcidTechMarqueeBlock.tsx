@@ -8,6 +8,9 @@ export function AcidTechMarqueeBlock({ data, theme, isEditor, isCardPreview }: a
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
     const profession = data?.profile?.profession || data?.profession || "Creative Director";
 
+    const rawThemeColor = theme?.themeColor || "#00ff00";
+    const themeColor = /^#([0-9A-Fa-f]{3}){1,2}$/i.test(rawThemeColor) ? rawThemeColor : "#00ff00";
+
     const MarqueeContent = ({ isDuplicate = false }) => (
         <div className="flex items-center gap-8 px-4">
             {[...Array(4)].map((_, i) => (
@@ -41,10 +44,11 @@ export function AcidTechMarqueeBlock({ data, theme, isEditor, isCardPreview }: a
             {...{ [animationTrigger]: { opacity: 1 } }} 
             viewport={{ once: true, amount: 0 }} 
             transition={{ duration: 1 }}
-            className="w-full overflow-hidden py-10 -my-10"
+            className="w-full overflow-hidden bg-black font-mono"
+            style={{ '--tc': themeColor } as React.CSSProperties}
         >
-            <div className={`acid-bg text-[#09090b] py-3 overflow-hidden border-y-4 border-[#09090b] -rotate-2 scale-105 relative z-20 shadow-[0_0_50px_rgba(223,255,0,0.2)] my-10 group`}>
-                <div className={`w-[200%] flex animate-marquee group-hover:[animation-play-state:paused] acid-heading font-bold text-2xl @md:text-4xl uppercase tracking-tighter`}>
+            <div className="w-full bg-black text-[var(--tc)] py-4 overflow-hidden border-y border-[var(--tc)]/20 relative z-20 shadow-[0_0_15px_rgba(0,255,0,0.05)] group">
+                <div className="w-[200%] flex animate-marquee group-hover:[animation-play-state:paused] font-bold text-lg @md:text-xl uppercase tracking-[0.15em]">
                     <MarqueeContent />
                     <MarqueeContent isDuplicate={true} />
                 </div>

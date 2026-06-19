@@ -84,8 +84,11 @@ export function ObsidianShellContent({ data, theme, isMobileView, isCardPreview,
               --brand-accent: ${accentColor};
               --accent-text: ${accentText};
           }
+          .obsidian-theme { font-family: ${customBodyFont} !important; }
           .obsidian-theme .font-heading { font-family: ${customHeadingFont} !important; }
           .obsidian-theme .font-body { font-family: ${customBodyFont} !important; }
+          .obsidian-theme .font-sans { font-family: ${customBodyFont} !important; }
+          .obsidian-theme .font-serif { font-family: ${customHeadingFont} !important; }
           .obsidian-theme ::selection { background: rgba(255,255,255,0.2); color: #fff; }
           .obsidian-img-container { overflow: hidden; }
           .obsidian-img-container img { transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1); }

@@ -110,12 +110,12 @@ export function AuraKineticShellContent({ data, theme, isMobileView, isCardPrevi
               --accent-text: ${accentText};
               --hl: ${accentColor};
           }
-          .aura-theme { font-family: ${customBodyFont}; }
-          .aura-theme .font-outfit { font-family: ${customHeadingFont}; }
-          .aura-theme .font-serif { font-family: ${customHeadingFont}; }
-          .aura-theme .font-heading { font-family: ${customHeadingFont}; }
-          .aura-theme .font-sans { font-family: ${customBodyFont}; }
-          .aura-theme .font-body { font-family: ${customBodyFont}; }
+          .aura-theme { font-family: ${customBodyFont} !important; }
+          .aura-theme .font-outfit { font-family: ${customHeadingFont} !important; }
+          .aura-theme .font-serif { font-family: ${customHeadingFont} !important; }
+          .aura-theme .font-heading { font-family: ${customHeadingFont} !important; }
+          .aura-theme .font-sans { font-family: ${customBodyFont} !important; }
+          .aura-theme .font-body { font-family: ${customBodyFont} !important; }
           
           @keyframes blob {
               0% { transform: translate(0px, 0px) scale(1); }

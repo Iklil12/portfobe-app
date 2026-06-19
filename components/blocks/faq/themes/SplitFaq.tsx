@@ -46,10 +46,10 @@ export default function SplitFaq({ data, theme, isEditor }: { data: any, theme?:
   };
 
   return (
-    <div className="w-full flex flex-col md:flex-row min-h-[70vh] group/faq">
-      {/* Kolom Kiri: Gelap */}
-      <div className="w-full md:w-1/2 bg-neutral-950 text-white p-12 md:p-24 flex flex-col justify-center">
-        <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
+    <div className="w-full flex flex-col min-h-[60vh] group/faq">
+      {/* Top Header Block: Dark background, spans 100% width */}
+      <div className="w-full bg-black text-white p-12 @md:p-16 flex flex-col justify-center border-b border-white/5">
+        <h2 className="text-4xl @md:text-6xl font-bold tracking-tighter mb-4" style={{ fontFamily: 'var(--font-heading)' }}>
           <EditableText 
             value={theme?.customTexts?.faq_main_title || 'Deep'} 
             field="faq_main_title" 
@@ -58,7 +58,7 @@ export default function SplitFaq({ data, theme, isEditor }: { data: any, theme?:
             as="span" 
             maxLength={20} 
           />
-          <br />
+          {" "}
           <span className="text-neutral-500">
             <EditableText 
               value={theme?.customTexts?.faq_sub_title || 'Dives'} 
@@ -70,7 +70,7 @@ export default function SplitFaq({ data, theme, isEditor }: { data: any, theme?:
             />
           </span>
         </h2>
-        <p className="text-neutral-400 text-lg max-w-sm leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
+        <p className="text-neutral-400 text-base max-w-xl leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
           <EditableText 
             value={theme?.customTexts?.faq_desc || 'Comprehensive answers to your most pressing questions about our collaboration.'} 
             field="faq_desc" 
@@ -82,35 +82,35 @@ export default function SplitFaq({ data, theme, isEditor }: { data: any, theme?:
         </p>
         
         {isEditor && (
-          <div className="mt-16 opacity-0 group-hover/faq:opacity-100 transition-opacity">
+          <div className="mt-8 opacity-0 group-hover/faq:opacity-100 transition-opacity">
             <button 
               onClick={handleAddItem}
-              className="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-2xl"
+              className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-2xl"
             >
-              <i className="fas fa-plus text-xl"></i>
+              <i className="fas fa-plus text-sm"></i>
             </button>
           </div>
         )}
       </div>
 
-      {/* Kolom Kanan: Terang */}
-      <div className="w-full md:w-1/2 bg-white text-neutral-950 p-12 md:p-24 flex flex-col justify-center">
-        <div className="flex flex-col">
+      {/* Bottom Accordion Block: Darker theme instead of bright white */}
+      <div className="w-full bg-black text-white p-12 @md:p-16 flex flex-col justify-center border-b border-white/5">
+        <div className="flex flex-col w-full">
           {faqs.map((faq: any, i: number) => {
             const isOpen = openIndex === i;
             return (
               <div 
                 key={i} 
-                className={`relative border-b-2 transition-colors duration-300 group/item ${isOpen ? 'border-neutral-900' : 'border-neutral-200 hover:border-neutral-400'}`}
+                className={`relative border-b transition-colors duration-300 group/item ${isOpen ? 'border-neutral-600' : 'border-neutral-800 hover:border-neutral-700'}`}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full py-8 flex justify-between items-center text-left focus:outline-none"
+                  className="w-full py-6 flex justify-between items-center text-left focus:outline-none"
                 >
-                  <span className="text-2xl font-bold tracking-tight w-5/6" style={{ fontFamily: 'var(--font-heading)' }}>
-                    <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"rounded-[2px] block w-full px-1"} />
+                  <span className="text-xl font-bold tracking-tight w-5/6" style={{ fontFamily: 'var(--font-heading)' }}>
+                    <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"rounded-[2px] block w-full px-1 bg-transparent text-white"} />
                   </span>
-                  <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center transition-colors ${isOpen ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-500'}`}>
+                  <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center transition-colors ${isOpen ? 'bg-white text-black' : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'}`}>
                     <i className={`fas ${isOpen ? 'fa-arrow-up' : 'fa-arrow-down'} text-xs transform ${isOpen ? 'rotate-0' : 'rotate-0'}`}></i>
                   </div>
                 </button>
@@ -123,8 +123,8 @@ export default function SplitFaq({ data, theme, isEditor }: { data: any, theme?:
                       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="pb-8 text-neutral-500 text-lg leading-relaxed pr-12" style={{ fontFamily: 'var(--font-body)' }}>
-                        <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={250} className={"rounded-[2px] block w-full px-1 min-h-[2rem]"} />
+                      <div className="pb-6 text-neutral-400 text-base leading-relaxed pr-12" style={{ fontFamily: 'var(--font-body)' }}>
+                        <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={250} className={"rounded-[2px] block w-full px-1 min-h-[2rem] bg-transparent text-neutral-300"} />
                       </div>
                     </motion.div>
                   )}
@@ -134,7 +134,7 @@ export default function SplitFaq({ data, theme, isEditor }: { data: any, theme?:
                 {isEditor && (
                   <button 
                     onClick={(e) => handleRemoveItem(i, e)}
-                    className="absolute top-8 right-16 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center bg-red-50 rounded-full hover:bg-red-100"
+                    className="absolute top-6 right-16 text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center bg-red-950/40 rounded-full hover:bg-red-950"
                     title="Hapus Pertanyaan"
                   >
                     <i className="fas fa-trash text-xs"></i>

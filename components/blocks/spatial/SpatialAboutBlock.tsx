@@ -24,7 +24,7 @@ export function SpatialAboutBlock({ data, theme, isEditor, isCardPreview }: any)
       initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }}
       variants={staggerContainer}
       id="about"
-      className="w-full px-8 py-20 @md:py-32 max-w-screen-xl mx-auto"
+      className="w-full px-8 py-20 @md:py-32 max-w-[1360px] mx-auto"
     >
       <div className="flex flex-col @lg:flex-row gap-16 @lg:gap-24 items-center">
         {/* Image Side */}

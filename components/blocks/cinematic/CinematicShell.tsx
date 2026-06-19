@@ -34,8 +34,13 @@ const ShellContent = ({ children, theme }: any) => {
         <div className={`w-full min-h-screen bg-[#0a0a0a] text-white selection:bg-white selection:text-black relative text-sm cinematic-theme`}>
             <style dangerouslySetInnerHTML={{
                 __html: `
+        .cinematic-theme { font-family: ${customBodyFont} !important; }
         .cine-heading { font-family: ${customHeadingFont} !important; }
         .cine-body { font-family: ${customBodyFont} !important; }
+        .cinematic-theme .font-sans { font-family: ${customBodyFont} !important; }
+        .cinematic-theme .font-serif { font-family: ${customHeadingFont} !important; }
+        .cinematic-theme .font-heading { font-family: ${customHeadingFont} !important; }
+        .cinematic-theme .font-body { font-family: ${customBodyFont} !important; }
         .cine-accent { color: ${themeColor} !important; }
         .cine-border-accent:hover { border-color: ${themeColor} !important; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }

@@ -226,8 +226,10 @@ export const CinematicGalleryShell = ({ children, data, theme, isMobileView = fa
             <main ref={containerRef} className="cinematic-gallery-root bg-[#050505] text-[#f5f5f0] min-h-screen relative overflow-x-hidden selection:bg-[#f5f5f0] selection:text-[#050505]">
                 <style dangerouslySetInnerHTML={{
                     __html: `
+                    .cinematic-gallery-root { font-family: ${customBodyFont} !important; }
                     .cinematic-gallery-root .font-serif, .cinematic-gallery-root .font-display { font-family: ${customHeadingFont} !important; }
                     .cinematic-gallery-root .font-sans, .cinematic-gallery-root .font-body { font-family: ${customBodyFont} !important; }
+                    .cinematic-gallery-root .font-heading { font-family: ${customHeadingFont} !important; }
 
                     /* Hide Scrollbar (Except in Editor) */
                     ${!isEditor ? `

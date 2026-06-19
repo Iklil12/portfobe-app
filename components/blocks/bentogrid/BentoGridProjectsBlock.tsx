@@ -23,7 +23,7 @@ export function BentoGridProjectsBlock({ data, theme, isEditor, isCardPreview }:
     };
 
     return (
-        <div className="grid auto-rows-[minmax(120px,auto)] gap-4 @lg:gap-6 grid-cols-1 @md:grid-cols-2 @lg:grid-cols-4 w-full">
+        <div id="work" className="grid auto-rows-[minmax(120px,auto)] gap-4 @lg:gap-6 grid-cols-1 @md:grid-cols-2 @lg:grid-cols-4 w-full scroll-mt-24">
             {archiveItems.map((p: any, i: number) => {
                 const spanClass = 'col-span-1 aspect-[4/5] ' + (i === 2 || i === 3 ? '@lg:col-span-4 @lg:row-span-3 @lg:aspect-auto' : '@lg:col-span-2 @lg:row-span-3 aspect-square @lg:aspect-auto');
                 const isVideo = p.projectType === 'video';

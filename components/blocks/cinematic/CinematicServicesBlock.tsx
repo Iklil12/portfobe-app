@@ -55,13 +55,13 @@ export function CinematicServicesBlock({ theme, isEditor, isCardPreview }: any) 
     };
 
     return (
-        <section className={`py-20 @md:py-24 px-6 @md:px-12 border-b border-[#1f1f1f] bg-[#050505]`}>
-            <div className="flex justify-between items-end mb-12">
-                <h2 className={`font-black uppercase tracking-tighter text-[clamp(2.5rem,8cqi,5rem)]`}>
+        <section className={`py-16 @md:py-24 px-6 @md:px-12 border-b border-[#1f1f1f] bg-[#050505]`}>
+            <div className="flex justify-between items-end mb-8 @md:mb-12">
+                <h2 className="font-black uppercase tracking-tighter text-3xl @md:text-5xl @lg:text-[clamp(2.5rem,8cqi,5rem)]">
                     <EditableText value={customTexts.cinematic_services_title || 'Services'} field="cinematic_services_title" entity="appearance" isEditor={isEditor} as="span" />
                 </h2>
             </div>
-            <div className="grid grid-cols-1 @md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 @md:grid-cols-2 gap-4 @md:gap-8">
                 {defaultServices.map((s, i) => {
                     const isVisible = customTexts[`cinematic_svc_${s.id}_visible`] !== 'false';
                     if (!isVisible && !isEditor) return null;
@@ -72,7 +72,7 @@ export function CinematicServicesBlock({ theme, isEditor, isCardPreview }: any) 
                             initial={{ opacity: 0, y: 20 }} 
                             {...{ [animationTrigger]: { opacity: isVisible ? 1 : 0.4, y: 0 } }} 
                             transition={{ duration: 0.5, delay: i * 0.1 }} 
-                            className={`border border-[#1f1f1f] p-8 hover:border-white/20 transition-all flex flex-col justify-between relative ${
+                            className={`border border-[#1f1f1f] p-5 @md:p-8 hover:border-white/20 transition-all flex flex-col justify-between relative ${
                                 !isVisible ? 'opacity-40 bg-zinc-950/20' : ''
                             }`}
                         >
@@ -91,10 +91,10 @@ export function CinematicServicesBlock({ theme, isEditor, isCardPreview }: any) 
                             )}
 
                             <div>
-                                <EditableText value={customTexts[s.titleKey] || s.defTitle} field={s.titleKey} entity="appearance" isEditor={isEditor} as="h3" className="font-bold uppercase tracking-tighter text-2xl mb-4 text-white" />
-                                <EditableText value={customTexts[s.descKey] || s.defDesc} field={s.descKey} entity="appearance" isEditor={isEditor} as="p" className="text-gray-500 mb-6 leading-relaxed" />
+                                <EditableText value={customTexts[s.titleKey] || s.defTitle} field={s.titleKey} entity="appearance" isEditor={isEditor} as="h3" className="font-bold uppercase tracking-tighter text-lg @md:text-2xl mb-2 @md:mb-4 text-white" />
+                                <EditableText value={customTexts[s.descKey] || s.defDesc} field={s.descKey} entity="appearance" isEditor={isEditor} as="p" className="text-xs @md:text-sm text-gray-500 mb-4 @md:mb-6 leading-relaxed" />
                             </div>
-                            <div className="flex justify-between items-center font-mono text-sm mt-auto pt-4 border-t border-[#1f1f1f]/50">
+                            <div className="flex justify-between items-center font-mono text-[11px] @md:text-sm mt-auto pt-3 @md:pt-4 border-t border-[#1f1f1f]/50">
                                 <EditableText value={customTexts[s.delivKey] || s.defDeliv} field={s.delivKey} entity="appearance" isEditor={isEditor} as="span" className="text-white/60" />
                                 <EditableText value={customTexts[s.priceKey] || s.defPrice} field={s.priceKey} entity="appearance" isEditor={isEditor} as="span" className="text-white font-bold" />
                             </div>

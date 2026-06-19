@@ -17,7 +17,6 @@ import CinematicGalleryVideoShowcase from './themes/CinematicGalleryVideoShowcas
 import ViewfinderVideoShowcase from './themes/ViewfinderVideoShowcase';
 import AuraKineticVideoShowcase from './themes/AuraKineticVideoShowcase';
 import HorizontalFlowVideoShowcase from './themes/HorizontalFlowVideoShowcase';
-import AcidTechVideoShowcase from './themes/AcidTechVideoShowcase';
 import KineticAvantGardeVideoShowcase from './themes/KineticAvantGardeVideoShowcase';
 import NexusNoirVideoShowcase from './themes/NexusNoirVideoShowcase';
 
@@ -63,11 +62,10 @@ export default function VideoShowcaseRenderer({ themeId, data, theme, isEditor, 
     case 'brutalism':
       return <BrutalistVideoShowcase data={data} theme={theme} isEditor={isEditor} />;
     case 'acid-tech':
-      return <AcidTechVideoShowcase data={data} theme={theme} isEditor={isEditor} />;
-    case 'kinetic-avant-garde':
-      return <KineticAvantGardeVideoShowcase data={data} theme={theme} isEditor={isEditor} />;
     case 'acid':
       return <AcidVideoShowcase data={data} theme={theme} isEditor={isEditor} />;
+    case 'kinetic-avant-garde':
+      return <KineticAvantGardeVideoShowcase data={data} theme={theme} isEditor={isEditor} />;
     case 'absolute-noir':
       return <AbsoluteNoirVideoShowcase data={data} theme={theme} isEditor={isEditor} />;
     case 'nexus-noir':

@@ -52,11 +52,19 @@ export function AuraKineticSkillsBlock({ theme, isEditor }: any) {
 
 
     return (
-        <section className="w-full py-32 px-4 md:px-16 overflow-hidden relative">
-            <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-transparent mix-blend-difference mb-16 outline-text">
-                <EditableText entity="appearance" field="aurakinetic_skills_title" value={getCustomText('aurakinetic_skills_title', 'Core Capabilities')} isEditor={isEditor} maxLength={40} as="span" />
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <section className="w-full py-16 md:py-32 px-6 md:px-16 overflow-hidden relative">
+            <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-16 gap-4 md:gap-6">
+                <div>
+                    <span className="font-mono text-xs tracking-[0.3em] text-[var(--hl)] font-bold uppercase block mb-3">
+                        Expertise
+                    </span>
+                    <h2 className="text-3xl md:text-6xl font-black tracking-tight text-white uppercase leading-none">
+                        <EditableText entity="appearance" field="aurakinetic_skills_title" value={getCustomText('aurakinetic_skills_title', 'Core Capabilities')} isEditor={isEditor} maxLength={40} as="span" />
+                    </h2>
+                </div>
+            </div>
+
+            <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                 {skills.map((skill: any, index: number) => {
                     const defaultName = skill.name;
                     const defaultProficiency = String(skill.level);
@@ -64,55 +72,78 @@ export function AuraKineticSkillsBlock({ theme, isEditor }: any) {
                     const safeVal = isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
                     
                     return (
-                        <div key={index} className="p-8 rounded-3xl bg-gradient-to-br from-white/10 to-transparent border border-white/20 backdrop-blur-md mb-6 hover:scale-[1.02] transition-transform relative">
-                            <div className="flex justify-between items-center mb-4 text-3xl font-bold text-white">
-                                <span>
-                                    <EditableText 
-                                        value={defaultName} 
-                                        onChange={(val) => handleUpdateItem(index, 'name', val)} 
-                                        isEditor={isEditor} 
-                                        maxLength={40} 
-                                        as="span" 
-                                    />
-                                </span>
-                                <span>
-                                    <EditableText 
-                                        value={defaultProficiency} 
-                                        onChange={(val) => handleUpdateItem(index, 'level', val)} 
-                                        isEditor={isEditor} 
-                                        maxLength={3} 
-                                        as="span" 
-                                    />%
-                                </span>
+                        <div 
+                            key={index} 
+                            className="group relative flex flex-col justify-between p-5 md:p-8 rounded-2xl md:rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 hover:border-white/20 backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden"
+                        >
+                            {/* Hover Background Glow */}
+                            <div className="absolute -right-20 -top-20 w-48 h-48 bg-[var(--hl)] opacity-0 group-hover:opacity-[0.08] rounded-full blur-[60px] transition-opacity duration-700 pointer-events-none" />
+
+                            <div>
+                                <div className="flex justify-between items-baseline mb-4 md:mb-6">
+                                    <span className="font-mono text-[10px] md:text-xs text-white/30">
+                                        {(index + 1).toString().padStart(2, '0')}
+                                    </span>
+                                    <span className="font-mono text-[9px] md:text-[10px] tracking-widest text-[var(--hl)] font-bold uppercase">
+                                        Skill level
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between items-end gap-3 md:gap-4">
+                                    <h3 className="text-lg md:text-2xl font-bold text-white tracking-tight uppercase">
+                                        <EditableText 
+                                            value={defaultName} 
+                                            onChange={(val) => handleUpdateItem(index, 'name', val)} 
+                                            isEditor={isEditor} 
+                                            maxLength={40} 
+                                            className="bg-transparent text-white focus:outline-none"
+                                        />
+                                    </h3>
+                                    <span className="text-2xl md:text-4xl font-extrabold text-[var(--hl)] tracking-tighter tabular-nums">
+                                        <EditableText 
+                                            value={defaultProficiency} 
+                                            onChange={(val) => handleUpdateItem(index, 'level', val)} 
+                                            isEditor={isEditor} 
+                                            maxLength={3} 
+                                            className="bg-transparent text-[var(--hl)] focus:outline-none"
+                                        />%
+                                    </span>
+                                </div>
                             </div>
-                            <div className={`w-full h-2 ${isEditor ? '' : 'overflow-hidden'} bg-white/10 rounded-full`}>
+
+                            <div className="relative w-full h-1.5 bg-white/10 rounded-full mt-4 md:mt-8 overflow-visible">
                                 <motion.div 
                                     initial={{ width: 0 }}
                                     whileInView={{ width: `${safeVal}%` }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                                    className={`h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full`}
+                                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-[var(--hl)] to-pink-500 rounded-full shadow-[0_0_12px_var(--hl)]"
                                     style={isEditor ? { width: `${safeVal}%` } : undefined}
-                                ></motion.div>
+                                >
+                                    {/* Glowing slider handle tip on hover */}
+                                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow-[0_0_8px_#fff,0_0_15px_var(--hl)] scale-0 group-hover:scale-100 transition-transform duration-300" />
+                                </motion.div>
                             </div>
                         
                             {isEditor && (
                                 <button
                                     onClick={(e) => handleRemoveItem(index, e)}
-                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
+                                    className="absolute top-4 right-4 bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white rounded-full w-7 h-7 flex items-center justify-center text-[10px] z-30 transition-all duration-300 shadow-md border border-red-500/30"
                                     title="Hapus Skill"
                                 >
                                     ✕
                                 </button>
                             )}
                         </div>
-                    );})}
+                    );
+                })}
             </div>
+
             {isEditor && (
-                <div className="flex justify-center mt-12 w-full col-span-full">
+                <div className="max-w-[1400px] mx-auto flex justify-center mt-12 w-full col-span-full">
                     <button
                         onClick={handleAddItem}
-                        className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
+                        className="px-8 py-4 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10 rounded-full"
                     >
                         + Tambah Skill
                     </button>

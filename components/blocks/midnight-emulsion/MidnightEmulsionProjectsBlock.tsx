@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
 import { EditableText } from '@/components/ui/EditableText';
@@ -11,9 +12,14 @@ export function MidnightEmulsionProjectsBlock({ data, theme, isEditor, isCardPre
   const { setSelectedMedia } = useMidnightEmulsion();
   const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
 
+  const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
   const allProjects = data?.projects || data?.user?.projects || [];
   const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
   const radiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';
+
+  const userPlan = data?.plan || data?.user?.plan || 'FREE';
+  const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+  const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
 
   const canvasEase = [0.22, 1, 0.36, 1] as any;
   const fadeUp = {
@@ -74,6 +80,25 @@ export function MidnightEmulsionProjectsBlock({ data, theme, isEditor, isCardPre
             </motion.div>
           );
         })}
+
+        {/* Gallery Archive Redirect Button */}
+        {showGalleryButton && (
+          <div className="w-full flex justify-center -mt-6 @lg:-mt-16">
+            <Link 
+              href={`/${subdomain}/gallery`}  
+              className={`group relative overflow-hidden px-10 py-5 bg-[#06080c] hover:bg-[var(--hl)] border border-white/10 hover:border-[var(--hl)] text-white hover:text-[#030508] font-mono text-[10px] @md:text-xs font-bold uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-4 shadow-2xl ${radiusClass}`}
+            >
+              {/* Button light sweep */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none z-0" />
+              
+              <span className="relative z-10 flex items-center gap-3">
+                <i className="fas fa-images text-[var(--hl)] group-hover:text-[#030508] transition-colors duration-300 text-xs"></i>
+                <EditableText value={theme?.customTexts?.midnight_archive || 'Open Complete Archive'} field="midnight_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                <i className="fas fa-arrow-right text-xs -rotate-45 group-hover:rotate-0 transition-transform duration-500 text-[var(--hl)] group-hover:text-[#030508]"></i>
+              </span>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

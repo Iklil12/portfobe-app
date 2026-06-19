@@ -5,7 +5,6 @@ import CinematicFaq from './themes/CinematicFaq';
 import BrutalismFaq from './themes/BrutalismFaq';
 import BentogridFaq from './themes/BentogridFaq';
 import SpatialFaq from './themes/SpatialFaq';
-import AcidTechFaq from './themes/AcidTechFaq';
 import KineticAvantGardeFaq from './themes/KineticAvantGardeFaq';
 import AbsoluteNoirFaq from './themes/AbsoluteNoirFaq';
 import ViewfinderFaq from './themes/ViewfinderFaq';
@@ -36,12 +35,12 @@ export default function FaqRenderer({ themeId, data, theme, isEditor }: FaqRende
     case 'brutalism': return <BrutalismFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'bentogrid': return <BentogridFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'spatial': return <SpatialFaq data={data} theme={theme} isEditor={isEditor} />;
-    case 'acid-tech': return <AcidTechFaq data={data} theme={theme} isEditor={isEditor} />;
+    case 'acid-tech': 
+    case 'acid': return <AcidFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'kinetic-avant-garde': return <KineticAvantGardeFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'absolute-noir': return <AbsoluteNoirFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'viewfinder': return <ViewfinderFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'editorial': return <EditorialFaq data={data} theme={theme} isEditor={isEditor} />;
-    case 'acid': return <AcidFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'obsidian-reel': return <ObsidianReelFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'midnight-emulsion': return <MidnightEmulsionFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'nexus-noir': return <NexusNoirFaq data={data} theme={theme} isEditor={isEditor} />;

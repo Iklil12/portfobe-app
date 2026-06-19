@@ -1,6 +1,22 @@
 "use client";
 import React from 'react';
 import { EditableText } from '@/components/ui/EditableText';
+import { motion } from 'framer-motion';
+
+const premiumEase = [0.16, 1, 0.3, 1] as const;
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: premiumEase } }
+};
+
+const getStaggerContainer = (delayStart = 0, staggerGap = 0.1) => ({
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: staggerGap, delayChildren: delayStart }
+  }
+});
 
 export function MidnightEmulsionExperienceBlock({ theme, isEditor }: any) {
     const customTexts = theme?.customTexts || {};
@@ -43,43 +59,53 @@ export function MidnightEmulsionExperienceBlock({ theme, isEditor }: any) {
         updateExperiences(newExps);
     };
 
+    const animationTrigger = isEditor ? "animate" : "whileInView";
 
     return (
-        <section className="w-full py-24 px-6 md:px-12 bg-[#020202] border-t border-white/10">
-            <h2 className="text-3xl md:text-5xl font-mono text-white/90 mb-12 uppercase tracking-tight">
-                <EditableText entity="appearance" field="midnightemulsion_exp_title" value={getCustomText('midnightemulsion_exp_title', 'Professional Journey')} isEditor={isEditor} maxLength={40} as="span" />
-            </h2>
-            <div className="flex flex-col">
-                {experiences.map((exp: any, index: number) => {
-                    const defaultRole = exp.role;
-                    const defaultCompany = exp.company;
-                    const defaultDuration = exp.duration;
-                    const defaultDescription = exp.description || '';
-                    
-                    return (
-                        <div key={index} className="p-6 bg-white/[0.02] border border-white/10 mb-4 hover:bg-white/[0.05] transition-colors relative">
-                            <div className="flex-1">
-                                <h3 className="text-xl font-mono text-white">
-                                    <EditableText 
-                                         value={defaultRole} 
-                                         onChange={(val) => handleUpdateItem(index, 'role', val)} 
-                                         isEditor={isEditor} 
-                                         maxLength={50} 
-                                         as="span" 
-                                     />
-                                </h3>
-                                <div className={`mt-2 flex flex-col md:flex-row md:items-center gap-2 text-xs text-white/50 font-mono uppercase tracking-widest mt-2 block`}>
-                                    <span>
-                                        <EditableText 
-                                             value={defaultCompany} 
-                                             onChange={(val) => handleUpdateItem(index, 'company', val)} 
-                                             isEditor={isEditor} 
-                                             maxLength={50} 
-                                             as="span" 
-                                         />
-                                    </span>
-                                    <span className="hidden md:inline">•</span>
-                                    <span>
+        <motion.section 
+            initial="hidden"
+            {...{ [animationTrigger]: "visible" }}
+            viewport={{ once: true, amount: 0.1 }}
+            variants={getStaggerContainer(0, 0.1)}
+            className="w-full py-16 @md:py-32 px-4 @md:px-12 @lg:px-20 border-b border-white/5 bg-[#030508] relative @container overflow-hidden"
+        >
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-40">
+                <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] bg-[var(--hl)] opacity-5 rounded-full blur-[100px]" />
+            </div>
+
+            <div className="max-w-5xl mx-auto w-full relative z-10">
+                {/* Heading */}
+                <motion.div variants={fadeUp} className="mb-12 @md:mb-20">
+                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2 @md:mb-4 block">
+                        <EditableText entity="appearance" field="midnightemulsion_exp_label" value={getCustomText('midnightemulsion_exp_label', 'Timeline Journey')} isEditor={isEditor} maxLength={30} as="span" />
+                    </span>
+                    <h2 className="font-serif text-3xl @xs:text-4xl @md:text-6xl text-white uppercase tracking-wide">
+                        <EditableText entity="appearance" field="midnightemulsion_exp_title" value={getCustomText('midnightemulsion_exp_title', 'Professional Experience')} isEditor={isEditor} maxLength={40} as="span" />
+                    </h2>
+                </motion.div>
+
+                {/* Experience Timeline */}
+                <div className="flex flex-col">
+                    {experiences.map((exp: any, index: number) => {
+                        const defaultRole = exp.role;
+                        const defaultCompany = exp.company;
+                        const defaultDuration = exp.duration;
+                        const defaultDescription = exp.description || '';
+                        
+                        return (
+                            <motion.div 
+                                key={index} 
+                                variants={fadeUp}
+                                className="group relative flex gap-4 @md:gap-12 pb-8 @md:pb-12 last:pb-0"
+                            >
+                                {/* Timeline Line */}
+                                {index !== experiences.length - 1 && (
+                                    <div className="absolute left-[66px] @xs:left-[86px] @md:left-[216px] top-8 bottom-0 w-px border-l border-dashed border-white/10 group-hover:border-[var(--hl)]/30 transition-colors duration-500"></div>
+                                )}
+
+                                {/* Left: Duration */}
+                                <div className="w-[70px] @xs:w-[90px] @md:w-[220px] shrink-0 flex items-start gap-2 @md:gap-8 justify-between pt-1">
+                                    <span className="font-sans text-[8px] @xs:text-[9px] @md:text-xs font-bold uppercase tracking-widest text-[var(--hl)]">
                                         <EditableText 
                                              value={defaultDuration} 
                                              onChange={(val) => handleUpdateItem(index, 'duration', val)} 
@@ -88,31 +114,66 @@ export function MidnightEmulsionExperienceBlock({ theme, isEditor }: any) {
                                              as="span" 
                                          />
                                     </span>
+                                    {/* Visual Dot on Timeline */}
+                                    <div className="w-2.5 h-2.5 rounded-full bg-[#030508] border border-[var(--hl)] shadow-[0_0_8px_var(--hl)] relative z-10 mt-1 shrink-0"></div>
                                 </div>
-                            </div>
-                        
-                            {isEditor && (
-                                <button
-                                    onClick={(e) => handleRemoveItem(index, e)}
-                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
-                                    title="Hapus Pengalaman"
-                                >
-                                    ✕
-                                </button>
-                            )}
-                        </div>
-                    );})}
-            </div>
-            {isEditor && (
-                <div className="flex justify-center mt-12 w-full col-span-full">
-                    <button
-                        onClick={handleAddItem}
-                        className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
-                    >
-                        + Tambah Pengalaman
-                    </button>
+
+                                {/* Right: Content Card */}
+                                <div className="flex-1 pb-4 pr-2 relative">
+                                    <h3 className="font-serif text-base @xs:text-lg @md:text-2xl text-white group-hover:text-white transition-colors duration-300">
+                                        <EditableText 
+                                             value={defaultRole} 
+                                             onChange={(val) => handleUpdateItem(index, 'role', val)} 
+                                             isEditor={isEditor} 
+                                             maxLength={50} 
+                                             as="span" 
+                                         />
+                                    </h3>
+                                    <h4 className="font-sans text-[8px] @xs:text-[9px] @md:text-[10px] font-bold uppercase tracking-widest text-slate-500 mt-1.5 @md:mt-2">
+                                        <EditableText 
+                                             value={defaultCompany} 
+                                             onChange={(val) => handleUpdateItem(index, 'company', val)} 
+                                             isEditor={isEditor} 
+                                             maxLength={30} 
+                                             as="span"
+                                         />
+                                    </h4>
+                                    <p className="font-sans text-xs @md:text-sm text-slate-400 mt-3 @md:mt-4 leading-relaxed max-w-2xl">
+                                        <EditableText 
+                                             value={defaultDescription} 
+                                             onChange={(val) => handleUpdateItem(index, 'description', val)} 
+                                             isEditor={isEditor} 
+                                             maxLength={300} 
+                                             as="span" 
+                                         />
+                                    </p>
+
+                                    {isEditor && (
+                                        <button
+                                            onClick={(e) => handleRemoveItem(index, e)}
+                                            className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
+                                            title="Hapus Pengalaman"
+                                        >
+                                            ✕
+                                        </button>
+                                    )}
+                                </div>
+                            </motion.div>
+                        );
+                    })}
                 </div>
-            )}
-        </section>
+
+                {isEditor && (
+                    <div className="flex justify-center mt-16 w-full">
+                        <button
+                            onClick={handleAddItem}
+                            className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
+                        >
+                            + Tambah Pengalaman
+                        </button>
+                    </div>
+                )}
+            </div>
+        </motion.section>
     );
 }

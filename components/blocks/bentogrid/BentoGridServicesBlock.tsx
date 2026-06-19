@@ -30,52 +30,87 @@ export function BentoGridServicesBlock({ data, theme, isEditor, isCardPreview }:
     const services = [1, 2, 3];
 
     return (
-        <div className="grid auto-rows-[minmax(120px,auto)] gap-4 @lg:gap-6 grid-cols-1 w-full">
+        <div id="services" className="grid gap-3 @lg:gap-6 grid-cols-2 @lg:grid-cols-3 w-full scroll-mt-24">
+            
+            {/* Title Card */}
             <motion.div 
                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
-                className={`bento-card flex flex-col p-6 @lg:p-10 w-full`}
+                className={`bento-card ${cardStyleClass} ${cardRadiusClass} p-4 @md:p-8 flex flex-col justify-between min-h-[120px] @md:min-h-[180px] relative overflow-hidden col-span-2 @lg:col-span-1`}
             >
-                <h3 className="text-xl @md:text-2xl font-black text-white mb-6 flex items-center gap-3">
-                    <i className="fas fa-briefcase text-[var(--hl)]"></i>
-                    <EditableText value={customTexts.bento_services_title || 'Services'} field="bento_services_title" entity="appearance" isEditor={isEditor} as="span" />
-                </h3>
-                <div className={`grid gap-4 grid-cols-1 @md:grid-cols-2 @lg:grid-cols-3`}>
-                    {services.map((num) => {
-                        const isVisible = customTexts[`bento_service_${num}_visible`] !== 'false';
-                        if (!isVisible && !isEditor) return null;
+                <div className="absolute right-[-10%] bottom-[-10%] opacity-[0.02] pointer-events-none select-none text-[3rem] @md:text-[6rem] font-black tracking-widest uppercase font-mono">
+                    SRV
+                </div>
+                
+                <div className="flex items-center justify-between z-10">
+                    <div className="w-8 h-8 @md:w-10 @md:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[var(--hl)]">
+                        <i className="fas fa-briefcase text-sm"></i>
+                    </div>
+                    <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">
+                        Node.06 // Services
+                    </span>
+                </div>
 
-                        return (
-                            <div 
-                                key={num} 
-                                className={`${cardStyleClass} ${cardRadiusClass} flex flex-col gap-4 p-6 hover:bg-white/5 transition-all group relative ${
-                                    !isVisible ? 'opacity-40 bg-zinc-900/20' : ''
-                                }`}
-                            >
-                                {isEditor && (
-                                    <button
-                                        onClick={() => toggleVisibility(num, isVisible)}
-                                        className={`absolute top-4 right-4 z-30 px-3 py-1 text-[10px] font-mono border transition-all ${
-                                            isVisible 
-                                                ? 'border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white' 
-                                                : 'border-green-500/50 text-green-400 hover:bg-green-500 hover:text-white'
-                                        }`}
-                                        title={isVisible ? "Sembunyikan Layanan" : "Tampilkan Layanan"}
-                                    >
-                                        {isVisible ? "✕ Sembunyikan" : "➕ Tampilkan"}
-                                    </button>
-                                )}
-
-                                <h4 className="font-bold text-white text-xl group-hover:text-[var(--hl)] transition-colors">
-                                    <EditableText value={customTexts[`bento_service_title_${num}`] || `Service ${num}`} field={`bento_service_title_${num}`} entity="appearance" isEditor={isEditor} as="span" />
-                                </h4>
-                                <p className="text-slate-400 font-medium leading-relaxed text-sm">
-                                    <EditableText value={customTexts[`bento_service_desc_${num}`] || 'Service description goes here...'} field={`bento_service_desc_${num}`} entity="appearance" isEditor={isEditor} as="span" />
-                                </p>
-                            </div>
-                        );
-                    })}
+                <div className="mt-3 @md:mt-6 z-10">
+                    <h3 className="text-sm @md:text-xl font-sans font-black text-white leading-tight uppercase tracking-tight">
+                        <EditableText value={customTexts.bento_services_title || 'Services'} field="bento_services_title" entity="appearance" isEditor={isEditor} as="span" />
+                    </h3>
+                    <p className="text-[7px] @md:text-[9px] font-mono text-slate-400 mt-1 @md:mt-2 uppercase tracking-wider">
+                        {services.filter(num => customTexts[`bento_service_${num}_visible`] !== 'false').length} SERVICE CHANNELS ACTIVE
+                    </p>
                 </div>
             </motion.div>
+
+            {/* Service Cards */}
+            {services.map((num) => {
+                const isVisible = customTexts[`bento_service_${num}_visible`] !== 'false';
+                if (!isVisible && !isEditor) return null;
+
+                return (
+                    <motion.div 
+                        key={num}
+                        initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
+                        className={`bento-card ${cardStyleClass} ${cardRadiusClass} p-4 @md:p-6 flex flex-col justify-between min-h-[120px] @md:min-h-[180px] relative group overflow-hidden ${
+                            !isVisible ? 'opacity-40 bg-zinc-900/20' : ''
+                        }`}
+                    >
+                        {/* Hover Glow */}
+                        <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl pointer-events-none opacity-0 group-hover:opacity-[0.06] transition-opacity duration-300 bg-[var(--hl)]" />
+
+                        <div className="flex justify-between items-center z-10">
+                            <span className="text-[7px] @md:text-[9px] font-mono text-slate-500 uppercase tracking-widest">
+                                SRV.0{num}
+                            </span>
+                            
+                            {isEditor && (
+                                <button
+                                    onClick={() => toggleVisibility(num, isVisible)}
+                                    className={`px-2 py-0.5 text-[8px] font-mono border rounded transition-all ${
+                                        isVisible 
+                                            ? 'border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white' 
+                                            : 'border-green-500/50 text-green-400 hover:bg-green-500 hover:text-white'
+                                    }`}
+                                    title={isVisible ? "Sembunyikan Layanan" : "Tampilkan Layanan"}
+                                >
+                                    {isVisible ? "✕ HIDE" : "➕ SHOW"}
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="my-2 @md:my-4 z-10">
+                            <h4 className="font-extrabold text-white text-xs @md:text-base tracking-tight leading-tight group-hover:text-[var(--hl)] transition-colors uppercase">
+                                <EditableText value={customTexts[`bento_service_title_${num}`] || `Service ${num}`} field={`bento_service_title_${num}`} entity="appearance" isEditor={isEditor} as="span" />
+                            </h4>
+                        </div>
+
+                        <div className="pt-2 @md:pt-3 border-t border-white/5 z-10">
+                            <p className="text-slate-400 font-medium leading-relaxed text-[11px] @md:text-sm">
+                                <EditableText value={customTexts[`bento_service_desc_${num}`] || 'Service description goes here...'} field={`bento_service_desc_${num}`} entity="appearance" isEditor={isEditor} as="span" />
+                            </p>
+                        </div>
+                    </motion.div>
+                );
+            })}
+
         </div>
     );
 }

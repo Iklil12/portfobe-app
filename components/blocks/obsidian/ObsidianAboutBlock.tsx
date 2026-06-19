@@ -20,9 +20,9 @@ export function ObsidianAboutBlock({ data, theme, isEditor }: any) {
   const animationTrigger = isEditor ? "animate" : "whileInView";
 
   return (
-    <section id="about" className="py-24 px-6 border-t border-[rgba(255,255,255,0.1)] bg-[#050505]">
+    <section id="about" className="py-16 md:py-24 px-6 border-t border-[rgba(255,255,255,0.1)] bg-[#050505]">
         <div className="max-w-screen-2xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-24">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
                 <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} variants={revealVariants} viewport={{ once: true, amount: 0 }} className="md:col-span-5">
                     <h2 className="font-heading text-3xl md:text-4xl font-medium mb-6">
                         <EditableText value={theme?.customTexts?.obs_about_title || 'About our studio'} field="obs_about_title" entity="appearance" isEditor={isEditor} as="span" maxLength={40} />

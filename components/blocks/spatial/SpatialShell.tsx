@@ -98,7 +98,7 @@ export function SpatialShellContent({ data, theme, isMobileView, isCardPreview, 
           initial={{ y: -100 }} animate={{ y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as any }}
           className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} top-0 left-0 w-full z-50 glass-nav flex justify-center py-4 px-6`}
       >
-          <div className="w-full max-w-6xl flex justify-between items-center">
+          <div className="w-full max-w-[1360px] flex justify-between items-center">
               <span className="font-semibold tracking-tight text-white">
                   <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} /> <EditableText value={theme?.customTexts?.spatial_nav_portfolio || 'Portfolio'} field="spatial_nav_portfolio" entity="appearance" isEditor={isEditor} as="span" className="opacity-40" maxLength={15} />
               </span>
@@ -110,7 +110,7 @@ export function SpatialShellContent({ data, theme, isMobileView, isCardPreview, 
           </div>
       </motion.nav>
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col pt-32 @md:pt-40">
+      <div className="relative z-10 w-full max-w-[1360px] mx-auto flex flex-col pt-32 @md:pt-40">
         {children}
       </div>
 

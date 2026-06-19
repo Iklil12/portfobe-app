@@ -1,4 +1,5 @@
 "use client";
+
 import React from 'react';
 import { EditableText } from '@/components/ui/EditableText';
 import { motion } from 'framer-motion';
@@ -13,9 +14,9 @@ export function ViewfinderSkillsBlock({ theme, isEditor }: any) {
             skills = JSON.parse(customTexts.skills_items);
         } else {
             skills = [
-                { name: 'Frontend Development', level: 95 },
-                { name: 'UI/UX Design', level: 90 },
-                { name: 'Backend Systems', level: 85 },
+                { name: 'Cinematography', level: 95 },
+                { name: 'Video Editing & Grading', level: 90 },
+                { name: 'Lighting Design', level: 85 },
                 { name: 'Creative Direction', level: 90 }
             ];
         }
@@ -50,74 +51,121 @@ export function ViewfinderSkillsBlock({ theme, isEditor }: any) {
         updateSkills(newSkills);
     };
 
-
     return (
-        <section className="w-full py-24 px-4 md:px-8">
-            <h2 className="text-2xl font-mono uppercase tracking-[0.2em] text-white/80 mb-12 flex items-center gap-4 before:w-8 before:h-[1px] before:bg-white/80">
-                <EditableText entity="appearance" field="viewfinder_skills_title" value={getCustomText('viewfinder_skills_title', 'Core Capabilities')} isEditor={isEditor} maxLength={40} as="span" />
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {skills.map((skill: any, index: number) => {
-                    const defaultName = skill.name;
-                    const defaultProficiency = String(skill.level);
-                    const val = parseInt(defaultProficiency || '0', 10);
-                    const safeVal = isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
-                    
-                    return (
-                        <div key={index} className="relative pl-8 py-4 border-l border-white/20 mb-8 before:absolute before:left-[-4px] before:top-6 before:w-2 before:h-2 before:bg-white before:rounded-full">
-                            <div className="flex justify-between items-center mb-4 text-xl uppercase tracking-widest text-white">
-                                <span>
-                                    <EditableText 
-                                        value={defaultName} 
-                                        onChange={(val) => handleUpdateItem(index, 'name', val)} 
-                                        isEditor={isEditor} 
-                                        maxLength={40} 
-                                        as="span" 
-                                    />
-                                </span>
-                                <span>
-                                    <EditableText 
-                                        value={defaultProficiency} 
-                                        onChange={(val) => handleUpdateItem(index, 'level', val)} 
-                                        isEditor={isEditor} 
-                                        maxLength={3} 
-                                        as="span" 
-                                    />%
-                                </span>
-                            </div>
-                            <div className={`w-full h-2 ${isEditor ? '' : 'overflow-hidden'} bg-white/10 h-[1px]`}>
-                                <motion.div 
-                                    initial={{ width: 0 }}
-                                    whileInView={{ width: `${safeVal}%` }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                                    className={`h-full bg-white h-[1px]`}
-                                    style={isEditor ? { width: `${safeVal}%` } : undefined}
-                                ></motion.div>
-                            </div>
-                        
-                            {isEditor && (
-                                <button
-                                    onClick={(e) => handleRemoveItem(index, e)}
-                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
-                                    title="Hapus Skill"
-                                >
-                                    ✕
-                                </button>
-                            )}
-                        </div>
-                    );})}
-            </div>
-            {isEditor && (
-                <div className="flex justify-center mt-12 w-full col-span-full">
-                    <button
-                        onClick={handleAddItem}
-                        className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
-                    >
-                        + Tambah Skill
-                    </button>
+        <section id="skills" className="w-full py-24 px-6 @md:px-12 @lg:px-20 border-b border-white/10 bg-[#050505] relative @container overflow-hidden">
+            {/* Background alignment overlay grids */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:30px_30px] z-0 pointer-events-none" />
+
+            <div className="w-full relative z-10">
+                
+                {/* Header Title - Technical Calibration Brackets */}
+                <div className="flex flex-col items-start mb-16 select-none">
+                  <span className="font-mono text-[9px] text-[var(--primary)] uppercase tracking-[0.3em] font-bold mb-3">
+                    <EditableText entity="appearance" field="viewfinder_skills_label" value={getCustomText('viewfinder_skills_label', 'SYS_CALIBRATION // 01')} isEditor={isEditor} maxLength={40} as="span" />
+                  </span>
+                  <div className="relative border border-white/20 px-6 py-4 rounded-sm bg-white/[0.01]">
+                    {/* Hinge/calibration marks */}
+                    <div className="absolute -top-[5px] -left-[5px] w-2 h-2 bg-[var(--primary)] shadow-[0_0_6px_var(--primary)]"></div>
+                    <div className="absolute -bottom-[5px] -right-[5px] w-2 h-2 bg-[var(--primary)] shadow-[0_0_6px_var(--primary)]"></div>
+                    <h2 className="font-cinema text-3xl @md:text-5xl text-white uppercase tracking-widest leading-none">
+                      <EditableText entity="appearance" field="viewfinder_skills_title" value={getCustomText('viewfinder_skills_title', 'Subsystems')} isEditor={isEditor} maxLength={40} as="span" />
+                    </h2>
+                  </div>
                 </div>
-            )}
+
+                {/* Skills Grid */}
+                <div className="grid grid-cols-1 @md:grid-cols-2 gap-6">
+                    {skills.map((skill: any, index: number) => {
+                        const defaultName = skill.name;
+                        const defaultProficiency = String(skill.level);
+                        const val = parseInt(defaultProficiency || '0', 10);
+                        const safeVal = isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
+                        
+                        // Calculate tick indicators (10 ticks scale)
+                        const activeTicks = Math.round(safeVal / 10);
+
+                        return (
+                            <div 
+                                key={index} 
+                                className="relative border border-white/10 rounded p-5 bg-[#0b0b0b]/60 flex flex-col justify-between group overflow-hidden shadow-lg"
+                            >
+                                {/* Corner visual ticks for camera focus frame */}
+                                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/20"></div>
+                                <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/20"></div>
+                                <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/20"></div>
+                                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20"></div>
+
+                                {/* Tech telemetry header */}
+                                <div className="flex justify-between items-center font-mono text-[7px] text-slate-500 mb-3 uppercase tracking-widest select-none">
+                                    <span>CAP_INDEX // 0{index + 1}</span>
+                                    <span>PEAK // {safeVal}%</span>
+                                </div>
+
+                                {/* Skill Name & Value Display */}
+                                <div className="flex justify-between items-baseline mb-4 text-white">
+                                    <h3 className="font-cinema text-xl uppercase tracking-wider group-hover:text-[var(--primary)] transition-colors duration-300">
+                                        <EditableText 
+                                            value={defaultName} 
+                                            onChange={(val) => handleUpdateItem(index, 'name', val)} 
+                                            isEditor={isEditor} 
+                                            maxLength={40} 
+                                            as="span" 
+                                        />
+                                    </h3>
+                                    <span className="font-mono text-xs text-slate-400 font-bold ml-2">
+                                        <EditableText 
+                                            value={defaultProficiency} 
+                                            onChange={(val) => handleUpdateItem(index, 'level', val)} 
+                                            isEditor={isEditor} 
+                                            maxLength={3} 
+                                            as="span" 
+                                        />%
+                                    </span>
+                                </div>
+
+                                {/* Exposure Compensation / Battery-style Ticks Meter */}
+                                <div className="flex gap-1.5 items-center select-none py-1.5 border-t border-white/5 mt-1">
+                                    {[...Array(10)].map((_, tickIdx) => {
+                                        const isActive = tickIdx < activeTicks;
+                                        return (
+                                            <div 
+                                                key={tickIdx} 
+                                                className={`h-2.5 w-1.5 rounded-[1px] transition-all duration-1000 ${
+                                                    isActive 
+                                                        ? 'bg-[var(--primary)] shadow-[0_0_6px_var(--primary)]' 
+                                                        : 'bg-white/10'
+                                                }`}
+                                                style={{ transitionDelay: `${tickIdx * 50}ms` }}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            
+                                {isEditor && (
+                                    <button
+                                        onClick={(e) => handleRemoveItem(index, e)}
+                                        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg cursor-pointer"
+                                        title="Hapus Skill"
+                                    >
+                                        ✕
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {isEditor && (
+                    <div className="flex justify-center mt-12 w-full">
+                        <button
+                            onClick={handleAddItem}
+                            className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10 cursor-pointer"
+                        >
+                            + Tambah Skill
+                        </button>
+                    </div>
+                )}
+            </div>
         </section>
     );
 }

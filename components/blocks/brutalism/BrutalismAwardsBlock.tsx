@@ -48,7 +48,7 @@ export function BrutalismAwardsBlock({ data, theme, isEditor, isCardPreview }: a
                     >
                         <div
                             className={"p-4 @sm:p-6 flex flex-col @sm:flex-row justify-between items-start @sm:items-center cursor-pointer brutal-hover-invert transition-none"}
-                            onClick={() => { if(!isEditor) setOpenAward(openAward === award.id ? null : award.id) }}
+                            onClick={() => { setOpenAward(openAward === award.id ? null : award.id) }}
                         >
                             <div className={"flex items-center gap-4 @sm:gap-8 w-full @sm:w-auto"}>
                                 <span className={"font-mono text-lg @sm:text-2xl font-black"}>

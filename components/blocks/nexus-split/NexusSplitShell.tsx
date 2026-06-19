@@ -34,8 +34,12 @@ function NexusSplitInner({ children, data, theme, isMobileView, isCardPreview, i
     <div className="w-full bg-black text-[#f4f4f5] selection:bg-[var(--hl)] selection:text-white font-sans overflow-x-hidden @container nexus-theme" style={{ '--hl': highlightColor } as React.CSSProperties}>
         <style dangerouslySetInnerHTML={{
             __html: `
-    .nexus-theme .font-display { font-family: ${customHeadingFont}; }
-    .nexus-theme .font-sans { font-family: ${customBodyFont}; }
+    .nexus-theme { font-family: ${customBodyFont} !important; }
+    .nexus-theme .font-display { font-family: ${customHeadingFont} !important; }
+    .nexus-theme .font-sans { font-family: ${customBodyFont} !important; }
+    .nexus-theme .font-serif { font-family: ${customHeadingFont} !important; }
+    .nexus-theme .font-heading { font-family: ${customHeadingFont} !important; }
+    .nexus-theme .font-body { font-family: ${customBodyFont} !important; }
     
     /* Hilangkan Scrollbar untuk tampilan bersih — scoped ke nexus-theme */
     .nexus-theme ::-webkit-scrollbar { width: 6px; }

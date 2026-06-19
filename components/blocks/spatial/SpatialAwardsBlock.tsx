@@ -1,11 +1,21 @@
 "use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { EditableText } from '@/components/ui/EditableText';
 
 export function SpatialAwardsBlock({ data, theme, isMobileView, isCardPreview, isEditor }: any) {
   const awardItems = data?.certificates || data?.user?.certificates || [];
+
+  // Track expanded certificates
+  const [expandedIndices, setExpandedIndices] = useState<{ [key: number]: boolean }>({});
+
+  const toggleExpand = (index: number) => {
+    setExpandedIndices(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
 
   if (awardItems.length === 0 && !isEditor) return null;
 
@@ -37,27 +47,90 @@ export function SpatialAwardsBlock({ data, theme, isMobileView, isCardPreview, i
         )}
 
         <div className="flex flex-col border-t border-white/10">
-            {awardItems.slice(0, 5).map((award: any, i: number) => (
-                <motion.a
-                    href={award.mediaUrl || '#'} target="_blank" rel="noreferrer" key={i}
-                    {...viewAnim} variants={auraAnim}
-                    className={`flex flex-col @md:flex-row @md:items-center justify-between py-6 border-b border-white/5 group cursor-pointer gap-4 @md:gap-0`}
-                >
-                    <div className="flex items-center gap-4 @md:gap-6 w-full @md:w-auto">
-                        <span className="text-xs font-mono text-slate-500 w-10 shrink-0">{award.year || new Date(award.createdAt).getFullYear()}</span>
-                        <div className="flex flex-col">
-                            <h4 className="text-lg @md:text-xl font-medium text-white group-hover:text-[var(--hl)] transition-colors">{award.title}</h4>
-                            <span className="text-xs text-slate-400 mt-1">{award.issuer}</span>
+            {awardItems.slice(0, 5).map((award: any, i: number) => {
+                const isExpanded = !!expandedIndices[i];
+                const hasMedia = !!award.mediaUrl;
+
+                return (
+                    <motion.div
+                        key={i}
+                        {...viewAnim} variants={auraAnim}
+                        className="flex flex-col border-b border-white/5 group cursor-pointer"
+                        onClick={() => hasMedia && toggleExpand(i)}
+                    >
+                        {/* Header Row */}
+                        <div className="flex flex-row items-center justify-between py-6 gap-4 w-full">
+                            <div className="flex items-center gap-4 @md:gap-6 min-w-0">
+                                <span className="text-xs font-mono text-slate-500 w-10 shrink-0 select-none">
+                                    {award.year || new Date(award.createdAt).getFullYear()}
+                                </span>
+                                <div className="flex flex-col min-w-0">
+                                    <h4 className="text-base @md:text-xl font-medium text-white group-hover:text-[var(--hl)] transition-colors truncate">
+                                        {award.title}
+                                    </h4>
+                                    <span className="text-xs text-slate-400 mt-1 truncate">{award.issuer}</span>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center shrink-0">
+                                <p className="text-sm text-slate-500 line-clamp-1 max-w-xs hidden @lg:block mr-6">
+                                    {award.description}
+                                </p>
+                                
+                                {hasMedia ? (
+                                    <div className={`w-10 h-10 ${radiusClass} border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all`}>
+                                        <i className={`fas fa-chevron-down text-slate-400 group-hover:text-white transition-transform duration-300 ${
+                                            isExpanded ? 'rotate-180 text-[var(--hl, #6366f1)]' : ''
+                                        }`}></i>
+                                    </div>
+                                ) : (
+                                    <div className="w-10 h-10 flex items-center justify-center opacity-20">
+                                        <i className="fas fa-minus text-slate-500 text-xs"></i>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                    <div className={`flex items-center justify-between @md:justify-end w-full @md:w-auto`}>
-                        <p className="text-sm text-slate-500 line-clamp-1 max-w-xs hidden @lg:block">{award.description}</p>
-                        <div className={`w-10 h-10 ${radiusClass} border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all @md:ml-8`}>
-                            <i className="fas fa-arrow-right -rotate-45 text-slate-400 group-hover:text-white transition-colors"></i>
-                        </div>
-                    </div>
-                </motion.a>
-            ))}
+
+                        {/* Collapsible Certificate Photo Dropdown */}
+                        <AnimatePresence initial={false}>
+                            {isExpanded && hasMedia && (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                                    className="overflow-hidden w-full flex flex-col items-center justify-center pb-6"
+                                    onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+                                >
+                                    <div className="relative w-full max-w-2xl aspect-[1.414/1] rounded-2xl border border-white/10 bg-white/[0.02] p-2.5 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] group/cert overflow-hidden mt-2">
+                                        {/* Neon Glow overlay */}
+                                        <div className="absolute inset-0 bg-[var(--hl, #6366f1)]/5 blur-[40px] opacity-0 group-hover/cert:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                                        
+                                        <img 
+                                            src={award.mediaUrl} 
+                                            alt={award.title} 
+                                            className="w-full h-full rounded-xl object-contain transition-transform duration-500 group-hover/cert:scale-[1.01]"
+                                        />
+                                        
+                                        {/* Full Image Link Tag */}
+                                        <div className="absolute bottom-4 right-4 opacity-0 group-hover/cert:opacity-100 transition-opacity duration-300">
+                                            <a 
+                                                href={award.mediaUrl} 
+                                                target="_blank" 
+                                                rel="noreferrer" 
+                                                className="px-3.5 py-1.5 bg-black/80 border border-white/15 hover:border-white/30 text-[10px] font-mono text-white rounded-lg flex items-center gap-2 backdrop-blur-md shadow-lg"
+                                            >
+                                                <span>VIEW FULL IMAGE</span>
+                                                <i className="fas fa-external-link-alt text-[8px]"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </motion.div>
+                );
+            })}
         </div>
     </div>
   );

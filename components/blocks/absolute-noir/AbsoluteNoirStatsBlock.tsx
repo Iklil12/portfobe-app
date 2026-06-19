@@ -42,7 +42,7 @@ export const AbsoluteNoirStatsBlock = ({ data, theme, isEditor, isCardPreview }:
                     <EditableText value={theme?.customTexts?.noir_stats_uptime || '[ SYSTEM_UPTIME ]'} field="noir_stats_uptime" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
                 </span>
                 <h3 className="font-sans font-black text-6xl @md:text-8xl tracking-tighter leading-none">
-                    <EditableText value={theme?.customTexts?.noir_stats_uptime_val || '99'} field="noir_stats_uptime_val" entity="appearance" isEditor={isEditor} as="span" maxLength={5} /><span className="text-2xl @md:text-4xl">%</span>
+                    <EditableText value={theme?.customTexts?.noir_stats_uptime_val || '99'} field="noir_stats_uptime_val" entity="appearance" isEditor={isEditor} as="span" maxLength={5} />
                 </h3>
             </motion.div>
         </motion.section>

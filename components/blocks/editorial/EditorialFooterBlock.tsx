@@ -27,7 +27,7 @@ export function EditorialFooterBlock({ data, theme, isEditor, isCardPreview }: a
     };
 
     return (
-        <footer className={`w-full bg-[#fdfdfc] flex flex-col items-center justify-center pt-32 pb-12 px-6 @md:px-12 @lg:px-20`}>
+        <footer className={`w-full bg-[#fdfdfc] flex flex-col items-center justify-center pt-12 @md:pt-32 pb-12 px-6 @md:px-12 @lg:px-20`}>
 
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="flex flex-col items-center text-center w-full max-w-4xl mx-auto mb-24 @md:mb-40">
                 <span className="font-sans text-[10px] @md:text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-8">

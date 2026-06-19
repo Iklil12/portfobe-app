@@ -51,7 +51,7 @@ export default function MonolithVideoShowcase({ data, theme, isEditor }: any) {
           </div>
 
           {/* Video Container (The Monolith) */}
-          <div className="w-full aspect-[21/9] md:aspect-video bg-black shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/5 relative z-20 pointer-events-auto overflow-hidden">
+          <div className="w-full aspect-video bg-black shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/5 relative z-20 pointer-events-auto overflow-hidden">
              {isAutoPlay ? (
                <div className="w-full h-full opacity-80 hover:opacity-100 transition-all duration-700 pointer-events-auto">
                  <UniversalPlayer mediaUrl={featuredVideo.mediaUrl} title={featuredVideo.title} autoPlayMode={true} />

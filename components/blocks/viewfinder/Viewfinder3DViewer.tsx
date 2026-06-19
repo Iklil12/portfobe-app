@@ -3,7 +3,7 @@ import Script from 'next/script';
 
 const ModelViewer = 'model-viewer' as any;
 
-export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: { mediaUrl: string, bgColor?: string, alwaysShowControls?: boolean }) {
+export function Viewfinder3DViewer({ mediaUrl, bgColor }: { mediaUrl: string, bgColor?: string }) {
   const [exposure, setExposure] = useState(1.0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [inView, setInView] = useState(false);
@@ -29,16 +29,14 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
     };
   }, []);
 
-  // Controls are always visible on mobile/touch OR when explicitly requested
-  const controlsClass = alwaysShowControls
-    ? "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 p-1 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full z-30 mv3d-controls-mobile"
-    : "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 p-1 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full opacity-0 group-hover/mv:opacity-100 [@media(hover:none)]:opacity-100 transition-all duration-500 translate-y-3 group-hover/mv:translate-y-0 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:mv3d-controls-mobile z-30";
+  // Controls are always visible and interactive in the Viewfinder theme.
+  const controlsClass = "absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 p-1.5 bg-black/80 backdrop-blur-md border border-white/20 rounded-full z-30 pointer-events-auto transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)]";
 
   return (
-    <div ref={containerRef} className="w-full aspect-video min-h-[300px] @md:min-h-[400px] relative group/mv" style={bgColor ? { backgroundColor: bgColor } : {}}>
+    <div ref={containerRef} className="w-full h-full relative group/mv" style={bgColor ? { backgroundColor: bgColor } : {}}>
       {/* Load library in background regardless of view state for better performance */}
       <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js" strategy="lazyOnload" />
-
+      
       {inView ? (
         <>
           <ModelViewer
@@ -59,7 +57,7 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
               <div className="mv3d-cube w-10 h-10 perspective-[200px]">
                 <div className="mv3d-cube-inner w-full h-full relative" style={{ transformStyle: 'preserve-3d', animation: 'mv3d-spin 3s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite' }}>
                   {[...Array(6)].map((_, i) => (
-                    <div key={i} className="mv3d-face absolute w-full h-full border border-white/20 rounded-sm bg-white/5" style={{
+                    <div key={i} className="mv3d-face absolute w-full h-full border border-white/25 rounded-sm bg-white/5" style={{
                       transform: i === 0 ? 'rotateY(0deg) translateZ(20px)' :
                         i === 1 ? 'rotateY(90deg) translateZ(20px)' :
                           i === 2 ? 'rotateY(180deg) translateZ(20px)' :
@@ -70,14 +68,18 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
                   ))}
                 </div>
               </div>
-              <span className="text-[9px] font-bold tracking-[0.25em] uppercase opacity-50" style={{ color: 'inherit' }}>Loading 3D</span>
+              <span className="text-[9px] font-bold tracking-[0.25em] uppercase opacity-50 text-white">Loading 3D</span>
             </div>
 
-            {/* Minimalist Floating Controls */}
+            {/* Viewfinder-specific Floating Controls */}
             <div className={controlsClass}>
-              {/* Exposure Slider */}
-              <div className="flex items-center gap-2 px-2 border-r border-white/10">
-                <i className="fas fa-sun text-[8px] text-white/50"></i>
+              {/* Exposure Control */}
+              <div className="flex items-center gap-2 px-2 border-r border-white/10 select-none">
+                {/* SVG Sun Icon */}
+                <svg className="w-3.5 h-3.5 text-white/60 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="5" />
+                  <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                </svg>
                 <input
                   type="range" min="0.5" max="2" step="0.1"
                   value={exposure}
@@ -85,19 +87,26 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
                   className="w-14 @md:w-24 h-[3px] bg-white/20 rounded-lg appearance-none cursor-pointer accent-white"
                 />
               </div>
-              {/* Auto Rotate Toggle */}
+              
+              {/* Auto Rotate Control */}
               <button
-                onClick={() => setAutoRotate(!autoRotate)}
-                className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${autoRotate ? 'bg-white text-black' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setAutoRotate(!autoRotate);
+                }}
+                className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer pointer-events-auto ${autoRotate ? 'bg-white text-black' : 'bg-white/15 text-white hover:bg-white/25'}`}
                 title="Toggle Auto-Rotate"
               >
-                <i className={`fas fa-sync-alt text-[8px] ${autoRotate ? 'animate-spin-slow' : ''}`}></i>
+                {/* SVG Rotate Icon */}
+                <svg className={`w-3.5 h-3.5 ${autoRotate ? 'animate-spin-slow' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89" />
+                </svg>
               </button>
             </div>
           </ModelViewer>
         </>
       ) : (
-        /* Static Placeholder sebelum masuk viewport */
+        /* Static Placeholder before viewport entrance */
         <div className="mv3d-loader absolute inset-0 flex flex-col items-center justify-center gap-4 z-10" style={{ background: bgColor || 'transparent' }}>
           <div className="mv3d-cube w-10 h-10 perspective-[200px]">
             <div className="mv3d-cube-inner w-full h-full relative" style={{ transformStyle: 'preserve-3d', animation: 'mv3d-spin 3s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite' }}>
@@ -113,7 +122,7 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
               ))}
             </div>
           </div>
-          <span className="text-[9px] font-bold tracking-[0.25em] uppercase opacity-50" style={{ color: 'inherit' }}>Ready to Load 3D</span>
+          <span className="text-[9px] font-bold tracking-[0.25em] uppercase opacity-50 text-white">Ready to Load 3D</span>
         </div>
       )}
 

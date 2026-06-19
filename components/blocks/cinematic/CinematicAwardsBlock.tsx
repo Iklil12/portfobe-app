@@ -33,16 +33,14 @@ export function CinematicAwardsBlock({ data, theme, isEditor, isCardPreview }: a
                         const isOpen = openAward === award.id;
                         return (
                             <motion.div key={`award-${i}`} initial={{ opacity: 0, y: 20 }} {...{ [animationTrigger]: { opacity: 1, y: 0 } }} transition={{ duration: 0.5, delay: i * 0.1 }} className="border-b border-[#1f1f1f] @container">
-                                <div className={`award-row flex justify-between items-center cursor-pointer text-gray-400 py-6 @md:py-8 flex-wrap @md:flex-nowrap`} onClick={() => !isEditor && setOpenAward(isOpen ? null : award.id)}>
-                                    <div className={`flex justify-between items-center w-full @md:w-auto mb-2 @md:mb-0`}>
-                                        <h3 className={`font-bold uppercase tracking-tighter cine-heading ${isOpen ? 'text-white' : ''} text-xl @md:text-2xl`}>{award.title}</h3>
-                                        <span className="@md:hidden font-mono text-[10px]">{award.year || new Date(award.createdAt).getFullYear()}</span>
+                                <div className={`award-row flex flex-row justify-between items-center cursor-pointer text-gray-400 py-6 @md:py-8 gap-4 w-full`} onClick={() => setOpenAward(isOpen ? null : award.id)}>
+                                    <div className="flex flex-col min-w-0 flex-1">
+                                        <h3 className={`font-bold uppercase tracking-tighter cine-heading ${isOpen ? 'text-white' : ''} text-xl @md:text-2xl truncate`}>{award.title}</h3>
+                                        <span className="text-[10px] @md:text-sm uppercase tracking-widest cine-body mt-1 truncate">{award.issuer}</span>
                                     </div>
 
-                                    <div className="hidden @md:flex flex-1 justify-center"><span className="text-[10px] @md:text-sm uppercase tracking-widest cine-body">{award.issuer}</span></div>
-
-                                    <div className={`flex items-center gap-6`}>
-                                        <span className="hidden @md:block font-mono text-sm">{award.year || new Date(award.createdAt).getFullYear()}</span>
+                                    <div className={`flex items-center gap-4 shrink-0`}>
+                                        <span className="font-mono text-xs @md:text-sm">{award.year || new Date(award.createdAt).getFullYear()}</span>
                                         <i className={`fas fa-arrow-right transition-transform duration-300 text-sm ${isOpen ? '-rotate-45 text-white' : 'rotate-45'}`}></i>
                                     </div>
                                 </div>

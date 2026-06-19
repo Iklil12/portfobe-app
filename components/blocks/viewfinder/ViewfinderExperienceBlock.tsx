@@ -1,6 +1,8 @@
 "use client";
+
 import React from 'react';
 import { EditableText } from '@/components/ui/EditableText';
+import { motion } from 'framer-motion';
 
 export function ViewfinderExperienceBlock({ theme, isEditor }: any) {
     const customTexts = theme?.customTexts || {};
@@ -12,9 +14,9 @@ export function ViewfinderExperienceBlock({ theme, isEditor }: any) {
             experiences = JSON.parse(customTexts.experience_items);
         } else {
             experiences = [
-                { role: 'Senior Lead Developer', company: 'Tech Corp', duration: '2022 - Present', description: 'Memimpin tim arsitek antarmuka dalam merumuskan ulang batasan antara seni digital dan pengalaman pengguna.' },
-                { role: 'Frontend Engineer', company: 'Startup Inc', duration: '2019 - 2022', description: 'Merancang sistem desain skala besar untuk perusahaan fintech, berfokus pada tipografi dan interaksi mikro.' },
-                { role: 'UI Designer', company: 'Creative Agency', duration: '2017 - 2019', description: 'Merancang aset visual kreatif untuk berbagai klien global terkemuka.' }
+                { role: 'Lead Director of Photography', company: 'Cinema Labs Studio', duration: '2022 - PRESENT', description: 'Memimpin tim pengarah gaya visual dalam memproduksi film komersial dan naratif berskala internasional, mengoptimalkan tata cahaya analog dan alur kerja sensor digital Alexa.' },
+                { role: 'Senior Editor & Colorist', company: 'Vanguard Post Co', duration: '2019 - 2022', description: 'Bertanggung jawab atas penyelarasan warna utama (primary grading) dan proses editorial ritmis untuk video klip musik premium serta iklan televisi kelas atas.' },
+                { role: 'Creative Director', company: 'Aperture Agency', duration: '2017 - 2019', description: 'Merancang konsep visual kreatif, mengorganisasi papan cerita (storyboards), serta mengeksekusi visi sutradara utama dengan presisi framing tingkat tinggi.' }
             ];
         }
     } catch (e) {
@@ -43,76 +45,119 @@ export function ViewfinderExperienceBlock({ theme, isEditor }: any) {
         updateExperiences(newExps);
     };
 
-
     return (
-        <section className="w-full py-24 px-4 md:px-8">
-            <h2 className="text-2xl font-mono uppercase tracking-[0.2em] text-white/80 mb-12 flex items-center gap-4 before:w-8 before:h-[1px] before:bg-white/80">
-                <EditableText entity="appearance" field="viewfinder_exp_title" value={getCustomText('viewfinder_exp_title', 'Professional Journey')} isEditor={isEditor} maxLength={40} as="span" />
-            </h2>
-            <div className="flex flex-col">
-                {experiences.map((exp: any, index: number) => {
-                    const defaultRole = exp.role;
-                    const defaultCompany = exp.company;
-                    const defaultDuration = exp.duration;
-                    const defaultDescription = exp.description || '';
-                    
-                    return (
-                        <div key={index} className="relative pl-8 py-4 border-l border-white/20 mb-8 before:absolute before:left-[-4px] before:top-6 before:w-2 before:h-2 before:bg-white before:rounded-full">
-                            <div className="flex-1">
-                                <h3 className="text-xl uppercase tracking-widest text-white">
-                                    <EditableText 
-                                         value={defaultRole} 
-                                         onChange={(val) => handleUpdateItem(index, 'role', val)} 
-                                         isEditor={isEditor} 
-                                         maxLength={50} 
-                                         as="span" 
-                                     />
-                                </h3>
-                                <div className={`mt-2 flex flex-col md:flex-row md:items-center gap-2 text-xs font-mono text-white/40`}>
-                                    <span>
-                                        <EditableText 
-                                             value={defaultCompany} 
-                                             onChange={(val) => handleUpdateItem(index, 'company', val)} 
-                                             isEditor={isEditor} 
-                                             maxLength={50} 
-                                             as="span" 
-                                         />
-                                    </span>
-                                    <span className="hidden md:inline">•</span>
-                                    <span>
-                                        <EditableText 
-                                             value={defaultDuration} 
-                                             onChange={(val) => handleUpdateItem(index, 'duration', val)} 
-                                             isEditor={isEditor} 
-                                             maxLength={40} 
-                                             as="span" 
-                                         />
-                                    </span>
-                                </div>
-                            </div>
-                        
-                            {isEditor && (
-                                <button
-                                    onClick={(e) => handleRemoveItem(index, e)}
-                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
-                                    title="Hapus Pengalaman"
-                                >
-                                    ✕
-                                </button>
-                            )}
-                        </div>
-                    );})}
-            </div>
-            {isEditor && (
-                <div className="flex justify-center mt-12 w-full col-span-full">
-                    <button
-                        onClick={handleAddItem}
-                        className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
-                    >
-                        + Tambah Pengalaman
-                    </button>
+        <section id="experience" className="w-full py-24 px-6 @md:px-12 @lg:px-20 border-b border-white/10 bg-[#050505] relative @container overflow-hidden">
+            {/* Background HUD Grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:40px_40px] z-0 pointer-events-none" />
+
+            <div className="w-full relative z-10">
+                
+                {/* Header Title - Ledger Status Bar */}
+                <div className="flex items-center gap-4 mb-16 select-none">
+                  <div className="w-1.5 h-14 bg-[var(--primary)] shadow-[0_0_8px_var(--primary)] rounded-[1px]"></div>
+                  <div className="flex flex-col">
+                    <span className="font-mono text-[9px] text-slate-500 uppercase tracking-widest leading-none mb-2">
+                      <EditableText entity="appearance" field="viewfinder_exp_label" value={getCustomText('viewfinder_exp_label', 'LOG_FILE // EXPS')} isEditor={isEditor} maxLength={40} as="span" />
+                    </span>
+                    <h2 className="font-cinema text-4xl @md:text-6xl text-white uppercase tracking-wider leading-none">
+                      <EditableText entity="appearance" field="viewfinder_exp_title" value={getCustomText('viewfinder_exp_title', 'Experience')} isEditor={isEditor} maxLength={40} as="span" />
+                    </h2>
+                  </div>
                 </div>
-            )}
+
+                {/* Timeline Entries */}
+                <div className="flex flex-col gap-12 relative">
+                    {experiences.map((exp: any, index: number) => {
+                        const defaultRole = exp.role;
+                        const defaultCompany = exp.company;
+                        const defaultDuration = exp.duration;
+                        const defaultDescription = exp.description || '';
+                        
+                        return (
+                            <div key={index} className="relative group select-none">
+                                <div className="grid grid-cols-1 @md:grid-cols-12 gap-4 @md:gap-8 relative">
+                                    
+                                    {/* Left Column: Duration */}
+                                    <div className="@md:col-span-3 font-mono text-[9px] @md:text-xs text-[var(--primary)] font-bold tracking-widest uppercase flex items-center md:justify-start">
+                                        <span className="border border-[var(--primary)]/30 px-3 py-1.5 rounded bg-[#0b0b0b]/60 shadow-sm flex items-center gap-1.5">
+                                            <span className="w-1 h-1 rounded-full bg-[var(--primary)] animate-pulse"></span>
+                                            <EditableText 
+                                                value={defaultDuration} 
+                                                onChange={(val) => handleUpdateItem(index, 'duration', val)} 
+                                                isEditor={isEditor} 
+                                                maxLength={40} 
+                                                as="span" 
+                                            />
+                                        </span>
+                                    </div>
+                                    
+                                    {/* Middle Dot / Connector Line (Desktop only) */}
+                                    <div className="absolute left-[25%] top-0 bottom-0 w-px bg-white/10 hidden @md:block pointer-events-none">
+                                        <div className="absolute top-[18px] left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-zinc-800 border border-white/20 group-hover:border-[var(--primary)] group-hover:bg-[var(--primary)] group-hover:shadow-[0_0_8px_var(--primary)] transition-all duration-300"></div>
+                                    </div>
+
+                                    {/* Right Column: Role Title, Company, and Description */}
+                                    <div className="@md:col-span-9 pl-0 @md:pl-10 pb-8 border-b border-white/5 last:border-b-0">
+                                        <h3 className="font-cinema text-2xl @md:text-3xl uppercase tracking-wider text-white group-hover:text-[var(--primary)] transition-colors duration-300">
+                                            <EditableText 
+                                                value={defaultRole} 
+                                                onChange={(val) => handleUpdateItem(index, 'role', val)} 
+                                                isEditor={isEditor} 
+                                                maxLength={50} 
+                                                as="span" 
+                                            />
+                                        </h3>
+                                        
+                                        <div className="mt-2.5 font-mono text-[9px] text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                                            <span>STUDIO //</span> 
+                                            <span className="text-white font-bold">
+                                                <EditableText 
+                                                    value={defaultCompany} 
+                                                    onChange={(val) => handleUpdateItem(index, 'company', val)} 
+                                                    isEditor={isEditor} 
+                                                    maxLength={50} 
+                                                    as="span" 
+                                                />
+                                            </span>
+                                        </div>
+                                        
+                                        <p className="text-xs @md:text-sm text-[#F3F3F1]/75 leading-relaxed mt-4 max-w-2xl text-justify font-medium">
+                                            <EditableText 
+                                                value={defaultDescription} 
+                                                onChange={(val) => handleUpdateItem(index, 'description', val)} 
+                                                isEditor={isEditor} 
+                                                maxLength={300} 
+                                                as="span" 
+                                            />
+                                        </p>
+                                    </div>
+                                </div>
+                            
+                                {isEditor && (
+                                    <button
+                                        onClick={(e) => handleRemoveItem(index, e)}
+                                        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg cursor-pointer"
+                                        title="Hapus Pengalaman"
+                                    >
+                                        ✕
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {isEditor && (
+                    <div className="flex justify-center mt-12 w-full">
+                        <button
+                            onClick={handleAddItem}
+                            className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10 cursor-pointer"
+                        >
+                            + Tambah Pengalaman
+                        </button>
+                    </div>
+                )}
+            </div>
         </section>
     );
 }

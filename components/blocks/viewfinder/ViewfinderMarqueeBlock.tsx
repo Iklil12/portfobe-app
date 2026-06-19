@@ -8,10 +8,10 @@ export function ViewfinderMarqueeBlock({ data, theme, isEditor }: any) {
   const animationTrigger = isEditor ? "animate" : "whileInView";
 
   const marqueeItems = [
-    { type: 'editable', field: 'vf_mq_1', default: 'RAW_DATA_STREAM' },
-    { type: 'editable', field: 'vf_mq_2', default: 'UNCOMPRESSED_VIDEO' },
-    { type: 'editable', field: 'vf_mq_3', default: 'NO_SIGNAL_LOSS' },
-    { type: 'editable', field: 'vf_mq_4', default: 'COLOR_GRADE_ACTIVE' },
+    { type: 'editable', field: 'vf_mq_1', default: 'LIDAR_SCAN_ACTIVE' },
+    { type: 'editable', field: 'vf_mq_2', default: 'RAW_UNCOMPRESSED_VIDEO' },
+    { type: 'editable', field: 'vf_mq_3', default: 'ZERO_SIGNAL_LOSS' },
+    { type: 'editable', field: 'vf_mq_4', default: 'COLOR_GRADE_ACES' },
   ];
 
   const canvasEase = [0.16, 1, 0.3, 1] as any;
@@ -24,16 +24,27 @@ export function ViewfinderMarqueeBlock({ data, theme, isEditor }: any) {
     <motion.div
       initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}
       variants={revealVariants}
-      className="w-full border-b border-white/10 py-3 overflow-hidden bg-[#050505] shrink-0"
+      className="w-full border-y border-white/10 py-6 overflow-hidden bg-[#050505] shrink-0 relative select-none"
     >
-      <div className="flex animate-marquee whitespace-nowrap">
+      {/* Background scanline bar */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent pointer-events-none z-0" />
+      
+      <div className="flex animate-marquee whitespace-nowrap relative z-10 items-center">
         {[...Array(2)].map((_, blockIndex) => (
-          <div key={blockIndex} className="flex items-center gap-8 px-4 shrink-0">
-            {[...Array(4)].map((_, groupIndex) => (
+          <div key={blockIndex} className="flex items-center gap-12 shrink-0">
+            {[...Array(3)].map((_, groupIndex) => (
               <React.Fragment key={groupIndex}>
                 {marqueeItems.map((item, index) => (
-                  <React.Fragment key={`${groupIndex}-${index}`}>
-                    <span className="vf-hud-text uppercase tracking-[0.2em] text-[#F3F3F1]/60 hover:text-[var(--primary)] transition-colors duration-300">
+                  <div key={`${groupIndex}-${index}`} className="flex items-center gap-6">
+                    
+                    {/* Pulsing camera recording beacon */}
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--primary)] opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--primary)]"></span>
+                    </span>
+
+                    {/* Hollow Stroke Outline Marquee Text */}
+                    <span className="font-cinema text-3xl md:text-5xl uppercase tracking-widest text-transparent [-webkit-text-stroke:1px_rgba(243,243,241,0.25)] hover:[-webkit-text-stroke:1px_var(--primary)] hover:text-white transition-all duration-300 cursor-pointer">
                       <EditableText 
                         value={theme?.customTexts?.[item.field as string] || item.default} 
                         field={item.field as string} 
@@ -43,8 +54,13 @@ export function ViewfinderMarqueeBlock({ data, theme, isEditor }: any) {
                         maxLength={40} 
                       />
                     </span>
-                    <span className="text-[var(--primary)] mx-4">&lt;///&gt;</span>
-                  </React.Fragment>
+
+                    {/* Dynamic telemetry spacer */}
+                    <span className="font-mono text-[9px] text-slate-600 tracking-[0.2em] px-2">
+                      [ REC_RUN // TC 24.00 ]
+                    </span>
+
+                  </div>
                 ))}
               </React.Fragment>
             ))}

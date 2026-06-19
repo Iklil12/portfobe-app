@@ -45,7 +45,8 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'text-slate-500',
       progressBg: 'bg-slate-100',
       progressFill: 'bg-slate-900',
-      calendarColorScheme: 'light' as const
+      calendarColorScheme: 'light' as const,
+      iconContainer: 'bg-slate-100 text-slate-900 border-none group-hover:bg-slate-900 group-hover:text-white'
     },
     classic: {
       section: 'p-8 @lg:p-12 border-t border-slate-800 bg-[#0d1117] text-slate-300',
@@ -58,7 +59,8 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'text-slate-400',
       progressBg: 'bg-slate-800',
       progressFill: 'bg-[#2ea043]',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-slate-800/50 text-slate-300 border border-slate-700/50 group-hover:bg-slate-200 group-hover:text-slate-900'
     },
     acid: {
       section: 'p-8 @lg:p-12 border-t-2 border-[#1a1a1a] bg-[#09090b] text-[#fafafa] acid-theme',
@@ -71,7 +73,8 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'text-zinc-500',
       progressBg: 'bg-zinc-800',
       progressFill: 'bg-[#a3e635]',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-[#a3e635]/10 text-[#a3e635] border border-[#a3e635]/20 group-hover:bg-[#a3e635] group-hover:text-[#09090b]'
     },
     aura: {
       section: 'p-8 @lg:p-12 border-t border-white/10 bg-white/5 backdrop-blur-md text-white rounded-3xl mb-12',
@@ -84,7 +87,8 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'text-violet-200/60',
       progressBg: 'bg-white/10',
       progressFill: 'bg-violet-400',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-violet-400/10 text-violet-300 border border-violet-400/20 group-hover:bg-violet-400 group-hover:text-[#0f0a1c]'
     },
     noir: {
       section: 'p-8 @md:p-12 border-t border-white/10 bg-[#050505] text-white wire-border-b grayscale',
@@ -97,7 +101,8 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'text-white/60 font-mono',
       progressBg: 'bg-white/10',
       progressFill: 'bg-white',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-white/5 text-white border border-white/20 group-hover:bg-white group-hover:text-black'
     },
     bento: {
       section: 'bento-card flex flex-col p-6 @lg:p-10 @lg:col-span-4 w-full h-full',
@@ -110,7 +115,8 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'text-slate-400 font-medium',
       progressBg: 'bg-white/5',
       progressFill: 'bg-white',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-white/5 text-white border border-white/10 group-hover:bg-white group-hover:text-black'
     },
     brutalism: {
       section: 'p-6 @sm:p-12 border-b-[3px] border-black bg-[#f4f4f0] flex flex-col w-full font-mono text-black',
@@ -123,11 +129,12 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'text-black font-bold uppercase',
       progressBg: 'bg-white border-y-[3px] border-black h-4 mt-2',
       progressFill: 'bg-black border-r-[3px] border-black h-full',
-      calendarColorScheme: 'light' as const
+      calendarColorScheme: 'light' as const,
+      iconContainer: 'bg-white border-2 border-black text-black group-hover:bg-black group-hover:text-white'
     },
     cinematic: {
-      section: 'py-20 @md:py-24 px-6 @md:px-12 border-t border-[#1f1f1f]',
-      heading: 'font-black uppercase tracking-tighter text-white mb-12 text-4xl @md:text-6xl',
+      section: 'py-16 md:py-24 px-6 @md:px-12 border-t border-[#1f1f1f]',
+      heading: 'font-black uppercase tracking-tighter text-white text-4xl @md:text-6xl',
       label: 'text-[10px] @md:text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 inline-block',
       border: 'border-[#1f1f1f]',
       cardBg: 'bg-transparent border-y border-[#1f1f1f] py-8 rounded-none',
@@ -136,7 +143,8 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'text-gray-500 text-xs @md:text-sm',
       progressBg: 'bg-[#1f1f1f] h-[1px]',
       progressFill: 'bg-white h-[1px]',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-white/5 text-white border border-white/10 group-hover:bg-white group-hover:text-black'
     },
     editorial: {
       section: 'w-full max-w-[1600px] mx-auto px-6 py-12 @md:px-12 @lg:px-20',
@@ -149,20 +157,22 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'font-sans text-sm text-slate-500 font-medium',
       progressBg: 'bg-slate-100 rounded-full',
       progressFill: 'bg-[#111] rounded-full',
-      calendarColorScheme: 'light' as const
+      calendarColorScheme: 'light' as const,
+      iconContainer: 'bg-slate-100 text-[#111] group-hover:bg-[#111] group-hover:text-white'
     },
     midnight: {
-      section: 'p-6 @md:p-12 @lg:p-20 flex flex-col border-t border-white/5 bg-[#030508]/50 shrink-0 w-full',
+      section: 'p-8 @md:p-12 @lg:p-20 flex flex-col border-b border-white/5 bg-[#030508] shrink-0 w-full relative overflow-hidden',
       heading: 'font-serif text-3xl @md:text-5xl text-white mb-8',
-      label: 'font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-white mb-2 block',
+      label: 'font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2 block',
       border: 'border-white/10',
-      cardBg: 'bg-[#05070a] border border-white/10 shadow-2xl rounded-xl',
-      icon: 'text-white',
-      textPrimary: 'font-serif text-xl @md:text-2xl text-white',
-      textSecondary: 'font-sans text-xs text-slate-400 font-medium uppercase tracking-widest',
+      cardBg: 'bg-[#06080c] border border-white/5 hover:border-[var(--hl)]/30 hover:bg-[#080b11] transition-all duration-500 shadow-2xl rounded-xl',
+      icon: 'text-[var(--hl)]',
+      textPrimary: 'font-serif text-lg @md:text-xl text-white',
+      textSecondary: 'font-sans text-[10px] text-slate-400 font-bold uppercase tracking-[0.25em]',
       progressBg: 'bg-white/10',
       progressFill: 'bg-white',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-[var(--hl)]/10 text-[var(--hl)] border border-[var(--hl)]/20 group-hover:bg-[var(--hl)] group-hover:text-[#030508]'
     },
     monolith: {
       section: 'relative z-20 w-full bg-[#050505] px-6 @md:px-12 pb-20 @md:pb-32 flex flex-col',
@@ -175,7 +185,8 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'font-sans font-medium text-slate-400 text-[10px] @md:text-sm',
       progressBg: 'bg-white/10',
       progressFill: 'bg-[var(--hl)]',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-[var(--hl)]/10 text-[var(--hl)] border border-[var(--hl)]/20 group-hover:bg-[var(--hl)] group-hover:text-[#050505]'
     },
     spatial: {
       section: 'flex flex-col w-full px-8 mt-24 @md:mt-32',
@@ -188,20 +199,22 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'text-[10px] text-slate-400 mt-1',
       progressBg: 'bg-white/10 rounded-full',
       progressFill: 'bg-[var(--hl)] rounded-full',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-[var(--hl)]/10 text-[var(--hl)] border border-[var(--hl)]/20 group-hover:bg-[var(--hl)] group-hover:text-[#050508]'
     },
     split: {
-      section: 'flex flex-col pt-16 @lg:pt-24 pb-16 border-b border-white/10 w-full',
-      heading: 'font-serif font-extrabold text-4xl @lg:text-6xl text-white mb-10 px-6 @md:px-12',
-      label: 'font-sans text-[10px] font-bold uppercase tracking-widest text-[var(--hl)] mb-2 block px-6 @md:px-12',
-      border: 'border-white/10',
-      cardBg: 'bg-white/5 backdrop-blur-md border border-white/10 rounded-xl mx-6 @md:mx-12 p-6 @md:p-8',
+      section: 'flex flex-col pt-16 @lg:pt-24 pb-16 border-b border-white/5 w-full px-6 @md:px-12',
+      heading: 'font-display font-black text-3xl @lg:text-5xl text-white mb-10',
+      label: 'font-mono text-[9px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2 block',
+      border: 'border-white/5',
+      cardBg: 'bg-white/[0.01] hover:bg-white/[0.03] border border-white/5 hover:border-white/10 rounded-xl p-5 transition-all duration-300',
       icon: 'text-white',
-      textPrimary: 'font-serif font-bold text-3xl @md:text-5xl text-white',
-      textSecondary: 'font-sans font-medium text-slate-400 text-sm mt-2',
+      textPrimary: 'font-sans text-sm @md:text-base font-bold text-white',
+      textSecondary: 'font-sans text-[10px] text-neutral-400 mt-1',
       progressBg: 'bg-white/10',
       progressFill: 'bg-[var(--hl)]',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-[var(--hl)]/10 text-[var(--hl)] border border-[var(--hl)]/20 group-hover:bg-[var(--hl)] group-hover:text-black'
     },
     viewfinder: {
       section: 'border-y border-white/10 py-16 mb-10 w-full px-6 @md:px-12 @lg:px-20 bg-[#050505]',
@@ -214,20 +227,22 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'font-bold uppercase tracking-widest text-[10px] text-gray-500 mt-2',
       progressBg: 'bg-gray-800',
       progressFill: 'bg-[var(--primary)]',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-[#F3F3F1]/10 text-[#F3F3F1] border border-[#F3F3F1]/20 group-hover:bg-[#F3F3F1] group-hover:text-[#050505]'
     },
     minimalist: {
-      section: 'border-t border-gray-200 bg-gray-50/30 overflow-hidden w-full pb-8',
-      heading: 'text-2xl font-black uppercase tracking-tighter text-black px-8 @lg:px-12 pt-8 pb-2 min-heading',
-      label: 'text-[10px] font-bold uppercase tracking-widest text-gray-400 px-8 @lg:px-12 mb-6 block min-heading',
+      section: 'border-t border-gray-200 bg-white w-full py-16 px-8 @lg:px-12 flex flex-col',
+      heading: 'text-2xl font-black uppercase tracking-tighter text-black pb-2 min-heading',
+      label: 'text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-6 block min-heading',
       border: 'border-gray-200',
-      cardBg: 'bg-white border-y border-gray-200 py-8 px-8 @lg:px-12',
+      cardBg: 'bg-white border border-gray-200 hover:border-black transition-colors duration-300',
       icon: 'text-black',
       textPrimary: 'text-2xl font-black tracking-tighter text-black',
       textSecondary: 'text-xs font-medium text-gray-500 mt-2',
       progressBg: 'bg-gray-200',
       progressFill: 'bg-black',
-      calendarColorScheme: 'light' as const
+      calendarColorScheme: 'light' as const,
+      iconContainer: 'bg-slate-100 text-black group-hover:bg-black group-hover:text-white'
     },
     'split-screen-studio': {
       section: 'flex flex-col p-8 md:p-12 lg:p-16 border-t border-white/10 w-full',
@@ -240,7 +255,8 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       textSecondary: 'font-sans text-xs text-white/50 tracking-widest uppercase mt-2',
       progressBg: 'bg-white/10',
       progressFill: 'bg-white',
-      calendarColorScheme: 'dark' as const
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-white/5 text-white border border-white/10 group-hover:bg-white group-hover:text-black'
     }
   };
 
@@ -248,67 +264,77 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
   const isDynamic = true;
   const dynamicTextStyle = isDynamic && themeColor ? { color: themeColor } : {};
 
+  const gridCols = variant === 'minimalist' 
+    ? 'grid-cols-1' 
+    : variant === 'midnight' 
+      ? '@xl:grid-cols-2' 
+      : '@md:grid-cols-2 @xl:grid-cols-3';
+
+  const cardPadding = variant === 'minimalist' ? 'p-6 @md:p-8' : variant === 'midnight' ? 'p-5 @md:p-6' : 'p-4';
+ 
   const PenpotIcon = ({ className }: { className?: string }) => (
     <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path d="M22 4.5L37.5 12.25V31.75L22 39.5L6.5 31.75V12.25L22 4.5Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M22 39.5V22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M37.5 12.25L22 22L6.5 12.25" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M14 12V6M22 15V4M30 12V6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M22 4.5L37.5 12.25V31.75L22 39.5L6.5 31.75V12.25L22 4.5Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M22 39.5V22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M37.5 12.25L22 22L6.5 12.25" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14 12V6M22 15V4M30 12V6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
-
+ 
   return (
     <section ref={sectionRef} className={s.section}>
-      <div className={`flex justify-between items-baseline mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-6 border-b'} ${s.border}`}>
-        <h2 className={s.heading}>Design Index</h2>
-        <div className={`flex items-center gap-2 ${s.label}`} style={dynamicTextStyle}>
-          <PenpotIcon className="w-4 h-4" />
-          <span>Penpot</span>
+      <div className={variant === 'minimalist' ? 'max-w-4xl w-full mx-auto' : ''}>
+        <div className={`flex ${variant === 'noir' || variant === 'spatial' ? 'flex-col items-center text-center gap-3' : 'justify-between items-baseline'} mb-6 md:mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-4 md:pb-6 border-b'} ${s.border}`}>
+          <h2 className={s.heading}>Design Index</h2>
+          <div className={`flex items-center gap-2 ${s.label}`} style={dynamicTextStyle}>
+            <PenpotIcon className="w-4 h-4" />
+            <span>Penpot</span>
+          </div>
         </div>
-      </div>
-
-      <div className="w-full font-sans">
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className={`animate-pulse flex items-center gap-4 p-5 rounded-2xl ${s.cardBg}`}>
-                <div className="w-12 h-12 shrink-0 rounded-xl bg-current opacity-10"></div>
-                <div className="flex flex-col flex-1 gap-2">
-                  <div className={`h-4 ${s.textPrimary} bg-current opacity-20 rounded w-3/4`}></div>
-                  <div className={`h-3 ${s.textSecondary} bg-current opacity-10 rounded w-1/2`}></div>
+ 
+        <div className="w-full font-sans">
+          {isLoading ? (
+            <div className={variant === 'noir' || variant === 'spatial' ? "flex flex-wrap justify-center gap-6 w-full" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"}>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className={`animate-pulse flex items-center gap-4 p-5 rounded-2xl ${s.cardBg} ${variant === 'noir' || variant === 'spatial' ? 'w-full max-w-md' : ''}`}>
+                  <div className="w-12 h-12 shrink-0 rounded-xl bg-current opacity-10"></div>
+                  <div className="flex flex-col flex-1 gap-2">
+                    <div className={`h-4 ${s.textPrimary} bg-current opacity-20 rounded w-3/4`}></div>
+                    <div className={`h-3 ${s.textSecondary} bg-current opacity-10 rounded w-1/2`}></div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className={`grid grid-cols-1 gap-6 ${variant === 'midnight' ? '@xl:grid-cols-2' : '@md:grid-cols-2 @xl:grid-cols-3'}`}>
-            {data.projects.map((project: any, index: number) => (
-              <a 
-                key={index} 
-                href={project.url}
-                target="_blank"
-                rel="noreferrer"
-                className={`flex items-center ${variant === 'midnight' ? 'gap-2 p-3' : 'gap-3 p-4'} rounded-xl cursor-pointer group ${s.cardBg}`}
-              >
-                <div className={`${variant === 'midnight' ? 'w-8 h-8' : 'w-10 h-10'} shrink-0 rounded-lg bg-emerald-50/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300 shadow-sm relative overflow-hidden`}>
-                  <PenpotIcon className={variant === 'midnight' ? 'w-4 h-4' : 'w-5 h-5'} />
-                </div>
-                
-                <div className="flex flex-col flex-1 min-w-0">
-                  <h4 className={`${s.textPrimary} mb-0.5 uppercase tracking-tight`}>{project.title || 'Untitled Design'}</h4>
-                  <span className={`${s.textSecondary} flex items-center gap-2 text-[10px]`}>
-                    <i className="fas fa-external-link-alt text-[9px]"></i>
-                    {variant === 'midnight' ? 'View' : 'View on Penpot'}
-                  </span>
-                </div>
-                
-                <div className={`${variant === 'midnight' ? 'w-6 h-6' : 'w-8 h-8'} rounded-full border border-current flex items-center justify-center opacity-50 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0`}>
-                  <i className="fas fa-arrow-right -rotate-45 text-[10px]"></i>
-                </div>
-              </a>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div className={variant === 'noir' || variant === 'spatial' ? "flex flex-wrap justify-center gap-6 w-full" : `grid grid-cols-1 gap-6 ${gridCols}`}>
+              {data.projects.map((project: any, index: number) => (
+                <a
+                  key={index}
+                  href={project.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`flex items-center ${variant === 'midnight' ? 'gap-4' : 'gap-3'} ${cardPadding} rounded-xl cursor-pointer group ${s.cardBg} ${variant === 'noir' || variant === 'spatial' ? 'w-full max-w-md' : ''}`}
+                >
+                  <div className={`${variant === 'midnight' ? 'w-10 h-10' : 'w-10 h-10'} shrink-0 rounded-lg flex items-center justify-center transition-colors duration-300 shadow-sm relative overflow-hidden ${s.iconContainer || 'bg-emerald-50/10 border border-emerald-500/20 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white'}`}>
+                    <PenpotIcon className={variant === 'midnight' ? 'w-5 h-5' : 'w-5 h-5'} />
+                  </div>
+ 
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <h4 className={`${s.textPrimary} mb-0.5 uppercase tracking-tight`}>{(project.title || 'Untitled Design').replace(/pnepot/gi, 'Penpot')}</h4>
+                    <span className={`${s.textSecondary} flex items-center gap-2 text-[10px]`}>
+                      <i className="fas fa-external-link-alt text-[9px]"></i>
+                      {variant === 'midnight' ? 'View Details' : 'View on Penpot'}
+                    </span>
+                  </div>
+ 
+                  <div className={`${variant === 'midnight' ? 'w-8 h-8 text-[var(--hl)] border-white/10 group-hover:border-[var(--hl)]/40' : 'w-8 h-8 border-current'} rounded-full border flex items-center justify-center opacity-50 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0`}>
+                    <i className="fas fa-arrow-right -rotate-45 text-[10px]"></i>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
