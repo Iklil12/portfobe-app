@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   // Dukungan kompilasi untuk package native (menghindari error serverless)
   serverExternalPackages: ['bcrypt', 'html-encoding-sniffer', 'jsdom', 'isomorphic-dompurify', '@exodus/bytes'],
 
+
   // Konfigurasi optimalisasi gambar untuk CDN eksternal
   images: {
     remotePatterns: [

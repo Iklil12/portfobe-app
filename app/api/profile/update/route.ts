@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity"; 
 import { checkRateLimit } from "@/lib/rate-limit";
 import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeHtml from 'sanitize-html';
 
 export async function PATCH(req: Request) {
   try {
@@ -26,10 +26,12 @@ export async function PATCH(req: Request) {
     }
 
     // XSS PROTECTION: Sanitize input pengguna di sisi server sebelum masuk database
-    firstName = DOMPurify.sanitize(firstName || "", { ALLOWED_TAGS: [] }).trim();
-    lastName = DOMPurify.sanitize(lastName || "", { ALLOWED_TAGS: [] }).trim();
-    profession = DOMPurify.sanitize(profession || "", { ALLOWED_TAGS: [] }).trim();
-    bio = DOMPurify.sanitize(bio || "", { ALLOWED_TAGS: [] }).trim();
+    // Menggunakan sanitize-html karena tidak memerlukan JSDOM dan sangat aman untuk Edge/Node runtime
+    const sanitizeConfig = { allowedTags: [], allowedAttributes: {} };
+    firstName = sanitizeHtml(firstName || "", sanitizeConfig).trim();
+    lastName = sanitizeHtml(lastName || "", sanitizeConfig).trim();
+    profession = sanitizeHtml(profession || "", sanitizeConfig).trim();
+    bio = sanitizeHtml(bio || "", sanitizeConfig).trim();
 
     
     // Ambil data User & Profile yang sekarang ada di database

@@ -14,18 +14,16 @@ interface EditableTextProps {
   onChange?: (newText: string) => void;
 }
 
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeHtml from 'sanitize-html';
 
-// Fungsi untuk membersihkan teks secara aman menggunakan DOMPurify
+// Fungsi untuk membersihkan teks secara aman menggunakan sanitize-html
 const sanitizeText = (text: string) => {
   if (!text) return "";
   
-  // Konfigurasi DOMPurify: Hanya izinkan tag teks dasar jika diinginkan
-  // (saat ini kita biarkan kosong agar berfungsi layaknya plain text murni
-  // namun tetap membersihkan struktur XSS)
-  const clean = DOMPurify.sanitize(text, {
-    ALLOWED_TAGS: [], // Kosongkan jika kita hanya ingin teks biasa tanpa formatting
-    ALLOWED_ATTR: []
+  // Konfigurasi sanitize-html: Hanya izinkan tag teks dasar jika diinginkan
+  const clean = sanitizeHtml(text, {
+    allowedTags: [], // Kosongkan jika kita hanya ingin teks biasa tanpa formatting
+    allowedAttributes: {}
   });
   
   return clean

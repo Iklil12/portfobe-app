@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getEffectivePlan } from "@/lib/planUtils";
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeHtml from 'sanitize-html';
 
 
 // GET ALL TESTIMONIALS FOR USER
@@ -58,9 +58,10 @@ export async function POST(req: Request) {
     }
 
     // Sanitize input strings to prevent XSS
-    clientName = DOMPurify.sanitize(clientName || "", { ALLOWED_TAGS: [] }).trim();
-    company = DOMPurify.sanitize(company || "", { ALLOWED_TAGS: [] }).trim();
-    content = DOMPurify.sanitize(content || "", { ALLOWED_TAGS: [] }).trim();
+    const sanitizeConfig = { allowedTags: [], allowedAttributes: {} };
+    clientName = sanitizeHtml(clientName || "", sanitizeConfig).trim();
+    company = sanitizeHtml(company || "", sanitizeConfig).trim();
+    content = sanitizeHtml(content || "", sanitizeConfig).trim();
 
     const newTestimonial = await prisma.testimonial.create({
       data: {

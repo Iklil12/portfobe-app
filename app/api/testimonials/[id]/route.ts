@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { checkRateLimit } from "@/lib/rate-limit";
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeHtml from 'sanitize-html';
 
 // UPDATE TESTIMONIAL
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -36,9 +36,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     // Sanitize input strings to prevent XSS
-    if (clientName !== undefined) clientName = DOMPurify.sanitize(clientName || "", { ALLOWED_TAGS: [] }).trim();
-    if (company !== undefined) company = DOMPurify.sanitize(company || "", { ALLOWED_TAGS: [] }).trim();
-    if (content !== undefined) content = DOMPurify.sanitize(content || "", { ALLOWED_TAGS: [] }).trim();
+    const sanitizeConfig = { allowedTags: [], allowedAttributes: {} };
+    if (clientName !== undefined) clientName = sanitizeHtml(clientName || "", sanitizeConfig).trim();
+    if (company !== undefined) company = sanitizeHtml(company || "", sanitizeConfig).trim();
+    if (content !== undefined) content = sanitizeHtml(content || "", sanitizeConfig).trim();
 
     const updatedTestimonial = await prisma.testimonial.update({
       where: { id },
