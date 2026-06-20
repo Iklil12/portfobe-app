@@ -14,45 +14,64 @@ export function BrutalismStatsBlock({ data, theme, isEditor, isCardPreview }: an
     const brutalEase = [0, 0, 0, 1] as any;
 
     const starkReveal = {
-        hidden: { opacity: 0, y: 30 },
+        hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: brutalEase } }
     };
 
     return (
         <motion.div
             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal}
-            className={`w-full grid grid-cols-2 @md:grid-cols-4 border-b-[3px] border-black font-mono uppercase bg-black text-white divide-x-[3px] divide-black`}
+            className="w-full grid grid-cols-2 @md:grid-cols-4 border-b-[3px] border-black font-mono uppercase bg-black"
         >
-            <div className={"p-3 @sm:p-6 flex flex-col justify-between items-center bg-white text-black brutal-hover-invert transition-none text-center gap-2"}>
-                <span className={"text-[10px] @sm:text-xs font-bold pointer-events-none"}>
-                    <EditableText value={theme?.customTexts?.brutal_stat_1_label || 'PROJECTS'} field="brutal_stat_1_label" entity="appearance" isEditor={isEditor} as="span" className="pointer-events-auto" />
+            {/* Stat 1: Projects */}
+            <div className="p-4 @sm:p-8 flex flex-col justify-between items-center bg-white text-black border-r-[3px] border-b-[3px] @md:border-b-0 border-black hover:bg-[var(--hl)] transition-all duration-200 cursor-pointer text-center gap-4 group">
+                <span className="text-[9px] font-black text-slate-400 group-hover:text-black transition-colors duration-150">
+                    [ STAT_01 ]
                 </span>
-                <span className={"text-2xl @sm:text-4xl font-black custom-heading"}>
+                <span className="text-2xl @xs:text-3xl @sm:text-5xl font-black custom-heading tracking-tighter group-hover:scale-110 transition-transform duration-200">
                     {archiveItems.length}
                 </span>
-            </div>
-            <div className={"p-3 @sm:p-6 flex flex-col justify-between items-center bg-[var(--hl)] text-black brutal-hover-invert transition-none text-center gap-2"}>
-                <span className={"text-[10px] @sm:text-xs font-bold pointer-events-none"}>
-                    <EditableText value={theme?.customTexts?.brutal_stat_2_label || 'AWARDS'} field="brutal_stat_2_label" entity="appearance" isEditor={isEditor} as="span" className="pointer-events-auto" />
+                <span className="text-[10px] @sm:text-xs font-black tracking-wider">
+                    <EditableText value={theme?.customTexts?.brutal_stat_1_label || 'PROJECTS'} field="brutal_stat_1_label" entity="appearance" isEditor={isEditor} as="span" />
                 </span>
-                <span className={"text-2xl @sm:text-4xl font-black custom-heading"}>
+            </div>
+
+            {/* Stat 2: Awards */}
+            <div className="p-4 @sm:p-8 flex flex-col justify-between items-center bg-[var(--hl)] text-black border-b-[3px] @md:border-b-0 border-black @md:border-r-[3px] hover:bg-black hover:text-white transition-all duration-200 cursor-pointer text-center gap-4 group">
+                <span className="text-[9px] font-black text-black/40 group-hover:text-white/40 transition-colors duration-150">
+                    [ STAT_02 ]
+                </span>
+                <span className="text-2xl @xs:text-3xl @sm:text-5xl font-black custom-heading tracking-tighter group-hover:scale-110 transition-transform duration-200">
                     {awardItems.length}
                 </span>
-            </div>
-            <div className={"p-3 @sm:p-6 flex flex-col justify-between items-center bg-white text-black brutal-hover-invert transition-none text-center gap-2"}>
-                <span className={"text-[10px] @sm:text-xs font-bold pointer-events-none"}>
-                    <EditableText value={theme?.customTexts?.brutal_stat_3_label || 'CLIENTS'} field="brutal_stat_3_label" entity="appearance" isEditor={isEditor} as="span" className="pointer-events-auto" />
-                </span>
-                <span className={"text-2xl @sm:text-4xl font-black custom-heading pointer-events-none"}>
-                    <EditableText value={theme?.customTexts?.brutal_stat_3_val || '50+'} field="brutal_stat_3_val" entity="appearance" isEditor={isEditor} as="span" className="pointer-events-auto" />
+                <span className="text-[10px] @sm:text-xs font-black tracking-wider">
+                    <EditableText value={theme?.customTexts?.brutal_stat_2_label || 'AWARDS'} field="brutal_stat_2_label" entity="appearance" isEditor={isEditor} as="span" />
                 </span>
             </div>
-            <div className={"p-3 @sm:p-6 flex flex-col justify-between items-center bg-black text-white brutal-hover-invert transition-none text-center gap-2"}>
-                <span className={"text-[10px] @sm:text-xs font-bold pointer-events-none"}>
-                    <EditableText value={theme?.customTexts?.brutal_stat_4_label || 'EXPERIENCE'} field="brutal_stat_4_label" entity="appearance" isEditor={isEditor} as="span" className="pointer-events-auto" />
+
+            {/* Stat 3: Clients */}
+            <div className="p-4 @sm:p-8 flex flex-col justify-between items-center bg-white text-black border-r-[3px] border-black hover:bg-[var(--hl)] transition-all duration-200 cursor-pointer text-center gap-4 group">
+                <span className="text-[9px] font-black text-slate-400 group-hover:text-black transition-colors duration-150">
+                    [ STAT_03 ]
                 </span>
-                <span className={"text-2xl @sm:text-4xl font-black custom-heading pointer-events-none"}>
-                    <EditableText value={theme?.customTexts?.brutal_stat_4_val || '10 YRS'} field="brutal_stat_4_val" entity="appearance" isEditor={isEditor} as="span" className="pointer-events-auto" />
+                <span className="text-2xl @xs:text-3xl @sm:text-5xl font-black custom-heading tracking-tighter group-hover:scale-110 transition-transform duration-200">
+                    <EditableText value={theme?.customTexts?.brutal_stat_3_val || '50+'} field="brutal_stat_3_val" entity="appearance" isEditor={isEditor} as="span" />
+                </span>
+                <span className="text-[10px] @sm:text-xs font-black tracking-wider">
+                    <EditableText value={theme?.customTexts?.brutal_stat_3_label || 'CLIENTS'} field="brutal_stat_3_label" entity="appearance" isEditor={isEditor} as="span" />
+                </span>
+            </div>
+
+            {/* Stat 4: Experience */}
+            <div className="p-4 @sm:p-8 flex flex-col justify-between items-center bg-black text-white hover:bg-[var(--hl)] hover:text-black transition-all duration-200 cursor-pointer text-center gap-4 group">
+                <span className="text-[9px] font-black text-white/40 group-hover:text-black/40 transition-colors duration-150">
+                    [ STAT_04 ]
+                </span>
+                <span className="text-2xl @xs:text-3xl @sm:text-5xl font-black custom-heading tracking-tighter group-hover:scale-110 transition-transform duration-200">
+                    <EditableText value={theme?.customTexts?.brutal_stat_4_val || '10 YRS'} field="brutal_stat_4_val" entity="appearance" isEditor={isEditor} as="span" />
+                </span>
+                <span className="text-[10px] @sm:text-xs font-black tracking-wider">
+                    <EditableText value={theme?.customTexts?.brutal_stat_4_label || 'EXPERIENCE'} field="brutal_stat_4_label" entity="appearance" isEditor={isEditor} as="span" />
                 </span>
             </div>
         </motion.div>

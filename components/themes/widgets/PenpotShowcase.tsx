@@ -33,6 +33,77 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
 
   if (!isLoading && (!data?.projects || data.projects.length === 0 || data.hasError)) return null;
 
+  const PenpotIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M22 4.5L37.5 12.25V31.75L22 39.5L6.5 31.75V12.25L22 4.5Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M22 39.5V22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M37.5 12.25L22 22L6.5 12.25" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14 12V6M22 15V4M30 12V6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+
+  if (variant === 'brutalism') {
+    return (
+      <section ref={sectionRef} className="p-6 @sm:p-12 border-b-[3px] border-black bg-[#f4f4f0] flex flex-col w-full font-mono text-black">
+        {/* Title Bar dengan Retro Controls & warna highlight editor */}
+        <div className="p-6 border-[3px] border-black bg-[var(--hl)] flex justify-between items-center mb-8">
+          <h2 className="custom-heading text-xl @xs:text-2xl @sm:text-4xl @md:text-5xl font-black uppercase tracking-tighter text-black flex items-center gap-2">
+            <PenpotIcon className="w-6 h-6 @sm:w-8 @sm:h-8 shrink-0" />
+            PENPOT_SHOWCASE
+          </h2>
+          {/* Retro controls window */}
+          <div className="flex items-center gap-1.5 hidden @sm:flex font-mono text-xs font-bold border-[3px] border-black bg-white p-1.5 shadow-[3px_3px_0px_0px_#000] select-none">
+            <span className="w-6 h-6 flex items-center justify-center border-[2px] border-black bg-white hover:bg-black hover:text-white cursor-pointer transition-colors duration-100">_</span>
+            <span className="w-6 h-6 flex items-center justify-center border-[2px] border-black bg-white hover:bg-black hover:text-white cursor-pointer transition-colors duration-100">⧠</span>
+            <span className="w-6 h-6 flex items-center justify-center border-[2px] border-black bg-white hover:bg-red-500 hover:text-white cursor-pointer transition-colors duration-100">X</span>
+          </div>
+        </div>
+
+        {/* Grid items */}
+        <div className="grid grid-cols-1 @md:grid-cols-2 @xl:grid-cols-3 gap-6">
+          {isLoading ? (
+            [1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse bg-white border-[3px] border-black p-5 flex items-center gap-4">
+                <div className="w-12 h-12 shrink-0 bg-black opacity-10"></div>
+                <div className="flex flex-col flex-1 gap-2">
+                  <div className="h-4 bg-black opacity-20 rounded w-3/4"></div>
+                  <div className="h-3 bg-black opacity-10 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))
+          ) : (
+            data.projects.map((project: any, index: number) => (
+              <a
+                key={index}
+                href={project.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-between gap-4 p-5 bg-white border-[3px] border-black shadow-[6px_6px_0px_0px_#000] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[3px_3px_0px_0px_#000] transition-all cursor-pointer group rounded-none"
+              >
+                <div className="w-10 h-10 shrink-0 border-2 border-black flex items-center justify-center bg-black text-[var(--hl)] transition-all group-hover:bg-[var(--hl)] group-hover:text-black">
+                  <PenpotIcon className="w-5 h-5" />
+                </div>
+
+                <div className="flex flex-col flex-1 min-w-0">
+                  <h4 className="text-black font-black uppercase text-sm mb-1 truncate tracking-tight group-hover:text-[var(--hl)] transition-colors">
+                    {(project.title || 'Untitled Design').replace(/pnepot/gi, 'Penpot')}
+                  </h4>
+                  <span className="text-black font-bold uppercase text-[9px] flex items-center gap-1">
+                    <span>&gt; VIEW_DESIGN</span>
+                  </span>
+                </div>
+
+                <div className="w-8 h-8 border-[2px] border-black rounded-none flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all">
+                  <i className="fas fa-arrow-right -rotate-45 text-[10px]"></i>
+                </div>
+              </a>
+            ))
+          )}
+        </div>
+      </section>
+    );
+  }
+
   const styles = {
     monochrome: {
       section: 'p-8 @lg:py-10 @lg:px-12 border-t border-gray-100 bg-white text-slate-900',
@@ -257,6 +328,20 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       progressFill: 'bg-white',
       calendarColorScheme: 'dark' as const,
       iconContainer: 'bg-white/5 text-white border border-white/10 group-hover:bg-white group-hover:text-black'
+    },
+    'layered-monolith': {
+      section: 'py-16 px-6 md:px-12 bg-transparent text-white w-full border-t border-white/5 flex flex-col',
+      heading: 'font-display font-black text-2xl md:text-3xl uppercase tracking-tighter text-white',
+      label: 'font-mono text-[9px] font-bold uppercase tracking-[0.25em] text-[var(--hl)] bg-[var(--hl)]/10 px-3 py-1 border border-[var(--hl)]/20',
+      border: 'border-white/10',
+      cardBg: 'bg-[#090909] border border-white/10 hover:border-white/20 transition-all duration-300 hover:bg-[#0f0f0f] rounded-none shadow-[4px_4px_0px_0px_rgba(255,255,255,0.05)] hover:shadow-[4px_4px_0px_0px_var(--hl)]',
+      icon: 'text-white',
+      textPrimary: 'font-display text-sm font-bold uppercase tracking-tight text-white group-hover:text-white',
+      textSecondary: 'font-mono text-[9px] text-white/50 uppercase tracking-widest mt-1',
+      progressBg: 'bg-white/10',
+      progressFill: 'bg-[var(--hl)]',
+      calendarColorScheme: 'dark' as const,
+      iconContainer: 'bg-[var(--hl)]/10 text-[var(--hl)] border border-[var(--hl)]/20 group-hover:bg-[var(--hl)] group-hover:text-black'
     }
   };
 
@@ -271,16 +356,7 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
       : '@md:grid-cols-2 @xl:grid-cols-3';
 
   const cardPadding = variant === 'minimalist' ? 'p-6 @md:p-8' : variant === 'midnight' ? 'p-5 @md:p-6' : 'p-4';
- 
-  const PenpotIcon = ({ className }: { className?: string }) => (
-    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path d="M22 4.5L37.5 12.25V31.75L22 39.5L6.5 31.75V12.25L22 4.5Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M22 39.5V22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M37.5 12.25L22 22L6.5 12.25" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M14 12V6M22 15V4M30 12V6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
- 
+
   return (
     <section ref={sectionRef} className={s.section}>
       <div className={variant === 'minimalist' ? 'max-w-4xl w-full mx-auto' : ''}>
@@ -291,7 +367,7 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
             <span>Penpot</span>
           </div>
         </div>
- 
+
         <div className="w-full font-sans">
           {isLoading ? (
             <div className={variant === 'noir' || variant === 'spatial' ? "flex flex-wrap justify-center gap-6 w-full" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"}>
@@ -318,7 +394,7 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
                   <div className={`${variant === 'midnight' ? 'w-10 h-10' : 'w-10 h-10'} shrink-0 rounded-lg flex items-center justify-center transition-colors duration-300 shadow-sm relative overflow-hidden ${s.iconContainer || 'bg-emerald-50/10 border border-emerald-500/20 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white'}`}>
                     <PenpotIcon className={variant === 'midnight' ? 'w-5 h-5' : 'w-5 h-5'} />
                   </div>
- 
+
                   <div className="flex flex-col flex-1 min-w-0">
                     <h4 className={`${s.textPrimary} mb-0.5 uppercase tracking-tight`}>{(project.title || 'Untitled Design').replace(/pnepot/gi, 'Penpot')}</h4>
                     <span className={`${s.textSecondary} flex items-center gap-2 text-[10px]`}>
@@ -326,7 +402,7 @@ export function PenpotShowcase({ userId, variant = 'monochrome', themeColor }: P
                       {variant === 'midnight' ? 'View Details' : 'View on Penpot'}
                     </span>
                   </div>
- 
+
                   <div className={`${variant === 'midnight' ? 'w-8 h-8 text-[var(--hl)] border-white/10 group-hover:border-[var(--hl)]/40' : 'w-8 h-8 border-current'} rounded-full border flex items-center justify-center opacity-50 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0`}>
                     <i className="fas fa-arrow-right -rotate-45 text-[10px]"></i>
                   </div>

@@ -17,8 +17,8 @@ export function MidnightEmulsionProjectsBlock({ data, theme, isEditor, isCardPre
   const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
   const radiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';
 
-  const userPlan = data?.plan || data?.user?.plan || 'FREE';
   const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+  const userPlan = data?.plan || data?.user?.plan || 'FREE';
   const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
 
   const canvasEase = [0.22, 1, 0.36, 1] as any;

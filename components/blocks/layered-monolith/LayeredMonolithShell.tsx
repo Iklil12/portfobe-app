@@ -40,9 +40,9 @@ export function LayeredMonolithShell({ children, data, theme, isMobileView = fal
                     trigger: nextCard,
                     start: "top 95%", 
                     end: "top 5%",      
-                    scrub: true,         
+                    scrub: 1,         
                 }
-            });
+            } as any);
 
             // Parallax Images
             const img = card.querySelector('.parallax-img');
@@ -54,9 +54,9 @@ export function LayeredMonolithShell({ children, data, theme, isMobileView = fal
                         trigger: card,
                         start: "top bottom",
                         end: "bottom top",
-                        scrub: true
+                        scrub: 1
                     }
-                });
+                } as any);
             }
         });
 
@@ -67,7 +67,58 @@ export function LayeredMonolithShell({ children, data, theme, isMobileView = fal
         return () => clearTimeout(timer);
     }, { scope: containerRef, dependencies: [isMobileView, isCardPreview, children] });
 
+    // Client-side dynamic height auto-detection to prevent content truncation
+    useEffect(() => {
+        if (isCardPreview) return;
 
+        const checkOverflow = () => {
+            const container = containerRef.current;
+            if (!container) return;
+
+            const cards = container.querySelectorAll('.stack-card, .stack-card-dynamic');
+            const viewportHeight = window.innerHeight;
+
+            cards.forEach((cardEl: any) => {
+                const isSticky = cardEl.classList.contains('stack-card');
+                
+                // Temporarily force to measure scrollHeight accurately if sticky
+                if (isSticky) {
+                    cardEl.style.position = 'relative';
+                    cardEl.style.height = 'auto';
+                    cardEl.style.overflow = 'visible';
+                }
+                
+                const contentHeight = cardEl.scrollHeight;
+                
+                if (isSticky) {
+                    cardEl.style.position = '';
+                    cardEl.style.height = '';
+                    cardEl.style.overflow = '';
+                }
+
+                // If content height exceeds viewport height (with a 15px threshold), make it dynamic
+                if (contentHeight > viewportHeight + 15) {
+                    cardEl.classList.remove('stack-card');
+                    cardEl.classList.add('stack-card-dynamic');
+                } else {
+                    cardEl.classList.add('stack-card');
+                    cardEl.classList.remove('stack-card-dynamic');
+                }
+            });
+
+            ScrollTrigger.refresh();
+        };
+
+        checkOverflow();
+        window.addEventListener('resize', checkOverflow);
+
+        const timer = setTimeout(checkOverflow, 300);
+
+        return () => {
+            window.removeEventListener('resize', checkOverflow);
+            clearTimeout(timer);
+        };
+    }, [children, isCardPreview]);
 
     const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
         e.preventDefault();
@@ -161,11 +212,78 @@ export function LayeredMonolithShell({ children, data, theme, isMobileView = fal
                     position: sticky; top: 0; height: 100dvh; width: 100%; overflow: hidden;
                     transform-origin: top center; border-bottom: 1px solid rgba(0,0,0,0.1);
                     box-shadow: 0 -20px 50px rgba(0,0,0,0.15); 
-                    display: flex; flex-direction: column; will-change: transform, filter;
+                    display: flex; flex-direction: column; will-change: transform, filter, opacity;
+                    transform: translate3d(0,0,0);
+                    backface-visibility: hidden;
                 }
+                .stack-card-dynamic {
+                    position: relative !important;
+                    height: auto !important;
+                    min-h: 100dvh !important;
+                    overflow: visible !important;
+                    transform: none !important;
+                    will-change: auto !important;
+                }
+                
+                /* Mobile viewports: disable sticky stacking for better readability */
+                @media (max-width: 768px) {
+                    .stack-card {
+                        position: relative !important;
+                        height: auto !important;
+                        min-h: 100dvh !important;
+                        overflow: visible !important;
+                        transform: none !important;
+                    }
+                }
+                
+                /* Desktop tight heights (max-height: 850px): KEEP sticky stacking, but shrink content */
+                @media (max-height: 850px) and (min-width: 769px) {
+                    #hero header {
+                        padding-top: 1.5rem !important;
+                        padding-bottom: 1.5rem !important;
+                    }
+                    #hero h2 {
+                        font-size: 8vh !important;
+                        line-height: 0.9 !important;
+                    }
+                    #hero .grow {
+                        padding-top: 0.5rem !important;
+                        padding-bottom: 0.5rem !important;
+                    }
+                    #hero p {
+                        margin-bottom: 0.5rem !important;
+                    }
+                    #hero .mt-4 {
+                        margin-top: 0.5rem !important;
+                    }
+                    
+                    /* Ethos / Philosophy block adjustments */
+                    #philosophy {
+                        padding-top: 2.5rem !important;
+                        padding-bottom: 2.5rem !important;
+                    }
+                    #philosophy .flex-col {
+                        gap: 1.5rem !important;
+                    }
+                    #philosophy h2 {
+                        font-size: 5.5vh !important;
+                        line-height: 1.05 !important;
+                    }
+                    #philosophy .grid {
+                        margin-top: 1rem !important;
+                        padding-top: 1rem !important;
+                        gap: 1.5rem !important;
+                    }
+                }
+
                 .stack-card:nth-child(1) { box-shadow: none; border-bottom: none; }
                 
-                .parallax-img { position: absolute; top: 0; left: 0; width: 100%; height: 120%; object-fit: cover; z-index: 0; }
+                .parallax-img {
+                    position: absolute; top: 0; left: 0; width: 100%; height: 120%; object-fit: cover; z-index: 0;
+                    will-change: transform;
+                    transform: translate3d(0,0,0);
+                    backface-visibility: hidden;
+                }
                 .parallax-overlay { position: absolute; inset: 0; z-index: 1; }
 
                 .floating-dock {

@@ -33,7 +33,7 @@ export default function CinematicGalleryFaq({ data, theme, isEditor }: { data: a
   };
 
   const handleAddItem = () => {
-    const newFaqs = [...faqs, { q: "New Frame", a: "Focus here" }];
+    const newFaqs = [...faqs, { q: "New Question", a: "Answer details go here." }];
     updateFaqs(newFaqs);
     setOpenIndex(newFaqs.length - 1);
   };
@@ -46,109 +46,139 @@ export default function CinematicGalleryFaq({ data, theme, isEditor }: { data: a
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-24 px-4 group/faq bg-[#0a0a0a] text-white">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-16 pb-8 border-b border-white/10">
-        <div>
-          <span className="text-white/40 uppercase tracking-[0.3em] text-xs font-semibold mb-4 block">
-            <EditableText 
-              value={theme?.customTexts?.faq_tag || 'THE ARCHIVE'} 
-              field="faq_tag" 
-              entity="appearance" 
-              isEditor={isEditor} 
-              as="span" 
-              maxLength={30} 
-            />
-          </span>
-          <h2 className="text-5xl md:text-7xl font-bold tracking-tighter" style={{ fontFamily: 'var(--font-heading)' }}>
-            <EditableText 
-              value={theme?.customTexts?.faq_main_title || 'Questions'} 
-              field="faq_main_title" 
-              entity="appearance" 
-              isEditor={isEditor} 
-              as="span" 
-              maxLength={30} 
-            />
-          </h2>
-        </div>
-        <p className="text-white/50 text-lg max-w-sm mt-6 md:mt-0 leading-relaxed font-light" style={{ fontFamily: 'var(--font-body)' }}>
+    <section className="panel w-[100vw] h-[100vh] flex flex-col justify-center px-6 md:px-24 bg-[#050505] shrink-0 border-r border-white/10 relative overflow-hidden text-white">
+      {/* Vignette Shadow Effect */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.85)_100%)] pointer-events-none z-0" />
+      
+      {/* Ambient Glow */}
+      <div className="absolute -top-48 -right-48 w-96 h-96 bg-white/[0.015] rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute -bottom-48 -left-48 w-96 h-96 bg-white/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
+
+      {/* Cinematic Header */}
+      <div className="absolute top-[8vh] left-6 md:top-[12vh] md:left-24 z-20 flex flex-col gap-1.5 pointer-events-auto">
+        <div className="text-white/40 text-[9px] md:text-[10px] tracking-[0.45em] uppercase font-mono">
           <EditableText 
-            value={theme?.customTexts?.faq_desc || 'Curated answers to the most frequent inquiries from clients and collaborators.'} 
-            field="faq_desc" 
+            value={theme?.customTexts?.faq_tag || '[ SECTION 08 // INQUIRIES ]'} 
+            field="faq_tag" 
             entity="appearance" 
             isEditor={isEditor} 
             as="span" 
-            maxLength={150} 
+            maxLength={30} 
           />
-        </p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {faqs.map((faq: any, i: number) => {
-          const isOpen = openIndex === i;
-          return (
-            <motion.div 
-              key={i}
-              layout
-              className={`relative bg-white/5 border border-white/10 p-8 flex flex-col group/item transition-colors hover:bg-white/10 ${isOpen ? 'md:col-span-2 lg:col-span-3 bg-white/10' : ''}`}
-            >
-              <button
-                onClick={() => setOpenIndex(isOpen ? null : i)}
-                className="w-full text-left focus:flex flex-col h-full justify-between"
-              >
-                <div className="flex justify-between items-start w-full mb-12">
-                  <span className="text-3xl font-light text-white/30 shrink-0">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <div className={`w-10 h-10 rounded-full border border-white/20 flex items-center justify-center shrink-0 transition-transform duration-500 ${isOpen ? 'rotate-45 bg-white text-black' : 'rotate-0 text-white'}`}>
-                    <i className="fas fa-plus text-sm"></i>
-                  </div>
-                </div>
-                <span className={`text-2xl font-medium tracking-tight mb-4 ${isOpen ? 'text-white' : 'text-white/80'}`} style={{ fontFamily: 'var(--font-heading)' }}>
-                  <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"block w-full px-1"} />
-                </span>
-              </button>
-              
-              <AnimatePresence>
-                {isOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="overflow-hidden border-t border-white/10 mt-4 pt-6"
-                  >
-                    <div className="text-white/60 font-light text-lg md:text-xl leading-relaxed max-w-4xl" style={{ fontFamily: 'var(--font-body)' }}>
-                      <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={250} className={"block w-full px-1 min-h-[2rem]"} />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Delete Button */}
-              {isEditor && (
-                <button 
-                  onClick={(e) => handleRemoveItem(i, e)}
-                  className="absolute top-8 right-24 text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity w-10 h-10 flex items-center justify-center bg-black/50 rounded-full border border-red-500/30 hover:bg-red-500/20"
-                  title="Hapus Pertanyaan"
-                >
-                  <i className="fas fa-trash text-sm"></i>
-                </button>
-              )}
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {isEditor && (
-        <div className="mt-12 flex justify-center opacity-0 group-hover/faq:opacity-100 transition-opacity duration-300">
-          <button 
-            onClick={handleAddItem}
-            className="flex items-center gap-2 px-8 py-4 bg-white text-black font-bold uppercase tracking-widest text-sm hover:bg-white/80 transition-colors"
-          >
-            <i className="fas fa-plus"></i> ADD FRAME
-          </button>
         </div>
-      )}
-    </div>
+        <h2 className="font-serif italic text-3xl md:text-5xl text-white leading-none">
+          <EditableText 
+            value={theme?.customTexts?.faq_main_title || 'Pertanyaan'} 
+            field="faq_main_title" 
+            entity="appearance" 
+            isEditor={isEditor} 
+            as="span" 
+            maxLength={30} 
+          />
+        </h2>
+      </div>
+
+      {/* FAQ Scrollable Container */}
+      <div className="w-full max-w-4xl mx-auto z-10 mt-[13vh] md:mt-[18vh] h-[68vh] md:h-[61vh] overflow-y-auto cinematic-scrollbar pointer-events-auto pr-3 flex flex-col justify-between">
+        <div className="flex flex-col gap-3">
+          {faqs.map((faq: any, i: number) => {
+            const isOpen = openIndex === i;
+            return (
+              <div 
+                key={i}
+                className={`group/item relative border transition-all duration-300 ease-out bg-gradient-to-br from-white/[0.01] to-transparent backdrop-blur-sm ${
+                  isOpen ? 'border-white/20 bg-white/[0.03]' : 'border-white/5 hover:border-white/10 hover:bg-white/[0.01]'
+                }`}
+              >
+                {/* Viewfinder corner brackets on active or hover */}
+                <div className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ease-out z-20 ${isOpen ? 'opacity-100' : 'opacity-0 group-hover/item:opacity-100'}`}>
+                  <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/30"></div>
+                  <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/30"></div>
+                  <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/30"></div>
+                  <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/30"></div>
+                </div>
+
+                {/* Accordion Trigger */}
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  className="w-full text-left p-4 md:p-6 flex items-center justify-between gap-4"
+                >
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <span className="font-mono text-xs md:text-sm text-white/30 group-hover/item:text-white/60 transition-colors">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className={`font-sans font-bold text-xs md:text-sm uppercase tracking-wider transition-colors duration-300 ${
+                      isOpen ? 'text-white' : 'text-white/70 group-hover/item:text-white'
+                    }`}>
+                      <EditableText 
+                        value={faq.q} 
+                        onChange={(val) => handleUpdateItem(i, "q", val)} 
+                        isEditor={isEditor} 
+                        maxLength={150} 
+                        className="block w-full px-1" 
+                      />
+                    </span>
+                  </div>
+
+                  <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300 ${
+                    isOpen 
+                      ? 'border-white/40 bg-white text-black rotate-45' 
+                      : 'border-white/10 text-white/40 group-hover/item:border-white/20 group-hover/item:text-white'
+                  }`}>
+                    <i className="fas fa-plus text-[9px] md:text-[10px]"></i>
+                  </div>
+                </button>
+
+                {/* Accordion Content */}
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      className="overflow-hidden border-t border-white/5 mx-5 md:mx-6"
+                    >
+                      <div className="py-5 text-xs md:text-sm text-white/60 leading-relaxed font-mono tracking-wide">
+                        <EditableText 
+                          value={faq.a} 
+                          onChange={(val) => handleUpdateItem(i, "a", val)} 
+                          isEditor={isEditor} 
+                          maxLength={250} 
+                          className="block w-full px-1 min-h-[2rem]" 
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Remove Button for Editor */}
+                {isEditor && (
+                  <button 
+                    onClick={(e) => handleRemoveItem(i, e)}
+                    className="absolute top-4 right-14 text-white/30 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-all w-7 h-7 flex items-center justify-center bg-black/40 border border-white/10 rounded-sm hover:border-red-500/30"
+                    title="Hapus Pertanyaan"
+                  >
+                    <i className="fas fa-trash text-[10px]"></i>
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Add Question Button inside the scrollable area at the bottom */}
+        {isEditor && (
+          <div className="mt-8 mb-4 flex justify-center">
+            <button 
+              onClick={handleAddItem}
+              className="flex items-center gap-2 px-6 py-3 border border-white/15 bg-white/5 hover:bg-white hover:text-black font-mono text-[10px] tracking-[0.2em] uppercase transition-all duration-300 rounded-sm"
+            >
+              <i className="fas fa-plus text-[8px]"></i> Tambah Pertanyaan
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

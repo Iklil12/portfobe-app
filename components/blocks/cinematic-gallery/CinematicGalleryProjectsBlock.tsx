@@ -3,12 +3,21 @@
 import React from 'react';
 import { useCinematicGallery } from './CinematicGalleryShell';
 import { getVideoThumbnail } from '@/lib/videoUtils';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function CinematicGalleryProjectsBlock(props: any) {
-    const { isMobileView, setSelectedMedia, data } = useCinematicGallery();
+    const { isMobileView, setSelectedMedia, data, isEditor, theme, isCardPreview } = useCinematicGallery();
+
+    const pathname = usePathname();
+    const isPreviewRoute = pathname?.includes('/preview/');
+    const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
 
     const allProjects = data?.projects || data?.user?.projects || [];
     const featuredProjects = allProjects.filter((p: any) => p.projectType?.toLowerCase() !== '3d').slice(0, 4);
+    const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+    const userPlan = data?.plan || data?.user?.plan || 'FREE';
+    const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
 
     if (featuredProjects.length === 0) return null;
 
@@ -52,6 +61,43 @@ export function CinematicGalleryProjectsBlock(props: any) {
                     </section>
                 );
             })}
+
+            {/* Panel Khusus "EXPLORE ALL WORKS / GALLERY" */}
+            {showGalleryButton && (
+                <section 
+                    className="panel flex-col items-center justify-center gap-8 md:gap-12 lg:gap-16 bg-[#0c0c0c] border border-white/5 relative"
+                    style={!isCardPreview ? { width: '100vw' } : undefined}
+                >
+                    {/* Background Reticle */}
+                    <div className="absolute inset-[10vh] border border-white/5 pointer-events-none z-10 rounded-sm">
+                        <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-white/10"></div>
+                        <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-white/10"></div>
+                        <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-white/10"></div>
+                        <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-white/10"></div>
+                    </div>
+
+                    <div className="flex-shrink-0 flex flex-col items-center text-center max-w-xl z-20">
+                        <span className="font-sans text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#8b8b8b] mb-4">
+                            0{featuredProjects.length + 1} — INDEX ARSIP
+                        </span>
+                        <h2 className="font-serif font-bold text-4xl md:text-6xl lg:text-7xl italic text-[#f5f5f0] uppercase leading-none tracking-tight">
+                            Galeri.
+                        </h2>
+                        <p className="font-sans mt-4 max-w-sm text-xs md:text-sm text-gray-400 leading-relaxed">
+                            Eksplorasi secara lengkap seluruh arsip karya visual, cuplikan video sinematik, dan dokumentasi proyek kami.
+                        </p>
+                        <div className="mt-8">
+                            <Link 
+                                href={isEditor ? '#' : (isPreviewRoute ? `/preview/${subdomain}/gallery` : `/${subdomain}/gallery`)} 
+                                className="inline-flex items-center gap-3 px-6 py-3 border border-white/10 hover:border-white/40 bg-white/5 hover:bg-white/10 rounded-full text-xs md:text-sm tracking-widest uppercase transition-all duration-300 pointer-events-auto"
+                            >
+                                <span>Jelajahi Galeri</span>
+                                <i className="fas fa-arrow-right text-[10px]"></i>
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+            )}
         </>
     );
 }

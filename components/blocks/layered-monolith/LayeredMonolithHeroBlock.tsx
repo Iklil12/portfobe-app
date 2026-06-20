@@ -37,26 +37,26 @@ export function LayeredMonolithHeroBlock({ data, theme, isEditor = false, blockI
                 </svg>
             </div>
 
-            <header className="p-8 md:p-12 relative z-10 w-full">
+            <header className="p-6 md:p-10 relative z-10 w-full">
                 <h1 className="font-display font-bold text-xl md:text-2xl tracking-tight">
                     <EditableText value={fullName.split(' ')[0].toUpperCase()} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
                     <sup className="text-xs ml-1 opacity-50">TM</sup>
                 </h1>
             </header>
 
-            <div className="grow flex flex-col justify-center items-center text-center relative z-10 w-full px-4">
-                <p className="font-body font-medium text-brand-accent tracking-[0.3em] uppercase text-xs md:text-sm mb-6">
+            <div className="grow flex flex-col justify-center items-center text-center relative z-10 w-full px-4 py-4">
+                <p className="font-body font-medium text-brand-accent tracking-[0.3em] uppercase text-xs md:text-sm mb-3 md:mb-4">
                     <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={40} />
                 </p>
-                <h2 className="font-display text-6xl md:text-[8rem] lg:text-[10rem] font-bold uppercase leading-[0.85] tracking-tighter cursor-hover" data-cursor-text="SCROLL">
+                <h2 className="font-display text-5xl sm:text-6xl md:text-[6rem] lg:text-[7rem] xl:text-[8.5rem] font-bold uppercase leading-[0.85] tracking-tighter cursor-hover" data-cursor-text="SCROLL">
                     <EditableText value={theme?.customTexts?.lm_hero_h1 || 'Shaping'} field="lm_hero_h1" entity="appearance" isEditor={isEditor} as="span" maxLength={15} /><br/>
                     <EditableText value={theme?.customTexts?.lm_hero_h2 || 'The'} field="lm_hero_h2" entity="appearance" isEditor={isEditor} as="span" maxLength={15} /><br/>
                     <span className="italic font-light">
                         <EditableText value={theme?.customTexts?.lm_hero_h3 || 'Unseen.'} field="lm_hero_h3" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
                     </span>
                 </h2>
-                <div className="mt-8 md:mt-12 flex justify-center w-full">
-                    <p className="font-body text-sm md:text-base max-w-md text-[#1A1A18]/60 leading-relaxed font-medium">
+                <div className="mt-4 md:mt-6 flex justify-center w-full">
+                    <p className="font-body text-xs md:text-sm max-w-md text-[#1A1A18]/60 leading-relaxed font-medium">
                         <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={200} />
                     </p>
                 </div>

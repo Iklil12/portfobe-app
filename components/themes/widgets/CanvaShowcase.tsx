@@ -23,6 +23,97 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
 
   if (!isLoading && projects.length === 0) return null;
 
+  const isSingleProject = projects.length === 1;
+
+  if (variant === 'brutalism') {
+    const skeletonItems = isSingleProject ? [1] : [1, 2];
+    return (
+      <section ref={sectionRef} className="p-6 @sm:p-12 border-b-[3px] border-black bg-[#f4f4f0] flex flex-col w-full font-mono text-black">
+        {/* Title Bar dengan Retro Controls & warna highlight editor */}
+        <div className="p-6 border-[3px] border-black bg-[var(--hl)] flex justify-between items-center mb-8">
+          <h2 className="custom-heading text-xl @xs:text-2xl @sm:text-4xl @md:text-5xl font-black uppercase tracking-tighter text-black flex items-center gap-2">
+            <svg viewBox="0 0 24 24" className="w-6 h-6 @sm:w-8 @sm:h-8 fill-current shrink-0" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            CANVA_SHOWCASE
+          </h2>
+          {/* Retro controls window */}
+          <div className="flex items-center gap-1.5 hidden @sm:flex font-mono text-xs font-bold border-[3px] border-black bg-white p-1.5 shadow-[3px_3px_0px_0px_#000] select-none">
+            <span className="w-6 h-6 flex items-center justify-center border-[2px] border-black bg-white hover:bg-black hover:text-white cursor-pointer transition-colors duration-100">_</span>
+            <span className="w-6 h-6 flex items-center justify-center border-[2px] border-black bg-white hover:bg-black hover:text-white cursor-pointer transition-colors duration-100">⧠</span>
+            <span className="w-6 h-6 flex items-center justify-center border-[2px] border-black bg-white hover:bg-red-500 hover:text-white cursor-pointer transition-colors duration-100">X</span>
+          </div>
+        </div>
+
+        {/* Grid items */}
+        <div className={`grid gap-8 ${isSingleProject ? 'grid-cols-1 max-w-5xl mx-auto w-full' : 'grid-cols-1 @lg:grid-cols-2'}`}>
+          {isLoading ? (
+            skeletonItems.map((i) => (
+              <div key={i} className="animate-pulse bg-white border-[3px] border-black p-5 flex flex-col gap-4">
+                <div className="h-4 bg-black opacity-20 rounded w-1/3 mb-2"></div>
+                <div className="w-full aspect-video bg-black opacity-10"></div>
+              </div>
+            ))
+          ) : (
+            projects.map((project: any) => {
+              let src = project.embedLink;
+              if (src.includes('<iframe') || src.includes('<div')) {
+                const match = src.match(/src="([^"]+)"/);
+                if (match) src = match[1];
+              }
+
+              if (src.startsWith('https://') && !src.includes('embed')) {
+                if (src.includes('?')) {
+                  src += '&embed';
+                } else {
+                  src += '?embed';
+                }
+              }
+
+              return (
+                <div 
+                  key={project.id} 
+                  className="flex flex-col bg-white border-[3px] border-black shadow-[8px_8px_0px_0px_#000] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[5px_5px_0px_0px_#000] transition-all cursor-pointer group"
+                >
+                  {/* Card Header Bar - Highlight Color */}
+                  <div className="flex justify-between items-center p-4 border-b-[3px] border-black font-mono text-xs font-black uppercase bg-[var(--hl)] text-black">
+                    <span className="bg-black text-[var(--hl)] px-2 py-1 border border-black truncate max-w-[200px]">{project.title.toUpperCase()}</span>
+                    <span className="tracking-widest flex items-center gap-1.5 shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                      EMBEDDED
+                    </span>
+                  </div>
+
+                  {/* Iframe Area */}
+                  <div className="w-full aspect-video border-b-[3px] border-black bg-neutral-200 overflow-hidden relative">
+                    <iframe
+                      src={src}
+                      className="absolute inset-0 w-full h-full border-0"
+                      allowFullScreen
+                      allow="clipboard-write"
+                      loading="lazy"
+                    ></iframe>
+                  </div>
+
+                  {/* Details Area */}
+                  <div className="p-6 flex flex-col justify-between flex-1 bg-white">
+                    <h4 className="text-black font-black uppercase text-lg leading-tight group-hover:text-[var(--hl)] transition-colors">
+                      {project.title}
+                    </h4>
+                    <div className="border-t border-dashed border-black/20 pt-4 mt-6 flex justify-between items-center font-mono text-[9px] text-slate-400">
+                      <span>PLATFORM: CANVA_LIVE</span>
+                      <span className="text-black font-bold">STATUS_OK</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </section>
+    );
+  }
+
   const styles = {
     monochrome: {
       section: 'p-8 @lg:p-12 border-t border-gray-100 text-slate-900',
@@ -232,14 +323,26 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       progressBg: 'bg-white/10',
       progressFill: 'bg-white',
       calendarColorScheme: 'dark' as const
+    },
+    'layered-monolith': {
+      section: 'py-16 px-6 md:px-12 bg-transparent text-white w-full border-t border-white/5 flex flex-col',
+      heading: 'font-display font-black text-2xl md:text-3xl uppercase tracking-tighter text-white',
+      label: 'font-mono text-[9px] font-bold uppercase tracking-[0.25em] text-[var(--hl)] bg-[var(--hl)]/10 px-3 py-1 border border-[var(--hl)]/20',
+      border: 'border-white/10',
+      cardBg: 'bg-[#090909] border border-white/10 p-6 rounded-none shadow-[4px_4px_0px_0px_rgba(255,255,255,0.05)]',
+      icon: 'text-white',
+      textPrimary: 'font-display text-sm font-bold uppercase tracking-tight text-white',
+      textSecondary: 'font-mono text-[9px] text-white/50 uppercase tracking-widest mt-1',
+      progressBg: 'bg-white/10',
+      progressFill: 'bg-[var(--hl)]',
+      iframeBorder: 'border border-white/10 rounded-none',
+      calendarColorScheme: 'dark' as const
     }
   };
 
   const s = (styles as any)[variant] || styles.monochrome;
   const isDynamic = ['acid', 'aura', 'noir', 'bento', 'brutalism', 'cinematic', 'editorial', 'midnight', 'monolith', 'spatial', 'split', 'viewfinder', 'minimalist', 'split-screen-studio', 'horizontal-flow', 'kinetic-avant-garde', 'layered-monolith', 'nexus-noir'].includes(variant);
   const dynamicTextStyle = isDynamic && themeColor ? { color: themeColor } : {};
-
-  const isSingleProject = projects.length === 1;
 
   const containerClass = isSingleProject
     ? "flex flex-col items-center justify-center w-full"
@@ -261,8 +364,6 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
     ? "w-full max-w-4xl mx-auto"
     : (variant === 'noir' || variant === 'spatial' ? "w-full max-w-xl" : "w-full");
 
-  const skeletonItems = isSingleProject ? [1] : [1, 2];
-
   return (
     <section ref={sectionRef} className={s.section}>
       <div className={variant === 'minimalist' ? 'max-w-4xl w-full mx-auto' : ''}>
@@ -276,7 +377,7 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
         <div className="w-full font-sans">
           {isLoading ? (
             <div className={skeletonContainerClass}>
-              {skeletonItems.map((i) => (
+              {[1, 2].map((i) => (
                 <div key={i} className={`animate-pulse rounded-3xl p-6 ${s.cardBg} ${skeletonCardClass}`}>
                   <div className={`h-4 ${s.textPrimary} bg-current opacity-20 rounded w-1/3 mb-6`}></div>
                   <div className="w-full aspect-video bg-current opacity-10 rounded-xl"></div>

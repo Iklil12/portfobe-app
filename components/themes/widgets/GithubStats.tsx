@@ -11,7 +11,7 @@ export type StatsVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' |
 interface GithubStatsProps {
   userId: string;
   variant?: StatsVariant;
-  themeColor?: string; // Menambahkan prop themeColor dinamis
+  themeColor?: string;
 }
 
 const fetcher = (url: string) => fetch(url).then(async (res) => {
@@ -28,10 +28,8 @@ const fetcher = (url: string) => fetch(url).then(async (res) => {
 
 export function GithubStats({ userId, variant = 'monochrome', themeColor }: GithubStatsProps) {
   const sectionRef = useScrollReveal<HTMLElement>(0);
-  const headingRef = useScrollReveal<HTMLDivElement>(100);
-  const reposRef = useScrollReveal<HTMLDivElement>(200);
-  const langsRef = useScrollReveal<HTMLDivElement>(300);
-  const calendarRef = useScrollReveal<HTMLDivElement>(400);
+  const barRef = useRef<HTMLDivElement>(null);
+  const [barAnimated, setBarAnimated] = useState(false);
 
   const { data, error, isLoading } = useSWR(`/api/github/stats?userId=${userId}`, fetcher, {
     revalidateOnFocus: false,
@@ -39,10 +37,6 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
     revalidateIfStale: true,
     dedupingInterval: 10000,
   });
-
-  // State untuk animasi bar — reset tiap kali data baru masuk, baru aktif saat scroll
-  const [barAnimated, setBarAnimated] = useState(false);
-  const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setBarAnimated(false);
@@ -61,13 +55,171 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
     return () => observer.disconnect();
   }, [data]);
 
-
   if (error || data?.hasError) return null;
 
   const hasNoPublicRepos = !isLoading && !data?.topRepo && (!data?.languages || data.languages.length === 0);
   if (hasNoPublicRepos) return null;
 
-  // --- STYLING MAP ---
+  if (variant === 'brutalism') {
+    return (
+      <section ref={sectionRef} className="p-6 @sm:p-12 border-b-[3px] border-black bg-[#f4f4f0] flex flex-col w-full font-mono text-black">
+        {/* Title Bar dengan Retro Controls & warna highlight editor */}
+        <div className="p-6 border-[3px] border-black bg-[var(--hl)] flex justify-between items-center mb-8">
+          <h2 className="custom-heading text-xl @xs:text-2xl @sm:text-4xl @md:text-5xl font-black uppercase tracking-tighter text-black flex items-center gap-2">
+            <svg viewBox="0 0 24 24" className="w-6 h-6 @sm:w-8 @sm:h-8 fill-current shrink-0" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.47 2 2 6.47 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"/>
+            </svg>
+            GITHUB_ACTIVITY
+          </h2>
+          {/* Retro controls window */}
+          <div className="flex items-center gap-1.5 hidden @sm:flex font-mono text-xs font-bold border-[3px] border-black bg-white p-1.5 shadow-[3px_3px_0px_0px_#000] select-none">
+            <span className="w-6 h-6 flex items-center justify-center border-[2px] border-black bg-white hover:bg-black hover:text-white cursor-pointer transition-colors duration-100">_</span>
+            <span className="w-6 h-6 flex items-center justify-center border-[2px] border-black bg-white hover:bg-black hover:text-white cursor-pointer transition-colors duration-100">⧠</span>
+            <span className="w-6 h-6 flex items-center justify-center border-[2px] border-black bg-white hover:bg-red-500 hover:text-white cursor-pointer transition-colors duration-100">X</span>
+          </div>
+        </div>
+
+        {/* Sub-bar / Info Toolbar */}
+        <div className="w-full bg-white border-[3px] border-black px-6 py-3 flex justify-between items-center text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 bg-neutral-50 mb-8">
+          <div className="flex items-center gap-4">
+            <span>USER: <span className="text-black">{data?.username || 'UNKNOWN'}</span></span>
+            <span className="hidden @md:inline">|</span>
+            <span>API_STATUS: <span className="text-green-600">CONNECTED</span></span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--hl)] animate-pulse border border-black"></span>
+            <span className="text-black">LIVE_SYNC</span>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="animate-pulse bg-white border-[3px] border-black p-6 flex flex-col gap-6">
+            <div className="h-4 bg-black opacity-20 rounded w-1/3 mb-2"></div>
+            <div className="h-3 bg-black opacity-10 rounded w-full mb-1"></div>
+            <div className="h-3 bg-black opacity-10 rounded w-4/5"></div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-8">
+            <div className="grid grid-cols-1 @md:grid-cols-2 gap-8">
+              {/* Repositories List */}
+              {(data.topRepos || data.topRepo) && (
+                <div className="flex flex-col bg-white border-[3px] border-black p-6 shadow-[6px_6px_0px_0px_#000]">
+                  <div className="font-mono text-xs font-black uppercase bg-black text-[var(--hl)] px-2 py-1 w-max mb-6 border border-black">
+                    TOP_REPOSITORIES
+                  </div>
+                  <div className="flex flex-col gap-6">
+                    {(data.topRepos || [data.topRepo]).map((repo: any, index: number) => (
+                      <a
+                        key={repo.name || index}
+                        href={repo.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group border-b border-dashed border-black/10 last:border-b-0 pb-4 last:pb-0"
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <i className="fab fa-github text-sm group-hover:text-[var(--hl)] transition-colors"></i>
+                          <h4 className="text-sm font-black uppercase group-hover:text-[var(--hl)] transition-colors">
+                            {repo.name}
+                          </h4>
+                        </div>
+                        {repo.description && (
+                          <p className="text-xs text-slate-600 mb-3 leading-relaxed">
+                            {repo.description}
+                          </p>
+                        )}
+                        <div className="flex items-center flex-wrap gap-4 text-[10px] font-bold text-slate-500">
+                          <span className="flex items-center gap-1"><i className="fas fa-star"></i> {repo.stars}</span>
+                          <span className="flex items-center gap-1"><i className="fas fa-eye"></i> {repo.watchers}</span>
+                          <span className="flex items-center gap-1"><i className="fas fa-code-branch"></i> {repo.forks}</span>
+                          {repo.language && (
+                            <span className="flex items-center gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-none border border-black" style={{ backgroundColor: repo.languageColor }}></span>
+                              {repo.language.toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Top Languages */}
+              {data.languages && data.languages.length > 0 && (
+                <div className="flex flex-col bg-white border-[3px] border-black p-6 shadow-[6px_6px_0px_0px_#000]">
+                  <div className="font-mono text-xs font-black uppercase bg-black text-[var(--hl)] px-2 py-1 w-max mb-6 border border-black">
+                    LANGUAGES_DECODED
+                  </div>
+                  <div className="flex flex-col">
+                    {/* Multi-segment Progress Bar */}
+                    <div ref={barRef} className="w-full h-6 flex border-[3px] border-black overflow-hidden mb-6 bg-white">
+                      {data.languages.map((lang: any, idx: number) => (
+                        <div
+                          key={`bar-${lang.name}`}
+                          style={{
+                            width: barAnimated ? `${lang.percent}%` : '0%',
+                            backgroundColor: lang.color,
+                            transitionDelay: barAnimated ? `${idx * 80}ms` : '0ms'
+                          }}
+                          className="h-full border-r-[2px] last:border-r-0 border-black transition-[width] duration-[1200ms]"
+                          title={`${lang.name}: ${lang.percent}%`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Language Legend */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {data.languages.map((lang: any) => (
+                        <div key={lang.name} className="flex items-center gap-2 text-xs font-bold">
+                          <span className="w-3 h-3 border border-black shrink-0" style={{ backgroundColor: lang.color }}></span>
+                          <span className="text-black uppercase">
+                            {lang.name}
+                          </span>
+                          <span className="text-[10px] font-mono text-slate-500 ml-auto">
+                            {lang.percent}%
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Contribution Calendar */}
+            {!isLoading && !hasNoPublicRepos && data?.username && (
+              <div className="mt-4 flex flex-col gap-6">
+                <div className="border-[3px] border-black bg-white p-6 shadow-[6px_6px_0px_0px_#000]">
+                  <div className="font-mono text-xs font-black uppercase bg-black text-[var(--hl)] px-2 py-1 w-max mb-6 border border-black">
+                    CONTRIBUTION_GRAPH
+                  </div>
+                  <div className="overflow-x-auto w-full pb-2">
+                    <GithubCalendarWidget
+                      username={data.username}
+                      variant="brutalism"
+                      colorScheme="light"
+                      themeColor={themeColor}
+                    />
+                  </div>
+                </div>
+
+                <div className="border-[3px] border-black bg-white p-6 shadow-[6px_6px_0px_0px_#000]">
+                  <div className="font-mono text-xs font-black uppercase bg-black text-[var(--hl)] px-2 py-1 w-max mb-6 border border-black">
+                    ACTIVITY_FEED
+                  </div>
+                  <GithubActivityFeed
+                    userId={userId}
+                    themeColor={themeColor}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+    );
+  }
+
   const styles = {
     monochrome: {
       section: 'p-8 @lg:p-12 border-t border-gray-100 bg-white text-slate-900',
@@ -277,7 +429,6 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       progressFill: 'bg-white',
       calendarColorScheme: 'dark' as const
     },
-
     'horizontal-flow': {
       section: 'flex-shrink-0 w-[85vw] @md:w-[60vw] @lg:w-[45vw] h-full p-8 @md:p-12 border-r border-black/10 bg-white snap-center',
       heading: 'text-3xl font-bold tracking-tight text-black mb-6',
@@ -330,20 +481,15 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
       progressFill: 'bg-gray-300',
       calendarColorScheme: 'dark' as const
     }
-
   };
 
   const s = styles[variant] || styles.monochrome;
-
-  // --- DYNAMIC STYLING ---
-  // Jika variant adalah acid atau aura, dan user memilih warna di editor, kita "timpa" warna bawaan
-  const isDynamic = ['acid', 'aura', 'noir', 'bento', 'brutalism', 'cinematic', 'editorial', 'midnight', 'monolith', 'spatial', 'split', 'viewfinder', 'minimalist', 'split-screen-studio', 'horizontal-flow', 'kinetic-avant-garde', 'layered-monolith', 'nexus-noir'].includes(variant);
+  const isDynamic = true;
   const dynamicTextStyle = isDynamic && themeColor ? { color: themeColor } : {};
-  const dynamicBgStyle = isDynamic && themeColor ? { backgroundColor: themeColor } : {};
 
   return (
     <section ref={sectionRef} className={s.section}>
-      <div ref={headingRef} className={`flex justify-between items-baseline mb-6 md:mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-4 md:pb-6 border-b'} ${s.border}`}>
+      <div className={`flex ${variant === 'noir' || variant === 'spatial' ? 'flex-col items-center text-center gap-3' : 'justify-between items-baseline'} mb-6 md:mb-10 ${variant === 'editorial' ? 'pt-10 border-t' : 'pb-4 md:pb-6 border-b'} ${s.border}`}>
         <h2 className={s.heading}>Open Source</h2>
         <span className={s.label} style={dynamicTextStyle}>GitHub</span>
       </div>
@@ -362,7 +508,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
 
             {/* Repositories List */}
             {(data.topRepos || data.topRepo) && (
-              <div ref={reposRef} className="flex flex-col gap-6">
+              <div className="flex flex-col gap-6">
                 <span className={`${s.label} mb-1`} style={dynamicTextStyle}>
                   Top Repositories
                 </span>
@@ -415,7 +561,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
 
             {/* Top Languages */}
             {data.languages && data.languages.length > 0 && (
-              <div ref={langsRef} className="flex flex-col">
+              <div className="flex flex-col">
                 <span className={`${s.label} mb-4`} style={dynamicTextStyle}>
                   Top Languages
                 </span>
@@ -459,7 +605,7 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
 
         {/* Contribution Calendar */}
         {!isLoading && !hasNoPublicRepos && data?.username && (
-          <div ref={calendarRef} className={`mt-12 pt-8 border-t ${s.border}`}>
+          <div className={`mt-12 pt-8 border-t ${s.border}`}>
             <GithubCalendarWidget
               username={data.username}
               variant={variant as CalendarThemeVariant}

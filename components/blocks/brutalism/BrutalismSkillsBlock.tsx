@@ -50,13 +50,13 @@ export function BrutalismSkillsBlock({ theme, isEditor }: any) {
         updateSkills(newSkills);
     };
 
-
     return (
-        <section className="w-full py-24 px-4 md:px-8 bg-[#ffff00] border-b-[6px] border-black @container">
-            <h2 className="text-5xl md:text-7xl font-black text-black uppercase mb-12 border-4 border-black p-4 inline-block bg-white shadow-[8px_8px_0_0_#000]">
+        <section className="w-full py-12 @sm:py-24 px-4 @sm:px-12 bg-[#f4f4f0] border-b-[4px] border-black @container">
+            <h2 className="text-2xl @sm:text-4xl @md:text-6xl font-black text-black uppercase mb-8 @sm:mb-12 border-[4px] border-black p-3 @sm:p-4 inline-block bg-[var(--hl)] shadow-[5px_5px_0_0_#000] @sm:shadow-[8px_8px_0_0_#000]">
                 <EditableText entity="appearance" field="brutalism_skills_title" value={getCustomText('brutalism_skills_title', 'Core Capabilities')} isEditor={isEditor} maxLength={40} as="span" />
             </h2>
-            <div className="grid grid-cols-1 @md:grid-cols-2 gap-8">
+            
+            <div className="grid grid-cols-1 @md:grid-cols-2 gap-4 @sm:gap-8">
                 {skills.map((skill: any, index: number) => {
                     const defaultName = skill.name;
                     const defaultProficiency = String(skill.level);
@@ -64,8 +64,8 @@ export function BrutalismSkillsBlock({ theme, isEditor }: any) {
                     const safeVal = isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
                     
                     return (
-                        <div key={index} className="border-4 border-black p-6 bg-white shadow-[8px_8px_0_0_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0_0_#000] transition-all relative">
-                            <div className="flex justify-between items-start gap-4 mb-4 text-xl @md:text-2xl @lg:text-3xl font-black uppercase text-black mb-2">
+                        <div key={index} className="border-[4px] border-black p-4 @sm:p-6 bg-white shadow-[5px_5px_0_0_#000] @sm:shadow-[8px_8px_0_0_#000] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[5px_5px_0_0_#000] transition-all relative group">
+                            <div className="flex justify-between items-start gap-3 mb-3 text-lg @sm:text-2xl font-black uppercase text-black">
                                 <span className="flex-1 break-words pr-2">
                                     <EditableText 
                                         value={defaultName} 
@@ -85,13 +85,15 @@ export function BrutalismSkillsBlock({ theme, isEditor }: any) {
                                     />%
                                 </span>
                             </div>
-                            <div className={`w-full h-2 ${isEditor ? '' : 'overflow-hidden'} bg-gray-200 border-2 border-black`}>
+                            
+                            {/* Progress bar tebal bergaya brutalis */}
+                            <div className="w-full h-4 bg-neutral-100 border-[3px] border-black overflow-hidden relative">
                                 <motion.div 
                                     initial={{ width: 0 }}
                                     whileInView={{ width: `${safeVal}%` }}
                                     viewport={{ once: true }}
-                                    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                                    className={`h-full bg-[#ff00ff] border-r-2 border-black`}
+                                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                                    className="h-full bg-[var(--hl)] border-r-[3px] border-black"
                                     style={isEditor ? { width: `${safeVal}%` } : undefined}
                                 ></motion.div>
                             </div>
@@ -99,20 +101,22 @@ export function BrutalismSkillsBlock({ theme, isEditor }: any) {
                             {isEditor && (
                                 <button
                                     onClick={(e) => handleRemoveItem(index, e)}
-                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
+                                    className="absolute top-2 right-2 bg-black text-white hover:bg-red-500 hover:text-white rounded-full w-5 h-5 flex items-center justify-center text-[8px] z-30 transition-colors"
                                     title="Hapus Skill"
                                 >
                                     ✕
                                 </button>
                             )}
                         </div>
-                    );})}
+                    );
+                })}
             </div>
+
             {isEditor && (
                 <div className="flex justify-center mt-12 w-full col-span-full">
                     <button
                         onClick={handleAddItem}
-                        className="px-6 py-3 border-4 border-black hover:bg-black hover:text-[#ffff00] text-black uppercase tracking-widest text-[11px] font-black transition-all duration-300 bg-white shadow-[6px_6px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_0_#000]"
+                        className="px-6 py-3 border-[4px] border-black hover:bg-black hover:text-[var(--hl)] text-black uppercase tracking-widest text-[11px] font-black transition-all duration-300 bg-white shadow-[6px_6px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_0_#000]"
                     >
                         + Tambah Skill
                     </button>

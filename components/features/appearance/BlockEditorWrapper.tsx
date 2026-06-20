@@ -14,9 +14,10 @@ interface BlockEditorWrapperProps {
   children: React.ReactNode;
   isHero?: boolean;
   isHorizontalFlow?: boolean;
+  style?: React.CSSProperties;
 }
 
-export function BlockEditorWrapper({ block, isEditor, children, isHero = false, isHorizontalFlow = false }: BlockEditorWrapperProps) {
+export function BlockEditorWrapper({ block, isEditor, children, isHero = false, isHorizontalFlow = false, style }: BlockEditorWrapperProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   // Jika bukan mode editor, render anak secara normal jika visible
@@ -43,7 +44,8 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
     <motion.div
       layout={!isHero}
       transition={!isHero ? { type: "spring", stiffness: 300, damping: 30 } : { duration: 0.2 }}
-      className={`relative group/block transition-opacity duration-500 ${isHovered ? 'z-50' : 'z-10'} ${!isHero && isHovered ? 'scale-[1.005]' : ''} ${!isHero && !isHovered ? 'scale-100' : ''} ${isHorizontalFlow ? 'flex flex-row flex-nowrap shrink-0 h-full items-stretch' : ''} ${isHero ? 'w-full h-full' : ''}`}
+      className={`relative group/block transition-opacity duration-500 ${isHovered ? 'z-50' : 'z-10'} ${!isHero && isHovered ? 'scale-[1.005]' : ''} ${!isHero && !isHovered ? 'scale-100' : ''} ${isHorizontalFlow ? 'flex flex-row flex-nowrap shrink-0 h-full items-stretch' : ''} ${isHero ? (isHorizontalFlow ? 'h-full' : 'w-full h-full') : ''}`}
+      style={style}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => setIsHovered(true)}
@@ -53,7 +55,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
 
       {/* Floating Toolbar */}
       <div
-        className={`absolute right-4 top-4 z-[300] flex items-center bg-black/60 backdrop-blur-md text-white rounded-lg border border-white/10 shadow-lg transition-all duration-400 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden ${isHovered ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95 pointer-events-none'}`}
+        className={`absolute right-4 ${isHorizontalFlow ? 'top-[9vh]' : 'top-4'} z-[300] flex items-center bg-black/60 backdrop-blur-md text-white rounded-lg border border-white/10 shadow-lg transition-all duration-400 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden ${isHovered ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95 pointer-events-none'}`}
       >
         <div className="px-4 py-2 border-r border-white/10 flex items-center bg-white/5">
           <span className="text-[11px] font-medium text-white/90 whitespace-nowrap capitalize">
@@ -145,7 +147,7 @@ export function BlockEditorWrapper({ block, isEditor, children, isHero = false, 
       )}
 
       {/* Konten Asli */}
-      <div className={`transition-all duration-300 ${!block.isVisible ? 'pointer-events-none select-none blur-[1px] opacity-40 grayscale group-hover/block:opacity-70' : ''} ${block.isLocked ? 'pointer-events-none select-none' : ''} ${isHorizontalFlow ? 'flex flex-row flex-nowrap shrink-0 h-full w-full items-stretch' : ''} ${isHero ? 'w-full h-full' : ''}`}
+      <div className={`transition-all duration-300 ${!block.isVisible ? 'pointer-events-none select-none blur-[1px] opacity-40 grayscale group-hover/block:opacity-70' : ''} ${block.isLocked ? 'pointer-events-none select-none' : ''} ${isHorizontalFlow ? 'flex flex-row flex-nowrap shrink-0 h-full w-full items-stretch' : ''} ${isHero ? (isHorizontalFlow ? 'h-full w-full' : 'w-full h-full') : ''}`}
         {...(!block.isVisible || block.isLocked ? { inert: true } as any : {})}
       >
         {children}

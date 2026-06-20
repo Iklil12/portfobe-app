@@ -317,7 +317,7 @@ const UniversalPlayer = dynamic(() => import('@/components/ui/UniversalPlayer').
 const BlockEditorWrapper = dynamic(() => import('@/components/features/appearance/BlockEditorWrapper').then(mod => mod.BlockEditorWrapper));
 const VideoShowcaseRenderer = dynamic(() => import('./video-showcase/VideoShowcaseRenderer'));
 
-export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: any) => {
+export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia, isMobileView = false }: any) => {
   const commonProps = { data, theme, isEditor, blockConfig: block, setSelectedMedia };
   const userId = data?.userId || data?.user?.id || data?.id || "";
   const themeColor = theme?.themeColor;
@@ -629,9 +629,30 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
       case 'MARQUEE': content = null; break; // Locked to Hero
       case 'STATS': content = null; break; // Locked to About
       case 'SERVICES': content = <CinematicGalleryServicesBlock {...commonProps} />; break;
-      case 'PENPOT': content = data?.id || data?.userId ? <section className="panel flex-col items-center justify-center"><div className="w-[100vw] h-full overflow-y-auto hide-scrollbar flex items-center justify-center px-2 md:px-0 pt-16 pb-8 pointer-events-auto"><PenpotShowcase userId={userId} variant="cinematic" themeColor="#ffffff" /></div></section> : null; break;
-      case 'CANVA': content = data?.id || data?.userId ? <section className="panel flex-col items-center justify-center"><div className="w-[100vw] h-full overflow-y-auto hide-scrollbar flex items-center justify-center px-2 md:px-0 pt-16 pb-8 pointer-events-auto"><CanvaShowcase userId={userId} variant="cinematic" themeColor="#ffffff" /></div></section> : null; break;
-      case 'GITHUB': content = data?.id || data?.userId ? <section className="panel flex-col items-center justify-center"><div className="w-[100vw] h-full overflow-y-auto hide-scrollbar flex items-center justify-center px-2 md:px-0 pt-16 pb-8 pointer-events-auto"><GithubStats userId={userId} variant="cinematic" themeColor="#ffffff" /></div></section> : null; break;
+      case 'PENPOT': content = data?.id || data?.userId ? <section className="panel w-[100vw] h-[100vh] flex flex-col items-center bg-[#050505] shrink-0 border-r border-white/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.85)_100%)] pointer-events-none z-0" />
+        <div className="absolute -top-48 -right-48 w-96 h-96 bg-white/[0.015] rounded-full blur-[120px] pointer-events-none z-0" />
+        <div className="absolute -bottom-48 -left-48 w-96 h-96 bg-white/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
+        <div className="w-full max-w-5xl mx-auto z-10 pt-[8vh] h-full overflow-y-auto cinematic-scrollbar pointer-events-auto px-6 md:px-12 [&>section]:border-t-0 [&>section]:pt-8">
+          <PenpotShowcase userId={userId} variant="cinematic" themeColor="#ffffff" />
+        </div>
+      </section> : null; break;
+      case 'CANVA': content = data?.id || data?.userId ? <section className="panel w-[100vw] h-[100vh] flex flex-col items-center bg-[#050505] shrink-0 border-r border-white/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.85)_100%)] pointer-events-none z-0" />
+        <div className="absolute -bottom-48 -right-48 w-96 h-96 bg-white/[0.015] rounded-full blur-[120px] pointer-events-none z-0" />
+        <div className="absolute -top-48 -left-48 w-96 h-96 bg-white/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
+        <div className="w-full max-w-5xl mx-auto z-10 pt-[8vh] h-full overflow-y-auto cinematic-scrollbar pointer-events-auto px-6 md:px-12 [&>section]:border-t-0 [&>section]:pt-8">
+          <CanvaShowcase userId={userId} variant="cinematic" themeColor="#ffffff" />
+        </div>
+      </section> : null; break;
+      case 'GITHUB': content = data?.id || data?.userId ? <section className="panel w-[100vw] h-[100vh] flex flex-col items-center bg-[#050505] shrink-0 border-r border-white/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.85)_100%)] pointer-events-none z-0" />
+        <div className="absolute -top-48 -left-48 w-96 h-96 bg-white/[0.015] rounded-full blur-[120px] pointer-events-none z-0" />
+        <div className="absolute -bottom-48 -right-48 w-96 h-96 bg-white/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
+        <div className="w-full max-w-5xl mx-auto z-10 pt-[8vh] h-full overflow-y-auto cinematic-scrollbar pointer-events-auto px-6 md:px-12 [&>section]:border-t-0 [&>section]:pt-8">
+          <GithubStats userId={userId} variant="cinematic" themeColor="#ffffff" />
+        </div>
+      </section> : null; break;
     }
   } else if (activeThemeTemplate === 'acid-tech' || activeThemeTemplate === 'acid') {
     switch (baseBlockType) {
@@ -721,9 +742,10 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia }: 
   const isHero = block.blockType.includes('HERO');
 
   const isHorizontalFlow = activeThemeTemplate === 'cinematic-gallery';
+  const customStyle = (isHorizontalFlow && isHero) ? { width: '100vw' } : undefined;
 
   return (
-    <BlockEditorWrapper key={block.id} block={block} isEditor={isEditor} isHero={isHero} isHorizontalFlow={isHorizontalFlow}>
+    <BlockEditorWrapper key={block.id} block={block} isEditor={isEditor} isHero={isHero} isHorizontalFlow={isHorizontalFlow} style={customStyle}>
       {content}
     </BlockEditorWrapper>
   );
@@ -1006,7 +1028,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
   const activeThemeTemplate = theme?.themeTemplate || 'minimalist';
 
   const renderBlock = (b: any) => (
-    <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} />
+    <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} isMobileView={isMobileView} />
   );
 
   const renderLayout = () => {

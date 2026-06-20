@@ -46,8 +46,8 @@ export default function BrutalismFaq({ data, theme, isEditor }: { data: any, the
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto py-16 px-4 group/faq">
-      <h2 className="text-5xl font-black uppercase mb-12 tracking-tighter" style={{ fontFamily: 'var(--font-heading)' }}>
+    <div className="w-full max-w-5xl mx-auto py-8 @sm:py-16 px-4 group/faq">
+      <h2 className="text-3xl @xs:text-4xl @sm:text-5xl font-black uppercase mb-12 tracking-tighter" style={{ fontFamily: 'var(--font-heading)' }}>
         <span className="bg-black text-white px-4 py-2 inline-block -rotate-2">
           <EditableText 
             value={theme?.customTexts?.faq_main_title || 'FAQ'} 
@@ -74,12 +74,12 @@ export default function BrutalismFaq({ data, theme, isEditor }: { data: any, the
             >
               <button
                 onClick={() => setOpenIndex(isOpen ? null : i)}
-                className="w-full p-5 flex justify-between items-center text-left focus:outline-none"
+                className="w-full p-4 @sm:p-5 flex justify-between items-center text-left focus:outline-none"
               >
-                <span className="text-xl font-bold uppercase tracking-tight w-5/6" style={{ fontFamily: 'var(--font-heading)' }}>
+                <span className="text-base @sm:text-xl font-bold uppercase tracking-tight w-5/6" style={{ fontFamily: 'var(--font-heading)' }}>
                   <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"rounded-none block w-full px-1"} />
                 </span>
-                <span className="text-3xl font-black font-mono shrink-0">
+                <span className="text-2xl @sm:text-3xl font-black font-mono shrink-0">
                   {isOpen ? '-' : '+'}
                 </span>
               </button>
@@ -91,7 +91,7 @@ export default function BrutalismFaq({ data, theme, isEditor }: { data: any, the
                     exit={{ height: 0 }}
                     className="overflow-hidden border-t-4 border-black"
                   >
-                    <div className="p-5 font-medium text-lg leading-relaxed bg-white text-black" style={{ fontFamily: 'var(--font-body)' }}>
+                    <div className="p-4 @sm:p-5 font-medium text-xs @sm:text-base leading-relaxed bg-white text-black" style={{ fontFamily: 'var(--font-body)' }}>
                       <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={250} className={"rounded-none block w-full px-1 min-h-[2rem]"} />
                     </div>
                   </motion.div>

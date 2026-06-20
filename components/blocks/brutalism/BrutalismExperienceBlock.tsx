@@ -43,12 +43,14 @@ export function BrutalismExperienceBlock({ theme, isEditor }: any) {
         updateExperiences(newExps);
     };
 
-
     return (
-        <section className="w-full py-24 px-4 md:px-8 bg-[#ffff00] border-b-[6px] border-black">
-            <h2 className="text-5xl md:text-7xl font-black text-black uppercase mb-12 border-4 border-black p-4 inline-block bg-white shadow-[8px_8px_0_0_#000]">
+        <section className="w-full py-12 @sm:py-24 px-4 @sm:px-12 bg-[var(--hl)] border-b-[4px] border-black @container">
+            {/* Title Card - High Contrast */}
+            <h2 className="text-2xl @sm:text-4xl @md:text-6xl font-black text-black uppercase mb-8 @sm:mb-12 border-[4px] border-black p-3 @sm:p-4 inline-block bg-white shadow-[5px_5px_0_0_#000] @sm:shadow-[8px_8px_0_0_#000]">
                 <EditableText entity="appearance" field="brutalism_exp_title" value={getCustomText('brutalism_exp_title', 'Professional Journey')} isEditor={isEditor} maxLength={40} as="span" />
             </h2>
+
+            {/* Experience Cards Stack */}
             <div className="flex flex-col">
                 {experiences.map((exp: any, index: number) => {
                     const defaultRole = exp.role;
@@ -57,57 +59,74 @@ export function BrutalismExperienceBlock({ theme, isEditor }: any) {
                     const defaultDescription = exp.description || '';
                     
                     return (
-                        <div key={index} className="border-4 border-black p-6 bg-white mb-8 shadow-[8px_8px_0_0_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0_0_#000] transition-all relative">
-                            <div className="flex-1">
-                                <h3 className="text-3xl font-black uppercase text-black mb-2">
-                                    <EditableText 
-                                         value={defaultRole} 
-                                         onChange={(val) => handleUpdateItem(index, 'role', val)} 
-                                         isEditor={isEditor} 
-                                         maxLength={50} 
-                                         as="span" 
-                                     />
-                                </h3>
-                                <div className={`mt-2 flex flex-col md:flex-row md:items-center gap-2 text-sm font-bold bg-black text-white px-2 py-1 inline-block`}>
-                                    <span>
+                        <div key={index} className="border-[4px] border-black p-4 @sm:p-8 bg-white mb-4 @sm:mb-8 shadow-[5px_5px_0_0_#000] @sm:shadow-[8px_8px_0_0_#000] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[5px_5px_0_0_#000] transition-all relative group">
+                            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                                <div className="flex-1">
+                                    {/* Role */}
+                                    <h3 className="text-lg @sm:text-3xl font-black uppercase text-black leading-tight">
                                         <EditableText 
-                                             value={defaultCompany} 
-                                             onChange={(val) => handleUpdateItem(index, 'company', val)} 
+                                             value={defaultRole} 
+                                             onChange={(val) => handleUpdateItem(index, 'role', val)} 
                                              isEditor={isEditor} 
                                              maxLength={50} 
                                              as="span" 
                                          />
-                                    </span>
-                                    <span className="hidden md:inline">•</span>
-                                    <span>
-                                        <EditableText 
-                                             value={defaultDuration} 
-                                             onChange={(val) => handleUpdateItem(index, 'duration', val)} 
-                                             isEditor={isEditor} 
-                                             maxLength={40} 
-                                             as="span" 
-                                         />
-                                    </span>
+                                    </h3>
+                                    
+                                    {/* Company & Duration Badge - Sleek Black */}
+                                    <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-black bg-black text-white border-[2px] border-black px-3 py-1.5 w-max uppercase tracking-wider">
+                                        <span>
+                                            <EditableText 
+                                                 value={defaultCompany} 
+                                                 onChange={(val) => handleUpdateItem(index, 'company', val)} 
+                                                 isEditor={isEditor} 
+                                                 maxLength={50} 
+                                                 as="span" 
+                                             />
+                                        </span>
+                                        <span className="opacity-50">•</span>
+                                        <span>
+                                            <EditableText 
+                                                 value={defaultDuration} 
+                                                 onChange={(val) => handleUpdateItem(index, 'duration', val)} 
+                                                 isEditor={isEditor} 
+                                                 maxLength={40} 
+                                                 as="span" 
+                                             />
+                                        </span>
+                                    </div>
                                 </div>
+                            </div>
+
+                            {/* Job Description (Fills the previous bug gap) */}
+                            <div className="mt-6 text-xs @sm:text-sm font-mono text-slate-700 leading-relaxed uppercase border-t-2 border-dashed border-black/10 pt-4">
+                                <EditableText 
+                                     value={defaultDescription} 
+                                     onChange={(val) => handleUpdateItem(index, 'description', val)} 
+                                     isEditor={isEditor} 
+                                     as="p" 
+                                 />
                             </div>
                         
                             {isEditor && (
                                 <button
                                     onClick={(e) => handleRemoveItem(index, e)}
-                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
+                                    className="absolute top-2 right-2 bg-black text-white hover:bg-red-500 hover:text-white rounded-full w-5 h-5 flex items-center justify-center text-[8px] z-30 transition-colors"
                                     title="Hapus Pengalaman"
                                 >
                                     ✕
                                 </button>
                             )}
                         </div>
-                    );})}
+                    );
+                })}
             </div>
+
             {isEditor && (
                 <div className="flex justify-center mt-12 w-full col-span-full">
                     <button
                         onClick={handleAddItem}
-                        className="px-6 py-3 border-4 border-black hover:bg-black hover:text-[#ffff00] text-black uppercase tracking-widest text-[11px] font-black transition-all duration-300 bg-white shadow-[6px_6px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_0_#000]"
+                        className="px-6 py-3 border-[4px] border-black hover:bg-black hover:text-[var(--hl)] text-black uppercase tracking-widest text-[11px] font-black transition-all duration-300 bg-white shadow-[6px_6px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_0_#000]"
                     >
                         + Tambah Pengalaman
                     </button>

@@ -9,6 +9,8 @@ import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
 import { AnimatePresence, motion } from 'framer-motion';
 import Lenis from 'lenis';
 import { EditableText } from '@/components/ui/EditableText';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
@@ -221,6 +223,15 @@ export const CinematicGalleryShell = ({ children, data, theme, isMobileView = fa
 
     const fullName = data?.profile?.fullName || data?.fullName || "Ruang Studio";
 
+    const pathname = usePathname();
+    const isPreviewRoute = pathname?.includes('/preview/');
+    const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
+
+    const allProjects = data?.projects || data?.user?.projects || [];
+    const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
+    const userPlan = data?.plan || data?.user?.plan || 'FREE';
+    const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+
     return (
         <CinematicGalleryContext.Provider value={{ themeColor, customHeadingFont, customBodyFont, setSelectedMedia, isEditor, isCardPreview, isMobileView, data, theme }}>
             <main ref={containerRef} className="cinematic-gallery-root bg-[#050505] text-[#f5f5f0] min-h-screen relative overflow-x-hidden selection:bg-[#f5f5f0] selection:text-[#050505]">
@@ -285,7 +296,12 @@ export const CinematicGalleryShell = ({ children, data, theme, isMobileView = fa
                         ${!isCardPreview ? 'width: max-content; height: 100vh; display: flex; flex-wrap: nowrap;' : 'display: flex; flex-direction: column; width: 100%; gap: 4rem; padding-bottom: 4rem;'} 
                     }
                     .panel {
-                        ${!isCardPreview ? 'width: 100vw; height: 100vh; display: flex; justify-content: center; position: relative; padding: 4rem; flex-shrink: 0;' : 'width: 100%; min-height: 50vh; display: flex; flex-direction: column; justify-content: center; position: relative; padding: 2rem 1rem; flex-shrink: 0;'}
+                        ${!isCardPreview ? 'width: 100vw; height: 100vh; display: flex; justify-content: center; position: relative; padding: 10vh 4rem; flex-shrink: 0;' : 'width: 100%; min-height: 50vh; display: flex; flex-direction: column; justify-content: center; position: relative; padding: 2rem 1rem; flex-shrink: 0;'}
+                    }
+                    @media (max-width: 768px) {
+                        .panel {
+                            ${!isCardPreview ? 'padding: 8vh 1.5rem !important;' : ''}
+                        }
                     }
 
                     .img-container { overflow: hidden; position: relative; }
@@ -296,23 +312,52 @@ export const CinematicGalleryShell = ({ children, data, theme, isMobileView = fa
                 }} />
 
                 
-                {/* Fixed Headers */}
-                <header className="fixed top-6 left-6 md:top-8 md:left-8 z-50 mix-blend-difference pointer-events-none flex flex-col gap-1">
-                    <div className="font-serif italic text-xl md:text-2xl hover-trigger pointer-events-auto">
+                {/* Widescreen Aspect Ratio Bars (2.39:1 Cinema Bars Simulation) */}
+                {!isCardPreview && (
+                    <>
+                        <div className="fixed top-0 left-0 w-full h-[5vh] md:h-[7vh] bg-[#050505] border-b border-white/5 z-[60] flex items-center justify-between px-6 md:px-12 pointer-events-none">
+                            <span className="font-sans text-[7px] md:text-[8px] tracking-[0.2em] uppercase text-white/30 hidden md:block">
+                                FORMAT: 2.39:1 CINESCOPE
+                            </span>
+                            <span className="font-sans text-[7px] md:text-[8px] tracking-[0.2em] uppercase text-white/30 hidden md:block">
+                                SYSTEM: ONLINE // ACTIVE
+                            </span>
+                        </div>
+                        <div className="fixed bottom-0 left-0 w-full h-[5vh] md:h-[7vh] bg-[#050505] border-t border-white/5 z-[60] flex items-center justify-between px-6 md:px-12 pointer-events-none">
+                            <span className="font-sans text-[7px] md:text-[8px] tracking-[0.2em] uppercase text-white/30 ml-auto hidden md:block">
+                                FPS: 24.00 // SHUTTER: 180° // S-LOG3
+                            </span>
+                        </div>
+                    </>
+                )}
+
+                {/* Fixed Headers aligned to Cinescope Bars */}
+                <header className="fixed top-0 left-6 md:left-12 h-[5vh] md:h-[7vh] flex items-center z-[70] mix-blend-difference pointer-events-none">
+                    <div className="font-serif italic text-xl md:text-2xl hover-trigger pointer-events-auto text-white leading-none">
                         <EditableText value={theme?.customTexts?.cg_header_logo || `${fullName.split(' ')[0]}.`} field="cg_header_logo" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                     </div>
                 </header>
 
-                <header className="fixed top-6 right-6 md:top-8 md:right-8 z-50 mix-blend-difference pointer-events-none flex flex-col items-end gap-1">
-                    <div className="font-sans text-[10px] md:text-xs tracking-[0.2em] uppercase pointer-events-auto">
+                <header className="fixed top-0 right-6 md:right-12 h-[5vh] md:h-[7vh] flex items-center gap-4 md:gap-6 z-[70] mix-blend-difference pointer-events-auto">
+                    {showGalleryButton && (
+                        <>
+                            <Link href={isPreviewRoute ? `/preview/${subdomain}/gallery` : `/${subdomain}/gallery`} className="font-sans text-[10px] md:text-xs tracking-[0.2em] uppercase text-white hover:opacity-70 transition-opacity">
+                                [ GALLERY ]
+                            </Link>
+                            <div className="font-sans text-[10px] md:text-xs tracking-[0.2em] uppercase text-white/40 leading-none select-none hidden md:block">
+                                /
+                            </div>
+                        </>
+                    )}
+                    <div className="font-sans text-[10px] md:text-xs tracking-[0.2em] uppercase text-[#8b8b8b] leading-none">
                         <EditableText value={theme?.customTexts?.cg_header_tagline || 'ESTETIKA / 2026'} field="cg_header_tagline" entity="appearance" isEditor={isEditor} as="span" maxLength={40} />
                     </div>
                 </header>
 
-                {/* Fixed Footer Indicator */}
+                {/* Fixed Footer Indicator aligned to Cinescope Bar */}
                 {!isCardPreview && (
-                    <div className="fixed bottom-6 left-6 md:bottom-8 md:left-8 z-50 mix-blend-difference pointer-events-none">
-                        <p className="font-sans text-[10px] md:text-xs tracking-[0.2em] uppercase text-[#8b8b8b] flex items-center gap-4">
+                    <div className="fixed bottom-0 left-6 md:left-12 h-[5vh] md:h-[7vh] flex items-center z-[70] mix-blend-difference pointer-events-none">
+                        <p className="font-sans text-[10px] md:text-xs tracking-[0.2em] uppercase text-[#8b8b8b] flex items-center gap-4 leading-none">
                             <span className="w-12 h-[1px] bg-[#8b8b8b] inline-block line-indicator"></span>
                             Scroll to Navigate
                         </p>

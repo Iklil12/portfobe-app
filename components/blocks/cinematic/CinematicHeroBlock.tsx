@@ -4,6 +4,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { LazyImage } from '@/components/ui/LazyImage';
 import { EditableText } from '@/components/ui/EditableText';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function CinematicHeroBlock({ data, theme, isEditor, isCardPreview }: any) {
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
@@ -21,13 +23,20 @@ export function CinematicHeroBlock({ data, theme, isEditor, isCardPreview }: any
 
     const themeColor = theme?.themeColor || "#ff9e00";
 
+    const pathname = usePathname();
+    const isPreviewRoute = pathname?.includes('/preview/');
+    const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
+
     return (
         <div className="relative">
             {/* NAVBAR */}
             <nav className={`absolute top-0 left-0 w-full z-50 mix-blend-difference flex justify-between items-center cine-body p-6`}>
                 <div className={`font-black tracking-tighter cine-heading text-xl`}>{firstName[0]}{lastName ? lastName[0] : ''}.</div>
-                <div className={`flex font-bold uppercase tracking-widest gap-4 @md:gap-6 text-xs @md:text-sm`}>
+                <div className={`flex font-bold uppercase tracking-widest gap-4 @md:gap-6 text-xs @md:text-sm items-center`}>
                     <EditableText value={theme?.customTexts?.cinematic_nav_work || 'Work'} field="cinematic_nav_work" entity="appearance" isEditor={isEditor} as="a" href="#work" className="hover:cine-accent transition" />
+                    <Link href={isPreviewRoute ? `/preview/${subdomain}/gallery` : `/${subdomain}/gallery`} className="hover:cine-accent transition">
+                        <EditableText value={theme?.customTexts?.cinematic_nav_gallery || 'Gallery'} field="cinematic_nav_gallery" entity="appearance" isEditor={isEditor} as="span" />
+                    </Link>
                     <EditableText value={theme?.customTexts?.cinematic_nav_info || 'Info'} field="cinematic_nav_info" entity="appearance" isEditor={isEditor} as="a" href="#about" className="hover:cine-accent transition" />
                 </div>
             </nav>

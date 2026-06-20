@@ -79,6 +79,15 @@ body {
   scrollbar-width: none;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Navbar Hover Effect */
 .nav-link {
   position: relative;
@@ -444,4 +453,27 @@ body {
 
 .animate-pulse-slow {
   animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom Cinematic Scrollbar */
+.cinematic-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.cinematic-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cinematic-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cinematic-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+.cinematic-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }

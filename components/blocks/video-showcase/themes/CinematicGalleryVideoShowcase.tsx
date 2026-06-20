@@ -15,30 +15,57 @@ export default function CinematicGalleryVideoShowcase({ data, theme, isEditor }:
   if (!featuredVideo) return null;
 
   return (
-    <section className="py-0 px-0 w-full h-[80vh] bg-black relative overflow-hidden flex items-center justify-center">
-      <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none scale-110 blur-xl">
-         {/* Background blurred video effect */}
-         <UniversalPlayer mediaUrl={featuredVideo.mediaUrl} title="bg" autoPlayMode={true} />
+    <section className="panel w-[100vw] h-[100vh] flex flex-col justify-center px-6 md:px-24 bg-[#050505] shrink-0 border-r border-white/10 relative overflow-hidden">
+      {/* Vignette Shadow Theater Effect */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.85)_100%)] pointer-events-none z-0" />
+      
+      {/* Ambient Lens Flare Glow */}
+      <div className="absolute -top-48 -right-48 w-96 h-96 bg-white/[0.015] rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute -bottom-48 -left-48 w-96 h-96 bg-white/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
+
+      {/* Cinematic Header Area */}
+      <div className="absolute top-[8vh] left-6 md:top-[12vh] md:left-24 z-20 flex flex-col gap-1.5 pointer-events-auto">
+        <div className="text-white/40 text-[9px] md:text-[10px] tracking-[0.45em] uppercase font-mono">
+          [ SECTION 03 // VISUAL SHOWCASE ]
+        </div>
+        <h2 className="font-serif italic text-3xl md:text-5xl text-white leading-none">
+          <EditableText 
+            value={theme?.customTexts?.showcase_title || 'Sorotan Karya'} 
+            field="showcase_title" 
+            entity="appearance" 
+            isEditor={isEditor} 
+            maxLength={40} 
+            as="span"
+          />
+        </h2>
       </div>
 
-      <div className="w-full max-w-7xl mx-auto flex flex-col items-center relative z-10 px-8">
-        <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }}
-          variants={{ hidden: { opacity: 0, scale: 0.9 }, visible: { opacity: 1, scale: 1, transition: { duration: 1.2 } } }}
-          className="w-full aspect-video bg-black shadow-2xl relative z-20 pointer-events-auto overflow-hidden border border-white/10"
-        >
-           {isAutoPlay ? (
-             <div className="w-full h-full opacity-90 hover:opacity-100 transition-all pointer-events-auto">
-               <UniversalPlayer mediaUrl={featuredVideo.mediaUrl} title={featuredVideo.title} autoPlayMode={true} />
-             </div>
-           ) : (
-             <UniversalPlayer mediaUrl={featuredVideo.mediaUrl} title={featuredVideo.title} />
-           )}
-        </motion.div>
-        
-        <div className="absolute bottom-12 left-12 z-30 pointer-events-none">
-          <h2 className="text-4xl font-light text-white tracking-widest drop-shadow-lg">
-            <EditableText value={theme?.customTexts?.showcase_title || 'CINEMATIC GALLERY'} field="showcase_title" entity="appearance" isEditor={isEditor} maxLength={40} />
-          </h2>
+      {/* Video Container Wrapper */}
+      <div className="w-full max-w-5xl mx-auto z-10 mt-[16vh] md:mt-[20vh] pointer-events-auto flex items-center justify-center px-4 md:px-0">
+        <div className="relative w-full aspect-video border border-white/10 bg-black/60 shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden group">
+          {/* Corner Viewfinder brackets on Hover */}
+          <div className="absolute inset-0 pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity duration-500 ease-out z-20">
+            <div className="absolute top-4 left-4 w-4 h-4 border-t border-l border-white/50"></div>
+            <div className="absolute top-4 right-4 w-4 h-4 border-t border-r border-white/50"></div>
+            <div className="absolute bottom-4 left-4 w-4 h-4 border-b border-l border-white/50"></div>
+            <div className="absolute bottom-4 right-4 w-4 h-4 border-b border-r border-white/50"></div>
+          </div>
+
+          {/* Background blurred video effect */}
+          <div className="absolute inset-0 w-full h-full opacity-10 scale-105 blur-lg pointer-events-none z-0">
+            <UniversalPlayer mediaUrl={featuredVideo.mediaUrl} title="bg" autoPlayMode={true} />
+          </div>
+
+          {/* Main Player */}
+          <div className="relative w-full h-full z-10">
+            {isAutoPlay ? (
+              <div className="w-full h-full opacity-90 hover:opacity-100 transition-all pointer-events-auto">
+                <UniversalPlayer mediaUrl={featuredVideo.mediaUrl} title={featuredVideo.title} autoPlayMode={true} />
+              </div>
+            ) : (
+              <UniversalPlayer mediaUrl={featuredVideo.mediaUrl} title={featuredVideo.title} />
+            )}
+          </div>
         </div>
       </div>
     </section>

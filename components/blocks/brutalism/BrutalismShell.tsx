@@ -53,7 +53,7 @@ export function BrutalismShell({ data, theme, children, isMobileView, isCardPrev
 
     return (
         <BrutalismContext.Provider value={{ selectedMedia, setSelectedMedia, themeColor, strokeWidth, hardShadow, hardShadowHover, radiusClass }}>
-            <main className={`relative w-full min-h-screen bg-[#f4f4f0] text-black font-sans selection:bg-black selection:text-white @container overflow-x-hidden brutal-theme flex flex-col ${isCardPreview ? '' : 'p-4 @sm:p-6'}`} style={{ '--hl': themeColor } as React.CSSProperties}>
+            <main className={`relative w-full min-h-screen bg-[#f4f4f0] text-black font-sans selection:bg-black selection:text-white @container overflow-x-hidden brutal-theme flex flex-col ${isCardPreview ? '' : 'p-0 @sm:p-6'}`} style={{ '--hl': themeColor } as React.CSSProperties}>
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     .brutal-theme { font-family: ${customBodyFont} !important; }
@@ -86,11 +86,11 @@ export function BrutalismShell({ data, theme, children, isMobileView, isCardPrev
                     `
                 }} />
 
-                <div className={`w-full max-w-[1400px] mx-auto bg-white ${strokeWidth} ${hardShadow} relative z-10 flex flex-col`}>
-                    <div className="absolute -top-3 -left-3 text-xl font-bold font-mono">+</div>
-                    <div className="absolute -top-3 -right-3 text-xl font-bold font-mono">+</div>
-                    <div className="absolute -bottom-3 -left-3 text-xl font-bold font-mono">+</div>
-                    <div className="absolute -bottom-3 -right-3 text-xl font-bold font-mono">+</div>
+                <div className={`w-full max-w-[1700px] mx-auto bg-white border-y-[3px] @sm:border-[3px] border-black shadow-none @sm:${hardShadow} relative z-10 flex flex-col`}>
+                    <div className="absolute -top-3 -left-3 text-xl font-bold font-mono hidden @sm:block">+</div>
+                    <div className="absolute -top-3 -right-3 text-xl font-bold font-mono hidden @sm:block">+</div>
+                    <div className="absolute -bottom-3 -left-3 text-xl font-bold font-mono hidden @sm:block">+</div>
+                    <div className="absolute -bottom-3 -right-3 text-xl font-bold font-mono hidden @sm:block">+</div>
 
                     {children}
                 </div>

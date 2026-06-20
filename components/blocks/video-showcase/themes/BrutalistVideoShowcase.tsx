@@ -17,7 +17,7 @@ export default function BrutalistVideoShowcase({ data, theme, isEditor }: any) {
   if (!featuredVideo) {
     if (isEditor) {
       return (
-        <section className="py-20 px-4 w-full flex items-center justify-center bg-lime-300">
+        <section className="py-20 px-4 w-full flex items-center justify-center bg-[var(--hl)]">
           <div className="w-full max-w-5xl bg-white p-12 text-center border-4 border-black border-dashed shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <h3 className="text-black font-black uppercase text-2xl mb-2">Video Area</h3>
             <p className="text-xs font-bold uppercase tracking-widest text-black/50">Select a video project</p>
@@ -46,7 +46,7 @@ export default function BrutalistVideoShowcase({ data, theme, isEditor }: any) {
           <span className="inline-block px-4 py-2 bg-black text-white font-black text-xs uppercase tracking-widest border-2 border-black mb-4">
             <EditableText value={theme?.customTexts?.showcase_subtitle || 'MEDIA'} field="showcase_subtitle" entity="appearance" isEditor={isEditor} maxLength={20} />
           </span>
-          <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-black leading-none bg-lime-300 px-4 py-2 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] -rotate-1">
+          <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-black leading-none bg-[var(--hl)] px-4 py-2 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] -rotate-1">
             <EditableText value={theme?.customTexts?.showcase_title || 'RAW FOOTAGE'} field="showcase_title" entity="appearance" isEditor={isEditor} maxLength={40} />
           </h2>
         </motion.div>
@@ -58,7 +58,7 @@ export default function BrutalistVideoShowcase({ data, theme, isEditor }: any) {
               hidden: { opacity: 0, y: 40 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.2 } }
             }}
-            className="w-full lg:w-3/4 border-4 border-black bg-black p-2 shadow-[12px_12px_0px_0px_rgba(217,249,157,1)] relative z-10"
+            className="w-full lg:w-3/4 border-4 border-black bg-black p-2 shadow-[12px_12px_0px_0px_var(--hl)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[16px_16px_0px_0px_var(--hl)] transition-all duration-200 relative z-10 cursor-pointer"
           >
             <div className="aspect-video w-full border-2 border-white/20">
                {isAutoPlay ? (
@@ -79,8 +79,8 @@ export default function BrutalistVideoShowcase({ data, theme, isEditor }: any) {
             }}
             className="lg:w-1/4 flex flex-col justify-end"
           >
-            <div className="border-4 border-black p-6 bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <h3 className="text-xl font-black uppercase mb-4 text-black underline decoration-4 decoration-lime-300 underline-offset-4">{featuredVideo.title}</h3>
+            <div className="border-4 border-black p-6 bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 cursor-pointer">
+              <h3 className="text-xl font-black uppercase mb-4 text-black underline decoration-4 decoration-[var(--hl)] underline-offset-4">{featuredVideo.title}</h3>
               {featuredVideo.description && (
                 <p className="text-black font-medium leading-relaxed">{featuredVideo.description}</p>
               )}

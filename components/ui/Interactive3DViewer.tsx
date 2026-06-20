@@ -3,7 +3,7 @@ import Script from 'next/script';
 
 const ModelViewer = 'model-viewer' as any;
 
-export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: { mediaUrl: string, bgColor?: string, alwaysShowControls?: boolean }) {
+export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls, className }: { mediaUrl: string, bgColor?: string, alwaysShowControls?: boolean, className?: string }) {
   const [exposure, setExposure] = useState(1.0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [inView, setInView] = useState(false);
@@ -35,7 +35,7 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls }: {
     : "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 p-1 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full opacity-0 group-hover/mv:opacity-100 [@media(hover:none)]:opacity-100 transition-all duration-500 translate-y-3 group-hover/mv:translate-y-0 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:mv3d-controls-mobile z-30";
 
   return (
-    <div ref={containerRef} className="w-full aspect-video min-h-[300px] @md:min-h-[400px] relative group/mv" style={bgColor ? { backgroundColor: bgColor } : {}}>
+    <div ref={containerRef} className={className || "w-full aspect-video min-h-[300px] @md:min-h-[400px] relative group/mv"} style={bgColor ? { backgroundColor: bgColor } : {}}>
       {/* Load library in background regardless of view state for better performance */}
       <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js" strategy="lazyOnload" />
 

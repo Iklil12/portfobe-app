@@ -7,6 +7,7 @@ import { LazyImage } from '@/components/ui/LazyImage';
 import { getVideoThumbnail } from '@/lib/videoUtils';
 import { EditableText } from '@/components/ui/EditableText';
 import { useCinematic } from './CinematicContext';
+import { usePathname } from 'next/navigation';
 
 export function CinematicProjectsBlock({ data, theme, isEditor, isCardPreview }: any) {
     const { setSelectedMedia } = useCinematic();
@@ -16,7 +17,9 @@ export function CinematicProjectsBlock({ data, theme, isEditor, isCardPreview }:
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
     const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
     const userPlan = data?.plan || data?.user?.plan || 'FREE';
-    const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
+    const showGalleryButton = true; // Selalu tampilkan tombol galeri atas permintaan user
+    const pathname = usePathname();
+    const isPreviewRoute = pathname?.includes('/preview/');
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
 
     const buttonShape = theme?.buttonShape || 'hard';
@@ -94,7 +97,7 @@ export function CinematicProjectsBlock({ data, theme, isEditor, isCardPreview }:
             {/* Tombol Gallery Utama (Sleek Cinematic Style) */}
             {showGalleryButton && (
                 <div className={`w-full flex justify-center mb-20 px-6 mt-12`}>
-                    <Link href={isEditor ? '#' : `/${subdomain}/gallery`}  className="group relative block w-full max-w-4xl no-underline overflow-hidden border-y border-[#1f1f1f] hover:border-white/30 transition-colors duration-700">
+                    <Link href={isEditor ? '#' : (isPreviewRoute ? `/preview/${subdomain}/gallery` : `/${subdomain}/gallery`)}  className="group relative block w-full max-w-4xl no-underline overflow-hidden border-y border-[#1f1f1f] hover:border-white/30 transition-colors duration-700">
                         {/* Background Glow Effect */}
                         <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-700"></div>
 

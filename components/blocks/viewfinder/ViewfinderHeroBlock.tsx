@@ -6,7 +6,7 @@ import { EditableText } from '@/components/ui/EditableText';
 
 export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: any) {
   const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
-  
+
   const fullName = data?.profile?.fullName || data?.fullName || "JAMAL ARIFIN";
   const profession = data?.profile?.profession || data?.profession || "Cinematographer & Editor";
   const bio = data?.profile?.bio || data?.bio || "Weaving light, shadow, and sound to capture the human experience. Specializing in high-end commercial and narrative films.";
@@ -41,11 +41,11 @@ export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: an
 
   return (
     <section className="relative bg-[#050505] vf-crosshair overflow-hidden border-b border-white/10 shrink-0 select-none" style={{ minHeight: '100svh' }}>
-      
+
       {/* Shutter White Flash Effect Overlay */}
       <AnimatePresence>
         {isFlashing && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 1 }}
             animate={{ opacity: 0 }}
             exit={{ opacity: 0 }}
@@ -59,10 +59,10 @@ export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: an
 
       {/* Atmospheric Cinematic Backdrop with interactive blur */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src={displayBg} 
-          alt="Cinematic background" 
-          className={`w-full h-full object-cover opacity-20 grayscale transition-all duration-1000 ease-out select-none pointer-events-none ${blurMap[aperture]}`} 
+        <img
+          src={displayBg}
+          alt="Cinematic background"
+          className={`w-full h-full object-cover opacity-20 grayscale transition-all duration-1000 ease-out select-none pointer-events-none ${blurMap[aperture]}`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/45 to-[#050505]/80" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.85)_100%)]" />
@@ -107,11 +107,10 @@ export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: an
           <button
             key={f}
             onClick={() => setAperture(f)}
-            className={`hover:text-white transition-all duration-300 uppercase px-1 ${
-              aperture === f 
-                ? 'text-[var(--primary)] font-bold border-b border-[var(--primary)]' 
+            className={`hover:text-white transition-all duration-300 uppercase px-1 ${aperture === f
+                ? 'text-[var(--primary)] font-bold border-b border-[var(--primary)]'
                 : 'text-slate-500'
-            }`}
+              }`}
           >
             {f.replace('f', 'f/')}
           </button>
@@ -121,7 +120,7 @@ export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: an
       {/* Interactive Shutter Trigger Button */}
       <div className="absolute bottom-24 @md:bottom-8 right-6 z-30 flex items-center gap-3">
         <span className="font-mono text-[8px] text-slate-500 uppercase tracking-widest hidden @md:inline pointer-events-none">TRIGGER SHUTTER:</span>
-        <button 
+        <button
           onClick={triggerShutter}
           className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center bg-black/40 hover:bg-white hover:text-black hover:border-white text-white transition-all duration-300 group shadow-lg active:scale-90"
           title="Ambil Foto (Shutter Flash)"
@@ -132,7 +131,7 @@ export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: an
 
       {/* Hero Content */}
       <div className="relative z-10 flex items-center justify-center px-6 py-24 mix-blend-difference" style={{ minHeight: '100svh' }}>
-        
+
         {/* Central Camera Autofocus Bracket Box */}
         <div className="absolute w-[260px] h-[190px] @md:w-[540px] @md:h-[320px] border border-white/5 pointer-events-none flex items-center justify-center rounded-sm">
           {/* Corner brackets */}
@@ -140,7 +139,7 @@ export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: an
           <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-white/30"></div>
           <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-white/30"></div>
           <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/30"></div>
-          
+
           {/* Status dots inside AF box */}
           <div className="absolute top-2 right-3 font-mono text-[7px] text-white/40 tracking-[0.15em] flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-red-600 animate-ping"></span>
