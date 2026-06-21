@@ -96,7 +96,7 @@ export async function GET(req: Request) {
       email: user.email,
       role: user.role,
       siteAppearance: user.siteAppearance,
-      canClaimTrial: user.plan !== "PRO" && user.transactions && user.transactions.length === 0,
+      canClaimTrial: user.plan === "FREE" && user.transactions && user.transactions.length === 0,
     };
 
     // --- 4. Format Data Announcements ---

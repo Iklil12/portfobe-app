@@ -79,8 +79,17 @@ export async function proxy(req: NextRequest) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
     if (!token) {
-      const loginUrl = new URL("/login", req.url);
-      loginUrl.searchParams.set("callbackUrl", req.url);
+      // PERBAIKAN: Deteksi host asli agar tidak bocor ke localhost:3000 jika di balik Nginx/Cloudflare
+      const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+      const proto = req.headers.get("x-forwarded-proto") || "https";
+      
+      let callbackStr = req.url;
+      if (host && callbackStr.includes("localhost")) {
+         callbackStr = callbackStr.replace(/^https?:\/\/[^\/]+/, `${proto}://${host}`);
+      }
+
+      const loginUrl = new URL("/login", callbackStr);
+      loginUrl.searchParams.set("callbackUrl", callbackStr);
       return NextResponse.redirect(loginUrl);
     }
 

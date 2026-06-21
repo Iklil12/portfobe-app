@@ -129,7 +129,7 @@ export async function PUT(req: Request) {
     });
 
     // Pemicu Webhook n8n (Asynchronous)
-    const loginType = user.password === 'GOOGLE_LOGIN_NO_PASSV' ? 'Google Auth' : 'Email/Password';
+    const loginType = user.password === 'GOOGLE_LOGIN_NO_PASSWORD' ? 'Google Auth' : 'Email/Password';
     fetch("https://n8n.portfo.be/webhook/0b096974-e914-473e-95de-3fa994929c9f", {
       method: "POST",
       headers: {

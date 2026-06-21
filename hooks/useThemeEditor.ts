@@ -1032,6 +1032,8 @@ export function useThemeEditor() {
       showOfflineModal,
       isLive,
       subdomain,
+      userPlan: dbData.plan || 'FREE',
+      planExpiredAt: dbData.planExpiredAt || null,
       
       activeTheme,
       themeColor,
@@ -1040,6 +1042,7 @@ export function useThemeEditor() {
       buttonShape,
       cardStyle,
       splashScreen,
+      customTexts,
       isThemeModalOpen,
       showProModal,
 

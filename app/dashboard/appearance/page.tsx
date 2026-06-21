@@ -10,7 +10,9 @@ import { PreviewPanel } from '@/components/features/appearance/PreviewPanel';
 import { SeoSettingsModal } from '@/components/features/appearance/SeoSettingsModal';
 import { OfflineModal } from '@/components/features/appearance/OfflineModal';
 import { PublishSuccessModal } from '@/components/features/appearance/PublishSuccessModal';
-import { Loader2, ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Columns, ExternalLink, Minus, Plus, Maximize, Minimize, Globe, ChevronDown, Layers, FileText, Settings, Search, SlidersHorizontal, Layout, Crop } from 'lucide-react';
+import { Loader2, ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Columns, ExternalLink, Minus, Plus, Maximize, Minimize, Globe, ChevronDown, Layers, FileText, Settings, Search, SlidersHorizontal, Layout, Crop, AlertTriangle } from 'lucide-react';
+import { THEMES_DATA } from '@/lib/themes';
+import { getEffectivePlan } from '@/lib/planUtils';
 
 function AppearanceEditor() {
   const { state, actions } = useThemeEditor();
@@ -20,6 +22,23 @@ function AppearanceEditor() {
   // Dock & Page States
   const [activeTab, setActiveTab] = useState<'theme' | 'pages'>('theme');
   const [selectedPage, setSelectedPage] = useState<'home' | 'gallery'>('home');
+
+  // Lock Editor Logic
+  const effectivePlan = getEffectivePlan({ plan: state.userPlan, planExpiredAt: state.planExpiredAt ? new Date(state.planExpiredAt) : null });
+  const isEffectiveFree = effectivePlan === 'FREE';
+
+  const selectedThemeData = THEMES_DATA.find(t => t.id === state.activeTheme);
+  const isProTheme = selectedThemeData ? selectedThemeData.isPro : false;
+  const isProSplash = state.splashScreen === true;
+  const isProSmoothScroll = state.customTexts?.smooth_scroll === 'true';
+
+  const isEditorLocked = isEffectiveFree && (isProTheme || isProSplash || isProSmoothScroll);
+
+  const handleRevertToFree = () => {
+    actions.setActiveTheme('minimalist');
+    actions.setSplashScreen(false);
+    actions.updateCustomText('smooth_scroll', 'false');
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -276,6 +295,31 @@ function AppearanceEditor() {
 
       {/* WORKSPACE AREA */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+        
+        {isEditorLocked && !state.isLoading && (
+          <div className="absolute inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+            <div className="bg-[#1a1a1a] border border-white/10 p-8 max-w-lg w-full text-center flex flex-col items-center shadow-2xl">
+              <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20">
+                <AlertTriangle className="w-8 h-8 text-amber-500" />
+              </div>
+              <h2 className="text-xl font-bold text-white mb-3 tracking-wide">Fitur PRO Terkunci!</h2>
+              <p className="text-sm text-white/60 mb-8 leading-relaxed">
+                Paket Anda sudah kembali ke FREE, tetapi desain portofolio Anda saat ini masih menggunakan fitur eksklusif PRO (Tema Premium / Splash Screen / Smooth Scroll).
+                <br/><br/>
+                <span className="text-white/80 font-medium">Portofolio publik Anda tetap aman (tetap menggunakan tema PRO ini)</span>, tetapi Anda tidak bisa mengedit portofolio sebelum memperpanjang PRO atau mereset desain ke mode standar.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
+                <Link href="/pricing" className="flex-1 w-full py-3 bg-[#ff9e00] hover:bg-[#ffaa22] text-black font-bold uppercase tracking-wider text-xs transition-colors flex items-center justify-center">
+                  Perpanjang PRO
+                </Link>
+                <button onClick={handleRevertToFree} className="flex-1 w-full py-3 bg-transparent border border-white/20 hover:bg-white/5 text-white font-bold uppercase tracking-wider text-xs transition-colors">
+                  Ubah ke Tema Gratis
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* LEFTMOST DOCK NAV (MATCHES REFERENCE IMAGE EXACTLY, ONLY THEME & PAGES) */}
         {!state.isEditorCollapsed && (
           <div className="hidden lg:flex flex-col w-[56px] border-r border-white/5 bg-[#111111] z-[101] shrink-0 items-center pt-3 pb-6 gap-2">

@@ -475,10 +475,10 @@ export const authOptions: NextAuthOptions = {
         }
       }
 
-      // RE-CHECK PLAN DARI DB UNTUK USER PRO (mencegah stale JWT)
-      // Hanya jalan jika: token sudah ada (bukan login pertama), user adalah PRO,
+      // RE-CHECK PLAN DARI DB UNTUK USER PRO/SUPREME (mencegah stale JWT)
+      // Hanya jalan jika: token sudah ada (bukan login pertama), user adalah PRO/SUPREME,
       // dan planExpiredAt ada (artinya bukan lifetime)
-      if (!user && token.id && token.plan === "PRO" && token.planExpiredAt) {
+      if (!user && token.id && (token.plan === "PRO" || token.plan === "SUPREME") && token.planExpiredAt) {
         const expiredAt = new Date(token.planExpiredAt);
         const now = new Date();
         // Jika planExpiredAt sudah lewat → sync dari DB untuk memastikan

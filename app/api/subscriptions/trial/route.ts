@@ -16,6 +16,24 @@ export async function POST() {
 
     const userId = session.user.id;
 
+    // 0. Ambil data user untuk cek plan
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { plan: true, planExpiredAt: true }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
+    }
+
+    const { isProActive } = require("@/lib/planUtils");
+    if (isProActive({ plan: user.plan, planExpiredAt: user.planExpiredAt })) {
+      return NextResponse.json(
+        { error: "Kamu sudah memiliki langganan aktif. Tidak bisa mengklaim trial." },
+        { status: 400 }
+      );
+    }
+
     // 1. Cek apakah user sudah pernah klaim trial
     const pastTrial = await prisma.transaction.findFirst({
       where: {
