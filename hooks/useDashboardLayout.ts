@@ -65,6 +65,23 @@ export function useDashboardLayout() {
   const userRole = syncData?.role || session?.user?.role || "USER";
   const canClaimTrial = syncData?.canClaimTrial === true;
 
+  const planExpiredAtStr = syncData?.planExpiredAt || (session?.user as any)?.planExpiredAt;
+  const planExpiredAt = planExpiredAtStr ? new Date(planExpiredAtStr) : null;
+  
+  let isGracePeriod = false;
+  let remainingGraceDays = 0;
+  if (userPlan !== 'FREE' && planExpiredAt) {
+    const expiredTime = planExpiredAt.getTime();
+    const now = Date.now();
+    if (expiredTime <= now) {
+      const remainingMs = expiredTime + (3 * 24 * 60 * 60 * 1000) - now;
+      if (remainingMs > 0) {
+        isGracePeriod = true;
+        remainingGraceDays = Math.ceil(remainingMs / (1000 * 60 * 60 * 24));
+      }
+    }
+  }
+
   const isSubdomainEmpty = !userSubdomain || String(userSubdomain).trim() === '' || String(userSubdomain) === 'null';
   const isProfessionEmpty = !userProfession || String(userProfession).trim() === '' || String(userProfession) === 'null';
   const isBioEmpty = !userBio || String(userBio).trim() === '' || String(userBio) === 'null';
@@ -81,6 +98,8 @@ export function useDashboardLayout() {
   else if (isBioShort) notifications.push({ id: 'bio-short', type: 'info', icon: 'fa-pen-to-square', title: 'Bio Terlalu Singkat', desc: 'Bio yang lebih detail (min. 30 karakter) akan terlihat lebih profesional.', link: '/dashboard/profile', btnText: 'Perpanjang', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' });
   if (canClaimTrial) {
     notifications.push({ id: 'trial-promo', type: 'promo', icon: 'fa-gift', title: 'Klaim Trial PRO Gratis', desc: 'Nikmati semua fitur PRO selama 14 hari secara gratis! Tanpa kartu kredit.', link: '/dashboard/billing', color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', btnText: 'Klaim Trial' });
+  } else if (isGracePeriod) {
+    notifications.unshift({ id: 'grace-period', type: 'warning', icon: 'fa-triangle-exclamation', title: 'Masa Tenggang PRO', desc: `Paket PRO kamu sudah kedaluwarsa. Kami berikan tambahan waktu ${remainingGraceDays} hari sebelum dikembalikan ke paket FREE.`, link: '/pricing', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200', btnText: 'Perpanjang' });
   } else if (userPlan === 'FREE') {
     notifications.push({ id: 'promo', type: 'promo', icon: 'fa-crown', title: 'Upgrade ke Pro', desc: 'Dapatkan analitik mendalam dan kustom domain sesukamu.', link: '/pricing', color: 'text-[#ff9e00]', bg: 'bg-[#ff9e00]/10', border: 'border-[#ff9e00]/20' });
   }
@@ -128,6 +147,8 @@ export function useDashboardLayout() {
     userSubdomain,
     isSubdomainEmpty,
     canClaimTrial,
+    isGracePeriod,
+    remainingGraceDays,
     notifications,
     topBanner,
     announcementsData, // expose for banner component

@@ -46,6 +46,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     userSubdomain,
     isSubdomainEmpty,
     canClaimTrial,
+    isGracePeriod,
+    remainingGraceDays,
     notifications,
     topBanner,
     announcementsData,
@@ -150,6 +152,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           userName={userName}
           userPlan={userPlan}
           canClaimTrial={canClaimTrial}
+          isGracePeriod={isGracePeriod}
+          remainingGraceDays={remainingGraceDays}
           adminData={{
             isActive: false,
             type: "promo",

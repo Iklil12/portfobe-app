@@ -11,7 +11,12 @@
 export function isProActive(user: { plan: string; planExpiredAt: Date | null }): boolean {
   if (user.plan === "FREE") return false;
   if (!user.planExpiredAt) return true; // Lifetime (admin grant tanpa expiry)
-  return user.planExpiredAt > new Date();
+  
+  // Tambahkan Grace Period 3 hari agar sinkron dengan cron job
+  const gracePeriodMs = 3 * 24 * 60 * 60 * 1000;
+  const actualExpiry = new Date(user.planExpiredAt.getTime() + gracePeriodMs);
+  
+  return actualExpiry > new Date();
 }
 
 /**
@@ -48,7 +53,16 @@ export function formatPlanExpiry(planExpiredAt: Date | null): string {
   const remaining = Math.ceil(
     (planExpiredAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
   );
-  if (remaining <= 0) return "Sudah berakhir";
+  
+  if (remaining <= 0) {
+    // Cek apakah masuk grace period (maksimal 3 hari lewat)
+    const gracePeriodRemaining = remaining + 3;
+    if (gracePeriodRemaining > 0) {
+      return `Masa Tenggang (${gracePeriodRemaining} hari)`;
+    }
+    return "Sudah berakhir";
+  }
+  
   if (remaining === 1) return "Berakhir besok";
   return `${remaining} hari lagi`;
 }

@@ -91,6 +91,7 @@ export async function GET(req: Request) {
       bio: user.profile?.bio || null,
       avatar: user.profile?.avatarUrl || user.avatar || null,
       plan: user.plan || "FREE",
+      planExpiredAt: user.planExpiredAt,
       fullName: user.profile?.fullName,
       email: user.email,
       role: user.role,

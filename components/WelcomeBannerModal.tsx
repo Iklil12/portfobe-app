@@ -19,9 +19,18 @@ interface WelcomeBannerModalProps {
   userPlan?: string; 
   adminData?: AdminPromoData | null; 
   canClaimTrial?: boolean;
+  isGracePeriod?: boolean;
+  remainingGraceDays?: number;
 }
 
-export default function WelcomeBannerModal({ userName, userPlan = "FREE", adminData, canClaimTrial = false }: WelcomeBannerModalProps) {
+export default function WelcomeBannerModal({ 
+  userName, 
+  userPlan = "FREE", 
+  adminData, 
+  canClaimTrial = false,
+  isGracePeriod = false,
+  remainingGraceDays = 0
+}: WelcomeBannerModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [greeting, setGreeting] = useState<{
     text: string;
@@ -72,7 +81,15 @@ export default function WelcomeBannerModal({ userName, userPlan = "FREE", adminD
   let btnLink = "";
   let badgeLabel = "";
 
-  if (adminData && adminData.isActive) {
+  if (isGracePeriod) {
+    displayTitle = "Masa Tenggang PRO ⚠️";
+    displayDesc = `Halo ${firstName}! Paket PRO kamu sudah kedaluwarsa. Sistem memberikan tambahan masa tenggang selama ${remainingGraceDays} hari sebelum akun kamu dikembalikan ke paket FREE.`;
+    displayBg = "from-zinc-950 to-zinc-900 border-amber-500/20";
+    displayIcon = <Crown className="w-12 h-12 text-amber-500 animate-pulse" />;
+    btnText = "Perpanjang PRO";
+    btnLink = "/dashboard/billing";
+    badgeLabel = "⚠️ Peringatan";
+  } else if (adminData && adminData.isActive) {
     displayTitle = adminData.title;
     displayDesc = adminData.desc;
     displayBg = "from-zinc-950 to-zinc-900";
