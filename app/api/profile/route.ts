@@ -87,7 +87,7 @@ export async function PUT(req: Request) {
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { id: true } // Hanya butuh ID untuk relasi
+      select: { id: true, password: true, email: true } // Ambil password & email untuk webhook
     });
 
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -126,6 +126,24 @@ export async function PUT(req: Request) {
         subdomain: subdomain ? subdomain.toLowerCase() : null,
         profession: profession || null
       }
+    });
+
+    // Pemicu Webhook n8n (Asynchronous)
+    const loginType = user.password === 'GOOGLE_LOGIN_NO_PASSV' ? 'Google Auth' : 'Email/Password';
+    fetch("https://n8n.portfo.be/webhook/0b096974-e914-473e-95de-3fa994929c9f", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-webhook-secret": process.env.N8N_WEBHOOK_SECRET || "",
+      },
+      body: JSON.stringify({
+        fullName: updatedProfile.fullName,
+        email: user.email,
+        loginType: loginType,
+        subdomain: updatedProfile.subdomain,
+      })
+    }).catch(err => {
+      console.error("Gagal mengirim webhook ke n8n:", err);
     });
 
     return NextResponse.json({ message: "Profil diperbarui", profile: updatedProfile });
