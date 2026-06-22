@@ -156,7 +156,7 @@ function AppearanceEditor() {
             </Link>
           </div>
           <div className="hidden sm:flex items-center gap-2 translate-y-[-0.5px]">
-            <span className="text-[13px] font-medium text-white/90 leading-none">Website Builder</span>
+            <span className="text-[13px] font-medium text-white/90 leading-none">Portofolio Builder</span>
             <span className="px-1.5 py-0.5 bg-white/10 text-white/60 text-[9px] rounded font-medium leading-none flex items-center justify-center h-4">PRO</span>
           </div>
         </div>
@@ -221,7 +221,7 @@ function AppearanceEditor() {
           <div className={`hidden lg:flex items-center gap-1 transition-all duration-300 ${state.previewMode === 'desktop' ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
             <div className="w-px h-4 bg-white/10 mx-2"></div>
             <button
-              onClick={actions.zoomOut}
+              onClick={() => actions.zoomOut(state.previewMode === 'desktop' ? 'desktop' : 'mobile')}
               disabled={state.previewMode === 'desktop' ? state.desktopZoom <= state.ZOOM_MIN : state.mobileZoom <= state.ZOOM_MIN}
               className="w-7 h-7 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-20 transition-all rounded-md"
             >
@@ -231,7 +231,7 @@ function AppearanceEditor() {
               {Math.round((state.previewMode === 'desktop' || state.previewMode === 'split' ? state.desktopZoom : state.mobileZoom) * 100)}%
             </span>
             <button
-              onClick={actions.zoomIn}
+              onClick={() => actions.zoomIn(state.previewMode === 'desktop' ? 'desktop' : 'mobile')}
               disabled={state.previewMode === 'desktop' ? state.desktopZoom >= state.ZOOM_MAX : state.mobileZoom >= (state.ZOOM_MAX_MOBILE || 1.5)}
               className="w-7 h-7 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-20 transition-all rounded-md"
             >

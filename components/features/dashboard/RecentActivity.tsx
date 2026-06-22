@@ -2,13 +2,13 @@
 
 import Link from 'next/link';
 import { AnimateOnScroll } from '@/components/ui/AnimateOnScroll';
-import { 
-  ArrowRight, 
-  CheckCircle2, 
-  Link2, 
-  Palette, 
-  FolderOpen, 
-  Award, 
+import {
+  ArrowRight,
+  CheckCircle2,
+  Link2,
+  Palette,
+  FolderOpen,
+  Award,
   MessageSquare,
   Clock
 } from 'lucide-react';

@@ -3,16 +3,16 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { AnimateOnScroll } from '@/components/ui/AnimateOnScroll';
-import { 
-  ArrowUpRight, 
-  Lock, 
-  Check, 
-  Minus, 
-  Target, 
-  FolderOpen, 
-  Award, 
-  MessageSquare, 
-  Link2 
+import {
+  ArrowUpRight,
+  Lock,
+  Check,
+  Minus,
+  Target,
+  FolderOpen,
+  Award,
+  MessageSquare,
+  Link2
 } from 'lucide-react';
 
 function AnimatedCounter({ value, duration = 1500 }: { value: number, duration?: number }) {
@@ -198,7 +198,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
                   {strength === 100 ? 'Semua aspek profil terisi secara maksimal.' : 'Tingkatkan kekuatan profil untuk visibilitas optimal.'}
                 </p>
               </div>
-              
+
               {/* Progress bar horizontal */}
               <div className="flex items-center gap-4 shrink-0">
                 <div className="w-32 md:w-48">
@@ -256,7 +256,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
               <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
               Karya & Koleksi
             </p>
-            
+
             <div className="grid grid-cols-2 gap-2.5 flex-1">
               {/* Proyek */}
               <div className="bg-white/[0.02] border border-white/5 rounded-none p-3.5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 group/item flex flex-col justify-between">

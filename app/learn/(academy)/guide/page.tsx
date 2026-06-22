@@ -11,7 +11,7 @@ const LESSONS = [
         content: (
             <div className="prose prose-invert prose-orange max-w-none font-sans text-lg text-white/80 leading-relaxed space-y-6">
                 <p>
-                    Welcome to the definitive guide on Portfo.be's core architecture. Unlike tradisional website builders that rely on fragile drag-and-drop mechanics, Portfo.be is engineered using an enterprise-grade abstraction. You don't just build a site; you manage a digital identity.
+                    Welcome to the definitive guide on Portfo.be's core architecture. Unlike tradisional portofolio builders that rely on fragile drag-and-drop mechanics, Portfo.be is engineered using an enterprise-grade abstraction. You don't just build a site; you manage a digital identity.
                 </p>
 
                 <h3 className="font-display uppercase text-2xl text-white mt-12 mb-4 border-l-4 border-[#ff9e00] pl-4">The Draft vs Publish Lifecycle</h3>

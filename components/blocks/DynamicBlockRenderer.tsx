@@ -2,10 +2,14 @@
 
 import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react';
+import { Eye, ChevronRight, Play, Maximize2, X, GitBranch, ExternalLink, Calendar, Code, Star, GitFork, Crown, Type, User, Zap, Briefcase, Layers, LayoutGrid, Box, PenTool, Paintbrush, Trophy, MessageSquare, BarChart, PanelBottom } from 'lucide-react';
+import type { PageBlock } from '@/hooks/useThemeEditor';
+import { FORBIDDEN_BLOCKS_PER_THEME } from '@/hooks/useThemeEditor';
 import Script from 'next/script';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReactLenis } from '@studio-freight/react-lenis';
 import { GlobalCursor } from '@/components/features/GlobalCursor';
+import { BlockErrorBoundary } from '@/components/errors/BlockErrorBoundary';
 
 // Minimalist Blocks
 const MinimalistSkillsBlock = dynamic(() => import('./minimalist/MinimalistSkillsBlock').then(mod => mod.MinimalistSkillsBlock));
@@ -746,7 +750,9 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia, is
 
   return (
     <BlockEditorWrapper key={block.id} block={block} isEditor={isEditor} isHero={isHero} isHorizontalFlow={isHorizontalFlow} style={customStyle}>
-      {content}
+      <BlockErrorBoundary>
+        {content}
+      </BlockErrorBoundary>
     </BlockEditorWrapper>
   );
 };
@@ -955,7 +961,12 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
     return parts.length > 1 ? parts.slice(1).join('_') : b.blockType;
   }));
 
-  const addableBlocks = allAvailableBlocks.filter(b => !existingBlockTypes.has(b.type));
+  const activeThemeTemplate = theme?.themeTemplate || theme?.id || 'minimalist';
+  const forbiddenBlocksForCurrentTheme = FORBIDDEN_BLOCKS_PER_THEME[activeThemeTemplate] || [];
+
+  const addableBlocks = allAvailableBlocks.filter(b => 
+    !existingBlockTypes.has(b.type) && !forbiddenBlocksForCurrentTheme.includes(b.type)
+  );
 
   const handleAddBlock = (blockType: string) => {
     window.parent.postMessage({ type: 'BLOCK_ADD', blockType, insertIndex }, window.location.origin);
@@ -1025,7 +1036,6 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
   }
 
   const isSmoothScroll = (!isMobileView && !isCardPreview) && (theme?.customTexts?.smooth_scroll === 'true');
-  const activeThemeTemplate = theme?.themeTemplate || 'minimalist';
 
   const renderBlock = (b: any) => (
     <BlockMapper key={b.id} block={b} data={data} theme={theme} isEditor={isEditor} setSelectedMedia={setSelectedMedia} isMobileView={isMobileView} />

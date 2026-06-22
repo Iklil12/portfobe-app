@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     "videographer portfolio",
     "3d designer portfolio",
     "online portfolio builder",
-    "creative website builder",
+    "creative portofolio builder",
     "visual portfolio templates",
     "web developer portfolio"
   ],
@@ -39,7 +39,7 @@ export default function RootLayout({
     "name": "Portfo.be",
     "operatingSystem": "Web Browser",
     "applicationCategory": "DesignApplication",
-    "description": "Website builder specifically designed for the creative industry: Photographers, Videographers, 3D Designers, Visual Artists, & Web Developers.",
+    "description": "Portofolio builder specifically designed for the creative industry: Photographers, Videographers, 3D Designers, Visual Artists, & Web Developers.",
     "offers": {
       "@type": "Offer",
       "price": "0",

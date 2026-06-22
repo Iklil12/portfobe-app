@@ -32,6 +32,7 @@ interface TopbarProps {
   alertCount: number;
   notifications: NotificationItem[];
   onToggleSidebar: () => void;
+  onToggleDesktopSidebar?: () => void;
 }
 
 export function Topbar({
@@ -44,7 +45,8 @@ export function Topbar({
   canClaimTrial,
   alertCount,
   notifications,
-  onToggleSidebar
+  onToggleSidebar,
+  onToggleDesktopSidebar
 }: TopbarProps) {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -76,7 +78,7 @@ export function Topbar({
 
   return (
     <>
-      <header className="sticky top-0 z-40 h-[88px] w-full bg-[#050505]/60 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-6 sm:px-10 shrink-0 animate-page-load delay-100">
+      <header className="sticky top-0 z-40 h-[72px] w-full bg-[#050505]/60 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-6 sm:px-10 shrink-0 animate-page-load delay-100">
         <div className="flex items-center gap-6 flex-1">
           <button className="md:hidden w-11 h-11 rounded-none border border-white/10 bg-zinc-900 text-white/70 hover:text-white active:scale-95 transition-all flex items-center justify-center shadow-sm" onClick={onToggleSidebar}>
             <Menu className="w-5 h-5" />

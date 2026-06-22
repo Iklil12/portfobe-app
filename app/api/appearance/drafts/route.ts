@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { safeStringifyJson } from "@/lib/safeJson";
+import { safeStringifyJson, safeParseJson } from "@/lib/safeJson";
 import { getEffectivePlan } from "@/lib/planUtils";
 
 
@@ -98,19 +98,23 @@ export async function POST(req: Request) {
       finalSelectedProjects = selectedProjects.filter((id: string) => validIds.includes(id));
     }
 
+    const designTokens = {
+      themeColor: themeColor || '#000000',
+      fontHeading: fontHeading || 'Inter',
+      fontBody: fontBody || 'Inter',
+      buttonShape: buttonShape || 'rounded',
+      cardStyle: cardStyle || 'flat'
+    };
+
     const newDraft = await prisma.themeDraft.create({
       data: {
         userId: user.id,
         name: safeName,
         description: safeDescription,
         themeTemplate: themeTemplate || 'minimalist',
-        themeColor: themeColor || '#000000',
-        fontHeading: fontHeading || 'Inter',
-        fontBody: fontBody || 'Inter',
-        buttonShape: buttonShape || 'rounded',
-        cardStyle: cardStyle || 'flat',
         splashScreen: splashScreen || false,
         customTexts: stringifiedCustomTexts,
+        designTokens: JSON.stringify(designTokens),
         projects: Array.isArray(finalSelectedProjects) && finalSelectedProjects.length > 0 ? {
           create: finalSelectedProjects.map((projectId: string, index: number) => ({
             projectId: projectId,
@@ -184,19 +188,28 @@ export async function PUT(req: Request) {
       finalSelectedProjects = selectedProjects.filter((id: string) => validIds.includes(id));
     }
 
+    let existingTokens: any = {};
+    if (existingDraft.designTokens) {
+      existingTokens = safeParseJson(existingDraft.designTokens, {});
+    }
+
+    const designTokens = {
+      themeColor: themeColor !== undefined ? themeColor : existingTokens.themeColor,
+      fontHeading: fontHeading !== undefined ? fontHeading : existingTokens.fontHeading,
+      fontBody: fontBody !== undefined ? fontBody : existingTokens.fontBody,
+      buttonShape: buttonShape !== undefined ? buttonShape : existingTokens.buttonShape,
+      cardStyle: cardStyle !== undefined ? cardStyle : existingTokens.cardStyle
+    };
+
     const updatedDraft = await prisma.themeDraft.update({
       where: { id },
       data: {
         ...(safeName !== undefined && { name: safeName }),
         ...(safeDescription !== undefined && { description: safeDescription }),
         ...(themeTemplate !== undefined && { themeTemplate }),
-        ...(themeColor !== undefined && { themeColor }),
-        ...(fontHeading !== undefined && { fontHeading }),
-        ...(fontBody !== undefined && { fontBody }),
-        ...(buttonShape !== undefined && { buttonShape }),
-        ...(cardStyle !== undefined && { cardStyle }),
         ...(splashScreen !== undefined && { splashScreen }),
         customTexts: stringifiedCustomTexts,
+        designTokens: JSON.stringify(designTokens),
         ...(Array.isArray(finalSelectedProjects) && {
           projects: {
             deleteMany: {},

@@ -25,7 +25,9 @@ import {
   Lightbulb, 
   CheckCircle,
   Menu,
-  X
+  X,
+  PanelLeftClose,
+  PanelLeft
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -36,9 +38,11 @@ interface SidebarProps {
   linksCount?: number;
   testimonialsCount?: number;
   userRole?: string;
+  isDesktopSidebarOpen?: boolean;
+  onToggleDesktopSidebar?: () => void;
 }
 
-export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0, linksCount = 0, testimonialsCount = 0, userRole = 'USER' }: SidebarProps) {
+export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0, linksCount = 0, testimonialsCount = 0, userRole = 'USER', isDesktopSidebarOpen = true, onToggleDesktopSidebar }: SidebarProps) {
   const pathname = usePathname();
   
   const isActive = (path: string) => pathname === path;
@@ -60,170 +64,138 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
     <div className={`fixed inset-y-0 left-0 z-50 flex transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0 md:relative md:shadow-none'}`}>
       
       {/* ============================================================== */}
-      {/* DESKTOP SIDEBAR (TWO-PANE LAYOUT)                              */}
+      {/* DESKTOP SIDEBAR (SINGLE PANE TREE LAYOUT)                      */}
       {/* ============================================================== */}
-      <div className="hidden md:flex h-full">
-        {/* PRIMARY SIDEBAR (NAVIGATION RAIL) */}
-        <aside className="w-[90px] bg-black border-r border-white/10 flex flex-col h-full flex-shrink-0 z-20">
-          <div className="h-[88px] shrink-0 flex items-center justify-center relative">
-            {isLoading ? (
-               <div className="w-10 h-10 skeleton-premium rounded-none"></div>
+      <div className={`hidden md:flex h-full shrink-0 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-visible ${isDesktopSidebarOpen ? 'w-[240px]' : 'w-[72px]'}`}>
+        <aside className="w-full bg-[#0a0a0a] border-r border-white/10 flex flex-col h-full z-20 shrink-0">
+          <div className={`h-[72px] shrink-0 flex items-center relative border-b border-white/5 transition-all duration-300 ${isDesktopSidebarOpen ? 'justify-between px-6' : 'justify-center px-0'}`}>
+            {!isDesktopSidebarOpen ? (
+              <button onClick={onToggleDesktopSidebar} className="w-12 h-12 flex items-center justify-center text-white/40 hover:text-[#ff9e00] transition-colors">
+                <PanelLeft className="w-5 h-5" />
+              </button>
             ) : (
-              <Link href="/dashboard" className="flex items-center justify-center w-full h-full cursor-pointer hover:scale-105 transition-transform">
-                 <img src="/portfobe.png" alt="Logo" className="w-9 h-9 object-contain invert brightness-0" />
-              </Link>
+              <>
+                <Link href="/dashboard" className="flex items-center group cursor-pointer">
+                   <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-6 w-auto object-contain invert brightness-0 group-hover:opacity-80 transition-opacity" />
+                </Link>
+                <button onClick={onToggleDesktopSidebar} className="w-6 h-6 flex items-center justify-center text-white/40 hover:text-[#ff9e00] transition-colors">
+                  <PanelLeftClose className="w-5 h-5" />
+                </button>
+              </>
             )}
           </div>
 
-          <nav className="flex-1 flex flex-col gap-1 py-4 px-2 overflow-y-auto hide-scrollbar">
+          <nav className={`flex-1 py-4 hide-scrollbar space-y-1 ${isDesktopSidebarOpen ? 'px-3 overflow-y-auto' : 'px-2 overflow-visible'}`}>
             {isLoading ? (
-               <div className="flex flex-col gap-3 px-1">
-                  {[1,2,3,4,5,6].map(i => <div key={i} className="w-full h-16 skeleton-premium rounded-none"></div>)}
+               <div className="flex flex-col gap-1">
+                  {[1,2,3,4,5].map(i => <div key={i} className={`w-full h-11 skeleton-premium rounded-none ${!isDesktopSidebarOpen && 'h-11'}`}></div>)}
                </div>
             ) : (
                <>
-                  <RailItem href="/dashboard" icon={<LayoutGrid className="w-4 h-4" />} label="Overview" active={isActive('/dashboard')} />
-                  <RailItem href="/dashboard/projects" icon={<Palette className="w-4 h-4" />} label="Desain" active={isDesignRoute} />
-                  <RailItem href="/dashboard/explore" icon={<Compass className="w-4 h-4" />} label="Explore" active={isActive('/dashboard/explore')} />
-                  <RailItem href="/dashboard/analytics" icon={<PieChart className="w-4 h-4" />} label="Metrics" active={isActive('/dashboard/analytics')} />
-                  <RailItem href="/dashboard/profile" icon={<User className="w-4 h-4" />} label="Profil" active={isActive('/dashboard/profile')} />
-                  <RailItem href="/support" icon={<HelpCircle className="w-4 h-4" />} label="Bantuan" active={isActive('/support')} />
-                  <RailItem href="/dashboard/settings" icon={<Settings className="w-4 h-4" />} label="Settings" active={isActive('/dashboard/settings')} />
-                  {userRole === 'ADMIN' && (
-                    <RailItem href="/dashboard/admin/architecture" icon={<Terminal className="w-4 h-4" />} label="Dev Hub" active={isAdminRoute} />
-                  )}
+                  <PrimaryNavItem href="/dashboard" icon={<LayoutGrid className="w-[18px] h-[18px]" />} label="Overview" active={isActive('/dashboard')} isCollapsed={!isDesktopSidebarOpen} />
+                  
+                  <TreeAccordion 
+                    icon={<Palette className="w-[18px] h-[18px]" />} 
+                    label="Desain" 
+                    isOpen={isMobileDesignMenuOpen} 
+                    onToggle={() => {
+                      if (!isDesktopSidebarOpen) {
+                        onToggleDesktopSidebar?.();
+                        if (!isMobileDesignMenuOpen) setIsMobileDesignMenuOpen(true);
+                      } else {
+                        setIsMobileDesignMenuOpen(!isMobileDesignMenuOpen);
+                      }
+                    }}
+                    active={isDesignRoute}
+                    isCollapsed={!isDesktopSidebarOpen}
+                  >
+                    <TreeChildItem href="/dashboard/projects" label="Proyek & Karya" active={isActive('/dashboard/projects')} count={projectsCount} />
+                    <TreeChildItem href="/dashboard/themes" label="Koleksi Tema" active={isActive('/dashboard/themes')} />
+                    <TreeChildItem href="/dashboard/build-with-ai" label="Build with AI" active={isActive('/dashboard/build-with-ai')} countText="AI" countColor="bg-[#ff9e00]/20 text-[#ff9e00]" />
+                    <TreeChildItem href="/dashboard/links" label="Tautan (Links)" active={isActive('/dashboard/links')} count={linksCount} />
+                    <TreeChildItem href="/dashboard/testimonials" label="Testimoni" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
+                    <TreeChildItem href="/dashboard/integrations" label="Connected Works" active={isActive('/dashboard/integrations')} />
+                    <TreeChildItem href="/dashboard/trash" label="Trash" active={isActive('/dashboard/trash')} isLast />
+                  </TreeAccordion>
+
+                  <PrimaryNavItem href="/dashboard/explore" icon={<Compass className="w-[18px] h-[18px]" />} label="Explore" active={isActive('/dashboard/explore')} isCollapsed={!isDesktopSidebarOpen} />
+                  <PrimaryNavItem href="/dashboard/analytics" icon={<PieChart className="w-[18px] h-[18px]" />} label="Metrics" active={isActive('/dashboard/analytics')} isCollapsed={!isDesktopSidebarOpen} />
+                  <PrimaryNavItem href="/dashboard/profile" icon={<User className="w-[18px] h-[18px]" />} label="Profil" active={isActive('/dashboard/profile')} isCollapsed={!isDesktopSidebarOpen} />
                </>
             )}
           </nav>
+
+          {/* Utility Nav */}
+          <div className={`shrink-0 flex flex-col pt-3 pb-3 border-t border-white/5 space-y-1 mt-auto ${isDesktopSidebarOpen ? 'px-3' : 'px-2'}`}>
+            {isLoading ? (
+               <div className="flex flex-col gap-1">
+                  {[1,2].map(i => <div key={i} className="w-full h-11 skeleton-premium rounded-none"></div>)}
+               </div>
+            ) : (
+              <>
+                <PrimaryNavItem href="/support" icon={<HelpCircle className="w-[18px] h-[18px]" />} label="Bantuan" active={isActive('/support')} isCollapsed={!isDesktopSidebarOpen} />
+                <PrimaryNavItem href="/dashboard/settings" icon={<Settings className="w-[18px] h-[18px]" />} label="Settings" active={isActive('/dashboard/settings')} isCollapsed={!isDesktopSidebarOpen} />
+                
+                {userRole === 'ADMIN' && (
+                  <TreeAccordion 
+                    icon={<Terminal className="w-[18px] h-[18px]" />} 
+                    label="Developer Hub" 
+                    isOpen={isMobileAdminMenuOpen} 
+                    onToggle={() => {
+                      if (!isDesktopSidebarOpen) {
+                        onToggleDesktopSidebar?.();
+                        if (!isMobileAdminMenuOpen) setIsMobileAdminMenuOpen(true);
+                      } else {
+                        setIsMobileAdminMenuOpen(!isMobileAdminMenuOpen);
+                      }
+                    }}
+                    active={isAdminRoute}
+                    isCollapsed={!isDesktopSidebarOpen}
+                    popoverDirection="up"
+                  >
+                    <TreeChildItem href="/dashboard/admin/architecture" label="TDD Plan" active={isActive('/dashboard/admin/architecture')} />
+                    <TreeChildItem href="/dashboard/admin/ideas" label="Feature Backlog" active={isActive('/dashboard/admin/ideas')} />
+                    <TreeChildItem href="/dashboard/admin/errors" label="System Logs" active={isActive('/dashboard/admin/errors')} />
+                    <TreeChildItem href="/dashboard/admin/features" label="Feature Flags" active={isActive('/dashboard/admin/features')} isLast />
+                  </TreeAccordion>
+                )}
+              </>
+            )}
+          </div>
           
           {/* User Plan Indicator in Rail */}
-          <div className="shrink-0 pb-6 pt-2 flex justify-center border-t border-white/10 mt-auto">
+          <div className={`shrink-0 pb-6 pt-2 flex justify-center ${isDesktopSidebarOpen ? 'px-3' : 'px-2'}`}>
              {isLoading ? (
-                <div className="w-12 h-12 skeleton-premium rounded-none mt-4"></div>
+                <div className="w-full h-11 skeleton-premium rounded-none"></div>
              ) : userPlan === 'FREE' ? (
-               <Link href="/pricing" className="w-12 h-12 mt-4 bg-[#0a0a0a] rounded-none flex items-center justify-center relative group shadow-sm border border-white/10" title="Upgrade to PRO">
-                  <Crown className="text-[#ff9e00] w-5 h-5 group-hover:scale-110 transition-transform" />
-                  <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-black"></div>
-               </Link>
+               isDesktopSidebarOpen ? (
+                 <Link href="/pricing" className="w-full py-3 px-3 bg-zinc-900 rounded-none flex items-center justify-between group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title="Upgrade to PRO">
+                    <div className="flex items-center gap-2">
+                      <Crown className="text-[#ff9e00] w-4 h-4 group-hover:scale-110 transition-transform" />
+                      <span className="text-[10px] font-mono font-bold text-white tracking-widest uppercase">PRO</span>
+                    </div>
+                    <div className="w-1.5 h-1.5 bg-red-500 rounded-none border border-black shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+                 </Link>
+               ) : (
+                 <Link href="/pricing" className="w-full h-11 bg-zinc-900 rounded-none flex items-center justify-center group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title="Upgrade to PRO">
+                    <Crown className="text-[#ff9e00] w-4 h-4 group-hover:scale-110 transition-transform" />
+                 </Link>
+               )
              ) : (
-               <div className={`w-12 h-12 mt-4 rounded-none flex items-center justify-center border ${userPlan === 'SUPREME' ? 'bg-violet-950/30 border-violet-500/30' : 'bg-zinc-900 border-white/10'}`} title={userPlan === 'SUPREME' ? 'Supreme Creator' : 'Pro Creator'}>
-                  <Gem className={`w-5 h-5 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`} />
-               </div>
+               isDesktopSidebarOpen ? (
+                 <div className={`w-full py-3 px-3 rounded-none flex items-center gap-2 border ${userPlan === 'SUPREME' ? 'bg-violet-950/30 border-violet-500/30' : 'bg-zinc-900 border-white/10'}`}>
+                    <Gem className={`w-4 h-4 shrink-0 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`} />
+                    <span className={`text-[10px] font-mono font-bold tracking-widest uppercase truncate ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`}>
+                      {userPlan === 'SUPREME' ? 'Supreme' : 'Pro'}
+                    </span>
+                 </div>
+               ) : (
+                 <div className={`w-full h-11 rounded-none flex items-center justify-center border ${userPlan === 'SUPREME' ? 'bg-violet-950/30 border-violet-500/30' : 'bg-zinc-900 border-white/10'}`} title={userPlan === 'SUPREME' ? 'Supreme Plan' : 'Pro Plan'}>
+                    <Gem className={`w-4 h-4 shrink-0 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`} />
+                 </div>
+               )
              )}
           </div>
-        </aside>
-
-        {/* SECONDARY SIDEBAR (KHUSUS UNTUK DESAIN & ADMIN) */}
-        <aside className={`bg-zinc-950 border-r border-white/10 flex flex-col h-full flex-shrink-0 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden z-10
-          ${isDesignRoute || isAdminRoute ? 'w-[240px] opacity-100 border-r' : 'w-0 opacity-0 border-r-0'}
-        `}>
-          {isDesignRoute && (
-             <div className="flex flex-col h-full w-[240px]">
-               <div className="h-[88px] shrink-0 flex flex-col justify-center px-6 border-b border-white/5">
-                 {isLoading ? (
-                   <>
-                     <div className="w-16 h-3 skeleton-premium rounded-none mb-2"></div>
-                     <div className="w-32 h-5 skeleton-premium rounded-none"></div>
-                   </>
-                 ) : (
-                   <h2 className="font-display font-bold text-sm text-white tracking-wider uppercase">Desain Portofolio</h2>
-                 )}
-               </div>
-               
-               <nav className="flex-1 py-4 px-3 space-y-4 overflow-y-auto hide-scrollbar">
-                 {isLoading ? (
-                   <div className="flex flex-col gap-2">
-                     {[1, 2, 3, 4].map(i => <div key={i} className="w-full h-11 skeleton-premium rounded-none"></div>)}
-                   </div>
-                 ) : (
-                   <>
-                     {/* KONTEN */}
-                     <div className="space-y-1">
-                       <p className="px-3 text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] mb-2">Konten</p>
-                       <SecondaryNavItem href="/dashboard/projects" icon={<FolderOpen className="w-4 h-4" />} label="Proyek & Karya" active={isActive('/dashboard/projects')} count={projectsCount} />
-                       <SecondaryNavItem href="/dashboard/links" icon={<Link2 className="w-4 h-4" />} label="Tautan (Links)" active={isActive('/dashboard/links')} count={linksCount} />
-                       <SecondaryNavItem href="/dashboard/testimonials" icon={<MessageSquare className="w-4 h-4" />} label="Testimoni" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
-                     </div>
-
-                     {/* TAMPILAN */}
-                     <div className="space-y-1">
-                       <p className="px-3 text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] mb-2">Tampilan</p>
-                       <SecondaryNavItem href="/dashboard/themes" icon={<Palette className="w-4 h-4" />} label="Koleksi Tema" active={isActive('/dashboard/themes')} />
-                     </div>
-
-                     {/* EKSTENSI */}
-                     <div className="space-y-1">
-                       <p className="px-3 text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] mb-2">Ekstensi</p>
-                       <SecondaryNavItem href="/dashboard/integrations" icon={<Plug className="w-4 h-4" />} label="Connected Works" active={isActive('/dashboard/integrations')} />
-                     </div>
-
-                     {/* EKSPERIMEN */}
-                     <div className="space-y-1">
-                       <p className="px-3 text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] mb-2">Eksperimen</p>
-                       <SecondaryNavItem href="/dashboard/build-with-ai" icon={<Sparkles className="w-4 h-4" />} label="Build with AI" active={isActive('/dashboard/build-with-ai')} highlightText="Segera" />
-                     </div>
-
-                     {/* DIVIDER + TRASH */}
-                     <div className="pt-2">
-                       <div className="h-px bg-white/10 mx-2 mb-4" />
-                       <SecondaryNavItem href="/dashboard/trash" icon={<Trash2 className="w-4 h-4" />} label="Trash" active={isActive('/dashboard/trash')} />
-                     </div>
-                   </>
-                 )}
-               </nav>
-               
-               <div className="p-4 mt-auto border-t border-white/5">
-                 {isLoading ? (
-                   <div className="w-full h-24 skeleton-premium rounded-none"></div>
-                 ) : (
-                   <div className="bg-white/[0.02] border border-white/10 rounded-none p-4 relative overflow-hidden group">
-                       <div className="absolute top-0 right-0 w-24 h-24 bg-[#ff9e00]/5 blur-2xl rounded-full translate-x-1/3 -translate-y-1/3 group-hover:bg-[#ff9e00]/10 transition-all duration-500"></div>
-                       <Lightbulb className="text-[#ff9e00] w-5 h-5 mb-2 relative z-10" />
-                       <p className="text-[10px] text-white/60 font-mono leading-relaxed relative z-10">Atur karya dan koleksi tema sesuai gayamu untuk menarik lebih banyak klien.</p>
-                   </div>
-                 )}
-               </div>
-             </div>
-          )}
-
-          {isAdminRoute && (
-             <div className="flex flex-col h-full w-[240px]">
-               <div className="h-[88px] shrink-0 flex flex-col justify-center px-6 border-b border-white/5">
-                 {isLoading ? (
-                   <>
-                     <div className="w-16 h-3 skeleton-premium rounded-none mb-2"></div>
-                     <div className="w-32 h-5 skeleton-premium rounded-none"></div>
-                   </>
-                 ) : (
-                   <h2 className="font-display font-bold text-sm text-violet-400 tracking-wider uppercase flex items-center gap-2">
-                     <Terminal className="w-4 h-4" /> Developer Hub
-                   </h2>
-                 )}
-               </div>
-               
-               <nav className="flex-1 py-4 px-3 space-y-4 overflow-y-auto hide-scrollbar">
-                 {isLoading ? (
-                   <div className="flex flex-col gap-2">
-                     {[1, 2, 3].map(i => <div key={i} className="w-full h-11 skeleton-premium rounded-none"></div>)}
-                   </div>
-                 ) : (
-                   <>
-                     <div className="space-y-1">
-                       <p className="px-3 text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] mb-2">Architecture</p>
-                       <SecondaryNavItem href="/dashboard/admin/architecture" icon={<Terminal className="w-4 h-4" />} label="TDD Plan" active={isActive('/dashboard/admin/architecture')} />
-                     </div>
-
-                     <div className="space-y-1">
-                       <p className="px-3 text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] mb-2">Maintenance</p>
-                       <SecondaryNavItem href="/dashboard/admin/ideas" icon={<Lightbulb className="w-4 h-4" />} label="Feature Backlog" active={isActive('/dashboard/admin/ideas')} />
-                       <SecondaryNavItem href="/dashboard/admin/errors" icon={<Terminal className="w-4 h-4" />} label="System Logs" active={isActive('/dashboard/admin/errors')} />
-                       <SecondaryNavItem href="/dashboard/admin/features" icon={<Terminal className="w-4 h-4" />} label="Feature Flags" active={isActive('/dashboard/admin/features')} />
-                     </div>
-                   </>
-                 )}
-               </nav>
-             </div>
-          )}
         </aside>
       </div>
 
@@ -351,60 +323,112 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
 // --------------------------------------------------------
 // DESKTOP COMPONENTS
 // --------------------------------------------------------
-function RailItem({ href, icon, label, active }: { href: string, icon: React.ReactNode, label: string, active: boolean }) {
+function PrimaryNavItem({ href, icon, label, active, isCollapsed }: { href: string, icon: React.ReactNode, label: string, active: boolean, isCollapsed?: boolean }) {
   return (
     <Link 
       href={href} 
-      className="flex flex-col items-center justify-center py-2.5 w-full transition-all duration-300 group relative"
+      className={`flex items-center w-full py-3 rounded-none transition-all duration-300 group ${
+        active ? 'bg-zinc-900 border border-white/10 text-white shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
+      } ${isCollapsed ? 'px-0 justify-center' : 'px-3'}`}
+      title={isCollapsed ? label : undefined}
     >
-      <div className={`relative flex items-center justify-center w-10 h-10 transition-all duration-300 ${
-        active 
-          ? 'bg-zinc-900 border border-white/10 text-white' 
-          : 'bg-transparent hover:bg-white/5 text-white/40 group-hover:text-white/80 active:scale-95'
-      }`}>
+      <div className={`shrink-0 transition-transform duration-300 ${active ? 'scale-110 text-[#ff9e00]' : 'group-hover:scale-110'}`}>
         {icon}
-        
-        {/* Orange Accent Dot */}
-        {active && (
-          <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#ff9e00] border border-black rounded-full shadow-sm"></div>
-        )}
       </div>
-      
-      <span className={`mt-1.5 text-[8px] font-mono font-bold uppercase tracking-widest transition-all duration-300 ${
-        active ? 'text-white' : 'text-white/40 group-hover:text-white/70'
-      }`}>
-        {label}
-      </span>
+      {!isCollapsed && (
+        <>
+          <span className="ml-3 text-[14px] font-sans font-semibold tracking-wide truncate">
+            {label}
+          </span>
+          {active && (
+            <div className="ml-auto w-6 flex items-center justify-center shrink-0">
+              <div className="w-1.5 h-1.5 bg-[#ff9e00] rounded-none border border-black shadow-[0_0_8px_rgba(255,158,0,0.5)]"></div>
+            </div>
+          )}
+        </>
+      )}
     </Link>
   );
 }
 
-// Komponen Item untuk Secondary Sidebar
-function SecondaryNavItem({ href, icon, label, active, count, highlightText }: { href: string, icon: React.ReactNode, label: string, active: boolean, count?: number, highlightText?: string }) {
+function TreeAccordion({ 
+  icon, label, isOpen, onToggle, active, isCollapsed, popoverDirection = 'down', children 
+}: { 
+  icon: React.ReactNode, label: string, isOpen: boolean, onToggle: () => void, active?: boolean, isCollapsed?: boolean, popoverDirection?: 'up' | 'down', children: React.ReactNode 
+}) {
   return (
-    <Link href={href} className={`flex items-center justify-between px-3 py-2.5 font-mono text-[11px] uppercase tracking-wider transition-all duration-200 group relative ${active ? 'bg-white/5 text-white' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
-      
-      {active && <div className="absolute left-0 top-1/2 -translate-y-1/2 h-2/3 w-[2px] bg-[#ff9e00]"></div>}
+    <div className="flex flex-col w-full relative group/accordion">
+      <button 
+        onClick={onToggle} 
+        className={`flex items-center w-full py-3 transition-colors group rounded-none ${
+          isOpen || active ? 'text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'
+        } ${isCollapsed ? 'justify-center px-0' : 'justify-between px-3'}`}
+        title={isCollapsed ? label : undefined}
+      >
+        <div className={`flex items-center ${isCollapsed ? '' : 'gap-3'}`}>
+          <div className={`shrink-0 transition-transform duration-300 ${(isOpen || active) ? 'scale-110 text-[#ff9e00]' : 'group-hover:scale-110'}`}>{icon}</div>
+          {!isCollapsed && <span className="text-[14px] font-sans font-semibold tracking-wide">{label}</span>}
+        </div>
+        {!isCollapsed && (
+          <div className="w-6 flex items-center justify-center shrink-0">
+            <ChevronDown className={`w-4 h-4 text-white/40 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+          </div>
+        )}
+      </button>
 
-      <div className="flex items-center transition-transform duration-200 group-hover:translate-x-1">
-        <span className={`mr-2.5 transition-colors ${active ? 'text-white' : 'text-white/40 group-hover:text-white/60'}`}>
-          {icon}
-        </span>
-        <span className="font-bold">{label}</span>
-      </div>
+      {!isCollapsed && (
+        <div className={`overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'max-h-[500px] opacity-100 mt-1' : 'max-h-0 opacity-0'}`}>
+          <div className="relative flex flex-col gap-0.5 pb-2">
+            {children}
+          </div>
+        </div>
+      )}
+
+      {/* Floating Popover on Hover (Collapsed State) */}
+      {isCollapsed && (
+        <div className={`absolute left-[calc(100%+8px)] ${popoverDirection === 'up' ? 'bottom-0' : 'top-0'} w-52 bg-[#0a0a0a] border border-white/10 shadow-2xl opacity-0 invisible group-hover/accordion:opacity-100 group-hover/accordion:visible transition-all duration-200 z-50 rounded-none transform translate-x-[-10px] group-hover/accordion:translate-x-0`}>
+          <div className="px-4 py-3 border-b border-white/5 bg-zinc-900/50">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/60">{label}</span>
+          </div>
+          <div className="flex flex-col p-1.5 gap-0.5">
+            {React.Children.map(children, child => {
+              if (React.isValidElement(child)) {
+                return React.cloneElement(child, { isFloating: true } as any);
+              }
+              return child;
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TreeChildItem({ href, label, active, count, countText, countColor, isLast, isFloating }: { href: string, label: string, active: boolean, count?: number, countText?: string, countColor?: string, isLast?: boolean, isFloating?: boolean }) {
+  return (
+    <div className={`relative flex items-center w-full group ${isFloating ? 'px-0 py-0' : 'px-2 py-0.5'}`}>
+      {/* Brutalist Sharp Connector Lines */}
+      {!isFloating && (
+        <>
+          <div className={`absolute left-[18px] top-0 w-[14px] border-l border-b border-white/20 group-hover:border-white/40 transition-colors ${isLast ? 'bottom-1/2' : 'h-1/2'}`}></div>
+          {!isLast && (
+             <div className="absolute left-[18px] top-1/2 bottom-[-4px] border-l border-white/20 group-hover:border-white/40 transition-colors z-0"></div>
+          )}
+        </>
+      )}
       
-      <div className="transition-transform duration-200 group-hover:-translate-x-0.5 shrink-0 ml-2">
-        {highlightText ? (
-          <span className="text-[8px] px-1.5 py-0.5 font-bold uppercase tracking-wide bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/25">
-            {highlightText}
-          </span>
-        ) : count !== undefined ? (
-          <span className={`text-[9px] px-1.5 py-0.5 transition-colors ${active ? 'bg-zinc-900 text-white border border-white/10' : 'bg-white/5 text-white/40 group-hover:bg-white/10'}`}>
-            {count}
-          </span>
-        ) : null}
-      </div>
-    </Link>
+      {/* Clickable item */}
+      <Link href={href} className={`${isFloating ? 'ml-0 px-3 py-2 w-full' : 'ml-[24px] flex-1 px-3 py-2.5'} flex items-center justify-between rounded-none transition-colors duration-200 z-10 border border-transparent ${
+        active ? 'bg-zinc-900 border-white/10 text-white' : 'text-white/50 hover:bg-white/5 hover:border-white/5 hover:text-white'
+      }`}>
+        <span className="text-[13px] font-sans font-semibold">{label}</span>
+        {(count !== undefined || countText) && (
+          <span className={`text-[10px] px-1.5 py-0.5 rounded-none font-mono leading-none flex items-center justify-center border ${
+            countColor ? countColor + ' border-transparent' : (active ? 'bg-[#ff9e00] text-black border-black font-bold' : 'bg-white/10 text-white/60 border-transparent')
+          }`}>{countText || count}</span>
+        )}
+      </Link>
+    </div>
   );
 }
 

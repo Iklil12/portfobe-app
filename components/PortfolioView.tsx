@@ -30,6 +30,18 @@ export default function PortfolioView({ data, theme, isMobileView = false, isCar
     }
   }
 
+  // FASE 3: Ekstrak designTokens jika ada dan timpa properti usang
+  if (typeof processedTheme.designTokens === 'string') {
+    try {
+      const tokens = JSON.parse(processedTheme.designTokens);
+      Object.assign(processedTheme, tokens); 
+    } catch (e) {
+      // safe fallback
+    }
+  } else if (processedTheme.designTokens && typeof processedTheme.designTokens === 'object') {
+    Object.assign(processedTheme, processedTheme.designTokens);
+  }
+
   // Semua rendering diserahkan sepenuhnya kepada arsitektur Block-based (DynamicBlockRenderer)
   // Tema-tema lama berbentuk Monolith telah resmi ditinggalkan dan dibersihkan untuk optimasi Bundle Size.
   return (

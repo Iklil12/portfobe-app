@@ -15,6 +15,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
 
   // Tutup sidebar mobile otomatis saat pindah rute/menu
   useEffect(() => {
@@ -107,6 +108,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         linksCount={linksCount}
         testimonialsCount={testimonialsCount}
         userRole={userRole}
+        isDesktopSidebarOpen={isDesktopSidebarOpen}
+        onToggleDesktopSidebar={() => setIsDesktopSidebarOpen(!isDesktopSidebarOpen)}
       />
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#050505] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
@@ -130,6 +133,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             alertCount={notifications.length}
             notifications={notifications}
             onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+            onToggleDesktopSidebar={() => setIsDesktopSidebarOpen(!isDesktopSidebarOpen)}
           />
           <TopBanner isLoading={isLoading} topBanner={topBanner} />
         </div>

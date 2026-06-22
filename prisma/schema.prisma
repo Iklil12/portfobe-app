@@ -106,13 +106,9 @@ model SiteAppearance {
   userId           String  @unique
   splashScreen     Boolean @default(false)
   themeTemplate    String  @default("minimalist")
-  themeColor       String  @default("#000000")
-  fontHeading      String  @default("Inter")
-  fontBody         String  @default("Inter")
-  buttonShape      String  @default("rounded")
-  cardStyle        String  @default("flat")
   favoriteThemes   String  @default("[]") @db.Text
   customTexts      String  @default("{}") @db.Text
+  designTokens     String? @db.Text
   publishedDraftId String?
   user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects         LiveThemeProject[]
@@ -123,13 +119,9 @@ model ThemeDraft {
   userId        String
   name          String   @default("Draft Baru")
   themeTemplate String
-  themeColor    String
-  fontHeading   String
-  fontBody      String
-  buttonShape   String
-  cardStyle     String
   splashScreen  Boolean
   customTexts   String   @db.Text
+  designTokens  String?  @db.Text
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   description   String?  @db.Text

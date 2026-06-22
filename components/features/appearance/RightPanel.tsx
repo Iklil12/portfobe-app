@@ -5,6 +5,7 @@ import { EditorControls } from './EditorControls';
 import { GalleryLayoutPicker, GalleryDesignPicker } from '@/components/editor-controls/SharedControls';
 import type { ThemeEditorState, ThemeEditorActions } from '@/hooks/useThemeEditor';
 import { Grid, Layout, Info } from 'lucide-react';
+import { SectionReorderPanel } from './SectionReorderPanel';
 
 export function RightPanel({ 
   state, 
@@ -72,11 +73,10 @@ export function RightPanel({
                   <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase">Home Options</h3>
                 </div>
                 
-                <div className="p-4 rounded-lg border border-dashed border-white/10 text-center bg-white/[0.01]">
-                  <p className="text-xs text-white/40 leading-relaxed">
-                    Halaman utama diatur secara langsung menggunakan block visual pada preview. Silakan atur style global di tab Theme Settings.
-                  </p>
-                </div>
+                <SectionReorderPanel 
+                  blocks={state.pageBlocks} 
+                  setBlocks={actions.setPageBlocks} 
+                />
               </div>
             )}
           </div>

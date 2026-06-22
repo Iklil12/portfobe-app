@@ -7,6 +7,7 @@ import { showToast } from '@/lib/customToast';
 import { ProjectType } from '@/hooks/useProjects';
 import { LazyImage } from '@/components/ui/LazyImage';
 import { X, UploadCloud, Box, Check, Film, Image as ImageIcon, Sparkles, Rocket, Award, Loader2, Crown } from 'lucide-react';
+import * as tus from 'tus-js-client';
 
 // --- VARIANTS ANIMASI ---
 const modalSpring = { type: "spring", stiffness: 300, damping: 25 } as const;
@@ -73,16 +74,25 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     const maxImageLabel = userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB';
     
     if (f.size > maxImageSize) {
-      showToast({ message: `Maksimal ukuran gambar ${maxImageLabel}`, id: "err-img", icon: "fa-exclamation" });
+      showToast({ message: `Maksimal ukuran gambar ${maxImageLabel}`, id: "err-img", icon: "⚠️" });
+      return;
+    }
+
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET;
+    
+    if (!cloudName || !uploadPreset) {
+      showToast({ message: "Konfigurasi Cloudinary tidak ditemukan", id: "upload-asset-fail", icon: "❌" });
       return;
     }
 
     setIsUploadingImage(true);
     const formData = new FormData();
     formData.append('file', f);
+    formData.append('upload_preset', uploadPreset);
 
     try {
-      const res = await fetch('/api/projects/upload-image', {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
         method: 'POST',
         body: formData
       });
@@ -90,14 +100,15 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
       
       if (res.ok && data.secure_url) {
         setMediaUrl(data.secure_url);
-        showToast({ message: "Aset berhasil dilampirkan", id: "upload-asset-success", icon: "fa-image" });
+        showToast({ message: "Gambar berhasil diunggah dengan cepat", id: "upload-asset-success", icon: "⚡" });
       } else {
-        showToast({ message: data.error || "Gagal mengunggah gambar", id: "upload-asset-fail", icon: "fa-times" });
+        showToast({ message: data.error?.message || "Gagal mengunggah gambar", id: "upload-asset-fail", icon: "❌" });
       }
     } catch (err) {
-      showToast({ message: "Terjadi kesalahan jaringan", id: "upload-asset-err", icon: "fa-wifi" });
+      showToast({ message: "Terjadi kesalahan jaringan saat mengunggah", id: "upload-asset-err", icon: "⚠️" });
     } finally {
       setIsUploadingImage(false);
+      if (fileImageInputRef.current) fileImageInputRef.current.value = '';
     }
   };
 
@@ -111,7 +122,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     const maxVideoSizeLabel = userPlan === 'SUPREME' ? '100MB' : '50MB';
 
     if (f.size > maxVideoSize) {
-      showToast({ message: `Ukuran video maksimal ${maxVideoSizeLabel}`, id: "err-video-size", icon: "fa-exclamation-triangle" });
+      showToast({ message: `Ukuran video maksimal ${maxVideoSizeLabel}`, id: "err-video-size", icon: "⚠️" });
       return;
     }
 
@@ -119,55 +130,61 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     setUploadProgress(0);
 
     try {
-      const formData = new FormData();
-      formData.append('title', projectTitle || f.name);
-      formData.append('file', f);
+      // 1. Minta tiket presigned signature dari server kita
+      const ticketRes = await fetch('/api/projects/upload-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: projectTitle || f.name })
+      });
 
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', '/api/projects/upload-video', true);
+      const ticketData = await ticketRes.json();
 
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percentComplete = Math.round((event.loaded / event.total) * 100);
-          setUploadProgress(percentComplete);
-        }
-      };
+      if (!ticketRes.ok || !ticketData.guid) {
+        throw new Error(ticketData.error || "Gagal mendapatkan tiket upload");
+      }
 
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            if (data.guid) {
-              setMediaUrl(data.guid);
-              showToast({ message: "Video berhasil diunggah!", id: "upload-success", icon: "fa-check-circle" });
-            } else {
-              showToast({ message: "Gagal mengunggah video.", id: "upload-fail", icon: "fa-times-circle" });
-            }
-          } catch (e) {
-            showToast({ message: "Respon server tidak valid.", id: "upload-fail-parse", icon: "fa-times-circle" });
-          }
-        } else {
-          try {
-            const err = JSON.parse(xhr.responseText);
-            showToast({ message: err.error || "Gagal mengunggah video.", id: "upload-fail", icon: "fa-times-circle" });
-          } catch {
-            showToast({ message: "Gagal mengunggah video.", id: "upload-fail", icon: "fa-times-circle" });
-          }
-        }
-        setIsUploadingVideo(false);
-      };
+      const { guid, libraryId, signature, expirationTime } = ticketData;
 
-      xhr.onerror = () => {
-        showToast({ message: "Terjadi kesalahan jaringan saat mengunggah.", id: "upload-error", icon: "fa-wifi" });
-        setIsUploadingVideo(false);
-      };
+      // 2. Upload file menggunakan TUS langsung ke Edge CDN Bunny
+      const upload = new tus.Upload(f, {
+        endpoint: 'https://video.bunnycdn.com/tusupload',
+        retryDelays: [0, 3000, 5000, 10000, 20000],
+        headers: {
+          AuthorizationSignature: signature,
+          AuthorizationExpire: expirationTime.toString(),
+          VideoId: guid,
+          LibraryId: libraryId.toString(),
+        },
+        metadata: {
+          filename: f.name,
+          filetype: f.type,
+        },
+        onError: function (error) {
+          console.error("Failed because: " + error);
+          showToast({ message: "Gagal mengunggah video.", id: "upload-edge-fail", icon: "❌" });
+          setIsUploadingVideo(false);
+          if (fileInputRef.current) fileInputRef.current.value = '';
+        },
+        onProgress: function (bytesUploaded, bytesTotal) {
+          const percentage = Math.round((bytesUploaded / bytesTotal) * 100);
+          setUploadProgress(percentage);
+        },
+        onSuccess: function () {
+          setMediaUrl(guid);
+          showToast({ message: "Video 100% berhasil diunggah", id: "upload-edge-success", icon: "✅" });
+          setIsUploadingVideo(false);
+          if (fileInputRef.current) fileInputRef.current.value = '';
+        },
+      });
 
-      xhr.send(formData);
+      // Mulai proses upload TUS
+      upload.start();
 
     } catch (error: any) {
       console.error(error);
-      showToast({ message: error.message || "Gagal memproses video", id: "upload-exception", icon: "fa-exclamation-triangle" });
+      showToast({ message: error.message || "Gagal memproses video", id: "upload-exception", icon: "⚠️" });
       setIsUploadingVideo(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -175,7 +192,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     const max3DSize = userPlan === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
     const max3DLabel = userPlan === 'SUPREME' ? '100MB' : '50MB';
     if (f.size > max3DSize) {
-       showToast({ message: `Maksimal ${max3DLabel}`, id: "err-3d", icon: "fa-exclamation" });
+       showToast({ message: `Maksimal ${max3DLabel}`, id: "err-3d", icon: "⚠️" });
        return;
     }
     setFile3d(f);
@@ -202,20 +219,20 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     if (projectType === 'photo') {
       const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
       if (!validMimeTypes.includes(file.type)) {
-        showToast({ message: "Format tidak didukung. Harap unggah JPG, PNG, WEBP, atau GIF.", id: "err-img-type", icon: "fa-exclamation" });
+        showToast({ message: "Format tidak didukung. Harap unggah JPG, PNG, WEBP, atau GIF.", id: "err-img-type", icon: "⚠️" });
         return;
       }
       await processImageUpload(file);
     } else if (projectType === 'video') {
       if (!file.type.startsWith('video/')) {
-        showToast({ message: "Harap unggah file video yang valid.", id: "err-video-type", icon: "fa-exclamation" });
+        showToast({ message: "Harap unggah file video yang valid.", id: "err-video-type", icon: "⚠️" });
         return;
       }
       await processVideoUpload(file);
     } else if (projectType === '3d') {
       const isGlb = file.name.endsWith('.glb') || file.name.endsWith('.gltf');
       if (!isGlb) {
-        showToast({ message: "Harap unggah file 3D berformat .GLB atau .GLTF.", id: "err-3d-type", icon: "fa-exclamation" });
+        showToast({ message: "Harap unggah file 3D berformat .GLB atau .GLTF.", id: "err-3d-type", icon: "⚠️" });
         return;
       }
       process3DFile(file);
@@ -338,7 +355,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                           return;
                         }
                         if (!projectTitle || !file3d) {
-                           showToast({ message: 'Judul dan File 3D wajib diisi!', id: 'err-3d-req', icon: 'fa-exclamation' });
+                           showToast({ message: 'Judul dan File 3D wajib diisi!', id: 'err-3d-req', icon: "⚠️" });
                            return;
                         }
                         setIsUploading3D(true);
@@ -362,29 +379,32 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
 
                           xhr.onload = () => {
                             if (xhr.status >= 200 && xhr.status < 300) {
-                              showToast({ message: '3D Model berhasil diunggah!', id: 'succ-3d', icon: 'fa-check-circle' });
+                              showToast({ message: '3D Model berhasil diunggah', id: 'succ-3d', icon: "✅" });
                               handleCloseModal();
                               window.location.reload();
                             } else {
                               try {
                                 const err = JSON.parse(xhr.responseText);
-                                showToast({ message: err.error || 'Gagal mengunggah', id: 'err-3d-api', icon: 'fa-times-circle' });
+                                showToast({ message: err.error || 'Gagal mengunggah', id: 'err-3d-api', icon: "❌" });
                               } catch {
-                                showToast({ message: 'Gagal mengunggah 3D model', id: 'err-3d-api', icon: 'fa-times-circle' });
+                                showToast({ message: 'Gagal mengunggah 3D model', id: 'err-3d-api', icon: "❌" });
                               }
+                              if (file3dInputRef.current) file3dInputRef.current.value = '';
                             }
                             setIsUploading3D(false);
                           };
 
                           xhr.onerror = () => {
-                            showToast({ message: 'Gagal terhubung ke server', id: 'err-net', icon: 'fa-wifi' });
+                            showToast({ message: 'Gagal terhubung ke server', id: 'err-net', icon: '⚠️' });
                             setIsUploading3D(false);
+                            if (file3dInputRef.current) file3dInputRef.current.value = '';
                           };
 
                           xhr.send(formData);
                         } catch (err) {
-                           showToast({ message: 'Gagal terhubung server', id: 'err-net', icon: 'fa-wifi' });
+                           showToast({ message: 'Gagal terhubung server', id: 'err-net', icon: '⚠️' });
                            setIsUploading3D(false);
+                           if (file3dInputRef.current) file3dInputRef.current.value = '';
                         }
                       } else {
                         handleSubmit(e);
@@ -446,7 +466,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                 const max3DSize = userPlan === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
                                 const max3DLabel = userPlan === 'SUPREME' ? '100MB' : '50MB';
                                 if (f.size > max3DSize) {
-                                   showToast({ message: `Maksimal ${max3DLabel}`, id: "err-3d", icon: "fa-exclamation" });
+                                   showToast({ message: `Maksimal ${max3DLabel}`, id: "err-3d", icon: "⚠️" });
                                    return;
                                 }
                                 setFile3d(f);
@@ -568,16 +588,21 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                 const maxImageLabel = userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB';
                                 
                                 if (f.size > maxImageSize) {
-                                  showToast({ message: `Maksimal ukuran gambar ${maxImageLabel}`, id: "err-img", icon: "fa-exclamation" });
+                                  showToast({ message: `Maksimal ukuran gambar ${maxImageLabel}`, id: "err-img", icon: "⚠️" });
                                   return;
                                 }
+
+                                const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+                                const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET;
+                                if (!cloudName || !uploadPreset) return;
 
                                 setIsUploadingImage(true);
                                 const formData = new FormData();
                                 formData.append('file', f);
+                                formData.append('upload_preset', uploadPreset);
 
                                 try {
-                                  const res = await fetch('/api/projects/upload-image', {
+                                  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
                                     method: 'POST',
                                     body: formData
                                   });
@@ -585,14 +610,15 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                   
                                   if (res.ok && data.secure_url) {
                                     setMediaUrl(data.secure_url);
-                                    showToast({ message: "Aset berhasil dilampirkan", id: "upload-asset-success", icon: "fa-image" });
+                                    showToast({ message: "Gambar berhasil diunggah dengan cepat", id: "upload-asset-success", icon: "⚡" });
                                   } else {
-                                    showToast({ message: data.error || "Gagal mengunggah gambar", id: "upload-asset-fail", icon: "fa-times" });
+                                    showToast({ message: data.error?.message || "Gagal mengunggah gambar", id: "upload-asset-fail", icon: "❌" });
                                   }
                                 } catch (err) {
-                                  showToast({ message: "Terjadi kesalahan jaringan", id: "upload-asset-err", icon: "fa-wifi" });
+                                  showToast({ message: "Terjadi kesalahan jaringan Edge", id: "upload-asset-err", icon: "⚠️" });
                                 } finally {
                                   setIsUploadingImage(false);
+                                  if (fileImageInputRef.current) fileImageInputRef.current.value = '';
                                 }
                               }} 
                             />

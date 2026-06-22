@@ -46,19 +46,29 @@ const THEME_BLOCK_PRESETS: Record<string, string[]> = {
   'default': UNIVERSAL_BLOCK_ORDER
 };
 
+export const FORBIDDEN_BLOCKS_PER_THEME: Record<string, string[]> = {
+  'absolute-noir': ['MARQUEE'],
+  'split': ['MARQUEE']
+};
+
 const applyPresetToBlocks = (blocks: PageBlock[], themeId: string) => {
   const preset = THEME_BLOCK_PRESETS[themeId] || THEME_BLOCK_PRESETS['default'];
+  const forbidden = FORBIDDEN_BLOCKS_PER_THEME[themeId] || [];
   
-  // Hanya masukkan blok yang ada di preset (menghapus blok opsional seperti FAQ/VIDEO_SHOWCASE)
-  const filteredBlocks = blocks.filter(b => preset.includes(b.blockType));
+  // Pisahkan blok menjadi dua: blok bawaan preset, dan blok kustom (opsional)
+  const coreBlocks = blocks.filter(b => preset.includes(b.blockType) && !forbidden.includes(b.blockType));
+  const customBlocks = blocks.filter(b => !preset.includes(b.blockType) && !forbidden.includes(b.blockType));
   
-  const newBlocks = [...filteredBlocks].sort((a, b) => {
+  const sortedCoreBlocks = [...coreBlocks].sort((a, b) => {
     const indexA = preset.indexOf(a.blockType);
     const indexB = preset.indexOf(b.blockType);
     return indexA - indexB;
   });
   
-  return newBlocks.map((b, i) => ({ ...b, orderIndex: i }));
+  // Gabungkan blok kustom di bagian akhir
+  const combinedBlocks = [...sortedCoreBlocks, ...customBlocks];
+  
+  return combinedBlocks.map((b, i) => ({ ...b, orderIndex: i }));
 };
 
 export function useThemeEditor() {
@@ -84,20 +94,20 @@ export function useThemeEditor() {
   const [desktopZoom, setDesktopZoom] = useState(0.75);
   const [mobileZoom, setMobileZoom] = useState(1.0);
   
-  const zoomIn = () => {
-    if (previewMode === 'desktop' || previewMode === 'split') {
+  const zoomIn = (mode?: string) => {
+    const targetMode = mode || previewMode;
+    if (targetMode === 'desktop' || targetMode === 'split') {
       setDesktopZoom(z => Math.min(ZOOM_MAX, parseFloat((z + ZOOM_STEP).toFixed(2))));
-    }
-    if (previewMode === 'mobile' || previewMode === 'split') {
+    } else {
       setMobileZoom(z => Math.min(ZOOM_MAX_MOBILE, parseFloat((z + ZOOM_STEP).toFixed(2))));
     }
   };
   
-  const zoomOut = () => {
-    if (previewMode === 'desktop' || previewMode === 'split') {
+  const zoomOut = (mode?: string) => {
+    const targetMode = mode || previewMode;
+    if (targetMode === 'desktop' || targetMode === 'split') {
       setDesktopZoom(z => Math.max(ZOOM_MIN, parseFloat((z - ZOOM_STEP).toFixed(2))));
-    }
-    if (previewMode === 'mobile' || previewMode === 'split') {
+    } else {
       setMobileZoom(z => Math.max(ZOOM_MIN, parseFloat((z - ZOOM_STEP).toFixed(2))));
     }
   };
@@ -174,7 +184,12 @@ export function useThemeEditor() {
       return;
     }
 
-    if (isRestoring.current || isLoading) return;
+    if (isRestoring.current || isLoading) {
+      if (isRestoring.current) {
+        prevCombinedState.current = currentSnapshot;
+      }
+      return;
+    }
 
     const timer = setTimeout(() => {
       if (prevCombinedState.current) {
@@ -346,6 +361,17 @@ export function useThemeEditor() {
               if (sa.fontBody) setFontBody(sa.fontBody);
               if (sa.buttonShape) setButtonShape(sa.buttonShape);
               if (sa.cardStyle) setCardStyle(sa.cardStyle);
+
+              // FASE 3: PRIORITASKAN MEMBACA DARI LACI BARU (designTokens)
+              if (sa.designTokens) {
+                const tokens = safeParseJson(sa.designTokens, {}) as any;
+                if (tokens?.themeColor) setThemeColor(tokens.themeColor);
+                if (tokens?.fontHeading) setFontHeading(tokens.fontHeading);
+                if (tokens?.fontBody) setFontBody(tokens.fontBody);
+                if (tokens?.buttonShape) setButtonShape(tokens.buttonShape);
+                if (tokens?.cardStyle) setCardStyle(tokens.cardStyle);
+              }
+
               if (sa.splashScreen !== undefined && sa.splashScreen !== null) {
                 setSplashScreen(sa.splashScreen);
               }
@@ -380,13 +406,18 @@ export function useThemeEditor() {
                  });
               }
 
+              let cleanTokens: any = {};
+              if (sa.designTokens) {
+                cleanTokens = safeParseJson(sa.designTokens, {}) as any;
+              }
+
               setLastSavedState({
                 activeTheme: sa.themeTemplate || 'minimalist',
-                themeColor: sa.themeColor || '#000000',
-                fontHeading: sa.fontHeading || 'Inter',
-                fontBody: sa.fontBody || 'Inter',
-                buttonShape: sa.buttonShape || 'rounded',
-                cardStyle: sa.cardStyle || 'flat',
+                themeColor: cleanTokens.themeColor || sa.themeColor || '#000000',
+                fontHeading: cleanTokens.fontHeading || sa.fontHeading || 'Inter',
+                fontBody: cleanTokens.fontBody || sa.fontBody || 'Inter',
+                buttonShape: cleanTokens.buttonShape || sa.buttonShape || 'rounded',
+                cardStyle: cleanTokens.cardStyle || sa.cardStyle || 'flat',
                 splashScreen: sa.splashScreen || false,
                 customTexts: texts,
                 pageBlocks: cleanBlocks,
@@ -460,16 +491,23 @@ export function useThemeEditor() {
                   liveDraft.buttonShape !== appData.siteAppearance.buttonShape ||
                   liveDraft.cardStyle !== appData.siteAppearance.cardStyle ||
                   liveDraft.splashScreen !== appData.siteAppearance.splashScreen ||
-                  liveDraft.customTexts !== appData.siteAppearance.customTexts;
+                  liveDraft.customTexts !== appData.siteAppearance.customTexts; // Catatan: perbandingan sederhana, bisa disempurnakan nanti
                   
                 setHasUnpublishedChanges(isDraftDifferent);
+                
+                // FASE 3: BACA TOKENS DARI DRAFT
+                let draftTokens: any = {};
+                if (liveDraft.designTokens) {
+                  draftTokens = safeParseJson(liveDraft.designTokens, {}) as any;
+                }
+
                 // --- TERAPKAN DATA DRAFT KE STATE EDITOR AGAR PERUBAHAN TIDAK HILANG SAAT REFRESH ---
                 setActiveTheme(liveDraft.themeTemplate);
-                setThemeColor(liveDraft.themeColor);
-                setFontHeading(liveDraft.fontHeading);
-                setFontBody(liveDraft.fontBody);
-                setButtonShape(liveDraft.buttonShape);
-                setCardStyle(liveDraft.cardStyle);
+                setThemeColor(draftTokens.themeColor || liveDraft.themeColor);
+                setFontHeading(draftTokens.fontHeading || liveDraft.fontHeading);
+                setFontBody(draftTokens.fontBody || liveDraft.fontBody);
+                setButtonShape(draftTokens.buttonShape || liveDraft.buttonShape);
+                setCardStyle(draftTokens.cardStyle || liveDraft.cardStyle);
                 setSplashScreen(liveDraft.splashScreen);
                 
                 const parsedTexts: any = safeParseJson(liveDraft.customTexts, {});
@@ -499,11 +537,11 @@ export function useThemeEditor() {
                 setLastSavedState((prev: any) => ({
                   ...prev,
                   activeTheme: liveDraft.themeTemplate,
-                  themeColor: liveDraft.themeColor,
-                  fontHeading: liveDraft.fontHeading,
-                  fontBody: liveDraft.fontBody,
-                  buttonShape: liveDraft.buttonShape,
-                  cardStyle: liveDraft.cardStyle,
+                  themeColor: draftTokens.themeColor || liveDraft.themeColor,
+                  fontHeading: draftTokens.fontHeading || liveDraft.fontHeading,
+                  fontBody: draftTokens.fontBody || liveDraft.fontBody,
+                  buttonShape: draftTokens.buttonShape || liveDraft.buttonShape,
+                  cardStyle: draftTokens.cardStyle || liveDraft.cardStyle,
                   splashScreen: liveDraft.splashScreen,
                   customTexts: parsedTexts,
                   pageBlocks: draftBlocks,

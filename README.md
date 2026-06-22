@@ -4,7 +4,7 @@
 
 Portfo.be adalah platform SaaS (*Software as a Service*) komprehensif berskala *Enterprise* yang dirancang untuk memungkinkan desainer, *engineer*, dan pekerja kreatif kelas dunia dalam membangun, mengelola, dan melacak portofolio profesional mereka. 
 
-Lebih dari sekadar *website builder*, Portfo.be dilengkapi dengan sistem **Analytics Internal**, **Multi-Platform Integrations** (Canva, Penpot, Github), dan arsitektur *Theme Engine* yang sangat canggih.
+Lebih dari sekadar *portofolio builder*, Portfo.be dilengkapi dengan sistem **Analytics Internal**, **Multi-Platform Integrations** (Canva, Penpot, Github), dan arsitektur *Theme Engine* yang sangat canggih.
 
 ---
 

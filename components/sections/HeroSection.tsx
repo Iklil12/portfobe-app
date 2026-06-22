@@ -103,7 +103,7 @@ export function HeroSection() {
                 <div className="px-5 py-5 md:p-8 wire-b md:wire-b-0 md:wire-r bg-[#050505] flex flex-col justify-between min-h-[120px] md:min-h-[180px]">
                     <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ OVERVIEW ]</span>
                     <p className="font-sans text-[13px] md:text-sm font-medium leading-relaxed mt-3 text-white/70">
-                        The premium website builder designed for visual creators. Sign in to seamlessly build, manage, and publish your professional portfolio in minutes—without writing any code.
+                        The premium portofolio builder designed for visual creators. Sign in to seamlessly build, manage, and publish your professional portfolio in minutes—without writing any code.
                     </p>
                 </div>
 

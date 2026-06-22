@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
-import { safeStringifyJson } from "@/lib/safeJson";
+import { safeStringifyJson, safeParseJson } from "@/lib/safeJson";
 import { revalidateTag } from "next/cache";
 
 import { THEMES_DATA } from "@/lib/themes";
@@ -34,7 +34,7 @@ export async function GET(req: Request) {
           plan: true,
           planExpiredAt: true,
           profile: { select: { subdomain: true, fullName: true } },
-          siteAppearance: { select: { themeTemplate: true, favoriteThemes: true } }
+          siteAppearance: { select: { themeTemplate: true, favoriteThemes: true, designTokens: true } }
         }
       });
       return NextResponse.json(liteData);
@@ -193,20 +193,31 @@ export async function PATCH(req: Request) {
       finalSelectedProjects = selectedProjects.filter((id: string) => validIds.includes(id));
     }
 
+    let currentTokens: any = {};
+    if (currentAppearance?.designTokens) {
+      currentTokens = safeParseJson(currentAppearance.designTokens, {});
+    }
+
+    // BUNGKUS KE DESIGN TOKENS
+    const designTokens = {
+      themeColor: themeColor !== undefined ? themeColor : currentTokens.themeColor,
+      fontHeading: fontHeading !== undefined ? fontHeading : currentTokens.fontHeading,
+      fontBody: fontBody !== undefined ? fontBody : currentTokens.fontBody,
+      buttonShape: buttonShape !== undefined ? buttonShape : currentTokens.buttonShape,
+      cardStyle: cardStyle !== undefined ? cardStyle : currentTokens.cardStyle,
+    };
+    const stringifiedTokens = JSON.stringify(designTokens);
+
     // UPDATE ATAU CREATE KE TABEL SITE_APPEARANCE
     const updatedAppearance = await prisma.siteAppearance.upsert({
       where: { userId: user.id },
       update: { 
         ...(themeTemplate !== undefined && { themeTemplate }), 
-        ...(themeColor !== undefined && { themeColor }), 
-        ...(fontHeading !== undefined && { fontHeading }), 
-        ...(fontBody !== undefined && { fontBody }), 
-        ...(buttonShape !== undefined && { buttonShape }), 
-        ...(cardStyle !== undefined && { cardStyle }),
         ...(splashScreen !== undefined && { splashScreen }),
         ...(favoriteThemes !== undefined && { favoriteThemes: safeStringifyJson(favoriteThemes) }),
         ...(stringifiedCustomTexts !== undefined && { customTexts: stringifiedCustomTexts }),
         ...(publishedDraftId !== undefined && { publishedDraftId }),
+        designTokens: stringifiedTokens,
         ...(Array.isArray(finalSelectedProjects) && {
           projects: {
             deleteMany: {},
@@ -220,15 +231,11 @@ export async function PATCH(req: Request) {
       create: {
         userId: user.id,
         themeTemplate, 
-        themeColor, 
-        fontHeading, 
-        fontBody, 
-        buttonShape, 
-        cardStyle,
         splashScreen,
         favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : "[]",
         customTexts: stringifiedCustomTexts !== undefined ? stringifiedCustomTexts : "{}",
         publishedDraftId: publishedDraftId !== undefined ? publishedDraftId : null,
+        designTokens: stringifiedTokens,
         projects: Array.isArray(finalSelectedProjects) && finalSelectedProjects.length > 0 ? {
           create: finalSelectedProjects.map((projectId: string, index: number) => ({
             projectId: projectId,

@@ -89,19 +89,19 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
             <div className="p-5 sm:p-8">
               {/* URL Box */}
               <div className="border border-white/10 rounded-none p-5 sm:p-6 bg-zinc-950 mb-6 sm:mb-8 flex flex-col items-center">
-                <a 
-                  href={url} 
-                  target="_blank" 
+                <a
+                  href={url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-white hover:text-[#ff9e00] font-mono text-sm md:text-base mb-4 sm:mb-6 transition-colors break-all text-center underline decoration-white/20 underline-offset-4"
                 >
                   {url}
                 </a>
-                
+
                 <div className="flex items-center justify-center w-full mt-2">
-                  <a 
-                    href={url} 
-                    target="_blank" 
+                  <a
+                    href={url}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 px-8 py-3 rounded-none border border-[#ff9e00]/25 text-[#ff9e00] bg-[#ff9e00]/5 hover:bg-[#ff9e00]/10 transition-colors font-mono font-bold text-[10px] uppercase tracking-wider"
                   >
@@ -114,42 +114,40 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
               <div className="flex flex-col items-center">
                 <p className="text-[10px] font-mono font-bold text-white/40 mb-4 uppercase tracking-widest">Bagikan ke Media Sosial</p>
                 <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
-                  <button 
+                  <button
                     onClick={shareFacebook}
                     className="w-10 h-10 rounded-none border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-zinc-800 hover:text-[#1877F2] transition-all hover:border-white/20"
                   >
                     <i className="fab fa-facebook-f"></i>
                   </button>
-                  <button 
+                  <button
                     onClick={shareTwitter}
                     className="w-10 h-10 rounded-none border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-zinc-800 hover:text-white transition-all hover:border-white/20"
                   >
                     <i className="fab fa-twitter"></i>
                   </button>
-                  <button 
+                  <button
                     onClick={shareLinkedIn}
                     className="w-10 h-10 rounded-none border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-zinc-800 hover:text-[#0A66C2] transition-all hover:border-white/20"
                   >
                     <i className="fab fa-linkedin-in"></i>
                   </button>
-                  <button 
+                  <button
                     onClick={handleCopy}
-                    className={`w-10 h-10 rounded-none border flex items-center justify-center transition-all ${
-                      isCopied 
-                        ? 'border-[#ff9e00] bg-[#ff9e00] text-black' 
+                    className={`w-10 h-10 rounded-none border flex items-center justify-center transition-all ${isCopied
+                        ? 'border-[#ff9e00] bg-[#ff9e00] text-black'
                         : 'border-white/10 bg-zinc-900 text-white/70 hover:bg-zinc-800 hover:text-white hover:border-white/20'
-                    }`}
+                      }`}
                     title="Copy Link"
                   >
                     <i className={isCopied ? "fas fa-check" : "fas fa-link"}></i>
                   </button>
-                  <button 
+                  <button
                     onClick={() => setShowQR(!showQR)}
-                    className={`px-4 h-10 rounded-none border flex items-center justify-center gap-2 transition-colors font-mono text-[10px] font-bold uppercase tracking-wider ${
-                      showQR
+                    className={`px-4 h-10 rounded-none border flex items-center justify-center gap-2 transition-colors font-mono text-[10px] font-bold uppercase tracking-wider ${showQR
                         ? 'border-[#ff9e00] bg-[#ff9e00] text-black'
                         : 'border-white/10 bg-zinc-900 text-white/70 hover:bg-zinc-800 hover:text-white hover:border-white/20'
-                    }`}
+                      }`}
                   >
                     <i className="fas fa-qrcode"></i> Kode QR
                   </button>

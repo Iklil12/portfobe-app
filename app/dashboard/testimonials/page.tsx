@@ -54,12 +54,20 @@ export default function TestimonialsPage() {
       return;
     }
 
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET;
+    if (!cloudName || !uploadPreset) {
+      showToast({ message: "Konfigurasi Cloudinary tidak ditemukan", id: "up-fail", icon: "fa-times" });
+      return;
+    }
+
     setIsUploadingImage(true);
     const formDataObj = new FormData();
     formDataObj.append('file', file);
+    formDataObj.append('upload_preset', uploadPreset);
 
     try {
-      const res = await fetch('/api/projects/upload-image', {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
         method: 'POST',
         body: formDataObj
       });
@@ -67,12 +75,12 @@ export default function TestimonialsPage() {
       
       if (res.ok && data.secure_url) {
         setFormData(prev => ({ ...prev, avatarUrl: data.secure_url }));
-        showToast({ message: "Foto terunggah!", id: "up-ok", icon: "fa-check-circle" });
+        showToast({ message: "Foto terunggah kilat via Edge Node! ⚡", id: "up-ok", icon: "fa-bolt" });
       } else {
-        showToast({ message: data.error || "Gagal mengunggah gambar", id: "up-fail", icon: "fa-times" });
+        showToast({ message: data.error?.message || "Gagal mengunggah gambar", id: "up-fail", icon: "fa-times" });
       }
     } catch (err) {
-      showToast({ message: "Terjadi kesalahan jaringan", id: "up-err", icon: "fa-wifi" });
+      showToast({ message: "Terjadi kesalahan jaringan Edge", id: "up-err", icon: "fa-wifi" });
     } finally {
       setIsUploadingImage(false);
     }
