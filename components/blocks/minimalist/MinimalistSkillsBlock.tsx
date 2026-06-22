@@ -6,11 +6,11 @@ import { motion } from 'framer-motion';
 const premiumEase = [0.16, 1, 0.3, 1] as const;
 
 const cinematicBlurUp = {
-  hidden: { opacity: 0, y: 30, filter: "blur(8px)" },
+  hidden: { opacity: 0, y: 30 },
   visible: (customDelay = 0) => ({
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
+    
     transition: { duration: 1.2, ease: premiumEase, delay: customDelay }
   })
 };

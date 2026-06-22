@@ -3,6 +3,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { EditableText } from '@/components/ui/EditableText';
+import { Star } from 'lucide-react';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 export interface Testimonial {
   id: string;
@@ -45,11 +47,13 @@ export function TestimonialSection({ testimonials, variant = 'grid', isEditor = 
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
               }}
-              className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm transition-colors hover:bg-white/10"
+              className="p-6 rounded-2xl bg-zinc-900/60 border border-white/10 will-change-transform transition-colors hover:bg-zinc-800/80"
             >
               <div className="flex items-center gap-4 mb-4">
                 {t.avatarUrl ? (
-                  <img src={t.avatarUrl} alt={t.clientName} loading="lazy" className="w-12 h-12 rounded-full object-cover" />
+                  <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
+                    <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover" />
+                  </div>
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center font-bold">
                     {t.clientName.charAt(0)}
@@ -61,7 +65,7 @@ export function TestimonialSection({ testimonials, variant = 'grid', isEditor = 
                 </div>
               </div>
               <div className="flex mb-3">
-                {[...Array(t.rating)].map((_, i) => <i key={i} className="fas fa-star text-sm text-amber-400"></i>)}
+                {[...Array(t.rating)].map((_, i) => <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />)}
               </div>
               <p className="text-sm opacity-90 leading-relaxed italic">"{t.content}"</p>
             </motion.div>
@@ -83,7 +87,7 @@ export function TestimonialSection({ testimonials, variant = 'grid', isEditor = 
           <div key={t.id} className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center">
             <p className="text-lg opacity-90 leading-relaxed italic mb-6">"{t.content}"</p>
             <div className="flex justify-center mb-2">
-              {[...Array(t.rating)].map((_, i) => <i key={i} className="fas fa-star text-sm text-amber-400 mx-0.5"></i>)}
+              {[...Array(t.rating)].map((_, i) => <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400 mx-0.5" />)}
             </div>
             <h4 className="font-bold">{t.clientName}</h4>
             {t.company && <p className="text-sm opacity-70">{t.company}</p>}

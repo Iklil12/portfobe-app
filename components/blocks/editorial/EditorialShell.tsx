@@ -106,7 +106,7 @@ export function EditorialShellContent({ data, theme, isMobileView = false, isCar
                     >
                         {/* Soft Canvas Backdrop */}
                         <motion.div 
-                            initial={{ backdropFilter: "blur(0px)" }} animate={{ backdropFilter: "blur(10px)" }}
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                             className="absolute inset-0 bg-[#fdfdfc]/80" onClick={() => setSelectedMedia(null)}
                         ></motion.div>
 

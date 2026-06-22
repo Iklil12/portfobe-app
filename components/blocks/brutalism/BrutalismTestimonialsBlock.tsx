@@ -3,6 +3,7 @@
 import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/components/ui/LazyImage';
 import { BrutalismContext } from './BrutalismShell';
 
 export function BrutalismTestimonialsBlock({ data, theme, isEditor, isCardPreview }: any) {
@@ -74,7 +75,7 @@ export function BrutalismTestimonialsBlock({ data, theme, isEditor, isCardPrevie
                                 {/* Client Info Header */}
                                 <div className="flex items-center gap-3 @sm:gap-4 mb-3 pb-3 border-b border-dashed border-black/10">
                                     {t.avatarUrl ? (
-                                        <img src={t.avatarUrl} alt={t.clientName} loading="lazy" className="w-10 h-10 @sm:w-12 @sm:h-12 border-2 border-black object-cover rounded-none" />
+                                        <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-10 h-10 @sm:w-12 @sm:h-12 border-2 border-black object-cover rounded-none" />
                                     ) : (
                                         <div className="w-10 h-10 @sm:w-12 @sm:h-12 border-2 border-black bg-black text-[var(--hl)] flex items-center justify-center font-black text-base @sm:text-lg rounded-none select-none">
                                             {t.clientName.charAt(0).toUpperCase()}

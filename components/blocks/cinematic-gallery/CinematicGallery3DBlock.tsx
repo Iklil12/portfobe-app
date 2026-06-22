@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { useCinematicGallery } from './CinematicGalleryShell';
-import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import dynamic from 'next/dynamic';
+const Interactive3DViewer = dynamic(() => import('@/components/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
 import { EditableText } from '@/components/ui/EditableText';
 
 export function CinematicGallery3DBlock({ isEditor, theme }: any) {

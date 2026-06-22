@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import dynamic from 'next/dynamic';
+const Interactive3DViewer = dynamic(() => import('@/components/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
 import { EditableText } from '@/components/ui/EditableText';
 
 const smoothEase = [0.33, 1, 0.68, 1] as any;
@@ -44,13 +45,13 @@ export const AbsoluteNoir3DBlock = ({ data, theme, isEditor, isCardPreview }: an
 
             <motion.div
                 variants={staggerGrid}
-                className="grid grid-cols-1 gap-12"
+                className={`grid grid-cols-1 gap-8 @md:gap-12 mx-auto ${items3D.length > 1 ? '@lg:grid-cols-2' : 'max-w-3xl'}`}
             >
                 {items3D.map((p: any, i: number) => (
                     <motion.div key={p.id || i} variants={wireframeReveal} className="group flex flex-col gap-4">
                         <div className="w-full border border-white/20 bg-[#0a0a0a] overflow-hidden transition-all duration-500 hover:border-white/50 p-1">
                             {/* Interactive3DViewer handles rendering internally */}
-                            <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0a" />
+                            <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0a" className="w-full aspect-video min-h-[250px] @md:min-h-[350px] relative group/mv" />
                         </div>
                         <div className="flex justify-between items-start">
                             <div>

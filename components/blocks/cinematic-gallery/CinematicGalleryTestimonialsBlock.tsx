@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useCinematicGallery } from './CinematicGalleryShell';
 import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 export function CinematicGalleryTestimonialsBlock({ theme, isEditor }: any) {
     const { data } = useCinematicGallery();
@@ -65,7 +66,7 @@ export function CinematicGalleryTestimonialsBlock({ theme, isEditor }: any) {
                 {/* Client Info */}
                 <div className="flex items-center gap-4 md:gap-5 mb-8 md:mb-12">
                     {active.avatarUrl ? (
-                        <img 
+                        <LazyImage 
                             src={active.avatarUrl} 
                             alt={active.clientName || 'Client'} 
                             className="w-11 h-11 md:w-16 md:h-16 rounded-full object-cover border border-white/10 grayscale hover:grayscale-0 transition-all duration-500" 

@@ -7,11 +7,11 @@ import { TestimonialSection } from '@/components/features/testimonials/Testimoni
 const premiumEase = [0.16, 1, 0.3, 1] as const;
 
 const cinematicBlurUp = {
-  hidden: { opacity: 0, y: 40, filter: "blur(12px)" },
+  hidden: { opacity: 0, y: 40 },
   visible: (customDelay = 0) => ({
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
+    
     transition: { duration: 1.4, ease: premiumEase, delay: customDelay }
   })
 };

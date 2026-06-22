@@ -129,6 +129,7 @@ export function DeviceResizerSection() {
             {/* SIMULATED MINIMALIST THEME PAGE WRAPPER FOR MOBILE SCALING */}
             <div className="flex-1 relative overflow-hidden w-full bg-white">
               <div
+                data-lenis-prevent="true"
                 className={`absolute top-0 left-0 origin-top-left w-[125%] h-[125%] scale-[0.8] md:w-full md:h-full md:scale-100 bg-white text-black text-xs flex simulated-theme ${
                   previewMode === 'desktop' ? 'flex-row overflow-hidden' : 'flex-col overflow-y-auto custom-scrollbar'
                   }`}
@@ -161,7 +162,7 @@ export function DeviceResizerSection() {
                 `}} />
 
               {/* --- SIDEBAR SECTION --- */}
-              <div className={`
+              <div data-lenis-prevent="true" className={`
                   bg-gray-50 border-gray-200 flex flex-col justify-between shrink-0
                   ${previewMode === 'desktop'
                   ? 'w-[35%] border-r h-full overflow-y-auto custom-scrollbar p-3 md:p-6'
@@ -220,7 +221,7 @@ export function DeviceResizerSection() {
               </div>
 
               {/* --- MAIN CONTENT SECTION --- */}
-              <div className={`bg-white flex-1 ${
+              <div data-lenis-prevent="true" className={`bg-white flex-1 ${
                 previewMode === 'desktop' 
                   ? 'h-full overflow-y-auto custom-scrollbar p-3 md:p-6 pb-12 md:pb-16' 
                   : 'p-4 sm:p-6 pb-16'

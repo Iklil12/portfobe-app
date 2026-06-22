@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useRef, useState, useEffect, memo } from 'react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
-import { Abstract3DShowcase } from '../ui/Abstract3DShowcase';
-import { ThemeHoverShowcase } from '../ui/ThemeHoverShowcase';
+import dynamic from 'next/dynamic';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useInView } from 'framer-motion';
+
+const Abstract3DShowcase = dynamic(() => import('../ui/Abstract3DShowcase').then(mod => mod.Abstract3DShowcase), { ssr: false });
+const ThemeHoverShowcase = dynamic(() => import('../ui/ThemeHoverShowcase').then(mod => mod.ThemeHoverShowcase), { ssr: false });
 import './sync-engine-integrations.css';
 
 // ============================================================================
@@ -30,8 +32,12 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
     { id: 4, time: "12:45:32", type: "PROJECT", msg: "Opened project (Abstract-3D-Showcase)", latency: "28ms" },
   ]);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { margin: "200px" });
+
   // Single merged interval for all live updates (was 2 separate intervals)
   useEffect(() => {
+    if (!isInView) return;
     const logTemplates = [
       { type: "VIEW", msg: "Visited /projects (Mobile // Safari)", latency: "18ms" },
       { type: "REFER", msg: "Referral from Instagram", latency: "3ms" },
@@ -60,14 +66,14 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isInView]);
 
   const formatSessions = (num: number) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   return (
-    <div className="relative p-4 sm:p-6 rounded-none w-full overflow-hidden bg-[#0a0a0a] border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] text-left font-sans group">
+    <div ref={containerRef} className="relative p-4 sm:p-6 rounded-none w-full overflow-hidden bg-[#0a0a0a] border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] text-left font-sans group">
       {/* Subtle radial spotlight */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-32 bg-gradient-to-b from-[#ff9e00]/5 to-transparent blur-2xl pointer-events-none"></div>
 
@@ -121,7 +127,6 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
               repeat: Infinity,
               times: [0, 0.45, 0.55, 0.95, 1]
             }}
-            style={{ filter: `drop-shadow(0 2px 4px rgba(255,158,0,0.35))` }}
           />
           <motion.path
             d="M0,32 C10,22 18,34 30,24 C42,14 48,10 60,22 C72,34 80,12 90,26 C95,31.6 98,18 100,10 L100,35 L0,35 Z"
@@ -291,7 +296,7 @@ const GitHubPattern = memo(function GitHubPattern() {
         <circle cx="25" cy="75" r="2" fill="#ffffff" opacity="0.4" />
         <circle cx="70" cy="75" r="2" fill="#ffffff" opacity="0.4" />
         <circle cx="70" cy="75" r="5" fill="none" stroke="#58a6ff" strokeWidth="1" className="github-ripple" />
-        <circle r="3" fill="#58a6ff" className="github-commit-dot" style={{ filter: 'drop-shadow(0 0 3px #58a6ff)', offsetPath: "path('M 25 75 C 35 55, 60 55, 70 75')" }} />
+        <circle r="3" fill="#58a6ff" className="github-commit-dot" style={{ offsetPath: "path('M 25 75 C 35 55, 60 55, 70 75')" }} />
       </g>
     </svg>
   );
@@ -624,6 +629,7 @@ export function SyncEngineSection() {
                   animate={{
                     opacity: isActive ? 1 : 0,
                     y: isActive ? 0 : (activeIndex > idx ? -20 : 20),
+                    visibility: isActive ? 'visible' : 'hidden'
                   }}
                   transition={{ duration: 0.45, ease: "easeOut" }}
                   style={{ willChange: "transform, opacity" }}
@@ -769,7 +775,8 @@ export function SyncEngineSection() {
                           opacity: isActive ? 1 : 0,
                           y: isActive ? 0 : (activeIndex > idx ? -30 : 30),
                           scale: isActive ? 1 : 0.96,
-                          pointerEvents: isActive ? 'auto' : 'none'
+                          pointerEvents: isActive ? 'auto' : 'none',
+                          visibility: isActive ? 'visible' : 'hidden'
                         }}
                         transition={{ duration: 0.5, ease: EASE }}
                         style={{ willChange: "transform, opacity" }}

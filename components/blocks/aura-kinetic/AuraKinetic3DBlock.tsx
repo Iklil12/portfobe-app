@@ -3,7 +3,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { EditableText } from '@/components/ui/EditableText';
-import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import dynamic from 'next/dynamic';
+const Interactive3DViewer = dynamic(() => import('@/components/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
 
 export function AuraKinetic3DBlock({ data, theme, isEditor }: any) {
   const allProjects = data?.projects || data?.user?.projects || [];

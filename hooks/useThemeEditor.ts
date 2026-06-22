@@ -198,13 +198,13 @@ export function useThemeEditor() {
         
         if (prevStr !== currStr) {
           pastStatesRef.current.push(prevCombinedState.current);
-          if (pastStatesRef.current.length > 30) pastStatesRef.current.shift();
+          if (pastStatesRef.current.length > 15) pastStatesRef.current.shift(); // DIKURANGI DARI 30 KE 15 UNTUK OPTIMASI MEMORI
           futureStatesRef.current = [];
           setHistoryTick(t => t + 1);
         }
       }
       prevCombinedState.current = currentSnapshot;
-    }, 50);
+    }, 500); // NAIK DARI 50ms KE 500ms: Debounce seimbang (tidak memberatkan CPU, tapi Undo/Redo tetap responsif)
 
     return () => clearTimeout(timer);
   }, [activeTheme, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, pageBlocks, selectedProjects, isLoading]);

@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 export function LayeredMonolithTestimonialBlock({ data, theme, isEditor = false }: any) {
     const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
@@ -75,9 +76,9 @@ export function LayeredMonolithTestimonialBlock({ data, theme, isEditor = false 
                             
                             <div className="flex items-center gap-4 border-t border-white/5 pt-6 mt-auto">
                                 {t.avatarUrl || t.avatar ? (
-                                    <img 
+                                    <LazyImage 
                                         src={t.avatarUrl || t.avatar} 
-                                        alt={t.clientName} 
+                                        alt={t.clientName || t.name || 'Client'} 
                                         className="w-12 h-12 rounded-none object-cover grayscale border border-white/10 group-hover/card:grayscale-0 transition-all duration-500" 
                                     />
                                 ) : (

@@ -164,12 +164,23 @@ export function BentoGridHeroBlock({ data, theme, isEditor, isCardPreview }: any
                 }
             }
 
-            animationFrameId = requestAnimationFrame(draw);
+            if (isVisible) {
+                animationFrameId = requestAnimationFrame(draw);
+            }
         };
 
-        draw();
+        let isVisible = true;
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                isVisible = entry.isIntersecting;
+                if (isVisible) draw();
+            });
+        }, { threshold: 0.05 });
+        
+        observer.observe(canvas);
 
         return () => {
+            observer.disconnect();
             cancelAnimationFrame(animationFrameId);
             canvas.removeEventListener('mousemove', handleMouseMove);
             canvas.removeEventListener('mouseleave', handleMouseLeave);

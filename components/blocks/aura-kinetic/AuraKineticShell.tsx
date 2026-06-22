@@ -155,7 +155,7 @@ export function AuraKineticShellContent({ data, theme, isMobileView, isCardPrevi
                   className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10"
               >
                   <motion.div
-                      initial={{ backdropFilter: "blur(0px)" }} animate={{ backdropFilter: "blur(20px)" }}
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                       className="absolute inset-0 bg-black/80" onClick={() => setSelectedMedia(null)}
                   ></motion.div>
 

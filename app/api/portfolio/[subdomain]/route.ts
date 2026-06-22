@@ -28,33 +28,54 @@ export async function GET(
             }
           },
           include: {
-            profile: true,
+            profile: {
+              select: {
+                fullName: true,
+                profession: true,
+                bio: true,
+                location: true,
+                avatarUrl: true,
+                subdomain: true
+              }
+            },
             siteAppearance: {
-              include: {
+              select: {
+                id: true,
+                themeTemplate: true,
+                splashScreen: true,
+                favoriteThemes: true,
+                customTexts: true,
+                designTokens: true,
                 projects: {
-                  orderBy: { orderIndex: 'asc' }
+                  orderBy: { orderIndex: 'asc' },
+                  select: { projectId: true, orderIndex: true }
                 }
               }
             },
             links: { 
               where: { isActive: true }, 
-              orderBy: { order: 'asc' } 
+              orderBy: { order: 'asc' },
+              select: { id: true, platform: true, url: true }
             },
             projects: { 
               where: { deletedAt: null },
-              orderBy: { createdAt: 'desc' } 
+              orderBy: { createdAt: 'desc' },
+              select: { id: true, title: true, description: true, mediaUrl: true, projectType: true, tags: true }
             },
             certificates: { 
               where: { deletedAt: null },
-              orderBy: { createdAt: 'desc' }
+              orderBy: { createdAt: 'desc' },
+              select: { id: true, title: true, issuer: true, year: true, description: true, mediaUrl: true }
             },
             testimonials: {
               where: { isVisible: true },
-              orderBy: { order: 'asc' }
+              orderBy: { order: 'asc' },
+              select: { id: true, clientName: true, company: true, content: true, rating: true, avatarUrl: true, isVisible: true }
             },
             pageBlocks: {
               where: { isVisible: true },
-              orderBy: { orderIndex: 'asc' }
+              orderBy: { orderIndex: 'asc' },
+              select: { id: true, blockType: true, orderIndex: true, isVisible: true, configJson: true }
             }
           }
         });

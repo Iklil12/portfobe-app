@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/components/ui/LazyImage';
 
 export function ObsidianTestimonialsBlock({ data, theme, isEditor }: any) {
   const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
@@ -56,7 +57,7 @@ export function ObsidianTestimonialsBlock({ data, theme, isEditor }: any) {
                         </div>
                         <div className="flex items-center gap-4 mt-2">
                             {t.avatarUrl || t.avatar ? (
-                                <img src={t.avatarUrl || t.avatar} alt={t.clientName || t.name || 'Client'} className="w-12 h-12 rounded-full object-cover border border-white/10" />
+                                <LazyImage src={t.avatarUrl || t.avatar} alt={t.clientName || t.name || 'Client'} className="w-12 h-12 rounded-full object-cover border border-white/10" />
                             ) : (
                                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white/40 border border-white/10 uppercase font-medium">
                                     {(t.clientName || t.name || 'U').charAt(0)}

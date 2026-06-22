@@ -8,31 +8,31 @@ import { LazyImage } from '@/components/ui/LazyImage';
 const premiumEase = [0.16, 1, 0.3, 1] as const;
 
 const cinematicBlurRight = {
-  hidden: { opacity: 0, x: -40, filter: "blur(12px)" },
+  hidden: { opacity: 0, x: -40 },
   visible: (customDelay = 0) => ({
     opacity: 1,
     x: 0,
-    filter: "blur(0px)",
+    
     transition: { duration: 1.4, ease: premiumEase, delay: customDelay }
   })
 };
 
 const cinematicBlurUp = {
-  hidden: { opacity: 0, y: 40, filter: "blur(12px)" },
+  hidden: { opacity: 0, y: 40 },
   visible: (customDelay = 0) => ({
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
+    
     transition: { duration: 1.4, ease: premiumEase, delay: customDelay }
   })
 };
 
 const imageReveal = {
-  hidden: { opacity: 0, scale: 1.1, filter: "blur(20px)" },
+  hidden: { opacity: 0, scale: 1.1 },
   visible: (customDelay = 0) => ({
     opacity: 1,
     scale: 1,
-    filter: "blur(0px)",
+    
     transition: { duration: 1.6, ease: premiumEase, delay: customDelay }
   })
 };

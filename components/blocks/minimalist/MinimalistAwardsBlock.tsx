@@ -8,11 +8,11 @@ import { LazyImage } from '@/components/ui/LazyImage';
 const premiumEase = [0.16, 1, 0.3, 1] as const;
 
 const cinematicBlurUp = {
-  hidden: { opacity: 0, y: 40, filter: "blur(12px)" },
+  hidden: { opacity: 0, y: 40 },
   visible: (customDelay = 0) => ({
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
+    
     transition: { duration: 1.4, ease: premiumEase, delay: customDelay }
   })
 };
@@ -63,7 +63,7 @@ export const MinimalistAwardsBlock = ({ data, theme, isEditor, blockConfig }: an
                 {isOpen && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.6, ease: premiumEase }} className="overflow-hidden bg-white border-t border-gray-200">
                     <div className={`px-8 @lg:px-12 py-8 flex gap-8 flex-col @md:flex-row`}>
-                      <motion.div initial={{ scale: 0.9, filter: "blur(5px)" }} animate={{ scale: 1, filter: "blur(0px)" }} transition={{ duration: 0.8, delay: 0.2, ease: premiumEase }} className={`bg-gray-50 border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center p-2 w-full @md:w-64`}>
+                      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ duration: 0.8, delay: 0.2, ease: premiumEase }} className={`bg-gray-50 border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center p-2 w-full @md:w-64`}>
                         <LazyImage src={award.mediaUrl} className="w-full h-auto object-contain grayscale hover:grayscale-0 hover:scale-105 transition-all duration-700" alt="Certificate" />
                       </motion.div>
 

@@ -98,8 +98,8 @@ export function ViewfinderProjectsBlock({ data, theme, isEditor, isCardPreview }
                   const isVideo = p.projectType === 'video';
                   return (
                       <motion.div
-                          initial={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
-                          whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          whileInView={{ opacity: 1, x: 0 }}
                           viewport={{ once: true, amount: 0.1 }}
                           transition={{ duration: 0.8, delay: (idx % 3) * 0.08, ease: cinematicEase }}
                           whileHover={{ y: -6 }}

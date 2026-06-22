@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 
-export const LazyImage = ({ src, alt, className }: { src: string, alt: string, className?: string }) => {
+export const LazyImage = ({ src, alt, className, sizes }: { src: string, alt: string, className?: string, sizes?: string }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const [imgSrc, setImgSrc] = useState(src);
 
   useEffect(() => {
-    if (imgRef.current?.complete) {
-      setIsLoaded(true);
-    }
+    setImgSrc(src);
   }, [src]);
 
   return (
@@ -15,23 +14,36 @@ export const LazyImage = ({ src, alt, className }: { src: string, alt: string, c
       {!isLoaded && (
         <div className="absolute inset-0 bg-slate-200 animate-pulse z-[-1] rounded-inherit"></div>
       )}
-      <img
-        ref={imgRef}
-        src={src}
+      <Image
+        src={imgSrc}
         alt={alt}
-        loading="lazy"
+        width={0}
+        height={0}
+        sizes={sizes || "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
+        unoptimized={
+          imgSrc.includes('b-cdn.net') || 
+          imgSrc.includes('bunnycdn') || 
+          imgSrc.includes('mediadelivery.net') || 
+          imgSrc.includes('cloudinary.com') || 
+          imgSrc.includes('unsplash.com')
+        }
         onLoad={() => setIsLoaded(true)}
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop";
+        onError={() => {
+          setImgSrc("https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop");
           setIsLoaded(true);
         }}
         className={`
           ${className || ''} 
           ${!className?.includes('absolute') && !className?.includes('fixed') ? 'relative' : ''} 
           ${!className?.includes('z-') ? 'z-0' : ''} 
-          transition-all duration-700 ease-in-out
-          ${isLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm scale-105'}
+          transition-opacity duration-500 ease-in-out
+          ${isLoaded ? 'opacity-100' : 'opacity-0'}
         `}
+        style={{ 
+          objectFit: className?.includes('object-cover') ? 'cover' : className?.includes('object-contain') ? 'contain' : 'inherit',
+          width: className?.match(/\bw-\d+/) || className?.includes('w-full') || className?.includes('w-screen') ? undefined : '100%',
+          height: className?.match(/\bh-\d+/) || className?.includes('h-full') || className?.includes('h-screen') ? undefined : 'auto',
+        }}
       />
     </>
   );

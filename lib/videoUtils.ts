@@ -19,7 +19,7 @@ export const getVideoThumbnail = (urlOrId: string) => {
   let bunnyGuid = '';
   if (urlOrId.length === 36 && urlOrId.includes('-')) {
     bunnyGuid = urlOrId;
-  } else if (urlOrId.includes('mediadelivery.net') || urlOrId.includes('bunnycdn')) {
+  } else if (urlOrId.includes('mediadelivery.net') || urlOrId.includes('bunnycdn') || urlOrId.includes('b-cdn.net')) {
     try {
       const urlObj = new URL(urlOrId);
       const paths = urlObj.pathname.split('/').filter(Boolean);

@@ -13,11 +13,19 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls, cla
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setInView(true);
+          // Gunakan requestIdleCallback agar eksekusi 3D (sangat berat) ditunda
+          // sampai browser selesai merender scroll frame (mencegah FPS Drop / lag saat scroll)
+          if ('requestIdleCallback' in window) {
+            (window as any).requestIdleCallback(() => {
+              setInView(true);
+            }, { timeout: 1000 });
+          } else {
+            setTimeout(() => setInView(true), 200);
+          }
           observer.disconnect();
         }
       },
-      { rootMargin: '1500px' }
+      { rootMargin: '200px' }
     );
 
     if (containerRef.current) {
@@ -45,13 +53,15 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls, cla
             src={mediaUrl}
             auto-rotate={autoRotate ? "" : null}
             camera-controls
-            shadow-intensity="1"
+            shadow-intensity="0"
             environment-image="neutral"
             exposure={exposure}
-            loading="eager"
+            loading="lazy"
             reveal="auto"
             touch-action="pan-y"
             interaction-prompt="none"
+            zoom-sensitivity="3"
+            min-camera-orbit="auto auto 1%"
             style={{ width: '100%', height: '100%', '--poster-color': 'transparent' } as any}
           >
             {/* Premium Loading Poster */}

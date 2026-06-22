@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import dynamic from 'next/dynamic';
+const Interactive3DViewer = dynamic(() => import('@/components/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
 
 const premiumEase = [0.16, 1, 0.3, 1] as const;
 

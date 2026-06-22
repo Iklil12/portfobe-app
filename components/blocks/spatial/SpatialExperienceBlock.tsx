@@ -50,7 +50,7 @@ export function SpatialExperienceBlock({ theme, isEditor, isCardPreview }: any) 
 
     const auraAnim = isCardPreview
         ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
-        : { hidden: { opacity: 0, y: 40, filter: "blur(10px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } } };
+        : { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } } };
     const staggerContainer = isCardPreview
         ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
         : { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } };
