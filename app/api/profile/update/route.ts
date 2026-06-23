@@ -6,6 +6,7 @@ import { logActivity } from "@/lib/activity";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
 import sanitizeHtml from 'sanitize-html';
+import { invalidatePortfolioCache, redis } from "@/lib/redis";
 
 export async function PATCH(req: Request) {
   try {
@@ -123,6 +124,12 @@ export async function PATCH(req: Request) {
     if (avatar === currentAvatar && subdomain === currentSubdomain) {
        await logActivity(currentUser.id, "UPDATE_PROFILE", "Memperbarui informasi bio dan profil");
     }
+
+    // INVALIDATE CACHE
+    if (currentSubdomain && subdomain !== currentSubdomain) {
+      await redis.del(`portfolio_db:${currentSubdomain.toLowerCase().trim()}`);
+    }
+    await invalidatePortfolioCache(currentUser.id);
 
     return NextResponse.json({ 
       message: "Profil berhasil disimpan", 

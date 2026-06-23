@@ -100,10 +100,10 @@ export function SpatialStatsBlock({ data, theme, isEditor, isCardPreview }: any)
                     strokeWidth="5" 
                     fill="transparent" 
                     strokeDasharray="251.2"
-                    initial={{ strokeDashoffset: 251.2 }}
-                    whileInView={{ strokeDashoffset }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+                    variants={{
+                      hidden: { strokeDashoffset: 251.2 },
+                      visible: { strokeDashoffset, transition: { duration: 1.8, ease: [0.16, 1, 0.3, 1] } }
+                    }}
                     strokeLinecap="round"
                     style={{ filter: 'drop-shadow(0 0 5px var(--hl, #6366f1))' }}
                   />

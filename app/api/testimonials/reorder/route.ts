@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+ import { NextResponse } from 'next/server';
+import { invalidatePortfolioCache } from '@/lib/redis';
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -28,6 +29,10 @@ export async function PUT(req: Request) {
 
     await prisma.$transaction(updatePromises);
     await logActivity(user.id, "REORDER_TESTIMONIALS", "Mengubah urutan testimoni");
+
+    await invalidatePortfolioCache(user.id);
+
+    
 
     return NextResponse.json({ success: true });
   } catch (error) {

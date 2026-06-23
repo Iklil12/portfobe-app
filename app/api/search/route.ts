@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth"; // Sesuaikan jika beda
 import prisma from "@/lib/prisma"; // Tanpa kurung kurawal sesuai fix sebelumnya
+import { redis } from "@/lib/redis";
 
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
@@ -14,6 +15,15 @@ export async function GET(request: Request) {
 
   try {
     const userId = (session.user as any)?.id;
+    const cacheKey = `search:${userId}:${query.trim().toLowerCase()}`;
+
+    // 1. Cek Redis terlebih dahulu
+    try {
+      const cachedSearch = await redis.get(cacheKey);
+      if (cachedSearch) {
+        return NextResponse.json(JSON.parse(cachedSearch));
+      }
+    } catch(e) {}
 
     // 🚀 GOD MODE: Cari ke 4 tabel sekaligus secara paralel!
     const [projects, links, certificates, activities] = await Promise.all([
@@ -74,6 +84,11 @@ export async function GET(request: Request) {
         type: "link"
       }))
     ];
+
+    // 2. Simpan ke Redis selama 3 Menit (180 Detik)
+    try {
+      await redis.set(cacheKey, JSON.stringify(results), 'EX', 180);
+    } catch(e) {}
 
     return NextResponse.json(results);
   } catch (error) {

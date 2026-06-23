@@ -196,10 +196,10 @@ export function SpatialSkillsBlock({ theme, isEditor, isCardPreview }: any) {
                                 <div className="w-full h-4 bg-black/60 border border-white/5 shadow-inner rounded-full overflow-hidden p-[2px] relative flex items-center">
                                     {/* Liquid current fill */}
                                     <motion.div 
-                                        initial={{ width: 0 }}
-                                        whileInView={{ width: `${safeVal}%` }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                                        variants={{
+                                            hidden: { width: 0 },
+                                            visible: { width: isEditor ? `${safeVal}%` : `${safeVal}%`, transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] } }
+                                        }}
                                         className="h-full rounded-full relative flex items-center justify-end overflow-hidden"
                                         style={{ 
                                             width: isEditor ? `${safeVal}%` : undefined,
@@ -213,10 +213,10 @@ export function SpatialSkillsBlock({ theme, isEditor, isCardPreview }: any) {
                                     
                                     {/* Floating Glowing Cap Point */}
                                     <motion.div
-                                        initial={{ left: 0 }}
-                                        whileInView={{ left: `${safeVal}%` }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                                        variants={{
+                                            hidden: { left: 0 },
+                                            visible: { left: isEditor ? `${safeVal}%` : `${safeVal}%`, transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] } }
+                                        }}
                                         className="absolute w-4 h-4 rounded-full bg-white border border-[var(--hl, #6366f1)] flex items-center justify-center shadow-[0_0_15px_#fff]"
                                         style={{ 
                                             left: isEditor ? `${safeVal}%` : undefined,

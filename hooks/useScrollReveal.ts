@@ -24,7 +24,7 @@ export function useScrollReveal<T extends HTMLElement>(delayMs: number = 0) {
 
     // Jika belum terlihat, sembunyikan dulu dan pasang observer
     el.classList.add(
-      'transition-all', 
+      'transition-[opacity,transform]', 
       'duration-[1400ms]', 
       'ease-[cubic-bezier(0.22,1,0.36,1)]', 
       'opacity-0', 

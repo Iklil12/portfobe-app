@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity"; 
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getEffectivePlan } from "@/lib/planUtils";
+import { invalidatePortfolioCache } from "@/lib/redis";
 
 // 1. GET: Menarik Semua Proyek
 export async function GET(req: Request) {
@@ -97,6 +98,9 @@ export async function POST(req: Request) {
     let actionLabel = "Mengunggah proyek baru";
     if (projectType === 'video') actionLabel = "Menambahkan portofolio video";
     await logActivity(user.id, "UPLOAD_PROJECT", `${actionLabel}: "${title}"`);
+    
+    // HAPUS CACHE REDIS
+    await invalidatePortfolioCache(user.id);
 
     return NextResponse.json({ message: "Proyek berhasil ditambahkan", project: newProject }, { status: 201 });
 
@@ -148,6 +152,9 @@ export async function PATCH(req: Request) {
     // REKAM AKTIVITAS KE HISTORY
     await logActivity(user.id, "UPDATE_PROJECT", `Memperbarui karya: "${title}"`);
 
+    // HAPUS CACHE REDIS
+    await invalidatePortfolioCache(user.id);
+
     return NextResponse.json({ message: "Proyek berhasil diperbarui", project: updatedProject }, { status: 200 });
 
   } catch (error) {
@@ -185,6 +192,9 @@ export async function DELETE(req: Request) {
     
     // REKAM AKTIVITAS KE HISTORY
     await logActivity(user.id, "DELETE_PROJECT", `Memindahkan ke trash: "${existingProject.title}"`);
+
+    // HAPUS CACHE REDIS
+    await invalidatePortfolioCache(user.id);
 
     return NextResponse.json({ message: "Proyek dipindahkan ke trash" }, { status: 200 });
 

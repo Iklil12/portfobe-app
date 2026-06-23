@@ -1,3 +1,4 @@
+import { invalidatePortfolioCache } from '@/lib/redis';
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -32,6 +33,10 @@ export async function PUT(req: Request) {
     });
 
     await prisma.$transaction(transactions);
+
+    await invalidatePortfolioCache(session.user.id);
+
+    
 
     return NextResponse.json({ success: true, message: "Blocks reordered successfully" });
   } catch (error: any) {

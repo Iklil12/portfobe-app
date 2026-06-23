@@ -8,6 +8,9 @@ import { ProjectType } from '@/hooks/useProjects';
 import { LazyImage } from '@/components/ui/LazyImage';
 import { X, UploadCloud, Box, Check, Film, Image as ImageIcon, Sparkles, Rocket, Award, Loader2, Crown } from 'lucide-react';
 import { useProjectUpload } from './useProjectUpload';
+import { UpgradeToProModal } from './UpgradeToProModal';
+import { ProjectTypeSelection } from './ProjectTypeSelection';
+
 
 
 // --- VARIANTS ANIMASI ---
@@ -131,50 +134,8 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
               <AnimatePresence mode="wait">
                 {!projectType ? (
                   // --- STEP 1: PEMILIHAN TIPE PROYEK ---
-                  <motion.div
-                    key="type-selection"
-                    variants={staggerContainer}
-                    initial="hidden"
-                    animate="visible"
-                    exit={{ opacity: 0, x: -10, transition: { duration: 0.2 } }}
-                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
-                  >
-                    {[
-                      { id: 'video', icon: Film, label: 'Video', desc: 'Youtube / Vimeo' },
-                      { id: 'photo', icon: ImageIcon, label: 'Foto / Desain', desc: 'Format Visual' },
-                      { id: 'certificate', icon: Award, label: 'Sertifikat', desc: 'Lisensi & Lomba' },
-                      { id: '3d', icon: Box, label: '3D Model', desc: 'Format .GLB', isPro: true }
-                    ].map((opt) => {
-                      const IconComponent = opt.icon;
-                      return (
-                        <motion.button
-                          key={opt.id}
-                          variants={cardItem}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => {
-                            if (opt.isPro && userPlan === 'FREE') {
-                               setShowUpgradeModal(true);
-                               return;
-                            }
-                            setProjectType(opt.id as ProjectType)
-                          }}
-                          className="group relative p-5 rounded-none border border-white/10 bg-zinc-900/40 hover:border-[#ff9e00] hover:bg-zinc-900 transition-all text-center overflow-hidden flex flex-col justify-between min-h-[140px]"
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                          {opt.isPro && (
-                             <span className="absolute top-2.5 right-2.5 bg-[#ff9e00] text-black text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-none shadow-sm z-20">PRO</span>
-                          )}
-                          <div className="w-12 h-12 bg-zinc-950 border border-white/5 rounded-none flex items-center justify-center mx-auto mb-3 group-hover:bg-[#ff9e00]/10 group-hover:border-[#ff9e00]/30 transition-colors duration-300 relative z-10">
-                            <IconComponent className="w-5 h-5 text-white/30 group-hover:text-[#ff9e00] transition-colors duration-300" />
-                          </div>
-                          <div>
-                            <p className="font-mono font-bold text-white text-[11px] uppercase tracking-wider relative z-10">{opt.label}</p>
-                            <p className="text-[8px] font-mono text-white/30 mt-1 uppercase tracking-widest relative z-10 leading-none">{opt.desc}</p>
-                          </div>
-                        </motion.button>
-                      );
-                    })}
-                  </motion.div>
+                  <ProjectTypeSelection userPlan={userPlan} setProjectType={setProjectType} setShowUpgradeModal={setShowUpgradeModal} />
+
                 ) : (
                   // --- STEP 2: FORM ISIAN ---
                   <motion.form
@@ -579,53 +540,8 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
         </div>
       </motion.div>
 
-      {/* MODAL UPGRADE PRO */}
-      <AnimatePresence>
-        {showUpgradeModal && (
-          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-              onClick={() => setShowUpgradeModal(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.98, y: 15 }}
-              className="bg-zinc-950 p-6 sm:p-8 max-w-sm w-full relative z-10 border border-white/10 rounded-none flex flex-col items-center text-center"
-            >
-              <button 
-                onClick={() => setShowUpgradeModal(false)}
-                className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center bg-zinc-900 border border-white/10 text-white/50 hover:text-white rounded-none transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-              
-              <div className="w-16 h-16 bg-[#ff9e00]/10 border border-[#ff9e00]/25 rounded-none flex items-center justify-center mb-6">
-                <Rocket className="w-7 h-7 text-[#ff9e00]" />
-              </div>
-              
-              <h3 className="text-base font-mono font-bold text-white mb-2 uppercase tracking-wider">Upgrade ke PRO</h3>
-              <p className="text-xs font-mono text-white/40 mb-8 leading-relaxed">
-                Nikmati fitur unggah video langsung ke server super cepat (bebas iklan), ukuran hingga 100MB, dan model 3D interaktif.
-              </p>
-              
-              <Link 
-                href="/pricing"
-                className="w-full py-4 rounded-none bg-[#ff9e00] hover:bg-[#ffaa22] text-black font-mono font-bold text-xs uppercase tracking-widest text-center shadow-lg transition-all"
-              >
-                Lihat Paket PRO
-              </Link>
-              <button 
-                onClick={() => setShowUpgradeModal(false)}
-                className="w-full mt-4 py-2 text-[10px] font-mono font-bold text-white/30 hover:text-white uppercase tracking-widest transition-colors"
-              >
-                Nanti Saja
-              </button>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      <UpgradeToProModal showUpgradeModal={showUpgradeModal} setShowUpgradeModal={setShowUpgradeModal} />
+      
     </div>
   );
 }

@@ -1,5 +1,6 @@
 // File: app/api/certificates/route.ts
 import { NextResponse } from "next/server";
+import { invalidatePortfolioCache } from '@/lib/redis';
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -107,6 +108,10 @@ export async function POST(req: Request) {
     // REKAM AKTIVITAS KE HISTORY
     await logActivity(user.id, "CREATE_CERTIFICATE", `Menambahkan sertifikat/pencapaian: "${title}"`);
 
+    await invalidatePortfolioCache(user.id);
+
+    
+
     return NextResponse.json(newCertificate, { status: 201 });
   } catch (error) {
     console.error("POST Certificate Error:", error);
@@ -164,6 +169,10 @@ export async function PATCH(req: Request) {
     // REKAM AKTIVITAS KE HISTORY
     await logActivity(user.id, "UPDATE_CERTIFICATE", `Memperbarui data pencapaian: "${title}"`);
 
+    await invalidatePortfolioCache(user.id);
+
+    
+
     return NextResponse.json(updatedCertificate);
   } catch (error) {
     console.error("PATCH Certificate Error:", error);
@@ -209,6 +218,10 @@ export async function DELETE(req: Request) {
 
     // REKAM AKTIVITAS KE HISTORY
     await logActivity(user.id, "DELETE_CERTIFICATE", `Memindahkan ke trash: "${existingCert.title}"`);
+
+    await invalidatePortfolioCache(user.id);
+
+    
 
     return NextResponse.json({ message: "Sertifikat dipindahkan ke trash." });
   } catch (error) {

@@ -27,9 +27,25 @@ export default function PublicPortfolioPage() {
   const hasTrackedView = useRef(!!portfolioCache[subdomain]);
 
   useEffect(() => {
+    // ── IDLE TRACKER: Catat kapan terakhir user beraktivitas ──
+    const updateActivity = () => { (window as any)._pfLastActivity = Date.now(); };
+    (window as any)._pfLastActivity = Date.now();
+
+    window.addEventListener('mousemove', updateActivity, { passive: true });
+    window.addEventListener('scroll', updateActivity, { passive: true });
+    window.addEventListener('keydown', updateActivity, { passive: true });
+    window.addEventListener('click', updateActivity, { passive: true });
+    window.addEventListener('touchstart', updateActivity, { passive: true });
+
     return () => {
       if (heartbeatRef.current) clearInterval(heartbeatRef.current);
       if ((heartbeatRef as any)._cleanup) (heartbeatRef as any)._cleanup();
+
+      window.removeEventListener('mousemove', updateActivity);
+      window.removeEventListener('scroll', updateActivity);
+      window.removeEventListener('keydown', updateActivity);
+      window.removeEventListener('click', updateActivity);
+      window.removeEventListener('touchstart', updateActivity);
     };
   }, []);
 
@@ -79,14 +95,19 @@ export default function PublicPortfolioPage() {
                 // Simpan di sessionStorage supaya bisa diakses saat flush pagehide
                 sessionStorage.setItem('_pfAnalyticsId', analyticsId);
 
-                // Heartbeat tiap 15 detik agar sesi pendek pun tertangkap
+                // Heartbeat tiap 15 detik HANYA JIKA tab sedang aktif dan TIDAK IDLE
                 if (heartbeatRef.current) clearInterval(heartbeatRef.current);
                 heartbeatRef.current = setInterval(() => {
-                  fetch('/api/analytics/track', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'HEARTBEAT', analyticsId })
-                  }).catch(() => null);
+                  const lastActivity = (window as any)._pfLastActivity || Date.now();
+                  const isIdle = Date.now() - lastActivity > 5 * 60 * 1000; // Anggap idle jika 5 menit tidak ada gerakan
+                  
+                  if (document.visibilityState === 'visible' && document.hasFocus() && !isIdle) {
+                    fetch('/api/analytics/track', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ type: 'HEARTBEAT', analyticsId })
+                    }).catch(() => null);
+                  }
                 }, 15000); // 15 detik
 
                 // Flush durasi saat user pindah tab / close tab / navigasi keluar

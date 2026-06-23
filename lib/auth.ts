@@ -9,6 +9,7 @@ import { Resend } from 'resend';
 
 import GithubProvider from "next-auth/providers/github";
 import { logActivity } from "@/lib/activity";
+import { redis } from "@/lib/redis";
 
 // Inisialisasi Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -149,13 +150,15 @@ export const authOptions: NextAuthOptions = {
         }
         const ua = req?.headers?.["user-agent"];
 
-        const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-        const attemptRecord = await prisma.loginAttempt.findFirst({
-          where: { email: credentials.email, ip: ip },
-          orderBy: { updatedAt: 'desc' }
-        });
+        // Menggunakan Redis untuk performa super cepat dan mencegah Database Down saat diserang
+        const attemptKey = `login_fail:${credentials.email}:${ip}`;
+        let attemptCount = 0;
+        try {
+          const rawCount = await redis.get(attemptKey);
+          if (rawCount) attemptCount = parseInt(rawCount, 10);
+        } catch(e) {}
 
-        if (attemptRecord && attemptRecord.count >= 5 && attemptRecord.updatedAt >= fifteenMinutesAgo) {
+        if (attemptCount >= 5) {
           throw new Error('Terlalu banyak percobaan gagal. Silakan coba lagi dalam 15 menit.');
         }
         // ----------------------------------------
@@ -188,29 +191,19 @@ export const authOptions: NextAuthOptions = {
             { ip, ua }
           );
 
-          if (attemptRecord) {
-            // Jika sudah lewat 15 menit, reset hitungan jadi 1, jika belum tambahkan 1
-            const newCount = attemptRecord.updatedAt < fifteenMinutesAgo ? 1 : attemptRecord.count + 1;
-            await prisma.loginAttempt.update({
-              where: { id: attemptRecord.id },
-              data: { count: newCount, updatedAt: new Date() }
-            });
-          } else {
-            await prisma.loginAttempt.create({
-              data: {
-                email: credentials.email,
-                ip: ip,
-                count: 1
-              }
-            });
-          }
+          try {
+            const newCount = await redis.incr(attemptKey);
+            if (newCount === 1) {
+              await redis.expire(attemptKey, 15 * 60); // Blokir IP & Email selama 15 Menit
+            }
+          } catch(e) {}
           throw new Error("Password salah.");
         }
 
         // --- Pencatatan Sukses (Reset Hitungan) ---
-        await prisma.loginAttempt.deleteMany({
-          where: { email: credentials.email }
-        });
+        try {
+           await redis.del(attemptKey);
+        } catch(e) {}
 
         return {
           id: user.id,

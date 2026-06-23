@@ -8,8 +8,8 @@ import { getEffectivePlan } from '@/lib/planUtils';
 
 export async function POST(req: Request) {
   try {
-    // 1. Rate Limiting (Anti-Spam Bot): Batasi maksimal 10 request upload per menit per IP
-    const rateLimitRes = await checkRateLimit(10, 60 * 1000);
+    // 1. Rate Limiting (Anti-Spam Bot): Batasi maksimal 5 request upload per 5 menit per IP
+    const rateLimitRes = await checkRateLimit(5, 5 * 60 * 1000, "upload_3d");
     if (rateLimitRes) {
       return rateLimitRes;
     }

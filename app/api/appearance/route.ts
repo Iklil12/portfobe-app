@@ -10,6 +10,7 @@ import { revalidateTag } from "next/cache";
 import { THEMES_DATA } from "@/lib/themes";
 import { ensureUniversalBlocks } from "@/lib/blockSeeder";
 import { getEffectivePlan } from "@/lib/planUtils";
+import { invalidatePortfolioCache } from "@/lib/redis";
 
 
 export const dynamic = 'force-dynamic';
@@ -248,11 +249,8 @@ export async function PATCH(req: Request) {
     if (!isOnlyFavorites) {
       await logActivity(user.id, "UPDATE_THEME", `Memperbarui tema portofolio ke ${themeTemplate || 'terbaru'}`);
       
-      // FIRE THE MISSILE: Hancurkan cache 60-detik untuk pengunjung publik
-      if (user.profile?.subdomain) {
-        // @ts-expect-error: Next.js 16.2.4 requires a second 'profile' argument for revalidateTag but we only need to invalidate the tag.
-        revalidateTag(`portfolio-${user.profile.subdomain.trim().toLowerCase()}`);
-      }
+      // FIRE THE MISSILE: Hancurkan cache Redis untuk pengunjung publik
+      await invalidatePortfolioCache(user.id);
     }
 
     return NextResponse.json(updatedAppearance);

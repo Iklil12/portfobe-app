@@ -1,92 +1,63 @@
 //app/dashboard/analytics/page.tsx
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { showToast } from '@/lib/customToast';
 import useSWR from 'swr';
-import {
-  AreaChart, Area, BarChart, Bar,
-  XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Cell, TooltipContentProps
-} from 'recharts';
-import { 
-  Eye, User, Clock, LogOut, BarChart3, Trophy, Calendar, 
-  Target, Ghost, Crown, Lock, Globe, MessageSquare, 
-  Play, Link2, AlertTriangle, Loader2, Share2, Mail, Phone, FolderOpen, RefreshCw
-} from 'lucide-react';
-import { InstagramIcon, LinkedinIcon, YoutubeIcon, TwitterIcon } from '@/components/ui/Icons';
+import { Lock } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
-function AnimatedCounter({ value, duration = 1200 }: { value: number | string, duration?: number }) {
-  const [count, setCount] = useState(typeof value === 'number' ? 0 : value);
-  useEffect(() => {
-    if (typeof value !== 'number') { setCount(value); return; }
-    let start: number | null = null;
-    let raf: number;
-    const animate = (ts: number) => {
-      if (!start) start = ts;
-      const p = Math.min((ts - start) / duration, 1);
-      const ease = 1 - Math.pow(2, -10 * p);
-      setCount(Math.round(ease * value));
-      if (p < 1) raf = requestAnimationFrame(animate);
-    };
-    raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
-  }, [value, duration]);
-  return <>{typeof count === 'number' ? count.toLocaleString() : count}</>;
-}
+import { AnimatedCounter, getSourceIcon, SkeletonBlock, CustomAreaTooltip } from '@/components/features/analytics/AnalyticsShared';
+import { KpiCards, SecondaryMetricStrip } from '@/components/features/analytics/DashboardWidgets';
+import { TrafficOverviewChart, DailyVolumeChart } from '@/components/features/analytics/TrafficWidgets';
+import { DeviceBreakdown, TopLocations } from '@/components/features/analytics/GeoDeviceWidgets';
+import { TopSourcesWidget, ProjectPopularityWidget, SocialMediaWidget, ContactConversionsWidget, GalleryActivityWidget } from '@/components/features/analytics/InteractionWidgets';
 
-const getSourceIcon = (name: string) => {
-  switch (name) {
-    case 'Instagram':
-      return <InstagramIcon className="w-3.5 h-3.5 text-pink-500" />;
-    case 'LinkedIn':
-      return <LinkedinIcon className="w-3.5 h-3.5 text-blue-500" />;
-    case 'YouTube':
-      return <YoutubeIcon className="w-3.5 h-3.5 text-red-500" />;
-    case 'Twitter / X':
-      return <TwitterIcon className="w-3.5 h-3.5 text-white" />;
-    case 'Google':
-      return <Globe className="w-3.5 h-3.5 text-blue-400" />;
-    case 'WhatsApp':
-      return <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />;
-    case 'TikTok':
-      return <Play className="w-3.5 h-3.5 text-purple-400" />;
-    default:
-      return <Link2 className="w-3.5 h-3.5 text-white/40" />;
-  }
-};
+const STATIC_SOURCES = [
+  { name: 'Instagram', count: 842, percentage: 38 },
+  { name: 'Google', count: 531, percentage: 24 },
+  { name: 'Direct', count: 419, percentage: 19 },
+  { name: 'LinkedIn', count: 265, percentage: 12 },
+  { name: 'Twitter / X', count: 154, percentage: 7 },
+];
 
-function SkeletonBlock({ className = '' }: { className?: string }) {
-  return <div className={`shimmer-dark rounded-none ${className}`} />;
-}
+const STATIC_COUNTRIES = [
+  { name: 'Indonesia', count: 1240, percentage: 75 },
+  { name: 'Singapore', count: 248, percentage: 15 },
+  { name: 'Malaysia', count: 99, percentage: 6 },
+  { name: 'United States', count: 49, percentage: 3 },
+  { name: 'Japan', count: 16, percentage: 1 },
+];
 
-interface CustomTooltipProps extends TooltipContentProps<number, string> {
-  isHourly?: boolean;
-}
+const STATIC_CITIES = [
+  { name: 'Jakarta', count: 620, percentage: 38 },
+  { name: 'Bandung', count: 295, percentage: 18 },
+  { name: 'Surabaya', count: 180, percentage: 11 },
+  { name: 'Singapore City', count: 248, percentage: 15 },
+  { name: 'Kuala Lumpur', count: 99, percentage: 6 },
+];
 
-const CustomAreaTooltip = ({ active, payload, label, isHourly }: CustomTooltipProps) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-zinc-900 border border-white/10 rounded-none shadow-2xl px-4 py-3 min-w-[140px] font-mono">
-      <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-2">
-        {isHourly ? `Pukul ${label}` : label}
-      </p>
-      <div className="space-y-1.5">
-        {payload.map((entry, i) => (
-          <div key={i} className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-none" style={{ backgroundColor: entry.color }} />
-              <span className="text-[10px] font-bold text-white/70 capitalize">{entry.name}</span>
-            </div>
-            <span className="text-xs font-bold text-white">{entry.value?.toLocaleString() || 0}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+const STATIC_PROJECTS = [
+  { title: 'Interactive Cinematic Showreel', count: 421, percentage: 48 },
+  { title: 'Nexus Noir Theme Boilerplate', count: 219, percentage: 25 },
+  { title: 'Acid Tech 3D Playground', count: 130, percentage: 15 },
+  { title: 'Spatial Studio Landing Page', count: 68, percentage: 8 },
+  { title: 'Minimalist Portfolio Starter', count: 35, percentage: 4 },
+];
+
+const STATIC_SOCIAL_STATS = [
+  { name: 'Instagram', count: 184, percentage: 53 },
+  { name: 'LinkedIn', count: 98, percentage: 28 },
+  { name: 'GitHub', count: 42, percentage: 12 },
+  { name: 'Twitter / X', count: 24, percentage: 7 },
+];
+
+const STATIC_CONTACT_STATS = [
+  { name: 'WhatsApp', count: 120, percentage: 65 },
+  { name: 'Email', count: 45, percentage: 24 },
+  { name: 'Phone', count: 20, percentage: 11 },
+];
 
 export default function AnalyticsPage() {
   const [range, setRange] = useState('7d');
@@ -101,7 +72,7 @@ export default function AnalyticsPage() {
   }, []);
 
   const swrUrl = `/api/analytics/stats?range=${range}&tzOffset=${tzOffset}`;
-  const { data, isLoading } = useSWR(swrUrl, fetcher, { refreshInterval: 30000 });
+  const { data, isLoading } = useSWR(swrUrl, fetcher, { refreshInterval: 30000, keepPreviousData: true });
   const { data: userData, isLoading: isUserLoading } = useSWR('/api/layout-sync', fetcher);
   
   const userPlan = userData ? (userData.plan || 'FREE') : undefined;
@@ -118,19 +89,22 @@ export default function AnalyticsPage() {
   const sources: { name: string; count: number; percentage: number }[] = data?.sources || [];
 
   // derived metrics
-  const peakEntry = chartData.reduce((a, b) => (b.views > a.views ? b : a), { day: '-', date: '', views: 0 });
-  const totalPeriod = chartData.reduce((s, d) => s + d.views, 0);
-  const avgDaily = chartData.length > 0 ? Math.round(totalPeriod / chartData.length) : 0;
-  const todayViews = chartData.length > 0 ? chartData[chartData.length - 1].views : 0;
-  const yesterdayViews = chartData.length >= 2 ? chartData[chartData.length - 2].views : 0;
-  const growth = chartData.length >= 2
-    ? yesterdayViews === 0 
-        ? (todayViews > 0 ? 100 : 0) 
-        : Math.round(((todayViews - yesterdayViews) / yesterdayViews) * 100)
-    : 0;
+  const { peakEntry, totalPeriod, avgDaily, todayViews, yesterdayViews, growth } = useMemo(() => {
+    const pEntry = chartData.reduce((a, b) => (b.views > a.views ? b : a), { day: '-', date: '', views: 0 });
+    const tPeriod = chartData.reduce((s, d) => s + d.views, 0);
+    const aDaily = chartData.length > 0 ? Math.round(tPeriod / chartData.length) : 0;
+    const tViews = chartData.length > 0 ? chartData[chartData.length - 1].views : 0;
+    const yViews = chartData.length >= 2 ? chartData[chartData.length - 2].views : 0;
+    const g = chartData.length >= 2
+      ? yViews === 0 
+          ? (tViews > 0 ? 100 : 0) 
+          : Math.round(((tViews - yViews) / yViews) * 100)
+      : 0;
+    return { peakEntry: pEntry, totalPeriod: tPeriod, avgDaily: aDaily, todayViews: tViews, yesterdayViews: yViews, growth: g };
+  }, [chartData]);
 
   const isFree = userPlan === 'FREE';
-  const deviceData = isFree
+  const deviceData = useMemo(() => isFree
     ? [
         { name: 'Desktop', pct: 58, color: '#ffffff' },
         { name: 'Mobile', pct: 36, color: '#ff9e00' },
@@ -140,63 +114,21 @@ export default function AnalyticsPage() {
         { name: 'Desktop', pct: stats.devices?.desktop || 0, color: '#ffffff' },
         { name: 'Mobile', pct: stats.devices?.mobile || 0, color: '#ff9e00' },
         { name: 'Tablet', pct: stats.devices?.tablet || 0, color: 'rgba(255,255,255,0.3)' },
-      ];
+      ], [isFree, stats.devices]);
 
-  const staticSources = [
-    { name: 'Instagram', count: 842, percentage: 38 },
-    { name: 'Google', count: 531, percentage: 24 },
-    { name: 'Direct', count: 419, percentage: 19 },
-    { name: 'LinkedIn', count: 265, percentage: 12 },
-    { name: 'Twitter / X', count: 154, percentage: 7 },
-  ];
-  const displaySources = isFree ? staticSources : sources;
-
-  const staticCountries = [
-    { name: 'Indonesia', count: 1240, percentage: 75 },
-    { name: 'Singapore', count: 248, percentage: 15 },
-    { name: 'Malaysia', count: 99, percentage: 6 },
-    { name: 'United States', count: 49, percentage: 3 },
-    { name: 'Japan', count: 16, percentage: 1 },
-  ];
-  const staticCities = [
-    { name: 'Jakarta', count: 620, percentage: 38 },
-    { name: 'Bandung', count: 295, percentage: 18 },
-    { name: 'Surabaya', count: 180, percentage: 11 },
-    { name: 'Singapore City', count: 248, percentage: 15 },
-    { name: 'Kuala Lumpur', count: 99, percentage: 6 },
-  ];
+  const displaySources = isFree ? STATIC_SOURCES : sources;
 
   const countries: { name: string; count: number; percentage: number }[] = data?.geo?.countries || [];
   const cities: { name: string; count: number; percentage: number }[] = data?.geo?.cities || [];
 
-  const displayCountries = isFree ? staticCountries : countries;
-  const displayCities = isFree ? staticCities : cities;
-
-  const staticProjects = [
-    { title: 'Interactive Cinematic Showreel', count: 421, percentage: 48 },
-    { title: 'Nexus Noir Theme Boilerplate', count: 219, percentage: 25 },
-    { title: 'Acid Tech 3D Playground', count: 130, percentage: 15 },
-    { title: 'Spatial Studio Landing Page', count: 68, percentage: 8 },
-    { title: 'Minimalist Portfolio Starter', count: 35, percentage: 4 },
-  ];
+  const displayCountries = isFree ? STATIC_COUNTRIES : countries;
+  const displayCities = isFree ? STATIC_CITIES : cities;
 
   const topProjects: { title: string; count: number; percentage: number }[] = data?.topProjects || [];
-  const displayProjects = isFree ? staticProjects : topProjects;
+  const displayProjects = isFree ? STATIC_PROJECTS : topProjects;
 
-  const staticSocialStats = [
-    { name: 'Instagram', count: 184, percentage: 53 },
-    { name: 'LinkedIn', count: 98, percentage: 28 },
-    { name: 'GitHub', count: 42, percentage: 12 },
-    { name: 'Twitter / X', count: 24, percentage: 7 },
-  ];
-  const displaySocialStats = isFree ? staticSocialStats : (data?.socialStats || []);
-
-  const staticContactStats = [
-    { name: 'WhatsApp', count: 120, percentage: 65 },
-    { name: 'Email', count: 45, percentage: 24 },
-    { name: 'Phone', count: 20, percentage: 11 },
-  ];
-  const displayContactStats = isFree ? staticContactStats : (data?.contactStats || []);
+  const displaySocialStats = isFree ? STATIC_SOCIAL_STATS : (data?.socialStats || []);
+  const displayContactStats = isFree ? STATIC_CONTACT_STATS : (data?.contactStats || []);
 
   const lockedAvgTime = '2m 34s';
   const lockedBounceRate = '42%';
@@ -205,12 +137,12 @@ export default function AnalyticsPage() {
   const lockedPeakDay = 'Senin';
   const lockedTotalPeriod = 891;
 
-  const handleLocked = () => showToast({ message: "Upgrade ke PRO untuk membuka fitur analitik lengkap!", id: "range-lock", icon: "fa-lock" });
+  const handleLocked = useCallback(() => showToast({ message: "Upgrade ke PRO untuk membuka fitur analitik lengkap!", id: "range-lock", icon: "fa-lock" }), []);
 
-  const handleComingSoon = (e?: React.MouseEvent) => {
+  const handleComingSoon = useCallback((e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     showToast({ message: "Fitur analitik lanjutan akan tersedia segera!", id: "coming-soon-analytics", icon: "fa-clock" });
-  };
+  }, []);
 
   const RANGES = [
     { id: '1d', label: 'Hari Ini', pro: false },
@@ -258,666 +190,105 @@ export default function AnalyticsPage() {
       </div>
 
       {/* TOP KPI CARDS */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-5 mb-8">
-        {(isLoading || isUserLoading || userPlan === undefined) ? [1,2,3,4,5].map(i => <SkeletonBlock key={i} className="h-[120px] md:h-[140px]" />) : [
-          { label: 'Total Views', val: stats.totalViews, icon: Eye, badge: `${growth > 0 ? '+' : ''}${growth}%`, badgeColor: growth >= 0 ? 'bg-[#ff9e00]/10 text-[#ff9e00]' : 'bg-rose-500/10 text-rose-400', locked: false },
-          { label: 'Unique Visitors', val: stats.uniqueVisitors, icon: User, badge: 'Est.', badgeColor: 'bg-white/5 text-white/50 border border-white/5', locked: false },
-          { label: 'Avg. Time', val: isFree ? lockedAvgTime : stats.avgTime, icon: Clock, badge: 'PRO', badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
-          { label: 'Bounce Rate', val: isFree ? lockedBounceRate : stats.bounceRate, icon: LogOut, badge: 'PRO', badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
-          { label: 'Returning Rate', val: isFree ? '18%' : stats.returningRate, icon: RefreshCw, badge: 'PRO', badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
-        ].map((card, i) => {
-          const IconComponent = card.icon;
-          return (
-            <div key={i} onClick={card.locked ? handleLocked : undefined}
-              className={`bg-zinc-900/40 border border-white/10 rounded-none p-5 md:p-6 shadow-none hover:border-[#ff9e00]/40 transition-all duration-300 animate-enter flex flex-col justify-between relative overflow-hidden ${card.locked ? 'cursor-pointer' : ''}`}
-              style={{ animationDelay: `${i * 60}ms` }}
-            >
-              {card.locked && (
-                <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center">
-                  <div className="w-8 h-8 bg-zinc-900 text-white border border-white/15 rounded-none flex items-center justify-center mb-1.5">
-                    <Lock className="w-3.5 h-3.5 text-[#ff9e00]" />
-                  </div>
-                  <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-                </div>
-              )}
-              <div className="flex justify-between items-start mb-4">
-                <p className="text-[9px] font-mono font-bold text-white/30 uppercase tracking-widest">{card.label}</p>
-                <span className={`text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-none border border-white/5 uppercase tracking-wider ${card.badgeColor}`}>{card.badge}</span>
-              </div>
-              <h3 className={`text-2xl md:text-3xl font-mono font-bold text-white tracking-tighter leading-none ${card.locked ? 'blur-[4px] opacity-20' : ''}`}>
-                <AnimatedCounter value={card.val} duration={1000 + i * 150} />
-              </h3>
-            </div>
-          );
-        })}
-      </div>
+      <KpiCards 
+        isLoading={isLoading} isUserLoading={isUserLoading} userPlan={userPlan} 
+        stats={stats} growth={growth} isFree={isFree} 
+        lockedAvgTime={lockedAvgTime} lockedBounceRate={lockedBounceRate} 
+        handleLocked={handleLocked} 
+      />
 
       {/* SECONDARY METRIC STRIP */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 mb-8">
-        {(isLoading || isUserLoading || userPlan === undefined) ? [1,2,3,4].map(i => <SkeletonBlock key={i} className="h-20" />) : [
-          { label: 'Rata-rata Harian', val: isFree ? lockedAvgDaily : avgDaily, suffix: isFree ? 'views/hari' : 'views/hari', icon: BarChart3 },
-          { label: 'Puncak Kunjungan', val: isFree ? lockedPeakViews : peakEntry.views, suffix: isFree ? lockedPeakDay : peakEntry.day, icon: Trophy },
-          { label: 'Total Periode', val: isFree ? lockedTotalPeriod : totalPeriod, suffix: isFree ? 'dalam 7 hari' : `dalam ${chartData.length} hari`, icon: Calendar },
-          { label: 'Klik Galeri', val: isFree ? 75 : (data?.galleryClicks || 0), suffix: 'kunjungan arsip', icon: FolderOpen },
-        ].map((m, i) => {
-          const IconComponent = m.icon;
-          return (
-            <div key={i} onClick={isFree ? handleLocked : undefined}
-              className={`bg-zinc-900/40 border border-white/10 rounded-none p-4 md:p-5 shadow-none animate-enter flex items-center gap-3 md:gap-4 relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
-              style={{ animationDelay: `${250 + i * 50}ms` }}
-            >
-              {isFree && (
-                <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center">
-                  <div className="w-7 h-7 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-1">
-                    <Lock className="w-3 h-3 text-[#ff9e00]" />
-                  </div>
-                  <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-                </div>
-              )}
-              <div className="w-9 h-9 md:w-10 md:h-10 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center text-white/30 shrink-0">
-                <IconComponent className="w-4 h-4 text-[#ff9e00]" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[8px] font-mono font-bold text-white/30 uppercase tracking-widest truncate">{m.label}</p>
-                <p className={`text-lg md:text-xl font-mono font-bold text-white tracking-tighter leading-tight ${isFree ? 'blur-[5px] opacity-20' : ''}`}>
-                  <AnimatedCounter value={m.val} />
-                </p>
-                <p className={`text-[8px] font-mono text-white/30 uppercase tracking-widest mt-0.5 ${isFree ? 'blur-[5px] opacity-20' : ''}`}>{m.suffix}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <SecondaryMetricStrip 
+        isLoading={isLoading} isUserLoading={isUserLoading} userPlan={userPlan} 
+        isFree={isFree} lockedAvgDaily={lockedAvgDaily} avgDaily={avgDaily} 
+        lockedPeakViews={lockedPeakViews} peakEntry={peakEntry} 
+        lockedPeakDay={lockedPeakDay} lockedTotalPeriod={lockedTotalPeriod} 
+        totalPeriod={totalPeriod} chartDataLength={chartData.length} 
+        galleryClicks={data?.galleryClicks} handleLocked={handleLocked} 
+      />
 
       {/* MAIN CHARTS GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
 
         {/* TRAFFIC AREA CHART — spans 2 cols */}
-        {isLoading ? (
-          <div className="lg:col-span-2 rounded-none shimmer-dark h-[400px]" />
-        ) : (
-        <div className="lg:col-span-2 bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter" style={{ animationDelay: '300ms' }}>
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Traffic Overview</h3>
-              <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">
-                {range === '1d' ? 'Per jam — hari ini' : range === '7d' ? '7 hari terakhir' : range === '30d' ? '30 hari terakhir' : 'Semua waktu'}
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest">
-                <span className="w-2 h-2 rounded-none bg-[#ff9e00] inline-block" /> Page Views
-              </span>
-              <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest">
-                <span className="w-2 h-2 rounded-none bg-white/40 inline-block" /> Uniq. Visitors
-              </span>
-            </div>
-          </div>
-
-          <div className="h-[280px]" onMouseDown={e => e.preventDefault()}>
-            {isMounted && chartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="viewsGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ff9e00" stopOpacity={0.15} />
-                      <stop offset="95%" stopColor="#ff9e00" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }} />
-                  <Tooltip content={(props: any) => <CustomAreaTooltip {...props} isHourly={range === '1d'} />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
-                  <Area type="monotone" dataKey="views" name="Page Views" stroke="#ff9e00" strokeWidth={2} fill="url(#viewsGrad)" dot={false} activeDot={{ r: 4, fill: '#ff9e00', stroke: '#000', strokeWidth: 2 }} animationDuration={1500} />
-                  <Area type="monotone" dataKey="visitors" name="Uniq. Visitors" stroke="rgba(255,255,255,0.4)" strokeWidth={2} fill="transparent" dot={false} activeDot={{ r: 4, fill: 'rgba(255,255,255,0.4)', stroke: '#000', strokeWidth: 2 }} animationDuration={1500} />
-                </AreaChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-full flex flex-col items-center justify-center text-white/20">
-                <Ghost className="w-8 h-8 mb-3" />
-                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data traffic</p>
-              </div>
-            )}
-          </div>
-        </div>
-        )}
+        <TrafficOverviewChart 
+          isLoading={isLoading} isMounted={isMounted} 
+          chartData={chartData} range={range} 
+        />
 
         {/* DEVICE BREAKDOWN */}
-        {isLoading ? (
-          <div className="rounded-none shimmer-dark h-[400px]" />
-        ) : (
-        <div onClick={isFree ? handleLocked : undefined}
-          className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter flex flex-col relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
-          style={{ animationDelay: '350ms' }}
-        >
-          {isFree && (
-            <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
-              <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
-                <Lock className="w-4 h-4 text-[#ff9e00]" />
-              </div>
-              <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-              <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melihat data perangkat</p>
-            </div>
-          )}
-          <div className="mb-6">
-            <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Perangkat</h3>
-            <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Distribusi per device</p>
-          </div>
-          <div className="space-y-5 flex-1">
-            {deviceData.map((d, i) => (
-              <div key={d.name} className="group">
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-2 h-2 rounded-none shrink-0" style={{ background: d.color }} />
-                    <span className="text-[11px] font-mono text-white/70">{d.name}</span>
-                  </div>
-                  <span className="text-[11px] font-mono font-bold text-white">{d.pct}%</span>
-                </div>
-                <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
-                  <div className="h-full rounded-none transition-all duration-[1200ms] ease-out"
-                    style={{ width: animReady ? `${d.pct}%` : '0%', background: d.color, transitionDelay: `${i * 100}ms` }}
-                  />
-                </div>
-              </div>
-            ))}
-
-            <div className="pt-4 mt-4 border-t border-white/5">
-              <p className="text-[8px] font-mono font-bold text-white/30 uppercase tracking-widest mb-3">Estimasi User Agent</p>
-              <div className="grid grid-cols-3 gap-2">
-                {deviceData.map(d => (
-                  <div key={d.name} className="bg-zinc-900/40 rounded-none p-2.5 text-center border border-white/5">
-                    <p className="text-xs font-mono font-bold text-white">{d.pct}%</p>
-                    <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{d.name}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-        )}
+        <DeviceBreakdown 
+          isLoading={isLoading} isFree={isFree} handleLocked={handleLocked} 
+          deviceData={deviceData} animReady={animReady} 
+        />
       </div>
 
       {/* GEOGRAPHIC GRID: Countries & Cities */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
         {/* TOP COUNTRIES */}
-        {isLoading ? (
-          <div className="rounded-none shimmer-dark h-[340px]" />
-        ) : (
-          <div onClick={isFree ? handleLocked : undefined}
-            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
-            style={{ animationDelay: '380ms' }}
-          >
-            {isFree && (
-              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
-                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
-                  <Lock className="w-4 h-4 text-[#ff9e00]" />
-                </div>
-                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melihat lokasi negara pengunjung</p>
-              </div>
-            )}
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Top Negara</h3>
-                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Asal negara pengunjung</p>
-              </div>
-              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
-                <Globe className="w-4 h-4 text-[#ff9e00]" />
-              </div>
-            </div>
-            
-            {displayCountries.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-white/20">
-                <Ghost className="w-8 h-8 mb-3" />
-                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data negara</p>
-              </div>
-            ) : (
-              <div className="space-y-5">
-                {displayCountries.map((c, i) => (
-                  <div key={i} className="group/country">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[11px] font-mono text-white/80">{c.name}</span>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs font-mono font-bold text-white">{c.percentage}%</p>
-                        <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{c.count} hits</p>
-                      </div>
-                    </div>
-                    <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
-                      <div className="h-full bg-white rounded-none group-hover/country:bg-[#ff9e00] transition-colors duration-300"
-                        style={{ width: animReady ? `${c.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <TopLocations 
+          isLoading={isLoading} isFree={isFree} handleLocked={handleLocked} 
+          dataList={displayCountries} animReady={animReady} 
+          title="Top Negara" subtitle="Asal negara pengunjung" 
+        />
 
         {/* TOP CITIES */}
-        {isLoading ? (
-          <div className="rounded-none shimmer-dark h-[340px]" />
-        ) : (
-          <div onClick={isFree ? handleLocked : undefined}
-            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
-            style={{ animationDelay: '390ms' }}
-          >
-            {isFree && (
-              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
-                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
-                  <Lock className="w-4 h-4 text-[#ff9e00]" />
-                </div>
-                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melihat lokasi kota pengunjung</p>
-              </div>
-            )}
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Top Kota</h3>
-                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Asal kota pengunjung</p>
-              </div>
-              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
-                <Globe className="w-4 h-4 text-[#ff9e00]" />
-              </div>
-            </div>
-            
-            {displayCities.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-white/20">
-                <Ghost className="w-8 h-8 mb-3" />
-                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data kota</p>
-              </div>
-            ) : (
-              <div className="space-y-5">
-                {displayCities.map((c, i) => (
-                  <div key={i} className="group/city">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[11px] font-mono text-white/80">{c.name}</span>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs font-mono font-bold text-white">{c.percentage}%</p>
-                        <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{c.count} hits</p>
-                      </div>
-                    </div>
-                    <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
-                      <div className="h-full bg-white rounded-none group-hover/city:bg-[#ff9e00] transition-colors duration-300"
-                        style={{ width: animReady ? `${c.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <TopLocations 
+          isLoading={isLoading} isFree={isFree} handleLocked={handleLocked} 
+          dataList={displayCities} animReady={animReady} 
+          title="Top Kota" subtitle="Asal kota pengunjung" 
+        />
       </div>
 
       {/* BOTTOM ROW: Top Sources + Bar Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
 
         {/* TOP SOURCES */}
-        {isLoading ? (
-          <div className="rounded-none shimmer-dark h-[340px]" />
-        ) : (
-        <div onClick={isFree ? handleLocked : undefined}
-          className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
-          style={{ animationDelay: '400ms' }}
-        >
-          {isFree && (
-            <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
-              <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
-                <Lock className="w-4 h-4 text-[#ff9e00]" />
-              </div>
-              <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-              <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melihat sumber trafik</p>
-            </div>
-          )}
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Top Sources</h3>
-              <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Dari mana trafik berasal</p>
-            </div>
-            <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
-              <Target className="w-4 h-4 text-[#ff9e00]" />
-            </div>
-          </div>
-          
-          {displaySources.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 text-white/20">
-              <Ghost className="w-8 h-8 mb-3" />
-              <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data sources</p>
-            </div>
-          ) : (
-            <div className="space-y-5">
-              {displaySources.map((src, i) => (
-                <div key={i} className="group/src">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
-                        {getSourceIcon(src.name)}
-                      </div>
-                      <span className="text-[11px] font-mono text-white/80">{src.name}</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs font-mono font-bold text-white">{src.percentage}%</p>
-                      <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{src.count} hits</p>
-                    </div>
-                  </div>
-                  <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
-                    <div className="h-full bg-white rounded-none group-hover/src:bg-[#ff9e00] transition-colors duration-300"
-                      style={{ width: animReady ? `${src.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        )}
+        <TopSourcesWidget 
+          isLoading={isLoading} isFree={isFree} handleLocked={handleLocked} 
+          displaySources={displaySources} animReady={animReady} 
+        />
 
         {/* DAILY BAR CHART */}
-        {isLoading ? (
-          <div className="rounded-none shimmer-dark h-[340px]" />
-        ) : (
-        <div className="bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter flex flex-col" style={{ animationDelay: '450ms' }}>
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Volume Harian</h3>
-              <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Distribusi per hari</p>
-            </div>
-            <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
-              <BarChart3 className="w-4 h-4 text-[#ff9e00]" />
-            </div>
-          </div>
-          <div className="flex-1 min-h-[240px]" onMouseDown={e => e.preventDefault()}>
-            {isMounted && chartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }} dy={8} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }} />
-                  <Tooltip cursor={{ fill: 'rgba(255,255,255,0.02)', stroke: 'none' }}
-                    contentStyle={{ borderRadius: '0px', border: '1px solid rgba(255,255,255,0.1)', background: '#09090b', color: '#fff', fontSize: '10px', fontFamily: 'monospace', fontWeight: 'bold' }} />
-                  <Bar dataKey="views" radius={[0, 0, 0, 0]} barSize={24} animationDuration={1400}>
-                    {chartData.map((entry, idx) => (
-                      <Cell key={`c-${idx}`}
-                        fill={entry.date === peakEntry.date ? '#ff9e00' : idx === chartData.length - 1 ? '#ffffff' : 'rgba(255,255,255,0.15)'}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-full flex flex-col items-center justify-center text-white/20">
-                <Ghost className="w-8 h-8 mb-3" />
-                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data</p>
-              </div>
-            )}
-          </div>
-
-          {!isLoading && chartData.length > 0 && (
-            <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 pt-4 border-t border-white/5">
-              <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40">
-                <span className="w-2.5 h-2.5 bg-[#ff9e00] inline-block" /> Puncak
-              </span>
-              <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40">
-                <span className="w-2.5 h-2.5 bg-white inline-block" /> Hari Ini
-              </span>
-              <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40">
-                <span className="w-2.5 h-2.5 bg-white/10 inline-block" /> Lainnya
-              </span>
-            </div>
-          )}
-        </div>
-        )}
+        <DailyVolumeChart 
+          isLoading={isLoading} isMounted={isMounted} 
+          chartData={chartData} peakEntry={peakEntry} 
+        />
       </div>
 
       {/* PROJECT POPULARITY WIDGET */}
       <div className="grid grid-cols-1 gap-5 mb-8">
         {/* TOP PROJECTS */}
-        {isLoading ? (
-          <div className="rounded-none shimmer-dark h-[340px]" />
-        ) : (
-          <div onClick={isFree ? handleLocked : undefined}
-            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
-            style={{ animationDelay: '480ms' }}
-          >
-            {isFree && (
-              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
-                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
-                  <Lock className="w-4 h-4 text-[#ff9e00]" />
-                </div>
-                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak interaksi dan klik proyek populer Anda</p>
-              </div>
-            )}
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Popularitas Proyek</h3>
-                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Jumlah klik media & karya Anda</p>
-              </div>
-              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
-                <BarChart3 className="w-4 h-4 text-[#ff9e00]" />
-              </div>
-            </div>
-            
-            {displayProjects.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-white/20">
-                <Ghost className="w-8 h-8 mb-3" />
-                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data interaksi proyek</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {displayProjects.map((p, i) => (
-                  <div key={i} className="group/proj">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-mono font-bold text-white/40 group-hover/proj:text-[#ff9e00] transition-colors">{String(i + 1).padStart(2, '0')}</span>
-                        <span className="text-[11px] font-mono text-white/80 truncate max-w-[200px] sm:max-w-md">{p.title}</span>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-xs font-mono font-bold text-white">{p.percentage}%</p>
-                        <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{p.count} klik</p>
-                      </div>
-                    </div>
-                    <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
-                      <div className="h-full bg-white rounded-none group-hover/proj:bg-[#ff9e00] transition-colors duration-300"
-                        style={{ width: animReady ? `${p.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <ProjectPopularityWidget 
+          isLoading={isLoading} isFree={isFree} handleLocked={handleLocked} 
+          displayProjects={displayProjects} animReady={animReady} 
+        />
       </div>
 
       {/* SOCIAL MEDIA & CONTACT CONVERSION WIDGETS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
         
         {/* SOCIAL MEDIA CLICKS */}
-        {isLoading ? (
-          <div className="rounded-none shimmer-dark h-[340px]" />
-        ) : (
-          <div onClick={isFree ? handleLocked : undefined}
-            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
-            style={{ animationDelay: '500ms' }}
-          >
-            {isFree && (
-              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
-                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
-                  <Lock className="w-4 h-4 text-[#ff9e00]" />
-                </div>
-                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak klik link sosial media</p>
-              </div>
-            )}
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Klik Sosial Media</h3>
-                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Klik pada link sosial media utama Anda</p>
-              </div>
-              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
-                <Share2 className="w-4 h-4 text-[#ff9e00]" />
-              </div>
-            </div>
-            
-            {displaySocialStats.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-white/20">
-                <Ghost className="w-8 h-8 mb-3" />
-                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada klik sosmed</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {displaySocialStats.map((src: any, i: number) => (
-                  <div key={i} className="group/social">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
-                          {getSourceIcon(src.name)}
-                        </div>
-                        <span className="text-[11px] font-mono text-white/80">{src.name}</span>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-xs font-mono font-bold text-white">{src.percentage}%</p>
-                        <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{src.count} klik</p>
-                      </div>
-                    </div>
-                    <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
-                      <div className="h-full bg-white rounded-none group-hover/social:bg-[#ff9e00] transition-colors duration-300"
-                        style={{ width: animReady ? `${src.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <SocialMediaWidget 
+          isLoading={isLoading} isFree={isFree} handleLocked={handleLocked} 
+          displaySocialStats={displaySocialStats} animReady={animReady} 
+        />
 
         {/* CONTACT CONVERSIONS */}
-        {isLoading ? (
-          <div className="rounded-none shimmer-dark h-[340px]" />
-        ) : (
-          <div onClick={isFree ? handleLocked : undefined}
-            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
-            style={{ animationDelay: '540ms' }}
-          >
-            {isFree && (
-              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
-                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
-                  <Lock className="w-4 h-4 text-[#ff9e00]" />
-                </div>
-                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak konversi kontak</p>
-              </div>
-            )}
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Konversi Kontak</h3>
-                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Interaksi klik email / telepon / WA</p>
-              </div>
-              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
-                <MessageSquare className="w-4 h-4 text-[#ff9e00]" />
-              </div>
-            </div>
-            
-            {displayContactStats.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-white/20">
-                <Ghost className="w-8 h-8 mb-3" />
-                <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data konversi</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {displayContactStats.map((c: any, i: number) => {
-                  const getContactIcon = (name: string) => {
-                    if (name === 'WhatsApp') return <MessageSquare className="w-3.5 h-3.5 text-green-500" />;
-                    if (name === 'Email') return <Mail className="w-3.5 h-3.5 text-blue-400" />;
-                    if (name === 'Phone') return <Phone className="w-3.5 h-3.5 text-amber-500" />;
-                    return <Link2 className="w-3.5 h-3.5 text-white/50" />;
-                  };
-                  return (
-                    <div key={i} className="group/contact">
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0">
-                            {getContactIcon(c.name)}
-                          </div>
-                          <span className="text-[11px] font-mono text-white/80">{c.name}</span>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className="text-xs font-mono font-bold text-white">{c.percentage}%</p>
-                          <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{c.count} klik</p>
-                        </div>
-                      </div>
-                      <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
-                        <div className="h-full bg-white rounded-none group-hover/contact:bg-[#ff9e00] transition-colors duration-300"
-                          style={{ width: animReady ? `${c.percentage}%` : '0%', transition: `width 1.2s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms, background-color 0.3s` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
+        <ContactConversionsWidget 
+          isLoading={isLoading} isFree={isFree} handleLocked={handleLocked} 
+          displayContactStats={displayContactStats} animReady={animReady} 
+        />
 
       </div>
 
       {/* GALLERY BUTTON ACTIVITY WIDGET */}
       <div className="grid grid-cols-1 gap-5 mb-8">
-        {isLoading ? (
-          <div className="rounded-none shimmer-dark h-[180px]" />
-        ) : (
-          <div onClick={isFree ? handleLocked : undefined}
-            className={`bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter relative overflow-hidden ${isFree ? 'cursor-pointer' : ''}`}
-            style={{ animationDelay: '560ms' }}
-          >
-            {isFree && (
-              <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center px-4">
-                <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-none flex items-center justify-center mb-2">
-                  <Lock className="w-4 h-4 text-[#ff9e00]" />
-                </div>
-                <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-                <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak klik tombol Galeri</p>
-              </div>
-            )}
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Aktivitas Tombol Galeri</h3>
-                <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Seberapa sering pengunjung mengklik tombol menuju halaman galeri/arsip</p>
-              </div>
-              <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
-                <FolderOpen className="w-4 h-4 text-[#ff9e00]" />
-              </div>
-            </div>
-
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="text-center md:text-left">
-                <p className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-widest mb-1">Total Klik Menuju Galeri</p>
-                <h4 className="text-4xl md:text-5xl font-mono font-bold text-white tracking-tighter">
-                  <AnimatedCounter value={isFree ? 75 : (data?.galleryClicks || 0)} />
-                  <span className="text-xs font-mono font-bold text-white/30 ml-2 uppercase tracking-normal">klik</span>
-                </h4>
-              </div>
-              <div className="w-full md:max-w-md bg-zinc-900/40 border border-white/5 p-4 rounded-none flex items-center gap-4">
-                <div className="w-10 h-10 bg-zinc-950 border border-white/5 flex items-center justify-center shrink-0">
-                  <FolderOpen className="w-5 h-5 text-white/40" />
-                </div>
-                <div>
-                  <h5 className="text-[11px] font-mono font-bold text-white/80 uppercase tracking-wide">Minat Pengunjung</h5>
-                  <p className="text-[9px] font-mono text-white/40 leading-relaxed mt-1">
-                    Klik tombol ini menandakan ketertarikan tinggi pengunjung untuk melihat seluruh koleksi karya Anda.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* GALLERY BUTTON ACTIVITY WIDGET */}
+        <GalleryActivityWidget 
+          isLoading={isLoading} isFree={isFree} handleLocked={handleLocked} 
+          galleryClicks={data?.galleryClicks} 
+        />
       </div>
 
     </main>

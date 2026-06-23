@@ -27,13 +27,13 @@ export function SpatialAwardsBlock({ data, theme, isMobileView, isCardPreview, i
   const auraAnim = isCardPreview
       ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
       : { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } } };
-  const viewAnim = isCardPreview
+  const staggerContainer = isCardPreview
       ? { initial: "visible" as const, animate: "visible" as const }
-      : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 } };
+      : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 }, variants: { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } } };
 
   return (
-    <div id="awards" className={`flex flex-col w-full mt-24 @md:mt-32 px-8`}>
-        <motion.div {...viewAnim} variants={auraAnim} className="mb-8">
+    <motion.div id="awards" {...staggerContainer} className={`flex flex-col w-full mt-24 @md:mt-32 px-8`}>
+        <motion.div variants={auraAnim} className="mb-8">
             <h2 className={`font-medium tracking-tight text-white text-4xl`}>
                 <EditableText value={theme?.customTexts?.spatial_awards_title || 'Recognitions'} field="spatial_awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
             </h2>
@@ -54,7 +54,7 @@ export function SpatialAwardsBlock({ data, theme, isMobileView, isCardPreview, i
                 return (
                     <motion.div
                         key={i}
-                        {...viewAnim} variants={auraAnim}
+                        variants={auraAnim}
                         className="flex flex-col border-b border-white/5 group cursor-pointer"
                         onClick={() => hasMedia && toggleExpand(i)}
                     >
@@ -132,6 +132,6 @@ export function SpatialAwardsBlock({ data, theme, isMobileView, isCardPreview, i
                 );
             })}
         </div>
-    </div>
+    </motion.div>
   );
 }

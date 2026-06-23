@@ -1,3 +1,4 @@
+import { invalidatePortfolioCache } from '@/lib/redis';
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
@@ -66,6 +67,10 @@ export async function PATCH(
       `Memperbarui tautan "${updatedLink.platform}"`
     );
 
+    await invalidatePortfolioCache(currentLink.userId);
+
+    
+
     return NextResponse.json(updatedLink);
   } catch (error) {
     console.error(error);
@@ -105,6 +110,10 @@ export async function DELETE(
       "DELETE_LINK", 
       `Menghapus tautan "${link.platform}" dari profil`
     );
+
+    await invalidatePortfolioCache(link.userId);
+
+    
 
     return NextResponse.json({ message: "Deleted" });
   } catch (error) {

@@ -20,13 +20,13 @@ export function Spatial3DBlock({ data, theme, isMobileView, isCardPreview, isEdi
    const auraAnim = isCardPreview
       ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
       : { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } } };
-  const viewAnim = isCardPreview
+  const staggerContainer = isCardPreview
       ? { initial: "visible" as const, animate: "visible" as const }
-      : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 } };
+      : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 }, variants: { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } } };
 
   return (
-    <div className={`flex flex-col w-full px-8 gap-12 mt-24 @md:mt-32`}>
-        <motion.div {...viewAnim} variants={auraAnim} className="flex justify-between items-end mb-4">
+    <motion.div {...staggerContainer} className={`flex flex-col w-full px-8 gap-12 mt-24 @md:mt-32`}>
+        <motion.div variants={auraAnim} className="flex justify-between items-end mb-4">
             <h2 className={`font-medium tracking-tight text-white text-4xl`}>
                 <EditableText value={theme?.customTexts?.spatial_models_title || 'Spatial Assets'} field="spatial_models_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
             </h2>
@@ -44,7 +44,7 @@ export function Spatial3DBlock({ data, theme, isMobileView, isCardPreview, isEdi
             {items3D.map((p: any, i: number) => (
                 <motion.div
                     key={i}
-                    {...viewAnim} variants={auraAnim}
+                    variants={auraAnim}
                     className="group flex flex-col gap-6"
                 >
                     <div className={`w-full aspect-[4/3] @md:aspect-video ${xlCardRadiusClass} overflow-hidden relative ${cardStyleClass} p-2 @md:p-3 transition-all duration-700 group-hover:shadow-[0_0_60px_rgba(var(--hl-rgb),0.2)] group-hover:border-[var(--hl)]/30`}>
@@ -70,6 +70,6 @@ export function Spatial3DBlock({ data, theme, isMobileView, isCardPreview, isEdi
                 </motion.div>
             ))}
         </div>
-    </div>
+    </motion.div>
   );
 }

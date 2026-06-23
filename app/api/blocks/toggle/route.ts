@@ -1,3 +1,4 @@
+import { invalidatePortfolioCache } from '@/lib/redis';
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -27,6 +28,10 @@ export async function PATCH(req: Request) {
         isVisible 
       },
     });
+
+    await invalidatePortfolioCache(session.user.id);
+
+    
 
     return NextResponse.json({ success: true, block: updatedBlock });
   } catch (error: any) {

@@ -23,17 +23,17 @@ export function SpatialProjectsBlock({ data, theme, isMobileView, isCardPreview,
   const auraAnim = isCardPreview
       ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
       : { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } } };
-  const viewAnim = isCardPreview
+  const staggerContainer = isCardPreview
       ? { initial: "visible" as const, animate: "visible" as const }
-      : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 } };
+      : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 }, variants: { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } } };
 
   const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
   const userPlan = data?.plan || data?.user?.plan || 'FREE';
   const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
 
   return (
-    <div id="projects" className={`flex flex-col w-full px-8 gap-12`}>
-        <motion.div {...viewAnim} variants={auraAnim} className="flex justify-between items-end mb-4">
+    <motion.div id="projects" {...staggerContainer} className={`flex flex-col w-full px-8 gap-12`}>
+        <motion.div variants={auraAnim} className="flex justify-between items-end mb-4">
             <h2 className={`font-medium tracking-tight text-white text-4xl`}>
                 <EditableText value={theme?.customTexts?.spatial_stats_projects || 'Selected Works'} field="spatial_stats_projects" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
             </h2>
@@ -48,7 +48,7 @@ export function SpatialProjectsBlock({ data, theme, isMobileView, isCardPreview,
                 return (
                     <motion.div
                         key={i}
-                        {...viewAnim} variants={auraAnim}
+                        variants={auraAnim}
                         className={`group flex flex-col gap-4 cursor-pointer ${colSpan}`}
                         onClick={() => {
                             if (isVideo || p.projectType === 'photo') {
@@ -95,7 +95,7 @@ export function SpatialProjectsBlock({ data, theme, isMobileView, isCardPreview,
 
         {/* Explore More Button */}
         {showGalleryButton && (
-            <motion.div {...viewAnim} variants={auraAnim} className="w-full flex justify-center mt-8">
+            <motion.div variants={auraAnim} className="w-full flex justify-center mt-8">
                 <Link href={`/${subdomain}/gallery`}  className={`${cardStyleClass} px-8 py-4 ${radiusClass} flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group`}>
                     <span className="font-medium text-white">
                         <EditableText value={theme?.customTexts?.spatial_explore_archive || 'Explore Full Archive'} field="spatial_explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
@@ -104,6 +104,6 @@ export function SpatialProjectsBlock({ data, theme, isMobileView, isCardPreview,
                 </Link>
             </motion.div>
         )}
-    </div>
+    </motion.div>
   );
 }

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { redis } from "@/lib/redis";
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
@@ -21,18 +22,28 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const range = searchParams.get("range") || "7d";
 
-    // Konsisten dengan analytics/stats: gunakan UTC midnight
+    // ── REDIS MICRO-CACHING ──────────────────────────────────────────────────
+    const cacheKey = `dashboard:sync:${userId}:${range}`;
+    try {
+      const cachedData = await redis.get(cacheKey);
+      if (cachedData) {
+        return NextResponse.json(JSON.parse(cachedData)); // SUPER CEPAT (<10ms)
+      }
+    } catch (e) {
+      console.warn("⚠️ Redis Dashboard Sync Cache Error:", e);
+    }
+
+    // ── DATABASE QUERY & KOMPUTASI BERAT ──────────────────────────────────────
     const now = new Date();
     const startOfToday = new Date(now);
     startOfToday.setUTCHours(0, 0, 0, 0);
 
     let startDate = new Date(startOfToday);
-    if (range === "7d") startDate.setUTCDate(startDate.getUTCDate() - 6);      // 7 hari termasuk hari ini
-    else if (range === "30d") startDate.setUTCDate(startDate.getUTCDate() - 29); // 30 hari termasuk hari ini
+    if (range === "7d") startDate.setUTCDate(startDate.getUTCDate() - 6);      
+    else if (range === "30d") startDate.setUTCDate(startDate.getUTCDate() - 29); 
     else if (range === "1d") { /* startDate = startOfToday, sudah benar */ }
-    else startDate = new Date(0); // all
+    else startDate = new Date(0); 
 
-    // 2. PARALLEL EXECUTION: OPTIMASI SUPER RINGAN
     const [user, announcements, historicalStats, todayLogs, projectsCount, certificatesCount, linksCount, testimonialsCount, activities] = await Promise.all([
       // A. Layout & Appearance
       prisma.user.findUnique({
@@ -64,15 +75,15 @@ export async function GET(req: Request) {
         where: { userId, createdAt: { gte: startDate } },
         select: { id: true, type: true, ipAddress: true, duration: true, sessionId: true, referrer: true, createdAt: true }
       }),
-      // E. Projects (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
+      // E. Projects 
       prisma.project.count({ where: { userId, deletedAt: null } }),
-      // F. Certificates (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
+      // F. Certificates 
       prisma.certificate.count({ where: { userId, deletedAt: null } }),
-      // G. Links (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
+      // G. Links 
       prisma.link.count({ where: { userId } }),
-      // H. Testimonials (OPTIMASI: Gunakan count, hasilkan 1 angka integer)
+      // H. Testimonials 
       prisma.testimonial.count({ where: { userId } }),
-      // I. Activities (Dibatasi take: 5 agar ringan)
+      // I. Activities
       prisma.activity.findMany({
         where: { userId },
         orderBy: { createdAt: 'desc' },
@@ -83,7 +94,6 @@ export async function GET(req: Request) {
 
     if (!user) return NextResponse.json(null, { status: 404 });
 
-    // --- 3. Format Data Layout & Appearance ---
     const layout = {
       isLive: user.isLive,
       subdomain: user.profile?.subdomain || null,
@@ -99,12 +109,10 @@ export async function GET(req: Request) {
       canClaimTrial: user.plan === "FREE" && user.transactions && user.transactions.length === 0,
     };
 
-    // --- 4. Format Data Announcements ---
     const formattedAnnouncements = Array.isArray(announcements) ? announcements.map((a: any) => ({
       ...a, isActive: Boolean(a.isActive),
     })) : [];
 
-    // --- 5. Format Data Stats Analytics ---
     const historicalViews = historicalStats.reduce((acc: number, curr: any) => acc + curr.views, 0);
     const todayViews = todayLogs.filter((l: any) => l.type === 'VIEW').length;
     const totalViews = historicalViews + todayViews;
@@ -118,17 +126,14 @@ export async function GET(req: Request) {
     };
 
     if (totalViews > 0) {
-      // Unique visitors: IP unik dari raw logs + estimasi historis
       const uniqueIPs = new Set(todayLogs.map((log: any) => log.ipAddress).filter(Boolean));
       const uniqueVisitors = uniqueIPs.size + Math.round(historicalViews * 0.7);
 
-      // Avg. Time: dari semua rawLogs dalam range (bukan hanya hari ini)
       const logsWithDuration = todayLogs.filter((l: any) => l.duration > 0);
       const totalDuration = logsWithDuration.reduce((acc: number, curr: any) => acc + curr.duration, 0);
       const avgSec = logsWithDuration.length > 0 ? Math.round(totalDuration / logsWithDuration.length) : 0;
       const avgTimeStr = avgSec >= 60 ? `${Math.floor(avgSec / 60)}m ${avgSec % 60}s` : `${avgSec}s`;
 
-      // Bounce Rate: berdasarkan sessionId dalam range
       const sessionsMap: Record<string, number> = {};
       todayLogs.filter((l: any) => l.type === 'VIEW' && l.sessionId).forEach((l: any) => {
         sessionsMap[l.sessionId] = (sessionsMap[l.sessionId] || 0) + 1;
@@ -142,7 +147,6 @@ export async function GET(req: Request) {
         ? Math.round((todayLogs.filter((l: any) => l.duration > 0 && l.duration < 10).length / rawViewCount) * 100)
         : 0;
 
-      // Sources: dari semua raw logs dalam range
       const sourcesMap: Record<string, number> = {};
       todayLogs.filter((l: any) => l.type === 'VIEW').forEach((log: any) => {
         let ref = "Direct";
@@ -168,7 +172,6 @@ export async function GET(req: Request) {
         .map(([name, count]) => ({ name, count, percentage: Math.round((count / (totalRefViews || 1)) * 100) }))
         .sort((a, b) => b.count - a.count);
 
-      // Chart Data: gunakan TANGGAL (YYYY-MM-DD) sebagai key, bukan nama hari
       const dailyMap: Record<string, number> = {};
       historicalStats.forEach((stat: any) => {
         const key = stat.date.toISOString().split('T')[0];
@@ -203,18 +206,27 @@ export async function GET(req: Request) {
       };
     }
 
-    return NextResponse.json({
+    const responseData = {
       layout,
       announcements: formattedAnnouncements,
       stats: statsResult,
       overview: {
-        projectsCount: projectsCount, // LANGSUNG MENGGUNAKAN HASIL COUNT (Angka murni)
-        certificatesCount: certificatesCount, // LANGSUNG MENGGUNAKAN HASIL COUNT
-        linksCount: linksCount, // LANGSUNG MENGGUNAKAN HASIL COUNT
-        testimonialsCount: testimonialsCount,
+        projectsCount,
+        certificatesCount,
+        linksCount,
+        testimonialsCount,
         activities
       }
-    });
+    };
+
+    // ── SIMPAN KE REDIS (TTL: 60 DETIK) ───────────────────────────────────────
+    try {
+      await redis.set(cacheKey, JSON.stringify(responseData), 'EX', 60);
+    } catch (e) {
+      console.warn("⚠️ Redis Dashboard Sync Cache Set Error:", e);
+    }
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error("Dashboard Sync API Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

@@ -1,3 +1,4 @@
+import { invalidatePortfolioCache } from '@/lib/redis';
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
@@ -41,7 +42,7 @@ export async function GET(req: Request) {
 
 // TAMBAH LINK BARU
 export async function POST() {
-  const rateLimitResponse = await checkRateLimit();
+  const rateLimitResponse = await checkRateLimit(15, 60 * 1000, "create_link");
   if (rateLimitResponse) return rateLimitResponse;
 
   const session = await getServerSession(authOptions);
@@ -81,6 +82,10 @@ export async function POST() {
 
   // 2. Catat aktivitasnya
   await logActivity(user.id, "ADD_LINK", `Menambahkan tautan baru ke profil`);
+
+  await invalidatePortfolioCache(user.id);
+
+  
 
   return NextResponse.json(newLink);
 }

@@ -17,13 +17,13 @@ export function SpatialTestimonialsBlock({ data, theme, isMobileView, isCardPrev
   const auraAnim = isCardPreview
       ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
       : { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } } };
-  const viewAnim = isCardPreview
+  const staggerContainer = isCardPreview
       ? { initial: "visible" as const, animate: "visible" as const }
-      : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 } };
+      : { initial: "hidden" as const, whileInView: "visible" as const, viewport: { once: true, amount: 0.1 }, variants: { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } } };
 
   return (
-    <div className={`flex flex-col w-full mt-24 @md:mt-32 px-8`}>
-        <motion.div {...viewAnim} variants={auraAnim} className="mb-8">
+    <motion.div {...staggerContainer} className={`flex flex-col w-full mt-24 @md:mt-32 px-8`}>
+        <motion.div variants={auraAnim} className="mb-8">
             <h2 className={`font-medium tracking-tight text-white text-4xl`}>
                 <EditableText value={theme?.customTexts?.spatial_testimonials_title || 'Client Voices'} field="spatial_testimonials_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
             </h2>
@@ -40,7 +40,7 @@ export function SpatialTestimonialsBlock({ data, theme, isMobileView, isCardPrev
             {testimonials.map((t: any) => (
                 <motion.div
                     key={t.id}
-                    {...viewAnim} variants={auraAnim}
+                    variants={auraAnim}
                     className={`${cardStyleClass} p-8 ${xlCardRadiusClass} flex flex-col gap-6 relative overflow-hidden group hover:border-[var(--hl)]/30 transition-colors`}
                 >
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-[var(--hl)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -70,6 +70,6 @@ export function SpatialTestimonialsBlock({ data, theme, isMobileView, isCardPrev
                 </motion.div>
             ))}
         </div>
-    </div>
+    </motion.div>
   );
 }

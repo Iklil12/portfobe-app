@@ -7,7 +7,14 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls, cla
   const [exposure, setExposure] = useState(1.0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [inView, setInView] = useState(false);
+  const [zoomSense, setZoomSense] = useState(3); // 3 untuk desktop, 1 untuk mobile
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+      setZoomSense(1.2); // Sedikit lebih responsif dari default 1 tapi tidak seliar 3 di mobile
+    }
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -60,7 +67,7 @@ export function Interactive3DViewer({ mediaUrl, bgColor, alwaysShowControls, cla
             reveal="auto"
             touch-action="pan-y"
             interaction-prompt="none"
-            zoom-sensitivity="3"
+            zoom-sensitivity={zoomSense.toString()}
             min-camera-orbit="auto auto 1%"
             style={{ width: '100%', height: '100%', '--poster-color': 'transparent' } as any}
           >

@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+ import { NextResponse } from 'next/server';
+import { invalidatePortfolioCache } from '@/lib/redis';
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -77,6 +78,10 @@ export async function POST(req: Request) {
     });
 
     await logActivity(user.id, "ADD_TESTIMONIAL", `Menambahkan testimoni dari ${clientName}`);
+
+    await invalidatePortfolioCache(user.id);
+
+    
 
     return NextResponse.json(newTestimonial);
   } catch (error) {

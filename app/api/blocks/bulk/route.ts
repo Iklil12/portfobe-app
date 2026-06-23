@@ -1,3 +1,4 @@
+import { invalidatePortfolioCache } from '@/lib/redis';
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -73,6 +74,10 @@ export async function PUT(req: Request) {
     });
 
     await prisma.$transaction([deletePromise, ...updatePromises]);
+
+    await invalidatePortfolioCache(session.user.id);
+
+    
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+ import { NextResponse } from 'next/server';
+import { invalidatePortfolioCache } from '@/lib/redis';
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -56,6 +57,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     await logActivity(user.id, "UPDATE_TESTIMONIAL", `Memperbarui testimoni dari ${updatedTestimonial.clientName}`);
 
+    await invalidatePortfolioCache(user.id);
+
+    
+
     return NextResponse.json(updatedTestimonial);
   } catch (error) {
     console.error("Error updating testimonial:", error);
@@ -86,6 +91,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
     await prisma.testimonial.delete({ where: { id } });
     await logActivity(user.id, "DELETE_TESTIMONIAL", `Menghapus testimoni dari ${existingTestimonial.clientName}`);
+
+    await invalidatePortfolioCache(user.id);
+
+    
 
     return NextResponse.json({ success: true });
   } catch (error) {
