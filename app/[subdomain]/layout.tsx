@@ -2,7 +2,8 @@
 import React from 'react';
 import { ClientTransition } from '@/components/animations/ClientTransition';
 import { Metadata } from 'next';
-import prisma from '@/shared/lib/prisma';
+
+import { getPortfolioData } from '@/features/portfolio/model/portfolioService';
 
 function getOptimizedFavicon(url: string | null | undefined) {
   if (!url) return '/favicon.ico';
@@ -26,17 +27,17 @@ export async function generateMetadata({
   const resolvedParams = await params;
   const subdomain = resolvedParams.subdomain.trim().toLowerCase();
 
+  // JANGAN biarkan Intercepting Route galeri aktif jika kita sedang berada di dashboard
+  const isDashboard = subdomain === 'dashboard' || subdomain === 'settings' || subdomain === 'api';
+  if (isDashboard) {
+    return { title: 'Portfobe' };
+  }
+
   let user = null;
   try {
-    user = await prisma.user.findFirst({
-      where: { profile: { subdomain } },
-      include: { 
-        profile: true,
-        siteAppearance: true
-      },
-    });
+    user = await getPortfolioData(subdomain);
   } catch (error) {
-    console.error("🔥 DATABASE CONNECTION ERROR IN METADATA:", error);
+    console.error("🔥 REDIS/DATABASE CONNECTION ERROR IN METADATA:", error);
   }
 
   if (!user || !user.profile) {
@@ -144,10 +145,7 @@ export default async function SubdomainLayout({
   let user = null;
   if (!isDashboard) {
     try {
-      user = await prisma.user.findFirst({
-        where: { profile: { subdomain } },
-        include: { profile: true },
-      });
+      user = await getPortfolioData(subdomain);
     } catch (error) {
       console.error("🔥 DATABASE CONNECTION ERROR IN SUBDOMAIN LAYOUT:", error);
       throw new Error("Failed to connect to database. Please check your internet connection, or make sure your current IP address is whitelisted in the database.");

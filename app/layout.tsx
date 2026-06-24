@@ -63,6 +63,16 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <script dangerouslySetInnerHTML={{__html: `
+          try {
+            var sub = window.location.hostname === 'localhost' 
+              ? window.location.pathname.split('/')[1] 
+              : window.location.hostname.split('.')[0];
+            if (sessionStorage.getItem('_pfIntroPlayed_' + sub)) {
+              document.documentElement.classList.add('hide-splash');
+            }
+          } catch(e) {}
+        `}} />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

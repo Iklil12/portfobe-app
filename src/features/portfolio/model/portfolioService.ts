@@ -1,8 +1,9 @@
 import prisma from "@/shared/lib/prisma";
 import { redis } from "@/shared/lib/redis";
 import { signBunnyUrl } from "@/shared/lib/bunnySign";
+import { cache } from "react";
 
-export async function getPortfolioData(subdomain: string) {
+export const getPortfolioData = cache(async (subdomain: string) => {
   const userSubdomain = subdomain.trim().toLowerCase();
   const cacheKey = `portfolio_db:${userSubdomain}`;
   let userData: any = null;
@@ -77,4 +78,4 @@ export async function getPortfolioData(subdomain: string) {
     name: userData.profile.fullName || userSubdomain,
     subdomain: userData.profile.subdomain
   };
-}
+});
