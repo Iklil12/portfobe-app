@@ -10,7 +10,7 @@ export function BrutalismFooterBlock({ data, theme, isEditor, isCardPreview }: a
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
 
     const fullName = data?.profile?.fullName || data?.fullName || "JOHN DOE";
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     const [sysTime, setSysTime] = useState("");
 

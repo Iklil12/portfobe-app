@@ -11,6 +11,19 @@ export function KineticAvantGardeShell({ children, theme, isMobileView = false, 
     const accentColor = theme?.themeColor || '#c92a2a'; // Blood Red default
     const customTexts = theme?.customTexts || {};
     const getCustomText = (key: string, fallback: string) => customTexts[key] || fallback;
+    const fontFamily = theme?.fontHeading || 'Anton';
+
+    const getDynamicFont = (f: string, fallback: string) => {
+        if (!f) return fallback;
+        if (f.toLowerCase().includes('mono') || f.toLowerCase().includes('space')) return "'Space Mono', monospace";
+        if (f.toLowerCase().includes('serif') || f.toLowerCase().includes('playfair')) return "'Playfair Display', serif";
+        if (f.toLowerCase().includes('inter') || f.toLowerCase().includes('sans')) return "'Inter', sans-serif";
+        return fallback; // Fallback to theme's original identity if unknown
+    };
+
+    const dynamicFontStr = getDynamicFont(fontFamily, "'Anton', sans-serif");
+    // Also use the dynamic font for mono blocks if the user specifically chose a font, else keep Space Grotesk
+    const dynamicMonoStr = getDynamicFont(fontFamily, "'Space Grotesk', monospace");
 
     useGSAP(() => {
         if (isCardPreview) return;
@@ -19,11 +32,11 @@ export function KineticAvantGardeShell({ children, theme, isMobileView = false, 
     }, { scope: containerRef, dependencies: [isMobileView, isCardPreview, isEditor, theme, accentColor] });
 
     const fontStyleString = `
-        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;700;900&display=swap');
 
-        .font-kag-brutal { font-family: 'Anton', sans-serif; }
-        .font-kag-serif { font-family: 'Playfair Display', serif; }
-        .font-kag-mono { font-family: 'Space Grotesk', monospace; }
+        .font-kag-brutal { font-family: ${dynamicFontStr} !important; }
+        .font-kag-serif { font-family: ${getDynamicFont(fontFamily, "'Playfair Display', serif")} !important; }
+        .font-kag-mono { font-family: ${dynamicMonoStr} !important; }
         
         .kag-theme {
             background-color: #0a0a0a;
@@ -57,6 +70,10 @@ export function KineticAvantGardeShell({ children, theme, isMobileView = false, 
         .kag-text-void { color: #0a0a0a; }
         .kag-text-bone { color: #e6e4dc; }
         .kag-text-blood { color: ${accentColor}; }
+
+        .kag-border-void { border-color: #0a0a0a; }
+        .kag-border-bone { border-color: #e6e4dc; }
+        .kag-border-blood { border-color: ${accentColor}; }
     `;
 
     const content = (

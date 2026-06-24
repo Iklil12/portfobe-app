@@ -337,6 +337,48 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
       progressFill: 'bg-[var(--hl)]',
       iframeBorder: 'border border-white/10 rounded-none',
       calendarColorScheme: 'dark' as const
+    },
+    'kinetic-avant-garde': {
+      section: 'py-32 px-6 md:px-20 kag-bg-void text-white border-t border-white/20 w-full relative z-10',
+      heading: 'font-kag-brutal text-4xl md:text-6xl uppercase tracking-tighter text-[#e6e4dc] mix-blend-difference',
+      label: 'font-kag-mono text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--accent)] bg-[var(--accent)]/10 px-3 py-1 border border-[var(--accent)]/20 mix-blend-difference',
+      border: 'border-white/10',
+      cardBg: 'bg-[#111] border border-white/10 hover:border-[var(--accent)] transition-colors duration-500 rounded-2xl shadow-2xl',
+      icon: 'text-white',
+      textPrimary: 'font-kag-brutal text-2xl font-bold uppercase tracking-tight text-[#e6e4dc] group-hover:text-[var(--accent)] transition-colors',
+      textSecondary: 'font-kag-mono text-[10px] text-white/50 uppercase tracking-widest mt-1',
+      progressBg: 'bg-white/10',
+      progressFill: 'bg-[var(--accent)]',
+      iframeBorder: 'border border-white/10 rounded-xl overflow-hidden',
+      calendarColorScheme: 'dark' as const
+    },
+    'nexus-noir': {
+      section: 'py-24 px-6 md:px-10 border-t border-white/10 bg-[#050505] relative z-20 w-full',
+      heading: 'font-nn-heading text-4xl uppercase tracking-tighter text-white',
+      label: 'font-nn-sans text-[10px] font-bold uppercase tracking-[0.3em] text-white mb-6 block',
+      border: 'border-white/10',
+      cardBg: 'glass-panel p-6 magnetic-card group',
+      icon: 'text-white',
+      textPrimary: 'font-nn-heading text-2xl font-bold uppercase tracking-tight text-white transition-colors',
+      textSecondary: 'font-nn-sans text-[10px] text-white/50 uppercase tracking-widest mt-1',
+      progressBg: 'bg-white/10',
+      progressFill: 'bg-white',
+      iframeBorder: 'border border-white/10',
+      calendarColorScheme: 'dark' as const
+    },
+    'horizontal-flow': {
+      section: 'py-24 w-full max-w-[1600px] mx-auto px-6 md:px-12 relative z-20 bg-[#050505] border-y border-white/10',
+      heading: 'font-display font-medium text-5xl md:text-7xl uppercase tracking-tighter text-white leading-none',
+      label: 'font-mono text-[10px] text-accent uppercase tracking-[0.3em] mb-4',
+      border: 'border-white/10',
+      cardBg: 'bg-[#0a0a0a] border border-white/5 hover:border-accent transition-colors duration-500 p-6 md:p-8',
+      icon: 'text-white/50 group-hover:text-accent transition-colors',
+      textPrimary: 'text-white/80 group-hover:text-white font-display text-2xl md:text-3xl uppercase tracking-wide transition-colors',
+      textSecondary: 'text-white/40 group-hover:text-white/60 font-mono text-[10px] uppercase tracking-widest mt-2',
+      progressBg: 'bg-white/5',
+      progressFill: 'bg-accent',
+      iframeBorder: 'border border-white/10',
+      calendarColorScheme: 'dark' as const
     }
   };
 

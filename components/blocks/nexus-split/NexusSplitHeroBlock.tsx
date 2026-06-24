@@ -34,7 +34,7 @@ export function NexusSplitHeroBlock({ data, theme, isEditor }: any) {
   const cleanAvatar = rawAvatar.replace(/"/g, '').trim();
   const displayAvatar = (cleanAvatar !== "" && cleanAvatar !== "null") ? cleanAvatar : `https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop`;
 
-  const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+  const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
   
   const rawHighlightColor = theme?.themeColor || '#4f46e5';
   const highlightColor = /^#([0-9A-Fa-f]{3}){1,2}$/i.test(rawHighlightColor) ? rawHighlightColor : '#4f46e5';

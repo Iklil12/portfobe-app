@@ -13,7 +13,7 @@ export function BentoGridStatsBlock({ data, theme, isEditor, isCardPreview }: an
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const allProjects = data?.projects || data?.user?.projects || [];
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d');
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     const githubLink = links.find((l: any) => l.platform.toLowerCase().includes('github'));
     const linkedinLink = links.find((l: any) => l.platform.toLowerCase().includes('linkedin'));

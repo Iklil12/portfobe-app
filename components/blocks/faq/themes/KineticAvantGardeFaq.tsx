@@ -56,7 +56,7 @@ export default function KineticAvantGardeFaq({ data, theme, isEditor }: { data: 
       </div>
 
       <div className="relative z-10 w-full max-w-5xl">
-        <h2 className="text-6xl md:text-8xl font-black mb-16 tracking-tighter uppercase leading-none" style={{ fontFamily: 'var(--font-heading)' }}>
+        <h2 className="text-5xl md:text-8xl font-black mb-12 md:mb-16 tracking-tighter uppercase leading-none break-words" style={{ fontFamily: 'var(--font-heading)' }}>
           <EditableText 
             value={theme?.customTexts?.faq_main_title || 'Got'} 
             field="faq_main_title" 
@@ -90,15 +90,15 @@ export default function KineticAvantGardeFaq({ data, theme, isEditor }: { data: 
                   onClick={() => setOpenIndex(isOpen ? null : i)}
                   className="w-full py-8 px-6 flex justify-between items-center text-left focus:group"
                 >
-                  <span className="text-3xl md:text-4xl font-bold uppercase tracking-tight w-5/6" style={{ fontFamily: 'var(--font-heading)' }}>
+                  <span className="text-xl md:text-4xl font-bold uppercase tracking-tight w-5/6 break-words pr-4" style={{ fontFamily: 'var(--font-heading)' }}>
                     <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"rounded-none block w-full px-1"} />
                   </span>
                   <motion.div
                     animate={{ rotate: isOpen ? 135 : 0 }}
                     transition={{ duration: 0.4, ease: "anticipate" }}
-                    className={`w-16 h-16 rounded-full shrink-0 flex items-center justify-center border-4 transition-colors ${isOpen ? 'border-[#FF3300] text-[#FF3300]' : 'border-black text-black group-hover:bg-black group-hover:text-[#FF3300]'}`}
+                    className={`w-12 h-12 md:w-16 md:h-16 rounded-full shrink-0 flex items-center justify-center border-4 transition-colors ${isOpen ? 'border-[#FF3300] text-[#FF3300]' : 'border-black text-black group-hover:bg-black group-hover:text-[#FF3300]'}`}
                   >
-                    <i className="fas fa-plus text-2xl"></i>
+                    <i className="fas fa-plus text-xl md:text-2xl"></i>
                   </motion.div>
                 </button>
                 <AnimatePresence>
@@ -110,7 +110,7 @@ export default function KineticAvantGardeFaq({ data, theme, isEditor }: { data: 
                       transition={{ duration: 0.3, ease: "easeOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-12 pt-4 text-xl md:text-2xl font-medium leading-relaxed max-w-3xl text-white" style={{ fontFamily: 'var(--font-body)' }}>
+                      <div className="px-6 pb-8 md:pb-12 pt-4 text-sm md:text-2xl font-medium leading-relaxed max-w-3xl text-white" style={{ fontFamily: 'var(--font-body)' }}>
                         <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={250} className={"rounded-none block w-full px-1 min-h-[2rem]"} />
                       </div>
                     </motion.div>

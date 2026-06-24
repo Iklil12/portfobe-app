@@ -22,9 +22,25 @@ export function HorizontalFlowHeroBlock({ data, theme, isEditor }: any) {
 
     return (
         <section ref={containerRef} className="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden px-4" id="hero">
-            <div className="absolute inset-0 z-0 opacity-40">
-                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop" className="w-full h-full object-cover hero-bg grayscale" alt="Abstract" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent"></div>
+            <div className="absolute inset-0 z-0 bg-[#050505]">
+                {/* Architectural Grid - Extremely lightweight */}
+                <div 
+                    className="absolute inset-0 opacity-20" 
+                    style={{ 
+                        backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px)', 
+                        backgroundSize: '100px 100px' 
+                    }}
+                ></div>
+                {/* Static Subtle Glow - Fast rendering, no blur filters needed */}
+                <div 
+                    className="absolute inset-0" 
+                    style={{ 
+                        background: `radial-gradient(circle at 50% 0%, ${theme?.themeColor || '#4F46E5'}15 0%, transparent 70%)` 
+                    }}
+                ></div>
+                {/* Dark Vignette Overlay */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050505_100%)] opacity-80"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
             </div>
 
             <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-start mt-20">

@@ -10,7 +10,7 @@ export function MonolithFooterBlock({ data, theme, isEditor, isCardPreview }: an
     const fullName = data?.profile?.fullName || data?.fullName || "Budi Arsitek";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     const handleCopyEmail = (e: React.MouseEvent) => {
         e.preventDefault();

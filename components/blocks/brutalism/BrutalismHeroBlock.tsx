@@ -17,7 +17,7 @@ export function BrutalismHeroBlock({ data, theme, isEditor, isCardPreview }: any
     const bio = data?.profile?.bio || data?.bio || "Executing raw logic into brutal visual experiences. Unapologetic design systems.";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `connect@${subdomain}.net`;
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.avatar || "";
     const cleanAvatar = rawAvatar.replace(/"/g, '').trim();

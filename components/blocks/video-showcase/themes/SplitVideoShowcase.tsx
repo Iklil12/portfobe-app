@@ -29,48 +29,54 @@ export default function SplitVideoShowcase({ data, theme, isEditor }: any) {
   }
 
   return (
-    <section className="py-0 w-full flex flex-col bg-black border-y border-white/5">
-      {/* Top Section: Title & Description (Full Width - Dark Theme) */}
-      <div className="w-full flex flex-col justify-center p-12 @md:p-16 border-b border-white/5">
+    <section className="w-full flex flex-col bg-[#050505] border-y border-white/5 relative overflow-hidden">
+      {/* Top Section: Text Content */}
+      <div className="w-full flex flex-col justify-center p-8 md:p-12 lg:p-16 border-b border-white/5 relative z-10">
         <motion.div
           initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }}
           variants={{
-            hidden: { opacity: 0, y: -20 },
+            hidden: { opacity: 0, y: 20 },
             visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
           }}
         >
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/40 mb-3 block">
-            <EditableText value={theme?.customTexts?.showcase_subtitle || 'Case Study'} field="showcase_subtitle" entity="appearance" isEditor={isEditor} maxLength={30} />
-          </span>
-          <h2 className="text-4xl @md:text-6xl font-black tracking-tighter text-white mb-6 leading-none">
-            <EditableText value={theme?.customTexts?.showcase_title || 'Visual Focus'} field="showcase_title" entity="appearance" isEditor={isEditor} maxLength={50} />
+          <div className="flex items-center gap-4 mb-8">
+            <span className="w-12 h-[1px] bg-white/20"></span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
+              <EditableText value={theme?.customTexts?.showcase_subtitle || 'Visual Archive'} field="showcase_subtitle" entity="appearance" isEditor={isEditor} maxLength={30} />
+            </span>
+          </div>
+          
+          <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-6 leading-[0.9] -ml-1">
+            <EditableText value={theme?.customTexts?.showcase_title || 'Showcase'} field="showcase_title" entity="appearance" isEditor={isEditor} maxLength={50} />
           </h2>
           
-          <div className="mt-6 pt-6 border-t border-white/10 flex flex-col gap-2">
-            <h3 className="text-lg font-bold text-white">{featuredVideo.title}</h3>
+          <div className="mt-8 flex flex-col gap-2">
+            <h3 className="text-xl font-medium tracking-wide text-white/90">{featuredVideo.title}</h3>
             {featuredVideo.description && (
-              <p className="text-white/60 leading-relaxed text-sm max-w-2xl">{featuredVideo.description}</p>
+              <p className="text-white/50 leading-relaxed text-sm max-w-xl">{featuredVideo.description}</p>
             )}
           </div>
         </motion.div>
       </div>
 
-      {/* Bottom Section: Video Player Container (Full Width, Centered, Large Aspect) */}
-      <div className="w-full bg-black flex items-center justify-center p-6 @md:p-12">
+      {/* Bottom Section: Video Player */}
+      <div className="w-full bg-[#0a0a0a] flex items-center justify-center p-4 md:p-12 relative overflow-hidden group">
         <motion.div
           initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }}
           variants={{
-            hidden: { opacity: 0, scale: 0.95 },
-            visible: { opacity: 1, scale: 1, transition: { duration: 1, delay: 0.1, ease: "circOut" } }
+            hidden: { opacity: 0, scale: 0.98 },
+            visible: { opacity: 1, scale: 1, transition: { duration: 1, delay: 0.2, ease: "easeOut" } }
           }}
-          className="w-full aspect-video shadow-2xl relative pointer-events-auto"
+          className="w-full aspect-video shadow-2xl relative pointer-events-auto border border-white/5 bg-black"
         >
            {isAutoPlay ? (
-             <div className="w-full h-full opacity-90 hover:opacity-100 transition-opacity duration-500 pointer-events-auto">
+             <div className="w-full h-full flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-700 pointer-events-auto">
                <UniversalPlayer mediaUrl={featuredVideo.mediaUrl} title={featuredVideo.title} autoPlayMode={true} />
              </div>
            ) : (
-             <UniversalPlayer mediaUrl={featuredVideo.mediaUrl} title={featuredVideo.title} />
+             <div className="w-full h-full flex items-center justify-center">
+               <UniversalPlayer mediaUrl={featuredVideo.mediaUrl} title={featuredVideo.title} />
+             </div>
            )}
         </motion.div>
       </div>

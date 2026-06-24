@@ -117,7 +117,7 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia, is
         break;
       case 'nexus-noir':
         switch(baseBlockType) {
-          case 'MARQUEE': content = <NexusNoirMarqueeBlock />; break;
+          case 'MARQUEE': content = <NexusNoirMarqueeBlock {...commonProps} />; break;
           case 'PROJECTS': content = <NexusNoirProjectsBlock {...commonProps} setSelectedMedia={setSelectedMedia} />; break;
           case 'PENPOT': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><PenpotShowcase userId={userId} variant="nexus-noir" /></div> : null; break;
           case 'CANVA': content = data?.id || data?.userId ? <div className="w-full bg-[#030303] text-white"><CanvaShowcase userId={userId} variant="nexus-noir" /></div> : null; break;
@@ -126,9 +126,9 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia, is
         break;
       case 'horizontal-flow':
         switch(baseBlockType) {
-          case 'PENPOT': content = data?.id || data?.userId ? <div className="border-t border-white/10 py-10 px-6"><PenpotShowcase userId={userId} variant="horizontal-flow" /></div> : null; break;
-          case 'CANVA': content = data?.id || data?.userId ? <div className="border-t border-white/10 py-10 px-6"><CanvaShowcase userId={userId} variant="horizontal-flow" /></div> : null; break;
-          case 'GITHUB': content = data?.id || data?.userId ? <div className="border-t border-white/10 py-10 px-6"><GithubStats userId={userId} variant="horizontal-flow" /></div> : null; break;
+          case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="horizontal-flow" themeColor={themeColor} /> : null; break;
+          case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="horizontal-flow" themeColor={themeColor} /> : null; break;
+          case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="horizontal-flow" themeColor={themeColor} /> : null; break;
         }
         break;
       case 'midnight-emulsion':
@@ -231,9 +231,9 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia, is
         break;
       case 'kinetic-avant-garde':
         switch(baseBlockType) {
-          case 'PENPOT': content = data?.id || data?.userId ? <div className="kag-bg-void kag-text-bone w-full border-t-8 border-black"><PenpotShowcase userId={userId} variant="kinetic-avant-garde" /></div> : null; break;
-          case 'CANVA': content = data?.id || data?.userId ? <div className="kag-bg-void kag-text-bone w-full border-t-8 border-black"><CanvaShowcase userId={userId} variant="kinetic-avant-garde" /></div> : null; break;
-          case 'GITHUB': content = data?.id || data?.userId ? <div className="kag-bg-void kag-text-bone w-full border-t-8 border-black"><GithubStats userId={userId} variant="kinetic-avant-garde" /></div> : null; break;
+          case 'PENPOT': content = data?.id || data?.userId ? <PenpotShowcase userId={userId} variant="kinetic-avant-garde" themeColor={themeColor} /> : null; break;
+          case 'CANVA': content = data?.id || data?.userId ? <CanvaShowcase userId={userId} variant="kinetic-avant-garde" themeColor={themeColor} /> : null; break;
+          case 'GITHUB': content = data?.id || data?.userId ? <GithubStats userId={userId} variant="kinetic-avant-garde" themeColor={themeColor} /> : null; break;
         }
         break;
     }

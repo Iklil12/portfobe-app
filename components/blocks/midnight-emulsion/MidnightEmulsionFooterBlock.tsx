@@ -9,7 +9,7 @@ export function MidnightEmulsionFooterBlock({ data, theme, isEditor }: any) {
   const [copied, setCopied] = useState(false);
   
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
-  const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+  const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
   const fullName = data?.profile?.fullName || data?.fullName || "Director Name";
   const emailAddress = data?.profile?.email || data?.user?.email || `${subdomain}@example.com`;
 

@@ -19,7 +19,7 @@ export function SplitScreenStudioFooterBlock({ data, theme, isEditor }: any) {
     const fullName = data?.profile?.fullName || data?.fullName || "Elevate Studio";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = (data?.profile?.links || data?.links || data?.user?.links || []).filter((l: any) => l.isActive !== false);
 
     const customTexts = theme?.customTexts || {};
     const getCustomText = (key: string, fallback: string) => customTexts[key] || fallback;

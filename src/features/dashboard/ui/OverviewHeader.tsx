@@ -79,14 +79,14 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
             className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-none bg-[#ff9e00] text-black font-mono font-bold text-xs md:text-sm hover:bg-[#ffaa22] active:scale-95 transition-all duration-300"
           >
             <Plus className="w-4 h-4 md:hidden" />
-            <span className="whitespace-nowrap uppercase tracking-wider">New Project</span>
+            <span className="whitespace-nowrap uppercase tracking-wider">Project</span>
           </Link>
           <Link
             href="/dashboard/appearance"
             className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-none border border-white/10 bg-transparent text-white/80 hover:bg-white/5 hover:text-white transition-all duration-300 font-mono font-bold text-xs md:text-sm"
           >
             <Edit className="w-4 h-4" />
-            <span className="whitespace-nowrap uppercase tracking-wider">Editor Canvas</span>
+            <span className="whitespace-nowrap uppercase tracking-wider">Canvas</span>
           </Link>
 
           {/* Mobile: compact icon buttons for Bagikan & Lihat Web */}

@@ -46,121 +46,116 @@ export default function HorizontalFlowFaq({ data, theme, isEditor }: { data: any
     if (openIndex === index) setOpenIndex(null);
   };
 
-  // Horizontal scroll hook untuk mouse wheel
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        container.scrollLeft += e.deltaY;
-      }
-    };
-
-    container.addEventListener('wheel', handleWheel, { passive: false });
-    return () => container.removeEventListener('wheel', handleWheel);
-  }, []);
-
   return (
-    <div className="w-full h-full min-h-screen py-24 px-8 group/faq bg-[#f8f9fa] flex flex-col justify-center overflow-hidden">
-      <div className="mb-12 shrink-0">
-        <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-neutral-900" style={{ fontFamily: 'var(--font-heading)' }}>
-          <EditableText 
-            value={theme?.customTexts?.faq_main_title || 'FAQ'} 
-            field="faq_main_title" 
-            entity="appearance" 
-            isEditor={isEditor} 
-            as="span" 
-            maxLength={20} 
-          />
-        </h2>
-        <p className="text-neutral-500 mt-4 max-w-md text-lg">
-          <EditableText 
-            value={theme?.customTexts?.faq_desc || 'Scroll horizontally to explore common questions.'} 
-            field="faq_desc" 
-            entity="appearance" 
-            isEditor={isEditor} 
-            as="span" 
-            maxLength={100} 
-          />
-        </p>
-      </div>
+    <div className="w-full h-full py-32 group/faq bg-[#050505] overflow-hidden relative z-20">
       
-      <div 
-        ref={containerRef}
-        className="flex gap-6 overflow-x-auto pb-12 pt-4 snap-x snap-mandatory hide-scrollbar relative z-10"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {faqs.map((faq: any, i: number) => {
-          const isOpen = openIndex === i;
-          return (
-            <motion.div 
-              key={i} 
-              layout
-              className={`relative bg-white rounded-3xl p-8 shrink-0 snap-center shadow-lg border border-neutral-100 duration-500 group/item ${
-                isOpen ? 'w-[80vw] md:w-[60vw]' : 'w-[80vw] md:w-[30vw] hover:shadow-xl'
-              }`}
-            >
-              <div className="flex flex-col h-full justify-between gap-8">
-                <div>
-                  <div className="flex justify-between items-start mb-6">
-                    <span className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 font-bold shrink-0">
-                      0{i + 1}
-                    </span>
-                    {isEditor && (
-                      <button 
-                        onClick={(e) => handleRemoveItem(i, e)}
-                        className="text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-10 h-10 flex items-center justify-center bg-red-50 rounded-full hover:bg-red-100"
-                        title="Delete Question"
-                      >
-                        <i className="fas fa-trash text-sm"></i>
-                      </button>
-                    )}
-                  </div>
-                  <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 mb-4" style={{ fontFamily: 'var(--font-heading)' }}>
-                    <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"block w-full px-1"} />
-                  </h3>
-                </div>
-                
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.4 }}
+      {/* Background Ambient */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-accent/5 rounded-full blur-[150px] pointer-events-none"></div>
+
+      <div className="max-w-[1400px] mx-auto w-full px-6 md:px-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-24">
+            <h2 className="font-display text-5xl md:text-8xl font-bold uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20 leading-[0.85]">
+              <EditableText 
+                value={theme?.customTexts?.faq_main_title || 'INQUIRIES'} 
+                field="faq_main_title" 
+                entity="appearance" 
+                isEditor={isEditor} 
+                as="span" 
+                maxLength={20} 
+              />
+            </h2>
+            <p className="font-mono text-xs md:text-sm text-accent uppercase tracking-[0.3em] max-w-xs text-left md:text-right border-l md:border-l-0 md:border-r border-white/20 pl-4 md:pl-0 md:pr-4 py-2">
+              <EditableText 
+                value={theme?.customTexts?.faq_desc || '0X / FREQUENTLY ASKED QUESTIONS'} 
+                field="faq_desc" 
+                entity="appearance" 
+                isEditor={isEditor} 
+                as="span" 
+                maxLength={100} 
+              />
+            </p>
+        </div>
+      
+        <div className="flex flex-col border-t border-white/20 relative z-10 w-full">
+          {faqs.map((faq: any, i: number) => {
+            const isOpen = openIndex === i;
+            return (
+              <div 
+                key={i} 
+                className={`relative group/item flex flex-col border-b border-white/10 transition-colors duration-500 cursor-pointer ${
+                  isOpen ? 'bg-[#0a0a0a]' : 'hover:bg-[#080808]'
+                }`}
+                onClick={() => setOpenIndex(isOpen ? null : i)}
+              >
+                {/* Main Row */}
+                <div className="w-full flex items-start gap-6 md:gap-12 py-10 md:py-16 px-4 md:px-8 relative overflow-hidden">
+                  
+                  {/* Delete Button (Editor Only) */}
+                  {isEditor && (
+                    <button 
+                      onClick={(e) => handleRemoveItem(i, e)}
+                      className="absolute top-1/2 -translate-y-1/2 -left-2 bg-red-500 text-white opacity-0 group-hover/item:opacity-100 transition-opacity w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-600 z-20 text-[10px]"
+                      title="Delete Question"
                     >
-                      <div className="text-neutral-500 text-lg leading-relaxed pt-6 border-t border-neutral-100" style={{ fontFamily: 'var(--font-body)' }}>
-                        <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={250} className={"block w-full px-1 min-h-[2rem]"} />
-                      </div>
-                    </motion.div>
+                      ✕
+                    </button>
                   )}
-                </AnimatePresence>
 
-                <button
-                  onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="mt-auto self-start flex items-center gap-2 text-neutral-900 font-bold uppercase tracking-widest text-sm hover:opacity-70 transition-opacity"
+                  {/* Index Number */}
+                  <div className="font-mono text-sm md:text-base text-white/30 tracking-[0.2em] w-12 shrink-0 pt-2 md:pt-4">
+                    {(i + 1).toString().padStart(2, '0')}
+                  </div>
+
+                  {/* Question */}
+                  <div className="flex-1 flex flex-col justify-center">
+                    <h3 className={`font-display uppercase tracking-tighter transition-colors duration-500 leading-[0.9] pr-12 md:pr-24 ${isOpen ? 'text-4xl md:text-6xl text-accent' : 'text-3xl md:text-5xl text-white group-hover/item:text-white/80'}`}>
+                      <div onClick={(e) => isEditor && e.stopPropagation()}>
+                        <EditableText value={faq.q} onChange={(val) => handleUpdateItem(i, "q", val)} isEditor={isEditor} maxLength={150} className={"block w-full px-1"} />
+                      </div>
+                    </h3>
+                  </div>
+
+                  {/* Toggle Icon */}
+                  <div className={`absolute top-10 md:top-16 right-4 md:right-8 w-12 h-12 border border-white/10 rounded-full flex items-center justify-center transition-transform duration-500 shrink-0 ${isOpen ? 'rotate-45 bg-white text-black' : 'text-white'}`}>
+                    <svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M7 0V14M0 7H14" stroke="currentColor" strokeWidth="1.5"/>
+                    </svg>
+                  </div>
+                </div>
+                  
+                {/* Answer Content */}
+                <div 
+                  className={`overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
                 >
-                  {isOpen ? 'Close' : 'Read More'}
-                  <i className={`fas ${isOpen ? 'fa-arrow-left' : 'fa-arrow-right'}`}></i>
-                </button>
-              </div>
-            </motion.div>
-          );
-        })}
+                  <div className="pl-24 md:pl-[6.5rem] pr-4 md:pr-32 pb-16">
+                    <div className="font-body text-white/60 text-lg md:text-xl leading-relaxed pt-8 border-t border-white/10">
+                      <div onClick={(e) => isEditor && e.stopPropagation()}>
+                        <EditableText value={faq.a} onChange={(val) => handleUpdateItem(i, "a", val)} isEditor={isEditor} maxLength={500} className={"block w-full px-1 min-h-[2rem]"} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-        {isEditor && (
-          <div className="shrink-0 flex items-center justify-center w-[80vw] md:w-[20vw] px-8">
-            <button 
-              onClick={handleAddItem}
-              className="w-full h-full min-h-[300px] rounded-3xl border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center gap-4 text-neutral-400 hover:text-neutral-900 hover:border-neutral-900 transition-colors opacity-0 group-hover/faq:opacity-100"
-            >
-              <i className="fas fa-plus text-3xl"></i>
-              <span className="font-bold uppercase tracking-widest text-sm">Add Card</span>
-            </button>
-          </div>
-        )}
+                {/* Massive Hollow Index (Background Detail) */}
+                <div className="absolute bottom-4 right-8 font-display text-[8rem] md:text-[12rem] font-bold tracking-tighter text-transparent opacity-5 group-hover/item:opacity-10 transition-opacity pointer-events-none leading-none -z-10" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.8)' }}>
+                  {(i + 1).toString().padStart(2, '0')}
+                </div>
+              </div>
+            );
+          })}
+
+          {isEditor && (
+            <div className="w-full flex justify-end mt-12">
+              <button 
+                onClick={handleAddItem}
+                className="flex items-center gap-4 px-8 py-4 bg-white/5 hover:bg-white text-white hover:text-black font-mono text-xs uppercase tracking-[0.2em] transition-all duration-300"
+              >
+                <span>+ Append Inquiry</span>
+                <div className="w-12 h-[1px] bg-current"></div>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

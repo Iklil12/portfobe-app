@@ -26,8 +26,12 @@ export function NexusNoirProjectsBlock({ data, theme, isEditor, setSelectedMedia
             <div className="max-w-7xl mx-auto w-full">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20">
                     <div className={isEditor ? '' : 'gs-reveal'}>
-                        <p className="text-sm tracking-widest uppercase mb-4" style={{ color: accentColor }}>[ Selected Works ]</p>
-                        <h2 className="font-nn-heading text-4xl md:text-6xl font-semibold">Digital<br/>Artifacts.</h2>
+                        <p className="text-sm tracking-widest uppercase mb-4" style={{ color: accentColor }}>
+                            <EditableText entity="appearance" field="nn_work_subtitle" value={getCustomText('nn_work_subtitle', '[ Selected Works ]')} isEditor={isEditor} />
+                        </p>
+                        <h2 className="font-nn-heading text-4xl md:text-6xl font-semibold whitespace-pre-line">
+                            <EditableText entity="appearance" field="nn_work_title" value={getCustomText('nn_work_title', 'Digital\nArtifacts.')} isEditor={isEditor} />
+                        </h2>
                     </div>
                     <p className={`text-[#888888] text-sm mt-4 md:mt-0 text-left md:text-right max-w-xs ${isEditor ? '' : 'gs-reveal'}`}>
                         <EditableText entity="appearance" field="nn_work_desc" value={getCustomText('nn_work_desc', 'Koleksi proyek pilihan dengan fokus pada interaktivitas dan estetika presisi.')} isEditor={isEditor} />

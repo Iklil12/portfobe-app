@@ -10,7 +10,7 @@ export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: an
   const fullName = data?.profile?.fullName || data?.fullName || "JAMAL ARIFIN";
   const profession = data?.profile?.profession || data?.profession || "Cinematographer & Editor";
   const bio = data?.profile?.bio || data?.bio || "Weaving light, shadow, and sound to capture the human experience. Specializing in high-end commercial and narrative films.";
-  const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+  const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
   const nameParts = fullName.split(' ');
   const firstName = nameParts[0]?.toUpperCase() || "VISUAL";

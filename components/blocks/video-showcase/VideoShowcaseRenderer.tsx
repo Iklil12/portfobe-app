@@ -37,6 +37,7 @@ export default function VideoShowcaseRenderer({ themeId, data, theme, isEditor, 
       return <LayeredMonolithVideoShowcase data={data} theme={theme} isEditor={isEditor} />;
     case 'editorial':
       return <EditorialVideoShowcase data={data} theme={theme} isEditor={isEditor} />;
+    case 'split-screen-studio':
     case 'split':
       return <SplitVideoShowcase data={data} theme={theme} isEditor={isEditor} />;
     case 'cinematic':

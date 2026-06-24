@@ -10,7 +10,7 @@ export function CinematicGalleryFooterBlock(props: any) {
     const fullName = data?.profile?.fullName || data?.fullName || "Ruang Studio";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "ruang";
     const userEmail = data?.email || data?.user?.email || `studio@${subdomain}.art`;
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     return (
         <section className="panel flex-col items-center justify-center bg-[#f5f5f0] text-[#050505] relative">

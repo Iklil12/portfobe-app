@@ -11,7 +11,7 @@ export function NexusSplitFooterBlock({ data, theme, isEditor, isCardPreview }: 
   const fullName = data?.profile?.fullName || data?.fullName || "Budi Arsitek";
   const userEmail = data?.email || data?.user?.email || `hello@username.com`;
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
-  const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+  const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
   const buttonShape = theme?.buttonShape || 'rounded';
   const radiusClass = buttonShape === 'square' || buttonShape === 'hard' ? 'rounded-none' : buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';

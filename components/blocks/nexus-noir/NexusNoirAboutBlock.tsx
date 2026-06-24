@@ -11,8 +11,12 @@ export function NexusNoirAboutBlock({ theme, isEditor }: any) {
         <section id="about" className="py-32 px-6 relative z-20">
             <div className="max-w-7xl mx-auto w-full">
                 <div className={`mb-16 ${isEditor ? '' : 'gs-reveal'}`}>
-                    <p className="text-sm tracking-widest uppercase mb-4" style={{ color: accentColor }}>[ Core Arsenal ]</p>
-                    <h2 className="font-nn-heading text-4xl md:text-5xl font-semibold">Bento Grid<br/>Expertise.</h2>
+                    <p className="text-sm tracking-widest uppercase mb-4" style={{ color: accentColor }}>
+                        <EditableText entity="appearance" field="nn_bento_subtitle" value={getCustomText('nn_bento_subtitle', '[ Core Arsenal ]')} isEditor={isEditor} />
+                    </p>
+                    <h2 className="font-nn-heading text-4xl md:text-5xl font-semibold whitespace-pre-line">
+                        <EditableText entity="appearance" field="nn_bento_title" value={getCustomText('nn_bento_title', 'Bento Grid\nExpertise.')} isEditor={isEditor} />
+                    </h2>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[220px]">
@@ -51,7 +55,9 @@ export function NexusNoirAboutBlock({ theme, isEditor }: any) {
                             <p className="text-white text-lg font-nn-heading mb-1">
                                 <EditableText entity="appearance" field="nn_bento_d3" value={getCustomText('nn_bento_d3', 'Jakarta, ID')} isEditor={isEditor} />
                             </p>
-                            <p className="text-[#888888] text-xs font-mono">GMT+7 / Remote</p>
+                            <p className="text-[#888888] text-xs font-mono">
+                                <EditableText entity="appearance" field="nn_bento_d3_sub" value={getCustomText('nn_bento_d3_sub', 'GMT+7 / Remote')} isEditor={isEditor} />
+                            </p>
                         </div>
                     </div>
 

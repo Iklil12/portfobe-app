@@ -45,6 +45,7 @@ export default function FaqRenderer({ themeId, data, theme, isEditor }: FaqRende
     case 'midnight-emulsion': return <MidnightEmulsionFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'nexus-noir': return <NexusNoirFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'aura-kinetic': return <AuraKineticFaq data={data} theme={theme} isEditor={isEditor} />;
+    case 'split-screen-studio':
     case 'split': return <SplitFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'monolith': return <MonolithFaq data={data} theme={theme} isEditor={isEditor} />;
     case 'layered-monolith': return <LayeredMonolithFaq data={data} theme={theme} isEditor={isEditor} />;

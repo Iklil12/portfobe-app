@@ -10,7 +10,7 @@ export function AcidTechFooterBlock({ data, theme, isEditor, isCardPreview }: an
     const fullName = data?.profile?.fullName || data?.fullName || "Jamal Arifin";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     const rawThemeColor = theme?.themeColor || "#00ff00";
     const themeColor = /^#([0-9A-Fa-f]{3}){1,2}$/i.test(rawThemeColor) ? rawThemeColor : "#00ff00";

@@ -186,6 +186,7 @@ export function NexusNoirShell({ children, theme, isMobileView, isCardPreview, i
 
         .marquee-wrap { overflow: hidden; display: flex; position: relative; }
         .marquee-inner { display: flex; white-space: nowrap; animation: marquee 20s linear infinite; }
+        .marquee-wrap:hover .marquee-inner { animation-play-state: paused; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         .project-card .img-wrap { overflow: hidden; position: relative; }

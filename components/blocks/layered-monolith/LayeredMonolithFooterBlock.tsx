@@ -5,7 +5,7 @@ export function LayeredMonolithFooterBlock({ data, theme, isEditor = false }: an
     const fullName = data?.profile?.fullName || data?.fullName || "Elevate Studio";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     const [timeString, setTimeString] = useState('00:00:00 WIB');
 

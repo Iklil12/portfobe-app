@@ -22,8 +22,12 @@ export function NexusNoirServicesBlock({ theme, isEditor }: any) {
         <section className="py-20 px-6 relative z-20">
             <div className="max-w-7xl mx-auto w-full">
                 <div className={`mb-16 ${isEditor ? '' : 'gs-reveal'}`}>
-                    <p className="text-sm tracking-widest uppercase mb-4" style={{ color: accentColor }}>[ Capabilities ]</p>
-                    <h2 className="font-nn-heading text-4xl md:text-5xl font-semibold">Service<br/>Offerings.</h2>
+                    <p className="text-sm tracking-widest uppercase mb-4" style={{ color: accentColor }}>
+                        <EditableText entity="appearance" field="nn_svc_subtitle" value={getCustomText('nn_svc_subtitle', '[ Capabilities ]')} isEditor={isEditor} />
+                    </p>
+                    <h2 className="font-nn-heading text-4xl md:text-5xl font-semibold whitespace-pre-line">
+                        <EditableText entity="appearance" field="nn_svc_title" value={getCustomText('nn_svc_title', 'Service\nOfferings.')} isEditor={isEditor} />
+                    </h2>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

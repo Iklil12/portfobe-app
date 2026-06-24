@@ -10,7 +10,7 @@ export function SpatialFooterBlock({ data, theme, isMobileView, isCardPreview, i
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
   const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
   const fullName = data?.profile?.fullName || data?.fullName || "Budi Arsitek";
-  const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+  const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
   const rawHighlightColor = theme?.themeColor || '#6366f1';
   const highlightColor = isValidHexColor(rawHighlightColor) ? rawHighlightColor : '#6366f1';

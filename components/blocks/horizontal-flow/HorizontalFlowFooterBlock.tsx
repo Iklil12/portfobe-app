@@ -5,7 +5,7 @@ export function HorizontalFlowFooterBlock({ data, theme, isEditor }: any) {
     const fullName = data?.profile?.fullName || data?.fullName || "Elevate Studio";
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     return (
         <section id="contact" className="bg-accent text-bg py-20 px-6 md:px-10 relative overflow-hidden flex flex-col justify-between min-h-[80vh] z-20">

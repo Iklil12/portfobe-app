@@ -198,7 +198,7 @@ export function BentoGridHeroBlock({ data, theme, isEditor, isCardPreview }: any
     const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
     const allProjects = data?.projects || data?.user?.projects || [];
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d');
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
     const cleanAvatar = rawAvatar.replace(/"/g, '').trim();

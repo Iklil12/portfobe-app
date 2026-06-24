@@ -8,7 +8,7 @@ export function ObsidianFooterBlock({ data, theme, isEditor }: any) {
   const fullName = data?.profile?.fullName || data?.fullName || "Lacete Studio";
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
   const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
-  const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+  const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
   const getBtnShapeClass = (shape?: string) => {
       if (shape === 'hard' || shape === 'square') return 'rounded-none';

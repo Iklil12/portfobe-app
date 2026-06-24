@@ -47,8 +47,12 @@ export function NexusNoirExperienceBlock({ theme, isEditor }: any) {
         <section id="experience" className="py-32 px-6 bg-[#030303] relative z-20">
             <div className="max-w-7xl mx-auto w-full">
                 <div className={`text-center mb-24`}>
-                    <p className="text-sm tracking-widest uppercase mb-4" style={{ color: accentColor }}>[ The Journey ]</p>
-                    <h2 className="font-nn-heading text-4xl md:text-5xl font-semibold">Professional<br/>Timeline.</h2>
+                    <p className="text-sm tracking-widest uppercase mb-4" style={{ color: accentColor }}>
+                        <EditableText entity="appearance" field="nn_exp_subtitle" value={customTexts.nn_exp_subtitle || '[ The Journey ]'} isEditor={isEditor} />
+                    </p>
+                    <h2 className="font-nn-heading text-4xl md:text-5xl font-semibold whitespace-pre-line">
+                        <EditableText entity="appearance" field="nn_exp_title" value={customTexts.nn_exp_title || 'Professional\nTimeline.'} isEditor={isEditor} />
+                    </h2>
                 </div>
 
                 <div className="relative max-w-4xl mx-auto">

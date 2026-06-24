@@ -61,7 +61,7 @@ export function HorizontalFlowServicesBlock({ theme, isEditor }: any) {
                 
                 {/* Card 1: Wide */}
                 {(isVisible1 || isEditor) && (
-                    <div className={`bento-card-tilt group col-span-1 md:col-span-2 bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-8 flex flex-col justify-between overflow-hidden relative min-h-[300px] transition-all ${
+                    <div className={`bento-card-tilt group col-span-1 md:col-span-2 bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 md:p-8 flex flex-col justify-between overflow-hidden relative min-h-[220px] md:min-h-[300px] transition-all ${
                         isEditor ? '' : 'cursor-default'
                     } ${!isVisible1 ? 'opacity-40 bg-zinc-950/20' : ''}`} data-cursor="EXPLORE" style={{ transformStyle: 'preserve-3d' }}>
                         {isEditor && (
@@ -79,10 +79,10 @@ export function HorizontalFlowServicesBlock({ theme, isEditor }: any) {
                         )}
                         <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         <div className="relative z-10 pointer-events-auto" style={{ transform: isEditor ? 'none' : 'translateZ(30px)' }}>
-                          <h3 className="font-display text-4xl md:text-5xl font-medium uppercase tracking-tight mb-4 text-white">
+                          <h3 className="font-display text-3xl md:text-5xl font-medium uppercase tracking-tight mb-2 md:mb-4 text-white">
                             <EditableText value={customTexts.hf_srv1_title || 'Digital Strategy'} field="hf_srv1_title" entity="appearance" isEditor={isEditor} />
                           </h3>
-                          <p className="font-body text-textMuted max-w-md text-sm md:text-base">
+                          <p className="font-body text-textMuted max-w-md text-xs md:text-base">
                             <EditableText value={customTexts.hf_srv1_desc || 'Brand positioning, architecture, and user journey mapping designed to elevate your digital presence and drive measurable impact.'} field="hf_srv1_desc" entity="appearance" isEditor={isEditor} />
                           </p>
                         </div>
@@ -96,7 +96,7 @@ export function HorizontalFlowServicesBlock({ theme, isEditor }: any) {
 
                 {/* Card 2: Tall */}
                 {(isVisible2 || isEditor) && (
-                    <div className={`bento-card-tilt group col-span-1 md:row-span-2 bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-8 flex flex-col justify-end overflow-hidden relative min-h-[400px] md:min-h-full transition-all ${
+                    <div className={`bento-card-tilt group col-span-1 md:row-span-2 bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 md:p-8 flex flex-col justify-end overflow-hidden relative min-h-[250px] md:min-h-full transition-all ${
                         isEditor ? '' : 'cursor-default'
                     } ${!isVisible2 ? 'opacity-40 bg-zinc-950/20' : ''}`} data-cursor="VIEW" style={{ transformStyle: 'preserve-3d' }}>
                         {isEditor && (
@@ -118,11 +118,11 @@ export function HorizontalFlowServicesBlock({ theme, isEditor }: any) {
                             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent"></div>
                         </div>
                         <div className="relative z-10 pointer-events-auto" style={{ transform: isEditor ? 'none' : 'translateZ(30px)' }}>
-                            <span className="px-3 py-1 text-[10px] font-mono tracking-widest uppercase bg-white/10 backdrop-blur-md rounded-full border border-white/20 mb-4 inline-block text-white">Focus</span>
+                            <span className="px-3 py-1 text-[10px] font-mono tracking-widest uppercase bg-white/10 backdrop-blur-md rounded-full border border-white/20 mb-3 md:mb-4 inline-block text-white">Focus</span>
                             <h3 className="font-display text-3xl md:text-4xl font-medium uppercase tracking-tight mb-2 text-white">
                               <EditableText value={customTexts.hf_srv2_title || 'Spatial UI/UX'} field="hf_srv2_title" entity="appearance" isEditor={isEditor} />
                             </h3>
-                            <p className="font-body text-textMuted text-sm">
+                            <p className="font-body text-textMuted text-xs md:text-sm">
                               <EditableText value={customTexts.hf_srv2_desc || 'Designing interfaces that feel tactile, logical, and beautiful.'} field="hf_srv2_desc" entity="appearance" isEditor={isEditor} />
                             </p>
                         </div>
@@ -131,7 +131,7 @@ export function HorizontalFlowServicesBlock({ theme, isEditor }: any) {
 
                 {/* Card 3: Small Square */}
                 {(isVisible3 || isEditor) && (
-                    <div className={`bento-card-tilt group col-span-1 bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-8 flex flex-col justify-between overflow-hidden relative min-h-[250px] transition-all ${
+                    <div className={`bento-card-tilt group col-span-1 bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 md:p-8 flex flex-col justify-between overflow-hidden relative min-h-[200px] md:min-h-[250px] transition-all ${
                         !isVisible3 ? 'opacity-40 bg-zinc-950/20' : ''
                     }`} style={{ transformStyle: 'preserve-3d' }}>
                         {isEditor && (
@@ -162,7 +162,7 @@ export function HorizontalFlowServicesBlock({ theme, isEditor }: any) {
 
                 {/* Card 4: Stats replacement */}
                 {(isVisible4 || isEditor) && (
-                    <div className={`bento-card-tilt group col-span-1 bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-8 flex flex-col justify-center items-center overflow-hidden relative min-h-[250px] transition-all ${
+                    <div className={`bento-card-tilt group col-span-1 bg-surface/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 md:p-8 flex flex-col justify-center items-center overflow-hidden relative min-h-[200px] md:min-h-[250px] transition-all ${
                         !isVisible4 ? 'opacity-40 bg-zinc-950/20' : ''
                     }`} style={{ transformStyle: 'preserve-3d' }}>
                         {isEditor && (
@@ -180,7 +180,7 @@ export function HorizontalFlowServicesBlock({ theme, isEditor }: any) {
                         )}
                         <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         <div style={{ transform: isEditor ? 'none' : 'translateZ(40px)' }} className="text-center relative z-10">
-                          <h4 className="font-display text-6xl md:text-7xl font-bold text-transparent" style={{ WebkitTextStroke: '1px rgba(250,250,250,0.5)' }}>
+                          <h4 className="font-display text-5xl md:text-7xl font-bold text-transparent" style={{ WebkitTextStroke: '1px rgba(250,250,250,0.5)' }}>
                              <EditableText value={customTexts.hf_srv4_val || '100%'} field="hf_srv4_val" entity="appearance" isEditor={isEditor} />
                           </h4>
                           <p className="font-mono text-[10px] text-textMuted mt-4 uppercase tracking-widest text-center">

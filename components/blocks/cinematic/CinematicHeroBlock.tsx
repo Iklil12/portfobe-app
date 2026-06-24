@@ -15,7 +15,7 @@ export function CinematicHeroBlock({ data, theme, isEditor, isCardPreview }: any
     const bio = data?.profile?.bio || data?.bio || "Transforming raw vision into cinematic reality. Specializing in high-end commercials and visual storytelling.";
     const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
     const displayAvatar = (rawAvatar.replace(/"/g, '').trim() !== "" && rawAvatar !== "null") ? rawAvatar.replace(/"/g, '').trim() : `https://images.unsplash.com/photo-1580234797602-22c37b4a6230?q=80&w=2067&auto=format&fit=crop`;
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     const nameParts = fullName.split(' ');
     const firstName = nameParts[0];

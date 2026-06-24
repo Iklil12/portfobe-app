@@ -12,7 +12,7 @@ export function AcidTechStatsBlock({ data, theme, isEditor, isCardPreview }: any
     const allProjects = data?.projects || data?.user?.projects || [];
     const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d');
     const awardItems = data?.certificates || data?.user?.certificates || [];
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     const cardStyle = theme?.cardStyle || 'hard-shadow';
     const buttonShape = theme?.buttonShape || 'hard';

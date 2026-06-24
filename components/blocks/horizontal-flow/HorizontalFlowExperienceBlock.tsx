@@ -1,6 +1,8 @@
 "use client";
-import React from 'react';
+import React, { useRef } from 'react';
 import { EditableText } from '@/shared/ui/EditableText';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
 
 export function HorizontalFlowExperienceBlock({ theme, isEditor }: any) {
     const customTexts = theme?.customTexts || {};
@@ -42,74 +44,133 @@ export function HorizontalFlowExperienceBlock({ theme, isEditor }: any) {
         updateExperiences(newExps);
     };
 
+
+    const containerRef = useRef<HTMLElement>(null);
+
+    useGSAP(() => {
+        if (!isEditor) {
+            gsap.fromTo('.hf-exp-row', 
+                { x: -50, opacity: 0 },
+                {
+                    scrollTrigger: {
+                        trigger: containerRef.current,
+                        start: "top 75%",
+                    },
+                    x: 0,
+                    opacity: 1,
+                    duration: 1,
+                    stagger: 0.1,
+                    ease: "power4.out"
+                }
+            );
+        }
+    }, { scope: containerRef, dependencies: [experiences.length, isEditor] });
+
     return (
-        <section className="py-20 px-6 md:px-10 max-w-7xl mx-auto w-full relative z-20">
-            <h2 className="font-mono text-[10px] tracking-[0.3em] uppercase text-slate-400 border-l border-white pl-4 mb-16">
-               <span className="text-white">0X / Career Timeline</span>
-            </h2>
+        <section ref={containerRef} className="py-32 w-full relative z-20 bg-[#050505] overflow-hidden">
+            {/* Cinematic Background Elements */}
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none"></div>
             
-            <div className="flex flex-col gap-12">
-                {experiences.map((exp: any, index: number) => (
-                    <div key={index} className="group flex flex-col md:flex-row gap-6 md:gap-12 pb-12 border-b border-white/10 relative">
-                        {isEditor && (
-                            <button
-                                onClick={(e) => handleRemoveItem(index, e)}
-                                className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
-                                title="Delete Experience"
-                            >
-                                ✕
-                            </button>
-                        )}
-                        <div className="md:w-1/4 font-mono text-xs uppercase tracking-widest text-white/60 pt-2">
-                            <EditableText 
-                                value={exp.duration} 
-                                onChange={(val) => handleUpdateItem(index, 'duration', val)} 
-                                isEditor={isEditor} 
-                                maxLength={40} 
-                                as="span" 
-                            />
-                        </div>
-                        <div className="md:w-3/4">
-                            <h3 className="font-display text-3xl font-medium uppercase tracking-tight text-white mb-2">
-                                <EditableText 
-                                    value={exp.role} 
-                                    onChange={(val) => handleUpdateItem(index, 'role', val)} 
-                                    isEditor={isEditor} 
-                                    maxLength={50} 
-                                    as="span" 
-                                />
-                            </h3>
-                            <div className="font-mono text-sm text-slate-400 uppercase tracking-widest mb-4">
-                                <EditableText 
-                                    value={exp.company} 
-                                    onChange={(val) => handleUpdateItem(index, 'company', val)} 
-                                    isEditor={isEditor} 
-                                    maxLength={50} 
-                                    as="span" 
-                                />
-                            </div>
-                            <p className="font-body text-slate-400 text-sm leading-relaxed max-w-2xl">
-                                <EditableText 
-                                    value={exp.description} 
-                                    onChange={(val) => handleUpdateItem(index, 'description', val)} 
-                                    isEditor={isEditor} 
-                                    as="span" 
-                                />
-                            </p>
-                        </div>
+            <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 md:mb-24 gap-6 md:gap-8">
+                    <h2 className="font-display text-5xl md:text-8xl font-bold uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20 leading-[0.8]">
+                       <EditableText entity="appearance" field="hf_exp_title" value={customTexts.hf_exp_title || 'MILESTONES'} isEditor={isEditor} />
+                    </h2>
+                    <div className="font-mono text-[10px] md:text-xs tracking-[0.3em] uppercase text-accent border-l border-white/20 pl-4 py-1 md:py-2">
+                        0X / Professional Archive
                     </div>
-                ))}
-            </div>
-            {isEditor && (
-                <div className="flex justify-center mt-12 w-full col-span-full">
-                    <button
-                        onClick={handleAddItem}
-                        className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10"
-                    >
-                        + Tambah Pengalaman
-                    </button>
                 </div>
-            )}
+                
+                <div className="border-t border-white/20">
+                    {experiences.map((exp: any, index: number) => (
+                        <div 
+                            key={index} 
+                            className={`hf-exp-row group relative border-b border-white/10 hover:bg-[#0a0a0a] transition-colors duration-500 ${isEditor ? '' : 'opacity-0'}`}
+                        >
+                            {/* Editor Delete Button */}
+                            {isEditor && (
+                                <button
+                                    onClick={(e) => handleRemoveItem(index, e)}
+                                    className="absolute top-1/2 -translate-y-1/2 right-4 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs z-50 transition-colors opacity-0 group-hover:opacity-100"
+                                    title="Delete Experience"
+                                >
+                                    ✕
+                                </button>
+                            )}
+
+                            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-4 py-8 md:py-16 items-start px-4 md:px-8">
+                                
+                                {/* 1. Index Number */}
+                                <div className="md:col-span-1">
+                                    <span className="font-display text-3xl md:text-5xl text-transparent font-bold" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.2)' }}>
+                                        {(index + 1).toString().padStart(2, '0')}
+                                    </span>
+                                </div>
+                                
+                                {/* 2. Role (Massive Text) */}
+                                <div className="md:col-span-6 flex flex-col justify-center">
+                                    <h3 className="font-display text-3xl md:text-6xl lg:text-[5.5rem] font-bold uppercase tracking-tight text-white group-hover:text-accent transition-colors duration-500 leading-[0.9] md:leading-[0.85] -ml-1">
+                                        <EditableText 
+                                            value={exp.role} 
+                                            onChange={(val) => handleUpdateItem(index, 'role', val)} 
+                                            isEditor={isEditor} 
+                                            maxLength={50} 
+                                            as="span" 
+                                        />
+                                    </h3>
+                                </div>
+                                
+                                {/* 3. Company & Duration */}
+                                <div className="md:col-span-2 flex flex-col md:items-end justify-start pt-2">
+                                    <div className="font-mono text-sm text-white uppercase tracking-widest mb-2 text-left md:text-right">
+                                        <EditableText 
+                                            value={exp.company} 
+                                            onChange={(val) => handleUpdateItem(index, 'company', val)} 
+                                            isEditor={isEditor} 
+                                            maxLength={50} 
+                                            as="span" 
+                                        />
+                                    </div>
+                                    <div className="font-mono text-[10px] text-white/40 uppercase tracking-[0.2em] text-left md:text-right border-t border-white/10 pt-2 w-full md:w-auto inline-block">
+                                        <EditableText 
+                                            value={exp.duration} 
+                                            onChange={(val) => handleUpdateItem(index, 'duration', val)} 
+                                            isEditor={isEditor} 
+                                            maxLength={40} 
+                                            as="span" 
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* 4. Description */}
+                                <div className="md:col-span-3 pt-2">
+                                    <p className="font-body text-white/50 text-sm leading-relaxed text-justify group-hover:text-white/80 transition-colors duration-500">
+                                        <EditableText 
+                                            value={exp.description} 
+                                            onChange={(val) => handleUpdateItem(index, 'description', val)} 
+                                            isEditor={isEditor} 
+                                            as="span" 
+                                        />
+                                    </p>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                
+                {isEditor && (
+                    <div className="mt-12 flex justify-end">
+                        <button
+                            onClick={handleAddItem}
+                            className="flex items-center gap-4 px-8 py-4 bg-white/5 hover:bg-white text-white hover:text-black font-mono text-xs uppercase tracking-[0.2em] transition-all duration-300"
+                        >
+                            <span>+ Append Record</span>
+                            <div className="w-12 h-[1px] bg-current"></div>
+                        </button>
+                    </div>
+                )}
+            </div>
         </section>
     );
 }

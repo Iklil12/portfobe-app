@@ -51,7 +51,7 @@ export const MinimalistHeroBlock = ({ data, theme, isEditor }: any) => {
   const bio = data?.profile?.bio || data?.bio || "A visual storyteller based in Jakarta. I craft meticulous, high-end visual narratives for commercial brands and independent films.";
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
   const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.co`;
-  const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+  const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
   const rawAvatar = data?.profile?.avatarUrl || data?.avatarUrl || data?.user?.avatar || data?.avatar || "";
   const cleanAvatar = rawAvatar.replace(/"/g, '').trim();

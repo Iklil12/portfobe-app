@@ -9,7 +9,7 @@ export function MonolithAboutBlock({ data, theme, isEditor, isCardPreview }: any
 
     const profession = data?.profile?.profession || data?.profession || "Creative Director & Designer";
     const bio = data?.profile?.bio || data?.bio || "We craft digital experiences that transcend the ordinary. Merging aesthetic elegance with relentless engineering.";
-    const links = data?.links?.filter((l: any) => l.isActive) || data?.user?.links?.filter((l: any) => l.isActive) || [];
+    const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
 
     const cinematicEase = [0.22, 1, 0.36, 1] as any;
     
