@@ -130,7 +130,7 @@ export default function AuraKineticFaq({ data, theme, isEditor }: { data: any, t
                 <button 
                   onClick={(e) => handleRemoveItem(i, e)}
                   className="absolute top-6 right-20 text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity w-10 h-10 flex items-center justify-center bg-zinc-800 rounded-full shadow-lg border border-white/10 hover:bg-red-950/40 hover:text-red-300"
-                  title="Hapus Pertanyaan"
+                  title="Delete Question"
                 >
                   <i className="fas fa-trash text-sm"></i>
                 </button>

@@ -19,10 +19,10 @@ function ImpersonateContent() {
         redirect: false,
       }).then((result) => {
         if (result?.ok) {
-          setStatus("Berhasil! Mengalihkan ke dashboard...");
+          setStatus("Success! Redirecting to dashboard...");
           router.push("/dashboard");
         } else {
-          setStatus("Akses Ditolak: Token tidak valid atau kedaluwarsa!");
+          setStatus("Access Denied: Invalid or expired token!");
           setIsError(true);
           setTimeout(() => router.push("/login"), 3000);
         }

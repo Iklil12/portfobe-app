@@ -34,7 +34,7 @@ export function ManualPenpotManager() {
 
   const persistData = async (updatedProjects: { title: string; url: string }[]) => {
     setIsSaving(true);
-    const toastId = toast.loading('Menyimpan perubahan...');
+    const toastId = toast.loading('Saving changes...');
     try {
       const res = await fetch('/api/penpot/manual', {
         method: 'POST',
@@ -43,12 +43,12 @@ export function ManualPenpotManager() {
       });
       if (res.ok) {
         await mutate();
-        toast.success('Tersimpan secara otomatis!', { id: toastId });
+        toast.success('Autosaved!', { id: toastId });
       } else {
-        toast.error('Gagal menyimpan otomatis.', { id: toastId });
+        toast.error('Failed to autosave.', { id: toastId });
       }
     } catch (err) {
-      toast.error('Kesalahan jaringan.', { id: toastId });
+      toast.error('Network error.', { id: toastId });
     } finally {
       setIsSaving(false);
     }
@@ -57,13 +57,13 @@ export function ManualPenpotManager() {
   const handleAdd = (e?: React.MouseEvent) => {
     e?.preventDefault();
     if (projects.length >= 10) {
-      toast.error('Maksimal 10 proyek diperbolehkan.');
+      toast.error('Maximum 10 projects allowed.');
       return;
     }
     const newIndex = projects.length;
     setProjects(prev => [...prev, { title: '', url: '' }]);
     setEditingIndex(newIndex);
-    toast.success('Baris baru ditambahkan.');
+    toast.success('New row added.');
   };
 
   const handleRemove = async (index: number, e?: React.MouseEvent) => {
@@ -129,10 +129,10 @@ export function ManualPenpotManager() {
                     </div>
                   </div>
                   <div className="flex justify-end items-center gap-4 pt-2 border-t border-white/5">
-                     <button type="button" onClick={() => setEditingIndex(null)} className="text-[10px] font-mono font-bold text-white/45 hover:text-white uppercase tracking-wider">Batal</button>
+                     <button type="button" onClick={() => setEditingIndex(null)} className="text-[10px] font-mono font-bold text-white/45 hover:text-white uppercase tracking-wider">Cancel</button>
                      <button type="button" onClick={handleDone} disabled={isSaving} className="px-5 py-2.5 rounded-none bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-mono font-bold uppercase tracking-widest flex items-center gap-1.5 active:scale-95 transition-all">
                        {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-                       Simpan & Selesai
+                       Save & Done
                      </button>
                   </div>
                 </motion.div>
@@ -159,7 +159,7 @@ export function ManualPenpotManager() {
                     </button>
                     {deleteConfirm === idx ? (
                       <div className="flex items-center gap-1.5">
-                         <button type="button" onClick={(e) => { e.stopPropagation(); handleRemove(idx, e); }} className="px-3 py-1.5 rounded-none bg-rose-600 text-white text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-rose-700 transition-colors">Ya, Hapus</button>
+                         <button type="button" onClick={(e) => { e.stopPropagation(); handleRemove(idx, e); }} className="px-3 py-1.5 rounded-none bg-rose-600 text-white text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-rose-700 transition-colors">Yes, Delete</button>
                          <button type="button" onClick={(e) => { e.stopPropagation(); setDeleteConfirm(null); }} className="p-1.5 text-white/40 hover:text-white transition-colors"><X className="w-4 h-4" /></button>
                       </div>
                     ) : (

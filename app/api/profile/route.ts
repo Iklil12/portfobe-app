@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Aksi tidak dikenali" }, { status: 400 });
   } catch (error) {
     console.error("Check Subdomain Error:", error);
-    return NextResponse.json({ error: "Gagal mengecek." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to check." }, { status: 500 });
   }
 }
 
@@ -146,10 +146,10 @@ export async function PUT(req: Request) {
       console.error("Gagal mengirim webhook ke n8n:", err);
     });
 
-    return NextResponse.json({ message: "Profil diperbarui", profile: updatedProfile });
+    return NextResponse.json({ message: "Profile updated", profile: updatedProfile });
   } catch (error) {
     console.error("Error Update Profile:", error);
-    return NextResponse.json({ error: "Gagal memproses data." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to process data." }, { status: 500 });
   }
 }
 
@@ -193,9 +193,10 @@ export async function PATCH(req: Request) {
       }
     });
 
-    return NextResponse.json({ message: "Profil diperbarui sebagian", profile: updatedProfile });
+    return NextResponse.json({ message: "Profile partially updated", profile: updatedProfile });
   } catch (error) {
     console.error("Error Patch Profile:", error);
-    return NextResponse.json({ error: "Gagal memproses data patch." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to process patch data." }, { status: 500 });
   }
 }
+

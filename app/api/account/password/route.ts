@@ -22,7 +22,7 @@ export async function PATCH(req: Request) {
     const { currentPassword, newPassword } = await req.json();
 
     if (!newPassword || newPassword.length < 6) {
-      return NextResponse.json({ error: "Sandi baru minimal 6 karakter." }, { status: 400 });
+      return NextResponse.json({ error: "New password must be at least 6 characters." }, { status: 400 });
     }
 
     const user = await prisma.user.findUnique({
@@ -58,29 +58,29 @@ export async function PATCH(req: Request) {
     resend.emails.send({
       from: 'Portfo Security <portfosecure@mail.ritions.com>',
       to: user.email,
-      subject: '🛡️ Pemberitahuan Keamanan: Kata Sandi Berhasil Diubah',
+      subject: '🛡️ Security Notice: Password Successfully Changed',
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 30px; border: 1px solid #e2e8f0; border-radius: 24px; background-color: #ffffff;">
-          <h2 style="color: #0f172a; margin-bottom: 15px; font-weight: 900; font-size: 22px;">Kata Sandi Berhasil Diperbarui</h2>
+          <h2 style="color: #0f172a; margin-bottom: 15px; font-weight: 900; font-size: 22px;">Password Successfully Updated</h2>
           <p style="color: #475569; font-size: 15px; line-height: 1.6; margin-bottom: 10px;">
-            Halo! Pesan ini dikirim untuk mengonfirmasi bahwa kata sandi akun Portfo.be Anda baru saja berhasil diubah.
+            Hello! This message is sent to confirm that the password for your Portfo.be account has just been successfully changed.
           </p>
           <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; padding: 15px; border-radius: 12px; margin: 25px 0;">
             <p style="margin: 0; font-size: 13px; color: #64748b;">
-              <strong>Waktu Perubahan:</strong> ${new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })} WIB<br>
-              <strong>Status:</strong> Berhasil
+              <strong>Time of Change:</strong> ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })} WIB<br>
+              <strong>Status:</strong> Success
             </p>
           </div>
           <p style="color: #475569; font-size: 15px; line-height: 1.6;">
-            Jika ini adalah Anda, maka Anda tidak perlu melakukan tindakan apa pun. Namun, <strong>jika Anda tidak merasa melakukan perubahan ini</strong>, segera hubungi tim dukungan kami untuk mengamankan akun Anda.
+            If this was you, then you don't need to do anything. However, <strong>if you did not make this change</strong>, please contact our support team immediately to secure your account.
           </p>
           <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 30px 0;" />
           <p style="color: #94a3b8; font-size: 12px; line-height: 1.5;">
-            Ini adalah email otomatis dari sistem keamanan Portfo.be. Mohon jangan membalas email ini demi kerahasiaan data Anda.
+            This is an automated email from the Portfo.be security system. Please do not reply to this email for the confidentiality of your data.
           </p>
         </div>
       `,
-    }).catch(err => console.error("Gagal kirim notifikasi sandi:", err));
+    }).catch(err => console.error("Failed to send password notification:", err));
 
     return NextResponse.json({ message: "Kata sandi berhasil diperbarui." }, { status: 200 });
 

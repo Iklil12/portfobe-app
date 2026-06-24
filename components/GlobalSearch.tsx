@@ -31,23 +31,23 @@ import {
 // 1. DATA MENU STATIS
 // =========================================================================
 const APP_COMMANDS = [
-  { id: "nav-1", title: "Dashboard Overview", group: "Navigasi", icon: "folder", link: "/dashboard", type: "link", keywords: "beranda utama home" },
-  { id: "nav-2", title: "Metrik & Analitik", group: "Navigasi", icon: "metrics", link: "/dashboard/analytics", type: "link", keywords: "statistik grafik pengunjung views" },
-  { id: "nav-3", title: "Riwayat Pengunjung", group: "Navigasi", icon: "history", link: "/dashboard/analytics?tab=history", type: "link", keywords: "log riwayat history siapa yang lihat" },
-  { id: "des-1", title: "Proyek & Karya", group: "Desain & Konten", icon: "folder", link: "/dashboard/projects", type: "link", keywords: "portfolio list karya desain" },
-  { id: "des-2", title: "Koleksi Tema", group: "Desain & Konten", icon: "palette", link: "/dashboard/themes", type: "link", keywords: "warna tampilan baju warna-warni themes" },
-  { id: "des-3", title: "Atur Tautan (Links)", group: "Desain & Konten", icon: "link", link: "/dashboard/links", type: "link", keywords: "sosmed sosial media url tautan" },
-  { id: "des-4", title: "Pengaturan SEO", group: "Desain & Konten", icon: "search", link: "/dashboard/settings?tab=seo", type: "link", keywords: "google pencarian meta tag seo" },
-  { id: "app-1", title: "Ubah Bentuk Tombol", group: "Tampilan Web", icon: "shapes", link: "/dashboard/themes?focus=buttonShape", type: "link", keywords: "button shape tombol kotak bulat pill" },
-  { id: "app-2", title: "Ganti Warna Utama", group: "Tampilan Web", icon: "fill", link: "/dashboard/themes?focus=themeColor", type: "link", keywords: "warna color theme aksen" },
-  { id: "app-3", title: "Ubah Font (Tipografi)", group: "Tampilan Web", icon: "font", link: "/dashboard/themes?focus=fonts", type: "link", keywords: "font huruf tulisan tipografi" },
-  { id: "app-4", title: "Atur Gaya Kartu", group: "Tampilan Web", icon: "card", link: "/dashboard/themes?focus=cardStyle", type: "link", keywords: "card kartu kotak bayangan glass" },
-  { id: "pro-1", title: "Ubah Nomor WhatsApp", group: "Pengaturan Akun", icon: "whatsapp", link: "/dashboard/profile?focus=whatsapp", type: "link", keywords: "wa whatsapp nomor kontak hp" },
-  { id: "pro-2", title: "Status 'Available for Hire'", group: "Pengaturan Akun", icon: "hire", link: "/dashboard/profile?focus=hire", type: "link", keywords: "hire kerja open freelance buka" },
-  { id: "set-1", title: "Edit Profil & Bio", group: "Pengaturan Akun", icon: "profile", link: "/dashboard/profile", type: "link", keywords: "deskripsi tentang saya bio profil" },
-  { id: "set-2", title: "Keamanan & Password", group: "Pengaturan Akun", icon: "key", link: "/dashboard/settings?tab=security", type: "link", keywords: "keamanan sandi kata kunci ubah password" },
-  { id: "act-1", title: "Buat Proyek Baru", group: "Aksi Cepat", icon: "plus", link: "/dashboard/projects?action=new", type: "link", keywords: "tambah bikin portofolio baru" },
-  { id: "act-2", title: "Salin Link Portofolio", group: "Aksi Cepat", icon: "copy", action: "copy_link", type: "action", keywords: "copy share bagikan url salin" },
+  { id: "nav-1", title: "Dashboard Overview", group: "Navigation", icon: "folder", link: "/dashboard", type: "link", keywords: "beranda utama home" },
+  { id: "nav-2", title: "Metrics & Analytics", group: "Navigation", icon: "metrics", link: "/dashboard/analytics", type: "link", keywords: "statistik grafik pengunjung views" },
+  { id: "nav-3", title: "Visitor History", group: "Navigation", icon: "history", link: "/dashboard/analytics?tab=history", type: "link", keywords: "log riwayat history siapa yang lihat" },
+  { id: "des-1", title: "Projects & Work", group: "Design & Content", icon: "folder", link: "/dashboard/projects", type: "link", keywords: "portfolio list karya desain" },
+  { id: "des-2", title: "Theme Collection", group: "Design & Content", icon: "palette", link: "/dashboard/themes", type: "link", keywords: "warna tampilan baju warna-warni themes" },
+  { id: "des-3", title: "Manage Links", group: "Design & Content", icon: "link", link: "/dashboard/links", type: "link", keywords: "sosmed sosial media url tautan" },
+  { id: "des-4", title: "SEO Settings", group: "Design & Content", icon: "search", link: "/dashboard/settings?tab=seo", type: "link", keywords: "google pencarian meta tag seo" },
+  { id: "app-1", title: "Change Button Shape", group: "Web Appearance", icon: "shapes", link: "/dashboard/themes?focus=buttonShape", type: "link", keywords: "button shape tombol kotak bulat pill" },
+  { id: "app-2", title: "Change Main Color", group: "Web Appearance", icon: "fill", link: "/dashboard/themes?focus=themeColor", type: "link", keywords: "warna color theme aksen" },
+  { id: "app-3", title: "Change Font (Typography)", group: "Web Appearance", icon: "font", link: "/dashboard/themes?focus=fonts", type: "link", keywords: "font huruf tulisan tipografi" },
+  { id: "app-4", title: "Set Card Style", group: "Web Appearance", icon: "card", link: "/dashboard/themes?focus=cardStyle", type: "link", keywords: "card kartu kotak bayangan glass" },
+  { id: "pro-1", title: "Change WhatsApp Number", group: "Account Settings", icon: "whatsapp", link: "/dashboard/profile?focus=whatsapp", type: "link", keywords: "wa whatsapp nomor kontak hp" },
+  { id: "pro-2", title: "Status 'Available for Hire'", group: "Account Settings", icon: "hire", link: "/dashboard/profile?focus=hire", type: "link", keywords: "hire kerja open freelance buka" },
+  { id: "set-1", title: "Edit Profile & Bio", group: "Account Settings", icon: "profile", link: "/dashboard/profile", type: "link", keywords: "deskripsi tentang saya bio profil" },
+  { id: "set-2", title: "Security & Password", group: "Account Settings", icon: "key", link: "/dashboard/settings?tab=security", type: "link", keywords: "keamanan sandi kata kunci ubah password" },
+  { id: "act-1", title: "Create New Project", group: "Quick Actions", icon: "plus", link: "/dashboard/projects?action=new", type: "link", keywords: "tambah bikin portofolio baru" },
+  { id: "act-2", title: "Copy Portfolio Link", group: "Quick Actions", icon: "copy", action: "copy_link", type: "action", keywords: "copy share bagikan url salin" },
 ];
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -144,18 +144,18 @@ export default function GlobalSearch() {
           const portfolioUrl = `https://portfo.be/${userSubdomain}`;
           try {
             await navigator.clipboard.writeText(portfolioUrl);
-            toast.success(`Berhasil! Link disalin: portfo.be/${userSubdomain}`);
+            toast.success(`Success! Link copied: portfo.be/${userSubdomain}`);
           } catch (err) {
-            toast.error("Gagal menyalin link.");
+            toast.error("Failed to copy link.");
           }
           break;
         case "logout":
-          toast.loading("Mengakhiri sesi Anda...");
+          toast.loading("Ending your session...");
           if (typeof window !== "undefined") sessionStorage.removeItem("hasSeenWelcomePromo");
           signOut({ redirect: true, callbackUrl: "/login" });
           break;
         default:
-          toast.success(`Perintah tidak dikenal: ${item.action}`);
+          toast.success(`Unknown command: ${item.action}`);
       }
     } else {
       router.push(item.link);
@@ -182,7 +182,7 @@ export default function GlobalSearch() {
       <div className="hidden md:flex relative group max-w-md w-full cursor-pointer" onClick={() => setIsOpen(true)}>
         <div className="relative flex items-center w-full transition-all duration-300 bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-2.5 group-hover:bg-zinc-900 group-hover:border-[#ff9e00]/30">
           <Search className="w-4 h-4 text-white/40 group-hover:text-[#ff9e00] transition-colors" />
-          <div className="flex-1 text-[11px] font-mono font-bold text-white/40 px-3 text-left truncate uppercase tracking-wider">Cari proyek, fitur, metrik...</div>
+          <div className="flex-1 text-[11px] font-mono font-bold text-white/40 px-3 text-left truncate uppercase tracking-wider">Search projects, features, metrics...</div>
           <div className="flex items-center gap-1 px-2 py-1 bg-zinc-900 border border-white/10 text-[9px] font-mono font-bold text-white/50 rounded-none">
             <span>⌘</span><span>K</span>
           </div>
@@ -211,7 +211,7 @@ export default function GlobalSearch() {
               <input 
                 ref={inputRef}
                 type="text" 
-                placeholder="Cari proyek, tautan, sertifikat, fitur..." 
+                placeholder="Search projects, links, certificates, features..." 
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="flex-1 bg-transparent border-none outline-none px-4 text-base font-mono font-bold text-white placeholder:text-white/20"
@@ -227,21 +227,21 @@ export default function GlobalSearch() {
                   <div className="w-12 h-12 bg-zinc-900 border border-white/10 rounded-none flex items-center justify-center mb-4 text-white/40">
                     <Ghost className="w-6 h-6" />
                   </div>
-                  <p className="font-mono font-bold text-white/80 uppercase tracking-wider text-xs">Tidak ada hasil untuk "{query}"</p>
-                  <p className="text-[10px] font-mono text-white/40 mt-1.5">Gunakan kata kunci atau jalankan perintah cepat.</p>
+                  <p className="font-mono font-bold text-white/80 uppercase tracking-wider text-xs">No results for "{query}"</p>
+                  <p className="text-[10px] font-mono text-white/40 mt-1.5">Use keywords or run quick commands.</p>
                 </div>
               ) : (
                 <>
                   {!query && (
                     <div className="p-4 mb-4 mx-1.5 mt-1.5 bg-[#ff9e00]/5 border border-[#ff9e00]/25 rounded-none">
                       <p className="text-[10px] font-mono font-bold text-[#ff9e00] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <Info className="w-3.5 h-3.5" /> Apa yang bisa dicari di sini?
+                        <Info className="w-3.5 h-3.5" /> What can be searched here?
                       </p>
                       <div className="flex flex-wrap gap-2">
-                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Proyek & Karya</span>
-                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Tautan / Links</span>
-                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Sertifikat</span>
-                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Menu Sistem</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Projects & Work</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Links</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Certificates</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">System Menu</span>
                       </div>
                     </div>
                   )}
@@ -276,12 +276,12 @@ export default function GlobalSearch() {
                                 <div className="text-left">
                                   <p className="text-xs font-mono font-bold text-white">{item.title}</p>
                                   <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mt-0.5">
-                                    {item.type === 'action' ? '⚡ Jalankan Perintah' : `Buka ${item.link}`}
+                                    {item.type === 'action' ? '⚡ Run Command' : `Open ${item.link}`}
                                   </p>
                                 </div>
                               </div>
                               <div className={`transition-opacity flex items-center gap-1.5 ${isSelected ? 'opacity-100' : 'opacity-0'}`}>
-                                 <span className="text-[8px] font-mono font-bold text-black bg-[#ff9e00] px-2 py-1 uppercase tracking-widest">Pilih ↵</span>
+                                 <span className="text-[8px] font-mono font-bold text-black bg-[#ff9e00] px-2 py-1 uppercase tracking-widest">Select ↵</span>
                               </div>
                             </button>
                           );
@@ -296,7 +296,7 @@ export default function GlobalSearch() {
             <div className="bg-zinc-950 px-6 py-4 border-t border-white/10 flex justify-between items-center text-[9px] font-mono font-bold text-white/30 uppercase tracking-widest shrink-0">
               <div className="flex gap-4">
                 <span className="flex items-center gap-1.5">⌘ K - Search</span>
-                <span className="flex items-center gap-1.5">↑↓ - Navigasi</span>
+                <span className="flex items-center gap-1.5">↑↓ - Navigate</span>
               </div>
               <span>Portfo.be System</span>
             </div>

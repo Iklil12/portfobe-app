@@ -26,8 +26,8 @@ const TYPE_ICON: Record<string, React.ComponentType<any>> = {
 
 const TYPE_LABEL: Record<string, string> = {
   video:       "Video",
-  photo:       "Foto",
-  certificate: "Sertifikat",
+  photo:       "Photo",
+  certificate: "Certificate",
   "3d":        "3D Model",
 };
 
@@ -42,7 +42,7 @@ function DaysLeftBadge({ days }: { days: number }) {
         ? "bg-amber-950/20 border-amber-900/30 text-amber-400" 
         : "bg-white/5 border-white/10 text-white/50"}`}>
       <Clock className={`w-2.5 h-2.5 ${urgent ? "animate-pulse text-rose-500" : ""}`} />
-      {days === 0 ? "Kedaluwarsa hari ini" : `${days} hari lagi`}
+      {days === 0 ? "Expires today" : `${days} days left`}
     </span>
   );
 }
@@ -90,7 +90,7 @@ export default function TrashPage() {
             <div>
               <h1 className="text-xl sm:text-2xl font-display font-bold uppercase tracking-wider text-white">Trash</h1>
               <p className="text-xs text-white/40 font-mono mt-1">
-                Item yang dihapus akan otomatis dihapus permanen setelah <strong className="text-white/60">30 hari</strong>.
+                Deleted items will be permanently removed after <strong className="text-white/60">30 days</strong>.
               </p>
             </div>
           </div>
@@ -101,8 +101,8 @@ export default function TrashPage() {
           <div className="flex items-center justify-between mb-5 animate-enter" style={{ animationDelay: "80ms" }}>
             <span className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest">
               {items.length < totalCount
-                ? `${items.length} dari ${totalCount} item di trash`
-                : `${totalCount} item di trash`}
+                ? `${items.length} of ${totalCount} items in trash`
+                : `${totalCount} items in trash`}
             </span>
 
             {!confirmPurgeAll ? (
@@ -111,24 +111,24 @@ export default function TrashPage() {
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-none text-[10px] font-mono font-bold text-rose-400 border border-rose-900/30 hover:bg-rose-950/20 hover:border-rose-900/40 transition-colors uppercase tracking-wider"
               >
                 <Trash2 className="w-3.5 h-3.5 text-rose-500" />
-                Kosongkan Semua
+                Empty Trash
               </button>
             ) : (
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider">Yakin hapus semua?</span>
+                <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider">Are you sure?</span>
                 <button
                   onClick={purgeAll}
                   disabled={processingId === "all"}
                   className="px-3 py-1.5 rounded-none text-[10px] font-mono font-bold bg-rose-500 text-white hover:bg-rose-600 transition-colors disabled:opacity-50 uppercase tracking-wider"
                 >
-                  {processingId === "all" ? <Loader2 className="w-3 h-3 animate-spin" /> : "Ya, Hapus"}
+                  {processingId === "all" ? <Loader2 className="w-3 h-3 animate-spin" /> : "Yes, Delete"}
                 </button>
                 <button
                   onClick={() => setConfirmPurgeAll(false)}
                   disabled={processingId === "all"}
                   className="px-3 py-1.5 rounded-none text-[10px] font-mono font-bold border border-white/10 bg-zinc-900 text-white/70 hover:bg-zinc-800 transition-colors disabled:opacity-50 uppercase tracking-wider"
                 >
-                  Batal
+                  Cancel
                 </button>
               </div>
             )}
@@ -144,9 +144,9 @@ export default function TrashPage() {
               <div className="w-14 h-14 bg-zinc-900 border border-white/10 rounded-none flex items-center justify-center mb-4 text-white/30 text-xl">
                 <Check className="w-5 h-5" />
               </div>
-              <p className="font-mono font-bold text-white uppercase tracking-wider mb-1">Trash kosong</p>
+              <p className="font-mono font-bold text-white uppercase tracking-wider mb-1">Trash is empty</p>
               <p className="text-white/40 text-xs font-mono">
-                Tidak ada item yang dihapus. Semua data aman!
+                No deleted items. All data is safe!
               </p>
             </div>
           ) : (
@@ -189,7 +189,7 @@ export default function TrashPage() {
                         <DaysLeftBadge days={daysLeft} />
                       </div>
                       <p className="text-[9px] font-mono text-white/30 mt-1.5">
-                        Dihapus {formatDate(item.deletedAt)}
+                        Deleted {formatDate(item.deletedAt)}
                       </p>
                     </div>
 
@@ -203,7 +203,7 @@ export default function TrashPage() {
                         {isProcessing
                           ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
                           : <Undo2 className="w-3.5 h-3.5" />}
-                        Pulihkan
+                        Restore
                       </button>
                       <button
                         onClick={() => purge(item.id, item.itemType)}
@@ -211,7 +211,7 @@ export default function TrashPage() {
                         className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-widest bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30 transition-colors disabled:opacity-40"
                       >
                         <X className="w-3.5 h-3.5" />
-                        Hapus
+                        Delete
                       </button>
                     </div>
                   </div>
@@ -230,9 +230,9 @@ export default function TrashPage() {
               className="flex items-center gap-2 px-5 py-3 rounded-none text-[10px] font-mono font-bold uppercase tracking-widest border border-white/10 bg-zinc-900 text-white/70 hover:bg-zinc-800 transition-colors disabled:opacity-50"
             >
               {isLoadingMore ? (
-                <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Memuat...</>
+                <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading...</>
               ) : (
-                <><ChevronDown className="w-3.5 h-3.5" /> Muat {Math.min(10, totalCount - items.length)} Item Lagi</>
+                <><ChevronDown className="w-3.5 h-3.5" /> Load {Math.min(10, totalCount - items.length)} More Items</>
               )}
             </button>
           </div>
@@ -241,7 +241,7 @@ export default function TrashPage() {
         {/* ── Semua sudah dimuat ── */}
         {!isLoading && !hasMore && totalCount > 10 && (
           <p className="text-center text-[9px] font-mono text-white/30 font-bold uppercase tracking-widest mt-6">
-            Semua {totalCount} item sudah ditampilkan
+            All {totalCount} items displayed
           </p>
         )}
       </div>
@@ -251,10 +251,11 @@ export default function TrashPage() {
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+  return new Date(iso).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
 }
 
 function extractYtId(url: string) {
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
   return m ? m[1] : "";
 }
+

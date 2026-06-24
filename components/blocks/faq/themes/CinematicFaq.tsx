@@ -107,7 +107,7 @@ export default function CinematicFaq({ data, theme, isEditor }: { data: any, the
                 <button 
                   onClick={(e) => handleRemoveItem(i, e)}
                   className="absolute top-4 right-16 text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center bg-black/50 border border-red-500/30 rounded-full hover:bg-red-500/20"
-                  title="Hapus Pertanyaan"
+                  title="Delete Question"
                 >
                   <i className="fas fa-trash text-xs"></i>
                 </button>

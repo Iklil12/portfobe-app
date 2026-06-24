@@ -37,7 +37,7 @@ export default function WelcomeBannerModal({
     icon: React.ReactNode;
     color: string;
   }>({
-    text: "Halo",
+    text: "Hello",
     icon: <Sun className="w-12 h-12 text-[#ff9e00]" />,
     color: "from-zinc-950 to-zinc-900"
   });
@@ -46,13 +46,13 @@ export default function WelcomeBannerModal({
     // 1. Logika Jam
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 11) {
-      setGreeting({ text: "Selamat Pagi", icon: <Sun className="w-12 h-12 text-[#ff9e00]" />, color: "from-zinc-950 to-zinc-900" });
+      setGreeting({ text: "Good Morning", icon: <Sun className="w-12 h-12 text-[#ff9e00]" />, color: "from-zinc-950 to-zinc-900" });
     } else if (hour >= 11 && hour < 15) {
-      setGreeting({ text: "Selamat Siang", icon: <CloudSun className="w-12 h-12 text-[#ff9e00]" />, color: "from-zinc-950 to-zinc-900" });
+      setGreeting({ text: "Good Afternoon", icon: <CloudSun className="w-12 h-12 text-[#ff9e00]" />, color: "from-zinc-950 to-zinc-900" });
     } else if (hour >= 15 && hour < 18) {
-      setGreeting({ text: "Selamat Sore", icon: <Coffee className="w-12 h-12 text-[#ff9e00]" />, color: "from-zinc-950 to-zinc-900" });
+      setGreeting({ text: "Good Evening", icon: <Coffee className="w-12 h-12 text-[#ff9e00]" />, color: "from-zinc-950 to-zinc-900" });
     } else {
-      setGreeting({ text: "Selamat Malam", icon: <Moon className="w-12 h-12 text-slate-400" />, color: "from-zinc-950 to-zinc-900" });
+      setGreeting({ text: "Good Night", icon: <Moon className="w-12 h-12 text-slate-400" />, color: "from-zinc-950 to-zinc-900" });
     }
 
     // 2. Cek Session
@@ -70,7 +70,7 @@ export default function WelcomeBannerModal({
 
   if (!isOpen) return null;
 
-  const firstName = userName.split(" ")[0] || "Kreator";
+  const firstName = userName.split(" ")[0] || "Creator";
 
   // LOGIK PRIORITAS KONTEN
   let displayTitle = "";
@@ -82,45 +82,45 @@ export default function WelcomeBannerModal({
   let badgeLabel = "";
 
   if (isGracePeriod) {
-    displayTitle = "Masa Tenggang PRO ⚠️";
-    displayDesc = `Halo ${firstName}! Paket PRO kamu sudah kedaluwarsa. Sistem memberikan tambahan masa tenggang selama ${remainingGraceDays} hari sebelum akun kamu dikembalikan ke paket FREE.`;
+    displayTitle = "PRO Grace Period ⚠️";
+    displayDesc = `Hello ${firstName}! Your PRO plan has expired. The system is granting a grace period of ${remainingGraceDays} days before your account reverts to the FREE plan.`;
     displayBg = "from-zinc-950 to-zinc-900 border-amber-500/20";
     displayIcon = <Crown className="w-12 h-12 text-amber-500 animate-pulse" />;
-    btnText = "Perpanjang PRO";
+    btnText = "Renew PRO";
     btnLink = "/dashboard/billing";
-    badgeLabel = "⚠️ Peringatan";
+    badgeLabel = "⚠️ Warning";
   } else if (adminData && adminData.isActive) {
     displayTitle = adminData.title;
     displayDesc = adminData.desc;
     displayBg = "from-zinc-950 to-zinc-900";
     displayIcon = <Sparkles className="w-12 h-12 text-[#ff9e00]" />;
-    btnText = adminData.btnText || "Lihat Detail";
+    btnText = adminData.btnText || "View Details";
     btnLink = adminData.btnLink || "#";
-    badgeLabel = adminData.type === 'promo' ? '🔥 Penawaran Spesial' : '💡 Informasi Penting';
+    badgeLabel = adminData.type === 'promo' ? '🔥 Special Offer' : '💡 Important Info';
   } else if (canClaimTrial) {
-    displayTitle = "Klaim Trial PRO 14 Hari! 🎁";
-    displayDesc = `Halo ${firstName}! Kesempatan emas untukmu! Buka akses seluruh fitur premium tanpa batas. 100% Gratis, tanpa kartu kredit.`;
+    displayTitle = "Claim 14-Day PRO Trial! 🎁";
+    displayDesc = `Hello ${firstName}! A golden opportunity for you! Unlock unlimited access to all premium features. 100% Free, no credit card required.`;
     displayBg = "from-zinc-950 to-zinc-900";
     displayIcon = <Gift className="w-12 h-12 text-[#ff9e00] animate-bounce" />;
-    btnText = "Klaim Trial Sekarang";
+    btnText = "Claim Trial Now";
     btnLink = "/dashboard/billing";
-    badgeLabel = "🔥 Penawaran Spesial";
+    badgeLabel = "🔥 Special Offer";
   } else if (userPlan === "FREE") {
-    displayTitle = "Waktunya Naik Level! 🚀";
-    displayDesc = `Halo ${firstName}! Saat ini kamu pakai paket FREE. Upgrade ke PRO untuk custom domain & fitur eksklusif lainnya.`;
+    displayTitle = "Time to Level Up! 🚀";
+    displayDesc = `Hello ${firstName}! You are currently on the FREE plan. Upgrade to PRO for a custom domain & other exclusive features.`;
     displayBg = "from-zinc-950 to-zinc-900";
     displayIcon = <Crown className="w-12 h-12 text-[#ff9e00] animate-pulse" />;
-    btnText = "Upgrade ke Pro";
+    btnText = "Upgrade to Pro";
     btnLink = "/pricing";
-    badgeLabel = "💎 Rekomendasi";
+    badgeLabel = "💎 Recommendation";
   } else {
     displayTitle = `${greeting.text}, ${firstName}!`;
-    displayDesc = "Semoga harimu produktif. Apa mahakarya yang ingin kamu bagikan hari ini?";
+    displayDesc = "Have a productive day. What masterpiece would you like to share today?";
     displayBg = greeting.color;
     displayIcon = greeting.icon;
-    btnText = "Mulai Berkarya";
+    btnText = "Start Creating";
     btnLink = "/dashboard/projects";
-    badgeLabel = "✨ Dashboard Aktif";
+    badgeLabel = "✨ Active Dashboard";
   }
 
   return (

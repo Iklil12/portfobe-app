@@ -87,11 +87,11 @@ export default function BillingContent() {
         setIsTrialSuccess(true);
         mutate(); // Refresh SWR data
       } else {
-        alert("Gagal: " + json.error);
+        alert("Failed: " + json.error);
         setIsTrialModalOpen(false);
       }
     } catch (error) {
-      alert("Terjadi kesalahan jaringan.");
+      alert("Network error occurred.");
       setIsTrialModalOpen(false);
     } finally {
       setIsClaimingTrial(false);
@@ -157,9 +157,9 @@ export default function BillingContent() {
 
       {/* ── PAGE HEADER ── */}
       <div className="animate-billing-fade">
-        <h1 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Billing & Langganan</h1>
+        <h1 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Billing & Subscription</h1>
         <p className="text-white/40 mt-2 font-mono text-xs">
-          Kelola paket akun, pantau sisa hari, dan unduh riwayat transaksi.
+          Manage account plans, monitor remaining days, and download transaction history.
         </p>
       </div>
 
@@ -168,16 +168,16 @@ export default function BillingContent() {
         <div className="bg-zinc-900/40 p-6 sm:p-8 rounded-none border border-[#ff9e00]/20 flex flex-col sm:flex-row items-center justify-between gap-6 text-white animate-billing-fade">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#ff9e00]/10 border border-[#ff9e00]/20 rounded-none text-[9px] font-mono font-bold uppercase tracking-widest mb-3 text-[#ff9e00]">
-              <Gift className="w-3 h-3" /> Hadiah Pengguna Baru
+              <Gift className="w-3 h-3" /> New User Gift
             </div>
-            <h2 className="text-lg font-mono font-bold uppercase tracking-wider mb-1 text-white">Coba PRO Gratis 14 Hari!</h2>
-            <p className="text-white/40 text-xs font-mono">Buka semua batas tema, analitik, dan proyek. Tidak perlu kartu kredit.</p>
+            <h2 className="text-lg font-mono font-bold uppercase tracking-wider mb-1 text-white">Try PRO Free for 14 Days!</h2>
+            <p className="text-white/40 text-xs font-mono">Unlock all limits for themes, analytics, and projects. No credit card required.</p>
           </div>
           <button
             onClick={handleOpenTrialModal}
             className="shrink-0 w-full sm:w-auto px-8 py-3 bg-[#ff9e00] text-black font-mono font-bold uppercase tracking-wider text-xs rounded-none hover:bg-[#ffaa22] transition-colors"
           >
-            Klaim Trial Sekarang
+            Claim Trial Now
           </button>
         </div>
       )}
@@ -191,7 +191,7 @@ export default function BillingContent() {
           <div className="p-8 flex-1 relative z-10">
             <div className="flex justify-between items-start mb-8">
               <div>
-                <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest mb-2">Paket Saat Ini</p>
+                <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest mb-2">Current Plan</p>
                 <div className="flex items-center gap-3">
                   <h2 className="text-sm font-mono font-bold text-white uppercase tracking-wider">{isPro ? planLabel : "Starter"}</h2>
                   {isPro && sub && (
@@ -214,40 +214,40 @@ export default function BillingContent() {
               {isPro && sub ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 mt-6">
                   <div className="py-3 border-b border-white/5">
-                    <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-wider mb-1">Sisa Hari</p>
+                    <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-wider mb-1">Remaining Days</p>
                     <div className="font-mono font-bold text-white text-xs">
                       {remainingDays === -1 ? (
-                        <span className="text-[#ff9e00]">Seumur Hidup ♾️</span>
+                        <span className="text-[#ff9e00]">Lifetime ♾️</span>
                       ) : (
                         <span className="flex items-center gap-2">
-                          <span>{remainingDays} Hari</span>
+                          <span>{remainingDays} Days</span>
                           {remainingDays !== null && remainingDays <= 7 && (
-                            <span className="text-[9px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded-none uppercase font-mono font-bold">Hampir Habis</span>
+                            <span className="text-[9px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded-none uppercase font-mono font-bold">Expiring Soon</span>
                           )}
                         </span>
                       )}
                     </div>
                   </div>
                   <div className="py-3 border-b border-white/5">
-                    <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-wider mb-1">Berakhir Pada</p>
+                    <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-wider mb-1">Expires On</p>
                     <p className="font-mono font-bold text-white text-xs">
-                      {sub.isLifetime ? "Selamanya" : formatDate(sub.expiredAt)}
+                      {sub.isLifetime ? "Forever" : formatDate(sub.expiredAt)}
                     </p>
                   </div>
                   <div className="py-3 border-b border-white/5 sm:col-span-2">
-                    <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-wider mb-1">Siklus Penagihan (Mulai)</p>
+                    <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-wider mb-1">Billing Cycle (Start)</p>
                     <p className="font-mono font-bold text-white text-xs">{formatDate(sub.startedAt)}</p>
                   </div>
                 </div>
               ) : (
                 <div className="pt-2 max-w-lg">
                   <p className="text-xs font-mono text-white/40 leading-relaxed mb-6">
-                    Kamu menggunakan paket gratis. Upgrade ke PRO untuk membuka akses ke semua tema, analitik tingkat lanjut, dan menghapus batas proyek.
+                    You are using the free plan. Upgrade to PRO to unlock access to all themes, advanced analytics, and remove project limits.
                   </p>
                   <div className="grid grid-cols-2 gap-4">
                     {[
-                      { label: "Batas 5 Proyek", icon: Folder },
-                      { label: "Tema Terbatas", icon: Palette },
+                      { label: "5 Projects Limit", icon: Folder },
+                      { label: "Limited Themes", icon: Palette },
                     ].map((f) => {
                       const IconComp = f.icon;
                       return (
@@ -268,7 +268,7 @@ export default function BillingContent() {
             {isPro ? (
               <>
                 <p className="text-[10px] font-mono text-white/30">
-                  Lisensi diberikan oleh: <span className="font-bold text-white/50">{sub?.grantedBy || 'System Admin'}</span>
+                  License granted by: <span className="font-bold text-white/50">{sub?.grantedBy || 'System Admin'}</span>
                 </p>
                 <a
                   href={`https://wa.me/628xxxxxxxxx?text=Halo%2C+saya+ingin+memperpanjang+paket+${plan}+saya.`}
@@ -276,17 +276,17 @@ export default function BillingContent() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-zinc-900 border border-white/10 hover:bg-zinc-800 text-white text-xs font-mono font-bold uppercase tracking-wider rounded-none transition-colors"
                 >
-                  Perpanjang {plan}
+                  Extend {plan}
                 </a>
               </>
             ) : (
               <>
-                <p className="text-[10px] font-mono text-white/30">Tanpa biaya bulanan.</p>
+                <p className="text-[10px] font-mono text-white/30">No monthly fees.</p>
                 <Link
                   href="/pricing"
                   className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[#ff9e00] text-black text-xs font-mono font-bold uppercase tracking-wider rounded-none hover:bg-[#ffaa22] transition-colors"
                 >
-                  <span>Upgrade ke PRO</span>
+                  <span>Upgrade to PRO</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </>
@@ -304,13 +304,13 @@ export default function BillingContent() {
             </div>
             
             <div>
-              <p className="text-white/40 text-[10px] font-mono font-bold uppercase tracking-widest mb-1.5">Member Sejak</p>
+              <p className="text-white/40 text-[10px] font-mono font-bold uppercase tracking-widest mb-1.5">Member Since</p>
               <p className="text-lg font-mono font-bold tracking-wider">{formatDate(data?.memberSince)}</p>
             </div>
           </div>
           
           <div className="mt-12 pt-6 border-t border-white/5 relative z-10">
-            <p className="text-white/40 text-[10px] font-mono font-bold uppercase tracking-widest mb-3">Platform Terhubung</p>
+            <p className="text-white/40 text-[10px] font-mono font-bold uppercase tracking-widest mb-3">Connected Platforms</p>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center p-1.5">
                 <img src="/portfo.be.png" alt="Logo" className="w-full h-full object-contain brightness-0 invert opacity-95" />
@@ -337,7 +337,7 @@ export default function BillingContent() {
                   : "text-white/40 hover:text-white"
               }`}
             >
-              {t === "subscriptions" ? "Riwayat Langganan" : "Invoices & Transaksi"}
+              {t === "subscriptions" ? "Subscription History" : "Invoices & Transactions"}
             </button>
           ))}
         </div>
@@ -349,7 +349,7 @@ export default function BillingContent() {
           {tab === "subscriptions" && (
             <div className="divide-y divide-white/5">
               {subHistory.length === 0 ? (
-                <EmptyState icon={Layers} text="Belum ada riwayat langganan yang tercatat." />
+                <EmptyState icon={Layers} text="No subscription history recorded yet." />
               ) : (
                 subHistory.map((s: any) => (
                   <div key={s.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-zinc-950/20 transition-colors">
@@ -364,12 +364,12 @@ export default function BillingContent() {
                         <StatusBadge status={s.status} />
                       </div>
                       <p className="text-[11px] font-mono text-white/40">
-                        {formatDate(s.startedAt)} <span className="mx-2 text-white/20">→</span> {s.isLifetime ? "Seumur Hidup" : formatDate(s.expiredAt)}
+                        {formatDate(s.startedAt)} <span className="mx-2 text-white/20">→</span> {s.isLifetime ? "Lifetime" : formatDate(s.expiredAt)}
                       </p>
                       {s.notes && <p className="text-[10px] font-mono text-white/30 mt-1.5 italic flex items-center gap-1.5"><HelpCircle className="w-3.5 h-3.5 text-white/20" /> {s.notes}</p>}
                     </div>
                     <div className="text-left sm:text-right shrink-0 mt-2 sm:mt-0">
-                      <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest">Dibuat Pada</p>
+                      <p className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest">Created At</p>
                       <p className="text-xs font-mono font-bold text-white mt-0.5">{formatDate(s.createdAt)}</p>
                     </div>
                   </div>
@@ -382,7 +382,7 @@ export default function BillingContent() {
           {tab === "transactions" && (
             <div className="divide-y divide-white/5">
               {transactions.length === 0 ? (
-                <EmptyState icon={Receipt} text="Belum ada riwayat transaksi." />
+                <EmptyState icon={Receipt} text="No transaction history." />
               ) : (
                 transactions.map((t: any) => (
                   <div key={t.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-zinc-950/20 transition-colors group">
@@ -450,15 +450,15 @@ export default function BillingContent() {
                 <div className="w-24 h-24 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-none flex items-center justify-center mb-8 relative z-10 shadow-none">
                   <Check className="w-12 h-12" />
                 </div>
-                <h3 className="text-lg font-mono font-bold text-white uppercase tracking-wider mb-4 relative z-10">Selamat Datang di PRO! 🎉</h3>
+                <h3 className="text-lg font-mono font-bold text-white uppercase tracking-wider mb-4 relative z-10">Welcome to PRO! 🎉</h3>
                 <p className="text-white/40 text-xs font-mono leading-relaxed mb-10 max-w-lg relative z-10">
-                  Paket <strong>PRO Creator 14 Hari</strong> Anda sudah aktif. Sekarang Anda bebas mengeksplorasi seluruh fitur premium tanpa batas.
+                  Your <strong>PRO Creator 14 Days</strong> plan is now active. You are free to explore all premium features without limits.
                 </p>
                 <button 
                   onClick={handleCloseTrialModal}
                   className="w-full max-w-sm py-3 bg-[#ff9e00] text-black font-mono font-bold uppercase tracking-wider text-xs rounded-none hover:bg-[#ffaa22] transition-transform active:scale-95 relative z-10"
                 >
-                  Mulai Gunakan PRO
+                  Start Using PRO
                 </button>
               </div>
             ) : (
@@ -471,7 +471,7 @@ export default function BillingContent() {
                   </div>
                   
                   <h3 className="text-white text-sm font-mono font-bold uppercase tracking-wider mb-3 relative z-10 tracking-tight leading-tight">Portfobe<br/><span className="text-[#ff9e00]">PRO Creator</span></h3>
-                  <p className="text-white/40 text-[11px] font-mono relative z-10">Tingkatkan karir profesionalmu dengan alat super lengkap.</p>
+                  <p className="text-white/40 text-[11px] font-mono relative z-10">Elevate your professional career with comprehensive tools.</p>
                 </div>
 
                 {/* Right Column (Content) */}
@@ -484,19 +484,19 @@ export default function BillingContent() {
 
                   <div className="mb-8 text-center md:text-left">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#ff9e00]/10 border border-[#ff9e00]/20 text-[#ff9e00] rounded-none text-[9px] font-mono font-bold uppercase tracking-widest mb-4">
-                      <Gift className="w-3 h-3" /> Penawaran Spesial
+                      <Gift className="w-3 h-3" /> Special Offer
                     </div>
-                    <h3 className="text-lg font-mono font-bold text-white uppercase tracking-wider mb-3">Klaim Trial 14 Hari</h3>
-                    <p className="text-white/40 text-xs font-mono">Buka semua fitur tanpa batas. Tanpa perlu memasukkan kartu kredit. 100% Gratis selama masa percobaan.</p>
+                    <h3 className="text-lg font-mono font-bold text-white uppercase tracking-wider mb-3">Claim 14 Days Trial</h3>
+                    <p className="text-white/40 text-xs font-mono">Unlock all features without limits. No credit card required. 100% Free during the trial period.</p>
                   </div>
                   
                   {/* Features List */}
                   <div className="space-y-5 mb-10">
                     {[
-                      { icon: BarChart2, title: "Analitik Mendalam", desc: "Pantau pengunjung & performa portofolio." },
-                      { icon: Globe, title: "Custom Domain Pribadi", desc: "Ubah URL menjadi namakamu.com." },
-                      { icon: Layers, title: "Tanpa Batas Proyek", desc: "Upload karya sebanyak yang kamu mau." },
-                      { icon: Palette, title: "Tema Eksklusif", desc: "Akses ke seluruh template premium." }
+                      { icon: BarChart2, title: "Deep Analytics", desc: "Monitor visitors & portfolio performance." },
+                      { icon: Globe, title: "Personal Custom Domain", desc: "Change URL to yourname.com." },
+                      { icon: Layers, title: "Unlimited Projects", desc: "Upload as many works as you want." },
+                      { icon: Palette, title: "Exclusive Themes", desc: "Access all premium templates." }
                     ].map((feature, i) => {
                       const IconComp = feature.icon;
                       return (
@@ -519,7 +519,7 @@ export default function BillingContent() {
                       disabled={isClaimingTrial}
                       className="px-6 py-3 bg-zinc-900 border border-white/10 text-white/50 font-mono font-bold uppercase tracking-wider rounded-none hover:bg-zinc-800 transition-colors disabled:opacity-50 text-xs"
                     >
-                      Batal
+                      Cancel
                     </button>
                     <button 
                       onClick={handleClaimTrial}
@@ -527,9 +527,9 @@ export default function BillingContent() {
                       className="flex-1 py-3 bg-[#ff9e00] text-black font-mono font-bold uppercase tracking-wider rounded-none hover:bg-[#ffaa22] transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-xs relative overflow-hidden group"
                     >
                       {isClaimingTrial ? (
-                        <><Loader2 className="w-4 h-4 animate-spin" /> Mengaktifkan...</>
+                        <><Loader2 className="w-4 h-4 animate-spin" /> Activating...</>
                       ) : (
-                        <>Aktifkan Sekarang</>
+                        <>Activate Now</>
                       )}
                     </button>
                   </div>
@@ -549,9 +549,9 @@ export default function BillingContent() {
             <HelpCircle className="w-5 h-5 text-white/40" />
           </div>
           <div>
-            <h3 className="text-xs font-mono font-bold text-white uppercase mb-1">Punya kendala dengan tagihan?</h3>
+            <h3 className="text-xs font-mono font-bold text-white uppercase mb-1">Have billing issues?</h3>
             <p className="text-[10px] font-mono text-white/40 leading-relaxed">
-              Tim support kami siap membantu pertanyaan soal upgrade, pembayaran, atau perpanjangan.
+              Our support team is ready to help with questions about upgrades, payments, or extensions.
             </p>
           </div>
         </div>
@@ -559,7 +559,7 @@ export default function BillingContent() {
           href="/support"
           className="shrink-0 px-6 py-2.5 bg-zinc-950 border border-white/10 text-white text-[11px] font-mono font-bold uppercase tracking-wider rounded-none hover:bg-zinc-900 transition-colors"
         >
-          Hubungi Support
+          Contact Support
         </a>
       </div>
 

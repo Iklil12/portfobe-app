@@ -123,10 +123,10 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
               {/* Modal Header */}
               <div className="mb-8 pr-8">
                 <h2 className="text-lg font-mono font-bold text-white uppercase tracking-wider">
-                  {editingId ? 'Edit Data' : (projectType ? `Detail ${projectType === 'certificate' ? 'Sertifikat' : 'Proyek'}` : 'Pilih Tipe Unggahan')}
+                  {editingId ? 'Edit Data' : (projectType ? `${projectType === 'certificate' ? 'Certificate' : 'Project'} Detail` : 'Select Upload Type')}
                 </h2>
                 <p className="text-xs font-mono text-white/40 mt-1.5 leading-relaxed">
-                  {editingId ? 'Perbarui informasi data ini dengan cermat.' : (projectType ? 'Lengkapi formulir di bawah ini dengan detail yang sesuai.' : 'Pilih format data yang akan ditambahkan ke portofolio Anda.')}
+                  {editingId ? 'Update the data information carefully.' : (projectType ? 'Complete the form below with appropriate details.' : 'Choose the data format to add to your portfolio.')}
                 </p>
               </div>
 
@@ -152,7 +152,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                           return;
                         }
                         if (!projectTitle || !file3d) {
-                           showToast({ message: 'Judul dan File 3D wajib diisi!', id: 'err-3d-req', icon: "⚠️" });
+                           showToast({ message: 'Title and 3D File are required!', id: 'err-3d-req', icon: "⚠️" });
                            return;
                         }
                         setIsUploading3D(true);
@@ -176,15 +176,15 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
 
                           xhr.onload = () => {
                             if (xhr.status >= 200 && xhr.status < 300) {
-                              showToast({ message: '3D Model berhasil diunggah', id: 'succ-3d', icon: "✅" });
+                              showToast({ message: '3D Model uploaded successfully', id: 'succ-3d', icon: "✅" });
                               handleCloseModal();
                               window.location.reload();
                             } else {
                               try {
                                 const err = JSON.parse(xhr.responseText);
-                                showToast({ message: err.error || 'Gagal mengunggah', id: 'err-3d-api', icon: "❌" });
+                                showToast({ message: err.error || 'Failed to upload', id: 'err-3d-api', icon: "❌" });
                               } catch {
-                                showToast({ message: 'Gagal mengunggah 3D model', id: 'err-3d-api', icon: "❌" });
+                                showToast({ message: 'Failed to upload 3D model', id: 'err-3d-api', icon: "❌" });
                               }
                               if (file3dInputRef.current) file3dInputRef.current.value = '';
                             }
@@ -192,14 +192,14 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                           };
 
                           xhr.onerror = () => {
-                            showToast({ message: 'Gagal terhubung ke server', id: 'err-net', icon: '⚠️' });
+                            showToast({ message: 'Failed to connect to server', id: 'err-net', icon: '⚠️' });
                             setIsUploading3D(false);
                             if (file3dInputRef.current) file3dInputRef.current.value = '';
                           };
 
                           xhr.send(formData);
                         } catch (err) {
-                           showToast({ message: 'Gagal terhubung server', id: 'err-net', icon: '⚠️' });
+                           showToast({ message: 'Failed to connect to server', id: 'err-net', icon: '⚠️' });
                            setIsUploading3D(false);
                            if (file3dInputRef.current) file3dInputRef.current.value = '';
                         }
@@ -212,9 +212,9 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* INPUT JUDUL */}
                       <div className={projectType === 'certificate' ? 'md:col-span-1' : 'md:col-span-2'}>
-                        <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">Judul {projectType === 'certificate' ? 'Sertifikat/Acara' : 'Proyek'} <span className="text-rose-500">*</span></label>
+                        <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">{projectType === 'certificate' ? 'Certificate/Event' : 'Project'} Title <span className="text-rose-500">*</span></label>
                         <input
-                          type="text" value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} placeholder={projectType === 'certificate' ? "Contoh: Lomba Film UI 2022..." : "Contoh: UI/UX Masterclass..."}
+                          type="text" value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} placeholder={projectType === 'certificate' ? "e.g. Graphic Design Award 2022..." : "e.g. UI/UX Masterclass..."}
                           className="w-full px-5 py-3.5 rounded-none border border-white/10 bg-zinc-900 focus:bg-zinc-950 focus:border-[#ff9e00] outline-none text-sm font-mono text-white transition-all duration-300 placeholder:text-white/30"
                           required
                         />
@@ -224,25 +224,25 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                       {projectType === 'certificate' && (
                         <>
                           <div className="md:col-span-1">
-                            <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">Pencapaian / Status <span className="text-rose-500">*</span></label>
+                            <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">Achievement / Status <span className="text-rose-500">*</span></label>
                             <input
-                              type="text" value={certStatus} onChange={(e) => setCertStatus(e.target.value)} placeholder="Juara 1, Finalis, Staff..."
+                              type="text" value={certStatus} onChange={(e) => setCertStatus(e.target.value)} placeholder="1st Place, Finalist, Staff..."
                               className="w-full px-5 py-3.5 rounded-none border border-white/10 bg-zinc-900 focus:bg-zinc-950 focus:border-[#ff9e00] outline-none text-sm font-mono text-white transition-all duration-300 placeholder:text-white/30"
                               required
                             />
                           </div>
                           <div className="md:col-span-1">
-                            <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">Lembaga / Penyelenggara <span className="text-rose-500">*</span></label>
+                            <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">Issuer / Organizer <span className="text-rose-500">*</span></label>
                             <input
-                              type="text" value={certIssuer} onChange={(e) => setCertIssuer(e.target.value)} placeholder="BEM KM, Coursera, Google..."
+                              type="text" value={certIssuer} onChange={(e) => setCertIssuer(e.target.value)} placeholder="Coursera, Google..."
                               className="w-full px-5 py-3.5 rounded-none border border-white/10 bg-zinc-900 focus:bg-zinc-950 focus:border-[#ff9e00] outline-none text-sm font-mono text-white transition-all duration-300 placeholder:text-white/30"
                               required
                             />
                           </div>
                           <div className="md:col-span-1">
-                            <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">Tahun <span className="text-rose-500">*</span></label>
+                            <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">Year <span className="text-rose-500">*</span></label>
                             <input
-                              type="number" value={certYear} onChange={(e) => setCertYear(e.target.value)} placeholder="Misal: 2024"
+                              type="number" value={certYear} onChange={(e) => setCertYear(e.target.value)} placeholder="e.g. 2024"
                               className="w-full px-5 py-3.5 rounded-none border border-white/10 bg-zinc-900 focus:bg-zinc-950 focus:border-[#ff9e00] outline-none text-sm font-mono text-white transition-all duration-300 placeholder:text-white/30"
                               required
                             />
@@ -253,7 +253,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                       {/* INPUT MEDIA */}
                       <div className="md:col-span-2">
                         <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">
-                          {projectType === 'video' ? 'Tautan Video (YouTube/Vimeo)' : projectType === '3d' ? 'Unggah File 3D (.GLB)' : 'Unggah File Gambar'} <span className="text-rose-500">*</span>
+                          {projectType === 'video' ? 'Video Link (YouTube/Vimeo)' : projectType === '3d' ? 'Upload 3D File (.GLB)' : 'Upload Image File'} <span className="text-rose-500">*</span>
                         </label>
                         {projectType === '3d' ? (
                           <div className="w-full">
@@ -263,7 +263,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                 const max3DSize = userPlan === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
                                 const max3DLabel = userPlan === 'SUPREME' ? '100MB' : '50MB';
                                 if (f.size > max3DSize) {
-                                   showToast({ message: `Maksimal ${max3DLabel}`, id: "err-3d", icon: "⚠️" });
+                                   showToast({ message: `Max ${max3DLabel}`, id: "err-3d", icon: "⚠️" });
                                    return;
                                 }
                                 setFile3d(f);
@@ -283,23 +283,23 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                     <Box className="w-5 h-5" />
                                   </div>
                                   <span className="text-xs font-mono font-bold text-white">{file3d.name}</span>
-                                  <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Klik untuk mengganti</span>
+                                  <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Click to replace</span>
                                 </div>
                               ) : editingId && mediaUrl ? (
                                 <div className="py-8 flex flex-col items-center text-center px-4">
                                   <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-none flex items-center justify-center text-emerald-400 mb-3">
                                     <Check className="w-5 h-5" />
                                   </div>
-                                  <span className="text-xs font-mono font-bold text-white">File 3D Sudah Terlampir</span>
-                                  <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Klik untuk mengganti file</span>
+                                  <span className="text-xs font-mono font-bold text-white">3D File Attached</span>
+                                  <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Click to replace file</span>
                                 </div>
                               ) : (
                                 <div className="py-8 flex flex-col items-center text-center px-4">
                                   <div className="w-12 h-12 bg-zinc-950 border border-white/5 rounded-none flex items-center justify-center text-white/30 mb-3 group-hover/upload:bg-[#ff9e00]/10 group-hover/upload:text-[#ff9e00] group-hover/upload:border-[#ff9e00]/30 transition-all duration-300">
                                     <UploadCloud className="w-5 h-5" />
                                   </div>
-                                  <span className="text-xs font-mono font-bold text-white flex items-center gap-2">Pilih File 3D (.GLB/.GLTF)</span>
-                                  <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Maksimal {userPlan === 'SUPREME' ? '100MB' : '50MB'}</span>
+                                  <span className="text-xs font-mono font-bold text-white flex items-center gap-2">Select 3D File (.GLB/.GLTF)</span>
+                                  <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Max {userPlan === 'SUPREME' ? '100MB' : '50MB'}</span>
                                 </div>
                               )}
                             </div>
@@ -319,7 +319,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                 onClick={() => setVideoMethod('upload')}
                                 className={`flex-1 py-2 text-[10px] font-mono font-bold uppercase tracking-wider rounded-none transition-all flex items-center justify-center gap-1.5 ${(isBunnyGuid(mediaUrl) ? 'upload' : videoMethod) === 'upload' ? 'bg-zinc-800 text-white border border-white/5 shadow-sm' : 'text-white/40 hover:text-white'}`}
                               >
-                                Unggah <Crown className="w-3 h-3 text-[#ff9e00]" />
+                                Upload <Crown className="w-3 h-3 text-[#ff9e00]" />
                               </button>
                             </div>
 
@@ -347,23 +347,23 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                       <div className="w-full bg-zinc-900 border border-white/5 h-1.5 mb-3 overflow-hidden">
                                         <div className="bg-[#ff9e00] h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
                                       </div>
-                                      <span className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest">Mengunggah... {uploadProgress}%</span>
+                                      <span className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest">Uploading... {uploadProgress}%</span>
                                     </div>
                                   ) : mediaUrl && !mediaUrl.includes('youtube') && !mediaUrl.includes('vimeo') && mediaUrl.length === 36 ? (
                                     <div className="py-8 flex flex-col items-center text-center px-4">
                                       <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-none flex items-center justify-center text-emerald-400 mb-3">
                                         <Check className="w-5 h-5" />
                                       </div>
-                                      <span className="text-xs font-mono font-bold text-white">Video Berhasil Diunggah</span>
-                                      <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Klik untuk mengganti</span>
+                                      <span className="text-xs font-mono font-bold text-white">Video Successfully Uploaded</span>
+                                      <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Click to replace</span>
                                     </div>
                                   ) : (
                                     <div className="py-8 flex flex-col items-center text-center px-4">
                                       <div className="w-12 h-12 bg-zinc-950 border border-white/5 rounded-none flex items-center justify-center text-white/30 mb-3 group-hover/upload:bg-[#ff9e00]/10 group-hover/upload:text-[#ff9e00] group-hover/upload:border-[#ff9e00]/30 transition-all duration-300">
                                         <UploadCloud className="w-5 h-5" />
                                       </div>
-                                      <span className="text-xs font-mono font-bold text-white flex items-center gap-2">Unggah Video Langsung <Crown className="w-3.5 h-3.5 text-[#ff9e00]" /></span>
-                                      <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Maksimal {userPlan === 'SUPREME' ? '100MB' : '50MB'} (MP4, WEBM)</span>
+                                      <span className="text-xs font-mono font-bold text-white flex items-center gap-2">Upload Video Directly <Crown className="w-3.5 h-3.5 text-[#ff9e00]" /></span>
+                                      <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Max {userPlan === 'SUPREME' ? '100MB' : '50MB'} (MP4, WEBM)</span>
                                     </div>
                                   )}
                                 </div>
@@ -385,7 +385,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                 const maxImageLabel = userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB';
                                 
                                 if (f.size > maxImageSize) {
-                                  showToast({ message: `Maksimal ukuran gambar ${maxImageLabel}`, id: "err-img", icon: "⚠️" });
+                                  showToast({ message: `Max image size ${maxImageLabel}`, id: "err-img", icon: "⚠️" });
                                   return;
                                 }
 
@@ -407,12 +407,12 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                   
                                   if (res.ok && data.secure_url) {
                                     setMediaUrl(data.secure_url);
-                                    showToast({ message: "Gambar berhasil diunggah dengan cepat", id: "upload-asset-success", icon: "⚡" });
+                                    showToast({ message: "Image successfully uploaded", id: "upload-asset-success", icon: "⚡" });
                                   } else {
-                                    showToast({ message: data.error?.message || "Gagal mengunggah gambar", id: "upload-asset-fail", icon: "❌" });
+                                    showToast({ message: data.error?.message || "Failed to upload image", id: "upload-asset-fail", icon: "❌" });
                                   }
                                 } catch (err) {
-                                  showToast({ message: "Terjadi kesalahan jaringan Edge", id: "upload-asset-err", icon: "⚠️" });
+                                  showToast({ message: "Network error occurred", id: "upload-asset-err", icon: "⚠️" });
                                 } finally {
                                   setIsUploadingImage(false);
                                   if (fileImageInputRef.current) fileImageInputRef.current.value = '';
@@ -430,14 +430,14 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                               {isUploadingImage ? (
                                 <div className="py-8 flex flex-col items-center text-center px-4">
                                   <Loader2 className="w-6 h-6 animate-spin text-[#ff9e00] mb-3" />
-                                  <span className="text-xs font-mono font-bold text-white">Mengunggah Gambar...</span>
+                                  <span className="text-xs font-mono font-bold text-white">Uploading Image...</span>
                                 </div>
                               ) : mediaUrl ? (
                                 <div className="relative w-full h-48 bg-zinc-900">
                                   <LazyImage src={mediaUrl} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover/upload:scale-105" />
                                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/upload:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
                                     <span className="bg-zinc-900 border border-white/10 text-white px-4 py-2 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-xl">
-                                      Ganti Gambar
+                                      Change Image
                                     </span>
                                   </div>
                                 </div>
@@ -446,8 +446,8 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                   <div className="w-12 h-12 bg-zinc-950 border border-white/5 rounded-none flex items-center justify-center text-white/30 mb-3 group-hover/upload:bg-[#ff9e00]/10 group-hover/upload:text-[#ff9e00] group-hover/upload:border-[#ff9e00]/30 transition-all duration-300">
                                     <UploadCloud className="w-5 h-5" />
                                   </div>
-                                  <span className="text-xs font-mono font-bold text-white">Klik untuk Unggah Gambar</span>
-                                  <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Maksimal {userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB'}</span>
+                                  <span className="text-xs font-mono font-bold text-white">Click to Upload Image</span>
+                                  <span className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">Max {userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB'}</span>
                                 </div>
                               )}
                             </div>
@@ -457,9 +457,9 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                       
                       {/* INPUT DESKRIPSI */}
                       <div className="md:col-span-2">
-                        <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">Deskripsi (Opsional)</label>
+                        <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">Description (Optional)</label>
                         <textarea
-                          rows={3} value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} placeholder="Tambahkan penjelasan singkat..."
+                          rows={3} value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} placeholder="Add a short explanation..."
                           className="w-full px-5 py-4 rounded-none border border-white/10 bg-zinc-900 focus:bg-zinc-950 focus:border-[#ff9e00] outline-none text-sm font-mono text-white resize-none transition-all duration-300 placeholder:text-white/30 custom-scrollbar"
                         />
                       </div>
@@ -468,7 +468,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                       {projectType !== 'certificate' && (
                         <div className="md:col-span-2">
                           <label className="block text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 ml-1">
-                            Tags <span className="normal-case font-medium text-white/20">(Opsional)</span>
+                            Tags <span className="normal-case font-medium text-white/20">(Optional)</span>
                           </label>
                           {/* Chips */}
                           {projectTags.length > 0 && (
@@ -492,7 +492,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                           )}
                           <input
                             type="text"
-                            placeholder={projectTags.length >= 5 ? 'Maksimal 5 tag' : 'Ketik tag lalu tekan Enter atau koma...'}
+                            placeholder={projectTags.length >= 5 ? 'Max 5 tags' : 'Type tag then press Enter or comma...'}
                             disabled={projectTags.length >= 5}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === ',') {
@@ -506,7 +506,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                             }}
                             className="w-full px-5 py-3.5 rounded-none border border-white/10 bg-zinc-900 focus:bg-zinc-950 focus:border-[#ff9e00] outline-none text-sm font-mono text-white transition-all duration-300 placeholder:text-white/30 disabled:opacity-40 disabled:cursor-not-allowed"
                           />
-                          <p className="text-[9px] font-mono text-white/30 mt-2 ml-1">Contoh: UI/UX, Branding, React — Maks. 5 tag</p>
+                          <p className="text-[9px] font-mono text-white/30 mt-2 ml-1">e.g. UI/UX, Branding, React — Max 5 tags</p>
                         </div>
                       )}
                     </div>
@@ -519,7 +519,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                           onClick={() => setProjectType(null)}
                           className="w-full sm:w-auto px-8 py-3.5 rounded-none font-mono font-bold text-white/50 bg-zinc-900 border border-white/10 transition-colors hover:bg-zinc-850 hover:text-white text-xs uppercase tracking-wider"
                         >
-                          Kembali
+                          Back
                         </button>
                       )}
                       <button
@@ -528,7 +528,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                         className="w-full sm:flex-1 py-3.5 bg-[#ff9e00] hover:bg-[#ffaa22] text-black rounded-none font-mono font-bold text-xs uppercase tracking-widest active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
                         {(isSubmitting || isUploading3D) && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                        {isUploading3D ? `Mengunggah 3D... ${upload3DProgress}%` : isSubmitting ? 'Memproses...' : 'Simpan ke Portofolio'}
+                        {isUploading3D ? `Uploading 3D... ${upload3DProgress}%` : isSubmitting ? 'Processing...' : 'Save to Portfolio'}
                       </button>
                     </div>
                   </motion.form>

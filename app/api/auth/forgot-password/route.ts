@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     // Jika user tidak ada atau dia daftar pakai Google, kita tetap balas "Sukses" di frontend, 
     // tapi TIDAK MENGIRIM email apa-apa di backend.
     if (!user || user.password === "GOOGLE_LOGIN_NO_PASSWORD") {
-      return NextResponse.json({ message: "Jika email terdaftar, link reset akan dikirim." });
+      return NextResponse.json({ message: "If the email is registered, a reset link will be sent." });
     }
 
     // 2. Buat Token unik & set kadaluarsa (1 jam dari sekarang)
@@ -42,25 +42,25 @@ export async function POST(req: Request) {
     await resend.emails.send({
       from: 'Portfo Security <hellocreator@mail.ritions.com>',
       to: email,
-      subject: '🔑 Reset Kata Sandi Portfobe Anda',
+      subject: '🔑 Reset Your Portfobe Password',
       html: `
         <div style="font-family: sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
-          <h2>Permintaan Reset Password</h2>
-          <p>Seseorang (semoga itu Anda) baru saja meminta reset kata sandi untuk akun Portfobe.</p>
-          <p>Silakan klik tombol di bawah ini untuk membuat kata sandi baru:</p>
+          <h2>Password Reset Request</h2>
+          <p>Someone (hopefully you) recently requested a password reset for your Portfobe account.</p>
+          <p>Please click the button below to create a new password:</p>
           <div style="margin: 30px 0;">
-            <a href="${resetLink}" style="background-color: #0f172a; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">Reset Kata Sandi</a>
+            <a href="${resetLink}" style="background-color: #0f172a; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">Reset Password</a>
           </div>
           <p style="font-size: 12px; color: #64748b;">
-            Link ini akan kadaluarsa dalam 1 jam. Jika Anda tidak pernah meminta reset password, abaikan saja email ini.
+            This link will expire in 1 hour. If you did not request a password reset, please ignore this email.
           </p>
         </div>
       `
     });
 
-    return NextResponse.json({ message: "Jika email terdaftar, link reset akan dikirim." });
+    return NextResponse.json({ message: "If the email is registered, a reset link will be sent." });
   } catch (error) {
     console.error("FORGOT_PASSWORD_ERROR:", error);
-    return NextResponse.json({ error: "Gagal memproses permintaan" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
   }
 }

@@ -167,7 +167,7 @@ export async function registerUser(formData: FormData) {
   } catch (e) {
     // Jika ada error (koneksi database, dll), akan muncul di terminal
     console.error("🚨 DATABASE ERROR:", e);
-    return { error: "Terjadi kesalahan pada koneksi database." };
+    return { error: "A database connection error occurred." };
   }
 }
 
@@ -245,7 +245,7 @@ export async function resendVerificationEmail(email: string) {
 
     return { success: true };
   } catch (error) {
-    console.error("Gagal mengirim ulang email:", error);
-    return { error: "Terjadi kesalahan sistem saat mengirim email." };
+    console.error("Failed to resend email:", error);
+    return { error: "A system error occurred while sending email." };
   }
 }

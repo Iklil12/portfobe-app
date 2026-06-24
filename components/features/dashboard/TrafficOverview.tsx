@@ -92,11 +92,11 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
           <div>
             <h3 className="text-lg font-display font-bold text-white uppercase tracking-wider">Traffic Overview</h3>
-            <p className="text-xs font-mono text-white/50 mt-1">Performa portofolio Anda selama 7 hari terakhir</p>
+            <p className="text-xs font-mono text-white/50 mt-1">Your portfolio performance over the last 7 days</p>
           </div>
 
           <div className="px-4 py-1.5 border border-white/10 bg-white/5 text-[9px] font-mono font-bold uppercase tracking-widest text-white/70 self-start lg:self-auto rounded-none">
-            7 Hari Terakhir
+            Last 7 Days
           </div>
         </div>
 
@@ -107,11 +107,11 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
             <h4 className="text-xl md:text-2xl font-display font-bold text-white">{summary.totalViews.toLocaleString()}</h4>
           </div>
           <div className="bg-white/[0.02] border border-white/5 rounded-none p-4">
-            <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-1.5">Rata-rata Harian</p>
+            <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-1.5">Daily Average</p>
             <h4 className="text-xl md:text-2xl font-display font-bold text-white">{summary.avgDaily.toLocaleString()}</h4>
           </div>
           <div className="bg-[#ff9e00]/5 border border-[#ff9e00]/25 rounded-none p-4">
-            <p className="text-[9px] font-mono font-bold text-[#ff9e00] uppercase tracking-widest mb-1.5">Puncak Kunjungan</p>
+            <p className="text-[9px] font-mono font-bold text-[#ff9e00] uppercase tracking-widest mb-1.5">Peak Visits</p>
             <div className="flex items-baseline gap-2 truncate">
               <h4 className="text-xl md:text-2xl font-display font-bold text-[#ff9e00]">{summary.peakDay}</h4>
               <span className="text-[10px] font-mono font-bold text-[#ff9e00]/70">({summary.peakViews} views)</span>

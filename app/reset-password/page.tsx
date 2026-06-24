@@ -26,7 +26,7 @@ function ResetPasswordForm() {
       return;
     }
     if (newPassword.length < 6) {
-      setStatus({ type: "error", message: "Sandi minimal harus 6 karakter." });
+      setStatus({ type: "error", message: "Password must be at least 6 characters." });
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -48,13 +48,13 @@ function ResetPasswordForm() {
 
       if (res.ok) {
         setIsSuccess(true);
-        setStatus({ type: "success", message: "Sandi berhasil diperbarui! Mengalihkan ke halaman login..." });
+        setStatus({ type: "success", message: "Password successfully updated! Redirecting to login page..." });
         setTimeout(() => router.push('/login'), 3000);
       } else {
-        setStatus({ type: "error", message: data.error || "Gagal mereset sandi." });
+        setStatus({ type: "error", message: data.error || "Failed to reset password." });
       }
     } catch (error) {
-      setStatus({ type: "error", message: "Terjadi kesalahan server." });
+      setStatus({ type: "error", message: "A server error occurred." });
     } finally {
       setIsLoading(false);
     }
@@ -113,7 +113,7 @@ function ResetPasswordForm() {
               type={showPassword ? "text" : "password"} 
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Minimal 6 karakter" 
+              placeholder="Min 6 characters" 
               className="w-full px-4 py-4 rounded-none border border-white/15 bg-black focus:border-l-4 focus:border-l-[#ff9e00] focus:border-[#ff9e00] focus:ring-0 outline-none transition-all text-xs font-mono font-bold text-white placeholder:text-white/25 tracking-widest" 
               required 
             />

@@ -5,7 +5,7 @@ import { useMemo, useState, useEffect } from 'react';
 
 // Fetcher standar menggunakan fetch bawaan
 const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then((res) => {
-  if (!res.ok) throw new Error("Gagal memuat data");
+  if (!res.ok) throw new Error("Failed to load data");
   return res.json();
 });
 
@@ -108,3 +108,4 @@ export function useDashboardOverview() {
     isLoadingAnalytics: isLoadingAnalytics,
   };
 }
+

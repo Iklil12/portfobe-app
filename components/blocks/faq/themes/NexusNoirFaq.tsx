@@ -130,7 +130,7 @@ export default function NexusNoirFaq({ data, theme, isEditor }: { data: any, the
                     <button 
                       onClick={(e) => handleRemoveItem(i, e)}
                       className="absolute top-6 right-20 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center bg-black border border-red-500/30 hover:bg-red-500/20"
-                      title="Hapus Pertanyaan"
+                      title="Delete Question"
                     >
                       <i className="fas fa-trash text-xs"></i>
                     </button>

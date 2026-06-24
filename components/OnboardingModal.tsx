@@ -20,7 +20,7 @@ const professions = [
   { id: "uiux", label: "UI/UX Designer", icon: PenTool, color: "text-[#ff9e00]", bg: "bg-[#ff9e00]/5", border: "border-white/10 hover:border-[#ff9e00]" },
   { id: "dev", label: "Web Developer", icon: Code, color: "text-[#ff9e00]", bg: "bg-[#ff9e00]/5", border: "border-white/10 hover:border-[#ff9e00]" },
   { id: "creator", label: "Content Creator", icon: Film, color: "text-[#ff9e00]", bg: "bg-[#ff9e00]/5", border: "border-white/10 hover:border-[#ff9e00]" },
-  { id: "other", label: "Lainnya", icon: HelpCircle, color: "text-white/40", bg: "bg-zinc-950", border: "border-white/10 hover:border-white/30" },
+  { id: "other", label: "Other", icon: HelpCircle, color: "text-white/40", bg: "bg-zinc-950", border: "border-white/10 hover:border-white/30" },
 ];
 
 export default function OnboardingModal({ userName, onFinish }: OnboardingModalProps) {
@@ -48,7 +48,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
   // --- FUNGSI SUBMIT ---
   const finishOnboarding = async (selectedProfession: string | null) => {
     setIsSubmitting(true);
-    const loadingToast = toast.loading("Menyiapkan ruang digitalmu...");
+    const loadingToast = toast.loading("Setting up your digital space...");
     
     try {
       const res = await fetch("/api/profile", {
@@ -62,12 +62,12 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
       });
       
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Gagal menyimpan data.");
+      if (!res.ok) throw new Error(data.error || "Failed to save data.");
       
       // Paksa refresh data SWR di background
       await mutate('/api/layout-sync');
       
-      toast.success("Yeay! Berhasil.", { id: loadingToast });
+      toast.success("Yay! Success.", { id: loadingToast });
       
       setTimeout(() => {
         if (onFinish) onFinish();
@@ -75,7 +75,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
       }, 1200);
       
     } catch (e: any) {
-      toast.error(e.message || "Terjadi kesalahan teknis.", { id: loadingToast });
+      toast.error(e.message || "A technical error occurred.", { id: loadingToast });
       setIsSubmitting(false);
       if (e.message.toLowerCase().includes("url") || e.message.toLowerCase().includes("subdomain")) {
         setCurrentStep(1);
@@ -88,8 +88,8 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
     if (e) e.preventDefault(); 
     
     if (currentStep === 1) {
-      if (sub.length < 3) return toast.error("Subdomain minimal 3 karakter.");
-      if (!/^[a-z0-9]+$/.test(sub)) return toast.error("Hanya boleh huruf kecil dan angka.");
+      if (sub.length < 3) return toast.error("Subdomain must be at least 3 characters.");
+      if (!/^[a-z0-9]+$/.test(sub)) return toast.error("Only lowercase letters and numbers are allowed.");
 
       setIsValidating(true);
       try {
@@ -101,20 +101,20 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
         const data = await res.json();
 
         if (!data.available) {
-          setErr(data.message || "URL sudah diambil orang.");
-          toast.error(data.message || "URL sudah diambil.");
+          setErr(data.message || "URL is already taken.");
+          toast.error(data.message || "URL is already taken.");
           setIsValidating(false);
           return;
         }
         setErr("");
         setCurrentStep(2);
       } catch (error) {
-        toast.error("Server sedang sibuk.");
+        toast.error("Server is busy.");
       }
       setIsValidating(false);
 
     } else if (currentStep === 2) {
-      if (!name.trim()) return toast.error("Namanya diisi dulu ya.");
+      if (!name.trim()) return toast.error("Please fill in your name.");
       setCurrentStep(3);
     }
   };
@@ -163,8 +163,8 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
             <div className="w-24 h-24 sm:w-28 sm:h-28 bg-zinc-900 border border-white/10 rounded-none mx-auto flex items-center justify-center shadow-none mb-8">
               <span className="text-4xl sm:text-5xl intro-wave">👋</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-mono font-bold text-white uppercase tracking-wider mb-4">Halo, Kreator!</h1>
-            <p className="text-white/45 font-mono text-xs uppercase tracking-widest">Mari bangun ruang digitalmu...</p>
+            <h1 className="text-2xl sm:text-3xl font-mono font-bold text-white uppercase tracking-wider mb-4">Hello, Creator!</h1>
+            <p className="text-white/45 font-mono text-xs uppercase tracking-widest">Let's build your digital space...</p>
           </div>
         </div>
       ) : (
@@ -210,8 +210,8 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
 
               {currentStep === 1 && (
                 <div className="animate-[fadeInBackdrop_0.5s_forwards]">
-                  <h3 className="text-lg sm:text-xl font-mono font-bold text-white uppercase tracking-wider mb-3">Klaim Rumahmu</h3>
-                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">Ini adalah alamat permanen yang akan disebarkan ke klien atau audiensmu.</p>
+                  <h3 className="text-lg sm:text-xl font-mono font-bold text-white uppercase tracking-wider mb-3">Claim Your Home</h3>
+                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">This is the permanent address that will be shared with your clients or audience.</p>
 
                   <form onSubmit={handleNext} className="space-y-5">
                     <div className="relative flex items-center bg-zinc-950 border border-white/10 rounded-none focus-within:border-[#ff9e00] transition-all group">
@@ -222,7 +222,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                         maxLength={15} 
                         value={sub} 
                         onChange={(e) => setSub(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ""))} 
-                        placeholder="namamu" 
+                        placeholder="yourname" 
                         className="flex-1 px-4 py-4 bg-transparent outline-none font-mono font-bold text-white text-xs placeholder:text-white/20" 
                       />
                       <div className="pr-5 text-[9px] font-mono text-white/30">{sub.length}/15</div>
@@ -240,11 +240,11 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                       {isValidating ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Mengecek...</span>
+                          <span>Checking...</span>
                         </>
                       ) : (
                         <>
-                          <span>Kunci Nama Ini</span>
+                          <span>Lock This Name</span>
                           <ArrowRight className="w-4 h-4" />
                         </>
                       )}
@@ -255,8 +255,8 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
 
               {currentStep === 2 && (
                 <div className="animate-[fadeInBackdrop_0.5s_forwards]">
-                  <h3 className="text-lg sm:text-xl font-mono font-bold text-white uppercase tracking-wider mb-3">Kenalan Dulu</h3>
-                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">Bagaimana dunia harus memanggilmu? Ini akan jadi judul utamamu.</p>
+                  <h3 className="text-lg sm:text-xl font-mono font-bold text-white uppercase tracking-wider mb-3">Let's Get Acquainted</h3>
+                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">How should the world address you? This will be your main title.</p>
 
                   <form onSubmit={handleNext} className="space-y-5">
                     <div className="relative flex items-center bg-zinc-950 border border-white/10 rounded-none focus-within:border-[#ff9e00] transition-all">
@@ -266,7 +266,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                         maxLength={50} 
                         value={name} 
                         onChange={(e) => setName(e.target.value.replace(/[^a-zA-Z0-9\s\.\-]/g, ""))} 
-                        placeholder="Nama Lengkap / Panggung" 
+                        placeholder="Full / Stage Name" 
                         className="flex-1 px-5 py-4 bg-transparent outline-none font-mono font-bold text-white text-xs placeholder:text-white/20" 
                       />
                       <div className="pr-5 text-[9px] font-mono text-white/30">{name.length}/50</div>
@@ -276,7 +276,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                       disabled={!name.trim()} 
                       className="w-full py-4 bg-[#ff9e00] hover:bg-[#ffaa22] text-black rounded-none font-mono font-bold text-xs uppercase tracking-wider flex justify-center items-center gap-2 transition-all disabled:opacity-40"
                     >
-                      <span>Langkah Terakhir</span>
+                      <span>Final Step</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                     <button 
@@ -284,7 +284,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                       onClick={() => setCurrentStep(3)} 
                       className="w-full py-2 text-white/40 font-mono font-bold text-[9px] uppercase tracking-widest hover:text-white transition-colors"
                     >
-                      Lewati Dulu
+                      Skip for Now
                     </button>
                   </form>
                 </div>
@@ -292,8 +292,8 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
 
               {currentStep === 3 && (
                 <div className="animate-[fadeInBackdrop_0.5s_forwards]">
-                  <h3 className="text-lg sm:text-xl font-mono font-bold text-white uppercase tracking-wider mb-3">Satu Hal Lagi</h3>
-                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">Apa keahlian utamamu? Kami akan menyesuaikan tampilan untukmu.</p>
+                  <h3 className="text-lg sm:text-xl font-mono font-bold text-white uppercase tracking-wider mb-3">One More Thing</h3>
+                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">What is your primary skill? We will customize the look for you.</p>
 
                   <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
                     {professions.map((p) => {
@@ -322,7 +322,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                     disabled={isSubmitting} 
                     className="w-full text-white/40 font-mono font-bold text-[9px] uppercase tracking-[0.2em] hover:text-white transition-colors py-2 disabled:opacity-50"
                   >
-                    {isSubmitting ? "Sedang Memproses..." : "Saya Rahasiakan Dulu"}
+                    {isSubmitting ? "Processing..." : "Keep It Secret for Now"}
                   </button>
                 </div>
               )}
@@ -384,7 +384,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                   currentStep === 2 ? 'top-0 right-0 rotate-[5deg]' :
                   'top-[-10px] left-[-10px] rotate-[-2deg]'
                 }`}>
-                  {currentStep === 1 ? '✨ Domain Unik' : currentStep === 2 ? '😎 Keren' : '🚀 Mulai!'}
+                  {currentStep === 1 ? '✨ Unique Domain' : currentStep === 2 ? '😎 Cool' : '🚀 Start!'}
                 </div>
 
               </div>

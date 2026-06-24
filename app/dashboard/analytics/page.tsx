@@ -137,18 +137,18 @@ export default function AnalyticsPage() {
   const lockedPeakDay = 'Senin';
   const lockedTotalPeriod = 891;
 
-  const handleLocked = useCallback(() => showToast({ message: "Upgrade ke PRO untuk membuka fitur analitik lengkap!", id: "range-lock", icon: "fa-lock" }), []);
+  const handleLocked = useCallback(() => showToast({ message: "Upgrade to PRO to unlock full analytics features!", id: "range-lock", icon: "fa-lock" }), []);
 
   const handleComingSoon = useCallback((e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    showToast({ message: "Fitur analitik lanjutan akan tersedia segera!", id: "coming-soon-analytics", icon: "fa-clock" });
+    showToast({ message: "Advanced analytics features will be available soon!", id: "coming-soon-analytics", icon: "fa-clock" });
   }, []);
 
   const RANGES = [
-    { id: '1d', label: 'Hari Ini', pro: false },
-    { id: '7d', label: '7 Hari', pro: false },
-    { id: '30d', label: '30 Hari', pro: true },
-    { id: 'all', label: 'Semua', pro: true },
+    { id: '1d', label: 'Today', pro: false },
+    { id: '7d', label: '7 Days', pro: false },
+    { id: '30d', label: '30 Days', pro: true },
+    { id: 'all', label: 'All Time', pro: true },
   ];
 
   return (
@@ -171,7 +171,7 @@ export default function AnalyticsPage() {
           <h1 className="text-3xl font-mono font-bold text-white tracking-tight uppercase mb-1.5">
             Metrics.
           </h1>
-          <p className="text-xs font-mono text-white/40">Analisis mendalam performa dan trafik portofolio Anda.</p>
+          <p className="text-xs font-mono text-white/40">In-depth analysis of your portfolio's performance and traffic.</p>
         </div>
         <div className="flex bg-zinc-900 p-1 border border-white/10 rounded-none self-start md:self-auto">
           {RANGES.map(r => {
@@ -229,14 +229,14 @@ export default function AnalyticsPage() {
         <TopLocations 
           isLoading={isLoading} isFree={isFree} handleLocked={handleLocked} 
           dataList={displayCountries} animReady={animReady} 
-          title="Top Negara" subtitle="Asal negara pengunjung" 
+          title="Top Countries" subtitle="Visitor origin country" 
         />
 
         {/* TOP CITIES */}
         <TopLocations 
           isLoading={isLoading} isFree={isFree} handleLocked={handleLocked} 
           dataList={displayCities} animReady={animReady} 
-          title="Top Kota" subtitle="Asal kota pengunjung" 
+          title="Top Cities" subtitle="Visitor origin city" 
         />
       </div>
 

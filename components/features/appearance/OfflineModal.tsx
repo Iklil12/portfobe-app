@@ -14,16 +14,16 @@ export function OfflineModal({ setShowOfflineModal }: { setShowOfflineModal: (sh
         <div className="w-16 h-16 bg-zinc-950 border border-white/5 text-rose-500 rounded-none flex items-center justify-center mb-6 relative">
           <EyeOff className="w-6 h-6" />
         </div>
-        <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider mb-2">Desain Disimpan</h3>
+        <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider mb-2">Design Saved</h3>
         <p className="text-white/40 mb-8 text-[11px] font-mono leading-relaxed">
-          Namun, web portofolio Anda saat ini sedang berstatus <span className="font-bold text-rose-400">Offline</span>.
+          However, your portfolio web is currently <span className="font-bold text-rose-400">Offline</span>.
         </p>
         <div className="flex flex-col gap-3 w-full">
           <Link href="/dashboard/settings" className="w-full py-3 rounded-none font-mono font-bold text-black bg-[#ff9e00] hover:bg-[#ffaa22] active:scale-95 transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-2">
-            <Globe className="w-4 h-4" /> <span>Aktifkan Web Sekarang</span>
+            <Globe className="w-4 h-4" /> <span>Activate Web Now</span>
           </Link>
           <button onClick={() => setShowOfflineModal(false)} className="w-full py-3 rounded-none font-mono font-bold text-white/40 bg-zinc-950 border border-white/10 hover:bg-zinc-900 hover:text-white active:scale-95 transition-all text-xs uppercase tracking-wider">
-            Nanti Saja
+            Later
           </button>
         </div>
       </div>

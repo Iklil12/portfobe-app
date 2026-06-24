@@ -36,7 +36,7 @@ export default function LoginClient() {
     });
 
     if (res?.error) {
-      setErrorMsg("Email atau password yang Anda masukkan tidak cocok.");
+      setErrorMsg("The email or password you entered is incorrect.");
       setIsLoading(false);
     } else {
       router.push('/dashboard');
@@ -62,13 +62,13 @@ export default function LoginClient() {
       });
       
       if (res.ok) {
-        setForgotStatus({ type: "success", message: "Jika email Anda terdaftar, kami telah mengirimkan instruksi reset ke kotak masuk Anda." });
+        setForgotStatus({ type: "success", message: "If your email is registered, we have sent reset instructions to your inbox." });
         setForgotEmail(""); // Kosongkan input
       } else {
-        setForgotStatus({ type: "error", message: "Terjadi kesalahan jaringan. Coba lagi nanti." });
+        setForgotStatus({ type: "error", message: "Network error occurred. Please try again later." });
       }
     } catch (error) {
-      setForgotStatus({ type: "error", message: "Terjadi kesalahan server." });
+      setForgotStatus({ type: "error", message: "A server error occurred." });
     } finally {
       setIsForgotLoading(false);
     }
@@ -110,9 +110,9 @@ export default function LoginClient() {
               <X className="w-5 h-5" />
             </button>
             
-            <h3 className="text-xl font-display font-bold text-white mb-2 uppercase tracking-wider">Lupa Sandi?</h3>
+            <h3 className="text-xl font-display font-bold text-white mb-2 uppercase tracking-wider">Forgot Password?</h3>
             <p className="text-xs font-mono text-white/50 mb-8 leading-relaxed">
-              Masukkan alamat email yang terdaftar. Kami akan mengirimkan tautan untuk mereset kata sandi Anda.
+              Enter your registered email address. We will send you a link to reset your password.
             </p>
             
             {forgotStatus.message && (
@@ -124,7 +124,7 @@ export default function LoginClient() {
 
             <form onSubmit={handleForgotPassword} className="flex flex-col gap-5">
               <div>
-                <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2">Alamat Email</label>
+                <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2">Email Address</label>
                 <div className="relative">
                   <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
                   <input 
@@ -142,7 +142,7 @@ export default function LoginClient() {
                 disabled={isForgotLoading || !forgotEmail} 
                 className={`mt-2 py-4 rounded-none font-mono font-bold uppercase tracking-widest text-[11px] text-black bg-[#ff9e00] hover:bg-[#ffaa22] transition-all flex items-center justify-center gap-2 ${isForgotLoading || !forgotEmail ? 'opacity-70 cursor-not-allowed' : 'active:scale-[0.98]'}`}
               >
-                {isForgotLoading ? <div className="w-3.5 h-3.5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div> : 'Kirim Link Reset'}
+                {isForgotLoading ? <div className="w-3.5 h-3.5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div> : 'Send Reset Link'}
               </button>
             </form>
           </div>
@@ -163,8 +163,8 @@ export default function LoginClient() {
              <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#ff9e00]/20 bg-[#ff9e00]/5 text-[#ff9e00] text-[9px] font-mono uppercase tracking-[0.2em] mb-4">
                Sign In
              </div>
-             <h1 className="text-3xl font-display font-bold text-white tracking-tight">Selamat Datang Kembali</h1>
-             <p className="text-white/40 text-xs font-mono mt-2 leading-relaxed">Masuk untuk mengelola portofolio profesional Anda.</p>
+             <h1 className="text-3xl font-display font-bold text-white tracking-tight">Welcome Back</h1>
+             <p className="text-white/40 text-xs font-mono mt-2 leading-relaxed">Sign in to manage your professional portfolio.</p>
           </div>
 
           {errorMsg && (
@@ -176,7 +176,7 @@ export default function LoginClient() {
 
           <form onSubmit={handleLogin} className="space-y-6" suppressHydrationWarning>
             <div className="group">
-              <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Alamat Email</label>
+              <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Email Address</label>
               <input 
                 name="email" 
                 type="email" 
@@ -189,7 +189,7 @@ export default function LoginClient() {
 
             <div className="group">
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 group-focus-within:text-[#ff9e00] transition-colors">Kata Sandi</label>
+                <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 group-focus-within:text-[#ff9e00] transition-colors">Password</label>
                 
                 {/* --- TOMBOL TRIGGER MODAL LUPA PASSWORD --- */}
                 <button 
@@ -200,7 +200,7 @@ export default function LoginClient() {
                   }}
                   className="text-[9px] font-mono font-bold text-white/40 hover:text-[#ff9e00] uppercase tracking-widest transition-colors outline-none"
                 >
-                  Lupa Password?
+                  Forgot Password?
                 </button>
               </div>
               
@@ -229,7 +229,7 @@ export default function LoginClient() {
               className={`w-full relative bg-[#ff9e00] text-black py-4.5 rounded-none text-[11px] font-mono font-bold uppercase tracking-widest transition-all duration-300 transform active:scale-[0.98] hover:shadow-[4px_4px_0px_rgba(255,255,255,0.15)] ${isLoading ? 'bg-zinc-800 text-white/55' : 'hover:bg-[#ffaa22]'}`}
             >
               <div className={`flex items-center justify-center gap-2 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
-                Masuk ke Dashboard <ArrowRight className="w-4 h-4" />
+                Sign In to Dashboard <ArrowRight className="w-4 h-4" />
               </div>
               
               {isLoading && (
@@ -242,7 +242,7 @@ export default function LoginClient() {
 
           <div className="flex items-center my-8">
             <div className="flex-grow border-t border-white/5"></div>
-            <span className="px-4 text-[9px] font-mono font-bold text-white/20 uppercase tracking-widest">Atau masuk dengan</span>
+            <span className="px-4 text-[9px] font-mono font-bold text-white/20 uppercase tracking-widest">Or sign in with</span>
             <div className="flex-grow border-t border-white/5"></div>
           </div>
 
@@ -270,7 +270,7 @@ export default function LoginClient() {
           </button>
 
           <p className="text-center text-xs text-white/40 mt-10 font-mono">
-            Belum memiliki akun? <Link href="/register" className="text-white font-bold hover:text-[#ff9e00] transition-colors ml-1 uppercase tracking-wider">Daftar Sekarang</Link>
+            Don't have an account? <Link href="/register" className="text-white font-bold hover:text-[#ff9e00] transition-colors ml-1 uppercase tracking-wider">Register Now</Link>
           </p>
         </div>
       </div>
@@ -290,7 +290,7 @@ export default function LoginClient() {
             </div>
             
             <h2 className="text-2xl font-display font-bold text-white leading-relaxed tracking-tight mb-10">
-              &quot;Portfo.be mengubah cara klien dan agensi melihat hasil karya saya secara profesional.&quot;
+              &quot;Portfo.be changes how clients and agencies view my work professionally.&quot;
             </h2>
             
             <div className="flex items-center gap-4">

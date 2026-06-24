@@ -11,7 +11,7 @@ export async function updateUsername(newUsername: string) {
     // 1. Authenticate user
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
-      return { error: "Anda harus login terlebih dahulu." };
+      return { error: "You must be logged in first." };
     }
 
     // Clean input
@@ -95,6 +95,8 @@ export async function updateUsername(newUsername: string) {
 
   } catch (error) {
     console.error("Error in updateUsername action:", error);
-    return { error: "Terjadi kesalahan sistem saat memperbarui subdomain." };
+    return { error: "System error occurred while updating subdomain." };
   }
 }
+
+

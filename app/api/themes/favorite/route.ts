@@ -22,7 +22,7 @@ export async function GET() {
     return NextResponse.json({ favorites: favorites.map((f) => f.themeId) });
   } catch (error) {
     console.error("GET ThemeFavorite Error:", error);
-    return NextResponse.json({ error: "Gagal mengambil data favorit" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch favorite data" }, { status: 500 });
   }
 }
 
@@ -57,6 +57,6 @@ export async function POST(req: Request) {
     }
   } catch (error) {
     console.error("POST ThemeFavorite Error:", error);
-    return NextResponse.json({ error: "Gagal menyimpan favorit" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save favorite" }, { status: 500 });
   }
 }

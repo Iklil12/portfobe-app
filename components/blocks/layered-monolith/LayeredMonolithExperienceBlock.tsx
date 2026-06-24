@@ -137,7 +137,7 @@ export function LayeredMonolithExperienceBlock({ theme, isEditor }: any) {
                                     <button
                                         onClick={(e) => handleRemoveItem(index, e)}
                                         className="absolute -top-2.5 -right-2.5 bg-black hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors border border-white/10 shadow-lg"
-                                        title="Hapus Pengalaman"
+                                        title="Delete Experience"
                                     >
                                         ✕
                                     </button>

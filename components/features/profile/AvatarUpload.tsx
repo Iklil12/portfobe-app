@@ -35,7 +35,7 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
     // limit format
     const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!validMimeTypes.includes(file.type)) {
-      showToast({ message: "Format tidak didukung. Harap unggah JPG, PNG, atau WEBP.", id: "err-avatar-type", icon: "fa-exclamation" });
+      showToast({ message: "Unsupported format. Please upload JPG, PNG, or WEBP.", id: "err-avatar-type", icon: "fa-exclamation" });
       return;
     }
 
@@ -43,14 +43,14 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
     const maxImageSize = userPlan === 'SUPREME' ? 15 * 1024 * 1024 : userPlan === 'PRO' ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
     const maxImageLabel = userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB';
     if (file.size > maxImageSize) {
-      showToast({ message: `Maksimal ukuran gambar adalah ${maxImageLabel}`, id: "err-avatar-size", icon: "fa-exclamation" });
+      showToast({ message: `Maximum image size is ${maxImageLabel}`, id: "err-avatar-size", icon: "fa-exclamation" });
       return;
     }
 
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
     const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET;
     if (!cloudName || !uploadPreset) {
-      showToast({ message: "Konfigurasi Cloudinary tidak ditemukan", id: "upload-avatar-fail", icon: "fa-times" });
+      showToast({ message: "Cloudinary configuration not found", id: "upload-avatar-fail", icon: "fa-times" });
       return;
     }
 
@@ -67,12 +67,12 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
       const data = await res.json();
       if (res.ok && data.secure_url) {
         setAvatarUrl(data.secure_url);
-        showToast({ message: "Foto terunggah sangat cepat via Edge Node! ⚡ Jangan lupa klik Simpan.", id: "upload-success-toast", icon: "fa-check-circle" });
+        showToast({ message: "Photo uploaded very fast via Edge Node! ⚡ Don't forget to click Save.", id: "upload-success-toast", icon: "fa-check-circle" });
       } else {
-        showToast({ message: data.error?.message || "Gagal mengunggah foto", id: "upload-avatar-fail", icon: "fa-times" });
+        showToast({ message: data.error?.message || "Failed to upload photo", id: "upload-avatar-fail", icon: "fa-times" });
       }
     } catch (err) {
-      showToast({ message: "Terjadi kesalahan jaringan Edge", id: "upload-avatar-err", icon: "fa-wifi" });
+      showToast({ message: "Edge network error occurred", id: "upload-avatar-err", icon: "fa-wifi" });
     } finally {
       setIsUploading(false);
     }

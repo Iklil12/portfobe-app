@@ -44,20 +44,20 @@ export default function TestimonialsPage() {
 
     const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!validMimeTypes.includes(file.type)) {
-      showToast({ message: "Format tidak didukung. Harap unggah JPG, PNG, atau WEBP.", id: "err-testimonial-img-type", icon: "fa-exclamation" });
+      showToast({ message: "Unsupported format. Please upload JPG, PNG, or WEBP.", id: "err-testimonial-img-type", icon: "fa-exclamation" });
       return;
     }
 
     const maxImageSize = 5 * 1024 * 1024;
     if (file.size > maxImageSize) {
-      showToast({ message: "Maksimal ukuran gambar adalah 5MB", id: "err-testimonial-img-size", icon: "fa-exclamation" });
+      showToast({ message: "Maximum image size is 5MB", id: "err-testimonial-img-size", icon: "fa-exclamation" });
       return;
     }
 
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
     const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET;
     if (!cloudName || !uploadPreset) {
-      showToast({ message: "Konfigurasi Cloudinary tidak ditemukan", id: "up-fail", icon: "fa-times" });
+      showToast({ message: "Cloudinary configuration not found", id: "up-fail", icon: "fa-times" });
       return;
     }
 
@@ -75,12 +75,12 @@ export default function TestimonialsPage() {
       
       if (res.ok && data.secure_url) {
         setFormData(prev => ({ ...prev, avatarUrl: data.secure_url }));
-        showToast({ message: "Foto terunggah kilat via Edge Node! ⚡", id: "up-ok", icon: "fa-bolt" });
+        showToast({ message: "Photo uploaded quickly via Edge Node! ⚡", id: "up-ok", icon: "fa-bolt" });
       } else {
-        showToast({ message: data.error?.message || "Gagal mengunggah gambar", id: "up-fail", icon: "fa-times" });
+        showToast({ message: data.error?.message || "Failed to upload image", id: "up-fail", icon: "fa-times" });
       }
     } catch (err) {
-      showToast({ message: "Terjadi kesalahan jaringan Edge", id: "up-err", icon: "fa-wifi" });
+      showToast({ message: "Edge network error occurred", id: "up-err", icon: "fa-wifi" });
     } finally {
       setIsUploadingImage(false);
     }
@@ -125,11 +125,11 @@ export default function TestimonialsPage() {
         fetchTestimonials();
       } else {
         const data = await res.json();
-        showToast({ message: data.error || "Gagal menyimpan testimoni", id: "save-error", icon: "fa-exclamation-circle" });
+        showToast({ message: data.error || "Failed to save testimonial", id: "save-error", icon: "fa-exclamation-circle" });
       }
     } catch (error) {
       console.error(error);
-      showToast({ message: "Terjadi kesalahan sistem", id: "save-error", icon: "fa-exclamation-triangle" });
+      showToast({ message: "System error occurred", id: "save-error", icon: "fa-exclamation-triangle" });
     } finally {
       setIsAdding(false);
       isSubmittingRef.current = false;
@@ -167,7 +167,7 @@ export default function TestimonialsPage() {
       const res = await fetch(`/api/testimonials/${testimonialToDelete}`, { method: 'DELETE' });
       if (res.ok) {
         fetchTestimonials();
-        showToast({ message: "Testimoni dihapus", id: "del-success", icon: "fa-trash" });
+        showToast({ message: "Testimonial deleted", id: "del-success", icon: "fa-trash" });
       } else {
         const data = await res.json();
         showToast({ message: data.error || "Gagal menghapus testimoni", id: "del-error", icon: "fa-exclamation-triangle" });
@@ -193,7 +193,7 @@ export default function TestimonialsPage() {
         fetchTestimonials();
       } else {
         const data = await res.json();
-        showToast({ message: data.error || "Gagal mengubah status", id: "toggle-error", icon: "fa-exclamation-triangle" });
+        showToast({ message: data.error || "Failed to change status", id: "toggle-error", icon: "fa-exclamation-triangle" });
       }
     } catch (error) {
       console.error(error);
@@ -219,7 +219,7 @@ export default function TestimonialsPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        showToast({ message: data.error || "Terlalu banyak request, tunggu sebentar", id: "reorder-error", icon: "fa-hand-paper" });
+        showToast({ message: data.error || "Too many requests, please wait", id: "reorder-error", icon: "fa-hand-paper" });
         fetchTestimonials();
       }
     } catch (error) {
@@ -260,7 +260,7 @@ export default function TestimonialsPage() {
                 <AlertTriangle className="w-5 h-5 md:w-6 md:h-6" />
               </div>
               
-              <h3 className="text-base md:text-lg font-mono font-bold uppercase tracking-wider text-white mb-2">Hapus Testimoni?</h3>
+              <h3 className="text-base md:text-lg font-mono font-bold uppercase tracking-wider text-white mb-2">Delete Testimonial?</h3>
               <p className="text-xs font-mono text-white/50 mb-6 leading-relaxed px-1">
                 Data ini akan dihapus permanen dari sistem dan tidak dapat dikembalikan lagi.
               </p>
@@ -336,7 +336,7 @@ export default function TestimonialsPage() {
                 className="flex items-center gap-1.5 px-5 py-3 rounded-none border border-transparent bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-mono font-bold uppercase tracking-widest transition-all active:scale-95 shadow-md"
               >
                 {isFormOpen ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                {isFormOpen ? 'Batal' : 'Tambah Testimoni'}
+                {isFormOpen ? 'Batal' : 'Add Testimonial'}
               </button>
             </div>
 
@@ -344,7 +344,7 @@ export default function TestimonialsPage() {
             {isFormOpen && (
               <div className="bg-zinc-950 p-6 sm:p-8 md:p-10 rounded-none border border-white/10 shadow-none mb-10 animate-enter">
                 <h2 className="font-mono font-bold text-sm uppercase tracking-wider text-white mb-6 flex items-center gap-2">
-                  <PenTool className="w-4 h-4 text-[#ff9e00]" /> {editingId ? 'Edit Ulasan' : 'Tulis Ulasan'}
+                  <PenTool className="w-4 h-4 text-[#ff9e00]" /> {editingId ? 'Edit Review' : 'Write Review'}
                 </h2>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -352,7 +352,7 @@ export default function TestimonialsPage() {
                   <div className="flex flex-col sm:flex-row gap-8">
                     {/* Bagian Upload Foto */}
                     <div className="flex flex-col items-center sm:items-start gap-3">
-                      <label className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Foto (Opsional)</label>
+                      <label className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Photo (Optional)</label>
                       <input 
                         type="file" 
                         accept="image/png,image/jpeg,image/jpg,image/webp" 
@@ -387,22 +387,22 @@ export default function TestimonialsPage() {
                     <div className="flex-1 space-y-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                          <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Nama Klien *</label>
+                          <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Client Name *</label>
                           <input required type="text" value={formData.clientName} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-bold text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20" placeholder="Contoh: Budi Santoso" />
                         </div>
                         <div>
-                          <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Posisi / Perusahaan</label>
+                          <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Position / Company</label>
                           <input type="text" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-bold text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20" placeholder="Contoh: CEO, TechCorp" />
                         </div>
                       </div>
                       
                       <div>
-                        <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Isi Testimoni *</label>
-                        <textarea required rows={4} value={formData.content} onChange={(e) => setFormData({...formData, content: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-medium text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20 resize-none" placeholder="Tuliskan apresiasi atau ulasan klien di sini..." />
+                        <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Testimonial Content *</label>
+                        <textarea required rows={4} value={formData.content} onChange={(e) => setFormData({...formData, content: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-medium text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20 resize-none" placeholder="Write client appreciation or review here..." />
                       </div>
 
                       <div>
-                        <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Rating Bintang</label>
+                        <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Star Rating</label>
                         <div className="flex gap-2">
                           {[1,2,3,4,5].map((star) => (
                             <button 
@@ -421,7 +421,7 @@ export default function TestimonialsPage() {
                   <div className="pt-6 border-t border-white/5 flex justify-end">
                     <button disabled={isAdding} type="submit" className="bg-[#ff9e00] hover:bg-[#ffaa22] text-black px-8 py-3.5 rounded-none font-mono font-bold text-xs uppercase tracking-widest active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1.5 shadow-md">
                       {isAdding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-                      {isAdding ? 'Menyimpan...' : 'Simpan Testimoni'}
+                      {isAdding ? 'Saving...' : 'Save Testimonial'}
                     </button>
                   </div>
                 </form>
@@ -489,7 +489,7 @@ export default function TestimonialsPage() {
                       <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`px-3 py-2 flex items-center justify-center gap-1.5 rounded-none transition-all text-[10px] font-mono font-bold uppercase tracking-widest w-full disabled:opacity-50 ${t.isVisible ? 'bg-zinc-900 border border-white/10 text-white/70 hover:bg-zinc-800' : 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'}`}>
                         {processingId === t.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : (t.isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />)} {t.isVisible ? 'Hide' : 'Show'}
                       </button>
-                      <button onClick={() => handleDeleteClick(t.id)} className="px-3 py-2 flex items-center justify-center gap-1.5 rounded-none transition-all text-[10px] font-mono font-bold uppercase tracking-widest w-full bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30"><Trash2 className="w-3.5 h-3.5" /> Hapus</button>
+                      <button onClick={() => handleDeleteClick(t.id)} className="px-3 py-2 flex items-center justify-center gap-1.5 rounded-none transition-all text-[10px] font-mono font-bold uppercase tracking-widest w-full bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
                     </div>
                   </div>
                 ))
@@ -502,3 +502,5 @@ export default function TestimonialsPage() {
     </main>
   );
 }
+
+

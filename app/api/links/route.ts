@@ -81,7 +81,7 @@ export async function POST() {
   });
 
   // 2. Catat aktivitasnya
-  await logActivity(user.id, "ADD_LINK", `Menambahkan tautan baru ke profil`);
+  await logActivity(user.id, "ADD_LINK", `Added a new link to profile`);
 
   await invalidatePortfolioCache(user.id);
 

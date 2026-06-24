@@ -55,13 +55,13 @@ export async function POST(req: Request) {
     if (!createRes.ok) {
       const errTxt = await createRes.text();
       console.error("Bunny API Create Error:", errTxt);
-      return NextResponse.json({ error: "Gagal membuat objek video di Bunny" }, { status: 500 });
+      return NextResponse.json({ error: "Failed to create video object in Bunny" }, { status: 500 });
     }
 
     const { guid } = await createRes.json();
 
     if (!guid) {
-      return NextResponse.json({ error: "Gagal mendapatkan referensi video" }, { status: 500 });
+      return NextResponse.json({ error: "Failed to get video reference" }, { status: 500 });
     }
 
     // 5. Generate Presigned Auth Signature for TUS
@@ -83,3 +83,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Terjadi kesalahan sistem', details: error?.message || String(error), stack: error?.stack }, { status: 500 });
   }
 }
+

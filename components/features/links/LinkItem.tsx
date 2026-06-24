@@ -56,7 +56,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
 
   const handleUrlChange = (val: string) => {
     if (link.platform === 'whatsapp' && val.length > 8 && !val.includes('wa.me')) {
-      toast('Format WhatsApp sebaiknya menggunakan wa.me', {
+      toast('WhatsApp format should ideally use wa.me', {
         id: 'wa-hint',
         icon: '💡',
         style: { borderRadius: '0px', background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '11px', fontFamily: 'monospace' },
@@ -174,7 +174,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
         <button 
           onClick={() => setLinkToDelete(link.id)}
           className="w-9 h-9 sm:w-10 sm:h-10 rounded-none bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30 flex items-center justify-center active:scale-95 transition-all duration-300 shrink-0"
-          title="Hapus tautan"
+          title="Delete link"
         >
           <Trash2 className="w-4 h-4" />
         </button>

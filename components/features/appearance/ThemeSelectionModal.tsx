@@ -21,7 +21,7 @@ const FILTER_TABS = [
   { id: 'all',       label: 'All Themes',   icon: LayoutGrid },
   { id: 'free',      label: 'Free',         icon: Gift },
   { id: 'pro',       label: 'Pro',          icon: Crown },
-  { id: 'favorites', label: 'Favorit',      icon: Heart },
+  { id: 'favorites', label: 'Favorites',      icon: Heart },
 ] as const;
 
 export function ThemeSelectionModal({ 
@@ -162,11 +162,11 @@ export function ThemeSelectionModal({
                     </div>
 
                     <h3 className="text-xs font-mono font-bold text-white uppercase tracking-[0.2em] mb-2 drop-shadow-md">
-                      Menerapkan Tema...
+                      Applying Theme...
                     </h3>
                     
                     <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">
-                      Menyesuaikan tata letak untuk {targetTheme}
+                      Adjusting layout for {targetTheme}
                     </p>
                   </motion.div>
                 </motion.div>
@@ -177,8 +177,8 @@ export function ThemeSelectionModal({
             <div className="p-6 md:p-8 border-b border-white/5 shrink-0 bg-zinc-900/90 backdrop-blur-md relative z-40">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Pilih Tema Basis</h2>
-                  <p className="text-[10px] text-white/40 font-mono mt-1 uppercase">Eksplorasi berbagai gaya visual untuk portofolio Anda.</p>
+                  <h2 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Select Base Theme</h2>
+                  <p className="text-[10px] text-white/40 font-mono mt-1 uppercase">Explore various visual styles for your portfolio.</p>
                 </div>
                 <button 
                   onClick={!isSwitching ? onClose : undefined}
@@ -257,12 +257,12 @@ export function ThemeSelectionModal({
                     <AlertCircle className="w-6 h-6 text-white/30" />
                   </div>
                   <p className="font-mono font-bold text-white text-xs uppercase tracking-wider mb-1">
-                    {activeFilter === 'favorites' ? 'Belum ada favorit' : 'Tidak ada tema'}
+                    {activeFilter === 'favorites' ? 'No favorites yet' : 'No themes found'}
                   </p>
                   <p className="text-white/40 text-[10px] font-mono max-w-[240px] mx-auto uppercase tracking-wide">
                     {activeFilter === 'favorites'
-                      ? 'Klik ikon ♡ pada tema untuk menyimpannya.'
-                      : 'Coba filter lain.'}
+                      ? 'Click the ♡ icon on a theme to save it.'
+                      : 'Try another filter.'}
                   </p>
                 </div>
               ) : (

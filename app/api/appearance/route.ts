@@ -93,7 +93,7 @@ export async function GET(req: Request) {
     return NextResponse.json(userData);
   } catch (error) {
     console.error("GET Appearance Error:", error);
-    return NextResponse.json({ error: "Gagal mengambil data" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch data" }, { status: 500 });
   }
 }
 
@@ -247,7 +247,7 @@ export async function PATCH(req: Request) {
     });
 
     if (!isOnlyFavorites) {
-      await logActivity(user.id, "UPDATE_THEME", `Memperbarui tema portofolio ke ${themeTemplate || 'terbaru'}`);
+      await logActivity(user.id, "UPDATE_THEME", `Updated portfolio theme to ${themeTemplate || 'latest'}`);
       
       // FIRE THE MISSILE: Hancurkan cache Redis untuk pengunjung publik
       await invalidatePortfolioCache(user.id);
@@ -256,6 +256,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json(updatedAppearance);
   } catch (error) {
     console.error("PATCH Appearance Error:", error);
-    return NextResponse.json({ error: "Gagal menyimpan tema" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save theme" }, { status: 500 });
   }
 }
+

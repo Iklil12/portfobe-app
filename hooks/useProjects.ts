@@ -61,7 +61,7 @@ export function useProjects() {
         const combined = [...formattedProj, ...formattedCert].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setItems(combined);
       } catch (error) {
-        console.error("Gagal mengambil data", error);
+        console.error("Failed to fetch data", error);
       } finally {
         setTimeout(() => setIsLoading(false), 600);
       }
@@ -264,3 +264,4 @@ export function useProjects() {
     }
   };
 }
+

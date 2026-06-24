@@ -85,21 +85,21 @@ export async function PATCH(req: Request) {
     await resend.emails.send({
       from: 'Portfo Security <portfosecure@mail.ritions.com>',
       to: newEmail,
-      subject: '🔐 Konfirmasi Perubahan Email - Portfo.be',
+      subject: '🔐 Confirm Email Change - Portfo.be',
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 30px; border: 1px solid #e2e8f0; border-radius: 24px; background-color: #ffffff; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05);">
-          <h2 style="color: #0f172a; margin-bottom: 15px; font-weight: 900; font-size: 24px; letter-spacing: -0.5px;">Konfirmasi Email Baru</h2>
+          <h2 style="color: #0f172a; margin-bottom: 15px; font-weight: 900; font-size: 24px; letter-spacing: -0.5px;">Confirm New Email</h2>
           <p style="color: #475569; font-size: 15px; line-height: 1.6; margin-bottom: 10px;">
-            Halo! Kami menerima permintaan untuk mengubah alamat email utama akun Portfo.be Anda menjadi email ini.
+            Hello! We received a request to change the primary email address of your Portfo.be account to this email.
           </p>
           <p style="color: #475569; font-size: 15px; line-height: 1.6;">
-            Jika ini memang Anda, silakan klik tombol di bawah ini untuk menyelesaikan proses:
+            If this was you, please click the button below to complete the process:
           </p>
           <div style="text-align: center; margin: 40px 0;">
-            <a href="${magicLink}" style="background-color: #0f172a; color: #ffffff; padding: 16px 36px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 15px; display: inline-block; letter-spacing: 0.5px;">Verifikasi Email</a>
+            <a href="${magicLink}" style="background-color: #0f172a; color: #ffffff; padding: 16px 36px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 15px; display: inline-block; letter-spacing: 0.5px;">Verify Email</a>
           </div>
           <p style="color: #94a3b8; font-size: 13px; line-height: 1.6; margin-top: 40px; border-top: 1px solid #f1f5f9; padding-top: 25px;">
-            ⚠️ <strong>Perhatian:</strong> Tautan ini hanya berlaku selama <strong>15 menit</strong>. Jika Anda tidak pernah meminta perubahan ini, abaikan email ini.
+            ⚠️ <strong>Note:</strong> This link is only valid for <strong>15 minutes</strong>. If you did not request this change, you can safely ignore this email.
           </p>
         </div>
       `,
@@ -109,6 +109,6 @@ export async function PATCH(req: Request) {
 
   } catch (error) {
     console.error("EMAIL_UPDATE_ERROR:", error);
-    return NextResponse.json({ error: "Gagal memproses permintaan." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to process request." }, { status: 500 });
   }
 }

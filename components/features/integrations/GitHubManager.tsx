@@ -38,26 +38,26 @@ export function GitHubManager() {
   const timeAgo = (date: Date | null) => {
     if (!date) return null;
     const diff = Math.floor((Date.now() - date.getTime()) / 1000 / 60);
-    if (diff < 1) return 'Baru saja';
-    if (diff < 60) return `${diff} menit lalu`;
-    return `${Math.floor(diff / 60)} jam lalu`;
+    if (diff < 1) return 'Just now';
+    if (diff < 60) return `${diff} minutes ago`;
+    return `${Math.floor(diff / 60)} hours ago`;
   };
 
   const handleRefreshGithub = async () => {
     if (!session?.user?.id || isRefreshingGithub) return;
     setIsRefreshingGithub(true);
-    const toastId = toast.loading('Mensinkronisasi data GitHub...');
+    const toastId = toast.loading('Syncing GitHub data...');
     try {
       const res = await fetch(`/api/github/stats?userId=${session.user.id}&bust=1`);
       if (res.ok) {
         setLastGithubRefresh(new Date());
-        toast.success('Sinkronisasi GitHub berhasil!', { id: toastId });
+        toast.success('GitHub sync successful!', { id: toastId });
       } else {
         const err = await res.json();
-        toast.error(err.error || 'Sinkronisasi gagal.', { id: toastId });
+        toast.error(err.error || 'Sync failed.', { id: toastId });
       }
     } catch {
-      toast.error('Kesalahan jaringan saat sinkronisasi.', { id: toastId });
+      toast.error('Network error during sync.', { id: toastId });
     } finally {
       setIsRefreshingGithub(false);
     }
@@ -65,7 +65,7 @@ export function GitHubManager() {
 
   const handleDisconnectGithub = async () => {
     setIsDisconnectingGithub(true);
-    const toastId = toast.loading('Memutuskan koneksi GitHub...');
+    const toastId = toast.loading('Disconnecting GitHub...');
     try {
       const res = await fetch('/api/settings/integrations/disconnect', {
         method: 'POST',
@@ -75,12 +75,12 @@ export function GitHubManager() {
       if (res.ok) {
         mutate('/api/settings/integrations');
         setConfirmDisconnect(null);
-        toast.success('Koneksi GitHub diputuskan.', { id: toastId });
+        toast.success('GitHub disconnected.', { id: toastId });
       } else {
-        toast.error('Gagal memutuskan koneksi.', { id: toastId });
+        toast.error('Failed to disconnect.', { id: toastId });
       }
     } catch {
-      toast.error('Kesalahan jaringan.', { id: toastId });
+      toast.error('Network error.', { id: toastId });
     } finally {
       setIsDisconnectingGithub(false);
     }
@@ -139,8 +139,8 @@ export function GitHubManager() {
                 <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-4">Danger Zone</p>
                 {confirmDisconnect === 'github' ? (
                   <div className="flex gap-3">
-                    <button type="button" onClick={() => setConfirmDisconnect(null)} className="flex-1 py-2.5 rounded-none bg-zinc-900 border border-white/10 text-white/70 text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all">Batal</button>
-                    <button type="button" onClick={handleDisconnectGithub} disabled={isDisconnectingGithub} className="flex-1 py-2.5 rounded-none bg-rose-600 text-white text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-rose-700 active:scale-95 transition-all">Hapus</button>
+                    <button type="button" onClick={() => setConfirmDisconnect(null)} className="flex-1 py-2.5 rounded-none bg-zinc-900 border border-white/10 text-white/70 text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all">Cancel</button>
+                    <button type="button" onClick={handleDisconnectGithub} disabled={isDisconnectingGithub} className="flex-1 py-2.5 rounded-none bg-rose-600 text-white text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-rose-700 active:scale-95 transition-all">Disconnect</button>
                   </div>
                 ) : (
                   <button 

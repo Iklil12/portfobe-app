@@ -122,7 +122,7 @@ export function NexusSplitSkillsBlock({ theme, isEditor }: any) {
                                 <button
                                     onClick={(e) => handleRemoveItem(index, e)}
                                     className="absolute -top-1 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full w-4.5 h-4.5 flex items-center justify-center text-[8px] z-30 transition-colors shadow-lg opacity-0 group-hover:opacity-100"
-                                    title="Hapus Skill"
+                                    title="Delete Skill"
                                 >
                                     ✕
                                 </button>

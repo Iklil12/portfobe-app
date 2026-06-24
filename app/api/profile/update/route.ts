@@ -50,7 +50,7 @@ export async function PATCH(req: Request) {
         const now = new Date();
         const diffTime = Math.abs(now.getTime() - lastChange.getTime());
         if (diffTime < 14 * 24 * 60 * 60 * 1000) {
-          return NextResponse.json({ error: "Anda hanya dapat mengganti subdomain sekali dalam 14 hari." }, { status: 400 });
+          return NextResponse.json({ error: "You can only change subdomain once every 14 days." }, { status: 400 });
         }
       }
 
@@ -108,21 +108,21 @@ export async function PATCH(req: Request) {
     // 1. Logika Foto Profil
     if (avatar !== currentAvatar) {
       if (!avatar || avatar === "") {
-        await logActivity(currentUser.id, "DELETE_AVATAR", "Menghapus foto profil utama");
+        await logActivity(currentUser.id, "DELETE_AVATAR", "Deleted main profile photo");
       } else {
-        await logActivity(currentUser.id, "UPDATE_AVATAR", "Mengganti foto profil utama");
+        await logActivity(currentUser.id, "UPDATE_AVATAR", "Changed main profile photo");
       }
     }
 
     // 2. Logika Subdomain
     if (subdomain !== currentSubdomain) {
       // Jika sebelumnya kosong lalu diisi, atau diganti dengan yang baru
-      await logActivity(currentUser.id, "UPDATE_PROFILE", `Mengubah custom subdomain menjadi "${subdomain}"`);
+      await logActivity(currentUser.id, "UPDATE_PROFILE", `Changed custom subdomain to "${subdomain}"`);
     }
 
     // 3. Logika Teks Biasa (Jika foto & subdomain tidak berubah, tapi mereka menekan simpan)
     if (avatar === currentAvatar && subdomain === currentSubdomain) {
-       await logActivity(currentUser.id, "UPDATE_PROFILE", "Memperbarui informasi bio dan profil");
+       await logActivity(currentUser.id, "UPDATE_PROFILE", "Updated bio and profile information");
     }
 
     // INVALIDATE CACHE
@@ -132,12 +132,13 @@ export async function PATCH(req: Request) {
     await invalidatePortfolioCache(currentUser.id);
 
     return NextResponse.json({ 
-      message: "Profil berhasil disimpan", 
+      message: "Profile saved successfully", 
       user: updatedUser 
     });
 
   } catch (error) {
     console.error("Error Simpan Profil:", error);
-    return NextResponse.json({ error: "Gagal menyimpan profil" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save profile" }, { status: 500 });
   }
 }
+

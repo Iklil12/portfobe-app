@@ -150,7 +150,7 @@ export default function ViewfinderFaq({ data, theme, isEditor }: { data: any, th
                 <button 
                   onClick={(e) => handleRemoveItem(i, e)}
                   className="absolute top-6 right-20 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center border border-red-500/30 rounded-full hover:bg-red-500/10"
-                  title="Hapus Pertanyaan"
+                  title="Delete Question"
                 >
                   <i className="fas fa-trash text-xs"></i>
                 </button>

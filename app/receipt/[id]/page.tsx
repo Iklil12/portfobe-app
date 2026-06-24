@@ -32,7 +32,7 @@ export default function ReceiptPage() {
   if (error || data?.error) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 text-slate-800 font-mono text-xs uppercase tracking-wider">
-        <p className="text-rose-600 font-bold">{data?.error || "Gagal memuat receipt"}</p>
+        <p className="text-rose-600 font-bold">{data?.error || "Failed to load receipt"}</p>
       </div>
     );
   }

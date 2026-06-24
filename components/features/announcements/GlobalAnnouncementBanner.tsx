@@ -73,7 +73,7 @@ export function GlobalAnnouncementBanner({ announcements, userPlan }: Announceme
             <button 
               onClick={() => handleDismiss(item.id)}
               className="relative z-10 w-7 h-7 flex items-center justify-center bg-zinc-950 hover:bg-zinc-900 rounded-none transition-all shrink-0 border border-white/10 hover:border-white/20 text-white/50 hover:text-white"
-              aria-label="Tutup Pengumuman"
+              aria-label="Close Announcement"
             >
               <i className="fa-solid fa-xmark text-sm" />
             </button>

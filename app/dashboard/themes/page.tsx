@@ -20,7 +20,7 @@ const FILTER_TABS = [
   { id: 'all',       label: 'All Themes',   icon: LayoutGrid },
   { id: 'free',      label: 'Free',         icon: Gift },
   { id: 'pro',       label: 'Pro',          icon: Crown },
-  { id: 'favorites', label: 'Favorit',      icon: Heart },
+  { id: 'favorites', label: 'Favorites',    icon: Heart },
 ] as const;
 
 export default function ThemesPage() {
@@ -141,12 +141,12 @@ export default function ThemesPage() {
               )}
             </div>
             <p className="font-mono font-bold text-white uppercase tracking-wider mb-2">
-              {activeFilter === 'favorites' ? 'Belum ada favorit' : 'Tidak ada tema'}
+              {activeFilter === 'favorites' ? 'No favorites yet' : 'No themes'}
             </p>
             <p className="text-white/40 text-xs font-mono max-w-xs">
               {activeFilter === 'favorites'
-                ? 'Klik ikon ♡ pada tema yang kamu suka untuk menyimpannya di sini.'
-                : 'Coba filter lain atau nantikan koleksi tema terbaru.'}
+                ? 'Click the ♡ icon on themes you like to save them here.'
+                : 'Try another filter or look out for new theme collections.'}
             </p>
           </div>
         ) : (

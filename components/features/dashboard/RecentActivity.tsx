@@ -27,12 +27,12 @@ function timeAgo(dateParam: string | Date) {
   const hours = Math.round(minutes / 60);
   const days = Math.round(hours / 24);
 
-  if (seconds < 60) return 'Baru saja';
-  if (minutes < 60) return `${minutes} menit yang lalu`;
-  if (hours < 24) return `${hours} jam yang lalu`;
-  if (days === 1) return 'Kemarin';
-  if (days < 7) return `${days} hari yang lalu`;
-  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+  if (seconds < 60) return 'Just now';
+  if (minutes < 60) return `${minutes} minutes ago`;
+  if (hours < 24) return `${hours} hours ago`;
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days} days ago`;
+  return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
 }
 
 // --- HELPER: IKON & WARNA AKTIVITAS ---
@@ -51,8 +51,8 @@ export function RecentActivity({ activities, isLoading }: RecentActivityProps) {
       <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-none transition-all hover:border-white/20 h-full">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h3 className="text-lg font-display font-bold text-white uppercase tracking-wider">Aktivitas Terbaru</h3>
-            <p className="text-xs font-mono text-white/50 mt-1">Timeline perubahan Anda</p>
+            <h3 className="text-lg font-display font-bold text-white uppercase tracking-wider">Recent Activity</h3>
+            <p className="text-xs font-mono text-white/50 mt-1">Your change timeline</p>
           </div>
           <Link href="/dashboard/history" className="w-8 h-8 flex items-center justify-center rounded-none border border-white/10 bg-zinc-900 text-white/70 hover:bg-white/5 hover:text-white transition-all group shadow-sm">
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -67,7 +67,7 @@ export function RecentActivity({ activities, isLoading }: RecentActivityProps) {
             {isLoading ? (
               <div className="absolute inset-0 z-50 bg-zinc-950/40 backdrop-blur-md rounded-none border border-white/10 shimmer" style={{ margin: '-24px -32px' }}></div>
             ) : activities.length === 0 ? (
-              <div className="text-center py-10 text-white/40 text-xs rounded-none border border-dashed border-white/10 bg-white/[0.01] font-mono">Belum ada aktivitas baru.</div>
+              <div className="text-center py-10 text-white/40 text-xs rounded-none border border-dashed border-white/10 bg-white/[0.01] font-mono">No recent activity yet.</div>
             ) : (
               activities.slice(0, 5).map((activity, idx) => {
                 return (

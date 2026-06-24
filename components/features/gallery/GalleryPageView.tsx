@@ -253,7 +253,7 @@ export default function GalleryPageView({
           <span className="block w-full h-full">
             {isBrutalist ? (
               <EditableText
-                value={customTexts?.brutalistBackLabel || '← KEMBALI'}
+                value={customTexts?.brutalistBackLabel || '← BACK'}
                 field="brutalistBackLabel"
                 entity="appearance"
                 isEditor={isEditor}

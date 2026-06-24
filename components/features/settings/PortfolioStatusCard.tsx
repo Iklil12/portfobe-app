@@ -20,17 +20,17 @@ export function PortfolioStatusCard({ state, actions }: PortfolioStatusCardProps
   const handleResend = async () => {
     if (!session?.user?.email) return;
     setIsResending(true);
-    const toastId = toast.loading("Mengirim ulang email...");
+    const toastId = toast.loading("Resending email...");
     
     try {
       const result = await resendVerificationEmail(session.user.email);
       if (result?.error) {
         toast.error(result.error, { id: toastId });
       } else {
-        toast.success("Email verifikasi terkirim! Silakan cek kotak masuk/spam Anda.", { id: toastId, duration: 6000 });
+        toast.success("Verification email sent! Please check your inbox/spam.", { id: toastId, duration: 6000 });
       }
     } catch (e) {
-      toast.error("Gagal mengirim email.", { id: toastId });
+      toast.error("Failed to send email.", { id: toastId });
     } finally {
       setIsResending(false);
     }
@@ -45,7 +45,7 @@ export function PortfolioStatusCard({ state, actions }: PortfolioStatusCardProps
             <div className="w-48 h-6 shimmer-dark rounded-none"></div>
           ) : (
             <>
-              <h4 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Status Portofolio</h4>
+              <h4 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Portfolio Status</h4>
               {isLive ? (
                 <span className="px-2.5 py-1 rounded-none bg-zinc-950 border border-white/10 text-white/50 text-[9px] font-mono font-bold uppercase tracking-widest flex items-center gap-1.5 transition-all">
                    <span className="w-1.5 h-1.5 rounded-none bg-emerald-500 animate-pulse relative before:absolute before:inset-0 before:bg-emerald-500 before:rounded-none before:animate-ping"></span> Live
@@ -63,7 +63,7 @@ export function PortfolioStatusCard({ state, actions }: PortfolioStatusCardProps
           <div className="w-full max-w-sm h-4 shimmer-dark rounded-none mt-3"></div>
         ) : (
           <p className="text-xs font-mono text-white/40 leading-relaxed max-w-sm">
-            {isLive ? "Website portofolio Anda saat ini dapat dikunjungi oleh publik." : "Website Anda saat ini sedang disembunyikan dari publik."}
+            {isLive ? "Your portfolio website can currently be visited by the public." : "Your website is currently hidden from the public."}
           </p>
         )}
       </div>
@@ -89,8 +89,8 @@ export function PortfolioStatusCard({ state, actions }: PortfolioStatusCardProps
               <AlertTriangle className="text-[#ff9e00] w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-mono font-bold text-white uppercase">Email Belum Diverifikasi</p>
-              <p className="text-[10px] font-mono text-white/40 max-w-sm mt-0.5 leading-relaxed">Anda tidak dapat menyalakan portofolio (Live) ke publik sebelum memverifikasi email Anda.</p>
+              <p className="text-xs font-mono font-bold text-white uppercase">Email Not Verified</p>
+              <p className="text-[10px] font-mono text-white/40 max-w-sm mt-0.5 leading-relaxed">You cannot make your portfolio public (Live) before verifying your email.</p>
             </div>
           </div>
           <button 
@@ -101,10 +101,10 @@ export function PortfolioStatusCard({ state, actions }: PortfolioStatusCardProps
             {isResending ? (
               <>
                 <Loader2 className="w-3 h-3 animate-spin text-white/50" />
-                <span>Mengirim...</span>
+                <span>Sending...</span>
               </>
             ) : (
-              'Kirim Ulang Email'
+              'Resend Email'
             )}
           </button>
         </div>

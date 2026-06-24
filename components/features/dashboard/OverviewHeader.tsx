@@ -44,7 +44,7 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
             <h1 className="text-3xl md:text-4xl font-display font-bold text-white mb-1 md:mb-2 uppercase tracking-wide">
               Overview
             </h1>
-            <p className="text-xs md:text-sm font-mono text-white/50">Ringkasan performa dan data portofolio Anda saat ini.</p>
+            <p className="text-xs md:text-sm font-mono text-white/50">Summary of your current portfolio performance and data.</p>
           </div>
 
           {/* Desktop: full label buttons */}
@@ -56,14 +56,14 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
                   className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[10px] font-mono font-bold uppercase tracking-widest hover:border-white/20 hover:bg-zinc-800 hover:text-white transition-all duration-300 shadow-sm active:scale-95"
                 >
                   <Share2 className="w-3.5 h-3.5 text-white/40 group-hover:text-[#ff9e00] transition-colors" />
-                  Bagikan
+                  Share
                 </button>
                 <a
                   href={`/${subdomain}`} target="_blank" rel="noreferrer"
                   className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[10px] font-mono font-bold uppercase tracking-widest hover:border-white/20 hover:bg-zinc-800 hover:text-white transition-all duration-300 shadow-sm active:scale-95"
                 >
                   <ExternalLink className="w-3.5 h-3.5 text-white/40 group-hover:text-[#ff9e00] transition-colors" />
-                  Lihat Web
+                  View Site
                 </a>
               </>
             )}
@@ -79,14 +79,14 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
             className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-none bg-[#ff9e00] text-black font-mono font-bold text-xs md:text-sm hover:bg-[#ffaa22] active:scale-95 transition-all duration-300"
           >
             <Plus className="w-4 h-4 md:hidden" />
-            <span className="whitespace-nowrap uppercase tracking-wider">Buat Proyek</span>
+            <span className="whitespace-nowrap uppercase tracking-wider">New Project</span>
           </Link>
           <Link
             href="/dashboard/appearance"
             className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-none border border-white/10 bg-transparent text-white/80 hover:bg-white/5 hover:text-white transition-all duration-300 font-mono font-bold text-xs md:text-sm"
           >
             <Edit className="w-4 h-4" />
-            <span className="whitespace-nowrap uppercase tracking-wider">Kanvas</span>
+            <span className="whitespace-nowrap uppercase tracking-wider">Editor Canvas</span>
           </Link>
 
           {/* Mobile: compact icon buttons for Bagikan & Lihat Web */}

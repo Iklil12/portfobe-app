@@ -93,7 +93,7 @@ function AppearanceEditor() {
             <path className="opacity-90 text-white" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
         </div>
-        <p className="loader-text text-white/50 text-[10px] font-bold tracking-[0.25em] uppercase animate-pulse">Memuat Editor Canvas...</p>
+        <p className="loader-text text-white/50 text-[10px] font-bold tracking-[0.25em] uppercase animate-pulse">Loading Canvas Editor...</p>
       </div>
     );
   }
@@ -144,13 +144,13 @@ function AppearanceEditor() {
               href="/dashboard" 
               onClick={(e) => {
                 if (state.isDirty) {
-                  if (!window.confirm("Keluar dari Editor? Perubahan yang Anda lakukan mungkin tidak disimpan.")) {
+                  if (!window.confirm("Exit Editor? Unsaved changes may be lost.")) {
                     e.preventDefault();
                   }
                 }
               }}
               className="w-8 h-8 rounded-md hover:bg-white/5 flex items-center justify-center text-white/50 hover:text-white transition-all duration-200" 
-              title="Kembali ke Dashboard"
+              title="Back to Dashboard"
             >
               <ArrowLeft className="w-4 h-4 translate-y-[0.5px]" />
             </Link>
@@ -255,7 +255,7 @@ function AppearanceEditor() {
           <button
             onClick={() => actions.setIsSeoModalOpen(true)}
             className="w-8 h-8 rounded-md flex items-center justify-center transition-all text-white/50 hover:bg-white/5 hover:text-white"
-            title="Pengaturan SEO & Social Card"
+            title="SEO & Social Card Settings"
           >
             <Globe className="w-4 h-4" />
           </button>
@@ -265,7 +265,7 @@ function AppearanceEditor() {
           <button
             onClick={() => actions.setIsEditorCollapsed(!state.isEditorCollapsed)}
             className={`w-8 h-8 rounded-md flex items-center justify-center transition-all ${state.isEditorCollapsed ? 'bg-white/10 text-white shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}
-            title={state.isEditorCollapsed ? "Tampilkan Panel Editor" : "Sembunyikan Panel Editor (Full Screen)"}
+            title={state.isEditorCollapsed ? "Show Editor Panel" : "Hide Editor Panel (Full Screen)"}
           >
             {state.isEditorCollapsed ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
           </button>
@@ -279,7 +279,7 @@ function AppearanceEditor() {
             className="px-3 py-1.5 bg-transparent hover:bg-white/5 text-white/70 hover:text-white text-[11px] font-medium transition-all disabled:opacity-50 flex items-center gap-2 rounded-md"
           >
             {state.isSavingDraft && <Loader2 className="w-3 h-3 animate-spin" />}
-            Save
+            {state.activeDraftId ? 'Save' : 'Draft'}
           </button>
 
           <button
@@ -302,18 +302,18 @@ function AppearanceEditor() {
               <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20">
                 <AlertTriangle className="w-8 h-8 text-amber-500" />
               </div>
-              <h2 className="text-xl font-bold text-white mb-3 tracking-wide">Fitur PRO Terkunci!</h2>
+              <h2 className="text-xl font-bold text-white mb-3 tracking-wide">PRO Features Locked!</h2>
               <p className="text-sm text-white/60 mb-8 leading-relaxed">
-                Paket Anda sudah kembali ke FREE, tetapi desain portofolio Anda saat ini masih menggunakan fitur eksklusif PRO (Tema Premium / Splash Screen / Smooth Scroll).
+                Your plan has reverted to FREE, but your current portfolio design still uses exclusive PRO features (Premium Themes / Splash Screen / Smooth Scroll).
                 <br/><br/>
-                <span className="text-white/80 font-medium">Portofolio publik Anda tetap aman (tetap menggunakan tema PRO ini)</span>, tetapi Anda tidak bisa mengedit portofolio sebelum memperpanjang PRO atau mereset desain ke mode standar.
+                <span className="text-white/80 font-medium">Your public portfolio remains safe (still using this PRO theme)</span>, but you cannot edit the portfolio before extending PRO or resetting the design to standard mode.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
                 <Link href="/pricing" className="flex-1 w-full py-3 bg-[#ff9e00] hover:bg-[#ffaa22] text-black font-bold uppercase tracking-wider text-xs transition-colors flex items-center justify-center">
-                  Perpanjang PRO
+                  Extend PRO
                 </Link>
                 <button onClick={handleRevertToFree} className="flex-1 w-full py-3 bg-transparent border border-white/20 hover:bg-white/5 text-white font-bold uppercase tracking-wider text-xs transition-colors">
-                  Ubah ke Tema Gratis
+                  Revert to Free Theme
                 </button>
               </div>
             </div>
@@ -390,7 +390,7 @@ export default function AppearancePage() {
     <Suspense fallback={
       <div className="h-screen w-screen flex flex-col items-center justify-center bg-[#111111]">
         <Loader2 className="w-10 h-10 text-[#ff9e00] animate-spin mb-4" />
-        <p className="text-white/40 text-[9px] font-sans font-bold uppercase ">Sinkronisasi Canvas...</p>
+        <p className="text-white/40 text-[9px] font-sans font-bold uppercase ">Syncing Canvas...</p>
       </div>
     }>
       <AppearanceEditor />

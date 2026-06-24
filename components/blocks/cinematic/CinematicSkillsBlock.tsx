@@ -130,7 +130,7 @@ export function CinematicSkillsBlock({ theme, isEditor }: any) {
                                         <button
                                             onClick={(e) => handleRemoveItem(index, e)}
                                             className="absolute -top-1 -right-6 bg-red-500/80 hover:bg-red-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[8px] z-30 transition-colors shadow-lg"
-                                            title="Hapus Skill"
+                                            title="Delete Skill"
                                         >
                                             ✕
                                         </button>

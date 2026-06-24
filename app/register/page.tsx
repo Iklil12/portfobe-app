@@ -25,7 +25,7 @@ export default function RegisterPage() {
 
     // Verifikasi CAPTCHA sebelum lanjut (Abaikan jika key belum di-set)
     if (!captchaToken && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
-      setErrorMsg("Harap selesaikan verifikasi reCAPTCHA terlebih dahulu.");
+      setErrorMsg("Please complete the reCAPTCHA verification first.");
       return;
     }
 
@@ -94,10 +94,10 @@ export default function RegisterPage() {
           </Link>
           
           <h2 className="text-4xl font-display font-bold text-white leading-tight tracking-tight mb-6">
-            Pamerkan karya terbaikmu <br /> <span className="text-[#ff9e00] font-mono text-xl tracking-wider uppercase block mt-3">dalam 5 menit.</span>
+            Showcase your best work <br /> <span className="text-[#ff9e00] font-mono text-xl tracking-wider uppercase block mt-3">in 5 minutes.</span>
           </h2>
           <p className="text-white/50 text-xs font-mono max-w-sm leading-relaxed">
-            Bergabunglah dengan komunitas kreator visual paling eksklusif tanpa perlu menulis baris kode apapun.
+            Join the most exclusive visual creator community without writing a single line of code.
           </p>
           
           {/* Testimonial Kecil agar Terlihat Pro */}
@@ -110,8 +110,8 @@ export default function RegisterPage() {
               ))}
             </div>
             <div>
-               <p className="text-xs font-mono font-bold text-white tracking-wide">+1.2k Kreator</p>
-               <p className="text-[10px] font-mono text-white/40">telah bergabung bulan ini</p>
+               <p className="text-xs font-mono font-bold text-white tracking-wide">+1.2k Creators</p>
+               <p className="text-[10px] font-mono text-white/40">joined this month</p>
             </div>
           </div>
         </div>
@@ -132,8 +132,8 @@ export default function RegisterPage() {
              <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#ff9e00]/20 bg-[#ff9e00]/5 text-[#ff9e00] text-[9px] font-mono uppercase tracking-[0.2em] mb-4">
                Register Account
              </div>
-             <h1 className="text-3xl font-display font-bold text-white tracking-tight">Buat Akun Portfo.be</h1>
-             <p className="text-white/40 text-xs font-mono mt-2">Gratis selamanya, tanpa perlu kartu kredit.</p>
+             <h1 className="text-3xl font-display font-bold text-white tracking-tight">Create Portfo.be Account</h1>
+             <p className="text-white/40 text-xs font-mono mt-2">Free forever, no credit card required.</p>
           </div>
 
           {/* Elegant Error Alert */}
@@ -146,7 +146,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleRegister} className="space-y-6">
             <div className="group">
-              <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Nama Lengkap</label>
+              <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Full Name</label>
               <input 
                 name="fullName" 
                 type="text" 
@@ -157,7 +157,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="group">
-              <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Alamat Email</label>
+              <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Email Address</label>
               <input 
                 name="email" 
                 type="email" 
@@ -173,7 +173,7 @@ export default function RegisterPage() {
                 <input 
                   name="password" 
                   type={showPassword ? "text" : "password"} 
-                  placeholder="Min. 8 karakter" 
+                  placeholder="Min. 8 characters" 
                   className="w-full px-4 py-4 rounded-none border border-white/15 bg-black focus:border-l-4 focus:border-l-[#ff9e00] focus:border-[#ff9e00] focus:ring-0 outline-none transition-all text-xs font-mono font-bold text-white placeholder:text-white/25 tracking-widest" 
                   required 
                 />
@@ -197,7 +197,7 @@ export default function RegisterPage() {
                 />
               ) : (
                 <div className="text-[10px] text-red-400 font-mono font-bold p-3 bg-red-500/5 rounded-none border border-red-500/10 text-center w-full">
-                  ⚠️ ReCAPTCHA Site Key belum diset di .env
+                  ⚠️ ReCAPTCHA Site Key not set in .env
                 </div>
               )}
             </div>
@@ -208,7 +208,7 @@ export default function RegisterPage() {
               className={`w-full relative bg-[#ff9e00] text-black py-4.5 rounded-none text-[11px] font-mono font-bold uppercase tracking-widest transition-all duration-300 transform active:scale-[0.98] hover:shadow-[4px_4px_0px_rgba(255,255,255,0.15)] ${(isLoading || (!captchaToken && !!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)) ? 'bg-zinc-800 text-white/40 opacity-70 cursor-not-allowed' : 'hover:bg-[#ffaa22]'}`}
             >
               <div className={`flex items-center justify-center gap-2 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
-                Buat Akun Sekarang <ArrowRight className="w-4 h-4" />
+                Create Account Now <ArrowRight className="w-4 h-4" />
               </div>
               
               {/* Spinner Overlay */}
@@ -223,7 +223,7 @@ export default function RegisterPage() {
           {/* DIVIDER: ATAU LANJUTKAN DENGAN */}
           <div className="flex items-center my-8">
             <div className="flex-grow border-t border-white/5"></div>
-            <span className="px-4 text-[9px] font-mono font-bold text-white/20 uppercase tracking-widest">Atau daftar dengan</span>
+            <span className="px-4 text-[9px] font-mono font-bold text-white/20 uppercase tracking-widest">Or register with</span>
             <div className="flex-grow border-t border-white/5"></div>
           </div>
 
@@ -253,7 +253,7 @@ export default function RegisterPage() {
           </button>
 
           <p className="text-center text-xs text-white/40 mt-10 font-mono">
-            Sudah memiliki akun? <Link href="/login" className="text-white font-bold hover:text-[#ff9e00] transition-colors ml-1 uppercase tracking-wider">Masuk</Link>
+            Already have an account? <Link href="/login" className="text-white font-bold hover:text-[#ff9e00] transition-colors ml-1 uppercase tracking-wider">Sign In</Link>
           </p>
         </div>
       </div>

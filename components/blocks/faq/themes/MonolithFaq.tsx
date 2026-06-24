@@ -148,7 +148,7 @@ export default function MonolithFaq({ data, theme, isEditor }: { data: any, them
                 <button 
                   onClick={(e) => handleRemoveItem(i, e)}
                   className="absolute top-6 right-0 text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity w-6 h-6 flex items-center justify-center bg-red-500/10 hover:bg-red-500/20 rounded-full"
-                  title="Hapus Pertanyaan"
+                  title="Delete Question"
                 >
                   <i className="fas fa-times text-[10px]"></i>
                 </button>

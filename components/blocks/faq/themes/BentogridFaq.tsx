@@ -126,7 +126,7 @@ export default function BentogridFaq({ data, theme, isEditor }: { data: any, the
                   <button 
                     onClick={(e) => handleRemoveItem(i, e)}
                     className="absolute top-4 right-16 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center bg-red-50 dark:bg-red-500/10 rounded-full hover:bg-red-100 dark:hover:bg-red-500/20 z-10"
-                    title="Hapus Pertanyaan"
+                    title="Delete Question"
                   >
                     <i className="fas fa-trash text-[10px]"></i>
                   </button>

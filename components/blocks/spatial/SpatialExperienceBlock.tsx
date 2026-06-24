@@ -160,7 +160,7 @@ export function SpatialExperienceBlock({ theme, isEditor, isCardPreview }: any) 
                                     <button
                                         onClick={(e) => handleRemoveItem(index, e)}
                                         className="absolute -top-2 -right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg border border-rose-400/20"
-                                        title="Hapus Pengalaman"
+                                        title="Delete Experience"
                                     >
                                         ✕
                                     </button>

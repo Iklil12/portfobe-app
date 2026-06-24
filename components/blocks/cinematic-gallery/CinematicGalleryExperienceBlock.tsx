@@ -140,7 +140,7 @@ export function CinematicGalleryExperienceBlock({ theme, isEditor }: any) {
                                     <button
                                         onClick={(e) => handleRemoveItem(index, e)}
                                         className="bg-white/5 hover:bg-red-500/80 hover:text-white text-white/40 rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-all duration-300 shadow-md border border-white/10 absolute top-3 right-3"
-                                        title="Hapus Pengalaman"
+                                        title="Delete Experience"
                                     >
                                         ✕
                                     </button>

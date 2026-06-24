@@ -29,7 +29,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
   const copyLink = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     navigator.clipboard.writeText(`portfo.be/${subdomain}`);
-    showToast({ message: "Tautan berhasil disalin!", id: "copy-link", icon: "fa-link" });
+    showToast({ message: "Link successfully copied!", id: "copy-link", icon: "fa-link" });
   };
 
   return (
@@ -38,8 +38,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: NAME */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8 pt-4">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Nama Lengkap</label>
-          <p className="text-[10px] font-mono text-white/30">Nama yang akan tampil publik.</p>
+          <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Full Name</label>
+          <p className="text-[10px] font-mono text-white/30">Name that will be displayed publicly.</p>
         </div>
         <div className="w-full flex gap-3">
           <input 
@@ -65,7 +65,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8">
         <div className="w-full sm:w-1/3 shrink-0">
           <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Email Address</label>
-          <p className="text-[10px] font-mono text-white/30">Email untuk login dan kontak.</p>
+          <p className="text-[10px] font-mono text-white/30">Email for login and contact.</p>
         </div>
         <div className="w-full">
           <div className="relative flex items-center">
@@ -80,7 +80,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
           {/* Tag "Terverifikasi oleh Google" HANYA MUNCUL jika login menggunakan Google */}
           {isGoogleUser && (
             <p className="text-[10px] font-mono font-bold text-[#ff9e00] uppercase tracking-wider mt-2 flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Terverifikasi oleh Google
+              <CheckCircle2 className="w-3.5 h-3.5" /> Verified by Google
             </p>
           )}
         </div>
@@ -90,14 +90,14 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8">
         <div className="w-full sm:w-1/3 shrink-0 pt-2">
           <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Username / Link</label>
-          <p className="text-[10px] font-mono text-white/30">Tautan portofolio Anda.</p>
+          <p className="text-[10px] font-mono text-white/30">Your portfolio link.</p>
         </div>
         <div className="w-full flex flex-col">
           <div 
             onClick={() => {
               if (isUsernameChangeBlocked) {
                 showToast({
-                  message: `Ganti subdomain dikunci (Tersisa ${remainingDays} hari)`,
+                  message: `Subdomain change is locked (${remainingDays} days remaining)`,
                   id: "username-locked",
                   icon: "fa-lock"
                 });
@@ -133,7 +133,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
                 type="button" 
                 onClick={(e) => copyLink(e)} 
                 className="absolute right-10 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-white/30 hover:text-white hover:bg-white/5 rounded-none transition-colors" 
-                title="Salin Tautan"
+                title="Copy Link"
              >
                 <Copy className="w-3.5 h-3.5" />
              </button>
@@ -146,7 +146,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
              </div>
           </div>
           {subdomainStatus === 'taken' && !isUsernameChangeBlocked && (
-            <span className="text-[10px] font-mono font-bold text-rose-400 mt-2">Username ini sudah digunakan orang lain.</span>
+            <span className="text-[10px] font-mono font-bold text-rose-400 mt-2">This username is already taken by someone else.</span>
           )}
         </div>
       </div>
@@ -154,8 +154,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: PROFESSION & BIO */}
       <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Profesi & Bio</label>
-          <p className="text-[10px] font-mono text-white/30">Ceritakan sedikit tentang keahlian Anda.</p>
+          <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Profession & Bio</label>
+          <p className="text-[10px] font-mono text-white/30">Tell us a bit about your expertise.</p>
         </div>
         <div className="w-full flex flex-col gap-4">
           <input 
@@ -163,7 +163,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             maxLength={20} 
             value={profession} 
             onChange={(e) => setProfession(sanitizeText(e.target.value))} 
-            placeholder="Contoh: UI/UX Designer"
+            placeholder="e.g. UI/UX Designer"
             className="w-full px-4 py-3 rounded-none border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-mono text-white" 
           />
           <textarea 
@@ -171,7 +171,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             maxLength={250} 
             value={bio} 
             onChange={(e) => setBio(sanitizeText(e.target.value))} 
-            placeholder="Tuliskan bio singkat Anda di sini..."
+            placeholder="Write your short bio here..."
             className="w-full px-4 py-3 rounded-none border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-mono leading-relaxed text-white resize-none" 
           />
         </div>
@@ -181,7 +181,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8 pt-2">
         <div className="w-full sm:w-1/3 shrink-0">
           <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Connected Works</label>
-          <p className="text-[10px] font-mono text-white/30">Tampilkan karya dari platform lain.</p>
+          <p className="text-[10px] font-mono text-white/30">Showcase works from other platforms.</p>
         </div>
         <div className="w-full">
           <Link
@@ -192,8 +192,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
               <Plug className="w-4 h-4 text-[#ff9e00]" />
             </div>
             <div className="flex flex-col flex-1">
-              <span className="text-xs font-mono font-bold text-white group-hover:text-[#ff9e00] transition-colors leading-tight">Kelola Connected Works</span>
-              <span className="text-[10px] font-mono text-white/40">GitHub, Penpot, dan lainnya</span>
+              <span className="text-xs font-mono font-bold text-white group-hover:text-[#ff9e00] transition-colors leading-tight">Manage Connected Works</span>
+              <span className="text-[10px] font-mono text-white/40">GitHub, Penpot, and others</span>
             </div>
             <ArrowRight className="w-3.5 h-3.5 text-white/30 group-hover:text-[#ff9e00] group-hover:translate-x-1 transition-all" />
           </Link>

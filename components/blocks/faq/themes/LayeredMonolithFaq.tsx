@@ -111,7 +111,7 @@ export default function LayeredMonolithFaq({ data, theme, isEditor }: { data: an
                 <button 
                   onClick={(e) => handleRemoveItem(i, e)}
                   className="absolute top-8 right-24 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-10 h-10 flex items-center justify-center bg-red-50 dark:bg-red-500/10 rounded-full hover:bg-red-100 dark:hover:bg-red-500/20"
-                  title="Hapus Pertanyaan"
+                  title="Delete Question"
                 >
                   <i className="fas fa-trash text-sm"></i>
                 </button>

@@ -28,7 +28,7 @@ export function LinksHeader({ state, actions }: LinksHeaderProps) {
       <div className="text-center md:text-left">
         <div className="flex items-center justify-center md:justify-start gap-3 mb-5 sm:mb-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-none bg-zinc-900 border border-white/10 text-[9px] font-mono font-bold uppercase tracking-wider text-white/50 shadow-sm">
-            <Link2 className="w-3.5 h-3.5 text-white/40" /> Integrasi Publik
+            <Link2 className="w-3.5 h-3.5 text-white/40" /> Public Integration
           </div>
           
           <AnimatePresence mode="wait">
@@ -99,7 +99,7 @@ export function LinksHeader({ state, actions }: LinksHeaderProps) {
                   animate={{ opacity: 1 }}
                   className={`text-[9px] font-mono font-bold uppercase tracking-wider ${isFull ? 'text-rose-500' : 'text-white/40'}`}
                 >
-                  {linkCount}/1 Tautan Digunakan
+                  {linkCount}/1 Links Used
                 </motion.span>
              </motion.div>
           ) : (
@@ -109,7 +109,7 @@ export function LinksHeader({ state, actions }: LinksHeaderProps) {
               animate={{ opacity: 1, y: 0 }}
               className="text-xs font-mono text-white/50 max-w-lg mt-2"
             >
-              Kelola direktori tautan tanpa batas sebagai {userPlan === 'SUPREME' ? 'Supreme' : 'Pro'} Creator.
+              Manage unlimited link directory as a {userPlan === 'SUPREME' ? 'Supreme' : 'Pro'} Creator.
             </motion.p>
           )}
         </AnimatePresence>
@@ -122,7 +122,7 @@ export function LinksHeader({ state, actions }: LinksHeaderProps) {
               exit={{ opacity: 0, scale: 0.9 }}
               className="text-[9px] font-mono font-bold text-rose-400 uppercase tracking-wider mt-3 flex items-center justify-center md:justify-start gap-1.5"
             >
-              <Crown className="w-3.5 h-3.5 text-rose-500 animate-pulse" /> Limit tercapai. Upgrade ke PRO untuk menambah lebih banyak link.
+              <Crown className="w-3.5 h-3.5 text-rose-500 animate-pulse" /> Limit reached. Upgrade to PRO to add more links.
             </motion.p>
           )}
         </AnimatePresence>
@@ -140,7 +140,7 @@ export function LinksHeader({ state, actions }: LinksHeaderProps) {
               className="w-full sm:w-auto px-6 py-3.5 bg-white text-black hover:bg-zinc-200 rounded-none text-[10px] font-mono font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
             >
               {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-              Simpan
+              Save
             </motion.button>
           )}
         </AnimatePresence>
@@ -169,7 +169,7 @@ export function LinksHeader({ state, actions }: LinksHeaderProps) {
             className="w-full sm:w-auto px-6 py-3.5 bg-[#ff9e00] hover:bg-[#ffaa22] text-black rounded-none text-[10px] font-mono font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
           >
             {isAdding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />} 
-            {isAdding ? 'Membuat...' : 'Tambah Baru'}
+            {isAdding ? 'Creating...' : 'Add New'}
           </motion.button>
         )}
       </div>

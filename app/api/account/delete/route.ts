@@ -30,6 +30,6 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ message: "Akun berhasil dihapus selamanya" });
   } catch (error) {
     console.error("Error Hapus Akun:", error);
-    return NextResponse.json({ error: "Gagal menghapus akun. Cek relasi database." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete account. Check database relations." }, { status: 500 });
   }
 }

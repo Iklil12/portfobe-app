@@ -25,7 +25,7 @@ export function SeoSettingsModal({ state, actions }: { state: any, actions: any 
     actions.setIsSeoModalOpen(false);
     
     // Tampilkan notifikasi
-    toast.success('Draft SEO tersimpan! Klik "Publish" untuk menerapkannya.', {
+    toast.success('SEO Draft saved! Click "Publish" to apply.', {
       style: {
         background: '#111',
         color: '#fff',
@@ -72,7 +72,7 @@ export function SeoSettingsModal({ state, actions }: { state: any, actions: any 
                 </div>
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">SEO & Social Card</h2>
-                  <p className="text-xs text-white/50">Atur tampilan link portofolio Anda di media sosial.</p>
+                  <p className="text-xs text-white/50">Manage your portfolio link appearance on social media.</p>
                 </div>
               </div>
 
@@ -87,7 +87,7 @@ export function SeoSettingsModal({ state, actions }: { state: any, actions: any 
                   placeholder={fallbackTitle}
                   className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#0099ff] hover:border-white/20 transition-all"
                 />
-                <p className="text-[10px] text-white/30 text-right">{seoTitle.length}/60 karakter</p>
+                <p className="text-[10px] text-white/30 text-right">{seoTitle.length}/60 characters</p>
               </div>
 
               {/* Description Input */}
@@ -100,7 +100,7 @@ export function SeoSettingsModal({ state, actions }: { state: any, actions: any 
                   rows={3}
                   className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#0099ff] hover:border-white/20 transition-all resize-none"
                 />
-                <p className="text-[10px] text-white/30 text-right">{seoDescription.length}/160 karakter</p>
+                <p className="text-[10px] text-white/30 text-right">{seoDescription.length}/160 characters</p>
               </div>
 
           </div>
@@ -114,20 +114,20 @@ export function SeoSettingsModal({ state, actions }: { state: any, actions: any 
                 className="px-4 py-2 text-xs font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 rounded-lg hover:bg-white/5"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                Reset ke Default
+                Reset to Default
               </button>
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => actions.setIsSeoModalOpen(false)}
                   className="px-4 py-2 text-xs font-bold text-white/60 hover:text-white transition-colors rounded-lg hover:bg-white/5"
                 >
-                  Batal
+                  Cancel
                 </button>
                 <button 
                   onClick={handleSave}
                   className="px-6 py-2.5 bg-[#0099ff] hover:bg-[#0077cc] text-white text-xs font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:shadow-[0_0_30px_rgba(0,153,255,0.5)]"
                 >
-                  Simpan SEO
+                  Save SEO
                 </button>
               </div>
             </div>
@@ -162,7 +162,7 @@ export function SeoSettingsModal({ state, actions }: { state: any, actions: any 
             </div>
             
             <div className="mt-8 text-center relative z-10">
-              <p className="text-[10px] text-white/30 font-medium">Tampilan ini adalah simulasi saat link Anda dibagikan di Twitter, LinkedIn, WhatsApp, dll.</p>
+              <p className="text-[10px] text-white/30 font-medium">This view is a simulation of how your link will appear when shared on Twitter, LinkedIn, WhatsApp, etc.</p>
             </div>
           </div>
 

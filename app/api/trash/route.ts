@@ -70,7 +70,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ items, total, page, totalPages, hasMore });
   } catch (error) {
     console.error("GET Trash Error:", error);
-    return NextResponse.json({ error: "Gagal mengambil data trash" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch trash data" }, { status: 500 });
   }
 }
 
@@ -89,7 +89,7 @@ export async function POST(req: Request) {
 
     // ── RESTORE ───────────────────────────────────────────────────────────
     if (action === "restore") {
-      if (!id || !type) return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
+      if (!id || !type) return NextResponse.json({ error: "Incomplete data" }, { status: 400 });
 
       if (type === "project") {
         // Cek kuota FREE
@@ -104,10 +104,10 @@ export async function POST(req: Request) {
         }
         const item = await prisma.project.findUnique({ where: { id } });
         if (!item || item.userId !== user.id)
-          return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
+          return NextResponse.json({ error: "Access denied" }, { status: 403 });
 
         await prisma.project.update({ where: { id }, data: { deletedAt: null } });
-        await logActivity(user.id, "RESTORE_PROJECT", `Memulihkan karya dari trash: "${item.title}"`);
+        await logActivity(user.id, "RESTORE_PROJECT", `Restored work from trash: "${item.title}"`);
         return NextResponse.json({ message: "Proyek berhasil dipulihkan" });
       }
 
@@ -123,11 +123,11 @@ export async function POST(req: Request) {
         }
         const item = await prisma.certificate.findUnique({ where: { id } });
         if (!item || item.userId !== user.id)
-          return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
+          return NextResponse.json({ error: "Access denied" }, { status: 403 });
 
         await prisma.certificate.update({ where: { id }, data: { deletedAt: null } });
-        await logActivity(user.id, "RESTORE_CERTIFICATE", `Memulihkan sertifikat dari trash: "${item.title}"`);
-        return NextResponse.json({ message: "Sertifikat berhasil dipulihkan" });
+        await logActivity(user.id, "RESTORE_CERTIFICATE", `Restored certificate from trash: "${item.title}"`);
+        return NextResponse.json({ message: "Certificate successfully restored" });
       }
 
       return NextResponse.json({ error: "Tipe tidak valid" }, { status: 400 });
@@ -135,24 +135,24 @@ export async function POST(req: Request) {
 
     // ── PURGE (hapus permanen satu item) ──────────────────────────────────
     if (action === "purge") {
-      if (!id || !type) return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
+      if (!id || !type) return NextResponse.json({ error: "Incomplete data" }, { status: 400 });
 
       if (type === "project") {
         const item = await prisma.project.findUnique({ where: { id } });
         if (!item || item.userId !== user.id)
-          return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
+          return NextResponse.json({ error: "Access denied" }, { status: 403 });
         await prisma.project.delete({ where: { id } });
-        await logActivity(user.id, "PURGE_PROJECT", `Menghapus permanen karya: "${item.title}"`);
+        await logActivity(user.id, "PURGE_PROJECT", `Permanently deleted work: "${item.title}"`);
         return NextResponse.json({ message: "Proyek dihapus permanen" });
       }
 
       if (type === "certificate") {
         const item = await prisma.certificate.findUnique({ where: { id } });
         if (!item || item.userId !== user.id)
-          return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
+          return NextResponse.json({ error: "Access denied" }, { status: 403 });
         await prisma.certificate.delete({ where: { id } });
-        await logActivity(user.id, "PURGE_CERTIFICATE", `Menghapus permanen sertifikat: "${item.title}"`);
-        return NextResponse.json({ message: "Sertifikat dihapus permanen" });
+        await logActivity(user.id, "PURGE_CERTIFICATE", `Permanently deleted certificate: "${item.title}"`);
+        return NextResponse.json({ message: "Certificate permanently deleted" });
       }
 
       return NextResponse.json({ error: "Tipe tidak valid" }, { status: 400 });
@@ -165,13 +165,14 @@ export async function POST(req: Request) {
         prisma.certificate.deleteMany({ where: { userId: user.id, deletedAt: { not: null } } }),
       ]);
       const total = projDel.count + certDel.count;
-      await logActivity(user.id, "PURGE_ALL_TRASH", `Mengosongkan trash: ${total} item dihapus permanen`);
+      await logActivity(user.id, "PURGE_ALL_TRASH", `Emptied trash: ${total} items permanently deleted`);
       return NextResponse.json({ message: `${total} item dihapus permanen` });
     }
 
     return NextResponse.json({ error: "Action tidak dikenali" }, { status: 400 });
   } catch (error) {
     console.error("POST Trash Error:", error);
-    return NextResponse.json({ error: "Gagal memproses permintaan" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
   }
 }
+

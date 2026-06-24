@@ -55,7 +55,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       }
     });
 
-    await logActivity(user.id, "UPDATE_TESTIMONIAL", `Memperbarui testimoni dari ${updatedTestimonial.clientName}`);
+    await logActivity(user.id, "UPDATE_TESTIMONIAL", `Updated testimonial from ${updatedTestimonial.clientName}`);
 
     await invalidatePortfolioCache(user.id);
 
@@ -64,7 +64,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json(updatedTestimonial);
   } catch (error) {
     console.error("Error updating testimonial:", error);
-    return NextResponse.json({ error: "Gagal memperbarui testimoni" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update testimonial" }, { status: 500 });
   }
 }
 
@@ -90,7 +90,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     }
 
     await prisma.testimonial.delete({ where: { id } });
-    await logActivity(user.id, "DELETE_TESTIMONIAL", `Menghapus testimoni dari ${existingTestimonial.clientName}`);
+    await logActivity(user.id, "DELETE_TESTIMONIAL", `Deleted testimonial from ${existingTestimonial.clientName}`);
 
     await invalidatePortfolioCache(user.id);
 
@@ -99,6 +99,6 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting testimonial:", error);
-    return NextResponse.json({ error: "Gagal menghapus testimoni" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete testimonial" }, { status: 500 });
   }
 }

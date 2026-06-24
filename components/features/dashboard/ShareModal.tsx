@@ -28,10 +28,10 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
     try {
       await navigator.clipboard.writeText(url);
       setIsCopied(true);
-      showToast({ id: 'copy-success', message: 'Tautan disalin ke clipboard!', icon: 'fa-check' });
+      showToast({ id: 'copy-success', message: 'Link copied to clipboard!', icon: 'fa-check' });
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
-      showToast({ id: 'copy-error', message: 'Gagal menyalin tautan.', icon: 'fa-times' });
+      showToast({ id: 'copy-error', message: 'Failed to copy link.', icon: 'fa-times' });
     }
   };
 
@@ -40,7 +40,7 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
   };
 
   const shareTwitter = () => {
-    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=Lihat%20portofolio%20profesional%20saya%20di%20Portfo.be!`, '_blank');
+    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=Check%20out%20my%20professional%20portfolio%20on%20Portfo.be!`, '_blank');
   };
 
   const shareLinkedIn = () => {
@@ -74,7 +74,7 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
             {/* Header */}
             <div className="p-5 md:p-6 border-b border-white/10 flex items-center justify-between relative bg-zinc-950">
               <div className="flex-1 flex justify-center pr-8 sm:pr-0">
-                <h2 className="text-sm md:text-base font-mono font-bold text-white uppercase tracking-wider text-center">Bagikan Portofolio</h2>
+                <h2 className="text-sm md:text-base font-mono font-bold text-white uppercase tracking-wider text-center">Share Portfolio</h2>
               </div>
               <button
                 type="button"
@@ -105,14 +105,14 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 px-8 py-3 rounded-none border border-[#ff9e00]/25 text-[#ff9e00] bg-[#ff9e00]/5 hover:bg-[#ff9e00]/10 transition-colors font-mono font-bold text-[10px] uppercase tracking-wider"
                   >
-                    <i className="fas fa-external-link-alt"></i> Lihat Website
+                    <i className="fas fa-external-link-alt"></i> View Website
                   </a>
                 </div>
               </div>
 
               {/* Share Section */}
               <div className="flex flex-col items-center">
-                <p className="text-[10px] font-mono font-bold text-white/40 mb-4 uppercase tracking-widest">Bagikan ke Media Sosial</p>
+                <p className="text-[10px] font-mono font-bold text-white/40 mb-4 uppercase tracking-widest">Share to Social Media</p>
                 <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
                   <button
                     onClick={shareFacebook}
@@ -149,7 +149,7 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
                         : 'border-white/10 bg-zinc-900 text-white/70 hover:bg-zinc-800 hover:text-white hover:border-white/20'
                       }`}
                   >
-                    <i className="fas fa-qrcode"></i> Kode QR
+                    <i className="fas fa-qrcode"></i> QR Code
                   </button>
                 </div>
 

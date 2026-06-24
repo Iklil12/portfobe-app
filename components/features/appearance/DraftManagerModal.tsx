@@ -57,15 +57,15 @@ export function DraftManagerModal({
     try {
       const res = await fetch(`/api/appearance/drafts?id=${id}`, { method: 'DELETE' });
       if (res.ok) {
-        toast.success('Draft dihapus');
+        toast.success('Draft deleted');
         if (selectedDraftId === id) setSelectedDraftId('live');
         onClose();
         setTimeout(() => window.location.reload(), 1000);
       } else {
-        toast.error('Gagal menghapus draft');
+        toast.error('Failed to delete draft');
       }
     } catch {
-      toast.error('Error server');
+      toast.error('Server error');
     } finally {
       setIsDeleting(null);
     }
@@ -83,8 +83,8 @@ export function DraftManagerModal({
           
           <div className="px-6 py-4 md:py-5 flex items-center justify-between shrink-0 border-b border-white/5">
             <div>
-              <h2 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Manajemen Draft</h2>
-              <p className="text-[10px] text-white/40 font-mono mt-0.5 uppercase tracking-widest">{drafts.length} Tersimpan</p>
+              <h2 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Version History</h2>
+              <p className="text-[10px] text-white/40 font-mono mt-0.5 uppercase tracking-widest">{drafts.length} Saved</p>
             </div>
             <button 
               onClick={onClose}
@@ -122,8 +122,8 @@ export function DraftManagerModal({
                     <Globe className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-mono font-bold text-xs uppercase truncate">Versi Publik (Live)</h4>
-                    <p className="text-[9px] font-mono text-white/30 truncate mt-0.5">Desain utama</p>
+                    <h4 className="font-mono font-bold text-xs uppercase truncate">Public Version (Live)</h4>
+                    <p className="text-[9px] font-mono text-white/30 truncate mt-0.5">Main design</p>
                   </div>
                   {activeDraftId === null && (
                     <div className="w-1.5 h-1.5 rounded-none bg-emerald-400 shrink-0 animate-pulse"></div>
@@ -192,10 +192,10 @@ export function DraftManagerModal({
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-none bg-zinc-950 border border-white/10 flex items-center justify-center mb-6 text-[#ff9e00]">
                   <Globe className="w-8 h-8" />
                 </div>
-                <h2 className="text-lg font-mono font-bold text-white uppercase tracking-wider mb-3">Versi Publik (Live)</h2>
+                <h2 className="text-lg font-mono font-bold text-white uppercase tracking-wider mb-3">Public Version (Live)</h2>
                 <p className="text-[11px] font-mono text-white/40 leading-relaxed mb-8 uppercase tracking-wide">
-                  Ini adalah desain utama yang saat ini sedang aktif dan dapat dilihat oleh semua pengunjung portfolio Anda. 
-                  Semua perubahan pada mode live akan langsung terlihat di website publik.
+                  This is the main design currently active and visible to all your portfolio visitors.
+                  All changes to the live mode will instantly appear on the public website.
                 </p>
                 
                 <div className="pt-8 border-t border-white/5">
@@ -210,10 +210,10 @@ export function DraftManagerModal({
                   >
                     {activeDraftId === null ? (
                       <>
-                        <CheckCircle className="w-4 h-4" /> <span>Sedang Terbuka di Editor</span>
+                        <CheckCircle className="w-4 h-4" /> <span>Currently Open in Editor</span>
                       </>
                     ) : (
-                      'Muat Mode Live ke Editor'
+                      'Load Live Mode to Editor'
                     )}
                   </button>
                 </div>
@@ -226,11 +226,11 @@ export function DraftManagerModal({
                 <div className="mb-8 md:mb-10">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="px-2.5 py-1 bg-zinc-950 border border-white/10 text-white/40 rounded-none text-[8px] font-mono font-bold uppercase tracking-widest">
-                      Draft Tersimpan
+                      Saved Draft
                     </span>
                     {publishedDraftId === selectedDraft.id && (
                       <span className="px-2.5 py-1 bg-emerald-950/20 border border-emerald-500/20 text-emerald-400 rounded-none text-[8px] font-mono font-bold uppercase tracking-widest">
-                        Tayang Live
+                        Currently Live
                       </span>
                     )}
                   </div>
@@ -238,7 +238,7 @@ export function DraftManagerModal({
                     {selectedDraft.name}
                   </h2>
                   <p className="text-[10px] text-white/40 font-mono flex items-center gap-2 uppercase tracking-wider">
-                    <Clock className="w-3.5 h-3.5" /> Diperbarui pada {new Date(selectedDraft.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    <Clock className="w-3.5 h-3.5" /> Updated on {new Date(selectedDraft.updatedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
 
@@ -255,11 +255,11 @@ export function DraftManagerModal({
                   >
                     {activeDraftId === selectedDraft.id ? (
                       <>
-                        <CheckCircle className="w-4 h-4" /> <span>Sedang Terbuka</span>
+                        <CheckCircle className="w-4 h-4" /> <span>Currently Open</span>
                       </>
                     ) : (
                       <>
-                        <ArrowRight className="w-4 h-4" /> <span>Muat ke Editor</span>
+                        <ArrowRight className="w-4 h-4" /> <span>Load to Editor</span>
                       </>
                     )}
                   </button>
@@ -270,14 +270,14 @@ export function DraftManagerModal({
                     className="w-full sm:w-auto justify-center px-5 py-3 rounded-none text-[10px] font-mono font-bold text-rose-500 bg-rose-950/10 border border-rose-500/20 hover:bg-rose-950/20 hover:text-rose-400 transition-colors flex items-center gap-2 disabled:opacity-50"
                   >
                     {isDeleting === selectedDraft.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-                    <span>Hapus</span>
+                    <span>Delete</span>
                   </button>
                 </div>
 
                 {/* Details Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pb-6">
                   <div className="p-5 bg-zinc-950 border border-white/5 rounded-none">
-                    <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Warna Aksen</h5>
+                    <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Accent Color</h5>
                     <div className="flex items-center gap-4">
                       <div 
                         className="w-10 h-10 rounded-none border border-white/10 shrink-0" 
@@ -285,13 +285,13 @@ export function DraftManagerModal({
                       ></div>
                       <div>
                         <p className="text-xs font-mono font-bold text-white uppercase">{selectedDraft.themeColor}</p>
-                        <p className="text-[9px] font-mono text-white/30 mt-0.5 uppercase">Kode Hex</p>
+                        <p className="text-[9px] font-mono text-white/30 mt-0.5 uppercase">Hex Code</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="p-5 bg-zinc-950 border border-white/5 rounded-none">
-                    <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Basis Tema</h5>
+                    <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Base Theme</h5>
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center shrink-0 text-white/50">
                         <Palette className="w-4 h-4" />
@@ -300,7 +300,7 @@ export function DraftManagerModal({
                         <p className="text-xs font-mono font-bold text-white leading-tight uppercase">
                           {THEMES_DATA.find(t => t.id === selectedDraft.themeTemplate)?.name || selectedDraft.themeTemplate}
                         </p>
-                        <p className="text-[9px] font-mono text-white/30 mt-0.5 uppercase">Template Visual</p>
+                        <p className="text-[9px] font-mono text-white/30 mt-0.5 uppercase">Visual Template</p>
                       </div>
                     </div>
                   </div>
@@ -308,20 +308,20 @@ export function DraftManagerModal({
 
                 {/* Description Box */}
                 <div className="pb-8">
-                  <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Deskripsi / Catatan</h5>
+                  <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Description / Notes</h5>
                   {selectedDraft.description ? (
                     <p className="text-[11px] font-mono text-white/60 leading-relaxed max-w-2xl bg-zinc-950 p-4 rounded-none border border-white/5">
                       {selectedDraft.description}
                     </p>
                   ) : (
-                    <p className="text-[11px] font-mono text-white/30 italic uppercase">Tidak ada catatan untuk draft ini.</p>
+                    <p className="text-[11px] font-mono text-white/30 italic uppercase">No notes for this draft.</p>
                   )}
                 </div>
 
               </div>
             ) : (
               <div className="flex-1 h-full flex items-center justify-center text-white/40 font-mono uppercase text-[10px] tracking-wider">
-                <p>Pilih draft di sebelah kiri</p>
+                <p>Select a version from the left</p>
               </div>
             )}
           </div>
@@ -353,9 +353,9 @@ export function DraftManagerModal({
                 </div>
               </div>
               
-              <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider mb-2">Hapus Draft Ini?</h3>
+              <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider mb-2">Delete This Draft?</h3>
               <p className="text-[10px] font-mono text-white/40 mb-6 leading-relaxed uppercase tracking-wide">
-                Draft yang dihapus tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?
+                Deleted drafts cannot be recovered. Are you sure you want to proceed?
               </p>
               
               <div className="flex flex-row gap-3 w-full">
@@ -367,7 +367,7 @@ export function DraftManagerModal({
                   disabled={isDeleting !== null} 
                   className="flex-1 py-3 bg-rose-600 hover:bg-rose-500 rounded-none font-mono font-bold text-white text-xs uppercase tracking-wider flex items-center justify-center gap-2"
                 >
-                  <Trash2 className="w-3.5 h-3.5" /> Ya, Hapus
+                  <Trash2 className="w-3.5 h-3.5" /> Yes, Delete
                 </button>
                 <button 
                   onClick={() => setDraftToDelete(null)} 

@@ -872,7 +872,6 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
             .lenis.lenis-smooth { scroll-behavior: auto !important; }
             .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
             .lenis.lenis-stopped { overflow: hidden; }
-            html.lenis-scrolling * { pointer-events: none !important; }
           `
         }} />
         <ReactLenis root options={{ smoothWheel: true, duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) }}>

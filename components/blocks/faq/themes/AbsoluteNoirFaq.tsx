@@ -130,7 +130,7 @@ export default function AbsoluteNoirFaq({ data, theme, isEditor }: { data: any, 
                   <button 
                     onClick={(e) => handleRemoveItem(i, e)}
                     className="absolute top-8 right-24 text-white opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center border border-white/20 hover:bg-white/10"
-                    title="Hapus Pertanyaan"
+                    title="Delete Question"
                   >
                     <i className="fas fa-trash text-[10px]"></i>
                   </button>

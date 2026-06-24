@@ -102,7 +102,7 @@ export function BrutalismSkillsBlock({ theme, isEditor }: any) {
                                 <button
                                     onClick={(e) => handleRemoveItem(index, e)}
                                     className="absolute top-2 right-2 bg-black text-white hover:bg-red-500 hover:text-white rounded-full w-5 h-5 flex items-center justify-center text-[8px] z-30 transition-colors"
-                                    title="Hapus Skill"
+                                    title="Delete Skill"
                                 >
                                     ✕
                                 </button>

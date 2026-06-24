@@ -23,6 +23,6 @@ export async function GET() {
     return NextResponse.json(stats);
   } catch (error) {
     console.error("GET ThemeStats Error:", error);
-    return NextResponse.json({ error: "Gagal mengambil statistik tema" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch theme stats" }, { status: 500 });
   }
 }

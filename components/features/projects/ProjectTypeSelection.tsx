@@ -37,8 +37,8 @@ export function ProjectTypeSelection({
     >
       {[
         { id: 'video', icon: Film, label: 'Video', desc: 'Youtube / Vimeo' },
-        { id: 'photo', icon: ImageIcon, label: 'Foto / Desain', desc: 'Format Visual' },
-        { id: 'certificate', icon: Award, label: 'Sertifikat', desc: 'Lisensi & Lomba' },
+        { id: 'photo', icon: ImageIcon, label: 'Photo / Design', desc: 'Visual Format' },
+        { id: 'certificate', icon: Award, label: 'Certificate', desc: 'License & Awards' },
         { id: '3d', icon: Box, label: '3D Model', desc: 'Format .GLB', isPro: true }
       ].map((opt) => {
         const IconComponent = opt.icon;

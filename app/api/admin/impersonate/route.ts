@@ -59,6 +59,7 @@ export async function POST(req: Request) {
 
   } catch (error) {
     console.error("Error generating impersonate token:", error);
-    return NextResponse.json({ error: "Terjadi kesalahan server." }, { status: 500 });
+    return NextResponse.json({ error: "A server error occurred." }, { status: 500 });
   }
 }
+

@@ -173,7 +173,7 @@ export const authOptions: NextAuthOptions = {
             await logActivity(
               user.id,
               "LOGIN_FAILED",
-              "Percobaan masuk gagal: Akun terdaftar menggunakan Google atau Email tidak valid",
+              "Login attempt failed: Account registered with Google or invalid Email",
               { ip, ua }
             );
           }
@@ -187,7 +187,7 @@ export const authOptions: NextAuthOptions = {
           await logActivity(
             user.id,
             "LOGIN_FAILED",
-            "Percobaan masuk gagal: Password tidak sesuai",
+            "Login attempt failed: Incorrect password",
             { ip, ua }
           );
 
@@ -316,7 +316,7 @@ export const authOptions: NextAuthOptions = {
             await logActivity(
               newUser.id,
               "LOGIN_SUCCESS",
-              "Berhasil masuk menggunakan google"
+              "Successfully logged in using Google"
             );
 
             // ==============================================================
@@ -388,7 +388,7 @@ export const authOptions: NextAuthOptions = {
             await logActivity(
               existingUser.id,
               "LOGIN_SUCCESS",
-              "Berhasil masuk menggunakan google"
+              "Successfully logged in using Google"
             );
           }
           return true;
@@ -516,7 +516,7 @@ export const authOptions: NextAuthOptions = {
         await logActivity(
           user.id, 
           "LOGIN_SUCCESS", 
-          "Berhasil masuk menggunakan credentials"
+          "Successfully logged in using credentials"
         );
       }
     },
@@ -526,7 +526,7 @@ export const authOptions: NextAuthOptions = {
         await logActivity(
           userId, 
           "LOGOUT", 
-          "Pengguna keluar dari aplikasi"
+          "User logged out of application"
         );
       }
     }

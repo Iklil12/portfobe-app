@@ -62,12 +62,12 @@ export function PublishSuccessModal({
   };
 
   const shareFacebook = () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-  const shareTwitter = () => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=Kunjungi portofolio saya!`, '_blank');
+  const shareTwitter = () => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=Check out my portfolio!`, '_blank');
   const shareLinkedIn = () => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
-  const shareWhatsapp = () => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('Kunjungi portofolio saya: ' + url)}`, '_blank');
+  const shareWhatsapp = () => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('Check out my portfolio: ' + url)}`, '_blank');
   const shareInstagram = () => {
     copyToClipboard();
-    toast.success('Link disalin! Buka Instagram untuk menempelkannya.', {
+    toast.success('Link copied! Open Instagram to paste it.', {
       style: { background: '#111', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontSize: '13px' },
       iconTheme: { primary: '#E1306C', secondary: '#fff' }
     });
@@ -103,9 +103,9 @@ export function PublishSuccessModal({
           
           {isLive ? (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 md:mb-3 tracking-tight">Website Anda Telah Mengudara</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 md:mb-3 tracking-tight">Your Website is Live</h2>
               <p className="text-white/50 text-xs md:text-sm leading-relaxed mb-6 md:mb-8">
-                Desain terbaru Anda telah berhasil dipublikasikan. Portofolio Anda kini siap memukau dunia.
+                Your latest design has been successfully published. Your portfolio is now ready to dazzle the world.
               </p>
 
               {/* URL Copier Box */}
@@ -132,7 +132,7 @@ export function PublishSuccessModal({
                   rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 py-3 md:py-3.5 rounded-xl bg-[#0099ff] hover:bg-[#0077cc] text-white text-xs md:text-sm font-semibold transition-all shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:shadow-[0_0_30px_rgba(0,153,255,0.5)]"
                 >
-                  Buka Website <ExternalLink className="w-4 h-4" />
+                  Open Website <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
             </>
@@ -142,9 +142,9 @@ export function PublishSuccessModal({
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center mb-5 md:mb-6 border border-red-500/20">
                 <AlertTriangle className="w-6 h-6 md:w-7 md:h-7" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 md:mb-3 tracking-tight">Portofolio Nonaktif</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 md:mb-3 tracking-tight">Portfolio Inactive</h2>
               <p className="text-white/50 text-xs md:text-sm leading-relaxed mb-6 md:mb-8 max-w-sm">
-                Desain terbaru berhasil disimpan ke database. Namun, status portofolio Anda saat ini sedang <strong className="text-white">disembunyikan</strong> dari publik.
+                The latest design was successfully saved. However, your portfolio status is currently <strong className="text-white">hidden</strong> from the public.
               </p>
               
               <Link 
@@ -152,7 +152,7 @@ export function PublishSuccessModal({
                 className="w-full flex items-center justify-center gap-2 py-3 md:py-3.5 rounded-xl bg-white text-black hover:bg-white/90 text-xs md:text-sm font-semibold transition-all shadow-lg"
                 onClick={onClose}
               >
-                Buka Pengaturan
+                Open Settings
               </Link>
             </div>
           )}
@@ -160,7 +160,7 @@ export function PublishSuccessModal({
 
         {/* RIGHT PANEL: Share & QR */}
         <div className="w-full md:w-[320px] bg-zinc-900/50 p-6 md:p-8 lg:p-10 flex flex-col justify-center items-center relative z-10 backdrop-blur-xl">
-          <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4 md:mb-6 w-full text-center md:text-left">Bagikan Cepat</p>
+          <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4 md:mb-6 w-full text-center md:text-left">Quick Share</p>
           
           {/* Social Row */}
           <div className="flex justify-center gap-2 md:gap-3 w-full mb-5 md:mb-8">
@@ -207,7 +207,7 @@ export function PublishSuccessModal({
                 <QrCode className="w-4 h-4 md:w-5 md:h-5 text-black" />
               </div>
             </div>
-            <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest text-center mt-4">Scan untuk membuka</p>
+            <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest text-center mt-4">Scan to open</p>
           </div>
         </div>
           </div>

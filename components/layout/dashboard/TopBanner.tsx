@@ -43,7 +43,7 @@ export function TopBanner({ isLoading, topBanner }: TopBannerProps) {
       <button 
         onClick={() => setDismissed([...dismissed, topBanner.id])}
         className="absolute top-2.5 right-4 sm:top-1/2 sm:-translate-y-1/2 sm:right-6 w-7 h-7 flex items-center justify-center rounded-none bg-zinc-950 border border-white/10 hover:bg-zinc-900 text-white/40 hover:text-white transition-colors z-20"
-        aria-label="Tutup Peringatan"
+        aria-label="Close Warning"
       >
         <i className="fas fa-times text-[11px]"></i>
       </button>
@@ -66,3 +66,4 @@ export function TopBanner({ isLoading, topBanner }: TopBannerProps) {
     </div>
   );
 }
+

@@ -138,7 +138,7 @@ export function AcidTechSkillsBlock({ theme, isEditor, isCardPreview }: any) {
                                         <button
                                             onClick={(e) => handleRemoveItem(index, e)}
                                             className="absolute top-1.5 right-2 text-zinc-500 hover:text-red-500 text-[10px] z-30 transition-colors"
-                                            title="Hapus Skill"
+                                            title="Delete Skill"
                                         >
                                             ✕
                                         </button>

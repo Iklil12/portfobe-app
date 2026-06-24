@@ -84,44 +84,44 @@ export function Providers({ children }: { children: React.ReactNode }) {
     let shadowClass = "shadow-[0_20px_50px_rgba(255,255,255,0.05)]";
     
     if (t.type === 'success') {
-      title = "Berhasil!";
+      title = "Success!";
       IconComponent = Check;
       borderClass = "border-emerald-500/60";
       iconBgClass = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
       shadowClass = "shadow-[0_20px_50px_rgba(16,185,129,0.18)]";
     } else if (t.type === 'error') {
-      title = "Kesalahan!";
+      title = "Error!";
       IconComponent = X;
       borderClass = "border-rose-500/60";
       iconBgClass = "bg-rose-500/20 text-rose-300 border border-rose-500/30";
       shadowClass = "shadow-[0_20px_50px_rgba(244,63,94,0.18)]";
     } else if (t.type === 'loading') {
-      title = "Memproses...";
+      title = "Processing...";
       IconComponent = Loader2;
       borderClass = "border-white/30";
       iconBgClass = "bg-white/10 text-white/50 border border-white/20";
       shadowClass = "shadow-[0_20px_50px_rgba(255,255,255,0.05)]";
     } else if (t.className === 'warning') {
-      title = "Peringatan!";
+      title = "Warning!";
       IconComponent = AlertTriangle;
       borderClass = "border-[#ff9e00]/70";
       iconBgClass = "bg-[#ff9e00]/20 text-[#ffb633] border border-[#ff9e00]/30";
       shadowClass = "shadow-[0_20px_50px_rgba(255,158,0,0.18)]";
     } else if (typeof t.icon === 'string') {
       if (t.icon.includes('exclamation') || t.icon.includes('warning') || t.icon.includes('hand-paper')) {
-        title = "Peringatan!";
+        title = "Warning!";
         IconComponent = AlertTriangle;
         borderClass = "border-[#ff9e00]/70";
         iconBgClass = "bg-[#ff9e00]/20 text-[#ffb633] border border-[#ff9e00]/30";
         shadowClass = "shadow-[0_20px_50px_rgba(255,158,0,0.18)]";
       } else if (t.icon.includes('check') || t.icon.includes('success') || t.icon.includes('ok')) {
-        title = "Berhasil!";
+        title = "Success!";
         IconComponent = Check;
         borderClass = "border-emerald-500/60";
         iconBgClass = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
         shadowClass = "shadow-[0_20px_50px_rgba(16,185,129,0.18)]";
       } else if (t.icon.includes('times') || t.icon.includes('err') || t.icon.includes('fail')) {
-        title = "Kesalahan!";
+        title = "Error!";
         IconComponent = X;
         borderClass = "border-rose-500/60";
         iconBgClass = "bg-rose-500/20 text-rose-300 border border-rose-500/30";

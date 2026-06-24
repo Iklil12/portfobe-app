@@ -61,54 +61,54 @@ export function UpdatePasswordModal({ state, actions }: UpdatePasswordModalProps
                 }} 
                 className="w-full bg-[#ff9e00] text-black py-3 rounded-none text-xs font-mono font-bold uppercase tracking-wider hover:bg-[#ffaa22] transition-all"
               >
-                Selesai
+                Done
               </button>
             </div>
         ) : (
             /* --- TAMPILAN FORM ASLI --- */
             <>
-                <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider mb-2">{isStrictlyGoogle ? "Buat Sandi Lokal" : "Perbarui Sandi"}</h3>
+                <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider mb-2">{isStrictlyGoogle ? "Create Local Password" : "Update Password"}</h3>
                 <p className="text-white/40 mb-8 text-xs font-mono leading-relaxed">
-                  {isStrictlyGoogle ? "Buat kata sandi agar Anda bisa login menggunakan email ini tanpa melalui Google." : "Pastikan kata sandi baru Anda unik dan aman."}
+                  {isStrictlyGoogle ? "Create a password so you can log in using this email without going through Google." : "Make sure your new password is unique and secure."}
                 </p>
                 
                 <form onSubmit={onSubmit} className="flex flex-col gap-5">
                   {!isStrictlyGoogle && (
                     <div>
                       <div className="flex justify-between items-end mb-2">
-                        <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-white/40">Sandi Saat Ini</label>
+                        <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-white/40">Current Password</label>
                         <button 
                           type="button"
                           onClick={handleInternalForgotPassword}
                           className="text-[10px] text-[#ff9e00] font-mono font-bold hover:underline transition-all"
                         >
-                          Lupa sandi saat ini?
+                          Forgot current password?
                         </button>
                       </div>
                       <div className="relative flex items-center">
                         <Unlock className="absolute left-4 text-white/20 w-4 h-4" />
-                        <input type="password" required value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="w-full pl-11 pr-5 py-3 bg-zinc-950 border border-white/10 rounded-none text-xs font-mono text-white outline-none focus:border-[#ff9e00]/50 transition-all" placeholder="Sandi lama Anda" />
+                        <input type="password" required value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="w-full pl-11 pr-5 py-3 bg-zinc-950 border border-white/10 rounded-none text-xs font-mono text-white outline-none focus:border-[#ff9e00]/50 transition-all" placeholder="Your old password" />
                       </div>
                     </div>
                   )}
                   <div>
-                    <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-white/40 mb-2">Sandi Baru</label>
+                    <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-white/40 mb-2">New Password</label>
                     <div className="relative flex items-center">
                       <Key className="absolute left-4 text-white/20 w-4 h-4" />
-                      <input type="password" required minLength={6} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full pl-11 pr-5 py-3 bg-zinc-950 border border-white/10 rounded-none text-xs font-mono text-white outline-none focus:border-[#ff9e00]/50 transition-all" placeholder="Minimal 6 karakter" />
+                      <input type="password" required minLength={6} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full pl-11 pr-5 py-3 bg-zinc-950 border border-white/10 rounded-none text-xs font-mono text-white outline-none focus:border-[#ff9e00]/50 transition-all" placeholder="Minimum 6 characters" />
                     </div>
                   </div>
                   <div className="mb-2">
-                    <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-white/40 mb-2">Konfirmasi Sandi</label>
+                    <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-white/40 mb-2">Confirm Password</label>
                     <div className="relative flex items-center">
                       <Check className="absolute left-4 text-white/20 w-4 h-4" />
-                      <input type="password" required minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full pl-11 pr-5 py-3 bg-zinc-950 border border-white/10 rounded-none text-xs font-mono text-white outline-none focus:border-[#ff9e00]/50 transition-all" placeholder="Ulangi sandi baru" />
+                      <input type="password" required minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full pl-11 pr-5 py-3 bg-zinc-950 border border-white/10 rounded-none text-xs font-mono text-white outline-none focus:border-[#ff9e00]/50 transition-all" placeholder="Repeat new password" />
                     </div>
                   </div>
                   <div className="flex gap-3 pt-2">
-                    <button type="button" onClick={() => setShowPasswordModal(false)} disabled={isUpdatingPassword} className="flex-1 py-2.5 rounded-none font-mono font-bold uppercase tracking-wider text-white/50 bg-zinc-900 border border-white/10 hover:bg-zinc-800 transition-all text-xs">Batal</button>
+                    <button type="button" onClick={() => setShowPasswordModal(false)} disabled={isUpdatingPassword} className="flex-1 py-2.5 rounded-none font-mono font-bold uppercase tracking-wider text-white/50 bg-zinc-900 border border-white/10 hover:bg-zinc-800 transition-all text-xs">Cancel</button>
                     <button type="submit" disabled={isUpdatingPassword} className="flex-1 py-2.5 rounded-none font-mono font-bold uppercase tracking-wider text-black bg-[#ff9e00] hover:bg-[#ffaa22] transition-all flex items-center justify-center gap-2 text-xs">
-                      {isUpdatingPassword ? <Loader2 className="w-4 h-4 animate-spin text-black" /> : 'Simpan Sandi'}
+                      {isUpdatingPassword ? <Loader2 className="w-4 h-4 animate-spin text-black" /> : 'Save Password'}
                     </button>
                   </div>
                 </form>

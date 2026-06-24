@@ -58,7 +58,7 @@ export function useLinks() {
       const targetLink = links.find(l => l.id === id);
       
       if (activeCount >= 4 && targetLink && !targetLink.isActive) {
-        toast.error("Maksimal hanya 4 link yang bisa tampil di profil.", {
+        toast.error("Maximum of 4 links can be displayed on profile.", {
           id: 'active-limit',
           icon: '⚠️',
           style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
@@ -185,3 +185,4 @@ export function useLinks() {
     }
   };
 }
+

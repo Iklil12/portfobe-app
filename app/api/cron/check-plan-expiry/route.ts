@@ -54,7 +54,7 @@ export async function GET(req: Request) {
     if (expiredSubscriptions.length === 0) {
       return NextResponse.json({
         success: true,
-        message: "Tidak ada subscription yang expired hari ini.",
+        message: "No subscriptions expired today.",
         downgraded: 0,
       });
     }
@@ -104,21 +104,21 @@ export async function GET(req: Request) {
               from: "Portfobe <hellocreator@mail.ritions.com>",
               to: userEmail,
               replyTo: "ikliluluyun@ritions.com",
-              subject: "Paket PRO Anda Telah Berakhir (Grace Period Habis) — Portfobe",
+              subject: "Your PRO Plan Has Expired (Grace Period Ended) — Portfobe",
               html: `
               <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
                 <div style="background: #0f172a; padding: 24px 32px; border-radius: 12px 12px 0 0;">
                   <h1 style="color: white; margin: 0; font-size: 20px; font-weight: 800;">portfobe</h1>
                 </div>
                 <div style="padding: 32px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px;">
-                  <p style="font-size: 16px; margin-top: 0;">Hei, <strong>${userName}</strong>!</p>
-                  <p style="font-size: 16px;">Masa berlaku tambahan (Grace Period) Paket PRO kamu di <strong>Portfobe</strong> telah habis. Akun kamu sekarang kembali ke paket <strong>Starter (Gratis)</strong>.</p>
+                  <p style="font-size: 16px; margin-top: 0;">Hey, <strong>${userName}</strong>!</p>
+                  <p style="font-size: 16px;">The additional grace period for your PRO Plan on <strong>Portfobe</strong> has ended. Your account has now reverted to the <strong>Starter (Free)</strong> plan.</p>
                   <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 16px; margin: 20px 0;">
-                    <p style="margin: 0; font-size: 14px; color: #92400e;">⚠️ Fitur PRO seperti analitik lanjutan, tema custom, dan batas 4 proyek tidak lagi tersedia. Data lama kamu tetap aman.</p>
+                    <p style="margin: 0; font-size: 14px; color: #92400e;">⚠️ PRO features like advanced analytics, custom themes, and the 4-project limit are no longer available. Your old data remains safe.</p>
                   </div>
-                  <p style="font-size: 16px;">Hubungi kami untuk memperpanjang paket PRO kamu kapan saja.</p>
+                  <p style="font-size: 16px;">Contact us to renew your PRO plan anytime.</p>
                   <br/>
-                  <p style="font-size: 14px; color: #64748b;">Tim Portfobe</p>
+                  <p style="font-size: 14px; color: #64748b;">Portfobe Team</p>
                 </div>
               </div>
               `,
@@ -134,25 +134,25 @@ export async function GET(req: Request) {
             from: "Portfobe <hellocreator@mail.ritions.com>",
             to: userEmail,
             replyTo: "ikliluluyun@ritions.com",
-            subject: "Masa Tenggang: Paket PRO Anda Berakhir Hari Ini — Portfobe",
+            subject: "Grace Period: Your PRO Plan Expires Today — Portfobe",
             html: `
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
               <div style="background: #0f172a; padding: 24px 32px; border-radius: 12px 12px 0 0;">
                 <h1 style="color: white; margin: 0; font-size: 20px; font-weight: 800;">portfobe</h1>
               </div>
               <div style="padding: 32px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px;">
-                <p style="font-size: 16px; margin-top: 0;">Hei, <strong>${userName}</strong>!</p>
-                <p style="font-size: 16px;">Paket PRO kamu seharusnya berakhir hari ini. Namun, kami memberikan <strong>Masa Tenggang (Grace Period) selama 3 Hari</strong> agar kamu tidak kehilangan akses secara mendadak.</p>
+                <p style="font-size: 16px; margin-top: 0;">Hey, <strong>${userName}</strong>!</p>
+                <p style="font-size: 16px;">Your PRO plan was supposed to expire today. However, we are providing a <strong>3-Day Grace Period</strong> so you don't lose access suddenly.</p>
                 <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin: 20px 0;">
-                  <p style="margin: 0; font-size: 14px; color: #1e40af;">✨ Kamu masih bisa menggunakan semua fitur PRO selama 3 hari ke depan.</p>
+                  <p style="margin: 0; font-size: 14px; color: #1e40af;">✨ You can still use all PRO features for the next 3 days.</p>
                 </div>
-                <p style="font-size: 16px;">Silakan lakukan perpanjangan sebelum akun kamu otomatis dialihkan ke paket Gratis (Starter).</p>
+                <p style="font-size: 16px;">Please renew before your account is automatically switched to the Free (Starter) plan.</p>
                 <br/>
-                <p style="font-size: 14px; color: #64748b;">Tim Portfobe</p>
+                <p style="font-size: 14px; color: #64748b;">Portfobe Team</p>
               </div>
             </div>
             `,
-          }).catch(err => console.error(`Gagal kirim email grace period ke ${userEmail}:`, err));
+          }).catch(err => console.error(`Failed to send grace period email to ${userEmail}:`, err));
         }
         // Kirim notifikasi H+2 (peringatan terakhir grace period)
         else if (daysSinceExpiry === 2 && userEmail) {
@@ -160,22 +160,22 @@ export async function GET(req: Request) {
             from: "Portfobe <hellocreator@mail.ritions.com>",
             to: userEmail,
             replyTo: "ikliluluyun@ritions.com",
-            subject: "[Penting] Hari Terakhir Masa Tenggang PRO — Portfobe",
+            subject: "[Important] Last Day of PRO Grace Period — Portfobe",
             html: `
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
               <div style="background: #0f172a; padding: 24px 32px; border-radius: 12px 12px 0 0;">
                 <h1 style="color: white; margin: 0; font-size: 20px; font-weight: 800;">portfobe</h1>
               </div>
               <div style="padding: 32px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 0 0 12px 12px;">
-                <p style="font-size: 16px; margin-top: 0;">Hei, <strong>${userName}</strong>!</p>
-                <p style="font-size: 16px;">Ini adalah hari terakhir dari masa tenggang (Grace Period) 3 hari kamu. Besok, akun kamu akan otomatis di-downgrade ke paket Gratis.</p>
-                <p style="font-size: 16px;">Jangan sampai fitur-fitur premium kamu terhenti! Segera hubungi kami untuk perpanjangan hari ini.</p>
+                <p style="font-size: 16px; margin-top: 0;">Hey, <strong>${userName}</strong>!</p>
+                <p style="font-size: 16px;">This is the last day of your 3-day Grace Period. Tomorrow, your account will automatically be downgraded to the Free plan.</p>
+                <p style="font-size: 16px;">Don't let your premium features stop! Contact us for a renewal today.</p>
                 <br/>
-                <p style="font-size: 14px; color: #64748b;">Tim Portfobe</p>
+                <p style="font-size: 14px; color: #64748b;">Portfobe Team</p>
               </div>
             </div>
             `,
-          }).catch(err => console.error(`Gagal kirim email reminder grace period ke ${userEmail}:`, err));
+          }).catch(err => console.error(`Failed to send grace period reminder to ${userEmail}:`, err));
         }
       }
     }
@@ -216,23 +216,23 @@ export async function GET(req: Request) {
             from: "Portfobe <hellocreator@mail.ritions.com>",
             to: userEmail,
             replyTo: "ikliluluyun@ritions.com",
-            subject: `Paket PRO Kamu Berakhir dalam ${daysLeft} Hari — Portfobe`,
+            subject: `Your PRO Plan Expires in ${daysLeft} Days — Portfobe`,
             html: `
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
               <div style="background: #0f172a; padding: 24px 32px; border-radius: 12px 12px 0 0;">
                 <h1 style="color: white; margin: 0; font-size: 20px; font-weight: 800;">portfobe</h1>
               </div>
               <div style="padding: 32px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px;">
-                <p style="font-size: 16px; margin-top: 0;">Hei, <strong>${userName}</strong>!</p>
-                <p style="font-size: 16px;">Paket PRO kamu akan berakhir dalam <strong>${daysLeft} hari</strong>. Segera perpanjang agar tidak kehilangan akses ke fitur-fitur PRO!</p>
+                <p style="font-size: 16px; margin-top: 0;">Hey, <strong>${userName}</strong>!</p>
+                <p style="font-size: 16px;">Your PRO plan will expire in <strong>${daysLeft} days</strong>. Renew soon so you don't lose access to PRO features!</p>
                 <br/>
-                <p style="font-size: 14px; color: #64748b;">Tim Portfobe</p>
+                <p style="font-size: 14px; color: #64748b;">Portfobe Team</p>
               </div>
             </div>
             `,
           })
           .catch((err) =>
-            console.error(`Gagal kirim reminder ke ${userEmail}:`, err)
+            console.error(`Failed to send reminder to ${userEmail}:`, err)
           );
       }
     }
@@ -272,22 +272,22 @@ export async function GET(req: Request) {
           from: "Portfobe <hellocreator@mail.ritions.com>",
           to: userEmail,
           replyTo: "ikliluluyun@ritions.com",
-          subject: "Kami Rindu Karya Hebatmu! Diskon 30% untuk Kembali ke PRO 🎁",
+          subject: "We Miss Your Great Work! 30% Off to Return to PRO 🎁",
           html: `
           <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
             <div style="background: #0f172a; padding: 24px 32px; border-radius: 12px 12px 0 0;">
               <h1 style="color: white; margin: 0; font-size: 20px; font-weight: 800;">portfobe</h1>
             </div>
             <div style="padding: 32px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px;">
-              <p style="font-size: 16px; margin-top: 0;">Hei, <strong>${userName}</strong>!</p>
-              <p style="font-size: 16px;">Sudah beberapa hari sejak paket PRO kamu berakhir. Kami sangat merindukan portofolio menawan yang kamu buat menggunakan fitur premium kami.</p>
+              <p style="font-size: 16px; margin-top: 0;">Hey, <strong>${userName}</strong>!</p>
+              <p style="font-size: 16px;">It's been a few days since your PRO plan ended. We really miss the captivating portfolios you created using our premium features.</p>
               <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
-                <h3 style="margin: 0 0 10px 0; color: #065f46; font-size: 18px;">Penawaran Spesial Kembalinya Kreator!</h3>
-                <p style="margin: 0; font-size: 15px; color: #047857;">Gunakan kode promo <strong>COMEBACK30</strong> untuk mendapatkan diskon 30% perpanjangan Paket PRO hari ini.</p>
+                <h3 style="margin: 0 0 10px 0; color: #065f46; font-size: 18px;">Special Creator Comeback Offer!</h3>
+                <p style="margin: 0; font-size: 15px; color: #047857;">Use promo code <strong>COMEBACK30</strong> to get a 30% discount on renewing your PRO Plan today.</p>
               </div>
-              <p style="font-size: 16px;">Tingkatkan kembali karir profesionalmu dan dapatkan analitik mendalam serta custom domain sekarang juga.</p>
+              <p style="font-size: 16px;">Elevate your professional career again and get in-depth analytics and a custom domain right now.</p>
               <br/>
-              <p style="font-size: 14px; color: #64748b;">Salam hangat,<br/>Tim Portfobe</p>
+              <p style="font-size: 14px; color: #64748b;">Warm regards,<br/>Portfobe Team</p>
             </div>
           </div>
           `,
@@ -301,22 +301,22 @@ export async function GET(req: Request) {
           from: "Portfobe <hellocreator@mail.ritions.com>",
           to: userEmail,
           replyTo: "ikliluluyun@ritions.com",
-          subject: "Kesempatan Terakhir: Diskon 50% Khusus Untukmu! 🔥",
+          subject: "Last Chance: 50% Off Just For You! 🔥",
           html: `
           <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
             <div style="background: #0f172a; padding: 24px 32px; border-radius: 12px 12px 0 0;">
               <h1 style="color: white; margin: 0; font-size: 20px; font-weight: 800;">portfobe</h1>
             </div>
             <div style="padding: 32px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px;">
-              <p style="font-size: 16px; margin-top: 0;">Hei, <strong>${userName}</strong>!</p>
-              <p style="font-size: 16px;">Ini adalah penawaran terbesar kami dan eksklusif hanya untukmu. Kami ingin melihatmu berkembang bersama Portfobe PRO.</p>
+              <p style="font-size: 16px; margin-top: 0;">Hey, <strong>${userName}</strong>!</p>
+              <p style="font-size: 16px;">This is our biggest offer and exclusive just for you. We want to see you grow with Portfobe PRO.</p>
               <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
-                <h3 style="margin: 0 0 10px 0; color: #b45309; font-size: 18px;">Diskon 50% Selamanya!</h3>
-                <p style="margin: 0; font-size: 15px; color: #d97706;">Gunakan kode promo <strong>MISSYOU50</strong> saat checkout. Kupon ini hanya berlaku selama 24 jam ke depan.</p>
+                <h3 style="margin: 0 0 10px 0; color: #b45309; font-size: 18px;">50% Off Forever!</h3>
+                <p style="margin: 0; font-size: 15px; color: #d97706;">Use promo code <strong>MISSYOU50</strong> at checkout. This coupon is only valid for the next 24 hours.</p>
               </div>
-              <p style="font-size: 16px;">Jangan biarkan karya hebatmu tidak terlihat. Kembali jadi PRO sekarang.</p>
+              <p style="font-size: 16px;">Don't let your great work go unseen. Go back to PRO now.</p>
               <br/>
-              <p style="font-size: 14px; color: #64748b;">Salam hangat,<br/>Tim Portfobe</p>
+              <p style="font-size: 14px; color: #64748b;">Warm regards,<br/>Portfobe Team</p>
             </div>
           </div>
           `,
@@ -341,3 +341,4 @@ export async function GET(req: Request) {
     );
   }
 }
+

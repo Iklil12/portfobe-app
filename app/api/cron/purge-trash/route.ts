@@ -37,6 +37,7 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error("Cron purge-trash error:", error);
-    return NextResponse.json({ error: "Gagal menjalankan purge" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to run purge" }, { status: 500 });
   }
 }
+

@@ -49,7 +49,7 @@ export async function POST(req: Request) {
 
     // 1. Batasi maksimal 10 proyek per user
     if (projects.length > 10) {
-      return NextResponse.json({ error: "Maksimal 10 proyek diperbolehkan" }, { status: 400 });
+      return NextResponse.json({ error: "Maximum 10 projects allowed" }, { status: 400 });
     }
 
     // 2. Validasi setiap item
@@ -95,6 +95,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Save Manual Penpot Error:", error);
-    return NextResponse.json({ error: "Gagal menyimpan data" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save data" }, { status: 500 });
   }
 }
+
+

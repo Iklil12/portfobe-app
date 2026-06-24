@@ -17,12 +17,12 @@ export function DeviceBreakdown({ isLoading, isFree, handleLocked, deviceData, a
             <Lock className="w-4 h-4 text-[#ff9e00]" />
           </div>
           <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melihat data perangkat</p>
+          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade to view device data</p>
         </div>
       )}
       <div className="mb-6">
-        <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Perangkat</h3>
-        <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Distribusi per device</p>
+        <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Devices</h3>
+        <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Device distribution</p>
       </div>
       <div className="space-y-5 flex-1">
         {deviceData.map((d: any, i: number) => (
@@ -43,7 +43,7 @@ export function DeviceBreakdown({ isLoading, isFree, handleLocked, deviceData, a
         ))}
 
         <div className="pt-4 mt-4 border-t border-white/5">
-          <p className="text-[8px] font-mono font-bold text-white/30 uppercase tracking-widest mb-3">Estimasi User Agent</p>
+          <p className="text-[8px] font-mono font-bold text-white/30 uppercase tracking-widest mb-3">User Agent Estimation</p>
           <div className="grid grid-cols-3 gap-2">
             {deviceData.map((d: any) => (
               <div key={d.name} className="bg-zinc-900/40 rounded-none p-2.5 text-center border border-white/5">
@@ -74,7 +74,7 @@ export function TopLocations({ isLoading, isFree, handleLocked, dataList, animRe
             <Lock className="w-4 h-4 text-[#ff9e00]" />
           </div>
           <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melihat lokasi pengunjung</p>
+          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade to view visitor locations</p>
         </div>
       )}
       <div className="flex justify-between items-start mb-6">
@@ -90,7 +90,7 @@ export function TopLocations({ isLoading, isFree, handleLocked, dataList, animRe
       {dataList.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-10 text-white/20">
           <Ghost className="w-8 h-8 mb-3" />
-          <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data lokasi</p>
+          <p className="text-[9px] font-mono font-bold tracking-widest uppercase">No location data yet</p>
         </div>
       ) : (
         <div className="space-y-5">

@@ -56,7 +56,7 @@ export const CustomAreaTooltip = ({ active, payload, label, isHourly }: CustomTo
   return (
     <div className="bg-zinc-900 border border-white/10 rounded-none shadow-2xl px-4 py-3 min-w-[140px] font-mono">
       <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-2">
-        {isHourly ? `Pukul ${label}` : label}
+        {isHourly ? `Time: ${label}` : label}
       </p>
       <div className="space-y-1.5">
         {payload.map((entry, i) => (

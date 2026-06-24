@@ -36,25 +36,25 @@ export default function BuildWithAIPage() {
     {
       icon: PenTool,
       label: 'Auto-Write',
-      desc: 'AI menyusun bio & deskripsi proyek yang menarik dari poin-poin sederhana milikmu',
+      desc: 'AI generates engaging bios & project descriptions from your simple bullet points',
       delay: 0,
     },
     {
       icon: Layers,
       label: 'Smart Theme',
-      desc: 'Rekomendasi tema & warna terbaik berdasarkan analisis karya portofoliomu secara mendalam',
+      desc: 'Best theme & color recommendations based on in-depth analysis of your portfolio works',
       delay: 100,
     },
     {
       icon: Globe,
       label: 'Translate+',
-      desc: 'Terjemahkan seluruh portofolio ke Inggris dengan grammar presisi dalam satu klik',
+      desc: 'Translate your entire portfolio to English with precise grammar in one click',
       delay: 200,
     },
     {
       icon: SearchCode,
       label: 'SEO Boost',
-      desc: 'Optimasi kata kunci agar portofoliomu mudah ditemukan di Google dan mesin pencari lainnya',
+      desc: 'Keyword optimization so your portfolio is easily found on Google and other search engines',
       delay: 300,
     },
   ];
@@ -210,7 +210,7 @@ export default function BuildWithAIPage() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff9e00]"></span>
             </span>
-            <span className="text-[10px] font-sans font-bold text-[#ff9e00] uppercase ">Coming Soon · Dalam Pengembangan</span>
+            <span className="text-[10px] font-sans font-bold text-[#ff9e00] uppercase ">Coming Soon · In Development</span>
           </div>
         </div>
 
@@ -242,14 +242,14 @@ export default function BuildWithAIPage() {
               {words[wordIndex]}
             </span>
             <br />
-            <span className="text-white/40 font-sans font-bold text-lg sm:text-xl md:text-2xl mt-2 block  uppercase">Dibangun oleh AI</span>
+            <span className="text-white/40 font-sans font-bold text-lg sm:text-xl md:text-2xl mt-2 block  uppercase">Built by AI</span>
           </h1>
         </div>
 
         {/* ── SUBHEADLINE ─────────────────────────────────────── */}
         <div className="ai-slide-up ai-delay-300 text-center mb-14 max-w-lg">
           <p className="text-white/40 font-sans text-xs leading-relaxed">
-            Cukup ceritakan siapa kamu — AI kami akan menyusun portofolio yang memukau, teroptimasi SEO, dan siap menarik klien impianmu.
+            Just tell us who you are — our AI will generate a stunning, SEO-optimized portfolio ready to attract your dream clients.
           </p>
         </div>
 
@@ -282,10 +282,10 @@ export default function BuildWithAIPage() {
             <div className="absolute top-0 right-0 w-32 h-32 rounded-full -mr-12 -mt-12"
               style={{ background: 'radial-gradient(circle, rgba(255,158,0,0.08), transparent 70%)' }} />
             <p className="text-[9px] font-sans font-bold uppercase  text-[#ff9e00] mb-2">
-              Dapatkan Akses Pertama
+              Get Early Access
             </p>
             <p className="font-sans font-bold text-sm text-white uppercase  mb-5">
-              Daftarkan Email-mu, Jadilah yang Pertama Mencoba ✨
+              Register your email, be the first to try ✨
             </p>
 
             {!submitted ? (
@@ -294,7 +294,7 @@ export default function BuildWithAIPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="emailmu@example.com"
+                  placeholder="youremail@example.com"
                   className="ai-input flex-1 rounded-none px-4 py-3 text-xs font-sans font-bold"
                 />
                 <button
@@ -308,7 +308,7 @@ export default function BuildWithAIPage() {
               <div className="flex items-center gap-2.5 py-3 px-4 rounded-none bg-emerald-950/20 border border-emerald-900/30 text-emerald-400">
                 <CheckCircle className="w-4 h-4 shrink-0" />
                 <p className="text-[11px] font-sans font-bold">
-                  Berhasil! Kami akan kabari kamu duluan 🎉
+                  Success! We will notify you first 🎉
                 </p>
               </div>
             )}
@@ -321,7 +321,7 @@ export default function BuildWithAIPage() {
           <div className="space-y-4 relative">
             <div className="absolute left-[19px] top-4 bottom-4 w-px bg-white/5" />
             {[
-              { phase: 'Alpha', label: 'Auto-Write Bio & Deskripsi', done: false, active: true },
+              { phase: 'Alpha', label: 'Auto-Write Bio & Description', done: false, active: true },
               { phase: 'Beta', label: 'Smart Theme & Color AI', done: false, active: false },
               { phase: 'v1.0', label: 'SEO Optimizer + Translator', done: false, active: false },
             ].map((item, i) => (
@@ -348,7 +348,7 @@ export default function BuildWithAIPage() {
 
         {/* ── FOOTER ────────────────────────────────────────────── */}
         <p className="mt-16 text-[9px] font-sans text-white/20 text-center">
-          © 2025 Portfo.be · Semua fitur AI akan tersedia secara bertahap
+          © 2025 Portfo.be · All AI features will be available gradually
         </p>
       </div>
     </div>

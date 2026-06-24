@@ -198,10 +198,10 @@ export function ProjectSelectionModal({ isOpen, onClose, allProjects = [], selec
         <div className="p-6 border-b border-white/5 flex items-start justify-between shrink-0 bg-zinc-900/20">
           <div>
             <h2 className="text-sm font-mono font-bold text-white uppercase tracking-widest flex items-center gap-2">
-              <ImageIcon className="w-4 h-4 text-[#ff9e00]" /> Kurasi Project
+              <ImageIcon className="w-4 h-4 text-[#ff9e00]" /> Curate Projects
             </h2>
             <p className="text-[11px] font-mono text-white/40 mt-2 max-w-lg leading-relaxed">
-              Tambahkan project dari daftar tersedia ke daftar terpilih. Geser (drag) ikon di daftar terpilih untuk mengatur urutan. Jika daftar terpilih kosong, semua project akan ditampilkan secara default.
+              Add projects from the available list to the selected list. Drag the icons in the selected list to rearrange the order. If the selected list is empty, all projects will be shown by default.
             </p>
           </div>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-none bg-zinc-900 hover:bg-zinc-800 text-white/40 hover:text-white transition-colors border border-white/5"><X className="w-4 h-4" /></button>
@@ -214,7 +214,7 @@ export function ProjectSelectionModal({ isOpen, onClose, allProjects = [], selec
           <div className="flex-1 flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 bg-zinc-950/30 overflow-hidden">
             <div className="p-4 border-b border-white/5 shrink-0 flex items-center justify-between">
               <span className="text-[10px] font-mono font-bold text-[#ff9e00] uppercase tracking-widest">
-                ● Project Terpilih ({selectedList.length})
+                ● Selected Projects ({selectedList.length})
               </span>
             </div>
             <div className="flex-1 overflow-y-auto custom-scrollbar p-4 relative">
@@ -234,8 +234,8 @@ export function ProjectSelectionModal({ isOpen, onClose, allProjects = [], selec
                 </div>
               ) : selectedList.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-30 animate-in fade-in duration-300">
-                  <p className="text-[10px] font-mono uppercase tracking-widest">Belum ada project yang dikurasi.</p>
-                  <p className="text-[9px] font-mono mt-2 px-8">Klik (+) pada daftar di sebelah kanan untuk mulai mengurasi project untuk tema ini.</p>
+                  <p className="text-[10px] font-mono uppercase tracking-widest">No projects curated yet.</p>
+                  <p className="text-[9px] font-mono mt-2 px-8">Click (+) on the right list to start curating projects for this theme.</p>
                 </div>
               ) : (
                 <div className="animate-in fade-in duration-300">
@@ -257,13 +257,13 @@ export function ProjectSelectionModal({ isOpen, onClose, allProjects = [], selec
           <div className="flex-1 flex flex-col bg-zinc-950/80 overflow-hidden">
             <div className="p-4 border-b border-white/5 shrink-0 flex flex-col gap-3">
               <span className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest">
-                ○ Daftar Tersedia
+                ○ Available List
               </span>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
                 <input 
                   type="text" 
-                  placeholder="Cari project..." 
+                  placeholder="Search projects..." 
                   value={searchQuery} 
                   onChange={(e) => setSearchQuery(e.target.value)} 
                   className="w-full bg-zinc-900 border border-white/10 rounded-none py-2 pl-9 pr-4 text-[11px] font-mono text-white placeholder:text-white/30 focus:outline-none focus:border-[#ff9e00]/50" 
@@ -288,7 +288,7 @@ export function ProjectSelectionModal({ isOpen, onClose, allProjects = [], selec
               ) : unselectedProjects.length === 0 ? (
                 <div className="h-full flex items-center justify-center text-center opacity-30 animate-in fade-in duration-300">
                   <p className="text-[10px] font-mono uppercase tracking-widest">
-                    {searchQuery ? 'Tidak ada hasil pencarian.' : 'Tidak ada project tersisa.'}
+                    {searchQuery ? 'No search results.' : 'No projects left.'}
                   </p>
                 </div>
               ) : (
@@ -305,7 +305,7 @@ export function ProjectSelectionModal({ isOpen, onClose, allProjects = [], selec
         {/* Footer */}
         <div className="p-4 border-t border-white/5 shrink-0 flex items-center justify-end gap-3 bg-zinc-900/20">
           <button onClick={handleClose} className="px-6 py-2 bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-mono font-bold uppercase tracking-wider transition-colors shadow-lg">
-            Selesai
+            Done
           </button>
         </div>
       </div>

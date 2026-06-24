@@ -118,7 +118,7 @@ export function AuraKineticExperienceBlock({ theme, isEditor }: any) {
                                     <button
                                         onClick={(e) => handleRemoveItem(index, e)}
                                         className="absolute top-4 right-4 bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white rounded-full w-7 h-7 flex items-center justify-center text-[10px] z-30 transition-all duration-300 shadow-md border border-red-500/30"
-                                        title="Hapus Pengalaman"
+                                        title="Delete Experience"
                                     >
                                         ✕
                                     </button>

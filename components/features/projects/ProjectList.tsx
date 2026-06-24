@@ -79,7 +79,7 @@ function ModelViewerCard({ src }: { src: string }) {
       >
         <div slot="poster" className="w-full h-full flex flex-col items-center justify-center bg-zinc-950 text-white/30 gap-3">
           <Box className="w-6 h-6 animate-pulse" />
-          <span className="text-[9px] font-mono font-bold uppercase tracking-widest">Memuat 3D...</span>
+          <span className="text-[9px] font-mono font-bold uppercase tracking-widest">Loading 3D...</span>
         </div>
       </ModelViewer>
     </div>
@@ -118,15 +118,15 @@ export function ProjectList({ state, actions }: { state: any, actions: any }) {
           <FolderOpen className="w-8 h-8" />
         </div>
         <h3 className="text-base sm:text-lg font-mono font-bold text-white uppercase tracking-wider mb-2">
-          {activeTab === 'all' ? 'Belum ada data' : `Tidak ada ${activeTab} ditemukan`}
+          {activeTab === 'all' ? 'No data yet' : `No ${activeTab} found`}
         </h3>
-        <p className="text-white/40 font-mono text-xs mb-6 sm:mb-8 max-w-xs px-4">Perkaya profil Anda dengan menambahkan pencapaian terbaru.</p>
+        <p className="text-white/40 font-mono text-xs mb-6 sm:mb-8 max-w-xs px-4">Enrich your profile by adding your latest achievements.</p>
         {activeTab === 'all' && (
           <button 
             onClick={() => handleOpenModal()} 
             className="text-black bg-[#ff9e00] hover:bg-[#ffaa22] px-6 py-3.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-widest transition-all active:scale-95"
           >
-            Unggah Data Pertama
+            Upload First Data
           </button>
         )}
       </div>
@@ -170,7 +170,7 @@ export function ProjectList({ state, actions }: { state: any, actions: any }) {
                   ) : (
                     <ImageIcon className="w-3 h-3 text-[#ff9e00]" />
                   )}
-                  {item.itemType === 'certificate' ? 'Sertifikat' : item.projectType}
+                  {item.itemType === 'certificate' ? 'Certificate' : item.projectType}
                 </div>
               </div>
 
@@ -185,7 +185,7 @@ export function ProjectList({ state, actions }: { state: any, actions: any }) {
                 </div>
 
                 <p className="text-[11px] text-white/40 font-mono line-clamp-2 leading-relaxed">
-                  {item.description || "Tidak ada rincian deskripsi tambahan untuk karya ini."}
+                  {item.description || "No additional description details for this work."}
                 </p>
 
                 {/* Tag chips */}
@@ -204,17 +204,17 @@ export function ProjectList({ state, actions }: { state: any, actions: any }) {
                 })()}
                 <div className="mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-white/5 flex items-center justify-between">
                   <div>
-                    <p className="text-[8px] font-mono font-bold text-white/30 uppercase tracking-widest mb-0.5">Tahun</p>
+                    <p className="text-[8px] font-mono font-bold text-white/30 uppercase tracking-widest mb-0.5">Year</p>
                     <p className="text-xs font-mono font-bold text-white">{item.year || new Date(item.createdAt).getFullYear()}</p>
                   </div>
                   {item.itemType === 'certificate' && item.status ? (
                     <div className="text-right">
-                      <p className="text-[8px] font-mono font-bold text-white/30 uppercase tracking-widest mb-0.5">Pencapaian</p>
+                      <p className="text-[8px] font-mono font-bold text-white/30 uppercase tracking-widest mb-0.5">Achievement</p>
                       <p className="text-xs font-mono font-bold text-white truncate max-w-[100px] sm:max-w-[120px]">{item.status}</p>
                     </div>
                   ) : item.itemType === 'certificate' && item.issuer ? (
                     <div className="text-right">
-                      <p className="text-[8px] font-mono font-bold text-white/30 uppercase tracking-widest mb-0.5">Penerbit</p>
+                      <p className="text-[8px] font-mono font-bold text-white/30 uppercase tracking-widest mb-0.5">Issuer</p>
                       <p className="text-xs font-mono font-bold text-white truncate max-w-[100px] sm:max-w-[120px]">{item.issuer}</p>
                     </div>
                   ) : null}
@@ -225,12 +225,12 @@ export function ProjectList({ state, actions }: { state: any, actions: any }) {
                     onClick={() => handleOpenModal(item)}
                     className="flex-1 bg-zinc-900 text-white border border-white/10 rounded-none py-2.5 text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 active:scale-95"
                   >
-                    <Edit3 className="w-3 h-3" /> Edit Karya
+                    <Edit3 className="w-3 h-3" /> Edit Work
                   </button>
                   <button
                     onClick={() => confirmDelete(item.id, item.title, item.itemType)}
                     className="w-10 h-10 shrink-0 bg-zinc-900 border border-white/10 text-white/40 rounded-none flex items-center justify-center hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30 transition-all active:scale-95"
-                    title="Hapus"
+                    title="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

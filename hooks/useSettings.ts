@@ -43,7 +43,7 @@ export function useSettings() {
       const errorMsg = urlParams.get('error');
 
       if (success) {
-        toast.success(success === 'true' ? 'Email berhasil diverifikasi dan diperbarui!' : success, {
+        toast.success(success === 'true' ? 'Email successfully verified and updated!' : success, {
           duration: 5000,
           style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
         });
@@ -69,7 +69,7 @@ export function useSettings() {
           setIsLive(data.isLive);
         }
       } catch (error) {
-        console.error("Gagal mengambil status portofolio");
+        console.error("Failed to fetch portfolio status");
       } finally {
         setTimeout(() => setIsLoadingStatus(false), 400); 
       }
@@ -79,7 +79,7 @@ export function useSettings() {
 
   const handleInternalForgotPassword = async () => {
     const userEmail = session?.user?.email; 
-    const toastId = toast.loading('Mengirim link reset...', {
+    const toastId = toast.loading('Sending reset link...', {
         style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
 
@@ -94,14 +94,14 @@ export function useSettings() {
             toast.dismiss(toastId);
             setIsSuccessModal(true);
             setSuccessData({
-                title: "Link Terkirim!",
-                desc: "Kami telah mengirimkan instruksi reset ke kotak masuk email Anda. Silakan periksa untuk melanjutkan."
+                title: "Link Sent!",
+                desc: "We have sent reset instructions to your email inbox. Please check to continue."
             });
         } else {
-            toast.error("Gagal mengirim link reset.", { id: toastId });
+            toast.error("Failed to send reset link.", { id: toastId });
         }
     } catch (error) {
-        toast.error("Terjadi kesalahan jaringan.", { id: toastId });
+        toast.error("A network error occurred.", { id: toastId });
     }
   };
 
@@ -110,7 +110,7 @@ export function useSettings() {
     setIsLive(newStatus); 
     
     const loadingToast = toast.loading(
-      newStatus ? 'Mempublikasikan portofolio...' : 'Menyembunyikan portofolio...', 
+      newStatus ? 'Publishing portfolio...' : 'Hiding portfolio...', 
       { style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' } }
     );
 
@@ -126,7 +126,7 @@ export function useSettings() {
       });
 
       if (res.ok) {
-        toast.success(newStatus ? 'Portofolio kini Live!' : 'Portofolio disembunyikan.', { id: loadingToast });
+        toast.success(newStatus ? 'Portfolio is now Live!' : 'Portfolio hidden.', { id: loadingToast });
         await update({ isLive: newStatus, isEmailVerified: true });
       } else {
         const errorData = await res.json().catch(() => ({}));
@@ -142,18 +142,18 @@ export function useSettings() {
       }, { revalidate: true });
 
       if (error.message === "FORBIDDEN") {
-        toast.error("Email belum diverifikasi!", { id: loadingToast });
+        toast.error("Email not verified!", { id: loadingToast });
         // Force refresh session state for the client (must match jwt callback root properties)
         await update({ isEmailVerified: false });
       } else {
-        toast.error('Gagal mengubah status.', { id: loadingToast });
+        toast.error('Failed to change status.', { id: loadingToast });
       }
     }
   };
 
   const confirmDeletion = async (emailInput: string) => {
     setIsDeleting(true);
-    const toastId = toast.loading('Sedang memusnahkan akun...', {
+    const toastId = toast.loading('Destroying account...', {
       style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
 
@@ -164,7 +164,7 @@ export function useSettings() {
         body: JSON.stringify({ emailInput })
       });
       if (response.ok) {
-        toast.success("Akun berhasil dihapus. Selamat tinggal!", { 
+        toast.success("Account successfully deleted. Goodbye!", { 
           id: toastId, 
           duration: 4000,
           style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' },
@@ -173,23 +173,23 @@ export function useSettings() {
         setTimeout(() => { signOut({ callbackUrl: '/register' }); }, 2000);
       } else {
         const data = await response.json();
-        toast.error(data.error || "Gagal menghapus akun.", { id: toastId });
+        toast.error(data.error || "Failed to delete account.", { id: toastId });
         setIsDeleting(false);
       }
     } catch (error) {
-      toast.error("Terjadi kesalahan jaringan.", { id: toastId });
+      toast.error("A network error occurred.", { id: toastId });
       setIsDeleting(false);
     }
   };
 
   const handleUpdateEmail = async (newEmail: string, emailVerifyPassword: string) => {
     if (!newEmail || !emailVerifyPassword) {
-      toast.error("Harap isi email baru dan kata sandi Anda.");
+      toast.error("Please enter your new email and password.");
       return false;
     }
 
     setIsUpdatingEmail(true);
-    const toastId = toast.loading('Memperbarui email...', {
+    const toastId = toast.loading('Updating email...', {
       style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
 
@@ -206,16 +206,16 @@ export function useSettings() {
         toast.dismiss(toastId);
         setIsSuccessModal(true);
         setSuccessData({
-            title: "Konfirmasi Terkirim",
-            desc: "Kami telah mengirimkan link konfirmasi ke alamat email baru Anda. Silakan periksa kotak masuk untuk menyelesaikan."
+            title: "Confirmation Sent",
+            desc: "We have sent a confirmation link to your new email address. Please check your inbox to complete."
         });
         return true;
       } else {
-        toast.error(data.error || "Gagal memperbarui email.", { id: toastId });
+        toast.error(data.error || "Failed to update email.", { id: toastId });
         return false;
       }
     } catch (error) {
-      toast.error("Terjadi kesalahan server.", { id: toastId });
+      toast.error("A server error occurred.", { id: toastId });
       return false;
     } finally {
       setIsUpdatingEmail(false);
@@ -224,20 +224,20 @@ export function useSettings() {
 
   const handleUpdatePassword = async (currentPassword: string, newPassword: string, confirmPassword: string) => {
     if (newPassword !== confirmPassword) {
-      toast.error("Konfirmasi sandi tidak cocok!");
+      toast.error("Password confirmation does not match!");
       return false;
     }
     if (!isStrictlyGoogle && !currentPassword) {
-      toast.error("Harap isi sandi saat ini.");
+      toast.error("Please enter your current password.");
       return false;
     }
     if (newPassword.length < 6) {
-      toast.error("Sandi baru minimal 6 karakter.");
+      toast.error("New password must be at least 6 characters.");
       return false;
     }
 
     setIsUpdatingPassword(true);
-    const toastId = toast.loading('Menyimpan kata sandi...', {
+    const toastId = toast.loading('Saving password...', {
       style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
 
@@ -257,17 +257,17 @@ export function useSettings() {
         toast.dismiss(toastId);
         setIsSuccessModal(true);
         setSuccessData({
-            title: isStrictlyGoogle ? "Sandi Lokal Dibuat" : "Sandi Diperbarui",
-            desc: "Kata sandi akun Anda telah berhasil disimpan. Gunakan sandi baru ini untuk login berikutnya."
+            title: isStrictlyGoogle ? "Local Password Created" : "Password Updated",
+            desc: "Your account password has been successfully saved. Use this new password for your next login."
         });
         if (isStrictlyGoogle) setIsStrictlyGoogle(false); 
         return true;
       } else {
-        toast.error(data.error || "Gagal menyimpan sandi.", { id: toastId });
+        toast.error(data.error || "Failed to save password.", { id: toastId });
         return false;
       }
     } catch (error) {
-      toast.error("Terjadi kesalahan server.", { id: toastId });
+      toast.error("A server error occurred.", { id: toastId });
       return false;
     } finally {
       setIsUpdatingPassword(false);
@@ -304,3 +304,4 @@ export function useSettings() {
     }
   };
 }
+

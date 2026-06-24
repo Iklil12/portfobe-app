@@ -8,22 +8,22 @@ const features = [
   {
     icon: Palette,
     title: 'Community Themes',
-    desc: 'Temukan dan gunakan tema portofolio unik yang dibuat oleh kreator lain di komunitas Portfo.be.',
+    desc: 'Discover and use unique portfolio themes created by other creators in the Portfo.be community.',
   },
   {
     icon: UploadCloud,
-    title: 'Publish Desainmu',
-    desc: 'Bagikan tampilan kustom portofoliomu ke komunitas dan dapatkan reputasi sebagai kreator terbaik.',
+    title: 'Publish Your Design',
+    desc: 'Share your custom portfolio look with the community and gain reputation as a top creator.',
   },
   {
     icon: Star,
-    title: 'Rating & Ulasan',
-    desc: 'Beri penilaian dan ulasan jujur agar komunitas terus menghadirkan desain portofolio berkualitas.',
+    title: 'Ratings & Reviews',
+    desc: 'Provide honest ratings and reviews to help the community keep delivering quality portfolio designs.',
   },
   {
     icon: Zap,
-    title: 'Terapkan 1 Klik',
-    desc: 'Gunakan desain apapun langsung ke portofoliomu — data konten dan proyekmu tetap aman.',
+    title: '1-Click Apply',
+    desc: 'Apply any design directly to your portfolio — your content and project data stay safe.',
   },
 ];
 
@@ -67,14 +67,14 @@ export default function ExplorePage() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#ff9e00]"></span>
             </span>
-            Dalam Pengembangan
+            In Development
           </div>
 
           <h1 className="text-3xl font-sans font-bold text-white tracking-tight uppercase mb-3">
             Explore <span className="text-white/40">Community</span>
           </h1>
           <p className="text-white/50 text-xs font-sans max-w-lg leading-relaxed">
-            Segera hadir — marketplace desain portofolio dari sesama kreator Portfo.be. Temukan, gunakan, dan bagikan karya desain terbaikmu.
+            Coming soon — a portfolio design marketplace from fellow Portfo.be creators. Discover, use, and share your best design work.
           </p>
         </div>
 
@@ -101,10 +101,10 @@ export default function ExplorePage() {
         <div className="animate-enter" style={{animationDelay:'200ms'}}>
           <div className="flex items-end justify-between mb-5">
             <div>
-              <h2 className="font-sans font-bold text-white text-xs uppercase ">Pratinjau Komunitas</h2>
-              <p className="text-white/30 text-[9px] font-sans uppercase  mt-1">Estimasi antarmuka rilis perdana</p>
+              <h2 className="font-sans font-bold text-white text-xs uppercase ">Community Preview</h2>
+              <p className="text-white/30 text-[9px] font-sans uppercase  mt-1">Initial release interface estimation</p>
             </div>
-            <span className="px-2.5 py-1 bg-zinc-900 text-white/40 text-[9px] font-sans font-bold rounded-none uppercase  border border-white/5">Segera</span>
+            <span className="px-2.5 py-1 bg-zinc-900 text-white/40 text-[9px] font-sans font-bold rounded-none uppercase  border border-white/5">Soon</span>
           </div>
 
           {/* Blurred Grid Preview */}
@@ -114,9 +114,9 @@ export default function ExplorePage() {
               <div className="w-14 h-14 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center mb-4 text-white/30">
                 <Compass className="w-6 h-6 animate-pulse text-[#ff9e00]" />
               </div>
-              <p className="font-sans font-bold text-white text-xs uppercase  mb-1.5">Komunitas Belum Dibuka</p>
+              <p className="font-sans font-bold text-white text-xs uppercase  mb-1.5">Community Not Open</p>
               <p className="text-white/40 font-sans text-[10px] text-center max-w-xs leading-relaxed">
-                Kami sedang merancang ekosistem pembagian tema paling mulus untuk para kreator Portfo.be.
+                We are designing the most seamless theme-sharing ecosystem for Portfo.be creators.
               </p>
             </div>
 
@@ -150,16 +150,16 @@ export default function ExplorePage() {
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none bg-zinc-950 border border-white/10 text-white/60 text-[9px] font-sans font-bold uppercase  mb-4">
-                  <Bell className="w-3 h-3 text-[#ff9e00]" /> Dapatkan Notifikasi
+                  <Bell className="w-3 h-3 text-[#ff9e00]" /> Get Notified
                 </div>
-                <h3 className="font-sans font-bold text-white text-sm uppercase  mb-1">Jadilah Kreator Pertama</h3>
-                <p className="text-white/40 font-sans text-xs leading-relaxed max-w-xl">Saat Explore Community diluncurkan, tema kustom buatanmu bisa langsung dikenal dan digunakan pengguna lain.</p>
+                <h3 className="font-sans font-bold text-white text-sm uppercase  mb-1">Be the First Creator</h3>
+                <p className="text-white/40 font-sans text-xs leading-relaxed max-w-xl">When the Explore Community launches, your custom themes can be instantly recognized and used by others.</p>
               </div>
               <button
                 onClick={() => {}}
                 className="flex-shrink-0 bg-[#ff9e00] hover:bg-[#ffaa22] text-black px-6 py-3.5 rounded-none font-sans font-bold text-xs uppercase  active:scale-95 transition-all whitespace-nowrap"
               >
-                Kabari Saya
+                Notify Me
               </button>
             </div>
           </div>

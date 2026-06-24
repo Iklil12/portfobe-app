@@ -103,8 +103,9 @@ export async function POST() {
   } catch (error) {
     console.error("POST /api/subscriptions/trial error:", error);
     return NextResponse.json(
-      { error: "Terjadi kesalahan sistem saat mengaktifkan trial." },
+      { error: "A system error occurred while activating trial." },
       { status: 500 }
     );
   }
 }
+

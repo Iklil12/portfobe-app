@@ -36,7 +36,7 @@ export function NotFoundUI({ subdomain }: NotFoundUIProps) {
         href={subdomain ? "/" : "/dashboard"} 
         className="px-8 py-4 bg-[#ff9e00] hover:bg-[#ffaa22] transition-colors text-black font-mono font-bold uppercase tracking-widest text-[11px] rounded-none active:scale-95"
       >
-        {subdomain ? "Kembali ke Beranda" : "Kembali ke Dashboard"}
+        {subdomain ? "Back to Home" : "Back to Dashboard"}
       </Link>
     </BaseErrorLayout>
   );

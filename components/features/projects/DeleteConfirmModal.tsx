@@ -29,9 +29,9 @@ export function DeleteConfirmModal({ state, actions }: { state: any, actions: an
           <AlertTriangle className="w-5 h-5 md:w-6 md:h-6" />
         </div>
 
-        <h3 className="text-base md:text-lg font-mono font-bold uppercase tracking-wider text-white mb-2">Pindah ke Trash?</h3>
+        <h3 className="text-base md:text-lg font-mono font-bold uppercase tracking-wider text-white mb-2">Move to Trash?</h3>
         <p className="text-xs font-mono text-white/50 mb-6 leading-relaxed px-1">
-          Item ini akan dipindahkan ke <strong className="text-[#ff9e00] font-bold">Trash</strong> dan dihapus permanen setelah <strong className="text-[#ff9e00] font-bold">30 hari</strong>. Kamu bisa memulihkannya kapan saja sebelum itu.
+          This item will be moved to the <strong className="text-[#ff9e00] font-bold">Trash</strong> and permanently deleted after <strong className="text-[#ff9e00] font-bold">30 days</strong>. You can restore it anytime before then.
         </p>
 
         <div className="flex flex-row gap-2 md:gap-3 w-full">
@@ -44,7 +44,7 @@ export function DeleteConfirmModal({ state, actions }: { state: any, actions: an
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
             ) : (
               <>
-                <Trash2 className="w-3.5 h-3.5" /> Pindah
+                <Trash2 className="w-3.5 h-3.5" /> Move
               </>
             )}
           </button>

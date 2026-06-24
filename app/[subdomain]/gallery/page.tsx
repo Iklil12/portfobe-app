@@ -38,7 +38,7 @@ export default async function FullGalleryPage({
     });
   } catch (error) {
     console.error("🔥 DATABASE CONNECTION ERROR IN GALLERY:", error);
-    throw new Error("Gagal terhubung ke database Hostinger. Silakan periksa koneksi jaringan internet Anda, atau pastikan alamat IP Anda saat ini sudah di-whitelist di panel Hostinger (srv1786.hstgr.io).");
+    throw new Error("Failed to connect to database. Please check your internet connection, or make sure your current IP address is whitelisted in the database.");
   }
 
   let finalProjects = userData?.projects || [];

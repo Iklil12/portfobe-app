@@ -14,7 +14,7 @@ export function TrafficOverviewChart({ isLoading, isMounted, chartData, range }:
         <div>
           <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Traffic Overview</h3>
           <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">
-            {range === '1d' ? 'Per jam — hari ini' : range === '7d' ? '7 hari terakhir' : range === '30d' ? '30 hari terakhir' : 'Semua waktu'}
+            {range === '1d' ? 'Hourly — today' : range === '7d' ? 'Last 7 days' : range === '30d' ? 'Last 30 days' : 'All time'}
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -48,7 +48,7 @@ export function TrafficOverviewChart({ isLoading, isMounted, chartData, range }:
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-white/20">
             <Ghost className="w-8 h-8 mb-3" />
-            <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data traffic</p>
+            <p className="text-[9px] font-mono font-bold tracking-widest uppercase">No traffic data yet</p>
           </div>
         )}
       </div>
@@ -65,8 +65,8 @@ export function DailyVolumeChart({ isLoading, isMounted, chartData, peakEntry }:
     <div className="bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter flex flex-col" style={{ animationDelay: '450ms' }}>
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Volume Harian</h3>
-          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Distribusi per hari</p>
+          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Daily Volume</h3>
+          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Daily distribution</p>
         </div>
         <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
           <BarChart3 className="w-4 h-4 text-[#ff9e00]" />
@@ -93,7 +93,7 @@ export function DailyVolumeChart({ isLoading, isMounted, chartData, peakEntry }:
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-white/20">
             <Ghost className="w-8 h-8 mb-3" />
-            <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data</p>
+            <p className="text-[9px] font-mono font-bold tracking-widest uppercase">No data yet</p>
           </div>
         )}
       </div>
@@ -101,13 +101,13 @@ export function DailyVolumeChart({ isLoading, isMounted, chartData, peakEntry }:
       {chartData.length > 0 && (
         <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 pt-4 border-t border-white/5">
           <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40">
-            <span className="w-2.5 h-2.5 bg-[#ff9e00] inline-block" /> Puncak
+            <span className="w-2.5 h-2.5 bg-[#ff9e00] inline-block" /> Peak
           </span>
           <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40">
-            <span className="w-2.5 h-2.5 bg-white inline-block" /> Hari Ini
+            <span className="w-2.5 h-2.5 bg-white inline-block" /> Today
           </span>
           <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40">
-            <span className="w-2.5 h-2.5 bg-white/10 inline-block" /> Lainnya
+            <span className="w-2.5 h-2.5 bg-white/10 inline-block" /> Others
           </span>
         </div>
       )}

@@ -49,10 +49,10 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
         setMediaUrl(data.secure_url);
         showToast({ message: "Gambar berhasil diunggah dengan cepat", id: "upload-asset-success", icon: "✨" });
       } else {
-        showToast({ message: data.error?.message || "Gagal mengunggah gambar", id: "upload-asset-fail", icon: "❌" });
+        showToast({ message: data.error?.message || "Failed to upload image", id: "upload-asset-fail", icon: "❌" });
       }
     } catch (err) {
-      showToast({ message: "Terjadi kesalahan jaringan saat mengunggah", id: "upload-asset-err", icon: "⚠️" });
+      showToast({ message: "Network error occurred during upload", id: "upload-asset-err", icon: "⚠️" });
     } finally {
       setIsUploadingImage(false);
       if (fileImageInputRef.current) fileImageInputRef.current.value = '';
@@ -86,7 +86,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
       const ticketData = await ticketRes.json();
 
       if (!ticketRes.ok || !ticketData.guid) {
-        throw new Error(ticketData.error || "Gagal mendapatkan tiket upload");
+        throw new Error(ticketData.error || "Failed to get upload ticket");
       }
 
       const { guid, libraryId, signature, expirationTime } = ticketData;
@@ -106,7 +106,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
         },
         onError: function (error) {
           console.error("Failed because: " + error);
-          showToast({ message: "Gagal mengunggah video.", id: "upload-edge-fail", icon: "❌" });
+          showToast({ message: "Failed to upload video.", id: "upload-edge-fail", icon: "❌" });
           setIsUploadingVideo(false);
           if (fileInputRef.current) fileInputRef.current.value = '';
         },
@@ -126,7 +126,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
 
     } catch (error: any) {
       console.error(error);
-      showToast({ message: error.message || "Gagal memproses video", id: "upload-exception", icon: "⚠️" });
+      showToast({ message: error.message || "Failed to process video", id: "upload-exception", icon: "⚠️" });
       setIsUploadingVideo(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }

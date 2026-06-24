@@ -16,8 +16,8 @@ import BillingContent from '@/components/features/settings/BillingContent';
 import { Shield, CreditCard, Plug, Cog, Loader2 } from 'lucide-react';
 
 const TABS = [
-  { id: 'account', label: 'Akun & Keamanan', icon: Shield },
-  { id: 'billing', label: 'Billing & Langganan', icon: CreditCard },
+  { id: 'account', label: 'Account & Security', icon: Shield },
+  { id: 'billing', label: 'Billing & Subscription', icon: CreditCard },
   { id: 'integrations', label: 'Integrations', icon: Plug, comingSoon: true },
 ] as const;
 
@@ -96,12 +96,12 @@ function SettingsContent() {
         <div className="mb-8 sm:mb-10 animate-enter text-center md:text-left" style={{animationDelay: '100ms'}}>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-zinc-900 border border-white/10 text-[9px] font-mono font-bold uppercase tracking-widest text-[#ff9e00] mb-5 shadow-none">
             <Cog className="w-3.5 h-3.5" />
-            <span>Pengaturan</span>
+            <span>Settings</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-mono font-bold uppercase tracking-wider text-white mb-3">
             Settings
           </h1>
-          <p className="text-xs font-mono text-white/40 max-w-lg mx-auto md:mx-0">Kelola akun, keamanan, billing, dan integrasi dari satu tempat.</p>
+          <p className="text-xs font-mono text-white/40 max-w-lg mx-auto md:mx-0">Manage account, security, billing, and integrations from one place.</p>
         </div>
 
         {/* TAB NAVIGATION */}
@@ -173,8 +173,8 @@ function SettingsContent() {
                   <div className="w-16 h-16 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center mb-6 text-white/20 animate-pulse">
                     <Plug className="w-6 h-6 text-white/30" />
                   </div>
-                  <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider mb-2">Segera Hadir</h3>
-                  <p className="text-[10px] font-mono text-white/40 max-w-md leading-relaxed">Hubungkan layanan pihak ketiga seperti Google Analytics, Calendly, dan Webhook untuk memperkuat portofoliomu.</p>
+                  <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider mb-2">Coming Soon</h3>
+                  <p className="text-[10px] font-mono text-white/40 max-w-md leading-relaxed">Connect third-party services like Google Analytics, Calendly, and Webhooks to empower your portfolio.</p>
                 </div>
               )}
             </>
@@ -188,7 +188,7 @@ function SettingsContent() {
 
 export default function SettingsPage() {
   return (
-    <Suspense fallback={<div className="flex h-screen items-center justify-center font-mono text-xs text-white/40 bg-zinc-950">Memuat pengaturan...</div>}>
+    <Suspense fallback={<div className="flex h-screen items-center justify-center font-mono text-xs text-white/40 bg-zinc-950">Loading settings...</div>}>
       <SettingsContent />
     </Suspense>
   );

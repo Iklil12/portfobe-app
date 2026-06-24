@@ -122,7 +122,7 @@ export default function MidnightEmulsionFaq({ data, theme, isEditor }: { data: a
                 <button 
                   onClick={(e) => handleRemoveItem(i, e)}
                   className="absolute top-8 right-24 text-[#fca5a5] opacity-0 group-hover/item:opacity-100 transition-opacity w-10 h-10 flex items-center justify-center bg-red-500/10 rounded-xl hover:bg-red-500/20"
-                  title="Hapus Pertanyaan"
+                  title="Delete Question"
                 >
                   <i className="fas fa-trash text-sm"></i>
                 </button>

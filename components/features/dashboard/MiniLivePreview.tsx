@@ -23,7 +23,7 @@ export function MiniLivePreview({ themeName, subdomain, isLoading }: MiniLivePre
       <div className="bg-zinc-950 border border-white/10 p-6 md:p-8 h-full flex flex-col justify-between relative overflow-hidden group rounded-none hover:border-white/20 transition-all duration-300">
         <div className="relative z-10 flex justify-between items-start mb-6">
           <div>
-            <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-1">Tema Aktif</p>
+            <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-1">Active Theme</p>
             <h3 className="text-xl md:text-2xl font-display font-bold text-white tracking-tight uppercase">{themeName}</h3>
           </div>
           <Link

@@ -135,7 +135,7 @@ export default function IdeasPage() {
               disabled={isSubmitting || !newIdea.trim()}
               className="w-full sm:w-auto px-5 py-2.5 bg-[#ff9e00] disabled:opacity-50 hover:bg-[#ffaa22] text-black text-xs font-bold rounded-none transition-colors shrink-0 flex items-center justify-center gap-2"
             >
-              {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Simpan Ide"}
+              {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Save Idea"}
             </button>
           </form>
 
@@ -186,10 +186,10 @@ export default function IdeasPage() {
                           }}
                         />
                         <div className="flex flex-col gap-1 shrink-0">
-                          <button onClick={() => saveEdit(note.id)} className="w-8 h-8 rounded-none bg-[#ff9e00] text-black flex items-center justify-center hover:bg-[#ffaa22] transition-colors" title="Simpan (Enter)">
+                          <button onClick={() => saveEdit(note.id)} className="w-8 h-8 rounded-none bg-[#ff9e00] text-black flex items-center justify-center hover:bg-[#ffaa22] transition-colors" title="Save (Enter)">
                             <Check className="w-3.5 h-3.5" />
                           </button>
-                          <button onClick={() => setEditingId(null)} className="w-8 h-8 rounded-none bg-zinc-900 border border-white/10 text-white/50 flex items-center justify-center hover:bg-zinc-800 transition-colors" title="Batal (Esc)">
+                          <button onClick={() => setEditingId(null)} className="w-8 h-8 rounded-none bg-zinc-900 border border-white/10 text-white/50 flex items-center justify-center hover:bg-zinc-800 transition-colors" title="Cancel (Esc)">
                             <X className="w-3.5 h-3.5" />
                           </button>
                         </div>
@@ -221,7 +221,7 @@ export default function IdeasPage() {
                     <button 
                       onClick={() => deleteNote(note.id)}
                       className="w-8 h-8 rounded-none flex items-center justify-center text-white/30 hover:text-rose-500 hover:bg-zinc-950 transition-colors"
-                      title="Hapus"
+                      title="Delete"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -236,3 +236,4 @@ export default function IdeasPage() {
     </div>
   );
 }
+

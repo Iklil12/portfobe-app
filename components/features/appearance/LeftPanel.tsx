@@ -117,7 +117,7 @@ export function LeftPanel({
   return (
     <>
       {/* Modals */}
-      <ProUpgradeModal isOpen={showProModal} onClose={() => setShowProModal(false)} feature="Fitur Premium" />
+      <ProUpgradeModal isOpen={showProModal} onClose={() => setShowProModal(false)} feature="Premium Features" />
       <ThemeSelectionModal
         isOpen={isThemeModalOpen} onClose={() => setIsThemeModalOpen(false)}
         activeTheme={activeTheme} onSelectTheme={(themeId) => setActiveTheme(themeId)}
@@ -246,7 +246,7 @@ export function LeftPanel({
               className="flex items-center gap-1.5 text-[10px] font-semibold text-zinc-400 hover:text-red-400 bg-white/5 hover:bg-red-500/10 px-2.5 py-1 rounded-md transition-all duration-200 border border-white/5 hover:border-red-500/20 shadow-sm"
             >
               <LogOut className="w-3 h-3" />
-              <span>Keluar</span>
+              <span>Exit</span>
             </button>
           </div>
         )}
@@ -317,17 +317,17 @@ export function LeftPanel({
               <div className="mt-3.5 px-1.5 flex items-center justify-between">
                 {isCurrentlyLive && !isDirty && !hasUnpublishedChanges && (
                    <span className="text-[10px] font-semibold text-emerald-400 flex items-center gap-2 tracking-wide">
-                     <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Sedang Live
+                     <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Currently Live
                    </span>
                 )}
                 {isCurrentlyLive && !isDirty && hasUnpublishedChanges && (
                    <span className="text-[10px] font-semibold text-[#ff9e00] flex items-center gap-2 tracking-wide">
-                     <span className="w-1.5 h-1.5 bg-[#ff9e00] rounded-full animate-pulse"></span> Perubahan Belum Tayang
+                     <span className="w-1.5 h-1.5 bg-[#ff9e00] rounded-full animate-pulse"></span> Unpublished Changes
                    </span>
                 )}
                 {isDirty && (
                    <span className="text-[10px] font-semibold text-sky-400 flex items-center gap-2 tracking-wide">
-                     <span className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-pulse"></span> Terdapat Perubahan
+                     <span className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-pulse"></span> Unsaved Changes
                    </span>
                 )}
               </div>
@@ -367,7 +367,7 @@ export function LeftPanel({
                   onClick={() => setIsDraftsModalOpen(true)}
                   className="w-full px-3 py-2 rounded-md border border-transparent hover:border-white/5 bg-transparent hover:bg-white/[0.02] text-white/60 hover:text-white transition-all flex items-center justify-between group text-sm"
                 >
-                  <span className="text-xs font-medium tracking-wide">Drafts</span>
+                  <span className="text-xs font-medium tracking-wide">Saved</span>
                   {drafts?.length > 0 && (
                     <span className="bg-white/5 text-zinc-500 font-mono font-medium text-[10px] px-2 py-0.5 rounded-full min-w-[20px] text-center group-hover:bg-white/10 group-hover:text-zinc-200 transition-all">
                       {drafts.length}
@@ -403,7 +403,7 @@ export function LeftPanel({
                     <Layout className="w-4 h-4 text-white/70" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-medium text-[13px] leading-tight">Halaman Utama</span>
+                    <span className="font-medium text-[13px] leading-tight">Main Page</span>
                     <span className="text-[10px] opacity-50 mt-0.5">Landing & Sections</span>
                   </div>
                 </button>
@@ -422,7 +422,7 @@ export function LeftPanel({
                           return;
                         }
                         if (galleryProjectsCount <= 4) {
-                          alert("Fitur Galeri membutuhkan minimal 5 proyek dengan tipe foto atau video.");
+                          alert("Gallery feature requires at least 5 photo or video projects.");
                           return;
                         }
                         setSelectedPage?.('gallery');

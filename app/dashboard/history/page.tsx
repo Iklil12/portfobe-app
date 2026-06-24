@@ -54,12 +54,12 @@ function timeAgo(dateParam: string | Date) {
   const hours = Math.round(minutes / 60);
   const days = Math.round(hours / 24);
 
-  if (seconds < 60) return 'Baru saja';
-  if (minutes < 60) return `${minutes} menit yang lalu`;
-  if (hours < 24) return `${hours} jam yang lalu`;
-  if (days === 1) return 'Kemarin';
-  if (days < 7) return `${days} hari yang lalu`;
-  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  if (seconds < 60) return 'Just now';
+  if (minutes < 60) return `${minutes} minutes ago`;
+  if (hours < 24) return `${hours} hours ago`;
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days} days ago`;
+  return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // Helper Ikon
@@ -141,12 +141,12 @@ export default function HistoryPage() {
       <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <Link href="/dashboard" className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 hover:text-[#ff9e00] transition-colors flex items-center gap-2 mb-4 group">
-             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" /> Kembali ke Dashboard
+             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" /> Back to Dashboard
           </Link>
           <h1 className="text-2xl md:text-3xl font-display font-bold uppercase tracking-wider text-white mb-2">
             Activity <span className="text-white/40 font-light">Log.</span>
           </h1>
-          <p className="text-xs font-mono text-white/50">Seluruh riwayat perubahan dan aktivitas pada portofolio Anda.</p>
+          <p className="text-xs font-mono text-white/50">All change history and activity on your portfolio.</p>
         </div>
 
         <div className="relative w-full md:w-80 group">
@@ -154,7 +154,7 @@ export default function HistoryPage() {
            <input 
              ref={searchInputRef}
              type="text" 
-             placeholder="Cari..." 
+             placeholder="Search..." 
              value={searchQuery}
              onChange={(e) => setSearchQuery(e.target.value)}
              className="w-full pl-11 pr-10 py-3.5 rounded-none border border-white/10 bg-[#0a0a0a] text-white focus:border-[#ff9e00]/40 focus:ring-0 outline-none transition-all text-xs font-mono font-bold placeholder:text-white/20"
@@ -189,10 +189,10 @@ export default function HistoryPage() {
              <div className="w-12 h-12 bg-zinc-900 border border-white/10 rounded-none flex items-center justify-center mb-6 text-white/40">
                 <Search className="w-6 h-6" />
              </div>
-             <p className="text-sm font-mono font-bold text-white uppercase tracking-wider">Aktivitas tidak ditemukan</p>
-             <p className="text-xs font-mono text-white/40 mt-1 mb-8">Tidak ada hasil yang cocok dengan kata kunci "{searchQuery}"</p>
+             <p className="text-sm font-mono font-bold text-white uppercase tracking-wider">Activity not found</p>
+             <p className="text-xs font-mono text-white/40 mt-1 mb-8">No results matching keyword "{searchQuery}"</p>
              <button onClick={() => setSearchQuery("")} className="text-[9px] font-mono font-bold uppercase tracking-widest bg-[#ff9e00] text-black px-6 py-3 rounded-none hover:bg-[#ffaa22] transition-all shadow-md active:scale-95">
-                Reset Pencarian
+                Reset Search
               </button>
           </div>
         ) : (

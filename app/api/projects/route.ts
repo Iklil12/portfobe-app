@@ -44,7 +44,7 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error("Error Fetch Projects:", error);
-    return NextResponse.json({ error: "Gagal mengambil data" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch data" }, { status: 500 });
   }
 }
 
@@ -95,8 +95,8 @@ export async function POST(req: Request) {
     });
 
     // REKAM AKTIVITAS KE HISTORY
-    let actionLabel = "Mengunggah proyek baru";
-    if (projectType === 'video') actionLabel = "Menambahkan portofolio video";
+    let actionLabel = "Uploading new project";
+    if (projectType === 'video') actionLabel = "Added video portfolio";
     await logActivity(user.id, "UPLOAD_PROJECT", `${actionLabel}: "${title}"`);
     
     // HAPUS CACHE REDIS
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
 
   } catch (error) {
     console.error("Error Create Project:", error);
-    return NextResponse.json({ error: "Gagal menyimpan proyek ke server" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save project to server" }, { status: 500 });
   }
 }
 
@@ -150,7 +150,7 @@ export async function PATCH(req: Request) {
     });
 
     // REKAM AKTIVITAS KE HISTORY
-    await logActivity(user.id, "UPDATE_PROJECT", `Memperbarui karya: "${title}"`);
+    await logActivity(user.id, "UPDATE_PROJECT", `Updated work: "${title}"`);
 
     // HAPUS CACHE REDIS
     await invalidatePortfolioCache(user.id);
@@ -159,7 +159,7 @@ export async function PATCH(req: Request) {
 
   } catch (error) {
     console.error("Error Update Project:", error);
-    return NextResponse.json({ error: "Gagal memperbarui proyek" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update project" }, { status: 500 });
   }
 }
 
@@ -191,7 +191,7 @@ export async function DELETE(req: Request) {
     });
     
     // REKAM AKTIVITAS KE HISTORY
-    await logActivity(user.id, "DELETE_PROJECT", `Memindahkan ke trash: "${existingProject.title}"`);
+    await logActivity(user.id, "DELETE_PROJECT", `Moved to trash: "${existingProject.title}"`);
 
     // HAPUS CACHE REDIS
     await invalidatePortfolioCache(user.id);
@@ -200,6 +200,7 @@ export async function DELETE(req: Request) {
 
   } catch (error) {
     console.error("Error Delete Project:", error);
-    return NextResponse.json({ error: "Gagal menghapus proyek" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete project" }, { status: 500 });
   }
 }
+

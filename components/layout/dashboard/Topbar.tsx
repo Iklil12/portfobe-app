@@ -90,9 +90,9 @@ export function Topbar({
           {!isLoading && (
             <>
               {canClaimTrial && (
-                <Link href="/dashboard/billing" className="flex items-center justify-center gap-2 px-4 py-2 border border-[#ff9e00]/30 bg-[#ff9e00]/10 text-[#ff9e00] rounded-none text-[10px] font-mono font-bold tracking-widest uppercase hover:bg-[#ff9e00]/20 hover:scale-105 active:scale-95 transition-all" title="Klaim Trial 14 Hari">
+                <Link href="/dashboard/billing" className="flex items-center justify-center gap-2 px-4 py-2 border border-[#ff9e00]/30 bg-[#ff9e00]/10 text-[#ff9e00] rounded-none text-[10px] font-mono font-bold tracking-widest uppercase hover:bg-[#ff9e00]/20 hover:scale-105 active:scale-95 transition-all" title="Claim 14-Day Trial">
                   <Gift className="w-4 h-4 animate-pulse" />
-                  <span className="hidden sm:inline">KLAIM TRIAL 14 HARI</span>
+                  <span className="hidden sm:inline">CLAIM 14-DAY TRIAL</span>
                 </Link>
               )}
 
@@ -105,7 +105,7 @@ export function Topbar({
                 {isNotifOpen && (
                   <div className="absolute top-[calc(100%+12px)] right-[-60px] md:right-0 w-[320px] bg-zinc-950 rounded-none shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-white/10 py-2 animate-dropdown z-50">
                     <div className="px-4 py-3 border-b border-white/10 mb-1 flex justify-between items-center">
-                      <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-white">Pusat Informasi</p>
+                      <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-white">Information Center</p>
                       {alertCount > 0 && (
                         <span className="text-[9px] px-2 py-0.5 bg-[#ff9e00]/10 border border-[#ff9e00]/20 text-[#ff9e00] font-mono font-bold uppercase tracking-wider">
                           {alertCount} Info
@@ -116,7 +116,7 @@ export function Topbar({
                       {notifications.length === 0 ? (
                         <div className="px-5 py-8 text-center text-white/40">
                           <BellOff className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                          <p className="text-xs font-mono font-bold uppercase tracking-wider">Tidak ada notifikasi baru.</p>
+                          <p className="text-xs font-mono font-bold uppercase tracking-wider">No new notifications.</p>
                         </div>
                       ) : (
                         notifications.map((notif) => (
@@ -185,7 +185,7 @@ export function Topbar({
                     <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border border-black rounded-full"></div>
                   </div>
                   <div className="flex flex-col overflow-hidden">
-                    <p className="text-xs font-mono font-bold text-white truncate">{userName || "Pengguna"}</p>
+                    <p className="text-xs font-mono font-bold text-white truncate">{userName || "User"}</p>
                     <p className="text-[10px] font-mono text-white/50 truncate">{userEmail}</p>
                   </div>
                 </div>
@@ -202,31 +202,31 @@ export function Topbar({
                       onClick={() => setIsProfileMenuOpen(false)}
                     >
                       <ExternalLink className="w-4 h-4 text-white/40 group-hover:text-[#ff9e00] transition-colors" />
-                      <span className="flex-1">Lihat Web</span>
+                      <span className="flex-1">View Site</span>
                     </a>
                   ) : (
-                    <div className="px-3 py-2.5 text-[11px] font-mono font-bold uppercase tracking-wider text-white/20 flex items-center gap-3 cursor-not-allowed" title="Atur subdomain terlebih dahulu">
+                    <div className="px-3 py-2.5 text-[11px] font-mono font-bold uppercase tracking-wider text-white/20 flex items-center gap-3 cursor-not-allowed" title="Set subdomain first">
                       <ExternalLink className="w-4 h-4" />
-                      <span className="flex-1">Lihat Web</span>
+                      <span className="flex-1">View Site</span>
                     </div>
                   )}
                   <div className="h-px bg-white/10 my-1 mx-2"></div>
                   
                   <Link href="/dashboard/profile" className="px-3 py-2.5 text-[11px] font-mono font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 rounded-none transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
                     <UserIcon className="w-4 h-4 text-white/40" /> 
-                    <span className="flex-1">Edit Profil</span>
+                    <span className="flex-1">Edit Profile</span>
                   </Link>
                   
                   <Link href="/dashboard/settings" className="px-3 py-2.5 text-[11px] font-mono font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 rounded-none transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
                     <SettingsIcon className="w-4 h-4 text-white/40" /> 
-                    <span className="flex-1">Pengaturan</span>
+                    <span className="flex-1">Settings</span>
                   </Link>
                   
                   <div className="h-px bg-white/10 my-1 mx-2"></div>
                   
                   <Link href="/support" className="px-3 py-2.5 text-[11px] font-mono font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 rounded-none transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
                     <HelpCircle className="w-4 h-4 text-white/40" /> 
-                    <span className="flex-1">Pusat Bantuan</span>
+                    <span className="flex-1">Help Center</span>
                   </Link>
                   
                   {userPlan === 'FREE' && (
@@ -242,7 +242,7 @@ export function Topbar({
                 {/* Sign Out Button */}
                 <div className="px-4 pb-2">
                   <button onClick={() => { setIsProfileMenuOpen(false); setShowLogoutModal(true); }} className="w-full px-4 py-2.5 text-[11px] font-mono font-bold uppercase tracking-widest text-white border border-white/10 rounded-none hover:bg-white/5 active:scale-95 transition-all flex items-center justify-center gap-2">
-                    <LogOut className="w-4 h-4 text-white/60" /> Keluar
+                    <LogOut className="w-4 h-4 text-white/60" /> Logout
                   </button>
                 </div>
               </div>
@@ -273,9 +273,9 @@ export function Topbar({
                 </div>
               </div>
               
-              <h3 className="text-lg font-display font-bold text-white mb-2 uppercase tracking-wide">Keluar dari akun?</h3>
+              <h3 className="text-lg font-display font-bold text-white mb-2 uppercase tracking-wide">Log out of account?</h3>
               <p className="text-xs font-mono text-white/50 mb-6 leading-relaxed px-1">
-                Sesi Anda akan diakhiri. Anda perlu masuk kembali untuk mengakses dashboard kreator.
+                Your session will end. You will need to log back in to access the creator dashboard.
               </p>
               
               <div className="flex flex-row gap-3 w-full">
@@ -284,14 +284,14 @@ export function Topbar({
                   disabled={isLoggingOut} 
                   className="flex-1 py-3 bg-[#ff9e00] hover:bg-[#ffaa22] rounded-none font-mono font-bold uppercase tracking-wider text-black active:scale-95 transition-all flex items-center justify-center gap-2 text-xs disabled:opacity-50"
                 >
-                  {isLoggingOut ? 'Loading...' : 'Keluar'}
+                  {isLoggingOut ? 'Loading...' : 'Logout'}
                 </button>
                 <button 
                   onClick={() => setShowLogoutModal(false)} 
                   disabled={isLoggingOut} 
                   className="flex-1 py-3 bg-transparent border border-white/10 hover:bg-white/5 text-white rounded-none font-mono font-bold uppercase tracking-wider active:scale-95 transition-all text-xs disabled:opacity-50"
                 >
-                  Batal
+                  Cancel
                 </button>
               </div>
             </div>

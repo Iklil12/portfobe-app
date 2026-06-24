@@ -23,7 +23,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ projects });
   } catch (error) {
-    return NextResponse.json({ error: "Gagal mengambil data Canva" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch Canva data" }, { status: 500 });
   }
 }
 
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     if (isBulk && Array.isArray(projects)) {
       // VALIDASI KEAMANAN
       if (projects.length > 10) {
-        return NextResponse.json({ error: "Maksimal 10 proyek diperbolehkan" }, { status: 400 });
+        return NextResponse.json({ error: "Maximum 10 projects allowed" }, { status: 400 });
       }
 
       for (const p of projects) {
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Save Canva Project Error:", error);
-    return NextResponse.json({ error: "Gagal menyimpan data" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save data" }, { status: 500 });
   }
 }
 
@@ -104,6 +104,8 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: "Gagal menghapus proyek" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete project" }, { status: 500 });
   }
 }
+
+

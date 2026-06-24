@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import { LayoutGrid, Play, Image as ImageIcon, Award, Box, ChevronRight, Hash } from 'lucide-react';
 
 const TYPE_TABS = [
-  { id: "all",         label: "Semua",      icon: LayoutGrid },
-  { id: "video",       label: "Video",      icon: Play       },
-  { id: "photo",       label: "Foto",       icon: ImageIcon      },
-  { id: "certificate", label: "Sertifikat", icon: Award      },
+  { id: "all",         label: "All",         icon: LayoutGrid },
+  { id: "video",       label: "Video",       icon: Play       },
+  { id: "photo",       label: "Photo",       icon: ImageIcon      },
+  { id: "certificate", label: "Certificate", icon: Award      },
   { id: "3d",          label: "3D",         icon: Box       },
 ] as const;
 

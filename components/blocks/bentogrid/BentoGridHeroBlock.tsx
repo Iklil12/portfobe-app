@@ -336,7 +336,7 @@ export function BentoGridHeroBlock({ data, theme, isEditor, isCardPreview }: any
                                                             }, window.location.origin);
                                                         }}
                                                         className="opacity-40 hover:opacity-100 text-red-400 hover:text-red-500 text-[10px] transition-opacity duration-200 shrink-0"
-                                                        title="Hapus"
+                                                        title="Delete"
                                                     >
                                                         ✕
                                                     </button>
@@ -423,7 +423,7 @@ export function BentoGridHeroBlock({ data, theme, isEditor, isCardPreview }: any
                                                             }, window.location.origin);
                                                         }}
                                                         className="opacity-0 group-hover/tag:opacity-100 text-red-400 hover:text-red-500 text-[10px] transition-opacity duration-200 shrink-0 ml-1"
-                                                        title="Hapus"
+                                                        title="Delete"
                                                     >
                                                         ✕
                                                     </button>
@@ -578,3 +578,4 @@ export function BentoGridHeroBlock({ data, theme, isEditor, isCardPreview }: any
         </div>
     );
 }
+

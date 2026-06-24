@@ -111,7 +111,7 @@ export default function AcidFaq({ data, theme, isEditor }: { data: any, theme?: 
                   <button 
                     onClick={(e) => handleRemoveItem(i, e)}
                     className="absolute top-2 right-2 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-6 h-6 flex items-center justify-center bg-black border border-red-500/50 hover:bg-red-500 hover:text-white z-20 text-[10px]"
-                    title="Hapus Pertanyaan"
+                    title="Delete Question"
                   >
                     ✕
                   </button>

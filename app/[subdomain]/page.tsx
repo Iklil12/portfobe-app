@@ -161,8 +161,8 @@ export default function PublicPortfolioPage() {
           setServerError(new Error("Koneksi ke database atau server internal terputus."));
         }
       } catch (error) {
-        console.error("Gagal memuat portofolio", error);
-        setServerError(error instanceof Error ? error : new Error("Gagal terhubung ke jaringan."));
+        console.error("Failed to load portfolio", error);
+        setServerError(error instanceof Error ? error : new Error("Failed to connect to network."));
       } finally {
         setIsFetching(false);
       }

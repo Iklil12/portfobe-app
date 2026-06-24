@@ -36,17 +36,17 @@ export function DeleteAccountModal({ state, actions }: DeleteAccountModalProps) 
         {/* Content */}
         <div className="p-6 space-y-6">
           <p className="text-xs text-white/50 leading-relaxed uppercase tracking-wide">
-            Sistem akan <strong className="text-white font-bold">menghapus permanen seluruh proyek Anda</strong>, beserta gambar, pengaturan, dan aset lain yang tertaut.
+            The system will <strong className="text-white font-bold">permanently delete all your projects</strong>, along with images, settings, and other linked assets.
           </p>
           
           <div className="bg-rose-950/20 border-l-2 border-rose-600 p-4 rounded-none text-rose-500 text-[10px] uppercase tracking-widest font-bold flex items-center gap-3">
             <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></div>
-            Tindakan ini tidak dapat dibatalkan.
+            This action cannot be undone.
           </div>
           
           <div className="space-y-3 pt-2">
             <label className="text-[10px] text-white/50 uppercase tracking-widest block">
-              Untuk verifikasi, ketik email <strong className="text-white">{session?.user?.email}</strong> di bawah:
+              For verification, type your email <strong className="text-white">{session?.user?.email}</strong> below:
             </label>
             <input 
               type="email"

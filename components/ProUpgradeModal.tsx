@@ -16,7 +16,7 @@ export function ProUpgradeModal({
   isOpen, 
   onClose, 
   title = "Unlock Pro Access", 
-  description = "Akses tanpa batas ke semua tema premium, analitik, dan kustomisasi penuh.",
+  description = "Unlimited access to all premium themes, analytics, and full customization.",
   feature
 }: ProUpgradeModalProps) {
   const [mounted, setMounted] = useState(false);

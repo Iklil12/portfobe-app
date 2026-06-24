@@ -106,7 +106,7 @@ export default function MinimalistFaq({ data, theme, isEditor }: { data: any, th
                 <button 
                   onClick={(e) => handleRemoveItem(i, e)}
                   className="absolute top-0 right-8 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity w-6 h-6 flex items-center justify-center bg-red-50 rounded-full hover:bg-red-100"
-                  title="Hapus Pertanyaan Ini"
+                  title="Delete Question"
                 >
                   <i className="fas fa-trash text-[10px]"></i>
                 </button>

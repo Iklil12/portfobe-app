@@ -46,7 +46,7 @@ export async function PATCH(
 
       if (activeCount >= 4) {
         return NextResponse.json({ 
-          error: "Maksimal hanya 4 link yang bisa tampil di profil." 
+          error: "Maximum of 4 links can be displayed on profile." 
         }, { status: 403 });
       }
     }
@@ -64,7 +64,7 @@ export async function PATCH(
     await logActivity(
       updatedLink.userId, 
       "UPDATE_LINK", 
-      `Memperbarui tautan "${updatedLink.platform}"`
+      `Updated link "${updatedLink.platform}"`
     );
 
     await invalidatePortfolioCache(currentLink.userId);
@@ -108,7 +108,7 @@ export async function DELETE(
     await logActivity(
       link.userId, 
       "DELETE_LINK", 
-      `Menghapus tautan "${link.platform}" dari profil`
+      `Deleted link "${link.platform}" from profile`
     );
 
     await invalidatePortfolioCache(link.userId);

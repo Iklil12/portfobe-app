@@ -49,23 +49,23 @@ export async function POST(req: Request) {
     resend.emails.send({
       from: 'Portfo Security <portfosecure@mail.ritions.com>',
       to: resetRecord.email,
-      subject: '🛡️ Kata Sandi Berhasil Direset',
+      subject: '🛡️ Password Successfully Reset',
       html: `
         <div style="font-family: sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; color: #334155;">
-          <h2 style="color: #0f172a;">Sandi Berhasil Diperbarui</h2>
-          <p>Halo,</p>
-          <p>Ini adalah notifikasi otomatis bahwa kata sandi untuk akun Portfo.be Anda baru saja berhasil diubah melalui fitur "Lupa Password".</p>
-          <p>Anda sekarang dapat login menggunakan kata sandi yang baru.</p>
+          <h2 style="color: #0f172a;">Password Successfully Updated</h2>
+          <p>Hello,</p>
+          <p>This is an automated notification that the password for your Portfo.be account has just been successfully changed via the "Forgot Password" feature.</p>
+          <p>You can now log in using your new password.</p>
           <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-          <p style="font-size: 12px; color: #64748b;">Jika Anda tidak melakukan perubahan ini, segera hubungi tim kami.</p>
+          <p style="font-size: 12px; color: #64748b;">If you did not make this change, please contact our team immediately.</p>
         </div>
       `
-    }).catch(e => console.error("Gagal kirim notif reset:", e));
+    }).catch(e => console.error("Failed to send reset notification:", e));
 
     return NextResponse.json({ message: "Kata sandi berhasil diubah." }, { status: 200 });
 
   } catch (error) {
     console.error("RESET_PW_ERROR:", error);
-    return NextResponse.json({ error: "Terjadi kesalahan pada server." }, { status: 500 });
+    return NextResponse.json({ error: "A server error occurred." }, { status: 500 });
   }
 }

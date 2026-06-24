@@ -69,10 +69,10 @@ export function SecondaryMetricStrip({
   handleLocked
 }: any) {
   const metrics = [
-    { label: 'Rata-rata Harian', val: isFree ? lockedAvgDaily : avgDaily, suffix: isFree ? 'views/hari' : 'views/hari', icon: BarChart3 },
-    { label: 'Puncak Kunjungan', val: isFree ? lockedPeakViews : peakEntry.views, suffix: isFree ? lockedPeakDay : peakEntry.day, icon: Trophy },
-    { label: 'Total Periode', val: isFree ? lockedTotalPeriod : totalPeriod, suffix: isFree ? 'dalam 7 hari' : `dalam ${chartDataLength} hari`, icon: Calendar },
-    { label: 'Klik Galeri', val: isFree ? 75 : (galleryClicks || 0), suffix: 'kunjungan arsip', icon: FolderOpen },
+    { label: 'Daily Average', val: isFree ? lockedAvgDaily : avgDaily, suffix: isFree ? 'views/day' : 'views/day', icon: BarChart3 },
+    { label: 'Peak Visits', val: isFree ? lockedPeakViews : peakEntry.views, suffix: isFree ? lockedPeakDay : peakEntry.day, icon: Trophy },
+    { label: 'Total Period', val: isFree ? lockedTotalPeriod : totalPeriod, suffix: isFree ? 'in 7 days' : `in ${chartDataLength} days`, icon: Calendar },
+    { label: 'Gallery Clicks', val: isFree ? 75 : (galleryClicks || 0), suffix: 'archive visits', icon: FolderOpen },
   ];
 
   return (

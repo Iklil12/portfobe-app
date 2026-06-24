@@ -110,7 +110,7 @@ export default function ObsidianReelFaq({ data, theme, isEditor }: { data: any, 
                 <button 
                   onClick={(e) => handleRemoveItem(i, e)}
                   className="absolute top-8 right-20 text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-full shadow-[0_0_15px_rgba(255,0,0,0.3)] hover:bg-red-500/20"
-                  title="Hapus Pertanyaan"
+                  title="Delete Question"
                 >
                   <i className="fas fa-trash text-xs"></i>
                 </button>

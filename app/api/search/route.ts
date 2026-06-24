@@ -93,6 +93,6 @@ export async function GET(request: Request) {
     return NextResponse.json(results);
   } catch (error) {
     console.error("Search API Error:", error);
-    return NextResponse.json({ error: "Gagal memuat data" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
   }
 }

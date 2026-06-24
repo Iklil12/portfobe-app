@@ -29,7 +29,7 @@ export async function GET(req: Request) {
     return NextResponse.json(drafts);
   } catch (error) {
     console.error("GET Drafts Error:", error);
-    return NextResponse.json({ error: "Gagal mengambil draft" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch draft" }, { status: 500 });
   }
 }
 
@@ -44,14 +44,14 @@ export async function POST(req: Request) {
     // Cek Batasan Plan
     const effectivePlan = getEffectivePlan(user);
     if (effectivePlan === 'FREE') {
-      return NextResponse.json({ error: "Fitur Draft eksklusif untuk PRO/SUPREME.", code: "FEATURE_LOCKED" }, { status: 403 });
+      return NextResponse.json({ error: "Drafts feature is exclusive to PRO/SUPREME.", code: "FEATURE_LOCKED" }, { status: 403 });
     }
 
     const draftCount = await prisma.themeDraft.count({ where: { userId: user.id } });
     const maxDrafts = effectivePlan === 'SUPREME' ? 5 : 2;
 
     if (draftCount >= maxDrafts) {
-      return NextResponse.json({ error: `Batas maksimal draft (${maxDrafts}) telah tercapai untuk paket ${effectivePlan}.` }, { status: 400 });
+      return NextResponse.json({ error: `Max drafts limit (${maxDrafts}) reached for ${effectivePlan} plan.` }, { status: 400 });
     }
 
     const body = await req.json();
@@ -77,14 +77,14 @@ export async function POST(req: Request) {
     const safeDescription = description ? sanitize(String(description), 200) : null;
 
     if (safeName.length < 1) {
-      return NextResponse.json({ error: "Nama draft tidak boleh kosong." }, { status: 400 });
+      return NextResponse.json({ error: "Draft name cannot be empty." }, { status: 400 });
     }
 
     let stringifiedCustomTexts = "{}";
     if (customTexts !== undefined) {
       stringifiedCustomTexts = safeStringifyJson(customTexts);
       if (stringifiedCustomTexts.length > 5000) {
-        return NextResponse.json({ error: "Payload customTexts terlalu besar." }, { status: 400 });
+        return NextResponse.json({ error: "customTexts payload too large." }, { status: 400 });
       }
     }
 
@@ -127,7 +127,7 @@ export async function POST(req: Request) {
     return NextResponse.json(newDraft);
   } catch (error) {
     console.error("POST Draft Error:", error);
-    return NextResponse.json({ error: "Gagal menyimpan draft" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save draft" }, { status: 500 });
   }
 }
 
@@ -155,19 +155,19 @@ export async function PUT(req: Request) {
         selectedProjects
     } = body;
 
-    if (!id) return NextResponse.json({ error: "ID Draft diperlukan" }, { status: 400 });
+    if (!id) return NextResponse.json({ error: "Draft ID is required" }, { status: 400 });
 
     // Verifikasi kepemilikan
     const existingDraft = await prisma.themeDraft.findUnique({ where: { id } });
     if (!existingDraft || existingDraft.userId !== user.id) {
-      return NextResponse.json({ error: "Draft tidak ditemukan" }, { status: 404 });
+      return NextResponse.json({ error: "Draft not found" }, { status: 404 });
     }
 
     let stringifiedCustomTexts = existingDraft.customTexts;
     if (customTexts !== undefined) {
       stringifiedCustomTexts = safeStringifyJson(customTexts);
       if (stringifiedCustomTexts.length > 5000) {
-        return NextResponse.json({ error: "Payload customTexts terlalu besar." }, { status: 400 });
+        return NextResponse.json({ error: "customTexts payload too large." }, { status: 400 });
       }
     }
 
@@ -225,7 +225,7 @@ export async function PUT(req: Request) {
     return NextResponse.json(updatedDraft);
   } catch (error) {
     console.error("PUT Draft Error:", error);
-    return NextResponse.json({ error: "Gagal memperbarui draft" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update draft" }, { status: 500 });
   }
 }
 
@@ -240,11 +240,11 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
-    if (!id) return NextResponse.json({ error: "ID Draft diperlukan" }, { status: 400 });
+    if (!id) return NextResponse.json({ error: "Draft ID is required" }, { status: 400 });
 
     const existingDraft = await prisma.themeDraft.findUnique({ where: { id } });
     if (!existingDraft || existingDraft.userId !== user.id) {
-      return NextResponse.json({ error: "Draft tidak ditemukan" }, { status: 404 });
+      return NextResponse.json({ error: "Draft not found" }, { status: 404 });
     }
 
     await prisma.themeDraft.delete({ where: { id } });
@@ -261,6 +261,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("DELETE Draft Error:", error);
-    return NextResponse.json({ error: "Gagal menghapus draft" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete draft" }, { status: 500 });
   }
 }
+

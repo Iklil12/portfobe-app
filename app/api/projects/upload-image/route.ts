@@ -88,7 +88,7 @@ export async function POST(req: Request) {
       if (!uploadRes.ok) {
         const errTxt = await uploadRes.text();
         console.error("Cloudinary Upload Error:", errTxt);
-        throw new Error("Gagal mengunggah gambar ke CDN");
+        throw new Error("Failed to upload image to CDN");
       }
 
       const data = await uploadRes.json();
@@ -106,3 +106,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Terjadi kesalahan sistem saat mengunggah gambar' }, { status: 500 });
   }
 }
+

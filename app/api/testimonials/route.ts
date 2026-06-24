@@ -77,7 +77,7 @@ export async function POST(req: Request) {
       }
     });
 
-    await logActivity(user.id, "ADD_TESTIMONIAL", `Menambahkan testimoni dari ${clientName}`);
+    await logActivity(user.id, "ADD_TESTIMONIAL", `Added testimonial from ${clientName}`);
 
     await invalidatePortfolioCache(user.id);
 
@@ -86,6 +86,6 @@ export async function POST(req: Request) {
     return NextResponse.json(newTestimonial);
   } catch (error) {
     console.error("Error creating testimonial:", error);
-    return NextResponse.json({ error: "Gagal membuat testimoni" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create testimonial" }, { status: 500 });
   }
 }

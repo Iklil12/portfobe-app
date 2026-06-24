@@ -122,7 +122,7 @@ export default function KineticAvantGardeFaq({ data, theme, isEditor }: { data: 
                   <button 
                     onClick={(e) => handleRemoveItem(i, e)}
                     className="absolute top-8 right-24 text-white opacity-0 group-hover/item:opacity-100 transition-opacity w-10 h-10 flex items-center justify-center bg-black border-4 border-black hover:bg-white hover:text-black z-10"
-                    title="Hapus Pertanyaan"
+                    title="Delete Question"
                   >
                     <i className="fas fa-trash text-sm"></i>
                   </button>

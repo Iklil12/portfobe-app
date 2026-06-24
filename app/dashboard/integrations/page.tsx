@@ -70,7 +70,7 @@ export default function IntegrationsPage() {
             <Plug className="w-3.5 h-3.5" /> Connected Works
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-white uppercase tracking-wider mb-3">Connected Works</h1>
-          <p className="text-xs text-white/40 font-mono leading-relaxed max-w-xl">Hubungkan platform favoritmu dan tampilkan karya langsung di portofolio.</p>
+          <p className="text-xs text-white/40 font-mono leading-relaxed max-w-xl">Connect your favorite platforms and display your work directly on your portfolio.</p>
         </motion.div>
 
         {/* Sections */}
@@ -145,7 +145,7 @@ export default function IntegrationsPage() {
               </div>
               <div>
                 <p className="text-sm font-mono font-bold text-white uppercase tracking-wider">More connected works coming soon</p>
-                <p className="text-xs text-white/40 mt-1.5 font-mono leading-relaxed">Figma, Behance, Dribbble, dan lainnya sedang dalam pengembangan.</p>
+                <p className="text-xs text-white/40 mt-1.5 font-mono leading-relaxed">Figma, Behance, Dribbble, and more are currently in development.</p>
               </div>
             </div>
 

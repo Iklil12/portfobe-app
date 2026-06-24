@@ -129,7 +129,7 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
           return `https://${pullZone}/${videoId}/playlist.m3u8?token=${token}&expires=${expires}`;
         }
       } catch (e) {
-        console.error("Gagal memproses Bunny URL");
+        console.error("Failed to process Bunny URL");
       }
     }
     return url; // Fallback jika bukan URL bertanda tangan (atau murni HLS)
@@ -532,3 +532,4 @@ export function UniversalPlayer({ mediaUrl, title = "Video Player", autoPlayMode
     </div>
   );
 }
+

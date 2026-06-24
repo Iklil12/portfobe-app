@@ -157,7 +157,7 @@ export default function CinematicGalleryFaq({ data, theme, isEditor }: { data: a
                   <button 
                     onClick={(e) => handleRemoveItem(i, e)}
                     className="absolute top-4 right-14 text-white/30 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-all w-7 h-7 flex items-center justify-center bg-black/40 border border-white/10 rounded-sm hover:border-red-500/30"
-                    title="Hapus Pertanyaan"
+                    title="Delete Question"
                   >
                     <i className="fas fa-trash text-[10px]"></i>
                   </button>

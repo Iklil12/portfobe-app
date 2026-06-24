@@ -23,12 +23,14 @@ export async function POST(req: Request) {
     const result = await sendSupportEmail(name, email, message);
 
     if (result.success) {
-      return NextResponse.json({ message: "Pesan berhasil dikirim. Kami akan segera menghubungi Anda." });
+      return NextResponse.json({ message: "Message sent successfully. We will contact you shortly." });
     } else {
-      return NextResponse.json({ error: "Gagal mengirim pesan. Silakan coba lagi nanti." }, { status: 500 });
+      return NextResponse.json({ error: "Failed to send message. Please try again later." }, { status: 500 });
     }
   } catch (error) {
     console.error("Support API Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
+

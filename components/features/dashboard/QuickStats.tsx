@@ -95,7 +95,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
           <div className="h-full bg-zinc-950 border border-white/10 p-5 rounded-none transition-all hover:border-white/20">
             <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-2.5 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-[#ff9e00] rounded-full animate-pulse shadow-[0_0_8px_#ff9e00]"></span>
-              Total Kunjungan
+              Total Visits
             </p>
             <div className="flex items-baseline gap-2">
               <h3 className="text-2xl md:text-3xl font-display font-bold text-white tracking-tight">
@@ -127,7 +127,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
                 <div className="w-5 h-5 rounded-none border border-white/10 bg-white/5 flex items-center justify-center shrink-0">
                   <Lock className="w-2.5 h-2.5 text-white/40" />
                 </div>
-                <p className="text-[9px] font-mono font-bold text-white/40">UPGRADE <span className="text-[#ff9e00]">PRO</span> UNTUK DETAIL</p>
+                <p className="text-[9px] font-mono font-bold text-white/40">UPGRADE <span className="text-[#ff9e00]">PRO</span> FOR DETAILS</p>
               </div>
             )}
           </div>
@@ -139,7 +139,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-2.5 flex items-center gap-1.5">
-                  Hari Ini
+                  Today
                   <span className="w-1.5 h-1.5 bg-[#ff9e00] rounded-full animate-pulse shadow-[0_0_8px_#ff9e00]"></span>
                 </p>
                 <div className="flex items-baseline gap-2">
@@ -179,7 +179,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
                 <div className="w-5 h-5 rounded-none border border-white/10 bg-white/5 flex items-center justify-center shrink-0">
                   <Lock className="w-2.5 h-2.5 text-white/40" />
                 </div>
-                <p className="text-[9px] font-mono font-bold text-white/40">UPGRADE <span className="text-[#ff9e00]">PRO</span> UNTUK DETAIL</p>
+                <p className="text-[9px] font-mono font-bold text-white/40">UPGRADE <span className="text-[#ff9e00]">PRO</span> FOR DETAILS</p>
               </div>
             )}
           </div>
@@ -192,10 +192,10 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
               <div className="flex-1">
                 <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-1.5">Portfolio Strength</p>
                 <h4 className="text-sm md:text-base font-display font-bold text-white tracking-wide uppercase">
-                  {strength === 100 ? 'Portofolio Sempurna!' : 'Lengkapi Profil Anda'}
+                  {strength === 100 ? 'Perfect Portfolio!' : 'Complete Your Profile'}
                 </h4>
                 <p className="text-[10px] font-mono text-white/50 mt-1 leading-snug">
-                  {strength === 100 ? 'Semua aspek profil terisi secara maksimal.' : 'Tingkatkan kekuatan profil untuk visibilitas optimal.'}
+                  {strength === 100 ? 'All aspects of your profile are fully completed.' : 'Enhance your profile strength for optimal visibility.'}
                 </p>
               </div>
 
@@ -205,7 +205,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[8px] font-mono font-bold text-white/40 uppercase tracking-widest flex items-center gap-1">
                       <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-                      {strength === 100 ? 'Siap Bersaing' : 'Perlu Diisi'}
+                      {strength === 100 ? 'Ready to Compete' : 'Needs Completion'}
                     </span>
                     <span className="text-xs font-mono font-bold text-white"><AnimatedCounter value={strength} duration={1500} />%</span>
                   </div>
@@ -222,7 +222,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
             {/* Hover Breakdown Overlay */}
             <div className="absolute inset-0 bg-zinc-950 p-4 md:p-5 opacity-0 pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 transition-all duration-200 z-20 flex flex-col justify-center rounded-none border border-white/10">
               <h4 className="text-[9px] font-mono font-bold uppercase tracking-widest text-white mb-3 flex items-center gap-2 shrink-0">
-                <Target className="w-4 h-4 text-[#ff9e00]" /> Kelengkapan Profil
+                <Target className="w-4 h-4 text-[#ff9e00]" /> Profile Completeness
               </h4>
               <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 overflow-y-auto pr-1 pb-1 hide-scrollbar">
                 {strengthBreakdown.map((item, index) => (
@@ -254,7 +254,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
           <div className="flex flex-col h-full relative z-10">
             <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
               <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-              Karya & Koleksi
+              Works & Collections
             </p>
 
             <div className="grid grid-cols-2 gap-2.5 flex-1">
@@ -270,7 +270,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
                   <span className="text-xl md:text-2xl font-display font-bold text-white leading-none block mb-0.5">
                     <AnimatedCounter value={stats?.projects ?? 0} />
                   </span>
-                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Proyek</span>
+                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Projects</span>
                 </div>
               </div>
 
@@ -286,7 +286,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
                   <span className="text-xl md:text-2xl font-display font-bold text-white leading-none block mb-0.5">
                     <AnimatedCounter value={stats?.awards ?? 0} />
                   </span>
-                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Sertifikat</span>
+                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Certificates</span>
                 </div>
               </div>
 
@@ -302,7 +302,7 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
                   <span className="text-xl md:text-2xl font-display font-bold text-white leading-none block mb-0.5">
                     <AnimatedCounter value={stats?.testimonials ?? 0} />
                   </span>
-                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Testimoni</span>
+                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Testimonials</span>
                 </div>
               </div>
 
@@ -312,13 +312,13 @@ export function QuickStats({ stats, analytics, isLoadingStats, isLoadingAnalytic
                   <div className="w-7 h-7 bg-zinc-900 border border-white/10 flex items-center justify-center group-hover/item:scale-105 transition-transform duration-300">
                     <Link2 className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <span className="text-[7px] font-mono font-bold text-[#ff9e00] bg-[#ff9e00]/10 px-1.5 py-0.5 border border-[#ff9e00]/20 uppercase tracking-widest">Aktif</span>
+                  <span className="text-[7px] font-mono font-bold text-[#ff9e00] bg-[#ff9e00]/10 px-1.5 py-0.5 border border-[#ff9e00]/20 uppercase tracking-widest">Active</span>
                 </div>
                 <div>
                   <span className="text-xl md:text-2xl font-display font-bold text-white leading-none block mb-0.5">
                     <AnimatedCounter value={stats?.links ?? 0} />
                   </span>
-                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Tautan</span>
+                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Links</span>
                 </div>
               </div>
             </div>

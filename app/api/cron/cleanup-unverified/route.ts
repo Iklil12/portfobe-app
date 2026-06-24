@@ -35,6 +35,7 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error("Cron cleanup-unverified error:", error);
-    return NextResponse.json({ error: "Gagal menjalankan pembersihan akun unverified" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to run unverified account cleanup" }, { status: 500 });
   }
 }
+

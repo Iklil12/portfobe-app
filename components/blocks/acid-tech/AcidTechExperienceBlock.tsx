@@ -147,7 +147,7 @@ export function AcidTechExperienceBlock({ theme, isEditor, isCardPreview }: any)
                                     <button
                                         onClick={(e) => handleRemoveItem(index, e)}
                                         className="absolute top-1 right-2 text-zinc-600 hover:text-red-500 text-[10px] z-30 transition-colors"
-                                        title="Hapus Pengalaman"
+                                        title="Delete Experience"
                                     >
                                         ✕
                                     </button>

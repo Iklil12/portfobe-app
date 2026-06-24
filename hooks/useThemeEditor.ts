@@ -713,7 +713,7 @@ export function useThemeEditor() {
 
   const resetToThemePreset = () => {
     setPageBlocks(prev => generateFreshBlocks(activeTheme, prev));
-    toast.success('BERHASIL! Susunan blok dikembalikan ke setelan pabrik (segar)!', {
+    toast.success('SUCCESS! Block order reset to default!', {
       id: 'reset-theme-toast', // ID UNIK ANTI-SPAM: Akan mereplace toast lama yang punya ID sama, bukan menumpuk
       style: { borderRadius: '0px', background: '#09090b', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '11px', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '0.05em' }
     });
@@ -725,7 +725,7 @@ export function useThemeEditor() {
 
   const saveDraft = async (draftName?: string, draftDescription?: string) => {
     setIsSavingDraft(true);
-    const toastId = toast.loading(activeDraftId ? 'Menyimpan perubahan draft...' : 'Menyimpan draft baru...', {
+    const toastId = toast.loading(activeDraftId ? 'Saving draft changes...' : 'Saving new draft...', {
       style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
 
@@ -765,7 +765,7 @@ export function useThemeEditor() {
       
       if (res.ok) {
         toast.dismiss(toastId);
-        showToast({ message: activeDraftId ? 'Perubahan disimpan!' : 'Draft baru berhasil dibuat!', id: toastId, icon: 'fa-check-circle' });
+        showToast({ message: activeDraftId ? 'Changes saved!' : 'New draft created!', id: toastId, icon: 'fa-check-circle' });
         
         // Refresh drafts
         const draftsRes = await fetch('/api/appearance/drafts');
@@ -789,11 +789,11 @@ export function useThemeEditor() {
           setShowProModal(true);
           return;
         }
-        throw new Error(data.error || 'Gagal menyimpan draft');
+        throw new Error(data.error || 'Failed to save draft');
       }
     } catch (error: any) {
       toast.dismiss(toastId);
-      toast.error(error.message || 'Terjadi kesalahan server.', { style: { background: '#333', color: '#fff' }});
+      toast.error(error.message || 'Server error occurred.', { style: { background: '#333', color: '#fff' }});
     } finally {
       setIsSavingDraft(false);
     }
@@ -801,7 +801,7 @@ export function useThemeEditor() {
 
   const publishDesign = async () => {
     setIsPublishing(true);
-    const toastId = toast.loading('Menyimpan & menayangkan desain...', {
+    const toastId = toast.loading('Publishing design...', {
       style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
 
@@ -886,10 +886,10 @@ export function useThemeEditor() {
             return;
           }
         }
-        throw new Error('Gagal publish');
+        throw new Error('Failed to publish');
       }
     } catch (error) {
-      showToast({ message: 'Terjadi kesalahan server.', id: toastId, icon: 'fa-exclamation-triangle' });
+      showToast({ message: 'Server error occurred.', id: toastId, icon: 'fa-exclamation-triangle' });
     } finally {
       setIsPublishing(false);
     }

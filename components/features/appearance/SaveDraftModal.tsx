@@ -35,9 +35,9 @@ export function SaveDraftModal({
         {/* Header */}
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <div>
-            <h2 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Simpan Draft Baru</h2>
+            <h2 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Save New Draft</h2>
             <p className="text-[10px] text-white/40 font-mono mt-1">
-              Beri nama agar mudah ditemukan nanti
+              Give it a name to find it easily later
             </p>
           </div>
           <button
@@ -53,13 +53,13 @@ export function SaveDraftModal({
         <div className="p-6 space-y-5">
           <div>
             <label className="block text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest mb-2">
-              Nama Draft <span className="text-rose-500">*</span>
+              Draft Name <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="contoh: Tema Gelap Lebaran"
+              placeholder="e.g. Dark Minimalist Theme"
               maxLength={50}
               autoFocus
               className="w-full px-4 py-3 rounded-none border border-white/10 bg-zinc-950 text-xs font-mono text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9e00] transition-all"
@@ -68,12 +68,12 @@ export function SaveDraftModal({
 
           <div>
             <label className="block text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest mb-2">
-              Deskripsi <span className="text-white/20">(opsional)</span>
+              Description <span className="text-white/20">(optional)</span>
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="contoh: Warna gelap untuk nuansa lebaran, font serif elegan..."
+              placeholder="e.g. Dark colors for a moody vibe, elegant serif fonts..."
               maxLength={200}
               rows={3}
               className="w-full px-4 py-3 rounded-none border border-white/10 bg-zinc-950 text-xs font-mono text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9e00] transition-all resize-none"
@@ -89,7 +89,7 @@ export function SaveDraftModal({
             onClick={onClose}
             className="flex-1 py-3 rounded-none text-[10px] font-mono font-bold tracking-wider uppercase bg-zinc-950 border border-white/10 text-white/60 hover:bg-zinc-900 hover:text-white transition-all"
           >
-            Batal
+            Cancel
           </button>
           <button
             type="submit"
@@ -99,12 +99,12 @@ export function SaveDraftModal({
             {isSaving ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Menyimpan...</span>
+                <span>Saving...</span>
               </>
             ) : (
               <>
                 <Save className="w-3.5 h-3.5" />
-                <span>Simpan Draft</span>
+                <span>Save Draft</span>
               </>
             )}
           </button>

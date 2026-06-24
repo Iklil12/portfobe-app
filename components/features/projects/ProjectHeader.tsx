@@ -15,7 +15,7 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
       <div>
         <div className="flex items-center gap-3 mb-1.5">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold uppercase tracking-wider text-white flex items-center gap-2.5 sm:gap-3">
-            Karya & Sertifikat
+            Works & Certificates
             <Sparkles className="w-5 h-5 text-white/30 animate-spin-slow" />
           </h1>
           
@@ -77,7 +77,7 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
             >
               <div className="flex flex-col gap-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-[0.1em]">Kapasitas Proyek</span>
+                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-[0.1em]">Project Capacity</span>
                   <span className={`text-[10px] font-mono font-bold ${isProjectFull ? 'text-rose-500' : 'text-white'}`}>{projectCount}/4</span>
                 </div>
                 <div className="w-full h-1 bg-zinc-900 border border-white/10 rounded-none overflow-hidden">
@@ -91,7 +91,7 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
               </div>
               <div className="flex flex-col gap-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-[0.1em]">Kapasitas Sertifikat</span>
+                  <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-[0.1em]">Certificate Capacity</span>
                   <span className={`text-[10px] font-mono font-bold ${isCertFull ? 'text-rose-500' : 'text-white'}`}>{certCount}/1</span>
                 </div>
                 <div className="w-full h-1 bg-zinc-900 border border-white/10 rounded-none overflow-hidden">
@@ -111,7 +111,7 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
               animate={{ opacity: 1, y: 0 }}
               className="text-xs text-white/40 font-mono mt-2"
             >
-              Kelola portofolio tanpa batas sebagai {userPlan === 'SUPREME' ? 'Supreme' : 'Pro'} Creator.
+              Manage unlimited portfolio as a {userPlan === 'SUPREME' ? 'Supreme' : 'Pro'} Creator.
             </motion.p>
           )}
         </AnimatePresence>
@@ -127,10 +127,10 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
               <Crown className="w-3.5 h-3.5 text-rose-400" /> 
               <p className="text-[9px] font-mono font-bold text-rose-400 uppercase tracking-wide leading-none">
                 {isProjectFull && isCertFull 
-                  ? "Semua limit tercapai. Upgrade PRO untuk akses tak terbatas."
+                  ? "All limits reached. Upgrade PRO for unlimited access."
                   : isProjectFull 
-                    ? "Limit proyek tercapai. Upgrade PRO untuk menambah karya lagi."
-                    : "Limit sertifikat tercapai. Upgrade PRO untuk menambah pencapaian."}
+                    ? "Project limit reached. Upgrade PRO to add more works."
+                    : "Certificate limit reached. Upgrade PRO to add achievements."}
               </p>
             </motion.div>
           )}
@@ -158,7 +158,7 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
                 className="w-full md:w-auto bg-zinc-900 text-white border border-white/10 px-7 py-4 rounded-none text-[10px] font-mono font-bold uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-zinc-800 transition-all duration-300 active:scale-95 group relative overflow-hidden"
               >
                 <Crown className="w-3.5 h-3.5 text-[#ff9e00]" /> 
-                Upgrade ke Pro
+                Upgrade to Pro
               </Link>
             </motion.div>
           ) : (
@@ -170,7 +170,7 @@ export function ProjectHeader({ state, actions }: { state: any; actions: any }) 
               className="group w-full md:w-auto relative overflow-hidden flex items-center justify-center gap-2 rounded-none bg-[#ff9e00] hover:bg-[#ffaa22] transition-all duration-300 active:scale-95 hover:-translate-y-0.5 px-6 py-3.5 text-black font-mono font-bold uppercase tracking-widest text-[10px]"
             >
               <Plus className="w-3.5 h-3.5 text-black" />
-              Tambah Data
+              Add New
             </motion.button>
           )}
         </AnimatePresence>

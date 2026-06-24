@@ -34,9 +34,9 @@ export function DeleteLinkModal({ state, actions }: DeleteLinkModalProps) {
           <AlertTriangle className="w-5 h-5 md:w-6 md:h-6" />
         </div>
 
-        <h3 className="text-base md:text-lg font-mono font-bold uppercase tracking-wider text-white mb-2">Hapus Tautan?</h3>
+        <h3 className="text-base md:text-lg font-mono font-bold uppercase tracking-wider text-white mb-2">Delete Link?</h3>
         <p className="text-xs font-mono text-white/50 mb-6 leading-relaxed px-1">
-          Data ini akan dihapus permanen dari sistem dan tidak dapat dikembalikan lagi.
+          This data will be permanently deleted from the system and cannot be recovered.
         </p>
 
         <div className="flex flex-row gap-2 md:gap-3 w-full">
@@ -49,7 +49,7 @@ export function DeleteLinkModal({ state, actions }: DeleteLinkModalProps) {
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
             ) : (
               <>
-                <Trash2 className="w-3.5 h-3.5" /> Hapus
+                <Trash2 className="w-3.5 h-3.5" /> Delete
               </>
             )}
           </button>

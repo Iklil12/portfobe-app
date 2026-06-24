@@ -106,7 +106,7 @@ export async function POST(req: Request) {
     });
 
     // REKAM AKTIVITAS KE HISTORY
-    await logActivity(user.id, "CREATE_CERTIFICATE", `Menambahkan sertifikat/pencapaian: "${title}"`);
+    await logActivity(user.id, "CREATE_CERTIFICATE", `Added certificate/achievement: "${title}"`);
 
     await invalidatePortfolioCache(user.id);
 
@@ -115,7 +115,7 @@ export async function POST(req: Request) {
     return NextResponse.json(newCertificate, { status: 201 });
   } catch (error) {
     console.error("POST Certificate Error:", error);
-    return NextResponse.json({ error: "Gagal menyimpan sertifikat." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save certificate." }, { status: 500 });
   }
 }
 
@@ -147,7 +147,7 @@ export async function PATCH(req: Request) {
     }
 
     const existingCert = await prisma.certificate.findUnique({ where: { id } });
-    if (!existingCert) return NextResponse.json({ error: "Sertifikat tidak ditemukan." }, { status: 404 });
+    if (!existingCert) return NextResponse.json({ error: "Certificate not found." }, { status: 404 });
 
     // --- IDOR PROTECTION ---
     if (existingCert.userId !== user.id) {
@@ -167,7 +167,7 @@ export async function PATCH(req: Request) {
     });
 
     // REKAM AKTIVITAS KE HISTORY
-    await logActivity(user.id, "UPDATE_CERTIFICATE", `Memperbarui data pencapaian: "${title}"`);
+    await logActivity(user.id, "UPDATE_CERTIFICATE", `Updated achievement data: "${title}"`);
 
     await invalidatePortfolioCache(user.id);
 
@@ -176,7 +176,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json(updatedCertificate);
   } catch (error) {
     console.error("PATCH Certificate Error:", error);
-    return NextResponse.json({ error: "Gagal memperbarui sertifikat." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update certificate." }, { status: 500 });
   }
 }
 
@@ -204,7 +204,7 @@ export async function DELETE(req: Request) {
     }
 
     const existingCert = await prisma.certificate.findUnique({ where: { id } });
-    if (!existingCert) return NextResponse.json({ error: "Sertifikat tidak ditemukan." }, { status: 404 });
+    if (!existingCert) return NextResponse.json({ error: "Certificate not found." }, { status: 404 });
 
     // --- IDOR PROTECTION ---
     if (existingCert.userId !== user.id) {
@@ -217,15 +217,16 @@ export async function DELETE(req: Request) {
     });
 
     // REKAM AKTIVITAS KE HISTORY
-    await logActivity(user.id, "DELETE_CERTIFICATE", `Memindahkan ke trash: "${existingCert.title}"`);
+    await logActivity(user.id, "DELETE_CERTIFICATE", `Moved to trash: "${existingCert.title}"`);
 
     await invalidatePortfolioCache(user.id);
 
     
 
-    return NextResponse.json({ message: "Sertifikat dipindahkan ke trash." });
+    return NextResponse.json({ message: "Certificate moved to trash." });
   } catch (error) {
     console.error("DELETE Certificate Error:", error);
-    return NextResponse.json({ error: "Gagal menghapus sertifikat." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete certificate." }, { status: 500 });
   }
 }
+

@@ -113,7 +113,7 @@ export default function SpatialFaq({ data, theme, isEditor }: { data: any, theme
                   <button 
                     onClick={(e) => handleRemoveItem(i, e)}
                     className="absolute -top-2 -right-2 text-white opacity-0 group-hover/item:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center bg-red-500/80 backdrop-blur-md rounded-full shadow-lg hover:bg-red-500"
-                    title="Hapus Pertanyaan"
+                    title="Delete Question"
                   >
                     <i className="fas fa-trash text-xs"></i>
                   </button>

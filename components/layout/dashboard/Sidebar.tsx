@@ -96,7 +96,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                   
                   <TreeAccordion 
                     icon={<Palette className="w-[18px] h-[18px]" />} 
-                    label="Desain" 
+                    label="Design" 
                     isOpen={isMobileDesignMenuOpen} 
                     onToggle={() => {
                       if (!isDesktopSidebarOpen) {
@@ -109,18 +109,18 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                     active={isDesignRoute}
                     isCollapsed={!isDesktopSidebarOpen}
                   >
-                    <TreeChildItem href="/dashboard/projects" label="Proyek & Karya" active={isActive('/dashboard/projects')} count={projectsCount} />
-                    <TreeChildItem href="/dashboard/themes" label="Koleksi Tema" active={isActive('/dashboard/themes')} />
+                    <TreeChildItem href="/dashboard/projects" label="Projects & Works" active={isActive('/dashboard/projects')} count={projectsCount} />
+                    <TreeChildItem href="/dashboard/themes" label="Theme Collection" active={isActive('/dashboard/themes')} />
                     <TreeChildItem href="/dashboard/build-with-ai" label="Build with AI" active={isActive('/dashboard/build-with-ai')} countText="AI" countColor="bg-[#ff9e00]/20 text-[#ff9e00]" />
-                    <TreeChildItem href="/dashboard/links" label="Tautan (Links)" active={isActive('/dashboard/links')} count={linksCount} />
-                    <TreeChildItem href="/dashboard/testimonials" label="Testimoni" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
+                    <TreeChildItem href="/dashboard/links" label="Links" active={isActive('/dashboard/links')} count={linksCount} />
+                    <TreeChildItem href="/dashboard/testimonials" label="Testimonials" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
                     <TreeChildItem href="/dashboard/integrations" label="Connected Works" active={isActive('/dashboard/integrations')} />
                     <TreeChildItem href="/dashboard/trash" label="Trash" active={isActive('/dashboard/trash')} isLast />
                   </TreeAccordion>
 
                   <PrimaryNavItem href="/dashboard/explore" icon={<Compass className="w-[18px] h-[18px]" />} label="Explore" active={isActive('/dashboard/explore')} isCollapsed={!isDesktopSidebarOpen} />
                   <PrimaryNavItem href="/dashboard/analytics" icon={<PieChart className="w-[18px] h-[18px]" />} label="Metrics" active={isActive('/dashboard/analytics')} isCollapsed={!isDesktopSidebarOpen} />
-                  <PrimaryNavItem href="/dashboard/profile" icon={<User className="w-[18px] h-[18px]" />} label="Profil" active={isActive('/dashboard/profile')} isCollapsed={!isDesktopSidebarOpen} />
+                  <PrimaryNavItem href="/dashboard/profile" icon={<User className="w-[18px] h-[18px]" />} label="Profile" active={isActive('/dashboard/profile')} isCollapsed={!isDesktopSidebarOpen} />
                </>
             )}
           </nav>
@@ -133,7 +133,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                </div>
             ) : (
               <>
-                <PrimaryNavItem href="/support" icon={<HelpCircle className="w-[18px] h-[18px]" />} label="Bantuan" active={isActive('/support')} isCollapsed={!isDesktopSidebarOpen} />
+                <PrimaryNavItem href="/support" icon={<HelpCircle className="w-[18px] h-[18px]" />} label="Support" active={isActive('/support')} isCollapsed={!isDesktopSidebarOpen} />
                 <PrimaryNavItem href="/dashboard/settings" icon={<Settings className="w-[18px] h-[18px]" />} label="Settings" active={isActive('/dashboard/settings')} isCollapsed={!isDesktopSidebarOpen} />
                 
                 {userRole === 'ADMIN' && (
@@ -232,18 +232,18 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                    <button onClick={() => setIsMobileDesignMenuOpen(!isMobileDesignMenuOpen)} className={`w-full flex items-center transition-all duration-300 group py-3 rounded-none px-4 justify-between ${isDesignRoute ? 'text-white' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
                      <div className="flex items-center gap-4">
                        <Palette className={`w-5 h-5 ${isDesignRoute ? 'text-white' : 'text-white/40'}`} /> 
-                       <span className="font-mono text-xs font-bold tracking-wider uppercase">Desain</span>
+                       <span className="font-mono text-xs font-bold tracking-wider uppercase">Design</span>
                      </div>
                      <ChevronDown className={`w-4 h-4 text-white/40 transition-transform duration-300 ${isMobileDesignMenuOpen ? 'rotate-180' : ''}`} />
                    </button>
 
                    {/* Submenu Inline (Accordion) */}
                    <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${isMobileDesignMenuOpen ? 'max-h-80 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 pointer-events-none'}`}>
-                     <MobileSubNavItem href="/dashboard/projects" label="Proyek & Karya" active={isActive('/dashboard/projects')} count={projectsCount} />
-                     <MobileSubNavItem href="/dashboard/themes" label="Koleksi Tema" active={isActive('/dashboard/themes')} />
-                     <MobileSubNavItem href="/dashboard/build-with-ai" label="Build with AI" active={isActive('/dashboard/build-with-ai')} highlightText="Segera" />
-                     <MobileSubNavItem href="/dashboard/links" label="Tautan (Links)" active={isActive('/dashboard/links')} count={linksCount} />
-                     <MobileSubNavItem href="/dashboard/testimonials" label="Testimoni" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
+                     <MobileSubNavItem href="/dashboard/projects" label="Projects & Works" active={isActive('/dashboard/projects')} count={projectsCount} />
+                     <MobileSubNavItem href="/dashboard/themes" label="Theme Collection" active={isActive('/dashboard/themes')} />
+                     <MobileSubNavItem href="/dashboard/build-with-ai" label="Build with AI" active={isActive('/dashboard/build-with-ai')} highlightText="Soon" />
+                     <MobileSubNavItem href="/dashboard/links" label="Links" active={isActive('/dashboard/links')} count={linksCount} />
+                     <MobileSubNavItem href="/dashboard/testimonials" label="Testimonials" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
                      <MobileSubNavItem href="/dashboard/integrations" label="Connected Works" active={isActive('/dashboard/integrations')} />
                      <div className="h-px bg-white/10 my-2" />
                      <MobileSubNavItem href="/dashboard/trash" label="Trash" active={isActive('/dashboard/trash')} />
@@ -255,11 +255,11 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                  <MobileNavItem href="/dashboard/analytics" icon={<PieChart className="w-5 h-5" />} label="Metrics" active={isActive('/dashboard/analytics')} />
 
                  <div className="px-5 pt-6 pb-2">
-                   <p className="text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.25em]">Pengaturan</p>
+                   <p className="text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.25em]">Settings</p>
                  </div>
 
-                 <MobileNavItem href="/dashboard/profile" icon={<User className="w-5 h-5" />} label="Profil & Bio" active={isActive('/dashboard/profile')} />
-                 <MobileNavItem href="/support" icon={<HelpCircle className="w-5 h-5" />} label="Bantuan" active={isActive('/support')} />
+                 <MobileNavItem href="/dashboard/profile" icon={<User className="w-5 h-5" />} label="Profile & Bio" active={isActive('/dashboard/profile')} />
+                 <MobileNavItem href="/support" icon={<HelpCircle className="w-5 h-5" />} label="Support" active={isActive('/support')} />
                  <MobileNavItem href="/dashboard/settings" icon={<Settings className="w-5 h-5" />} label="Settings" active={isActive('/dashboard/settings')} />
                  
                  {/* Menu Admin (Dengan Submenu Accordion) */}

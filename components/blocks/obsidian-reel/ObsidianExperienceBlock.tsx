@@ -153,7 +153,7 @@ export function ObsidianExperienceBlock({ theme, isEditor }: any) {
                                     <button
                                         onClick={(e) => handleRemoveItem(index, e)}
                                         className="absolute top-2 right-2 bg-zinc-800 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[8px] z-30 transition-colors border border-white/10"
-                                        title="Hapus Pengalaman"
+                                        title="Delete Experience"
                                     >
                                         ✕
                                     </button>

@@ -16,13 +16,13 @@ export function TopSourcesWidget({ isLoading, isFree, handleLocked, displaySourc
             <Lock className="w-4 h-4 text-[#ff9e00]" />
           </div>
           <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melihat sumber trafik</p>
+          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade to view traffic sources</p>
         </div>
       )}
       <div className="flex justify-between items-start mb-6">
         <div>
           <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Top Sources</h3>
-          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Dari mana trafik berasal</p>
+          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Where traffic comes from</p>
         </div>
         <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
           <Target className="w-4 h-4 text-[#ff9e00]" />
@@ -32,7 +32,7 @@ export function TopSourcesWidget({ isLoading, isFree, handleLocked, displaySourc
       {displaySources.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-10 text-white/20">
           <Ghost className="w-8 h-8 mb-3" />
-          <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data sources</p>
+          <p className="text-[9px] font-mono font-bold tracking-widest uppercase">No sources data yet</p>
         </div>
       ) : (
         <div className="space-y-5">
@@ -77,13 +77,13 @@ export function ProjectPopularityWidget({ isLoading, isFree, handleLocked, displ
             <Lock className="w-4 h-4 text-[#ff9e00]" />
           </div>
           <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak interaksi dan klik proyek populer Anda</p>
+          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade to track interactions and clicks on your popular projects</p>
         </div>
       )}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Popularitas Proyek</h3>
-          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Jumlah klik media & karya Anda</p>
+          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Project Popularity</h3>
+          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Number of clicks on your media & works</p>
         </div>
         <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
           <BarChart3 className="w-4 h-4 text-[#ff9e00]" />
@@ -93,7 +93,7 @@ export function ProjectPopularityWidget({ isLoading, isFree, handleLocked, displ
       {displayProjects.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-white/20">
           <Ghost className="w-8 h-8 mb-3" />
-          <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data interaksi proyek</p>
+          <p className="text-[9px] font-mono font-bold tracking-widest uppercase">No project interaction data yet</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -106,7 +106,7 @@ export function ProjectPopularityWidget({ isLoading, isFree, handleLocked, displ
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-xs font-mono font-bold text-white">{p.percentage}%</p>
-                  <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{p.count} klik</p>
+                  <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{p.count} clicks</p>
                 </div>
               </div>
               <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
@@ -136,13 +136,13 @@ export function SocialMediaWidget({ isLoading, isFree, handleLocked, displaySoci
             <Lock className="w-4 h-4 text-[#ff9e00]" />
           </div>
           <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak klik link sosial media</p>
+          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade to track social media link clicks</p>
         </div>
       )}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Klik Sosial Media</h3>
-          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Klik pada link sosial media utama Anda</p>
+          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Social Media Clicks</h3>
+          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Clicks on your main social media links</p>
         </div>
         <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
           <Share2 className="w-4 h-4 text-[#ff9e00]" />
@@ -152,7 +152,7 @@ export function SocialMediaWidget({ isLoading, isFree, handleLocked, displaySoci
       {displaySocialStats.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-white/20">
           <Ghost className="w-8 h-8 mb-3" />
-          <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada klik sosmed</p>
+          <p className="text-[9px] font-mono font-bold tracking-widest uppercase">No social media clicks yet</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -167,7 +167,7 @@ export function SocialMediaWidget({ isLoading, isFree, handleLocked, displaySoci
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-xs font-mono font-bold text-white">{src.percentage}%</p>
-                  <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{src.count} klik</p>
+                  <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{src.count} clicks</p>
                 </div>
               </div>
               <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
@@ -197,13 +197,13 @@ export function ContactConversionsWidget({ isLoading, isFree, handleLocked, disp
             <Lock className="w-4 h-4 text-[#ff9e00]" />
           </div>
           <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak konversi kontak</p>
+          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade to track contact conversions</p>
         </div>
       )}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Konversi Kontak</h3>
-          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Interaksi klik email / telepon / WA</p>
+          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Contact Conversions</h3>
+          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Email / phone / WA click interactions</p>
         </div>
         <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
           <MessageSquare className="w-4 h-4 text-[#ff9e00]" />
@@ -213,7 +213,7 @@ export function ContactConversionsWidget({ isLoading, isFree, handleLocked, disp
       {displayContactStats.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-white/20">
           <Ghost className="w-8 h-8 mb-3" />
-          <p className="text-[9px] font-mono font-bold tracking-widest uppercase">Belum ada data konversi</p>
+          <p className="text-[9px] font-mono font-bold tracking-widest uppercase">No conversion data yet</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -235,7 +235,7 @@ export function ContactConversionsWidget({ isLoading, isFree, handleLocked, disp
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-xs font-mono font-bold text-white">{c.percentage}%</p>
-                    <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{c.count} klik</p>
+                    <p className="text-[8px] font-mono text-white/30 uppercase mt-0.5 tracking-wider">{c.count} clicks</p>
                   </div>
                 </div>
                 <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-none overflow-hidden">
@@ -266,13 +266,13 @@ export function GalleryActivityWidget({ isLoading, isFree, handleLocked, gallery
             <Lock className="w-4 h-4 text-[#ff9e00]" />
           </div>
           <span className="text-[8px] font-mono font-bold text-[#ff9e00] tracking-widest uppercase">PRO ONLY</span>
-          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade untuk melacak klik tombol Galeri</p>
+          <p className="text-[10px] text-white/40 font-mono mt-1 text-center">Upgrade to track Gallery button clicks</p>
         </div>
       )}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Aktivitas Tombol Galeri</h3>
-          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Seberapa sering pengunjung mengklik tombol menuju halaman galeri/arsip</p>
+          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Gallery Button Activity</h3>
+          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">How often visitors click the button to the gallery/archive page</p>
         </div>
         <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
           <FolderOpen className="w-4 h-4 text-[#ff9e00]" />
@@ -281,10 +281,10 @@ export function GalleryActivityWidget({ isLoading, isFree, handleLocked, gallery
 
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-center md:text-left">
-          <p className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-widest mb-1">Total Klik Menuju Galeri</p>
+          <p className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-widest mb-1">Total Clicks to Gallery</p>
           <h4 className="text-4xl md:text-5xl font-mono font-bold text-white tracking-tighter">
             <AnimatedCounter value={isFree ? 75 : (galleryClicks || 0)} />
-            <span className="text-xs font-mono font-bold text-white/30 ml-2 uppercase tracking-normal">klik</span>
+            <span className="text-xs font-mono font-bold text-white/30 ml-2 uppercase tracking-normal">clicks</span>
           </h4>
         </div>
         <div className="w-full md:max-w-md bg-zinc-900/40 border border-white/5 p-4 rounded-none flex items-center gap-4">
@@ -292,9 +292,9 @@ export function GalleryActivityWidget({ isLoading, isFree, handleLocked, gallery
             <FolderOpen className="w-5 h-5 text-white/40" />
           </div>
           <div>
-            <h5 className="text-[11px] font-mono font-bold text-white/80 uppercase tracking-wide">Minat Pengunjung</h5>
+            <h5 className="text-[11px] font-mono font-bold text-white/80 uppercase tracking-wide">Visitor Interest</h5>
             <p className="text-[9px] font-mono text-white/40 leading-relaxed mt-1">
-              Klik tombol ini menandakan ketertarikan tinggi pengunjung untuk melihat seluruh koleksi karya Anda.
+              Clicks on this button indicate high visitor interest in viewing your entire collection of works.
             </p>
           </div>
         </div>
