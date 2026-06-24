@@ -1,6 +1,5 @@
 // app/[subdomain]/layout.tsx
 import React from 'react';
-import { ClientTransition } from '@/components/animations/ClientTransition';
 import { Metadata } from 'next';
 
 import { getPortfolioData } from '@/features/portfolio/model/portfolioService';
@@ -184,9 +183,7 @@ export default async function SubdomainLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       )}
-      <ClientTransition>
-        {children}
-      </ClientTransition>
+      {children}
     </>
   );
 }

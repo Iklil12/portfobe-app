@@ -69,7 +69,9 @@ export default function RootLayout({
               ? window.location.pathname.split('/')[1] 
               : window.location.hostname.split('.')[0];
             if (sessionStorage.getItem('_pfIntroPlayed_' + sub)) {
-              document.documentElement.classList.add('hide-splash');
+              var style = document.createElement('style');
+              style.innerHTML = '.splash-screen { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
+              document.head.appendChild(style);
             }
           } catch(e) {}
         `}} />

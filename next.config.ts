@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Mode Standalone: WAJIB untuk Coolify/Docker agar ukuran image susut drastis & efisien RAM
   output: 'standalone',
+  reactStrictMode: false,
 
   // Dukungan kompilasi untuk package native (menghindari error serverless)
   serverExternalPackages: ['bcrypt', 'html-encoding-sniffer', 'jsdom', 'isomorphic-dompurify', '@exodus/bytes'],
