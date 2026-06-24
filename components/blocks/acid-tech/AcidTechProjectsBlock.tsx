@@ -3,9 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { getVideoThumbnail } from '@/lib/videoUtils';
-import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
+import { EditableText } from '@/shared/ui/EditableText';
 import { useAcidTech } from './AcidTechContext';
 
 export function AcidTechProjectsBlock({ data, theme, isEditor, isCardPreview }: any) {

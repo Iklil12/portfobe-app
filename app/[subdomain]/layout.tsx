@@ -2,7 +2,7 @@
 import React from 'react';
 import { ClientTransition } from '@/components/animations/ClientTransition';
 import { Metadata } from 'next';
-import prisma from '@/lib/prisma';
+import prisma from '@/shared/lib/prisma';
 
 function getOptimizedFavicon(url: string | null | undefined) {
   if (!url) return '/favicon.ico';

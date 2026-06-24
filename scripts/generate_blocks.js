@@ -199,7 +199,7 @@ const THEMES = [
 function generateSkillsBlock(theme) {
   return `"use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import { motion } from 'framer-motion';
 
 export function ${theme.prefix}SkillsBlock({ theme, isEditor }: any) {
@@ -265,7 +265,7 @@ export function ${theme.prefix}SkillsBlock({ theme, isEditor }: any) {
 function generateExperienceBlock(theme) {
   return `"use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function ${theme.prefix}ExperienceBlock({ theme, isEditor }: any) {
     const customTexts = theme?.customTexts || {};

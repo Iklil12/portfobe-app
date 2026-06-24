@@ -2,11 +2,11 @@
 "use client";
 
 import React from 'react';
-import { useProfile } from '@/hooks/useProfile';
-import { ProfileSkeleton } from '@/components/features/profile/ProfileSkeleton';
-import { ProfileHeader } from '@/components/features/profile/ProfileHeader';
-import { AvatarUpload } from '@/components/features/profile/AvatarUpload';
-import { ProfileForm } from '@/components/features/profile/ProfileForm';
+import { useProfile } from '@/entities/user/model/useProfile';
+import { ProfileSkeleton } from '@/features/profile';
+import { ProfileHeader } from '@/features/profile';
+import { AvatarUpload } from '@/features/profile';
+import { ProfileForm } from '@/features/profile';
 
 export default function ProfilePage() {
   const { state, actions } = useProfile();

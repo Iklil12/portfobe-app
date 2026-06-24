@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { EditableText } from '@/shared/ui/EditableText';
 
 const smoothEase = [0.33, 1, 0.68, 1] as any;
 const wireframeReveal = {

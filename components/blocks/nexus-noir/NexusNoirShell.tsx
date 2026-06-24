@@ -6,10 +6,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import Link from 'next/link';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import { AnimatePresence, motion } from 'framer-motion';
-import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
-import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { UniversalPlayer } from '@/shared/ui/UniversalPlayer';
+import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);

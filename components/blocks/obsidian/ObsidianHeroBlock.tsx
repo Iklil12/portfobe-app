@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import { useObsidianMedia } from './ObsidianContext';
-import { getVideoThumbnail } from '@/lib/videoUtils';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
 
 export function ObsidianHeroBlock({ data, theme, isEditor }: any) {
   const { setSelectedMedia } = useObsidianMedia();

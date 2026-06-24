@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
-import { LazyImage } from '@/components/ui/LazyImage';
+import { EditableText } from '@/shared/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
 
 export function EditorialHeroBlock({ data, theme, isEditor, isCardPreview }: any) {
     const [isCopied, setIsCopied] = useState(false);

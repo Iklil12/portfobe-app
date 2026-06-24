@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import PortfolioView from '@/components/PortfolioView';
-import GalleryPageView from '@/components/features/gallery/GalleryPageView';
+import { GalleryPageView } from '@/features/gallery';
 
 export default function PreviewPage() {
   const [data, setData] = useState<any>(null);

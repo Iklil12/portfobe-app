@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useDashboardLayout } from '@/hooks/useDashboardLayout';
+import { useDashboardLayout } from '@/features/dashboard';
 import { 
   Lock, FileDown, Play, XCircle, CheckCircle2, AlertTriangle, 
   Circle, Move, Shield, Layers, PlusSquare, Terminal, Loader2 

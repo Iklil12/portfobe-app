@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useTrash } from "@/hooks/useTrash";
+import { useTrash } from '@/shared/hooks/useTrash';
 import { 
   Video, 
   Image as ImageIcon, 

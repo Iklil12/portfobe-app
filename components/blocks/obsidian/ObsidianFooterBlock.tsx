@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function ObsidianFooterBlock({ data, theme, isEditor }: any) {
   const fullName = data?.profile?.fullName || data?.fullName || "Lacete Studio";

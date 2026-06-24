@@ -13,7 +13,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function KineticAvantGardeShell({ children, theme, isMobileView = false, isCardPreview = false, isEditor = false }: any) {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -210,8 +210,8 @@ export function KineticAvantGardeShell({ children, theme, isMobileView = false, 
 `,
     'KineticAvantGardeHeroBlock.tsx': `"use client";
 import React, { useRef } from 'react';
-import { EditableText } from '@/components/ui/EditableText';
-import { LazyImage } from '@/components/ui/LazyImage';
+import { EditableText } from '@/shared/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
 import { useGSAP } from '@gsap/react';
 
 export function KineticAvantGardeHeroBlock({ data, theme, isEditor }: any) {
@@ -284,7 +284,7 @@ export function KineticAvantGardeHeroBlock({ data, theme, isEditor }: any) {
 `,
     'KineticAvantGardeAboutBlock.tsx': `"use client";
 import React, { useRef } from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -339,7 +339,7 @@ export function KineticAvantGardeAboutBlock({ data, theme, isEditor, isCardPrevi
 `,
     'KineticAvantGardeMarqueeBlock.tsx': `"use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function KineticAvantGardeMarqueeBlock({ data, theme, isEditor }: any) {
     const customTexts = theme?.customTexts || {};
@@ -361,9 +361,9 @@ export function KineticAvantGardeMarqueeBlock({ data, theme, isEditor }: any) {
 `,
     'KineticAvantGardeProjectsBlock.tsx': `"use client";
 import React, { useRef } from 'react';
-import { EditableText } from '@/components/ui/EditableText';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { getVideoThumbnail } from '@/lib/videoUtils';
+import { EditableText } from '@/shared/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -488,7 +488,7 @@ export function KineticAvantGardeProjectsBlock({ data, theme, isEditor, isCardPr
 `,
     'KineticAvantGardeServicesBlock.tsx': `"use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function KineticAvantGardeServicesBlock({ data, theme, isEditor }: any) {
     const customTexts = theme?.customTexts || {};
@@ -531,8 +531,8 @@ export function KineticAvantGardeServicesBlock({ data, theme, isEditor }: any) {
 `,
     'KineticAvantGarde3DBlock.tsx': `"use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
-import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/shared/ui/EditableText';
+import { Interactive3DViewer } from '@/shared/ui/Interactive3DViewer';
 
 export function KineticAvantGarde3DBlock({ data, theme, isEditor }: any) {
     const allProjects = data?.projects || data?.user?.projects || [];
@@ -565,7 +565,7 @@ export function KineticAvantGarde3DBlock({ data, theme, isEditor }: any) {
 `,
     'KineticAvantGardeStatsBlock.tsx': `"use client";
 import React, { useRef } from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -656,7 +656,7 @@ export function KineticAvantGardeStatsBlock({ data, theme, isEditor, isCardPrevi
 `,
     'KineticAvantGardeAwardsBlock.tsx': `"use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function KineticAvantGardeAwardsBlock({ data, theme, isEditor, setSelectedMedia }: any) {
     const certificates = data?.certificates || data?.user?.certificates || [];
@@ -699,8 +699,8 @@ export function KineticAvantGardeAwardsBlock({ data, theme, isEditor, setSelecte
 `,
     'KineticAvantGardeTestimonialsBlock.tsx': `"use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
-import { TestimonialSection } from '@/components/features/testimonials/TestimonialSection';
+import { EditableText } from '@/shared/ui/EditableText';
+import { TestimonialSection } from '@/features/testimonials';
 
 export function KineticAvantGardeTestimonialsBlock({ data, theme, isEditor }: any) {
     const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
@@ -723,7 +723,7 @@ export function KineticAvantGardeTestimonialsBlock({ data, theme, isEditor }: an
 `,
     'KineticAvantGardeFooterBlock.tsx': `"use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function KineticAvantGardeFooterBlock({ data, theme, isEditor }: any) {
     const fullName = data?.profile?.fullName || data?.fullName || "VISUAL REBEL";

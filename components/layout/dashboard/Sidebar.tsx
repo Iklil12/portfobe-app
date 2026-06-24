@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LazyImage } from '@/components/ui/LazyImage';
+import { LazyImage } from '@/shared/ui/LazyImage';
 import { 
   LayoutGrid, 
   Palette, 

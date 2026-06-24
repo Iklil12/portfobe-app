@@ -3,9 +3,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { getVideoThumbnail } from '@/lib/videoUtils';
-import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
+import { EditableText } from '@/shared/ui/EditableText';
 import { useAbsoluteNoir } from './AbsoluteNoirContext';
 
 const smoothEase = [0.33, 1, 0.68, 1] as any;

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import { EditableText } from '@/components/ui/EditableText';
-import { LazyImage } from '@/components/ui/LazyImage';
+import { EditableText } from '@/shared/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
 
 export function LayeredMonolithTestimonialBlock({ data, theme, isEditor = false }: any) {
     const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];

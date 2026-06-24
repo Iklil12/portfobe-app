@@ -1,7 +1,7 @@
 // app/login/page.tsx — Server Component wrapper
 // Redirect ke dashboard jika sudah login
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { authOptions } from '@/entities/user/api/auth';
 import { redirect } from 'next/navigation';
 import LoginClient from './LoginClient';
 

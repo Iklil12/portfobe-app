@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from '@/shared/lib/prisma';
 import Link from "next/link";
 import { Check, X, Clock, ArrowRight } from "lucide-react";
 

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import { useSplitScreenStudio } from './SplitScreenStudioContext';
 
 const ScrambleText = ({ text, isHovered }: { text: string, isHovered?: boolean }) => {

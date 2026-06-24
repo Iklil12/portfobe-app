@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import { Viewfinder3DViewer } from './Viewfinder3DViewer';
 
 export function Viewfinder3DBlock({ data, theme, isEditor, isCardPreview }: any) {

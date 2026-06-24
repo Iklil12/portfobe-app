@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ReactLenis } from '@studio-freight/react-lenis';
 import { usePathname } from 'next/navigation';
-import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
-import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { UniversalPlayer } from '@/shared/ui/UniversalPlayer';
+import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
 import { SplitScreenStudioProvider, useSplitScreenStudio } from './SplitScreenStudioContext';
-import { BlockEditorWrapper } from '@/components/features/appearance/BlockEditorWrapper';
+import { BlockEditorWrapper } from '@/features/appearance';
 import { SplitScreenStudioHeroBlock } from './SplitScreenStudioHeroBlock';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);

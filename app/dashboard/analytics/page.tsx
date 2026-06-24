@@ -2,17 +2,17 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { showToast } from '@/lib/customToast';
+import { showToast } from '@/shared/lib/customToast';
 import useSWR from 'swr';
 import { Lock } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
-import { AnimatedCounter, getSourceIcon, SkeletonBlock, CustomAreaTooltip } from '@/components/features/analytics/AnalyticsShared';
-import { KpiCards, SecondaryMetricStrip } from '@/components/features/analytics/DashboardWidgets';
-import { TrafficOverviewChart, DailyVolumeChart } from '@/components/features/analytics/TrafficWidgets';
-import { DeviceBreakdown, TopLocations } from '@/components/features/analytics/GeoDeviceWidgets';
-import { TopSourcesWidget, ProjectPopularityWidget, SocialMediaWidget, ContactConversionsWidget, GalleryActivityWidget } from '@/components/features/analytics/InteractionWidgets';
+import { AnimatedCounter, getSourceIcon, SkeletonBlock, CustomAreaTooltip } from '@/features/analytics';
+import { KpiCards, SecondaryMetricStrip } from '@/features/analytics';
+import { TrafficOverviewChart, DailyVolumeChart } from '@/features/analytics';
+import { DeviceBreakdown, TopLocations } from '@/features/analytics';
+import { TopSourcesWidget, ProjectPopularityWidget, SocialMediaWidget, ContactConversionsWidget, GalleryActivityWidget } from '@/features/analytics';
 
 const STATIC_SOURCES = [
   { name: 'Instagram', count: 842, percentage: 38 },

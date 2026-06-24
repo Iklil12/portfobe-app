@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { UniversalPlayer } from '@/shared/ui/UniversalPlayer';
 
 export const BentoGridContext = React.createContext<any>(null);
 

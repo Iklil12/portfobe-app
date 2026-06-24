@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import useSWR from 'swr';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { PricingHeader } from '@/components/pricing/PricingHeader';
-import { PricingPlansGrid } from '@/components/pricing/PricingPlansGrid';
-import { PricingFeatureMatrix } from '@/components/pricing/PricingFeatureMatrix';
-import { PricingDomainAdvantages } from '@/components/pricing/PricingDomainAdvantages';
+import { PricingHeader } from '@/features/billing';
+import { PricingPlansGrid } from '@/features/billing';
+import { PricingFeatureMatrix } from '@/features/billing';
+import { PricingDomainAdvantages } from '@/features/billing';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 

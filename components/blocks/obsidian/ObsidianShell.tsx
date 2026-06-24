@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ObsidianProvider, useObsidianMedia } from './ObsidianContext';
-import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
-import { EditableText } from '@/components/ui/EditableText';
-import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { UniversalPlayer } from '@/shared/ui/UniversalPlayer';
+import { EditableText } from '@/shared/ui/EditableText';
+import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
 
 export function ObsidianShellContent({ data, theme, isMobileView, isCardPreview, isEditor, children }: any) {
   const { selectedMedia, setSelectedMedia } = useObsidianMedia();

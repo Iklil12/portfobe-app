@@ -1,40 +1,23 @@
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { getErrorMessage } from "@/shared/lib/errorHelper";
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/entities/user/api/auth";
+import { disconnectIntegration } from "@/features/integrations/model/integrationService";
 
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { provider } = await req.json();
-
-    if (!provider) {
-      return NextResponse.json({ error: 'Provider is required' }, { status: 400 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    // Hapus integrasi dari database
-    await prisma.integration.deleteMany({
-      where: {
-        userId: user.id,
-        provider: provider,
-      }
-    });
+    await disconnectIntegration(session.user.email, provider);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Disconnect Integration Error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } catch (error: unknown) {
+    if (getErrorMessage(error).includes(":")) {
+      const [status, msg] = getErrorMessage(error).split(":");
+      return NextResponse.json({ error: msg }, { status: parseInt(status) });
+    }
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

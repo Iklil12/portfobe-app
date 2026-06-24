@@ -1,6 +1,6 @@
 "use client";
 
-import { MARQUEE_TEXTS } from '@/lib/constants';
+import { MARQUEE_TEXTS } from '@/shared/constants/constants';
 
 export function MarqueeSection() {
   return (

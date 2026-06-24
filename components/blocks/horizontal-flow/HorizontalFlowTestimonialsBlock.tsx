@@ -1,6 +1,6 @@
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
-import { TestimonialSection } from '@/components/features/testimonials/TestimonialSection';
+import { EditableText } from '@/shared/ui/EditableText';
+import { TestimonialSection } from '@/features/testimonials';
 
 export function HorizontalFlowTestimonialsBlock({ data, theme, isEditor }: any) {
     const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];

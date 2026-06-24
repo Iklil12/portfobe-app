@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useCinematicGallery } from './CinematicGalleryShell';
-import { getVideoThumbnail } from '@/lib/videoUtils';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function MidnightEmulsionFooterBlock({ data, theme, isEditor }: any) {
   const [copied, setCopied] = useState(false);

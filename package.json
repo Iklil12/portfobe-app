@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "test": "vitest",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -67,10 +68,14 @@
     "@types/react-dom": "^19",
     "@types/react-google-recaptcha": "^2.1.9",
     "@types/sanitize-html": "^2.14.0",
+    "@vitest/ui": "^4.1.9",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "prisma": "^5.21.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "^8.1.0",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.9"
   }
 }

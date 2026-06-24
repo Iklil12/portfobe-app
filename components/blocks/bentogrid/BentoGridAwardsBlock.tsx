@@ -2,7 +2,7 @@
 
 import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
-import { LazyImage } from '@/components/ui/LazyImage';
+import { LazyImage } from '@/shared/ui/LazyImage';
 import { BentoGridContext } from './BentoGridShell';
 
 export function BentoGridAwardsBlock({ data, theme, isEditor, isCardPreview }: any) {

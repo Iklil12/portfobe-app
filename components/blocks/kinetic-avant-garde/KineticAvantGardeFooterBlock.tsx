@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function KineticAvantGardeFooterBlock({ data, theme, isEditor }: any) {
     const fullName = data?.profile?.fullName || data?.fullName || "VISUAL REBEL";

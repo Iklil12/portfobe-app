@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function LayeredMonolithAwardsBlock({ data, theme, isEditor = false }: any) {
     const awardItems = data?.certificates || data?.user?.certificates || [];

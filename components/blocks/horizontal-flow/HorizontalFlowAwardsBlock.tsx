@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function HorizontalFlowAwardsBlock({ data, theme, isEditor }: any) {
     const awards = data?.certificates || data?.user?.certificates || [];

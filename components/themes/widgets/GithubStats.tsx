@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import useSWR from 'swr';
 import { GithubCalendarWidget, CalendarThemeVariant } from './GithubCalendarWidget';
 import { GithubActivityFeed } from './GithubActivityFeed';
-import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
 
 export type StatsVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist' | 'split-screen-studio' | 'horizontal-flow' | 'kinetic-avant-garde' | 'layered-monolith' | 'nexus-noir';
 

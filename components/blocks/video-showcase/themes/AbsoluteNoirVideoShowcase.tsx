@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
-import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { EditableText } from '@/shared/ui/EditableText';
+import { UniversalPlayer } from '@/shared/ui/UniversalPlayer';
 
 export default function AbsoluteNoirVideoShowcase({ data, theme, isEditor }: any) {
   const selectedVideoId = theme?.customTexts?.showcase_video_id;

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function MidnightEmulsionAwardsBlock({ data, theme, isEditor, isCardPreview }: any) {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);

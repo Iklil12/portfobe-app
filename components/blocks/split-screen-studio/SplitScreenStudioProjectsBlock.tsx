@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ScrollBlock } from './ScrollBlock';
-import { EditableText } from '@/components/ui/EditableText';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { getVideoThumbnail } from '@/lib/videoUtils';
+import { EditableText } from '@/shared/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
 import { useSplitScreenStudio } from './SplitScreenStudioContext';
 
 const ScrambleText = ({ text, isHovered }: { text: string, isHovered?: boolean }) => {

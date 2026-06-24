@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { getVideoThumbnail } from '@/lib/videoUtils';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
 
 export function LayeredMonolithWorksBlock({ data, setSelectedMedia }: any) {
     const subdomain = data?.profile?.subdomain || data?.subdomain || "username";

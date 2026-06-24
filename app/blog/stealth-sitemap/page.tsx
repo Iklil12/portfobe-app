@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
-import { ShareButton } from '@/components/ui/ShareButton';
+import { ShareButton } from '@/shared/ui/ShareButton';
 import { Footer } from '@/components/layout/Footer';
 import { Metadata } from 'next';
 

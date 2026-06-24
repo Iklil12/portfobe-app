@@ -2,8 +2,8 @@
 "use client";
 
 import Link from 'next/link';
-import { OptimizedLazyImage } from '@/components/ui/OptimizedLazyImage';
-import { TEMPLATE_LIST } from '@/lib/constants';
+import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
+import { TEMPLATE_LIST } from '@/shared/constants/constants';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 export function TemplatesSection() {

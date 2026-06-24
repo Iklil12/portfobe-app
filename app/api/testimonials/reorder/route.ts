@@ -1,41 +1,22 @@
- import { NextResponse } from 'next/server';
-import { invalidatePortfolioCache } from '@/lib/redis';
-import prisma from "@/lib/prisma";
+import { getErrorMessage } from "@/shared/lib/errorHelper";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { logActivity } from "@/lib/activity";
+import { authOptions } from "@/entities/user/api/auth";
+import { reorderTestimonials } from "@/features/testimonials/model/testimonialService";
 
 export async function PUT(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const { orderedIds } = await req.json();
-
-    if (!orderedIds || !Array.isArray(orderedIds)) {
-      return NextResponse.json({ error: "Format data tidak valid" }, { status: 400 });
-    }
-
-    // Update order in a transaction
-    const updatePromises = orderedIds.map((id: string, index: number) => {
-      return prisma.testimonial.update({
-        where: { id, userId: user.id },
-        data: { order: index }
-      });
-    });
-
-    await prisma.$transaction(updatePromises);
-    await logActivity(user.id, "REORDER_TESTIMONIALS", "Mengubah urutan testimoni");
-
-    await invalidatePortfolioCache(user.id);
-
-    
+    await reorderTestimonials(session.user.email, orderedIds);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: unknown) {
+    if (getErrorMessage(error).startsWith("INVALID_DATA:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1] }, { status: 400 });
+    if (getErrorMessage(error) === "USER_NOT_FOUND") return NextResponse.json({ error: "User not found" }, { status: 404 });
+
     console.error("Error reordering testimonials:", error);
     return NextResponse.json({ error: "Failed to reorder testimonials" }, { status: 500 });
   }

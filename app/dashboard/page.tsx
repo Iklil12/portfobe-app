@@ -1,12 +1,12 @@
 "use client";
 
 import React from 'react';
-import { useDashboardOverview } from '@/hooks/useDashboardOverview';
-import { OverviewHeader } from '@/components/features/dashboard/OverviewHeader';
-import { QuickStats } from '@/components/features/dashboard/QuickStats';
-import { RecentActivity } from '@/components/features/dashboard/RecentActivity';
-import { TrafficOverview } from '@/components/features/dashboard/TrafficOverview';
-import { MiniLivePreview } from '@/components/features/dashboard/MiniLivePreview';
+import { useDashboardOverview } from '@/features/dashboard';
+import { OverviewHeader } from '@/features/dashboard';
+import { QuickStats } from '@/features/dashboard';
+import { RecentActivity } from '@/features/dashboard';
+import { TrafficOverview } from '@/features/dashboard';
+import { MiniLivePreview } from '@/features/dashboard';
 
 export default function DashboardOverview() {
   const {

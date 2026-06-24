@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { EditableText } from '@/shared/ui/EditableText';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 

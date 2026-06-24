@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import { motion } from 'framer-motion';
 
 const smoothEase = [0.33, 1, 0.68, 1] as any;

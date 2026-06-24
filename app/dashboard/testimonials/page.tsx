@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { showToast } from '@/lib/customToast';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { showToast } from '@/shared/lib/customToast';
 import { 
   MessageSquare, 
   Plus, 

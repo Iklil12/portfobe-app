@@ -9,43 +9,43 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(uuid())
-  email           String           @unique
-  password        String
-  plan            PlanType         @default(FREE)
-  role            Role             @default(USER)
-  avatar          String
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  isLive          Boolean          @default(false)
-  pendingEmail    String?
-  planExpiredAt   DateTime?
-  emailVerified   DateTime?
+  id                 String               @id @default(uuid())
+  email              String               @unique
+  password           String
+  plan               PlanType             @default(FREE)
+  role               Role                 @default(USER)
+  avatar             String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  isLive             Boolean              @default(false)
+  pendingEmail       String?
+  planExpiredAt      DateTime?
+  emailVerified      DateTime?
   lastUsernameChange DateTime?
-  accounts        Account[]
-  activities      Activity[]
-  adminNotes      AdminNote[]
-  analytics       Analytics[]
-  canvaProjects   CanvaProject[]
-  certificates    Certificate[]
-  couponUsages    CouponUsage[]
-  dailyStats      DailyStats[]
-  hourlyStats     HourlyStats[]
-  dailyDeviceStats    DailyDeviceStats[]
-  dailyReferrerStats  DailyReferrerStats[]
-  dailyLocationStats  DailyLocationStats[]
-  integrations    Integration[]
-  links           Link[]
-  pageBlocks      PageBlock[]
-  profile         Profile?
-  projects        Project[]
-  siteAppearance  SiteAppearance?
-  subscriptions   Subscription[]
-  testimonials    Testimonial[]
-  themeDrafts     ThemeDraft[]
-  themeFavorites  ThemeFavorite[]
-  transactions    Transaction[]
-  visitorSessions VisitorSession[]
+  accounts           Account[]
+  activities         Activity[]
+  adminNotes         AdminNote[]
+  analytics          Analytics[]
+  canvaProjects      CanvaProject[]
+  certificates       Certificate[]
+  couponUsages       CouponUsage[]
+  dailyStats         DailyStats[]
+  hourlyStats        HourlyStats[]
+  dailyDeviceStats   DailyDeviceStats[]
+  dailyReferrerStats DailyReferrerStats[]
+  dailyLocationStats DailyLocationStats[]
+  integrations       Integration[]
+  links              Link[]
+  pageBlocks         PageBlock[]
+  profile            Profile?
+  projects           Project[]
+  siteAppearance     SiteAppearance?
+  subscriptions      Subscription[]
+  testimonials       Testimonial[]
+  themeDrafts        ThemeDraft[]
+  themeFavorites     ThemeFavorite[]
+  transactions       Transaction[]
+  visitorSessions    VisitorSession[]
 }
 
 model PasswordResetToken {
@@ -102,30 +102,30 @@ model Profile {
 }
 
 model SiteAppearance {
-  id               String  @id @default(uuid())
-  userId           String  @unique
-  splashScreen     Boolean @default(false)
-  themeTemplate    String  @default("minimalist")
-  favoriteThemes   String  @default("[]") @db.Text
-  customTexts      String  @default("{}") @db.Text
-  designTokens     String? @db.Text
+  id               String             @id @default(uuid())
+  userId           String             @unique
+  splashScreen     Boolean            @default(false)
+  themeTemplate    String             @default("minimalist")
+  favoriteThemes   String             @default("[]") @db.Text
+  customTexts      String             @default("{}") @db.Text
+  designTokens     String?            @db.Text
   publishedDraftId String?
-  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects         LiveThemeProject[]
 }
 
 model ThemeDraft {
-  id            String   @id @default(uuid())
+  id            String              @id @default(uuid())
   userId        String
-  name          String   @default("Draft Baru")
+  name          String              @default("Draft Baru")
   themeTemplate String
   splashScreen  Boolean
-  customTexts   String   @db.Text
-  designTokens  String?  @db.Text
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  description   String?  @db.Text
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customTexts   String              @db.Text
+  designTokens  String?             @db.Text
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  description   String?             @db.Text
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects      ThemeDraftProject[]
 
   @@index([userId])
@@ -153,19 +153,20 @@ model Link {
   user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "Link_userId_fkey")
+  @@index([userId, isActive, order])
 }
 
 model Project {
-  id          String           @id @default(uuid())
+  id          String              @id @default(uuid())
   title       String
   description String?
   mediaUrl    String?
-  projectType String           @default("photo")
+  projectType String              @default("photo")
   userId      String
-  createdAt   DateTime         @default(now())
-  tags        String           @default("[]") @db.Text
+  createdAt   DateTime            @default(now())
+  tags        String              @default("[]") @db.Text
   deletedAt   DateTime?
-  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   detail3D    Project3DDetail?
   themeDrafts ThemeDraftProject[]
   liveThemes  LiveThemeProject[]
@@ -173,6 +174,7 @@ model Project {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([userId], map: "Project_userId_fkey")
+  @@index([userId, deletedAt, createdAt])
 }
 
 model Project3DDetail {
@@ -213,6 +215,7 @@ model Certificate {
 
   @@index([userId], map: "Certificate_userId_fkey")
   @@index([deletedAt])
+  @@index([userId, deletedAt, createdAt])
 }
 
 model Announcement {
@@ -483,6 +486,7 @@ model Testimonial {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([userId, isVisible, order])
 }
 
 model PricingPlan {
@@ -544,6 +548,7 @@ model PageBlock {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, orderIndex])
+  @@index([userId, isVisible, orderIndex])
 }
 
 model AdminNote {
@@ -560,14 +565,14 @@ model AdminNote {
 }
 
 model ThemeDraftProject {
-  id            String     @id @default(uuid())
-  themeDraftId  String
-  projectId     String
-  orderIndex    Int        @default(0)
-  createdAt     DateTime   @default(now())
+  id           String   @id @default(uuid())
+  themeDraftId String
+  projectId    String
+  orderIndex   Int      @default(0)
+  createdAt    DateTime @default(now())
 
-  themeDraft    ThemeDraft @relation(fields: [themeDraftId], references: [id], onDelete: Cascade)
-  project       Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  themeDraft ThemeDraft @relation(fields: [themeDraftId], references: [id], onDelete: Cascade)
+  project    Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([themeDraftId, projectId])
   @@index([themeDraftId, orderIndex])
@@ -575,14 +580,14 @@ model ThemeDraftProject {
 }
 
 model LiveThemeProject {
-  id                String         @id @default(uuid())
-  siteAppearanceId  String
-  projectId         String
-  orderIndex        Int            @default(0)
-  createdAt         DateTime       @default(now())
+  id               String   @id @default(uuid())
+  siteAppearanceId String
+  projectId        String
+  orderIndex       Int      @default(0)
+  createdAt        DateTime @default(now())
 
-  siteAppearance    SiteAppearance @relation(fields: [siteAppearanceId], references: [id], onDelete: Cascade)
-  project           Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  siteAppearance SiteAppearance @relation(fields: [siteAppearanceId], references: [id], onDelete: Cascade)
+  project        Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([siteAppearanceId, projectId])
   @@index([siteAppearanceId, orderIndex])

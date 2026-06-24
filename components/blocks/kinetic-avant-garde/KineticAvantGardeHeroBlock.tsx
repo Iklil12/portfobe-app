@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef } from 'react';
-import { EditableText } from '@/components/ui/EditableText';
-import { LazyImage } from '@/components/ui/LazyImage';
+import { EditableText } from '@/shared/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
 import { useGSAP } from '@gsap/react';
 
 export function KineticAvantGardeHeroBlock({ data, theme, isEditor }: any) {

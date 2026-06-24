@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { NotificationItem } from '@/hooks/useDashboardLayout';
+import { NotificationItem } from '@/features/dashboard';
 
 interface TopBannerProps {
   isLoading: boolean;

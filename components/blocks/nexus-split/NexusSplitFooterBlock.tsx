@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function NexusSplitFooterBlock({ data, theme, isEditor, isCardPreview }: any) {
   const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";

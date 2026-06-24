@@ -7,7 +7,7 @@ import { SyncEngineSection } from '@/components/sections/SyncEngineSection';
 import { DeviceResizerSection } from '@/components/sections/DeviceResizerSection';
 import { TemplatesSection } from '@/components/sections/TemplatesSection';
 import { FaqSection } from '@/components/sections/FaqSection';
-import { SmoothScroll } from '@/components/ui/SmoothScroll';
+import { SmoothScroll } from '@/shared/ui/SmoothScroll';
 
 export default function LandingPage() {
   return (

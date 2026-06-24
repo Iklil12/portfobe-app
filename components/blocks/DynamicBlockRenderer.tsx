@@ -36,12 +36,12 @@ import {
 
 import React, { useState, useEffect } from 'react';
 import { Eye, ChevronRight, Play, Maximize2, X, GitBranch, ExternalLink, Calendar, Code, Star, GitFork, Crown, Type, User, Zap, Briefcase, Layers, LayoutGrid, Box, PenTool, Paintbrush, Trophy, MessageSquare, BarChart, PanelBottom } from 'lucide-react';
-import type { PageBlock } from '@/hooks/useThemeEditor';
-import { FORBIDDEN_BLOCKS_PER_THEME } from '@/hooks/useThemeEditor';
+import type { PageBlock } from '@/features/appearance';
+import { FORBIDDEN_BLOCKS_PER_THEME } from '@/features/appearance';
 import Script from 'next/script';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReactLenis } from '@studio-freight/react-lenis';
-import { GlobalCursor } from '@/components/features/GlobalCursor';
+import { GlobalCursor } from '@/features/appearance';
 import { BlockErrorBoundary } from '@/components/errors/BlockErrorBoundary';
 export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia, isMobileView = false }: any) => {
   const commonProps = { data, theme, isEditor, blockConfig: block, setSelectedMedia };
@@ -275,7 +275,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
       if (matchedProject && matchedProject.id) {
         const subdomain = data?.profile?.subdomain || data?.subdomain || "";
         if (subdomain) {
-          import('@/lib/analyticsClient').then(({ trackProjectClick }) => {
+          import('@/features/analytics').then(({ trackProjectClick }) => {
             trackProjectClick(subdomain, matchedProject.id, matchedProject.title);
           }).catch(err => console.error('Failed to track project click:', err));
         }
@@ -321,7 +321,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
         // a. Klik Tombol Galeri
         if (href.includes('/gallery')) {
           console.log("[Analytics Debug] Gallery button link clicked:", href);
-          import('@/lib/analyticsClient').then(({ trackCustomEvent }) => {
+          import('@/features/analytics').then(({ trackCustomEvent }) => {
             trackCustomEvent(subdomain, 'GALLERY_CLICK', undefined, { url: href });
           }).catch(err => console.error('[Analytics Debug] Failed to track gallery click:', err));
           return; // Stop di sini agar tidak memicu deteksi proyek
@@ -330,7 +330,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
         // b. Klik Kontak (Email, Telepon, WhatsApp)
         if (href.startsWith('mailto:')) {
           console.log("[Analytics Debug] Contact Email clicked:", href);
-          import('@/lib/analyticsClient').then(({ trackCustomEvent }) => {
+          import('@/features/analytics').then(({ trackCustomEvent }) => {
             trackCustomEvent(subdomain, 'CONTACT_CLICK', undefined, { platform: 'Email', value: href });
           }).catch(err => console.error('[Analytics Debug] Failed to track contact email click:', err));
           return;
@@ -338,7 +338,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
         
         if (href.startsWith('tel:')) {
           console.log("[Analytics Debug] Contact Phone clicked:", href);
-          import('@/lib/analyticsClient').then(({ trackCustomEvent }) => {
+          import('@/features/analytics').then(({ trackCustomEvent }) => {
             trackCustomEvent(subdomain, 'CONTACT_CLICK', undefined, { platform: 'Phone', value: href });
           }).catch(err => console.error('[Analytics Debug] Failed to track contact phone click:', err));
           return;
@@ -346,7 +346,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
         
         if (href.includes('wa.me') || href.includes('api.whatsapp.com') || href.includes('whatsapp:')) {
           console.log("[Analytics Debug] Contact WhatsApp clicked:", href);
-          import('@/lib/analyticsClient').then(({ trackCustomEvent }) => {
+          import('@/features/analytics').then(({ trackCustomEvent }) => {
             trackCustomEvent(subdomain, 'CONTACT_CLICK', undefined, { platform: 'WhatsApp', value: href });
           }).catch(err => console.error('[Analytics Debug] Failed to track contact whatsapp click:', err));
           return;
@@ -369,7 +369,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
           };
           const platform = getSocialPlatform(href);
           console.log(`[Analytics Debug] Social Outbound Link (${platform}) clicked:`, href);
-          import('@/lib/analyticsClient').then(({ trackCustomEvent }) => {
+          import('@/features/analytics').then(({ trackCustomEvent }) => {
             trackCustomEvent(subdomain, 'SOCIAL_CLICK', undefined, { platform, url: href });
           }).catch(err => console.error('[Analytics Debug] Failed to track social click:', err));
           return;
@@ -430,7 +430,7 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
 
         if (matchedProject && matchedProject.id) {
           console.log("[Analytics Debug] Match found in DB:", matchedProject);
-          import('@/lib/analyticsClient').then(({ trackProjectClick }) => {
+          import('@/features/analytics').then(({ trackProjectClick }) => {
             console.log("[Analytics Debug] Triggering tracking client for project:", subdomain, matchedProject.id);
             trackProjectClick(subdomain, matchedProject.id, matchedProject.title);
           }).catch(err => console.error('[Analytics Debug] Failed to track project click globally:', err));

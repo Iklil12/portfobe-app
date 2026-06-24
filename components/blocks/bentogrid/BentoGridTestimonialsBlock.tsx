@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { LazyImage } from '@/components/ui/LazyImage';
+import { LazyImage } from '@/shared/ui/LazyImage';
 
 export function BentoGridTestimonialsBlock({ data, theme, isEditor, isCardPreview }: any) {
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";

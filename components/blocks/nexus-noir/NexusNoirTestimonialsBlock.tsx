@@ -1,5 +1,5 @@
 import React from 'react';
-import { TestimonialSection } from '@/components/features/testimonials/TestimonialSection';
+import { TestimonialSection } from '@/features/testimonials';
 
 export function NexusNoirTestimonialsBlock({ data, theme, isEditor }: any) {
     const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];

@@ -1,10 +1,10 @@
-import { invalidatePortfolioCache } from '@/lib/redis';
+import { invalidatePortfolioCache } from '@/shared/lib/redis';
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import prisma from '@/shared/lib/prisma';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { logActivity } from "@/lib/activity";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { authOptions } from '@/entities/user/api/auth';
+import { logActivity } from '@/shared/lib/activity';
+import { checkRateLimit } from '@/shared/lib/rate-limit';
 
 // PATCH: Mengupdate informasi link (Nama Platform, URL, atau Status Active)
 export async function PATCH(

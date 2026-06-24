@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function MonolithStatsBlock({ data, theme, isEditor, isCardPreview }: any) {
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";

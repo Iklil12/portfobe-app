@@ -2,8 +2,8 @@
 
 import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
-import { LazyImage } from '@/components/ui/LazyImage';
+import { EditableText } from '@/shared/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
 import { BrutalismContext } from './BrutalismShell';
 
 export function BrutalismTestimonialsBlock({ data, theme, isEditor, isCardPreview }: any) {

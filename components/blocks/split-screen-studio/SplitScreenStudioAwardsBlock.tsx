@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ScrollBlock } from './ScrollBlock';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function SplitScreenStudioAwardsBlock({ data, theme, isEditor }: any) {
     const awardItems = data?.certificates || data?.user?.certificates || [];

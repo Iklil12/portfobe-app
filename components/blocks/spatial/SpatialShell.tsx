@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SpatialProvider, useSpatialMedia } from './SpatialContext';
-import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
-import { EditableText } from '@/components/ui/EditableText';
-import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { UniversalPlayer } from '@/shared/ui/UniversalPlayer';
+import { EditableText } from '@/shared/ui/EditableText';
+import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 

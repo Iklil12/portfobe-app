@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { getVideoThumbnail } from '@/lib/videoUtils';
-import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function NexusNoirProjectsBlock({ data, theme, isEditor, setSelectedMedia }: any) {
     const pathname = usePathname();

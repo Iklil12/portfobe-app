@@ -1,12 +1,9 @@
+import { getErrorMessage } from "@/shared/lib/errorHelper";
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth"; 
-import { logActivity } from "@/lib/activity"; 
-import { checkRateLimit } from "@/lib/rate-limit";
-import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
-import sanitizeHtml from 'sanitize-html';
-import { invalidatePortfolioCache, redis } from "@/lib/redis";
+import { authOptions } from "@/entities/user/api/auth";
+import { checkRateLimit } from "@/shared/lib/rate-limit";
+import { updateProfileAvatarAndBio } from "@/features/profile/model/profileService";
 
 export async function PATCH(req: Request) {
   try {
@@ -14,131 +11,20 @@ export async function PATCH(req: Request) {
     if (rateLimitResponse) return rateLimitResponse;
 
     const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Tidak diizinkan" }, { status: 401 });
-    }
+    if (!session?.user?.email) return NextResponse.json({ error: "Tidak diizinkan" }, { status: 401 });
 
     const body = await req.json();
-    let { firstName, lastName, subdomain, profession, bio, avatar } = body; 
-    
-    // Validate image URL source for security
-    if (avatar && !avatar.startsWith('https://res.cloudinary.com/') && !avatar.startsWith('https://ui-avatars.com/')) {
-      return NextResponse.json({ error: "URL gambar tidak valid atau tidak tepercaya" }, { status: 400 });
-    }
+    const updatedUser = await updateProfileAvatarAndBio(session.user.email, body);
 
-    // XSS PROTECTION: Sanitize input pengguna di sisi server sebelum masuk database
-    // Menggunakan sanitize-html karena tidak memerlukan JSDOM dan sangat aman untuk Edge/Node runtime
-    const sanitizeConfig = { allowedTags: [], allowedAttributes: {} };
-    firstName = sanitizeHtml(firstName || "", sanitizeConfig).trim();
-    lastName = sanitizeHtml(lastName || "", sanitizeConfig).trim();
-    profession = sanitizeHtml(profession || "", sanitizeConfig).trim();
-    bio = sanitizeHtml(bio || "", sanitizeConfig).trim();
+    return NextResponse.json({ message: "Profile saved successfully", user: updatedUser });
+  } catch (error: unknown) {
+    if (getErrorMessage(error) === "INVALID_AVATAR") return NextResponse.json({ error: "URL gambar tidak valid atau tidak tepercaya" }, { status: 400 });
+    if (getErrorMessage(error) === "USER_NOT_FOUND") return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
+    if (getErrorMessage(error) === "SUBDOMAIN_COOLDOWN") return NextResponse.json({ error: "You can only change subdomain once every 14 days." }, { status: 400 });
+    if (getErrorMessage(error).startsWith("FORBIDDEN_NAME:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1] }, { status: 400 });
+    if (getErrorMessage(error) === "SUBDOMAIN_TAKEN") return NextResponse.json({ error: "Subdomain sudah dipakai orang lain." }, { status: 400 });
 
-    
-    // Ambil data User & Profile yang sekarang ada di database
-    const currentUser = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: { profile: true, siteAppearance: true } // Pastikan untuk menarik data siteAppearance juga
-    });
-
-    if (!currentUser) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
-
-    // VALIDASI SUBDOMAIN: Cek kata cadangan dan apakah sudah dipakai user lain
-    if (subdomain && subdomain !== currentUser.profile?.subdomain) {
-      if (currentUser.lastUsernameChange) {
-        const lastChange = new Date(currentUser.lastUsernameChange);
-        const now = new Date();
-        const diffTime = Math.abs(now.getTime() - lastChange.getTime());
-        if (diffTime < 14 * 24 * 60 * 60 * 1000) {
-          return NextResponse.json({ error: "You can only change subdomain once every 14 days." }, { status: 400 });
-        }
-      }
-
-      const forbiddenCheck = isForbiddenUsername(subdomain);
-      if (forbiddenCheck.forbidden) {
-        return NextResponse.json({ error: forbiddenCheck.reason }, { status: 400 });
-      }
-
-      const existingSubdomain = await prisma.profile.findUnique({
-        where: { subdomain: subdomain }
-      });
-      
-      // Jika subdomain ada di DB dan BUKAN milik user ini
-      if (existingSubdomain && existingSubdomain.userId !== currentUser.id) {
-        return NextResponse.json({ error: `Subdomain "${subdomain}" sudah dipakai orang lain.` }, { status: 400 });
-      }
-    }
-
-    const fullName = `${firstName || ''} ${lastName || ''}`.trim() || "User Baru";
-
-    // EKSEKUSI UPDATE KE DATABASE
-    const updatedUser = await prisma.user.update({
-      where: { email: session.user.email },
-      data: {
-        avatar: avatar, // Simpan url foto di tabel User
-        ...(subdomain && subdomain !== currentUser.profile?.subdomain && {
-          lastUsernameChange: new Date()
-        }),
-        profile: {
-          upsert: {
-            create: { 
-              fullName, 
-              subdomain, 
-              profession, 
-              bio,
-              avatarUrl: avatar // Sinkronkan ke tabel Profile juga
-            },
-            update: { 
-              fullName, 
-              subdomain, 
-              profession, 
-              bio,
-              avatarUrl: avatar // Sinkronkan ke tabel Profile juga
-            }
-          }
-        }
-      },
-      include: { profile: true, siteAppearance: true } 
-    });
-
-    // LOGIKA HISTORY / ACTIVITY LOG (SANGAT DETAIL)
-    const currentAvatar = currentUser.avatar;
-    const currentSubdomain = currentUser.profile?.subdomain;
-
-    // 1. Logika Foto Profil
-    if (avatar !== currentAvatar) {
-      if (!avatar || avatar === "") {
-        await logActivity(currentUser.id, "DELETE_AVATAR", "Deleted main profile photo");
-      } else {
-        await logActivity(currentUser.id, "UPDATE_AVATAR", "Changed main profile photo");
-      }
-    }
-
-    // 2. Logika Subdomain
-    if (subdomain !== currentSubdomain) {
-      // Jika sebelumnya kosong lalu diisi, atau diganti dengan yang baru
-      await logActivity(currentUser.id, "UPDATE_PROFILE", `Changed custom subdomain to "${subdomain}"`);
-    }
-
-    // 3. Logika Teks Biasa (Jika foto & subdomain tidak berubah, tapi mereka menekan simpan)
-    if (avatar === currentAvatar && subdomain === currentSubdomain) {
-       await logActivity(currentUser.id, "UPDATE_PROFILE", "Updated bio and profile information");
-    }
-
-    // INVALIDATE CACHE
-    if (currentSubdomain && subdomain !== currentSubdomain) {
-      await redis.del(`portfolio_db:${currentSubdomain.toLowerCase().trim()}`);
-    }
-    await invalidatePortfolioCache(currentUser.id);
-
-    return NextResponse.json({ 
-      message: "Profile saved successfully", 
-      user: updatedUser 
-    });
-
-  } catch (error) {
     console.error("Error Simpan Profil:", error);
     return NextResponse.json({ error: "Failed to save profile" }, { status: 500 });
   }
 }
-

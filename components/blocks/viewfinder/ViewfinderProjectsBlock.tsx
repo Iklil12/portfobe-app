@@ -2,10 +2,10 @@
 
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { EditableText } from '@/shared/ui/EditableText';
 import Link from 'next/link';
-import { getVideoThumbnail } from '@/lib/videoUtils';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
 import { useViewfinder } from './ViewfinderContext';
 
 export function ViewfinderProjectsBlock({ data, theme, isEditor, isCardPreview }: any) {

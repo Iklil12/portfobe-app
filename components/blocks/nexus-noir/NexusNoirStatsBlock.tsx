@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function NexusNoirStatsBlock({ theme, isEditor }: any) {
     const accentColor = theme?.themeColor || '#4F46E5'; 

@@ -1,148 +1,23 @@
+import { getErrorMessage } from "@/shared/lib/errorHelper";
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { redis } from "@/lib/redis";
+import { getPortfolioData } from "@/features/portfolio/model/portfolioService";
 
-export const dynamic = 'force-dynamic'; // WAJIB agar Token Keamanan tidak di-cache sampai kedaluwarsa
+export const dynamic = "force-dynamic";
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ subdomain: string }> }
 ) {
   try {
-    // 1. AWAIT PARAMS: Kunci untuk error Next.js terbaru
     const resolvedParams = await params;
-    
-    // 2. Bersihkan teks
-    const userSubdomain = resolvedParams.subdomain.trim().toLowerCase();
-
-    // 3. Cek Redis Cache
-    const cacheKey = `portfolio_db:${userSubdomain}`;
-    let userData: any = null;
-
-    try {
-      const cachedData = await redis.get(cacheKey);
-      if (cachedData) {
-        userData = JSON.parse(cachedData);
-      }
-    } catch (err) {
-      console.warn("⚠️ Redis Get Error:", err);
-    }
-
-    // 4. Jika tidak ada di Redis, jalankan query Prisma yang berat
-    if (!userData) {
-      userData = await prisma.user.findFirst({
-        where: { 
-          profile: {
-            subdomain: userSubdomain
-          }
-        },
-        include: {
-          profile: {
-            select: {
-              fullName: true, profession: true, bio: true, location: true, avatarUrl: true, subdomain: true
-            }
-          },
-          siteAppearance: {
-            select: {
-              id: true, themeTemplate: true, splashScreen: true, favoriteThemes: true, customTexts: true, designTokens: true,
-              projects: {
-                orderBy: { orderIndex: 'asc' },
-                select: { projectId: true, orderIndex: true }
-              }
-            }
-          },
-          links: { 
-            where: { isActive: true }, orderBy: { order: 'asc' },
-            select: { id: true, platform: true, url: true }
-          },
-          projects: { 
-            where: { deletedAt: null }, orderBy: { createdAt: 'desc' },
-            select: { id: true, title: true, description: true, mediaUrl: true, projectType: true, tags: true }
-          },
-          certificates: { 
-            where: { deletedAt: null }, orderBy: { createdAt: 'desc' },
-            select: { id: true, title: true, issuer: true, year: true, description: true, mediaUrl: true }
-          },
-          testimonials: {
-            where: { isVisible: true }, orderBy: { order: 'asc' },
-            select: { id: true, clientName: true, company: true, content: true, rating: true, avatarUrl: true, isVisible: true }
-          },
-          pageBlocks: {
-            where: { isVisible: true }, orderBy: { orderIndex: 'asc' },
-            select: { id: true, blockType: true, orderIndex: true, isVisible: true, configJson: true }
-          }
-        }
-      });
-
-      // Simpan ke Redis selama 1 Jam (3600 detik) jika data ketemu
-      if (userData) {
-        try {
-          await redis.set(cacheKey, JSON.stringify(userData), 'EX', 3600);
-        } catch (err) {
-          console.warn("⚠️ Redis Set Error:", err);
-        }
-      }
-    }
-
-    // 5. Jika data masih tidak ketemu (User tidak ada)
-    if (!userData || !userData.profile) {
-      return NextResponse.json({ error: "Portfolio tidak ditemukan" }, { status: 404 });
-    }
-
-    // 6. KURASI PROJECT: Filter & Urutkan berdasarkan LiveThemeProject jika ada
-    let finalProjects = userData.projects;
-    if (userData.siteAppearance?.projects && userData.siteAppearance.projects.length > 0) {
-      const projectMap = new Map();
-      userData.projects.forEach((p: any) => projectMap.set(p.id, p));
-      
-      const curatedProjects = userData.siteAppearance.projects
-        .map((pivot: any) => projectMap.get(pivot.projectId))
-        .filter(Boolean);
-        
-      // WAJIB: Pastikan tipe 3D tetap lolos karena blok 3D butuh datanya dan sengaja disembunyikan dari Kurasi
-      const nonCurated3D = userData.projects.filter((p: any) => p.projectType === '3d' && !curatedProjects.some((cp: any) => cp.id === p.id));
-      
-      finalProjects = [...curatedProjects, ...nonCurated3D];
-    }
-    userData.projects = finalProjects;
-
-    // 7. SOFT LOCK: Batasi data berdasarkan plan untuk halaman publik
-    const isFree = userData.plan === 'FREE';
-    const publicProjects     = isFree ? userData.projects.slice(0, 5)     : userData.projects;
-    const publicLinks        = isFree ? userData.links.slice(0, 1)        : userData.links;
-    const publicCertificates = isFree ? userData.certificates.slice(0, 2) : userData.certificates;
-    const publicTestimonials = isFree ? userData.testimonials.slice(0, 2) : userData.testimonials;
-
-    // 8. Susun Ulang Data & Tanda Tangani (Sign) URL Aset Bunny CDN untuk Keamanan
-    const tokenKey = process.env.BUNNY_API_KEY || 'default_secret';
-    const { signBunnyUrl } = require("@/lib/bunnySign");
-    
-    const signedProjects = publicProjects.map((proj: any) => {
-      // HANYA Video yang ditandatangani untuk Bunny Stream (Melindungi Video dari pembajakan)
-      if (proj.projectType === 'video') {
-        return {
-          ...proj,
-          mediaUrl: signBunnyUrl(proj.mediaUrl, tokenKey)
-        };
-      }
-      return proj;
-    });
-
-    const responseData = {
-      ...userData,
-      projects:     signedProjects,
-      links:        publicLinks,
-      certificates: publicCertificates,
-      testimonials: publicTestimonials,
-      name:      userData.profile.fullName || userSubdomain,
-      subdomain: userData.profile.subdomain
-    };
-
-    // 9. Kirimkan Data (Super Cepat)
+    const responseData = await getPortfolioData(resolvedParams.subdomain);
     return NextResponse.json(responseData);
-    
-  } catch (error) {
-    console.error("🔥 CRITICAL API ERROR:", error);
+  } catch (error: unknown) {
+    if (getErrorMessage(error).includes(":")) {
+      const [status, msg] = getErrorMessage(error).split(":");
+      return NextResponse.json({ error: msg }, { status: parseInt(status) });
+    }
+    console.error("?? CRITICAL API ERROR:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

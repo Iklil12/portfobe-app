@@ -2,7 +2,7 @@
 
 import React from 'react';
 import useSWR from 'swr';
-import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
 
 const fetcher = (url: string) => fetch(url).then((res) => {
   if (!res.ok) return { projects: [] };

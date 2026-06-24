@@ -1,12 +1,15 @@
 // File: app/api/certificates/route.ts
 import { NextResponse } from "next/server";
-import { invalidatePortfolioCache } from '@/lib/redis';
-import prisma from "@/lib/prisma";
+import { invalidatePortfolioCache } from '@/shared/lib/redis';
+import prisma from '@/shared/lib/prisma';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { logActivity } from "@/lib/activity";
-import { checkRateLimit } from "@/lib/rate-limit";
-import { getEffectivePlan } from "@/lib/planUtils";
+import { authOptions } from '@/entities/user/api/auth';
+import { logActivity } from '@/shared/lib/activity';
+import { checkRateLimit } from '@/shared/lib/rate-limit';
+import { getEffectivePlan } from '@/features/billing';
+import { ProjectSchema } from '@/shared/lib/validations';
+import { handleApiError } from '@/shared/lib/apiError';
+import { getErrorMessage } from '@/shared/lib/errorHelper';
 
 
 // MENGAMBIL SERTIFIKAT USER DENGAN PAGINATION
@@ -49,8 +52,7 @@ export async function GET(req: Request) {
       }
     });
   } catch (error) {
-    console.error("GET Certificates Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
@@ -82,7 +84,7 @@ export async function POST(req: Request) {
       }
     }
 
-    const body = await req.json();
+    const body = ProjectSchema.parse(await req.json());
     const { title, description, mediaUrl, issuer, year, status } = body;
 
     if (!title || !mediaUrl || !issuer || !year) {
@@ -114,8 +116,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newCertificate, { status: 201 });
   } catch (error) {
-    console.error("POST Certificate Error:", error);
-    return NextResponse.json({ error: "Failed to save certificate." }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
@@ -135,7 +136,7 @@ export async function PATCH(req: Request) {
     });
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-    const body = await req.json();
+    const body = ProjectSchema.parse(await req.json());
     const { id, title, description, mediaUrl, issuer, year, status } = body;
 
     if (!id) {
@@ -175,8 +176,7 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json(updatedCertificate);
   } catch (error) {
-    console.error("PATCH Certificate Error:", error);
-    return NextResponse.json({ error: "Failed to update certificate." }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
@@ -225,8 +225,7 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ message: "Certificate moved to trash." });
   } catch (error) {
-    console.error("DELETE Certificate Error:", error);
-    return NextResponse.json({ error: "Failed to delete certificate." }, { status: 500 });
+    return handleApiError(error);
   }
 }
 

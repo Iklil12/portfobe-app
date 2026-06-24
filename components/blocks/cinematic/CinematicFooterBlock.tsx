@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function CinematicFooterBlock({ data, theme, isEditor }: any) {
     const fullName = data?.profile?.fullName || data?.fullName || "Jamal Arifin";

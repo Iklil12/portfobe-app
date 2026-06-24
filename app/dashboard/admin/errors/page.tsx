@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useDashboardLayout } from '@/hooks/useDashboardLayout';
+import { useDashboardLayout } from '@/features/dashboard';
 import { Lock, Radio, RefreshCw, Terminal, Loader2 } from 'lucide-react';
 
 export default function ErrorsPage() {

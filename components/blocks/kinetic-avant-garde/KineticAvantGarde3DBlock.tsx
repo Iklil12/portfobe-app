@@ -1,8 +1,8 @@
 "use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import dynamic from 'next/dynamic';
-const Interactive3DViewer = dynamic(() => import('@/components/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
+const Interactive3DViewer = dynamic(() => import('@/shared/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
 
 export function KineticAvantGarde3DBlock({ data, theme, isEditor }: any) {
     const allProjects = data?.projects || data?.user?.projects || [];

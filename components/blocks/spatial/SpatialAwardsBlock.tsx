@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function SpatialAwardsBlock({ data, theme, isMobileView, isCardPreview, isEditor }: any) {
   const awardItems = data?.certificates || data?.user?.certificates || [];

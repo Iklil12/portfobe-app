@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ScrollBlock } from './ScrollBlock';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function SplitScreenStudioTestimonialsBlock({ data, theme, isEditor }: any) {
     const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];

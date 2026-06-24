@@ -4,15 +4,15 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
-import { useSettings } from '@/hooks/useSettings';
-import { PortfolioStatusCard } from '@/components/features/settings/PortfolioStatusCard';
-import { EmailCredentialCard } from '@/components/features/settings/EmailCredentialCard';
-import { SecurityCard } from '@/components/features/settings/SecurityCard';
-import { DangerZoneCard } from '@/components/features/settings/DangerZoneCard';
-import { DeleteAccountModal } from '@/components/features/settings/DeleteAccountModal';
-import { UpdateEmailModal } from '@/components/features/settings/UpdateEmailModal';
-import { UpdatePasswordModal } from '@/components/features/settings/UpdatePasswordModal';
-import BillingContent from '@/components/features/settings/BillingContent';
+import { useSettings } from '@/features/settings';
+import { PortfolioStatusCard } from '@/features/settings';
+import { EmailCredentialCard } from '@/features/settings';
+import { SecurityCard } from '@/features/settings';
+import { DangerZoneCard } from '@/features/settings';
+import { DeleteAccountModal } from '@/features/settings';
+import { UpdateEmailModal } from '@/features/settings';
+import { UpdatePasswordModal } from '@/features/settings';
+import { BillingContent } from '@/features/settings';
 import { Shield, CreditCard, Plug, Cog, Loader2 } from 'lucide-react';
 
 const TABS = [

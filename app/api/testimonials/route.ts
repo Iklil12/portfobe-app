@@ -1,90 +1,40 @@
- import { NextResponse } from 'next/server';
-import { invalidatePortfolioCache } from '@/lib/redis';
-import prisma from "@/lib/prisma";
+import { getErrorMessage } from "@/shared/lib/errorHelper";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { logActivity } from "@/lib/activity";
-import { checkRateLimit } from "@/lib/rate-limit";
-import { getEffectivePlan } from "@/lib/planUtils";
-import sanitizeHtml from 'sanitize-html';
+import { authOptions } from "@/entities/user/api/auth";
+import { checkRateLimit } from "@/shared/lib/rate-limit";
+import { getTestimonials, createTestimonial } from "@/features/testimonials/model/testimonialService";
 
-
-// GET ALL TESTIMONIALS FOR USER
 export async function GET(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const testimonials = await prisma.testimonial.findMany({
-    where: { user: { email: session.user.email } },
-    orderBy: { order: 'asc' },
-  });
-
-  return NextResponse.json(testimonials);
+    const testimonials = await getTestimonials(session.user.email);
+    return NextResponse.json(testimonials);
+  } catch (error: unknown) {
+    console.error("GET Testimonials Error:", error);
+    return NextResponse.json({ error: "Failed to fetch testimonials" }, { status: 500 });
+  }
 }
 
-// CREATE NEW TESTIMONIAL
 export async function POST(req: Request) {
-  const rateLimitResponse = await checkRateLimit();
-  if (rateLimitResponse) return rateLimitResponse;
-
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-  // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
-  if (getEffectivePlan(user) === 'FREE') {
-    const testimonialCount = await prisma.testimonial.count({ where: { userId: user.id } });
-    if (testimonialCount >= 2) {
-      return NextResponse.json({ 
-        error: "Kuota FREE maksimal 2 testimoni. Silakan upgrade ke PRO.",
-        code: "QUOTA_EXCEEDED"
-      }, { status: 403 });
-    }
-  }
-  // -----------------------------------------
-
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const body = await req.json();
-    let { clientName, company, content, rating, avatarUrl } = body;
+    const testimonial = await createTestimonial(session.user.email, body);
+    return NextResponse.json(testimonial);
+  } catch (error: unknown) {
+    if (getErrorMessage(error).startsWith("QUOTA_EXCEEDED:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1], code: "QUOTA_EXCEEDED" }, { status: 403 });
+    if (getErrorMessage(error).startsWith("INVALID_DATA:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1] }, { status: 400 });
+    if (getErrorMessage(error).startsWith("INVALID_AVATAR:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1] }, { status: 400 });
+    if (getErrorMessage(error) === "USER_NOT_FOUND") return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-    if (!clientName || !content) {
-      return NextResponse.json({ error: "Nama dan isi testimoni wajib diisi" }, { status: 400 });
-    }
-
-    // Validate image URL source for security
-    if (avatarUrl && !avatarUrl.startsWith('https://res.cloudinary.com/') && !avatarUrl.startsWith('https://ui-avatars.com/')) {
-      return NextResponse.json({ error: "URL gambar tidak valid atau tidak tepercaya" }, { status: 400 });
-    }
-
-    // Sanitize input strings to prevent XSS
-    const sanitizeConfig = { allowedTags: [], allowedAttributes: {} };
-    clientName = sanitizeHtml(clientName || "", sanitizeConfig).trim();
-    company = sanitizeHtml(company || "", sanitizeConfig).trim();
-    content = sanitizeHtml(content || "", sanitizeConfig).trim();
-
-    const newTestimonial = await prisma.testimonial.create({
-      data: {
-        userId: user.id,
-        clientName,
-        company: company || null,
-        content,
-        rating: rating ? parseInt(rating) : 5,
-        avatarUrl: avatarUrl || null,
-        isVisible: true,
-        order: 0
-      }
-    });
-
-    await logActivity(user.id, "ADD_TESTIMONIAL", `Added testimonial from ${clientName}`);
-
-    await invalidatePortfolioCache(user.id);
-
-    
-
-    return NextResponse.json(newTestimonial);
-  } catch (error) {
     console.error("Error creating testimonial:", error);
     return NextResponse.json({ error: "Failed to create testimonial" }, { status: 500 });
   }

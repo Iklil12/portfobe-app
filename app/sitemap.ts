@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import prisma from '@/lib/prisma';
+import prisma from '@/shared/lib/prisma';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://portfo.be';

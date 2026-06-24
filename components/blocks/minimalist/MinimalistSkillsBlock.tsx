@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import { motion } from 'framer-motion';
 
 const premiumEase = [0.16, 1, 0.3, 1] as const;

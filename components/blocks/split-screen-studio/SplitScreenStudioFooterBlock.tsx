@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ScrollBlock } from './ScrollBlock';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import { useSplitScreenStudio } from './SplitScreenStudioContext';
 
 const ScrambleText = ({ text, isHovered }: { text: string, isHovered?: boolean }) => {

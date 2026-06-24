@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { FEATURE_LIST } from '@/lib/constants';
+import { FEATURE_LIST } from '@/shared/constants/constants';
 import { useInView } from 'framer-motion';
 
 export function FeaturesSection() {

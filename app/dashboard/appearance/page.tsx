@@ -2,17 +2,17 @@
 "use client";
 
 import React, { Suspense, useEffect, useState, useRef } from 'react';
-import { useThemeEditor } from '@/hooks/useThemeEditor';
+import { useThemeEditor } from '@/features/appearance';
 import Link from 'next/link';
-import { LeftPanel } from '@/components/features/appearance/LeftPanel';
-import { RightPanel } from '@/components/features/appearance/RightPanel';
-import { PreviewPanel } from '@/components/features/appearance/PreviewPanel';
-import { SeoSettingsModal } from '@/components/features/appearance/SeoSettingsModal';
-import { OfflineModal } from '@/components/features/appearance/OfflineModal';
-import { PublishSuccessModal } from '@/components/features/appearance/PublishSuccessModal';
+import { LeftPanel } from '@/features/appearance';
+import { RightPanel } from '@/features/appearance';
+import { PreviewPanel } from '@/features/appearance';
+import { SeoSettingsModal } from '@/features/appearance';
+import { OfflineModal } from '@/features/appearance';
+import { PublishSuccessModal } from '@/features/appearance';
 import { Loader2, ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Columns, ExternalLink, Minus, Plus, Maximize, Minimize, Globe, ChevronDown, Layers, FileText, Settings, Search, SlidersHorizontal, Layout, Crop, AlertTriangle } from 'lucide-react';
-import { THEMES_DATA } from '@/lib/themes';
-import { getEffectivePlan } from '@/lib/planUtils';
+import { THEMES_DATA } from '@/features/themes';
+import { getEffectivePlan } from '@/features/billing';
 
 function AppearanceEditor() {
   const { state, actions } = useThemeEditor();

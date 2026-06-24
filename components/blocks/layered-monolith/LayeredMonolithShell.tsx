@@ -5,9 +5,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { ReactLenis } from '@studio-freight/react-lenis';
-import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
 import { AnimatePresence, motion } from 'framer-motion';
-import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { UniversalPlayer } from '@/shared/ui/UniversalPlayer';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function LayeredMonolithExpertiseBlock({ data, theme, isEditor = false }: any) {
     const services = data?.services || data?.user?.services || [

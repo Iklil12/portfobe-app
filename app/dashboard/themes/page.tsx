@@ -1,11 +1,11 @@
 "use client";
 
 import React from 'react';
-import { useThemes } from '@/hooks/useThemes';
-import { ThemeSkeleton } from '@/components/features/themes/ThemeSkeleton';
-import { ThemeHeader } from '@/components/features/themes/ThemeHeader';
-import { ThemeGrid } from '@/components/features/themes/ThemeGrid';
-import { ProBanner } from '@/components/features/themes/ProBanner';
+import { useThemes } from '@/features/themes';
+import { ThemeSkeleton } from '@/features/themes';
+import { ThemeHeader } from '@/features/themes';
+import { ThemeGrid } from '@/features/themes';
+import { ProBanner } from '@/features/themes';
 import { 
   LayoutGrid, 
   Gift, 

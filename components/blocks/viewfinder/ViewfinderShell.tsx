@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ViewfinderProvider, useViewfinder } from './ViewfinderContext';
-import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
-import { EditableText } from '@/components/ui/EditableText';
-import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { UniversalPlayer } from '@/shared/ui/UniversalPlayer';
+import { EditableText } from '@/shared/ui/EditableText';
+import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
 
 function ViewfinderShellContent({ children, theme, isEditor, isCardPreview, data }: any) {
     const { selectedMedia, setSelectedMedia } = useViewfinder();

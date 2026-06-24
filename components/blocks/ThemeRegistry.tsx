@@ -262,6 +262,6 @@ export const SplitScreenStudioTestimonialsBlock = dynamic(() => import('./split-
 export const SplitScreenStudioSkillsBlock = dynamic(() => import('./split-screen-studio/SplitScreenStudioSkillsBlock').then(mod => mod.SplitScreenStudioSkillsBlock));
 export const SplitScreenStudioExperienceBlock = dynamic(() => import('./split-screen-studio/SplitScreenStudioExperienceBlock').then(mod => mod.SplitScreenStudioExperienceBlock));
 export const SplitScreenStudioFooterBlock = dynamic(() => import('./split-screen-studio/SplitScreenStudioFooterBlock').then(mod => mod.SplitScreenStudioFooterBlock));
-export const UniversalPlayer = dynamic(() => import('@/components/ui/UniversalPlayer').then(mod => mod.UniversalPlayer));
-export const BlockEditorWrapper = dynamic(() => import('@/components/features/appearance/BlockEditorWrapper').then(mod => mod.BlockEditorWrapper));
+export const UniversalPlayer = dynamic(() => import('@/shared/ui/UniversalPlayer').then(mod => mod.UniversalPlayer));
+export const BlockEditorWrapper = dynamic(() => import('@/features/appearance').then(mod => mod.BlockEditorWrapper));
 export const VideoShowcaseRenderer = dynamic(() => import('./video-showcase/VideoShowcaseRenderer'));

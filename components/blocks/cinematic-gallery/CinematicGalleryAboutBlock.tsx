@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useCinematicGallery } from './CinematicGalleryShell';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function CinematicGalleryAboutBlock(props: any) {
     const { isEditor, data, theme } = useCinematicGallery();

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function AcidTechAboutBlock({ data, theme, isEditor, isCardPreview }: any) {
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";

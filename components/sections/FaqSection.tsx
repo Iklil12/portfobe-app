@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { FAQ_LIST } from '@/lib/constants';
+import { FAQ_LIST } from '@/shared/constants/constants';
 
 export function FaqSection() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);

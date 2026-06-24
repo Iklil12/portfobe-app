@@ -8,12 +8,12 @@ import {
   Layers, 
   Plus 
 } from 'lucide-react';
-import { GithubIcon } from '@/components/ui/Icons';
+import { GithubIcon } from '@/shared/ui/Icons';
 
 // Import Modular Components
-import { ManualPenpotManager } from '@/components/features/integrations/ManualPenpotManager';
-import { ManualCanvaManager } from '@/components/features/integrations/ManualCanvaManager';
-import { GitHubManager } from '@/components/features/integrations/GitHubManager';
+import { ManualPenpotManager } from '@/features/integrations';
+import { ManualCanvaManager } from '@/features/integrations';
+import { GitHubManager } from '@/features/integrations';
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 

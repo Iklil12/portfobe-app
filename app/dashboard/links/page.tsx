@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { useLinks } from '@/hooks/useLinks';
-import { LinksHeader } from '@/components/features/links/LinksHeader';
-import { EmptyLinks } from '@/components/features/links/EmptyLinks';
-import { LinkItem } from '@/components/features/links/LinkItem';
-import { DeleteLinkModal } from '@/components/features/links/DeleteLinkModal';
-import { LinksSkeleton, AddingSkeleton } from '@/components/features/links/LinksSkeleton';
+import { useLinks } from '@/features/links';
+import { LinksHeader } from '@/features/links';
+import { EmptyLinks } from '@/features/links';
+import { LinkItem } from '@/features/links';
+import { DeleteLinkModal } from '@/features/links';
+import { LinksSkeleton, AddingSkeleton } from '@/features/links';
 
 export default function LinksPage() {
   const { state, actions } = useLinks();

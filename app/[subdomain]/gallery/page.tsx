@@ -1,6 +1,6 @@
 import React from 'react';
-import prisma from '@/lib/prisma';
-import GalleryPageView from '@/components/features/gallery/GalleryPageView';
+import prisma from '@/shared/lib/prisma';
+import { GalleryPageView } from '@/features/gallery';
 import { redirect } from 'next/navigation';
 
 export default async function FullGalleryPage({ 
@@ -65,7 +65,7 @@ export default async function FullGalleryPage({
 
   // Sign Bunny URL
   const tokenKey = process.env.BUNNY_API_KEY || 'default_secret';
-  const { signBunnyUrl } = require("@/lib/bunnySign");
+  const { signBunnyUrl } = require('@/shared/lib/bunnySign');
   const projects = filteredProjects.map((proj: any) => {
     if (proj.projectType === 'video') {
       return {

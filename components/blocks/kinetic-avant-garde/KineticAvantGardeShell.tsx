@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function KineticAvantGardeShell({ children, theme, isMobileView = false, isCardPreview = false, isEditor = false }: any) {
     const containerRef = useRef<HTMLDivElement>(null);

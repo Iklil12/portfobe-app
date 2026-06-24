@@ -4,11 +4,11 @@ import React, { useRef, useState, useEffect, createContext, useContext } from 'r
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { useEscapeKey } from '@/hooks/useEscapeKey';
-import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
+import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
+import { UniversalPlayer } from '@/shared/ui/UniversalPlayer';
 import { AnimatePresence, motion } from 'framer-motion';
 import Lenis from 'lenis';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function EditorialFooterBlock({ data, theme, isEditor, isCardPreview }: any) {
     const [isCopied, setIsCopied] = useState(false);

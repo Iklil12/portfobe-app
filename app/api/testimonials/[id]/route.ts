@@ -1,103 +1,49 @@
- import { NextResponse } from 'next/server';
-import { invalidatePortfolioCache } from '@/lib/redis';
-import prisma from "@/lib/prisma";
+import { getErrorMessage } from "@/shared/lib/errorHelper";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { logActivity } from "@/lib/activity";
-import { checkRateLimit } from "@/lib/rate-limit";
-import sanitizeHtml from 'sanitize-html';
+import { authOptions } from "@/entities/user/api/auth";
+import { checkRateLimit } from "@/shared/lib/rate-limit";
+import { updateTestimonial, deleteTestimonial } from "@/features/testimonials/model/testimonialService";
 
-// UPDATE TESTIMONIAL
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const rateLimitResponse = await checkRateLimit();
-  if (rateLimitResponse) return rateLimitResponse;
-
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const resolvedParams = await params;
-    const id = resolvedParams.id;
     const body = await req.json();
-    
-    // Verify ownership
-    const existingTestimonial = await prisma.testimonial.findUnique({ where: { id } });
-    if (!existingTestimonial || existingTestimonial.userId !== user.id) {
-      return NextResponse.json({ error: "Testimonial tidak ditemukan atau akses ditolak" }, { status: 404 });
-    }
 
-    let { clientName, company, content, rating, avatarUrl, isVisible, order } = body;
+    const testimonial = await updateTestimonial(session.user.email, resolvedParams.id, body);
+    return NextResponse.json(testimonial);
+  } catch (error: unknown) {
+    if (getErrorMessage(error).startsWith("FORBIDDEN:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1] }, { status: 404 });
+    if (getErrorMessage(error).startsWith("INVALID_AVATAR:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1] }, { status: 400 });
+    if (getErrorMessage(error) === "USER_NOT_FOUND") return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-    // Validate image URL source for security
-    if (avatarUrl && !avatarUrl.startsWith('https://res.cloudinary.com/') && !avatarUrl.startsWith('https://ui-avatars.com/')) {
-      return NextResponse.json({ error: "URL gambar tidak valid atau tidak tepercaya" }, { status: 400 });
-    }
-
-    // Sanitize input strings to prevent XSS
-    const sanitizeConfig = { allowedTags: [], allowedAttributes: {} };
-    if (clientName !== undefined) clientName = sanitizeHtml(clientName || "", sanitizeConfig).trim();
-    if (company !== undefined) company = sanitizeHtml(company || "", sanitizeConfig).trim();
-    if (content !== undefined) content = sanitizeHtml(content || "", sanitizeConfig).trim();
-
-    const updatedTestimonial = await prisma.testimonial.update({
-      where: { id },
-      data: {
-        clientName: clientName !== undefined ? clientName : existingTestimonial.clientName,
-        company: company !== undefined ? company : existingTestimonial.company,
-        content: content !== undefined ? content : existingTestimonial.content,
-        rating: rating !== undefined ? parseInt(rating) : existingTestimonial.rating,
-        avatarUrl: avatarUrl !== undefined ? avatarUrl : existingTestimonial.avatarUrl,
-        isVisible: isVisible !== undefined ? isVisible : existingTestimonial.isVisible,
-        order: order !== undefined ? parseInt(order) : existingTestimonial.order,
-      }
-    });
-
-    await logActivity(user.id, "UPDATE_TESTIMONIAL", `Updated testimonial from ${updatedTestimonial.clientName}`);
-
-    await invalidatePortfolioCache(user.id);
-
-    
-
-    return NextResponse.json(updatedTestimonial);
-  } catch (error) {
     console.error("Error updating testimonial:", error);
     return NextResponse.json({ error: "Failed to update testimonial" }, { status: 500 });
   }
 }
 
-// DELETE TESTIMONIAL
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const rateLimitResponse = await checkRateLimit();
-  if (rateLimitResponse) return rateLimitResponse;
-
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
   try {
+    const rateLimitResponse = await checkRateLimit();
+    if (rateLimitResponse) return rateLimitResponse;
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const resolvedParams = await params;
-    const id = resolvedParams.id;
-
-    // Verify ownership
-    const existingTestimonial = await prisma.testimonial.findUnique({ where: { id } });
-    if (!existingTestimonial || existingTestimonial.userId !== user.id) {
-      return NextResponse.json({ error: "Testimonial tidak ditemukan atau akses ditolak" }, { status: 404 });
-    }
-
-    await prisma.testimonial.delete({ where: { id } });
-    await logActivity(user.id, "DELETE_TESTIMONIAL", `Deleted testimonial from ${existingTestimonial.clientName}`);
-
-    await invalidatePortfolioCache(user.id);
-
-    
+    await deleteTestimonial(session.user.email, resolvedParams.id);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: unknown) {
+    if (getErrorMessage(error).startsWith("FORBIDDEN:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1] }, { status: 404 });
+    if (getErrorMessage(error) === "USER_NOT_FOUND") return NextResponse.json({ error: "User not found" }, { status: 404 });
+
     console.error("Error deleting testimonial:", error);
     return NextResponse.json({ error: "Failed to delete testimonial" }, { status: 500 });
   }

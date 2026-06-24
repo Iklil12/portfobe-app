@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TestimonialSection } from '@/components/features/testimonials/TestimonialSection';
+import { TestimonialSection } from '@/features/testimonials';
 
 const premiumEase = [0.16, 1, 0.3, 1] as const;
 

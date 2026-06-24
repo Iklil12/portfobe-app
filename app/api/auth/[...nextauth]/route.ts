@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
-import { authOptions } from "@/lib/auth"; // <-- Ambil pengaturan dari folder lib
-
+import { authOptions } from "@/entities/user/api/auth";
 export { authOptions }; // Re-export agar import lama tidak patah
 const handler = NextAuth(authOptions);
 

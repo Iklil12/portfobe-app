@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { useCinematicGallery } from './CinematicGalleryShell';
 import dynamic from 'next/dynamic';
-const Interactive3DViewer = dynamic(() => import('@/components/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
-import { EditableText } from '@/components/ui/EditableText';
+const Interactive3DViewer = dynamic(() => import('@/shared/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function CinematicGallery3DBlock({ isEditor, theme }: any) {
     const { data } = useCinematicGallery();

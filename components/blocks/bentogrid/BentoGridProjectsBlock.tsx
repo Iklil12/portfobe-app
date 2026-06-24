@@ -2,8 +2,8 @@
 
 import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { getVideoThumbnail } from '@/lib/videoUtils';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
 import { BentoGridContext } from './BentoGridShell';
 
 export function BentoGridProjectsBlock({ data, theme, isEditor, isCardPreview }: any) {

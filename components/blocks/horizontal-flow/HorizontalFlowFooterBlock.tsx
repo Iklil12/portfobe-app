@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function HorizontalFlowFooterBlock({ data, theme, isEditor }: any) {
     const fullName = data?.profile?.fullName || data?.fullName || "Elevate Studio";

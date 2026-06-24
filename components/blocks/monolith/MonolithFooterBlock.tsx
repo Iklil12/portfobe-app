@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function MonolithFooterBlock({ data, theme, isEditor, isCardPreview }: any) {
     const [isCopied, setIsCopied] = useState(false);

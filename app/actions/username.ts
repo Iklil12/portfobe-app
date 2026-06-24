@@ -1,9 +1,9 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import prisma from '@/shared/lib/prisma';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
+import { authOptions } from '@/entities/user/api/auth';
+import { isForbiddenUsername } from '@/shared/constants/reserved-usernames';
 import { revalidatePath } from "next/cache";
 
 export async function updateUsername(newUsername: string) {

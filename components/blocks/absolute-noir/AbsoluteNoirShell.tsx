@@ -3,8 +3,8 @@
 import React, { useEffect } from 'react';
 import Lenis from 'lenis';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UniversalPlayer } from '@/components/ui/UniversalPlayer';
-import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { UniversalPlayer } from '@/shared/ui/UniversalPlayer';
+import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
 import { useAbsoluteNoir, AbsoluteNoirProvider } from './AbsoluteNoirContext';
 
 const ShellContent = ({ children, theme, isMobileView, isCardPreview }: any) => {

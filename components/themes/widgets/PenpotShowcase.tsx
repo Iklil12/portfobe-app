@@ -2,7 +2,7 @@
 
 import React from 'react';
 import useSWR from 'swr';
-import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
 
 export type StatsVariant = 'monochrome' | 'classic' | 'acid' | 'aura' | 'noir' | 'bento' | 'brutalism' | 'cinematic' | 'editorial' | 'midnight' | 'monolith' | 'spatial' | 'split' | 'viewfinder' | 'minimalist' | 'split-screen-studio' | 'horizontal-flow' | 'kinetic-avant-garde' | 'layered-monolith' | 'nexus-noir';
 

@@ -3,9 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { EditableText } from '@/components/ui/EditableText';
-import { getVideoThumbnail } from '@/lib/videoUtils';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { EditableText } from '@/shared/ui/EditableText';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
 import { useMidnightEmulsion } from './MidnightEmulsionContext';
 
 export function MidnightEmulsionProjectsBlock({ data, theme, isEditor, isCardPreview }: any) {

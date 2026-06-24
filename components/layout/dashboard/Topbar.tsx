@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import GlobalSearch from "@/components/GlobalSearch";
-import { NotificationItem } from '@/hooks/useDashboardLayout';
+import { NotificationItem } from '@/features/dashboard';
 import { 
   Menu, 
   Bell, 

@@ -2,7 +2,7 @@
 
 import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 import { BrutalismContext } from './BrutalismShell';
 
 export function BrutalismServicesBlock({ data, theme, isEditor, isCardPreview }: any) {

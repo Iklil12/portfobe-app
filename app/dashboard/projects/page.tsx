@@ -3,12 +3,12 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 
-import { useProjects } from '@/hooks/useProjects';
-import { ProjectHeader } from '@/components/features/projects/ProjectHeader';
-import { ProjectFilterTabs } from '@/components/features/projects/ProjectFilterTabs';
-import { ProjectList } from '@/components/features/projects/ProjectList';
-import { ProjectFormModal } from '@/components/features/projects/ProjectFormModal';
-import { DeleteConfirmModal } from '@/components/features/projects/DeleteConfirmModal';
+import { useProjects } from '@/entities/portfolio';
+import { ProjectHeader } from '@/features/projects';
+import { ProjectFilterTabs } from '@/features/projects';
+import { ProjectList } from '@/features/projects';
+import { ProjectFormModal } from '@/features/projects';
+import { DeleteConfirmModal } from '@/features/projects';
 
 export default function ProjectsPage() {
   const { state, actions } = useProjects();

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export default function MinimalistFaq({ data, theme, isEditor }: { data: any, theme?: any, isEditor?: boolean }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);

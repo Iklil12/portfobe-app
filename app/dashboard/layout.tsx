@@ -5,11 +5,11 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import OnboardingModal from "@/components/OnboardingModal";
 import WelcomeBannerModal from "@/components/WelcomeBannerModal";
-import { useDashboardLayout } from '@/hooks/useDashboardLayout';
+import { useDashboardLayout } from '@/features/dashboard';
 import { Sidebar } from '@/components/layout/dashboard/Sidebar';
 import { Topbar } from '@/components/layout/dashboard/Topbar';
 import { TopBanner } from '@/components/layout/dashboard/TopBanner';
-import { GlobalAnnouncementBanner } from '@/components/features/announcements/GlobalAnnouncementBanner';
+import { GlobalAnnouncementBanner } from '@/features/announcements';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

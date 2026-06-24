@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export default function NexusNoirFaq({ data, theme, isEditor }: { data: any, theme?: any, isEditor?: boolean }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);

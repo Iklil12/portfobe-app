@@ -1,35 +1,23 @@
+import { getErrorMessage } from "@/shared/lib/errorHelper";
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { safeStringifyJson, safeParseJson } from "@/lib/safeJson";
-import { getEffectivePlan } from "@/lib/planUtils";
+import { authOptions } from "@/entities/user/api/auth";
+import { getDrafts, createDraft, updateDraft, deleteDraft } from "@/features/themes/model/themeService";
 
-
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-    const drafts = await prisma.themeDraft.findMany({
-      where: { userId: user.id },
-      orderBy: { updatedAt: 'desc' },
-      include: {
-        projects: {
-          orderBy: { orderIndex: 'asc' }
-        }
-      }
-    });
-
+    
+    const drafts = await getDrafts(session.user.email);
     return NextResponse.json(drafts);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("GET Drafts Error:", error);
-    return NextResponse.json({ error: "Failed to fetch draft" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch drafts" }, { status: 500 });
   }
 }
 
@@ -38,94 +26,12 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-    // Cek Batasan Plan
-    const effectivePlan = getEffectivePlan(user);
-    if (effectivePlan === 'FREE') {
-      return NextResponse.json({ error: "Drafts feature is exclusive to PRO/SUPREME.", code: "FEATURE_LOCKED" }, { status: 403 });
-    }
-
-    const draftCount = await prisma.themeDraft.count({ where: { userId: user.id } });
-    const maxDrafts = effectivePlan === 'SUPREME' ? 5 : 2;
-
-    if (draftCount >= maxDrafts) {
-      return NextResponse.json({ error: `Max drafts limit (${maxDrafts}) reached for ${effectivePlan} plan.` }, { status: 400 });
-    }
-
     const body = await req.json();
-    const { 
-        name,
-        description,
-        themeTemplate, 
-        themeColor, 
-        fontHeading, 
-        fontBody, 
-        buttonShape, 
-        cardStyle,
-        splashScreen,
-        customTexts,
-        selectedProjects
-    } = body;
-
-    // === SANITASI INPUT ===
-    const sanitize = (str: string, maxLen: number) => 
-      str.replace(/<[^>]*>/g, '').replace(/[<>"'&]/g, '').trim().slice(0, maxLen);
-
-    const safeName = name ? sanitize(String(name), 50) : `Draft ${new Date().toLocaleDateString()}`;
-    const safeDescription = description ? sanitize(String(description), 200) : null;
-
-    if (safeName.length < 1) {
-      return NextResponse.json({ error: "Draft name cannot be empty." }, { status: 400 });
-    }
-
-    let stringifiedCustomTexts = "{}";
-    if (customTexts !== undefined) {
-      stringifiedCustomTexts = safeStringifyJson(customTexts);
-      if (stringifiedCustomTexts.length > 5000) {
-        return NextResponse.json({ error: "customTexts payload too large." }, { status: 400 });
-      }
-    }
-
-    let finalSelectedProjects = selectedProjects;
-    if (Array.isArray(selectedProjects) && selectedProjects.length > 0) {
-      const validProjects = await prisma.project.findMany({
-        where: { userId: user.id, id: { in: selectedProjects }, deletedAt: null },
-        select: { id: true }
-      });
-      const validIds = validProjects.map(p => p.id);
-      finalSelectedProjects = selectedProjects.filter((id: string) => validIds.includes(id));
-    }
-
-    const designTokens = {
-      themeColor: themeColor || '#000000',
-      fontHeading: fontHeading || 'Inter',
-      fontBody: fontBody || 'Inter',
-      buttonShape: buttonShape || 'rounded',
-      cardStyle: cardStyle || 'flat'
-    };
-
-    const newDraft = await prisma.themeDraft.create({
-      data: {
-        userId: user.id,
-        name: safeName,
-        description: safeDescription,
-        themeTemplate: themeTemplate || 'minimalist',
-        splashScreen: splashScreen || false,
-        customTexts: stringifiedCustomTexts,
-        designTokens: JSON.stringify(designTokens),
-        projects: Array.isArray(finalSelectedProjects) && finalSelectedProjects.length > 0 ? {
-          create: finalSelectedProjects.map((projectId: string, index: number) => ({
-            projectId: projectId,
-            orderIndex: index
-          }))
-        } : undefined
-      }
-    });
-
-    return NextResponse.json(newDraft);
-  } catch (error) {
+    const draft = await createDraft(session.user.email, body);
+    return NextResponse.json(draft, { status: 201 });
+  } catch (error: unknown) {
+    if (getErrorMessage(error).startsWith("FEATURE_LOCKED:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1], code: "FEATURE_LOCKED" }, { status: 403 });
+    if (getErrorMessage(error).startsWith("MAXIMUM_DRAFTS_REACHED:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1], code: "MAXIMUM_DRAFTS_REACHED" }, { status: 403 });
     console.error("POST Draft Error:", error);
     return NextResponse.json({ error: "Failed to save draft" }, { status: 500 });
   }
@@ -136,94 +42,12 @@ export async function PUT(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
     const body = await req.json();
-    const { 
-        id,
-        name,
-        description,
-        themeTemplate, 
-        themeColor, 
-        fontHeading, 
-        fontBody, 
-        buttonShape, 
-        cardStyle,
-        splashScreen,
-        customTexts,
-        selectedProjects
-    } = body;
-
-    if (!id) return NextResponse.json({ error: "Draft ID is required" }, { status: 400 });
-
-    // Verifikasi kepemilikan
-    const existingDraft = await prisma.themeDraft.findUnique({ where: { id } });
-    if (!existingDraft || existingDraft.userId !== user.id) {
-      return NextResponse.json({ error: "Draft not found" }, { status: 404 });
-    }
-
-    let stringifiedCustomTexts = existingDraft.customTexts;
-    if (customTexts !== undefined) {
-      stringifiedCustomTexts = safeStringifyJson(customTexts);
-      if (stringifiedCustomTexts.length > 5000) {
-        return NextResponse.json({ error: "customTexts payload too large." }, { status: 400 });
-      }
-    }
-
-    // === SANITASI INPUT ===
-    const sanitize = (str: string, maxLen: number) => 
-      str.replace(/<[^>]*>/g, '').replace(/[<>"'&]/g, '').trim().slice(0, maxLen);
-
-    const safeName = name !== undefined ? sanitize(String(name), 50) : undefined;
-    const safeDescription = description !== undefined ? sanitize(String(description), 200) : undefined;
-
-    let finalSelectedProjects = selectedProjects;
-    if (Array.isArray(selectedProjects) && selectedProjects.length > 0) {
-      const validProjects = await prisma.project.findMany({
-        where: { userId: user.id, id: { in: selectedProjects }, deletedAt: null },
-        select: { id: true }
-      });
-      const validIds = validProjects.map(p => p.id);
-      finalSelectedProjects = selectedProjects.filter((id: string) => validIds.includes(id));
-    }
-
-    let existingTokens: any = {};
-    if (existingDraft.designTokens) {
-      existingTokens = safeParseJson(existingDraft.designTokens, {});
-    }
-
-    const designTokens = {
-      themeColor: themeColor !== undefined ? themeColor : existingTokens.themeColor,
-      fontHeading: fontHeading !== undefined ? fontHeading : existingTokens.fontHeading,
-      fontBody: fontBody !== undefined ? fontBody : existingTokens.fontBody,
-      buttonShape: buttonShape !== undefined ? buttonShape : existingTokens.buttonShape,
-      cardStyle: cardStyle !== undefined ? cardStyle : existingTokens.cardStyle
-    };
-
-    const updatedDraft = await prisma.themeDraft.update({
-      where: { id },
-      data: {
-        ...(safeName !== undefined && { name: safeName }),
-        ...(safeDescription !== undefined && { description: safeDescription }),
-        ...(themeTemplate !== undefined && { themeTemplate }),
-        ...(splashScreen !== undefined && { splashScreen }),
-        customTexts: stringifiedCustomTexts,
-        designTokens: JSON.stringify(designTokens),
-        ...(Array.isArray(finalSelectedProjects) && {
-          projects: {
-            deleteMany: {},
-            create: finalSelectedProjects.map((projectId: string, index: number) => ({
-              projectId: projectId,
-              orderIndex: index
-            }))
-          }
-        })
-      }
-    });
-
-    return NextResponse.json(updatedDraft);
-  } catch (error) {
+    const draft = await updateDraft(session.user.email, body);
+    return NextResponse.json(draft);
+  } catch (error: unknown) {
+    if (getErrorMessage(error) === "INVALID_DATA") return NextResponse.json({ error: "ID draft diperlukan" }, { status: 400 });
+    if (getErrorMessage(error) === "FORBIDDEN") return NextResponse.json({ error: "Draft tidak ditemukan" }, { status: 404 });
     console.error("PUT Draft Error:", error);
     return NextResponse.json({ error: "Failed to update draft" }, { status: 500 });
   }
@@ -234,34 +58,15 @@ export async function DELETE(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
-
+    const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "Draft ID is required" }, { status: 400 });
 
-    const existingDraft = await prisma.themeDraft.findUnique({ where: { id } });
-    if (!existingDraft || existingDraft.userId !== user.id) {
-      return NextResponse.json({ error: "Draft not found" }, { status: 404 });
-    }
-
-    await prisma.themeDraft.delete({ where: { id } });
-
-    // Jika draft yang dihapus adalah draft yang sedang live, reset publishedDraftId di SiteAppearance
-    const appearance = await prisma.siteAppearance.findUnique({ where: { userId: user.id } });
-    if (appearance && appearance.publishedDraftId === id) {
-      await prisma.siteAppearance.update({
-        where: { userId: user.id },
-        data: { publishedDraftId: null }
-      });
-    }
-
+    await deleteDraft(session.user.email, id);
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: unknown) {
+    if (getErrorMessage(error) === "FORBIDDEN") return NextResponse.json({ error: "Draft not found" }, { status: 404 });
     console.error("DELETE Draft Error:", error);
     return NextResponse.json({ error: "Failed to delete draft" }, { status: 500 });
   }
 }
-

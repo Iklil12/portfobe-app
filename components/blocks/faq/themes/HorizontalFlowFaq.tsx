@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export default function HorizontalFlowFaq({ data, theme, isEditor }: { data: any, theme?: any, isEditor?: boolean }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);

@@ -1,97 +1,27 @@
-// app/api/search/route.ts
+import { getErrorMessage } from "@/shared/lib/errorHelper";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth"; // Sesuaikan jika beda
-import prisma from "@/lib/prisma"; // Tanpa kurung kurawal sesuai fix sebelumnya
-import { redis } from "@/lib/redis";
+import { authOptions } from "@/entities/user/api/auth";
+import { globalSearch } from "@/features/search/model/searchService";
 
 export async function GET(request: Request) {
-  const session = await getServerSession(authOptions);
-  const { searchParams } = new URL(request.url);
-  const query = searchParams.get("q") || "";
-
-  // Jangan mencari jika user belum login atau ketikan kurang dari 2 huruf
-  if (!session || query.length < 2) return NextResponse.json([]);
-
   try {
+    const session = await getServerSession(authOptions);
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get("q") || "";
+
+    if (!session || query.length < 2) return NextResponse.json([]);
+
     const userId = (session.user as any)?.id;
-    const cacheKey = `search:${userId}:${query.trim().toLowerCase()}`;
+    if (!userId) return NextResponse.json([]);
 
-    // 1. Cek Redis terlebih dahulu
-    try {
-      const cachedSearch = await redis.get(cacheKey);
-      if (cachedSearch) {
-        return NextResponse.json(JSON.parse(cachedSearch));
-      }
-    } catch(e) {}
-
-    // 🚀 GOD MODE: Cari ke 4 tabel sekaligus secara paralel!
-    const [projects, links, certificates, activities] = await Promise.all([
-      // 1. Cari Proyek (berdasarkan judul)
-      prisma.project.findMany({
-        where: { userId, title: { contains: query} },
-        take: 3
-      }),
-      // 2. Cari Tautan/Link (berdasarkan nama platform, misal "Instagram")
-      prisma.link.findMany({
-        where: { userId, platform: { contains: query} },
-        take: 3
-      }),
-      // 3. Cari Sertifikat (berdasarkan judul sertifikat)
-      prisma.certificate.findMany({
-        where: { userId, title: { contains: query} },
-        take: 2
-      }),
-      // 4. Cari Riwayat Aktivitas (berdasarkan detail aktivitas)
-      prisma.activity.findMany({
-        where: { userId, details: { contains: query} },
-        take: 2
-      })
-    ]);
-
-    // 📦 FORMATTING: Ubah semua data menjadi format seragam untuk GlobalSearch
-    const results = [
-      ...projects.map(p => ({
-        id: `prj-${p.id}`, 
-        title: p.title, 
-        group: "Hasil: Proyek & Karya", 
-        icon: "fa-paint-roller", 
-        link: `/dashboard/projects?highlight=${p.id}`, 
-        type: "link"
-      })),
-      ...links.map(l => ({
-        id: `lnk-${l.id}`, 
-        title: l.platform, 
-        group: "Hasil: Tautan Sosial", 
-        icon: "fa-link", 
-        link: `/dashboard/links?edit=${l.id}`, 
-        type: "link"
-      })),
-      ...certificates.map(c => ({
-        id: `cert-${c.id}`, 
-        title: c.title, 
-        group: "Hasil: Sertifikat", 
-        icon: "fa-certificate", 
-        link: `/dashboard/certificates?edit=${c.id}`, 
-        type: "link"
-      })),
-      ...activities.map(a => ({
-        id: `actlog-${a.id}`, 
-        title: a.details, // Menampilkan log aktivitas ("Anda mengubah tema menjadi brutalism")
-        group: "Hasil: Riwayat Aktivitas", 
-        icon: "fa-history", 
-        link: `/dashboard/analytics?tab=history`, 
-        type: "link"
-      }))
-    ];
-
-    // 2. Simpan ke Redis selama 3 Menit (180 Detik)
-    try {
-      await redis.set(cacheKey, JSON.stringify(results), 'EX', 180);
-    } catch(e) {}
-
+    const results = await globalSearch(userId, query);
     return NextResponse.json(results);
-  } catch (error) {
+  } catch (error: unknown) {
+    if (getErrorMessage(error).includes(":")) {
+      const [status, msg] = getErrorMessage(error).split(":");
+      return NextResponse.json({ error: msg }, { status: parseInt(status) });
+    }
     console.error("Search API Error:", error);
     return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
   }

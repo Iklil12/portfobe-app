@@ -1,35 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth"; 
-import { checkRateLimit } from "@/lib/rate-limit";
+import { getErrorMessage } from "@/shared/lib/errorHelper";
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/entities/user/api/auth";
+import { checkRateLimit } from "@/shared/lib/rate-limit";
+import { deleteUserAccount } from "@/features/settings/model/accountService";
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Tidak diizinkan" }, { status: 401 });
-    }
-
-    const rateLimitResponse = await checkRateLimit(5, 15 * 60 * 1000);
+    const rateLimitResponse = await checkRateLimit();
     if (rateLimitResponse) return rateLimitResponse;
 
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const { emailInput } = await req.json();
-    if (!emailInput || emailInput.toLowerCase() !== session.user.email.toLowerCase()) {
-      return NextResponse.json({ error: "Email konfirmasi yang Anda masukkan tidak cocok." }, { status: 400 });
-    }
 
-    // Perintah sakti untuk menghapus User dari Database MySQL Hostinger
-    // Catatan: Pastikan di schema.prisma Anda, relasi tabel Profile memiliki opsi onDelete: Cascade
-    // agar data profil ikut terhapus otomatis saat user dihapus.
-    await prisma.user.delete({
-      where: { email: session.user.email }
-    });
+    await deleteUserAccount(session.user.email, emailInput);
 
-    return NextResponse.json({ message: "Akun berhasil dihapus selamanya" });
-  } catch (error) {
-    console.error("Error Hapus Akun:", error);
-    return NextResponse.json({ error: "Failed to delete account. Check database relations." }, { status: 500 });
+    return NextResponse.json({ message: "Account permanently deleted." }, { status: 200 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? getErrorMessage(error) : "Unknown error";
+    if (message === "USER_NOT_FOUND") return NextResponse.json({ error: "User not found." }, { status: 404 });
+    if (message === "EMAIL_MISMATCH") return NextResponse.json({ error: "Email confirmation does not match." }, { status: 400 });
+
+    console.error("DELETE_ACCOUNT_ERROR:", error);
+    return NextResponse.json({ error: "Failed to delete account." }, { status: 500 });
   }
 }

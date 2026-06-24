@@ -3,9 +3,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { getVideoThumbnail } from '@/lib/videoUtils';
-import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { getVideoThumbnail } from '@/shared/lib/videoUtils';
+import { EditableText } from '@/shared/ui/EditableText';
 import { useObsidianMedia } from './ObsidianContext';
 
 export function ObsidianProjectsBlock({ data, theme, isEditor }: any) {

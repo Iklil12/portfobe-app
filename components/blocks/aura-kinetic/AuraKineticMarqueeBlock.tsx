@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function AuraKineticMarqueeBlock({ data, theme, isEditor }: any) {
   const profession = data?.profile?.profession || data?.profession || "Digital Experience Designer";

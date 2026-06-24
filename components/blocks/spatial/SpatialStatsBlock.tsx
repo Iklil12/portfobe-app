@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { EditableText } from '@/components/ui/EditableText';
+import { EditableText } from '@/shared/ui/EditableText';
 
 export function SpatialStatsBlock({ data, theme, isEditor, isCardPreview }: any) {
   const projectCount = (data?.projects || data?.user?.projects || []).length;

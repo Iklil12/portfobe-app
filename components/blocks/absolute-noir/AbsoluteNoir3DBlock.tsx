@@ -3,8 +3,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
-const Interactive3DViewer = dynamic(() => import('@/components/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
-import { EditableText } from '@/components/ui/EditableText';
+const Interactive3DViewer = dynamic(() => import('@/shared/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
+import { EditableText } from '@/shared/ui/EditableText';
 
 const smoothEase = [0.33, 1, 0.68, 1] as any;
 const wireframeReveal = {

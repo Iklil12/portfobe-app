@@ -1,35 +1,25 @@
+import { getErrorMessage } from "@/shared/lib/errorHelper";
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit } from "@/shared/lib/rate-limit";
+import { checkSubdomainAvailability } from "@/features/profile/model/profileService";
 
 export async function GET(req: Request) {
   try {
-    // Rate limit: maks 10 cek per menit untuk mencegah enumerasi subdomain
     const rateLimitResponse = await checkRateLimit(10, 60000);
     if (rateLimitResponse) return rateLimitResponse;
+
     const { searchParams } = new URL(req.url);
-    const subdomain = searchParams.get('subdomain');
+    const subdomain = searchParams.get("subdomain");
 
-    if (!subdomain) {
-      return NextResponse.json({ error: "Subdomain wajib diisi" }, { status: 400 });
+    if (!subdomain) return NextResponse.json({ error: "Subdomain wajib diisi" }, { status: 400 });
+
+    const isAvailable = await checkSubdomainAvailability(subdomain);
+    return NextResponse.json({ available: isAvailable });
+  } catch (error: unknown) {
+    if (getErrorMessage(error).startsWith("FORBIDDEN_NAME:")) {
+      return NextResponse.json({ available: false, error: getErrorMessage(error).split(":")[1] });
     }
-
-    const forbiddenCheck = isForbiddenUsername(subdomain);
-    if (forbiddenCheck.forbidden) {
-      return NextResponse.json({ available: false, error: forbiddenCheck.reason });
-    }
-
-    // Cari apakah ada yang pakai subdomain ini di tabel profile
-    const existingProfile = await prisma.profile.findUnique({
-      where: { subdomain: subdomain }
-    });
-
-    // Kembalikan status 'available' (Tersedia: true/false)
-    return NextResponse.json({ available: !existingProfile });
-
-  } catch (error) {
-    console.error("Error Check Subdomain:", error);
+    console.error("Check Subdomain Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

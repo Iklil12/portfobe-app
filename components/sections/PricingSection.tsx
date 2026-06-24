@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
 import { useState, useEffect, useRef } from 'react';
 
 const STARTER_FEATURES = [

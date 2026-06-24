@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useDashboardLayout } from '@/hooks/useDashboardLayout';
+import { useDashboardLayout } from '@/features/dashboard';
 import { useRouter } from 'next/navigation';
 import { Lock, Save, Layers, Wand2, TrendingUp, Loader2 } from 'lucide-react';
 

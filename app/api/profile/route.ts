@@ -1,202 +1,81 @@
+import { getErrorMessage } from "@/shared/lib/errorHelper";
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { authOptions } from "@/entities/user/api/auth";
+import { checkRateLimit } from "@/shared/lib/rate-limit";
+import { getFullProfile, checkSubdomainAvailability, updateProfileFull, patchProfilePartial } from "@/features/profile/model/profileService";
+import { ProfileUpdateSchema } from "@/shared/lib/validations";
 
-// --- 1. FUNGSI GET (AMBIL DATA PROFIL LENGKAP) ---
+function handleProfileError(error: unknown) {
+  if (getErrorMessage(error) === "USER_NOT_FOUND") return NextResponse.json({ error: "User not found" }, { status: 404 });
+  if (getErrorMessage(error) === "MISSING_DATA") return NextResponse.json({ error: "Invalid or missing data" }, { status: 400 });
+  if (getErrorMessage(error) === "INVALID_SUBDOMAIN_LENGTH") return NextResponse.json({ error: "Subdomain must be 3-15 characters." }, { status: 400 });
+  if (getErrorMessage(error) === "SUBDOMAIN_TAKEN") return NextResponse.json({ error: "This URL is already taken." }, { status: 400 });
+  if (getErrorMessage(error).startsWith("FORBIDDEN_NAME:")) return NextResponse.json({ error: getErrorMessage(error).split(":")[1], available: false, message: getErrorMessage(error).split(":")[1] }, { status: 400 });
+  
+  console.error("Profile Service Error:", error);
+  return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+}
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: {
-        id: true,
-        email: true,
-        plan: true, // Penting agar UI Profil tahu kalau user sudah PRO
-        isLive: true,
-        profile: true,
-        siteAppearance: true,
-        integrations: true,
-        lastUsernameChange: true
-      } 
-    });
-
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-    // Kita gabungkan User + Profile + Plan ke satu level agar mudah dibaca Frontend
-    return NextResponse.json({
-      ...user,
-      ...user.profile,
-      plan: user.plan // Pastikan plan ada di level utama
-    });
-  } catch (error) {
-    console.error("Error Fetch Profile:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    const result = await getFullProfile(session.user.email);
+    return NextResponse.json(result);
+  } catch (error: unknown) {
+    return handleProfileError(error);
   }
 }
 
-// --- 2. FUNGSI POST (VALIDASI SUBDOMAIN CEPAT) ---
 export async function POST(req: Request) {
   try {
-    // Rate limit: maks 10 cek per menit untuk mencegah enumerasi subdomain
     const rateLimitResponse = await checkRateLimit(10, 60000);
     if (rateLimitResponse) return rateLimitResponse;
 
     const body = await req.json();
 
-    if (body.action === 'check_subdomain') {
+    if (body.action === "check_subdomain") {
       const { subdomain } = body;
-      if (!subdomain) return NextResponse.json({ error: "Subdomain kosong" }, { status: 400 });
-
-      const check = isForbiddenUsername(subdomain);
-      if (check.forbidden) {
-        return NextResponse.json({ available: false, message: check.reason });
-      }
-
-      // Cukup gunakan count (lebih cepat daripada findUnique)
-      const existingCount = await prisma.profile.count({
-        where: { subdomain: subdomain.toLowerCase() }
-      });
-
-      if (existingCount > 0) {
-        return NextResponse.json({ available: false, message: "URL ini sudah dipakai kreator lain." });
-      }
-
+      const isAvailable = await checkSubdomainAvailability(subdomain);
+      if (!isAvailable) return NextResponse.json({ available: false, message: "This URL is already taken by another creator." });
       return NextResponse.json({ available: true });
     }
 
-    return NextResponse.json({ error: "Aksi tidak dikenali" }, { status: 400 });
-  } catch (error) {
-    console.error("Check Subdomain Error:", error);
-    return NextResponse.json({ error: "Failed to check." }, { status: 500 });
+    return NextResponse.json({ error: "Unrecognized action" }, { status: 400 });
+  } catch (error: unknown) {
+    if (getErrorMessage(error).startsWith("FORBIDDEN_NAME:")) {
+      return NextResponse.json({ available: false, message: getErrorMessage(error).split(":")[1] });
+    }
+    return handleProfileError(error);
   }
 }
 
-// --- 3. FUNGSI PUT (UPDATE DATA PROFIL) ---
 export async function PUT(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const body = await req.json();
-    const { subdomain, fullName, profession } = body;
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: { id: true, password: true, email: true } // Ambil password & email untuk webhook
-    });
-
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-    if (subdomain) {
-      // Validasi simpel
-      if (subdomain.length < 3 || subdomain.length > 15) {
-        return NextResponse.json({ error: "Subdomain harus 3-15 karakter." }, { status: 400 });
-      }
-
-      const check = isForbiddenUsername(subdomain);
-      if (check.forbidden) {
-        return NextResponse.json({ error: check.reason }, { status: 400 });
-      }
-      
-      const existingProfile = await prisma.profile.findUnique({
-        where: { subdomain: subdomain.toLowerCase() },
-        select: { userId: true }
-      });
-
-      if (existingProfile && existingProfile.userId !== user.id) {
-        return NextResponse.json({ error: "URL ini sudah dipakai orang lain." }, { status: 400 });
-      }
-    }
-
-    const updatedProfile = await prisma.profile.upsert({
-      where: { userId: user.id },
-      update: {
-        ...(subdomain !== undefined && { subdomain: subdomain.toLowerCase() }),
-        ...(fullName !== undefined && { fullName }),
-        ...(profession !== undefined && { profession })
-      },
-      create: {
-        userId: user.id,
-        fullName: fullName || "Creator",
-        subdomain: subdomain ? subdomain.toLowerCase() : null,
-        profession: profession || null
-      }
-    });
-
-    // Pemicu Webhook n8n (Asynchronous)
-    const loginType = user.password === 'GOOGLE_LOGIN_NO_PASSWORD' ? 'Google Auth' : 'Email/Password';
-    fetch("https://n8n.portfo.be/webhook/0b096974-e914-473e-95de-3fa994929c9f", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-webhook-secret": process.env.N8N_WEBHOOK_SECRET || "",
-      },
-      body: JSON.stringify({
-        fullName: updatedProfile.fullName,
-        email: user.email,
-        loginType: loginType,
-        subdomain: updatedProfile.subdomain,
-      })
-    }).catch(err => {
-      console.error("Gagal mengirim webhook ke n8n:", err);
-    });
-
+    const body = ProfileUpdateSchema.parse(await req.json());
+    const updatedProfile = await updateProfileFull(session.user.email, body);
+    
     return NextResponse.json({ message: "Profile updated", profile: updatedProfile });
-  } catch (error) {
-    console.error("Error Update Profile:", error);
-    return NextResponse.json({ error: "Failed to process data." }, { status: 500 });
+  } catch (error: unknown) {
+    return handleProfileError(error);
   }
 }
 
-// --- 4. FUNGSI PATCH (PARTIAL UPDATE UNTUK INLINE EDITING) ---
 export async function PATCH(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const body = await req.json();
-    const allowedFields = ['fullName', 'profession', 'bio', 'subdomain', 'location'];
-    
-    // Filter only allowed fields
-    const updateData: any = {};
-    for (const key of Object.keys(body)) {
-      if (allowedFields.includes(key)) {
-        updateData[key] = body[key];
-      }
-    }
-
-    if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: { id: true }
-    });
-
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-    const updatedProfile = await prisma.profile.upsert({
-      where: { userId: user.id },
-      update: updateData,
-      create: {
-        userId: user.id,
-        fullName: updateData.fullName || "Creator",
-        subdomain: updateData.subdomain || null,
-        profession: updateData.profession || null,
-        bio: updateData.bio || null
-      }
-    });
+    const body = ProfileUpdateSchema.parse(await req.json());
+    const updatedProfile = await patchProfilePartial(session.user.email, body);
 
     return NextResponse.json({ message: "Profile partially updated", profile: updatedProfile });
-  } catch (error) {
-    console.error("Error Patch Profile:", error);
-    return NextResponse.json({ error: "Failed to process patch data." }, { status: 500 });
+  } catch (error: unknown) {
+    return handleProfileError(error);
   }
 }
-

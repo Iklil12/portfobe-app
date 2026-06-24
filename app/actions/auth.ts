@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import prisma from '@/shared/lib/prisma';
 import bcrypt from "bcrypt";
 import { Resend } from "resend"; // <-- 1. IMPORT RESEND DI SINI
 import { headers } from "next/headers";

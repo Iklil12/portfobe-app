@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { LazyImage } from '@/components/ui/LazyImage';
-import { EditableText } from '@/components/ui/EditableText';
+import { LazyImage } from '@/shared/ui/LazyImage';
+import { EditableText } from '@/shared/ui/EditableText';
 import { BentoGridContext } from './BentoGridShell';
 
 const getSocialIcon = (platform: string) => {

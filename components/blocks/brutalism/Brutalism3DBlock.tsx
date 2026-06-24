@@ -3,7 +3,7 @@
 import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
-const Interactive3DViewer = dynamic(() => import('@/components/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
+const Interactive3DViewer = dynamic(() => import('@/shared/ui/Interactive3DViewer').then(mod => mod.Interactive3DViewer), { ssr: false });
 import { BrutalismContext } from './BrutalismShell';
 
 export function Brutalism3DBlock({ data, theme, isEditor, isCardPreview }: any) {

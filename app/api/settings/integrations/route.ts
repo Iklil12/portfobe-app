@@ -1,84 +1,39 @@
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { getErrorMessage } from "@/shared/lib/errorHelper";
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/entities/user/api/auth";
+import { getIntegrations, upsertIntegration } from "@/features/integrations/model/integrationService";
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const integrations = await getIntegrations(session.user.email);
+    return NextResponse.json({ integrations });
+  } catch (error: unknown) {
+    if (getErrorMessage(error).includes(":")) {
+      const [status, msg] = getErrorMessage(error).split(":");
+      return NextResponse.json({ error: msg }, { status: parseInt(status) });
     }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: {
-        integrations: {
-          select: {
-            id: true,
-            provider: true,
-            providerId: true,
-            settings: true,
-            cacheExpiresAt: true,
-            updatedAt: true,
-          }
-        }
-      }
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    return NextResponse.json({ integrations: user.integrations });
-  } catch (error) {
-    console.error('Get Integrations Error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { provider, providerId } = await req.json();
-
-    if (!provider || !providerId) {
-      return NextResponse.json({ error: 'Provider and ProviderId are required' }, { status: 400 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    // Upsert integration
-    const integration = await prisma.integration.upsert({
-      where: {
-        userId_provider: {
-          userId: user.id,
-          provider: provider,
-        }
-      },
-      update: {
-        providerId: providerId,
-      },
-      create: {
-        userId: user.id,
-        provider: provider,
-        providerId: providerId,
-      }
-    });
+    const integration = await upsertIntegration(session.user.email, provider, providerId);
 
     return NextResponse.json({ success: true, integration });
-  } catch (error) {
-    console.error('Integration Error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } catch (error: unknown) {
+    if (getErrorMessage(error).includes(":")) {
+      const [status, msg] = getErrorMessage(error).split(":");
+      return NextResponse.json({ error: msg }, { status: parseInt(status) });
+    }
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
