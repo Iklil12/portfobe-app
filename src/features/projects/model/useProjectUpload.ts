@@ -47,7 +47,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
       
       if (res.ok && data.secure_url) {
         setMediaUrl(data.secure_url);
-        showToast({ message: "Gambar berhasil diunggah dengan cepat", id: "upload-asset-success", icon: "✨" });
+        showToast({ message: "Image uploaded successfully", id: "upload-asset-success", icon: "✨" });
       } else {
         showToast({ message: data.error?.message || "Failed to upload image", id: "upload-asset-fail", icon: "❌" });
       }
@@ -116,7 +116,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
         },
         onSuccess: function () {
           setMediaUrl(guid);
-          showToast({ message: "Video 100% berhasil diunggah", id: "upload-edge-success", icon: "🚀" });
+          showToast({ message: "Video uploaded successfully", id: "upload-edge-success", icon: "🚀" });
           setIsUploadingVideo(false);
           if (fileInputRef.current) fileInputRef.current.value = '';
         },

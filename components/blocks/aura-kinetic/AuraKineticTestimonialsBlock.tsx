@@ -16,7 +16,7 @@ export function AuraKineticTestimonialsBlock({ data, theme, isEditor }: any) {
       { id: '3', clientName: "Elena Rodriguez", company: "Vanguard", content: "An eye for motion and space. Every interaction feels deliberate and satisfying.", rating: 4 }
   ] : testimonials;
 
-  const cardRadiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-3xl';
+  
   const cardStyle = theme?.cardStyle || 'glassmorphism';
   const cardStyleClassDark = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#18181b] border-transparent shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border-2 border-[var(--hl)] shadow-[6px_6px_0_0_var(--hl)]' : cardStyle === 'flat' ? 'bg-[#0a0a0c] border-2 border-white/20' : 'bg-white/5 border border-white/10 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.1)] hover:border-white/20 hover:bg-white/10';
 
@@ -26,6 +26,18 @@ export function AuraKineticTestimonialsBlock({ data, theme, isEditor }: any) {
   };
 
   const animationTrigger = isEditor ? "animate" : "whileInView";
+
+  
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-xl';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
+
+    
+
 
   return (
     <section id="testimonials" className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-24 md:py-32">
@@ -47,16 +59,16 @@ export function AuraKineticTestimonialsBlock({ data, theme, isEditor }: any) {
                 <motion.div
                     key={t.id || i}
                     initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
-                    className={`group relative p-8 transition-all duration-500 ${cardRadiusClass} ${cardStyleClassDark} overflow-hidden flex flex-col justify-between`}
+                    className={`group relative p-8 transition-all duration-500 ${cardShape} ${cardStyleClassDark} overflow-hidden flex flex-col justify-between`}
                 >
                     <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--hl)] opacity-0 group-hover:opacity-10 blur-[50px] transition-opacity duration-500 rounded-full"></div>
 
                     <div>
                         <div className="flex items-center gap-4 mb-6">
                             {t.avatarUrl ? (
-                                <LazyImage src={t.avatarUrl} alt={authorName} className="w-12 h-12 rounded-full object-cover border border-white/20" />
+                                <LazyImage src={t.avatarUrl} alt={authorName} className={`w-12 h-12 ${btnShape} object-cover border border-white/20`} />
                             ) : (
-                                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center font-bold text-lg border border-white/20 text-[var(--hl)]">
+                                <div className={`w-12 h-12 ${btnShape} bg-white/10 flex items-center justify-center font-bold text-lg border border-white/20 text-[var(--hl)]`}>
                                     {authorName.charAt(0)}
                                 </div>
                             )}

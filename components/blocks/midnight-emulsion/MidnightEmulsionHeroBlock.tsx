@@ -13,6 +13,29 @@ export function MidnightEmulsionHeroBlock({ data, theme, isEditor, isCardPreview
   const profession = data?.profile?.profession || data?.profession || "Art Director & Designer";
   const bio = data?.profile?.bio || data?.bio || "Creating clean, functional, and visually striking digital experiences with extreme attention to detail.";
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-3xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#030508] shadow-[4px_4px_0_0_rgba(255,255,255,0.1)]';
+      if (style === 'flat') return 'border border-white/10 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#080b11] shadow-[0_10px_40px_rgba(0,0,0,0.5)]';
+      return 'border border-white/10 bg-[#06080c] shadow-2xl';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
   const userEmail = data?.email || data?.user?.email || `hello@${subdomain}.com`;
 
   const nameParts = fullName.trim().split(' ');
@@ -23,7 +46,7 @@ export function MidnightEmulsionHeroBlock({ data, theme, isEditor, isCardPreview
   const cleanAvatar = rawAvatar.replace(/"/g, '').trim();
   const displayAvatar = (cleanAvatar !== "" && cleanAvatar !== "null") ? cleanAvatar : `https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop`;
 
-  const radiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';
+
 
   const handleCopyEmail = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -79,7 +102,7 @@ export function MidnightEmulsionHeroBlock({ data, theme, isEditor, isCardPreview
       {/* Header Profile Info */}
       <header className="absolute top-10 left-10 right-10 @lg:top-14 @lg:left-24 @lg:right-24 z-20 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 shadow-lg relative">
+          <div className={`w-8 h-8 ${btnShape} overflow-hidden border border-white/10 shadow-lg relative`}>
             <LazyImage src={displayAvatar} alt={displayFirstName} className="w-full h-full object-cover grayscale" />
           </div>
           <span className="font-sans font-bold tracking-[0.25em] text-white uppercase text-[10px]">
@@ -143,7 +166,7 @@ export function MidnightEmulsionHeroBlock({ data, theme, isEditor, isCardPreview
           >
             <button 
               onClick={handleCopyEmail} 
-              className={`group relative overflow-hidden px-8 py-4 bg-white/[0.02] hover:bg-[var(--hl)] border border-white/10 hover:border-[var(--hl)] text-white hover:text-[#030508] font-mono text-[10px] font-bold uppercase tracking-widest transition-all duration-500 min-w-[200px] flex items-center justify-center gap-3 backdrop-blur-md shadow-2xl ${radiusClass}`}
+              className={`group relative overflow-hidden px-8 py-4 bg-white/[0.02] hover:bg-[var(--hl)] border border-white/10 hover:border-[var(--hl)] text-white hover:text-[#030508] font-mono text-[10px] font-bold uppercase tracking-widest transition-all duration-500 min-w-[200px] flex items-center justify-center gap-3 backdrop-blur-md shadow-2xl ${btnShape}`}
             >
               {/* Button light sweep */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none z-0" />

@@ -49,7 +49,7 @@ export function SpatialProjectsBlock({ data, theme, isMobileView, isCardPreview,
                     <motion.div
                         key={i}
                         variants={auraAnim}
-                        className={`group flex flex-col gap-4 cursor-pointer ${colSpan}`}
+                        className={`group flex flex-col cursor-pointer ${colSpan} ${cardStyleClass} ${cardRadiusClass} p-3 @md:p-4 transition-all duration-700 hover:shadow-[0_0_40px_rgba(var(--hl-rgb),0.15)] hover:border-[var(--hl)]`}
                         onClick={() => {
                             if (isVideo || p.projectType === 'photo') {
                                 setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
@@ -59,8 +59,8 @@ export function SpatialProjectsBlock({ data, theme, isMobileView, isCardPreview,
                         }}
                     >
                         {/* Image Container */}
-                        <div className={`w-full aspect-[4/3] ${cardRadiusClass} overflow-hidden relative ${cardStyleClass} p-2 transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(var(--hl-rgb),0.15)] group-hover:border-[var(--hl)]/30`}>
-                            <div className="w-full h-full rounded-[16px] overflow-hidden relative bg-[#0a0a0a]">
+                        <div className={`w-full aspect-[4/3] ${cardRadiusClass} overflow-hidden relative mb-4`}>
+                            <div className={`w-full h-full ${cardRadiusClass} overflow-hidden relative bg-[#0a0a0a]`}>
                                 <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" />
                                 
                                 {/* Hover Overlay */}
@@ -69,7 +69,7 @@ export function SpatialProjectsBlock({ data, theme, isMobileView, isCardPreview,
                                         ? 'bg-transparent opacity-100' 
                                         : 'bg-black/20 backdrop-blur-[2px] opacity-0 group-hover:opacity-100'
                                     }`}>
-                                    <div className={`rounded-full flex items-center justify-center border transition-all duration-500
+                                    <div className={`${radiusClass} flex items-center justify-center border transition-all duration-500
                                         ${isVideo
                                             ? 'w-12 h-12 bg-white/10 backdrop-blur-md border-white/20 scale-100 group-hover:scale-110 group-hover:bg-white/20'
                                             : 'w-14 h-14 bg-white/10 backdrop-blur-md border-white/20 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100'

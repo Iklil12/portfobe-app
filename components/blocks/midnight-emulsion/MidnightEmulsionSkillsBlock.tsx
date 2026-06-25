@@ -19,6 +19,29 @@ const getStaggerContainer = (delayStart = 0, staggerGap = 0.08) => ({
 });
 
 export function MidnightEmulsionSkillsBlock({ theme, isEditor }: any) {
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-3xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#030508] shadow-[4px_4px_0_0_rgba(255,255,255,0.1)]';
+      if (style === 'flat') return 'border border-white/10 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#080b11] shadow-[0_10px_40px_rgba(0,0,0,0.5)]';
+      return 'border border-white/10 bg-[#06080c] shadow-2xl';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
     const customTexts = theme?.customTexts || {};
     const getCustomText = (key: string, fallback: string) => customTexts[key] || fallback;
 
@@ -102,7 +125,7 @@ export function MidnightEmulsionSkillsBlock({ theme, isEditor }: any) {
                             <motion.div 
                                 key={index} 
                                 variants={fadeUp}
-                                className="group relative bg-[#06080c] border border-white/5 p-4 @md:p-6 hover:border-[var(--hl)]/30 hover:bg-[#080b11] transition-all duration-500 rounded-lg flex flex-col justify-between min-h-[130px] @md:min-h-[170px]"
+                                className={`group relative ${cardStyleClass} ${cardShape} p-4 @md:p-6 hover:border-[var(--hl)]/30 hover:bg-[#080b11] transition-all duration-500 flex flex-col justify-between min-h-[130px] @md:min-h-[170px]`}
                             >
                                 {/* Top row: Index and Status */}
                                 <div className="flex justify-between items-center mb-2 @md:mb-4">
@@ -172,7 +195,7 @@ export function MidnightEmulsionSkillsBlock({ theme, isEditor }: any) {
                                 {isEditor && (
                                     <button
                                         onClick={(e) => handleRemoveItem(index, e)}
-                                        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
+                                        className={`absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white ${btnShape} w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg`}
                                         title="Delete Skill"
                                     >
                                         ✕

@@ -28,16 +28,28 @@ export function AuraKineticHeroBlock({ data, theme, isEditor }: any) {
 
   const animationTrigger = isEditor ? "animate" : "whileInView";
 
+  
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-xl';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
+
+    
+
+
   return (
     <section className="relative z-10 w-full max-w-[1400px] mx-auto min-h-[90vh] flex flex-col justify-center items-center text-center px-6 pt-20">
         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={staggerContainer} className="flex flex-col items-center">
 
             <motion.div variants={fadeUp} className="mb-8">
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-white/10 p-1 mb-6 mx-auto group">
-                    <LazyImage src={displayAvatar} alt={fullName} className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-700" />
+                <div className={`w-24 h-24 md:w-32 md:h-32 ${btnShape} overflow-hidden border-2 border-white/10 p-1 mb-6 mx-auto group`}>
+                    <LazyImage src={displayAvatar} alt={fullName} className={`w-full h-full object-cover ${btnShape} group-hover:scale-110 transition-transform duration-700`} />
                 </div>
-                <span className="px-4 py-2 bg-white/5 border border-white/10 backdrop-blur-md rounded-full font-sans text-xs font-semibold text-[var(--hl)] flex items-center gap-2 max-w-max mx-auto cursor-default hover:bg-white/10 transition-colors">
-                    <span className="w-2 h-2 rounded-full bg-[var(--hl)] animate-pulse shadow-[0_0_10px_var(--hl)]"></span>
+                <span className={`px-4 py-2 bg-white/5 border border-white/10 backdrop-blur-md ${btnShape} font-sans text-xs font-semibold text-[var(--hl)] flex items-center gap-2 max-w-max mx-auto cursor-default hover:bg-white/10 transition-colors`}>
+                    <span className={`w-2 h-2 ${btnShape} bg-[var(--hl)] animate-pulse shadow-[0_0_10px_var(--hl)]`}></span>
                     <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
                 </span>
             </motion.div>

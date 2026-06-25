@@ -10,6 +10,14 @@ import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
 const AuraKineticNavbar = ({ data, theme, isEditor, isCardPreview }: any) => {
     const [isScrolled, setIsScrolled] = useState(false);
 
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-xl';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
+
     useEffect(() => {
         // Matikan scroll detection di editor dan preview untuk menghindari jitter!
         if (isCardPreview || isEditor) return; 
@@ -44,7 +52,7 @@ const AuraKineticNavbar = ({ data, theme, isEditor, isCardPreview }: any) => {
             className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} left-0 w-full z-50 flex justify-center pointer-events-none transition-all duration-500 ease-in-out ${isScrolled ? 'top-6 px-4' : 'top-0 px-6 md:px-12 py-6'}`}
         >
             <nav
-                className={`pointer-events-auto flex items-center justify-between transition-all duration-500 ease-in-out ${isScrolled ? 'gap-4 md:gap-10 px-4 md:px-10 py-2 md:py-4 bg-white/10 border border-white/20 backdrop-blur-2xl rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.3)] w-[95%] md:w-full max-w-[1200px] hover:bg-white/15' : 'gap-4 md:gap-10 px-0 py-0 bg-transparent border-transparent w-[95%] md:w-full max-w-[1400px]'}`}
+                className={`pointer-events-auto flex items-center justify-between transition-all duration-500 ease-in-out ${isScrolled ? `gap-4 md:gap-10 px-4 md:px-10 py-2 md:py-4 bg-white/10 border border-white/20 backdrop-blur-2xl ${btnShape} shadow-[0_8px_32px_rgba(0,0,0,0.3)] w-[95%] md:w-full max-w-[1200px] hover:bg-white/15` : 'gap-4 md:gap-10 px-0 py-0 bg-transparent border-transparent w-[95%] md:w-full max-w-[1400px]'}`}
             >
                 <span className={`font-sans font-bold tracking-tight text-white transition-all duration-500 ease-in-out ${isScrolled ? 'text-base md:text-2xl' : 'text-xl md:text-4xl'}`}>
                     <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} /><span className="text-[var(--hl)]">.</span>
@@ -59,7 +67,7 @@ const AuraKineticNavbar = ({ data, theme, isEditor, isCardPreview }: any) => {
                     </a>
                 </div>
 
-                <a href={`mailto:${userEmail}`} className={`font-sans font-bold uppercase tracking-widest text-black bg-[var(--hl)] hover:scale-105 transition-all duration-500 ease-in-out whitespace-nowrap ${isScrolled ? 'text-[10px] md:text-xs px-4 md:px-6 py-2 md:py-3 rounded-full' : 'text-[10px] md:text-sm px-5 md:px-8 py-2.5 md:py-4 rounded-full'}`}>
+                <a href={`mailto:${userEmail}`} className={`font-sans font-bold uppercase tracking-widest text-black bg-[var(--hl)] hover:scale-105 transition-all duration-500 ease-in-out whitespace-nowrap ${isScrolled ? `text-[10px] md:text-xs px-4 md:px-6 py-2 md:py-3 ${btnShape}` : `text-[10px] md:text-sm px-5 md:px-8 py-2.5 md:py-4 ${btnShape}`}`}>
                     <EditableText value={theme?.customTexts?.aura_nav_cta || 'Hire Me'} field="aura_nav_cta" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
                 </a>
             </nav>
@@ -173,7 +181,7 @@ export function AuraKineticShellContent({ data, theme, isMobileView, isCardPrevi
                           </div>
                           <button
                               onClick={() => setSelectedMedia(null)}
-                              className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group hover:bg-[var(--hl)] hover:border-[var(--hl)] transition-all duration-300"
+                              className={`w-12 h-12 ${btnShape} bg-white/5 border border-white/10 flex items-center justify-center group hover:bg-[var(--hl)] hover:border-[var(--hl)] transition-all duration-300`}
                           >
                               <i className="fas fa-times text-white group-hover:rotate-90 transition-transform duration-300"></i>
                           </button>

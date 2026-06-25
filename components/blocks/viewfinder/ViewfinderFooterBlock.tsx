@@ -5,7 +5,31 @@ import { motion } from 'framer-motion';
 import { EditableText } from '@/shared/ui/EditableText';
 
 export function ViewfinderFooterBlock({ data, theme, isEditor }: any) {
-  const animationTrigger = isEditor ? "animate" : "whileInView";
+  
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-md';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-2xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#050505] shadow-[4px_4px_0_0_rgba(255,255,255,0.2)]';
+      if (style === 'flat') return 'border border-white/20 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#0a0a0a] shadow-2xl';
+      return 'border border-white/10 bg-[#050505]';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
+const animationTrigger = isEditor ? "animate" : "whileInView";
   const cinematicEase = [0.16, 1, 0.3, 1] as any;
   const fadeUpVariants = {
       hidden: { opacity: 0, y: 40 },
@@ -103,7 +127,7 @@ export function ViewfinderFooterBlock({ data, theme, isEditor }: any) {
               className="flex gap-12 justify-center items-center my-8 select-none"
             >
               {/* Left Tape Spool */}
-              <div className="relative w-16 h-16 rounded-full border border-white/10 flex items-center justify-center bg-black/40">
+              <div className="relative w-16 h-16 ${btnShape} border border-white/10 flex items-center justify-center bg-black/40">
                 <svg className="w-12 h-12 text-white/15 motion-safe:animate-[spin_24s_linear_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <circle cx="12" cy="12" r="10" strokeDasharray="3 3" />
                   <path d="M12 2v22M2 12h22M5 5l14 14M5 19L19 5" />

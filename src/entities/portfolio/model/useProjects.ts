@@ -131,14 +131,14 @@ export function useProjects() {
       return;
     }
     if (projectType === 'certificate' && (!certIssuer || !certYear || !certStatus)) {
-      showToast({ message: 'Lembaga, Tahun, dan Pencapaian/Status wajib diisi untuk sertifikat!', id: 'err-cert', icon: 'fa-exclamation-triangle' });
+      showToast({ message: 'Issuer, Year, and Status are required for certificates!', id: 'err-cert', icon: 'fa-exclamation-triangle' });
       return;
     }
 
     if (isSubmittingRef.current) return;
     isSubmittingRef.current = true;
     setIsSubmitting(true);
-    const toastId = toast.loading(editingId ? 'Menyimpan perubahan...' : 'Mempublikasikan data...');
+    const toastId = toast.loading(editingId ? 'Saving changes...' : 'Publishing data...');
     const endpoint = projectType === 'certificate' ? '/api/certificates' : '/api/projects';
     const method = editingId ? 'PATCH' : 'POST';
 
@@ -154,16 +154,16 @@ export function useProjects() {
       });
 
       if (response.ok) {
-        toast.success(editingId ? 'Data diperbarui!' : 'Data berhasil dipublikasikan!', { id: toastId });
+        toast.success(editingId ? 'Data updated!' : 'Data published successfully!', { id: toastId });
         handleCloseModal();
         fetchAllData(); 
         setActiveTab(projectType || 'all'); 
       } else {
         const errorData = await response.json();
-        toast.error(errorData.error || 'Terjadi kesalahan sistem.', { id: toastId });
+        toast.error(errorData.error || 'System error occurred.', { id: toastId });
       }
     } catch (error) {
-      toast.error("Gagal terhubung ke server.", { id: toastId });
+      toast.error("Failed to connect to server.", { id: toastId });
     } finally {
       setIsSubmitting(false);
       isSubmittingRef.current = false;
@@ -195,10 +195,10 @@ export function useProjects() {
         fetchAllData(); 
       } else {
         const errorData = await response.json();
-        showToast({ message: errorData.error || 'Gagal menghapus data.', id: 'del-err', icon: 'fa-exclamation-triangle' });
+        showToast({ message: errorData.error || 'Failed to delete data.', id: 'del-err', icon: 'fa-exclamation-triangle' });
       }
     } catch (error) {
-      showToast({ message: 'Gagal terhubung ke server.', id: 'del-net-err', icon: 'fa-wifi' });
+      showToast({ message: 'Failed to connect to server.', id: 'del-net-err', icon: 'fa-wifi' });
     } finally {
       setIsDeleting(false);
       isDeletingRef.current = false;

@@ -22,7 +22,7 @@ export function AuraKinetic3DBlock({ data, theme, isEditor }: any) {
       }
   }
   
-  const cardRadiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-3xl';
+  
   const cardStyle = theme?.cardStyle || 'glassmorphism';
   const cardStyleClassDark = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#18181b] border-transparent shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border-2 border-[var(--hl)] shadow-[6px_6px_0_0_var(--hl)]' : cardStyle === 'flat' ? 'bg-[#0a0a0c] border-2 border-white/20' : 'bg-white/5 border border-white/10 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.1)] hover:border-white/20 hover:bg-white/10';
 
@@ -32,6 +32,18 @@ export function AuraKinetic3DBlock({ data, theme, isEditor }: any) {
   };
 
   const animationTrigger = isEditor ? "animate" : "whileInView";
+
+  
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-xl';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
+
+    
+
 
   return (
     <section className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-24 md:py-32 border-t border-white/5">
@@ -51,8 +63,8 @@ export function AuraKinetic3DBlock({ data, theme, isEditor }: any) {
                     initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                     className={`group relative block w-full`}
                 >
-                    <div className={`relative w-full aspect-[4/5] sm:aspect-square md:aspect-video ${cardRadiusClass} overflow-hidden ${cardStyleClassDark} p-1.5 md:p-3 transition-all duration-500 hover:border-[var(--hl)] hover:bg-white/10`}>
-                        <div className={`relative w-full h-full ${cardRadiusClass} overflow-hidden bg-[#0a0a0c]`}>
+                    <div className={`relative w-full aspect-[4/5] sm:aspect-square md:aspect-video ${cardShape} overflow-hidden ${cardStyleClassDark} p-1.5 md:p-3 transition-all duration-500 hover:border-[var(--hl)] hover:bg-white/10`}>
+                        <div className={`relative w-full h-full ${cardShape} overflow-hidden bg-[#0a0a0c]`}>
                             <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0c" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none opacity-80 group-hover:opacity-40 transition-opacity duration-500"></div>
 

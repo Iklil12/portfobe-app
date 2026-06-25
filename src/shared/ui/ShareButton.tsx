@@ -112,9 +112,9 @@ export function ShareButton({ title, text, image }: ShareButtonProps) {
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="font-display font-bold text-xl md:text-2xl text-white mb-1.5 md:mb-2 tracking-tight pr-8">Bagikan Artikel</h3>
+            <h3 className="font-display font-bold text-xl md:text-2xl text-white mb-1.5 md:mb-2 tracking-tight pr-8">Share Article</h3>
             <p className="text-white/50 text-xs md:text-sm font-sans mb-5 md:mb-6">
-              Pilih platform untuk membagikan wawasan teknikal ini kepada jaringan Anda.
+              Choose a platform to share this technical insight with your network.
             </p>
 
             {/* Link Preview Card */}

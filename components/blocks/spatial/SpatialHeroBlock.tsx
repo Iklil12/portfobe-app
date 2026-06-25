@@ -85,7 +85,7 @@ export function SpatialHeroBlock({ data, theme, isMobileView, isCardPreview, isE
           <motion.div variants={auraAnim} className={`flex items-center justify-center gap-4 mt-12 w-full flex-row`}>
               {/* Avatar Capsule */}
               <div className={`glass-panel p-1.5 pr-6 ${radiusClass} flex items-center gap-4 hover:scale-105 transition-transform duration-500`}>
-                  <div className="w-12 h-12 rounded-full overflow-hidden relative">
+                  <div className={`w-12 h-12 ${radiusClass} overflow-hidden relative`}>
                       <LazyImage src={displayAvatar} alt={fullName} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex flex-col text-left">

@@ -336,7 +336,7 @@ function CheckoutContent() {
             </div>
 
             {/* Free Domain Notice */}
-            {duration === 'yearly' && (
+            {duration === 'yearly' && plan === 'supreme' && (
               <div className="bg-emerald-500/[0.02] p-4 md:px-8 border-t border-emerald-500/10 flex gap-3 items-center rounded-none">
                 <div className="w-5 h-5 rounded-none bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
                   <Check className="w-3 h-3" />
@@ -388,7 +388,7 @@ function CheckoutContent() {
                       </div>
                     </div>
 
-                    {duration === 'yearly' && (
+                    {duration === 'yearly' && plan === 'supreme' && (
                       <div className="flex justify-between items-start animate-in fade-in slide-in-from-bottom-2">
                         <div>
                           <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Domain Kustom</h4>

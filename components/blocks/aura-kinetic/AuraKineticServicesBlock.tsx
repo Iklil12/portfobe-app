@@ -29,8 +29,9 @@ export function AuraKineticServicesBlock({ data, theme, isEditor }: any) {
         return 'rounded-full';
     };
     const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
 
-    const cardShape = theme?.cardStyle === 'hard' || theme?.cardStyle === 'hard-shadow' ? 'rounded-none' : 'rounded-3xl';
+
 
     const staggerReveal: any = {
         hidden: { opacity: 0 },
@@ -85,7 +86,7 @@ export function AuraKineticServicesBlock({ data, theme, isEditor }: any) {
                             {isEditor && (
                                 <button
                                     onClick={() => toggleVisibility(service.id, isVisible)}
-                                    className={`absolute top-4 right-4 z-30 px-2.5 py-0.5 text-[9px] font-mono border transition-all rounded-full ${
+                                    className={`absolute top-4 right-4 z-30 px-2.5 py-0.5 text-[9px] font-mono border transition-all ${btnShape} ${
                                         isVisible 
                                             ? 'border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white' 
                                             : 'border-green-500/30 text-green-400 hover:bg-green-500 hover:text-white'

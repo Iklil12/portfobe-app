@@ -10,6 +10,7 @@ export function useSettings() {
   // Status
   const [isLive, setIsLive] = useState(true);
   const [isLoadingStatus, setIsLoadingStatus] = useState(true);
+  const [isToggling, setIsToggling] = useState(false);
 
   // Google OAuth Detection
   const [isOAuthLinked, setIsOAuthLinked] = useState(false);
@@ -106,6 +107,9 @@ export function useSettings() {
   };
 
   const toggleStatus = async () => {
+    if (isToggling) return;
+    setIsToggling(true);
+    
     const newStatus = !isLive;
     setIsLive(newStatus); 
     
@@ -148,6 +152,8 @@ export function useSettings() {
       } else {
         toast.error('Failed to change status.', { id: loadingToast });
       }
+    } finally {
+      setIsToggling(false);
     }
   };
 
@@ -287,6 +293,7 @@ export function useSettings() {
       showPasswordModal,
       isSuccessModal,
       successData,
+      isToggling,
       isDeleting,
       isUpdatingEmail,
       isUpdatingPassword,

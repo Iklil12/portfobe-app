@@ -4,7 +4,9 @@ import Script from 'next/script';
 const ModelViewer = 'model-viewer' as any;
 
 export function Viewfinder3DViewer({ mediaUrl, bgColor }: { mediaUrl: string, bgColor?: string }) {
-  const [exposure, setExposure] = useState(1.0);
+  
+
+const [exposure, setExposure] = useState(1.0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [inView, setInView] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);

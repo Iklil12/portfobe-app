@@ -175,6 +175,7 @@ export async function activateTrial(userId: string) {
 
 export async function validateCoupon(email: string | null | undefined, code: string, plan: string, subtotal: number) {
   if (!code) throw new Error("400:Kode kupon diperlukan");
+  if (code.length > 50) throw new Error("400:Kode kupon tidak valid (terlalu panjang)");
 
   const coupon = await prisma.coupon.findUnique({
     where: { code: code.toUpperCase() }

@@ -6,6 +6,29 @@ import { LazyImage } from '@/shared/ui/LazyImage';
 import { EditableText } from '@/shared/ui/EditableText';
 
 export function MidnightEmulsionTestimonialsBlock({ data, theme, isEditor, isCardPreview }: any) {
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-3xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#030508] shadow-[4px_4px_0_0_rgba(255,255,255,0.1)]';
+      if (style === 'flat') return 'border border-white/10 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#080b11] shadow-[0_10px_40px_rgba(0,0,0,0.5)]';
+      return 'border border-white/10 bg-[#06080c] shadow-2xl';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
   const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
   const testimonials = data?.testimonials?.filter((t: any) => t.isVisible) || data?.user?.testimonials?.filter((t: any) => t.isVisible) || [];
 
@@ -43,7 +66,7 @@ export function MidnightEmulsionTestimonialsBlock({ data, theme, isEditor, isCar
               <motion.div
                 key={t.id || i}
                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
-                className="group flex flex-col p-8 @md:p-12 border border-white/5 bg-[#06080c] hover:border-[var(--hl)]/20 transition-all duration-700 rounded-xl relative overflow-hidden shadow-2xl"
+                className={`group flex flex-col p-8 @md:p-12 ${cardStyleClass} ${cardShape} hover:border-[var(--hl)]/20 transition-all duration-700 relative overflow-hidden`}
               >
                 {/* Scanning line sweep on hover */}
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--hl)]/5 to-transparent -translate-y-full group-hover:translate-y-full transition-transform duration-1000 ease-out pointer-events-none z-0" />
@@ -71,7 +94,7 @@ export function MidnightEmulsionTestimonialsBlock({ data, theme, isEditor, isCar
                 
                 {/* Client Profile details footer */}
                 <div className="flex items-center gap-4 relative z-10 mt-auto border-t border-white/5 pt-8">
-                  <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-white/10 group-hover:border-white/20 transition-colors shadow-lg">
+                  <div className={`w-12 h-12 ${btnShape} overflow-hidden shrink-0 border border-white/10 group-hover:border-white/20 transition-colors shadow-lg`}>
                     {t.avatarUrl ? (
                       <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover grayscale opacity-75 group-hover:opacity-100 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out" />
                     ) : (

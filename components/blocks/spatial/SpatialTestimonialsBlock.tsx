@@ -10,6 +10,7 @@ export function SpatialTestimonialsBlock({ data, theme, isMobileView, isCardPrev
 
   if (testimonials.length === 0 && !isEditor) return null;
 
+  const radiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-[24px]';
   const xlCardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[48px]' : 'rounded-[32px]';
   const cardStyle = theme?.cardStyle || 'flat';
   const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#0f1115] shadow-[0_30px_60px_rgba(0,0,0,0.8)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border border-white/20 shadow-[8px_8px_0_0_#ffffff]' : 'glass-panel border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]';
@@ -48,7 +49,7 @@ export function SpatialTestimonialsBlock({ data, theme, isMobileView, isCardPrev
                         "{t.content}"
                     </p>
                     <div className="flex items-center gap-4 mt-auto pt-6 border-t border-white/5">
-                        <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-white/10">
+                        <div className={`w-12 h-12 ${radiusClass} overflow-hidden shrink-0 border border-white/10`}>
                             {t.avatarUrl ? (
                                 <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover" />
                             ) : (

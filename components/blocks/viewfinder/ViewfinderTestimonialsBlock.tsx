@@ -6,7 +6,31 @@ import { EditableText } from '@/shared/ui/EditableText';
 import { LazyImage } from '@/shared/ui/LazyImage';
 
 export function ViewfinderTestimonialsBlock({ data, theme, isEditor, isCardPreview }: any) {
-  const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+  
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-md';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-2xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#050505] shadow-[4px_4px_0_0_rgba(255,255,255,0.2)]';
+      if (style === 'flat') return 'border border-white/20 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#0a0a0a] shadow-2xl';
+      return 'border border-white/10 bg-[#050505]';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
+const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
   const cinematicEase = [0.16, 1, 0.3, 1] as any;
   const fadeUpVariants = {
       hidden: { opacity: 0, y: 40 },

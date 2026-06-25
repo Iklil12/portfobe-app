@@ -20,6 +20,7 @@ export function SpatialAwardsBlock({ data, theme, isMobileView, isCardPreview, i
   if (awardItems.length === 0 && !isEditor) return null;
 
   const radiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-[24px]';
+  const cardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-[24px]';
   const xlCardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[48px]' : 'rounded-[32px]';
   const cardStyle = theme?.cardStyle || 'flat';
   const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#0f1115] shadow-[0_30px_60px_rgba(0,0,0,0.8)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border border-white/20 shadow-[8px_8px_0_0_#ffffff]' : 'glass-panel border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]';
@@ -102,14 +103,14 @@ export function SpatialAwardsBlock({ data, theme, isMobileView, isCardPreview, i
                                     className="overflow-hidden w-full flex flex-col items-center justify-center pb-6"
                                     onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
                                 >
-                                    <div className="relative w-full max-w-2xl aspect-[1.414/1] rounded-2xl border border-white/10 bg-white/[0.02] p-2.5 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] group/cert overflow-hidden mt-2">
+                                    <div className={`relative w-full max-w-2xl aspect-[1.414/1] ${cardRadiusClass} border border-white/10 bg-white/[0.02] p-2.5 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] group/cert overflow-hidden mt-2`}>
                                         {/* Neon Glow overlay */}
                                         <div className="absolute inset-0 bg-[var(--hl, #6366f1)]/5 blur-[40px] opacity-0 group-hover/cert:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
                                         
                                         <img 
                                             src={award.mediaUrl} 
                                             alt={award.title} 
-                                            className="w-full h-full rounded-xl object-contain transition-transform duration-500 group-hover/cert:scale-[1.01]"
+                                            className={`w-full h-full ${cardRadiusClass} object-contain transition-transform duration-500 group-hover/cert:scale-[1.01]`}
                                         />
                                         
                                         {/* Full Image Link Tag */}
@@ -118,7 +119,7 @@ export function SpatialAwardsBlock({ data, theme, isMobileView, isCardPreview, i
                                                 href={award.mediaUrl} 
                                                 target="_blank" 
                                                 rel="noreferrer" 
-                                                className="px-3.5 py-1.5 bg-black/80 border border-white/15 hover:border-white/30 text-[10px] font-mono text-white rounded-lg flex items-center gap-2 backdrop-blur-md shadow-lg"
+                                                className={`px-3.5 py-1.5 bg-black/80 border border-white/15 hover:border-white/30 text-[10px] font-mono text-white ${radiusClass} flex items-center gap-2 backdrop-blur-md shadow-lg`}
                                             >
                                                 <span>VIEW FULL IMAGE</span>
                                                 <i className="fas fa-external-link-alt text-[8px]"></i>

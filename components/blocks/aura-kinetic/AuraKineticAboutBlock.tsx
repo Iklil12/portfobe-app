@@ -15,8 +15,9 @@ export function AuraKineticAboutBlock({ data, theme, isEditor }: any) {
       return 'rounded-full';
   };
   const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
 
-  const cardShape = theme?.cardStyle === 'hard' || theme?.cardStyle === 'hard-shadow' ? 'rounded-none' : 'rounded-[2rem]';
+
 
   const revealVariants: any = {
       hidden: { opacity: 0, y: 30 },

@@ -33,6 +33,27 @@ export function ObsidianAwardsBlock({ data, theme, isEditor }: any) {
 
   const accentColor = theme?.themeColor || '#ff0055';
 
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-md';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (style?: string) => {
+      if (style === 'hard-shadow' || style === 'hard') {
+          return 'rounded-none';
+      }
+      if (style === 'flat') {
+          return 'rounded-none';
+      }
+      if (style === 'soft-shadow' || style === 'soft') {
+          return 'rounded-2xl';
+      }
+      return 'rounded-xl';
+  };
+  const cardShape = getCardShapeClass(theme?.cardStyle);
+
   return (
     <section className="py-16 md:py-24 px-6 border-t border-[rgba(255,255,255,0.1)]">
         <div className="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
@@ -61,7 +82,7 @@ export function ObsidianAwardsBlock({ data, theme, isEditor }: any) {
                                     <p className="font-body text-[#8a8a93] text-sm shrink-0 sm:text-right">{award.issuer} {award.year ? `(${award.year})` : ''}</p>
                                 </div>
                                 {hasMedia && (
-                                    <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-all">
+                                    <div className={`w-8 h-8 ${btnShape} border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-all`}>
                                         <i className={`fas fa-chevron-down text-slate-400 group-hover:text-white transition-transform duration-300 ${
                                             isExpanded ? 'rotate-180 text-[var(--brand-accent)]' : ''
                                         }`} style={{ color: isExpanded ? accentColor : undefined }}></i>
@@ -78,19 +99,19 @@ export function ObsidianAwardsBlock({ data, theme, isEditor }: any) {
                                         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                                         className="overflow-hidden w-full flex flex-col items-center justify-center pb-6"
                                     >
-                                        <div className="relative w-full max-w-2xl aspect-[1.414/1] rounded-xl border border-white/10 bg-white/[0.02] p-2 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] group/cert overflow-hidden mt-2">
+                                        <div className={`relative w-full max-w-2xl aspect-[1.414/1] ${cardShape} border border-white/10 bg-white/[0.02] p-2 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] group/cert overflow-hidden mt-2`}>
                                             <div className="absolute inset-0 bg-[var(--brand-accent)]/5 blur-[40px] opacity-0 group-hover/cert:opacity-100 transition-opacity duration-700 pointer-events-none" style={{ backgroundColor: `${accentColor}10` }}></div>
                                             <img 
                                                 src={award.mediaUrl} 
                                                 alt={award.title} 
-                                                className="w-full h-full rounded-lg object-contain transition-transform duration-500 group-hover/cert:scale-[1.01]"
+                                                className={`w-full h-full ${cardShape} object-contain transition-transform duration-500 group-hover/cert:scale-[1.01]`}
                                             />
                                             <div className="absolute bottom-4 right-4 opacity-0 group-hover/cert:opacity-100 transition-opacity duration-300">
                                                 <a 
                                                     href={award.mediaUrl} 
                                                     target="_blank" 
                                                     rel="noreferrer" 
-                                                    className="px-3 py-1.5 bg-black/80 border border-white/15 hover:border-white/30 text-[10px] font-mono text-white rounded-lg flex items-center gap-2 backdrop-blur-md shadow-lg"
+                                                    className={`px-3 py-1.5 bg-black/80 border border-white/15 hover:border-white/30 text-[10px] font-mono text-white ${btnShape} flex items-center gap-2 backdrop-blur-md shadow-lg`}
                                                 >
                                                     <span>VIEW FULL IMAGE</span>
                                                     <i className="fas fa-external-link-alt text-[8px]"></i>

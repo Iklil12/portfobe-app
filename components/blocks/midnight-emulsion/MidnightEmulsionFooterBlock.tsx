@@ -9,6 +9,29 @@ export function MidnightEmulsionFooterBlock({ data, theme, isEditor }: any) {
   const [copied, setCopied] = useState(false);
   
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-3xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#030508] shadow-[4px_4px_0_0_rgba(255,255,255,0.1)]';
+      if (style === 'flat') return 'border border-white/10 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#080b11] shadow-[0_10px_40px_rgba(0,0,0,0.5)]';
+      return 'border border-white/10 bg-[#06080c] shadow-2xl';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
   const links = data?.links?.filter((l: any) => l.isActive !== false) || data?.user?.links?.filter((l: any) => l.isActive !== false) || [];
   const fullName = data?.profile?.fullName || data?.fullName || "Director Name";
   const emailAddress = data?.profile?.email || data?.user?.email || `${subdomain}@example.com`;
@@ -39,7 +62,7 @@ export function MidnightEmulsionFooterBlock({ data, theme, isEditor }: any) {
           {/* Technical Mail Indicator Card */}
           <div 
             onClick={copyEmail}
-            className="group/mail cursor-pointer flex items-center justify-between gap-6 px-6 py-4 bg-[#06080c] border border-white/10 hover:border-[var(--hl)]/30 rounded-xl max-w-md w-full transition-all duration-500 shadow-2xl relative"
+            className={`group/mail cursor-pointer flex items-center justify-between gap-6 px-6 py-4 ${cardStyleClass} ${cardShape} hover:border-[var(--hl)]/30 max-w-md w-full transition-all duration-500 relative`}
           >
             <div className="absolute bottom-0 left-0 w-full h-[1.5px] bg-[var(--hl)] transform scale-x-0 group-hover/mail:scale-x-100 transition-transform duration-500 origin-left"></div>
             
@@ -50,7 +73,7 @@ export function MidnightEmulsionFooterBlock({ data, theme, isEditor }: any) {
               </span>
             </div>
             
-            <button className="flex items-center justify-center shrink-0 w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-slate-400 group-hover/mail:text-white group-hover/mail:border-white/20 transition-all duration-300 relative">
+            <button className={`flex items-center justify-center shrink-0 w-8 h-8 ${btnShape} bg-white/5 border border-white/10 text-slate-400 group-hover/mail:text-white group-hover/mail:border-white/20 transition-all duration-300 relative`}>
               {copied ? (
                 <span className="font-sans text-[8px] font-bold text-[var(--hl)] uppercase tracking-wider">Copied</span>
               ) : (

@@ -7,6 +7,29 @@ const Interactive3DViewer = dynamic(() => import('@/shared/ui/Interactive3DViewe
 import { EditableText } from '@/shared/ui/EditableText';
 
 export function MidnightEmulsion3DBlock({ data, theme, isEditor, isCardPreview }: any) {
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-3xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#030508] shadow-[4px_4px_0_0_rgba(255,255,255,0.1)]';
+      if (style === 'flat') return 'border border-white/10 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#080b11] shadow-[0_10px_40px_rgba(0,0,0,0.5)]';
+      return 'border border-white/10 bg-[#06080c] shadow-2xl';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
   const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
   const allProjects = data?.projects || data?.user?.projects || [];
   const items3D = allProjects.filter((p: any) => p.projectType === '3d');
@@ -76,7 +99,7 @@ export function MidnightEmulsion3DBlock({ data, theme, isEditor, isCardPreview }
                 </div>
 
                 {/* Right side: Viewfinder CAD viewport */}
-                <div className="flex-1 aspect-[4/3] @lg:aspect-video bg-[#05070a] overflow-hidden relative shadow-[0_30px_80px_rgba(0,0,0,0.6)] rounded-xl border border-white/10 group-hover:border-[var(--hl)]/30 transition-all duration-700 flex items-center justify-center">
+                <div className={`flex-1 aspect-[4/3] @lg:aspect-video ${cardStyleClass} ${cardShape} overflow-hidden relative group-hover:border-[var(--hl)]/30 transition-all duration-700 flex items-center justify-center`}>
                   {/* Interactive 3D Canvas */}
                   <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#05070a" />
 

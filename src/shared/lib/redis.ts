@@ -36,8 +36,14 @@ export async function invalidatePortfolioCache(userId: string) {
       await redis.del(cacheKey);
       console.log(`[Redis] Invalidate Cache Success: ${cacheKey}`);
     }
+
+    // INVALIDATE DASHBOARD SYNC CACHE JUGA BIAR REALTIME
+    const syncKeys = await redis.keys(`dashboard:sync:${userId}:*`);
+    if (syncKeys.length > 0) {
+      await redis.del(...syncKeys);
+      console.log(`[Redis] Invalidate Dashboard Sync Success for ${userId}`);
+    }
   } catch (e) {
     console.error("⚠️ Gagal menghapus cache Redis:", e);
   }
 }
-

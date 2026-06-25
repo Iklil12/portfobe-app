@@ -75,20 +75,21 @@ export function DraftManagerModal({
   const isViewingLive = selectedDraftId === 'live';
 
   return (
-    <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-8 bg-zinc-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="bg-zinc-900 border border-white/10 w-full max-w-5xl h-[85vh] md:h-[75vh] min-h-[550px] rounded-none shadow-none overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-8 bg-black/90 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-[#09090b] border border-white/10 w-full max-w-5xl h-[85vh] md:h-[75vh] min-h-[600px] rounded-none shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-300 ring-1 ring-white/5">
         
         {/* === SIDEBAR (Master List) === */}
-        <div className="w-full md:w-[320px] h-[45%] md:h-auto bg-zinc-950 border-b md:border-b-0 md:border-r border-white/5 flex flex-col shrink-0">
+        <div className="w-full md:w-[320px] h-[45%] md:h-auto bg-zinc-950 border-b md:border-b-0 md:border-r border-white/5 flex flex-col shrink-0 relative overflow-hidden">
           
-          <div className="px-6 py-4 md:py-5 flex items-center justify-between shrink-0 border-b border-white/5">
+          <div className="px-6 py-5 md:py-6 flex items-center justify-between shrink-0 border-b border-white/5 relative bg-zinc-950">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#ff9e00]/30 to-transparent opacity-50"></div>
             <div>
-              <h2 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Version History</h2>
-              <p className="text-[10px] text-white/40 font-mono mt-0.5 uppercase tracking-widest">{drafts.length} Saved</p>
+              <h2 className="text-sm font-mono font-bold text-white uppercase tracking-[0.2em]">Version History</h2>
+              <p className="text-[10px] text-[#ff9e00] font-mono mt-1.5 uppercase tracking-[0.1em]">{drafts.length} Saved</p>
             </div>
             <button 
               onClick={onClose}
-              className="w-8 h-8 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors"
+              className="w-10 h-10 rounded-none bg-zinc-900/50 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-zinc-800 transition-all hover:border-white/30 z-10"
             >
               <X className="w-4 h-4" />
             </button>
@@ -175,7 +176,7 @@ export function DraftManagerModal({
         </div>
 
         {/* === MAIN CONTENT (Detail View) === */}
-        <div className="flex-1 bg-zinc-900/40 flex flex-col relative overflow-hidden">
+        <div className="flex-1 bg-[#09090b] flex flex-col relative overflow-hidden">
           
           <div className="flex-1 overflow-y-auto">
             {isSimulatingLoad ? (
@@ -188,12 +189,13 @@ export function DraftManagerModal({
               </div>
             ) : isViewingLive ? (
               
-              <div className="p-8 md:p-12 max-w-2xl mx-auto h-full flex flex-col justify-center">
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-none bg-zinc-950 border border-white/10 flex items-center justify-center mb-6 text-[#ff9e00]">
+              <div className="p-8 md:p-12 max-w-2xl mx-auto h-full flex flex-col justify-center relative">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-none bg-zinc-950 border border-emerald-500/20 flex items-center justify-center mb-8 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
                   <Globe className="w-8 h-8" />
                 </div>
-                <h2 className="text-lg font-mono font-bold text-white uppercase tracking-wider mb-3">Public Version (Live)</h2>
-                <p className="text-[11px] font-mono text-white/40 leading-relaxed mb-8 uppercase tracking-wide">
+                <h2 className="text-xl sm:text-2xl font-mono font-bold text-white uppercase tracking-[0.2em] mb-4">Public Version <span className="text-emerald-400">(Live)</span></h2>
+                <p className="text-[11px] sm:text-xs font-mono text-white/40 leading-relaxed mb-10 uppercase tracking-widest max-w-xl">
                   This is the main design currently active and visible to all your portfolio visitors.
                   All changes to the live mode will instantly appear on the public website.
                 </p>
@@ -202,15 +204,15 @@ export function DraftManagerModal({
                   <button 
                     onClick={() => window.location.reload()}
                     disabled={activeDraftId === null}
-                    className={`px-6 py-3 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 w-max ${
+                    className={`px-8 py-4 rounded-none text-xs font-mono font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-3 w-max ${
                       activeDraftId === null 
-                        ? 'bg-emerald-950/20 text-emerald-400 border border-emerald-500/20 cursor-not-allowed' 
-                        : 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'
+                        ? 'bg-zinc-950 border border-emerald-500/20 text-emerald-400 cursor-not-allowed shadow-[0_0_15px_rgba(16,185,129,0.05)]' 
+                        : 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)] active:scale-95'
                     }`}
                   >
                     {activeDraftId === null ? (
                       <>
-                        <CheckCircle className="w-4 h-4" /> <span>Currently Open in Editor</span>
+                        <CheckCircle className="w-5 h-5" /> <span>Currently Open in Editor</span>
                       </>
                     ) : (
                       'Load Live Mode to Editor'
@@ -221,36 +223,38 @@ export function DraftManagerModal({
 
             ) : selectedDraft ? (
 
-              <div className="p-6 md:p-10 max-w-3xl mx-auto flex flex-col h-full w-full">
+              <div className="p-8 md:p-12 max-w-3xl mx-auto flex flex-col h-full w-full relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#ff9e00]/5 rounded-full blur-[100px] pointer-events-none"></div>
+                
                 {/* Header Information */}
-                <div className="mb-8 md:mb-10">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="px-2.5 py-1 bg-zinc-950 border border-white/10 text-white/40 rounded-none text-[8px] font-mono font-bold uppercase tracking-widest">
+                <div className="mb-10 md:mb-12">
+                  <div className="flex items-center gap-4 mb-6">
+                    <span className="px-3 py-1.5 bg-zinc-950 border border-white/10 text-white/40 rounded-none text-[9px] font-mono font-bold uppercase tracking-[0.2em]">
                       Saved Draft
                     </span>
                     {publishedDraftId === selectedDraft.id && (
-                      <span className="px-2.5 py-1 bg-emerald-950/20 border border-emerald-500/20 text-emerald-400 rounded-none text-[8px] font-mono font-bold uppercase tracking-widest">
+                      <span className="px-3 py-1.5 bg-emerald-950/20 border border-emerald-500/20 text-emerald-400 rounded-none text-[9px] font-mono font-bold uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(16,185,129,0.1)]">
                         Currently Live
                       </span>
                     )}
                   </div>
-                  <h2 className="text-xl font-mono font-bold text-white uppercase tracking-wider leading-tight mb-4">
+                  <h2 className="text-2xl sm:text-3xl font-mono font-bold text-white uppercase tracking-[0.1em] leading-tight mb-5">
                     {selectedDraft.name}
                   </h2>
-                  <p className="text-[10px] text-white/40 font-mono flex items-center gap-2 uppercase tracking-wider">
-                    <Clock className="w-3.5 h-3.5" /> Updated on {new Date(selectedDraft.updatedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  <p className="text-[10px] sm:text-xs text-[#ff9e00] font-mono flex items-center gap-2 uppercase tracking-[0.15em]">
+                    <Clock className="w-4 h-4" /> Updated on {new Date(selectedDraft.updatedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} at {new Date(selectedDraft.updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 mb-8 md:mb-10 pb-6 md:pb-8 border-b border-white/5">
+                <div className="flex flex-col sm:flex-row items-center gap-4 mb-10 md:mb-12 pb-8 border-b border-white/5">
                   <button 
                     onClick={() => onLoadDraft(selectedDraft)}
                     disabled={activeDraftId === selectedDraft.id}
-                    className={`w-full sm:w-auto justify-center px-8 py-3 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
+                    className={`w-full sm:w-auto justify-center px-10 py-4 rounded-none text-[11px] font-mono font-bold uppercase tracking-[0.2em] transition-all flex items-center gap-3 ${
                       activeDraftId === selectedDraft.id 
-                        ? 'bg-zinc-950 border border-white/10 text-white/30 cursor-not-allowed' 
-                        : 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'
+                        ? 'bg-zinc-950 border border-[#ff9e00]/20 text-[#ff9e00] cursor-not-allowed shadow-[0_0_15px_rgba(255,158,0,0.05)]' 
+                        : 'bg-[#ff9e00] text-black hover:bg-[#ffaa22] shadow-[0_0_20px_rgba(255,158,0,0.2)] active:scale-95'
                     }`}
                   >
                     {activeDraftId === selectedDraft.id ? (
@@ -267,54 +271,54 @@ export function DraftManagerModal({
                   <button 
                     onClick={() => setDraftToDelete(selectedDraft.id)}
                     disabled={isDeleting === selectedDraft.id}
-                    className="w-full sm:w-auto justify-center px-5 py-3 rounded-none text-[10px] font-mono font-bold text-rose-500 bg-rose-950/10 border border-rose-500/20 hover:bg-rose-950/20 hover:text-rose-400 transition-colors flex items-center gap-2 disabled:opacity-50"
+                    className="w-full sm:w-auto justify-center px-6 py-4 rounded-none text-[11px] font-mono font-bold text-rose-500 bg-transparent border border-rose-500/20 hover:bg-rose-500/10 transition-colors flex items-center gap-2 disabled:opacity-50"
                   >
-                    {isDeleting === selectedDraft.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                    {isDeleting === selectedDraft.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                     <span>Delete</span>
                   </button>
                 </div>
 
                 {/* Details Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pb-6">
-                  <div className="p-5 bg-zinc-950 border border-white/5 rounded-none">
-                    <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Accent Color</h5>
-                    <div className="flex items-center gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-8 pb-8">
+                  <div className="p-6 bg-zinc-950/50 border border-white/5 rounded-none hover:border-white/10 transition-colors">
+                    <h5 className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] mb-4">Accent Color</h5>
+                    <div className="flex items-center gap-5">
                       <div 
-                        className="w-10 h-10 rounded-none border border-white/10 shrink-0" 
+                        className="w-12 h-12 rounded-none border border-white/10 shrink-0 shadow-inner" 
                         style={{ backgroundColor: selectedDraft.themeColor }}
                       ></div>
                       <div>
-                        <p className="text-xs font-mono font-bold text-white uppercase">{selectedDraft.themeColor}</p>
-                        <p className="text-[9px] font-mono text-white/30 mt-0.5 uppercase">Hex Code</p>
+                        <p className="text-sm font-mono font-bold text-white uppercase tracking-wider">{selectedDraft.themeColor}</p>
+                        <p className="text-[10px] font-mono text-white/30 mt-1 uppercase tracking-widest">Hex Code</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-5 bg-zinc-950 border border-white/5 rounded-none">
-                    <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Base Theme</h5>
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center shrink-0 text-white/50">
-                        <Palette className="w-4 h-4" />
+                  <div className="p-6 bg-zinc-950/50 border border-white/5 rounded-none hover:border-white/10 transition-colors">
+                    <h5 className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] mb-4">Base Theme</h5>
+                    <div className="flex items-center gap-5">
+                      <div className="w-12 h-12 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center shrink-0 text-[#ff9e00]">
+                        <Palette className="w-5 h-5" />
                       </div>
-                      <div>
-                        <p className="text-xs font-mono font-bold text-white leading-tight uppercase">
+                      <div className="min-w-0">
+                        <p className="text-sm font-mono font-bold text-white uppercase tracking-wider truncate">
                           {THEMES_DATA.find(t => t.id === selectedDraft.themeTemplate)?.name || selectedDraft.themeTemplate}
                         </p>
-                        <p className="text-[9px] font-mono text-white/30 mt-0.5 uppercase">Visual Template</p>
+                        <p className="text-[10px] font-mono text-white/30 mt-1 uppercase tracking-widest">Visual Template</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Description Box */}
-                <div className="pb-8">
-                  <h5 className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-3">Description / Notes</h5>
+                <div className="pb-10">
+                  <h5 className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] mb-4">Description / Notes</h5>
                   {selectedDraft.description ? (
-                    <p className="text-[11px] font-mono text-white/60 leading-relaxed max-w-2xl bg-zinc-950 p-4 rounded-none border border-white/5">
+                    <p className="text-xs font-mono text-white/60 leading-relaxed max-w-2xl bg-zinc-950/50 p-6 rounded-none border border-white/5 border-l-2 border-l-[#ff9e00]/50">
                       {selectedDraft.description}
                     </p>
                   ) : (
-                    <p className="text-[11px] font-mono text-white/30 italic uppercase">No notes for this draft.</p>
+                    <p className="text-xs font-mono text-white/20 italic uppercase tracking-widest bg-zinc-950/30 p-6 border border-white/5 border-dashed">No notes for this draft.</p>
                   )}
                 </div>
 

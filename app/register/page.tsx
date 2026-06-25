@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { registerUser } from "@/app/actions/auth";
+import { registerUser, verifyRegistrationOtp, resendVerificationEmail } from "@/app/actions/auth";
 import { signIn } from 'next-auth/react';
 import ReCAPTCHA from "react-google-recaptcha";
 import { Eye, EyeOff, ArrowRight, AlertTriangle, User, Mail, ShieldAlert } from 'lucide-react';
@@ -15,9 +15,24 @@ export default function RegisterPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
+  // State OTP
+  const [otpSentTo, setOtpSentTo] = useState<string | null>(null);
+  const [passwordToLogin, setPasswordToLogin] = useState("");
+  const [otp, setOtp] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
+
   // State baru khusus untuk loading tombol Google
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  // Timer untuk cooldown resend
+  React.useEffect(() => {
+    let timer: any;
+    if (resendCooldown > 0) {
+      timer = setInterval(() => setResendCooldown(prev => prev - 1), 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,9 +58,26 @@ export default function RegisterPage() {
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
       
+      setOtpSentTo(email);
+      setPasswordToLogin(password);
+      setIsLoading(false);
+      setResendCooldown(120); // 2 menit cooldown
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrorMsg("");
+    setIsLoading(true);
+
+    const result = await verifyRegistrationOtp(otpSentTo!, otp);
+    if (result?.error) {
+      setErrorMsg(result.error);
+      setIsLoading(false);
+    } else {
       const loginRes = await signIn("credentials", {
-        email,
-        password,
+        email: otpSentTo,
+        password: passwordToLogin,
         redirect: false,
       });
 
@@ -54,6 +86,22 @@ export default function RegisterPage() {
       } else {
         router.push('/dashboard');
       }
+    }
+  };
+
+  const handleResend = async () => {
+    if (resendCooldown > 0 || !otpSentTo) return;
+    
+    setIsLoading(true);
+    setErrorMsg("");
+    const result = await resendVerificationEmail(otpSentTo);
+    
+    setIsLoading(false);
+    if (result?.error) {
+      setErrorMsg(result.error);
+    } else {
+      setResendCooldown(120);
+      setErrorMsg("Kode verifikasi baru telah dikirim!");
     }
   };
 
@@ -144,7 +192,64 @@ export default function RegisterPage() {
             </div>
           )}
 
-          <form onSubmit={handleRegister} className="space-y-6">
+          {otpSentTo ? (
+            <form onSubmit={handleVerifyOtp} className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="mb-6">
+                <p className="text-white/60 text-xs font-mono leading-relaxed">
+                  We've sent a 6-digit verification code to <br/>
+                  <span className="text-white font-bold">{otpSentTo}</span>.
+                </p>
+              </div>
+              <div className="group">
+                <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">6-Digit Code</label>
+                <input 
+                  name="otp" 
+                  type="text" 
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
+                  placeholder="000000" 
+                  className="w-full px-4 py-4 rounded-none border border-white/15 bg-black focus:border-l-4 focus:border-l-[#ff9e00] focus:border-[#ff9e00] focus:ring-0 outline-none transition-all text-2xl tracking-[0.5em] text-center font-mono font-bold text-white placeholder:text-white/10" 
+                  required 
+                />
+              </div>
+              <button 
+                type="submit" 
+                disabled={isLoading || otp.length !== 6}
+                className={`w-full relative bg-[#ff9e00] text-black py-4.5 rounded-none text-[11px] font-mono font-bold uppercase tracking-widest transition-all duration-300 transform active:scale-[0.98] hover:shadow-[4px_4px_0px_rgba(255,255,255,0.15)] ${(isLoading || otp.length !== 6) ? 'bg-zinc-800 text-white/40 opacity-70 cursor-not-allowed' : 'hover:bg-[#ffaa22]'}`}
+              >
+                <div className={`flex items-center justify-center gap-2 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
+                  Verify & Continue <ArrowRight className="w-4 h-4" />
+                </div>
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                  </div>
+                )}
+              </button>
+              
+              <div className="flex flex-col items-center gap-3">
+                <button 
+                  type="button" 
+                  disabled={resendCooldown > 0 || isLoading}
+                  onClick={handleResend}
+                  className={`text-xs font-mono transition-colors ${resendCooldown > 0 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white'}`}
+                >
+                  {resendCooldown > 0 ? `Kirim ulang dalam ${resendCooldown}s` : "Tidak menerima email? Kirim ulang kode"}
+                </button>
+
+                <button 
+                  type="button" 
+                  onClick={() => { setOtpSentTo(null); setOtp(""); setErrorMsg(""); setResendCooldown(0); }}
+                  className="text-xs text-[#ff9e00]/60 mt-2 font-mono hover:text-[#ff9e00] transition-colors"
+                >
+                  &larr; Gunakan email lain
+                </button>
+              </div>
+            </form>
+          ) : (
+            <>
+              <form onSubmit={handleRegister} className="space-y-6">
             <div className="group">
               <label className="block text-[9px] font-mono font-bold uppercase tracking-widest text-white/45 mb-2 group-focus-within:text-[#ff9e00] transition-colors">Full Name</label>
               <input 
@@ -252,9 +357,12 @@ export default function RegisterPage() {
             )}
           </button>
 
+
           <p className="text-center text-xs text-white/40 mt-10 font-mono">
             Already have an account? <Link href="/login" className="text-white font-bold hover:text-[#ff9e00] transition-colors ml-1 uppercase tracking-wider">Sign In</Link>
           </p>
+            </>
+          )}
         </div>
       </div>
     </div>

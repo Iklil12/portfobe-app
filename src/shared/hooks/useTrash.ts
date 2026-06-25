@@ -19,14 +19,14 @@ export function useTrash() {
     try {
       setIsLoading(true);
       const res = await fetch(`/api/trash?page=1&limit=${PAGE_SIZE}`);
-      if (!res.ok) throw new Error("Gagal fetch trash");
+      if (!res.ok) throw new Error("Failed to fetch trash");
       const data = await res.json();
       setItems(data.items || []);
       setTotalCount(data.total ?? 0);
       setCurrentPage(1);
       setHasMore(data.hasMore ?? false);
     } catch {
-      showToast({ message: "Gagal memuat data trash", id: "trash-err", icon: "fa-exclamation-triangle" });
+      showToast({ message: "Failed to load trash data", id: "trash-err", icon: "fa-exclamation-triangle" });
     } finally {
       setTimeout(() => setIsLoading(false), 400);
     }
@@ -39,14 +39,14 @@ export function useTrash() {
     try {
       setIsLoadingMore(true);
       const res = await fetch(`/api/trash?page=${nextPage}&limit=${PAGE_SIZE}`);
-      if (!res.ok) throw new Error("Gagal fetch halaman berikutnya");
+      if (!res.ok) throw new Error("Failed to fetch next page");
       const data = await res.json();
       setItems((prev) => [...prev, ...(data.items || [])]);
       setTotalCount(data.total ?? 0);
       setCurrentPage(nextPage);
       setHasMore(data.hasMore ?? false);
     } catch {
-      showToast({ message: "Gagal memuat lebih banyak", id: "trash-more-err", icon: "fa-exclamation-triangle" });
+      showToast({ message: "Failed to load more", id: "trash-more-err", icon: "fa-exclamation-triangle" });
     } finally {
       setIsLoadingMore(false);
     }
@@ -64,13 +64,13 @@ export function useTrash() {
       });
       const data = await res.json();
       if (res.ok) {
-        showToast({ message: data.message || "Berhasil dipulihkan", id: "restore-ok", icon: "fa-undo" });
+        showToast({ message: data.message || "Restored successfully", id: "restore-ok", icon: "fa-undo" });
         await fetchTrash();
       } else {
-        showToast({ message: data.error || "Gagal memulihkan", id: "restore-err", icon: "fa-exclamation-circle" });
+        showToast({ message: data.error || "Failed to restore", id: "restore-err", icon: "fa-exclamation-circle" });
       }
     } catch {
-      showToast({ message: "Gagal terhubung ke server", id: "restore-net", icon: "fa-wifi" });
+      showToast({ message: "Failed to connect to server", id: "restore-net", icon: "fa-wifi" });
     } finally {
       setProcessingId(null);
     }
@@ -89,10 +89,10 @@ export function useTrash() {
         showToast({ message: "Dihapus permanen", id: "purge-ok", icon: "fa-trash-alt" });
         await fetchTrash();
       } else {
-        showToast({ message: data.error || "Gagal menghapus", id: "purge-err", icon: "fa-exclamation-circle" });
+        showToast({ message: data.error || "Failed to delete", id: "purge-err", icon: "fa-exclamation-circle" });
       }
     } catch {
-      showToast({ message: "Gagal terhubung ke server", id: "purge-net", icon: "fa-wifi" });
+      showToast({ message: "Failed to connect to server", id: "purge-net", icon: "fa-wifi" });
     } finally {
       setProcessingId(null);
     }
@@ -108,13 +108,13 @@ export function useTrash() {
       });
       const data = await res.json();
       if (res.ok) {
-        showToast({ message: data.message || "Trash dikosongkan", id: "purge-all-ok", icon: "fa-trash" });
+        showToast({ message: data.message || "Trash emptied", id: "purge-all-ok", icon: "fa-trash" });
         await fetchTrash();
       } else {
-        showToast({ message: data.error || "Gagal mengosongkan", id: "purge-all-err", icon: "fa-exclamation-circle" });
+        showToast({ message: data.error || "Failed to empty trash", id: "purge-all-err", icon: "fa-exclamation-circle" });
       }
     } catch {
-      showToast({ message: "Gagal terhubung ke server", id: "purge-all-net", icon: "fa-wifi" });
+      showToast({ message: "Failed to connect to server", id: "purge-all-net", icon: "fa-wifi" });
     } finally {
       setProcessingId(null);
       setConfirmPurgeAll(false);

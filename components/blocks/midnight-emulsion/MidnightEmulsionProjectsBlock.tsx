@@ -13,10 +13,32 @@ export function MidnightEmulsionProjectsBlock({ data, theme, isEditor, isCardPre
   const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
 
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-3xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#030508] shadow-[4px_4px_0_0_rgba(255,255,255,0.1)]';
+      if (style === 'flat') return 'border border-white/10 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#080b11] shadow-[0_10px_40px_rgba(0,0,0,0.5)]';
+      return 'border border-white/10 bg-[#06080c] shadow-2xl';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
   const allProjects = data?.projects || data?.user?.projects || [];
   const archiveItems = allProjects.filter((p: any) => p.projectType !== '3d').slice(0, 4);
-  const radiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';
-
+  
   const galleryProjectsCount = allProjects.filter((p: any) => p.projectType === 'photo' || p.projectType === 'video').length;
   const userPlan = data?.plan || data?.user?.plan || 'FREE';
   const showGalleryButton = userPlan !== 'FREE' && galleryProjectsCount > 4;
@@ -63,12 +85,12 @@ export function MidnightEmulsionProjectsBlock({ data, theme, isEditor, isCardPre
                 </div>
                 <span className="font-sans text-xs font-medium text-slate-500 hidden @md:block uppercase tracking-widest">{p.projectType}</span>
               </div>
-              <div className={`w-full aspect-video @md:aspect-[21/9] bg-[#0a0f1e] overflow-hidden relative shadow-2xl ${radiusClass}`}>
+              <div className={`w-full aspect-video @md:aspect-[21/9] ${cardStyleClass} ${cardShape} overflow-hidden relative`}>
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0.03)_50%,rgba(255,255,255,0))] bg-[length:100%_4px] z-10 pointer-events-none opacity-20"></div>
                 <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover grayscale-[80%] opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-1000 ease-out" />
                 {isVideo && (
                   <div className="absolute inset-0 flex items-center justify-center z-20">
-                    <div className="w-24 h-24 rounded-full border border-white/20 bg-black/40 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 group-hover:border-[var(--hl)] group-hover:bg-[var(--hl)]/20 transition-all duration-700">
+                    <div className={`w-24 h-24 ${btnShape} border border-white/20 bg-black/40 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 group-hover:border-[var(--hl)] group-hover:bg-[var(--hl)]/20 transition-all duration-700`}>
                       <i className="fas fa-play text-white text-2xl ml-1"></i>
                     </div>
                   </div>
@@ -86,7 +108,7 @@ export function MidnightEmulsionProjectsBlock({ data, theme, isEditor, isCardPre
           <div className="w-full flex justify-center -mt-6 @lg:-mt-16">
             <Link 
               href={`/${subdomain}/gallery`}  
-              className={`group relative overflow-hidden px-10 py-5 bg-[#06080c] hover:bg-[var(--hl)] border border-white/10 hover:border-[var(--hl)] text-white hover:text-[#030508] font-mono text-[10px] @md:text-xs font-bold uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-4 shadow-2xl ${radiusClass}`}
+              className={`group relative overflow-hidden px-10 py-5 bg-[#06080c] hover:bg-[var(--hl)] border border-white/10 hover:border-[var(--hl)] text-white hover:text-[#030508] font-mono text-[10px] @md:text-xs font-bold uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-4 shadow-2xl ${btnShape}`}
             >
               {/* Button light sweep */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none z-0" />

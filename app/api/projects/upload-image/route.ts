@@ -2,11 +2,16 @@ import { getErrorMessage } from "@/shared/lib/errorHelper";
 import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/shared/lib/rate-limit";
 import { processImageUpload } from "@/features/projects/model/uploadService";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/entities/user/api/auth";
 
 export async function POST(req: Request) {
   try {
     const rateLimitResponse = await checkRateLimit(10, 60000, "upload_image");
     if (rateLimitResponse) return rateLimitResponse;
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;

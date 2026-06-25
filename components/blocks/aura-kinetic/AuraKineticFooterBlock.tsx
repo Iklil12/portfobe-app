@@ -23,6 +23,8 @@ export function AuraKineticFooterBlock({ data, theme, isEditor }: any) {
       return 'rounded-full';
   };
   const radiusClass = getBtnShapeClass(theme?.buttonShape);
+  const btnShape = radiusClass;
+    const cardShape = btnShape;
 
   const fadeUp = {
       hidden: { opacity: 0, y: 50 },
@@ -45,7 +47,7 @@ export function AuraKineticFooterBlock({ data, theme, isEditor }: any) {
                 {[...Array(6)].map((_, i) => (
                     <span key={i} className="font-serif text-2xl md:text-4xl italic text-white/50 px-8 flex items-center gap-8">
                         <EditableText value={theme?.customTexts?.aura_marquee || "Let's build something extraordinary."} field="aura_marquee" entity="appearance" isEditor={isEditor} as="span" maxLength={40} />
-                        <span className="w-3 h-3 rounded-full bg-[var(--hl)]"></span>
+                        <span className={`w-3 h-3 ${btnShape} bg-[var(--hl)]`}></span>
                     </span>
                 ))}
             </div>

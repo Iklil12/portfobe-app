@@ -51,6 +51,19 @@ export function AuraKineticSkillsBlock({ theme, isEditor }: any) {
     };
 
 
+    
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-xl';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
+
+    
+
+
+
     return (
         <section className="w-full py-16 md:py-32 px-6 md:px-16 overflow-hidden relative">
             <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-16 gap-4 md:gap-6">
@@ -74,7 +87,7 @@ export function AuraKineticSkillsBlock({ theme, isEditor }: any) {
                     return (
                         <div 
                             key={index} 
-                            className="group relative flex flex-col justify-between p-5 md:p-8 rounded-2xl md:rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 hover:border-white/20 backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden"
+                            className={`group relative flex flex-col justify-between p-5 md:p-8 ${cardShape} bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 hover:border-white/20 backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden`}
                         >
                             {/* Hover Background Glow */}
                             <div className="absolute -right-20 -top-20 w-48 h-48 bg-[var(--hl)] opacity-0 group-hover:opacity-[0.08] rounded-full blur-[60px] transition-opacity duration-700 pointer-events-none" />
@@ -111,13 +124,13 @@ export function AuraKineticSkillsBlock({ theme, isEditor }: any) {
                                 </div>
                             </div>
 
-                            <div className="relative w-full h-1.5 bg-white/10 rounded-full mt-4 md:mt-8 overflow-visible">
+                            <div className={`relative w-full h-1.5 bg-white/10 ${btnShape} mt-4 md:mt-8 overflow-visible`}>
                                 <motion.div 
                                     initial={{ width: 0 }}
                                     whileInView={{ width: `${safeVal}%` }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-[var(--hl)] to-pink-500 rounded-full shadow-[0_0_12px_var(--hl)]"
+                                    className={`absolute top-0 left-0 h-full bg-gradient-to-r from-[var(--hl)] to-pink-500 ${btnShape} shadow-[0_0_12px_var(--hl)]`}
                                     style={isEditor ? { width: `${safeVal}%` } : undefined}
                                 >
                                     {/* Glowing slider handle tip on hover */}

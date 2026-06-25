@@ -25,6 +25,13 @@ export function ObsidianTestimonialsBlock({ data, theme, isEditor }: any) {
   };
   const cardShape = getCardShapeClass(theme?.cardStyle);
 
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-md';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
   const revealVariants: any = {
       hidden: { opacity: 0, y: 30 },
       visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as any } }
@@ -57,9 +64,9 @@ export function ObsidianTestimonialsBlock({ data, theme, isEditor }: any) {
                         </div>
                         <div className="flex items-center gap-4 mt-2">
                             {t.avatarUrl || t.avatar ? (
-                                <LazyImage src={t.avatarUrl || t.avatar} alt={t.clientName || t.name || 'Client'} className="w-12 h-12 rounded-full object-cover border border-white/10" />
+                                <LazyImage src={t.avatarUrl || t.avatar} alt={t.clientName || t.name || 'Client'} className={`w-12 h-12 ${btnShape} object-cover border border-white/10`} />
                             ) : (
-                                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white/40 border border-white/10 uppercase font-medium">
+                                <div className={`w-12 h-12 ${btnShape} bg-white/5 flex items-center justify-center text-white/40 border border-white/10 uppercase font-medium`}>
                                     {(t.clientName || t.name || 'U').charAt(0)}
                                 </div>
                             )}

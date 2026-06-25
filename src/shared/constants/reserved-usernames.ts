@@ -11,7 +11,7 @@ export const SYSTEM_RESERVED = [
   "about", "contact", "support", "help", "faq", "terms", "privacy", "policy", "legal",
 
   // 4. Teknis & API
-  "api", "graphql", "static", "_next", "assets", "images", "root", "superadmin",
+  "api", "graphql", "static", "_next", "assets", "images", "root", "superadmin", "preview", "demo",
 
   // 5. Kategori Transaksi & Monetisasi
   "checkout", "invoice", "payment", "cart", "store", "shop", "premium",

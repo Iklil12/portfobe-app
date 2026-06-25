@@ -61,7 +61,7 @@ export function useThemes() {
       ? favorites.filter((id) => id !== themeId)
       : [...favorites, themeId];
     setFavorites(updatedFavorites);
-    toast(isFav ? 'Dihapus dari favorit' : 'Ditambahkan ke favorit ❤️', { id: `fav-${themeId}` });
+    toast(isFav ? 'Removed from favorites' : 'Added to favorites ❤️', { id: `fav-${themeId}` });
 
     try {
       await fetch('/api/themes/favorite', {

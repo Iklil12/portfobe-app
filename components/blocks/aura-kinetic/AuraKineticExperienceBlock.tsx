@@ -44,6 +44,19 @@ export function AuraKineticExperienceBlock({ theme, isEditor }: any) {
     };
 
 
+    
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-xl';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
+
+    
+
+
+
     return (
         <section className="w-full py-16 md:py-32 px-6 md:px-16 overflow-hidden relative">
             <div className="max-w-[1000px] mx-auto flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-16 gap-4 md:gap-6">
@@ -67,12 +80,12 @@ export function AuraKineticExperienceBlock({ theme, isEditor }: any) {
                     return (
                         <div key={index} className="relative group">
                             {/* Timeline Node Orb */}
-                            <div className="absolute left-[-39px] md:left-[-57px] top-6 md:top-7 w-[14px] h-[14px] md:w-[18px] md:h-[18px] rounded-full bg-[#0a0a0c] border-[3px] border-white/30 group-hover:border-[var(--hl)] group-hover:scale-125 transition-all duration-300 z-10 flex items-center justify-center">
-                                <div className="w-1.5 h-1.5 rounded-full bg-transparent group-hover:bg-[var(--hl)] transition-all duration-300" />
+                            <div className={`absolute left-[-39px] md:left-[-57px] top-6 md:top-7 w-[14px] h-[14px] md:w-[18px] md:h-[18px] ${btnShape} bg-[#0a0a0c] border-[3px] border-white/30 group-hover:border-[var(--hl)] group-hover:scale-125 transition-all duration-300 z-10 flex items-center justify-center`}>
+                                <div className={`w-1.5 h-1.5 ${btnShape} bg-transparent group-hover:bg-[var(--hl)] transition-all duration-300`} />
                             </div>
 
                             {/* Experience Content Card */}
-                            <div className="p-5 md:p-8 rounded-2xl md:rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 hover:border-white/20 backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden relative">
+                            <div className={`p-5 md:p-8 ${cardShape} bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 hover:border-white/20 backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden relative`}>
                                 {/* Hover Background Glow */}
                                 <div className="absolute -right-20 -top-20 w-48 h-48 bg-[var(--hl)] opacity-0 group-hover:opacity-[0.08] rounded-full blur-[60px] transition-opacity duration-700 pointer-events-none" />
 
@@ -85,7 +98,7 @@ export function AuraKineticExperienceBlock({ theme, isEditor }: any) {
                                             maxLength={50} 
                                         />
                                     </h3>
-                                    <span className="font-mono text-[10px] md:text-xs text-[var(--hl)] font-semibold tracking-wider uppercase bg-white/[0.03] px-2.5 py-0.5 md:px-3 md:py-1 rounded-full border border-white/5 whitespace-nowrap self-start md:self-auto">
+                                    <span className={`font-mono text-[10px] md:text-xs text-[var(--hl)] font-semibold tracking-wider uppercase bg-white/[0.03] px-2.5 py-0.5 md:px-3 md:py-1 ${btnShape} border border-white/5 whitespace-nowrap self-start md:self-auto`}>
                                         <EditableText 
                                             value={defaultDuration} 
                                             onChange={(val) => handleUpdateItem(index, 'duration', val)} 

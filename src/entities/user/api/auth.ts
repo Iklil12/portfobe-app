@@ -135,6 +135,11 @@ export const authOptions: NextAuthOptions = {
         // 2. FLOW LOGIN NORMAL (Email + Password)
         if (!credentials?.email || !credentials?.password) return null;
 
+        // Validasi panjang input untuk mencegah DoS (Payload Bomb)
+        if (credentials.email.length > 100 || credentials.password.length > 100) {
+          throw new Error("Format input tidak valid.");
+        }
+
         // --- Pengecekan Awal (Rate Limiting) ---
         // Catatan: Menggunakan field 'count' dan 'updatedAt' sesuai skema LoginAttempt saat ini
         
@@ -146,7 +151,7 @@ export const authOptions: NextAuthOptions = {
           ip = Array.isArray(realIp) ? realIp[0] : realIp;
         } else if (forwardedFor) {
           const ips = (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor).split(",").map((i: string) => i.trim());
-          ip = ips[ips.length - 1];
+          ip = ips[0]; // Ambil Client IP yang asli
         }
         const ua = req?.headers?.["user-agent"];
 
@@ -204,6 +209,10 @@ export const authOptions: NextAuthOptions = {
         try {
            await redis.del(attemptKey);
         } catch(e) {}
+
+        if (user.emailVerified === null) {
+          throw new Error("EMAIL_NOT_VERIFIED");
+        }
 
         return {
           id: user.id,

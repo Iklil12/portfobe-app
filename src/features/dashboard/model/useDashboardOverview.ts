@@ -60,7 +60,7 @@ export function useDashboardOverview() {
       'split-screen-studio': 'Split Screen Studio',
     };
 
-    let tName = "Belum Dipilih";
+    let tName = "Not Selected";
     if (currentTheme && themeMap[currentTheme]) {
         tName = themeMap[currentTheme];
     } else if (currentTheme) {
@@ -70,11 +70,11 @@ export function useDashboardOverview() {
     // --- CALCULATE PORTFOLIO STRENGTH ---
     let score = 0;
     const strengthBreakdown = [
-      { id: 'avatar', label: 'Foto Profil', done: !!layout.avatar, weight: 15 },
-      { id: 'bio', label: 'Bio & Profesi', done: !!layout.bio && !!layout.profession, weight: 25 },
-      { id: 'projects', label: 'Tambah Proyek', done: overview.projectsCount > 0, weight: 20 },
-      { id: 'links', label: 'Tautan Sosial', done: overview.linksCount > 0, weight: 20 },
-      { id: 'certificates', label: 'Sertifikat', done: overview.certificatesCount > 0, weight: 20 }
+      { id: 'avatar', label: 'Profile Picture', done: !!layout.avatar, weight: 15 },
+      { id: 'bio', label: 'Bio & Profession', done: !!layout.bio && !!layout.profession, weight: 25 },
+      { id: 'projects', label: 'Add Project', done: overview.projectsCount > 0, weight: 20 },
+      { id: 'links', label: 'Social Links', done: overview.linksCount > 0, weight: 20 },
+      { id: 'certificates', label: 'Certificates', done: overview.certificatesCount > 0, weight: 20 }
     ];
 
     strengthBreakdown.forEach(item => {

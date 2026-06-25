@@ -10,12 +10,16 @@ import { LazyImage } from '@/shared/ui/LazyImage';
 import { 
   Sparkles,
   Lock,
-  Palette
+  Palette,
+  Loader2
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TemplatesPage() {
+  const router = useRouter();
   const [hoveredThemeId, setHoveredThemeId] = useState<string | null>(null);
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
   const filteredThemes = THEMES_DATA;
 
@@ -86,18 +90,36 @@ export default function TemplatesPage() {
                           <div className="flex items-center gap-2">
                             {theme.isAvailable ? (
                               <>
-                                <Link
-                                  href={`/templates/${theme.id}`}
-                                  className="px-3 py-2.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-1.5 active:scale-95 bg-black/50 text-white hover:bg-white hover:text-black backdrop-blur-md border border-white/20"
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setLoadingAction(`${theme.id}-preview`);
+                                    router.push(`/templates/${theme.id}`);
+                                  }}
+                                  disabled={!!loadingAction}
+                                  className="px-3 py-2.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-1.5 active:scale-95 bg-black/50 text-white hover:bg-white hover:text-black backdrop-blur-md border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                  Preview
-                                </Link>
-                                <Link
-                                  href={`/register?theme=${theme.id}`}
-                                  className="px-3 py-2.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-1.5 active:scale-95 bg-[#ff9e00] text-black hover:bg-white border border-transparent"
+                                  {loadingAction === `${theme.id}-preview` ? (
+                                    <><Loader2 className="w-3 h-3 animate-spin" /> LOADING...</>
+                                  ) : (
+                                    'Preview'
+                                  )}
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setLoadingAction(`${theme.id}-use`);
+                                    router.push(`/register?theme=${theme.id}`);
+                                  }}
+                                  disabled={!!loadingAction}
+                                  className="px-3 py-2.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-1.5 active:scale-95 bg-[#ff9e00] text-black hover:bg-white border border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                  <Sparkles className="w-3.5 h-3.5" /> Use
-                                </Link>
+                                  {loadingAction === `${theme.id}-use` ? (
+                                    <><Loader2 className="w-3.5 h-3.5 animate-spin" /> LOADING...</>
+                                  ) : (
+                                    <><Sparkles className="w-3.5 h-3.5" /> Use</>
+                                  )}
+                                </button>
                               </>
                             ) : (
                               <button disabled className="px-4 py-2.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 bg-zinc-900 text-white/30 cursor-not-allowed border border-white/5">

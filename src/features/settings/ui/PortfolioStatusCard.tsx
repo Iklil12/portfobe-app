@@ -75,8 +75,8 @@ export function PortfolioStatusCard({ state, actions }: PortfolioStatusCardProps
       ) : (
         <button 
           onClick={toggleStatus} 
-          disabled={isLoadingStatus} 
-          className={`shrink-0 w-14 h-8 rounded-none p-1 relative bg-zinc-950 border border-white/10 hover:border-white/20 transition-colors duration-300 ${isLoadingStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+          disabled={isLoadingStatus || state.isToggling} 
+          className={`shrink-0 w-14 h-8 rounded-none p-1 relative bg-zinc-950 border border-white/10 hover:border-white/20 transition-colors duration-300 ${isLoadingStatus || state.isToggling ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
            <div className={`w-5 h-5 rounded-none shadow-sm transition-all duration-300 ${isLive ? 'translate-x-6 bg-[#ff9e00]' : 'translate-x-0 bg-zinc-700'}`}></div>
         </button>

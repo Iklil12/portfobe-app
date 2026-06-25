@@ -13,7 +13,27 @@ function MidnightEmulsionShellContent({ children, theme, isEditor, isCardPreview
   const { selectedMedia, setSelectedMedia } = useMidnightEmulsion();
   useEscapeKey(() => setSelectedMedia(null), !!selectedMedia);
 
-  const radiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-xl';
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-3xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#030508] shadow-[4px_4px_0_0_rgba(255,255,255,0.1)]';
+      if (style === 'flat') return 'border border-white/10 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#080b11] shadow-[0_10px_40px_rgba(0,0,0,0.5)]';
+      return 'border border-white/10 bg-[#06080c] shadow-2xl';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
   const fontHeading = theme?.fontHeading || 'Cormorant Garamond';
   const fontBody = theme?.fontBody || 'Inter';
 
@@ -60,7 +80,7 @@ function MidnightEmulsionShellContent({ children, theme, isEditor, isCardPreview
             <div className="absolute inset-0 bg-[#030508]/95 backdrop-blur-md" onClick={() => setSelectedMedia(null)}></div>
             <motion.div 
               initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}
-              className={`relative w-full max-w-5xl bg-[#05070a] shadow-[0_0_100px_rgba(0,0,0,0.5)] border border-white/10 flex flex-col overflow-hidden ${radiusClass}`}
+              className={`relative w-full max-w-5xl bg-[#05070a] shadow-[0_0_100px_rgba(0,0,0,0.5)] border border-white/10 flex flex-col overflow-hidden ${btnShape}`}
             >
               {/* Header */}
               <div className="flex justify-between items-center px-5 py-3 @md:px-6 border-b border-white/5 bg-black/20">

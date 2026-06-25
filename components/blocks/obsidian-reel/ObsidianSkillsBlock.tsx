@@ -57,6 +57,20 @@ export function ObsidianSkillsBlock({ theme, isEditor }: any) {
     };
     const btnShape = getBtnShapeClass(theme?.buttonShape);
 
+    const getCardShapeClass = (style?: string) => {
+        if (style === 'hard-shadow' || style === 'hard') {
+            return 'rounded-none border-2 border-[rgba(255,255,255,0.2)] shadow-[6px_6px_0_0_rgba(255,255,255,0.1)] transition-all duration-300 hover:border-[var(--brand-accent)] hover:shadow-[6px_6px_0_0_var(--brand-accent)] bg-zinc-900/40';
+        }
+        if (style === 'flat') {
+            return 'rounded-none border border-[rgba(255,255,255,0.1)] hover:border-[var(--brand-accent)] transition-colors duration-300 bg-transparent';
+        }
+        if (style === 'soft-shadow' || style === 'soft') {
+            return 'rounded-2xl border border-[rgba(255,255,255,0.05)] shadow-xl hover:shadow-[0_8px_30px_rgb(255,255,255,0.1)] transition-all duration-300 bg-zinc-900/20';
+        }
+        return 'rounded-2xl border border-white/5 bg-zinc-900/20 hover:border-white/15 hover:bg-zinc-900/30';
+    };
+    const cardShape = getCardShapeClass(theme?.cardStyle);
+
     return (
         <section className="w-full py-16 md:py-24 px-4 md:px-8 bg-zinc-950 border-t border-white/5 relative">
             {/* Ambient background highlight */}
@@ -73,7 +87,7 @@ export function ObsidianSkillsBlock({ theme, isEditor }: any) {
                         </h2>
                     </div>
                     <div className="h-[1px] flex-1 bg-white/5 hidden @sm:block mx-8 mb-4"></div>
-                    <span className="text-[9px] md:text-[10px] font-mono text-zinc-400 uppercase tracking-widest bg-white/5 border border-white/10 px-2.5 py-1.5 rounded shrink-0">
+                    <span className={`text-[9px] md:text-[10px] font-mono text-zinc-400 uppercase tracking-widest bg-white/5 border border-white/10 px-2.5 py-1.5 shrink-0 ${btnShape}`}>
                         DECIBEL_SCALE // DIRECT_OUT
                     </span>
                 </div>
@@ -88,7 +102,7 @@ export function ObsidianSkillsBlock({ theme, isEditor }: any) {
                         return (
                             <div 
                               key={index} 
-                              className="border border-white/5 bg-zinc-900/20 p-4 md:p-6 rounded-2xl hover:border-white/15 hover:bg-zinc-900/30 transition-all duration-300 relative group flex flex-col justify-between min-h-[110px] md:min-h-[140px] overflow-hidden"
+                              className={`${cardShape} p-4 md:p-6 transition-all duration-300 relative group flex flex-col justify-between min-h-[110px] md:min-h-[140px] overflow-hidden`}
                             >
                                 {/* Technical Corner Marks */}
                                 <div className="absolute top-2 left-2 w-1.5 h-1.5 border-t border-l border-white/20"></div>
@@ -124,14 +138,14 @@ export function ObsidianSkillsBlock({ theme, isEditor }: any) {
                                 </div>
 
                                 {/* Audio Fader Segment Meter */}
-                                <div className="flex gap-0.5 w-full h-2 md:h-3 bg-zinc-950 p-0.5 rounded border border-white/5 select-none">
+                                <div className={`flex gap-0.5 w-full h-2 md:h-3 bg-zinc-950 p-0.5 ${btnShape} border border-white/5 select-none`}>
                                     {Array.from({ length: 20 }).map((_, segmentIdx) => {
                                         const segmentThreshold = (segmentIdx + 1) * 5;
                                         const isLit = safeVal >= segmentThreshold;
                                         return (
                                             <div 
                                                 key={segmentIdx} 
-                                                className={`h-full rounded-[1px] transition-all duration-500 flex-1 ${
+                                                className={`h-full ${btnShape} transition-all duration-500 flex-1 ${
                                                     isLit 
                                                         ? 'bg-white shadow-[0_0_5px_rgba(255,255,255,0.7)]' 
                                                         : 'bg-zinc-900'
@@ -158,7 +172,7 @@ export function ObsidianSkillsBlock({ theme, isEditor }: any) {
                     <div className="flex justify-center mt-12 w-full col-span-full">
                         <button
                             onClick={handleAddItem}
-                            className={`px-8 py-3.5 border border-dashed border-white/25 hover:border-white/50 text-white/70 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10 ${btnShape}`}
+                            className="px-8 py-3.5 border border-dashed border-white/25 hover:border-white/50 text-white/70 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10 rounded-full"
                         >
                             + Tambah Skill
                         </button>

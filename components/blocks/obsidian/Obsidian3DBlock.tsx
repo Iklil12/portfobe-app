@@ -27,6 +27,13 @@ export function Obsidian3DBlock({ data, theme, isEditor }: any) {
   };
   const cardShape = getCardShapeClass(theme?.cardStyle);
 
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-md';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
   const revealVariants: any = {
       hidden: { opacity: 0, y: 30 },
       visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as any } }
@@ -61,17 +68,17 @@ export function Obsidian3DBlock({ data, theme, isEditor }: any) {
                 className={`grid grid-cols-1 ${displayItems.length === 1 ? 'max-w-4xl mx-auto w-full' : 'md:grid-cols-2'} gap-10 md:gap-16`}
             >
                 {displayItems.map((p: any, i: number) => (
-                    <motion.div key={i} variants={revealVariants} className="group flex flex-col">
-                        <div className={`w-full ${cardShape} overflow-hidden bg-[#050505] relative shadow-2xl group-hover:border-[var(--brand-accent)] transition-colors duration-500`}>
+                    <motion.div key={i} variants={revealVariants} className={`group flex flex-col ${cardShape} bg-[#080808] p-4 md:p-6 transition-all duration-500`}>
+                        <div className={`w-full aspect-[4/3] ${cardShape} overflow-hidden bg-[#050505] relative shadow-inner`}>
                             <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#050505" />
                         </div>
-                        <div className="mt-8 flex justify-between items-start px-2">
+                        <div className="mt-8 flex justify-between items-start px-2 mt-auto">
                             <div>
                                 <h3 className="font-heading text-2xl md:text-3xl font-medium group-hover-accent transition-colors">{p.title}</h3>
                                 <p className="font-body text-[#8a8a93] text-base mt-2 max-w-lg">{p.description || 'Interactive 3D Asset'}</p>
                             </div>
-                            <span className="font-sans text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#8a8a93] border border-white/10 px-4 py-2 rounded-full flex items-center gap-2">
-                                <i className="fas fa-cube"></i>
+                            <span className={`font-sans text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#8a8a93] border border-white/10 px-4 py-2 ${btnShape} flex items-center gap-2 group-hover:border-[var(--brand-accent)] transition-colors`}>
+                                <i className="fas fa-cube group-hover:text-[var(--brand-accent)] transition-colors"></i>
                                 <EditableText value={theme?.customTexts?.obs_obsidian_3d_badge || '3D Asset'} field="obs_obsidian_3d_badge" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
                             </span>
                         </div>

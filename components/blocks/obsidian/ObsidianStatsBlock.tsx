@@ -46,6 +46,27 @@ export function ObsidianStatsBlock({ data, theme, isEditor }: any) {
     }
   ];
 
+    const getCardShapeClass = (style?: string) => {
+        if (style === 'hard-shadow' || style === 'hard') {
+            return 'rounded-none border-2 border-[rgba(255,255,255,0.2)] shadow-[6px_6px_0_0_rgba(255,255,255,0.1)] transition-all duration-300 hover:border-[var(--brand-accent)] hover:shadow-[6px_6px_0_0_var(--brand-accent)] bg-zinc-900/30';
+        }
+        if (style === 'flat') {
+            return 'rounded-none border border-[rgba(255,255,255,0.1)] hover:border-[var(--brand-accent)] transition-colors duration-300 bg-transparent';
+        }
+        if (style === 'soft-shadow' || style === 'soft') {
+            return 'rounded-2xl border border-[rgba(255,255,255,0.05)] shadow-xl hover:shadow-[0_8px_30px_rgb(255,255,255,0.1)] transition-all duration-300 bg-zinc-900/10';
+        }
+        return 'rounded-2xl border border-white/5 bg-zinc-900/10 hover:border-white/15 hover:bg-zinc-900/20';
+    };
+    const cardShape = getCardShapeClass(theme?.cardStyle);
+
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-md';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
+
   return (
     <section id="stats" className="py-16 md:py-24 px-4 md:px-8 bg-zinc-950 border-t border-white/5 relative overflow-hidden">
         {/* Decorative Grid Line Overlay */}
@@ -63,7 +84,7 @@ export function ObsidianStatsBlock({ data, theme, isEditor }: any) {
                     <motion.div 
                       key={stat.id}
                       variants={revealVariants}
-                      className="group border border-white/5 bg-zinc-900/10 p-6 rounded-2xl relative hover:border-white/15 hover:bg-zinc-900/20 transition-all duration-300 flex flex-col justify-between min-h-[160px] overflow-hidden"
+                      className={`group ${cardShape} p-6 relative transition-all duration-300 flex flex-col justify-between min-h-[160px] overflow-hidden`}
                     >
                         {/* Corner Crosshairs */}
                         <div className="absolute top-2 left-2 w-1.5 h-1.5 border-t border-l border-white/20 group-hover:border-white/40 transition-colors"></div>
@@ -74,7 +95,7 @@ export function ObsidianStatsBlock({ data, theme, isEditor }: any) {
                         {/* Top Tag spec */}
                         <div className="flex justify-between items-center text-[9px] font-mono text-zinc-500 uppercase tracking-widest mb-4">
                             <span>{stat.tag}</span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span className={`w-1.5 h-1.5 ${btnShape} bg-emerald-500 animate-pulse`}></span>
                         </div>
 
                         {/* Big Stat Value */}
@@ -99,7 +120,7 @@ export function ObsidianStatsBlock({ data, theme, isEditor }: any) {
                 {/* Awards Stat Card */}
                 <motion.div 
                   variants={revealVariants}
-                  className="group border border-white/5 bg-zinc-900/10 p-6 rounded-2xl relative hover:border-white/15 hover:bg-zinc-900/20 transition-all duration-300 flex flex-col justify-between min-h-[160px] overflow-hidden"
+                  className={`group ${cardShape} p-6 relative transition-all duration-300 flex flex-col justify-between min-h-[160px] overflow-hidden`}
                 >
                     {/* Corner Crosshairs */}
                     <div className="absolute top-2 left-2 w-1.5 h-1.5 border-t border-l border-white/20 group-hover:border-white/40 transition-colors"></div>
@@ -110,7 +131,7 @@ export function ObsidianStatsBlock({ data, theme, isEditor }: any) {
                     {/* Top Tag spec */}
                     <div className="flex justify-between items-center text-[9px] font-mono text-zinc-500 uppercase tracking-widest mb-4">
                         <span>AWARDS // ARCHIVED</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                        <span className={`w-1.5 h-1.5 ${btnShape} bg-red-500 animate-pulse`}></span>
                     </div>
 
                     {/* Big Stat Value */}

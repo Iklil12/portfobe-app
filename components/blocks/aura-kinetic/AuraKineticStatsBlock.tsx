@@ -21,10 +21,22 @@ export function AuraKineticStatsBlock({ data, theme, isEditor }: any) {
 
   const animationTrigger = isEditor ? "animate" : "whileInView";
 
+  
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-xl';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
+
+    
+
+
   return (
     <section className="relative z-10 w-full max-w-6xl mx-auto px-6 py-12 md:py-16">
         {/* Glassmorphic Container */}
-        <div className="glass-panel rounded-3xl border border-white/10 bg-white/[0.01] hover:border-white/20 transition-all duration-500 overflow-hidden relative shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+        <div className={`glass-panel ${btnShape} border border-white/10 bg-white/[0.01] hover:border-white/20 transition-all duration-500 overflow-hidden relative shadow-[0_20px_50px_rgba(0,0,0,0.3)]`}>
             
             {/* Ambient Background Glow inside the container */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[var(--brand-accent)] opacity-[0.03] rounded-full blur-[80px] pointer-events-none" />

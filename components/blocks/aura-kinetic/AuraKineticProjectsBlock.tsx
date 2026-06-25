@@ -21,8 +21,11 @@ export function AuraKineticProjectsBlock({ data, theme, isEditor }: any) {
       return 'rounded-full';
   };
   const radiusClass = getBtnShapeClass(theme?.buttonShape);
+  const btnShape = radiusClass;
+    const cardShape = btnShape;
+
   
-  const cardRadiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-3xl';
+
   const cardStyle = theme?.cardStyle || 'glassmorphism';
   const cardStyleClassDark = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#18181b] border-transparent shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border-2 border-[var(--hl)] shadow-[6px_6px_0_0_var(--hl)]' : cardStyle === 'flat' ? 'bg-[#0a0a0c] border-2 border-white/20' : 'bg-white/5 border border-white/10 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.1)] hover:border-white/20 hover:bg-white/10';
 
@@ -57,8 +60,8 @@ export function AuraKineticProjectsBlock({ data, theme, isEditor }: any) {
                             }
                         }}
                     >
-                        <div className={`relative w-full ${isLarge ? 'aspect-video md:aspect-[21/9]' : 'aspect-video md:aspect-[4/3]'} ${cardRadiusClass} overflow-hidden ${cardStyleClassDark} p-2 transition-all duration-500`}>
-                            <div className={`relative w-full h-full ${cardRadiusClass} overflow-hidden bg-[#0a0a0c]`}>
+                        <div className={`relative w-full ${isLarge ? 'aspect-video md:aspect-[21/9]' : 'aspect-video md:aspect-[4/3]'} ${cardShape} overflow-hidden ${cardStyleClassDark} p-2 transition-all duration-500`}>
+                            <div className={`relative w-full h-full ${cardShape} overflow-hidden bg-[#0a0a0c]`}>
                                 <LazyImage
                                     src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl}
                                     alt={p.title}
@@ -68,7 +71,7 @@ export function AuraKineticProjectsBlock({ data, theme, isEditor }: any) {
 
                                 {isVideo && (
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-white/20 transition-all duration-500">
+                                        <div className={`w-16 h-16 ${btnShape} bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-white/20 transition-all duration-500`}>
                                             <i className="fas fa-play text-white ml-1"></i>
                                         </div>
                                     </div>
@@ -80,7 +83,7 @@ export function AuraKineticProjectsBlock({ data, theme, isEditor }: any) {
                                         <h3 className="font-serif text-2xl md:text-4xl font-bold text-white drop-shadow-lg">{p.title}</h3>
                                     </div>
                                     {!isVideo && (
-                                        <div className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transform rotate-[-45deg] group-hover:rotate-0 transition-all duration-500 ease-out shadow-xl">
+                                        <div className={`w-12 h-12 ${btnShape} bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transform rotate-[-45deg] group-hover:rotate-0 transition-all duration-500 ease-out shadow-xl`}>
                                             <i className="fas fa-arrow-right"></i>
                                         </div>
                                     )}

@@ -47,6 +47,9 @@ export function SpatialExperienceBlock({ theme, isEditor, isCardPreview }: any) 
 
     const radiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-[24px]';
     const cardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-[24px]';
+    
+    const cardStyle = theme?.cardStyle || 'flat';
+    const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#0f1115] shadow-[0_30px_60px_rgba(0,0,0,0.8)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border border-white/20 shadow-[8px_8px_0_0_#ffffff]' : 'glass-panel border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]';
 
     const auraAnim = isCardPreview
         ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
@@ -64,7 +67,7 @@ export function SpatialExperienceBlock({ theme, isEditor, isCardPreview }: any) 
         >
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-20">
-                <motion.div variants={auraAnim} className={`inline-flex items-center gap-2 px-4 py-2 ${radiusClass} glass-panel mb-6`}>
+                <motion.div variants={auraAnim} className={`inline-flex items-center gap-2 px-4 py-2 ${radiusClass} ${cardStyleClass} mb-6`}>
                     <span className="text-xs font-medium text-slate-300">
                         <EditableText value={getCustomText('spatial_exp_label', 'Journey')} field="spatial_exp_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                     </span>
@@ -103,7 +106,7 @@ export function SpatialExperienceBlock({ theme, isEditor, isCardPreview }: any) 
                             />
 
                             {/* Card Content */}
-                            <div className={`glass-panel ${cardRadiusClass} p-6 @md:p-8 border border-white/5 hover:border-white/15 hover:bg-white/[0.03] transition-all duration-500 relative flex flex-col @lg:flex-row gap-6 justify-between items-start`}>
+                            <div className={`${cardStyleClass} ${cardRadiusClass} p-6 @md:p-8 hover:border-white/15 hover:bg-white/[0.03] transition-all duration-500 relative flex flex-col @lg:flex-row gap-6 justify-between items-start`}>
                                 {/* Ambient Background Glow */}
                                 <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-[var(--hl, #6366f1)] rounded-full blur-[60px] opacity-0 group-hover:opacity-15 transition-opacity duration-700 pointer-events-none"></div>
 
@@ -175,7 +178,7 @@ export function SpatialExperienceBlock({ theme, isEditor, isCardPreview }: any) 
                 <div className="flex justify-center mt-16 w-full col-span-full">
                     <button
                         onClick={handleAddItem}
-                        className={`px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10 ${radiusClass}`}
+                        className="px-6 py-3 border border-dashed border-white/20 hover:border-white/40 text-white/60 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10 rounded-full"
                     >
                         + Tambah Pengalaman
                     </button>

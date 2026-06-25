@@ -5,7 +5,31 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { EditableText } from '@/shared/ui/EditableText';
 
 export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: any) {
-  const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
+  
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-md';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-2xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#050505] shadow-[4px_4px_0_0_rgba(255,255,255,0.2)]';
+      if (style === 'flat') return 'border border-white/20 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#0a0a0a] shadow-2xl';
+      return 'border border-white/10 bg-[#050505]';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
+const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
 
   const fullName = data?.profile?.fullName || data?.fullName || "JAMAL ARIFIN";
   const profession = data?.profile?.profession || data?.profession || "Cinematographer & Editor";
@@ -101,7 +125,7 @@ export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: an
       </div>
 
       {/* Interactive Aperture Control Dial */}
-      <div className="absolute bottom-24 @md:bottom-8 left-6 flex items-center gap-3 bg-black/60 border border-white/10 px-4 py-2 rounded-md backdrop-blur-md z-30 font-mono text-[9px] tracking-wider text-slate-400">
+      <div className="absolute bottom-24 @md:bottom-8 left-6 flex items-center gap-3 bg-black/60 border border-white/10 px-4 py-2 ${btnShape} backdrop-blur-md z-30 font-mono text-[9px] tracking-wider text-slate-400">
         <span className="text-white/40 mr-1 text-[8px]">APERTURE:</span>
         {(['f1.4', 'f2.8', 'f5.6', 'f16'] as const).map((f) => (
           <button
@@ -122,7 +146,7 @@ export function ViewfinderHeroBlock({ data, theme, isEditor, isCardPreview }: an
         <span className="font-mono text-[8px] text-slate-500 uppercase tracking-widest hidden @md:inline pointer-events-none">TRIGGER SHUTTER:</span>
         <button
           onClick={triggerShutter}
-          className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center bg-black/40 hover:bg-white hover:text-black hover:border-white text-white transition-all duration-300 group shadow-lg active:scale-90"
+          className="w-9 h-9 ${btnShape} border border-white/20 flex items-center justify-center bg-black/40 hover:bg-white hover:text-black hover:border-white text-white transition-all duration-300 group shadow-lg active:scale-90"
           title="Ambil Foto (Shutter Flash)"
         >
           <i className="fas fa-camera text-xs group-hover:scale-110 transition-transform" />

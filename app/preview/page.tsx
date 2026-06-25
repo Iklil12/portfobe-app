@@ -12,8 +12,15 @@ export default function PreviewPage() {
   
   const [activeTab, setActiveTab] = useState<'theme' | 'pages'>('theme');
   const [selectedPage, setSelectedPage] = useState<'home' | 'gallery'>('home');
+  const [isOrphaned, setIsOrphaned] = useState(false);
 
   useEffect(() => {
+    // Deteksi jika halaman ini dibuka langsung (bukan dari dalam iframe editor)
+    if (typeof window !== 'undefined' && window === window.parent) {
+      setIsOrphaned(true);
+      return;
+    }
+
     const handleMessage = (event: MessageEvent) => {
       // SECURITY: Cegah injeksi dari domain asing
       if (event.origin !== window.location.origin && !event.origin.includes('localhost') && !event.origin.includes('127.0.0.1')) return;
@@ -55,6 +62,23 @@ export default function PreviewPage() {
       return () => clearTimeout(timer);
     }
   }, [theme?.themeTemplate, isReady]);
+
+  if (isOrphaned) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#050505] text-white p-6 text-center font-sans">
+        <div className="p-4 bg-white/5 border border-white/10 rounded-2xl mb-6">
+          <svg className="w-8 h-8 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h1 className="text-2xl md:text-3xl font-bold mb-3 tracking-tight">Preview Canvas</h1>
+        <p className="text-white/50 text-sm mb-8 max-w-sm leading-relaxed">This page is a live preview canvas for the Theme Editor and is not meant to be viewed directly.</p>
+        <a href="/dashboard" className="px-6 py-3 bg-white text-black font-bold text-xs tracking-wider uppercase hover:bg-white/90 transition-colors">
+          Go To Dashboard
+        </a>
+      </div>
+    );
+  }
 
   if (!isReady || !data) {
     return (

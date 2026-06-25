@@ -6,6 +6,29 @@ import { LazyImage } from '@/shared/ui/LazyImage';
 import { EditableText } from '@/shared/ui/EditableText';
 
 export function MidnightEmulsionAboutBlock({ data, theme, isEditor, isCardPreview }: any) {
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-3xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#030508] shadow-[4px_4px_0_0_rgba(255,255,255,0.1)]';
+      if (style === 'flat') return 'border border-white/10 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#080b11] shadow-[0_10px_40px_rgba(0,0,0,0.5)]';
+      return 'border border-white/10 bg-[#06080c] shadow-2xl';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
   const fullName = data?.profile?.fullName || data?.fullName || "Director Name";
   const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
   
@@ -42,7 +65,7 @@ export function MidnightEmulsionAboutBlock({ data, theme, isEditor, isCardPrevie
             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
             className="@lg:col-span-5 w-full flex flex-col gap-4"
           >
-            <div className="relative w-full aspect-[4/5] bg-black border border-white/10 rounded-xl overflow-hidden group shadow-2xl">
+            <div className={`relative w-full aspect-[4/5] ${cardStyleClass} ${cardShape} overflow-hidden group`}>
               {/* Corner Viewfinder brackets */}
               <div className="absolute inset-3 pointer-events-none z-25 opacity-60">
                 <div className="absolute top-0 left-0 border-t-2 border-l-2 border-[var(--hl)] w-3 h-3"></div>

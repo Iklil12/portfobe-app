@@ -74,7 +74,7 @@ export function useLinks() {
     if (isSavingRef.current) return;
     isSavingRef.current = true;
     setIsSaving(true);
-    toast.loading('Menyimpan perubahan...', {
+    toast.loading('Saving changes...', {
         id: 'save-links',
         style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
@@ -92,19 +92,19 @@ export function useLinks() {
 
         if (!res.ok) {
           const errorData = await res.json();
-          throw new Error(errorData.error || "Gagal menyimpan perubahan");
+          throw new Error(errorData.error || "Failed to save changes");
         }
         return res.json();
       }));
 
       setOriginalLinks(JSON.parse(JSON.stringify(links)));
-      toast.success("Perubahan tersimpan!", { 
+      toast.success("Changes saved!", { 
           id: 'save-links',
           iconTheme: { primary: '#22c55e', secondary: '#0a0a0a' },
           style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
       });
     } catch (error: any) {
-    toast.error(error.message || "Gagal menyimpan", { id: 'save-links' });
+    toast.error(error.message || "Failed to save", { id: 'save-links' });
     } finally {
       setIsSaving(false);
       isSavingRef.current = false;
@@ -123,17 +123,17 @@ export function useLinks() {
         setLinks(updated);
         setLinkCount(prev => prev + 1); 
         setOriginalLinks(JSON.parse(JSON.stringify(updated)));
-        toast.success("Link ditambahkan", {
+        toast.success("Link added", {
             id: 'add-link',
             icon: '🔗',
             style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
         });
       } else {
         const errorData = await res.json();
-        toast.error(errorData.error || "Gagal menambah link", { id: 'add-link' });
+        toast.error(errorData.error || "Failed to add link", { id: 'add-link' });
       }
     } catch (err) {
-      toast.error("Masalah jaringan", { id: 'add-link' });
+      toast.error("Network error", { id: 'add-link' });
     } finally {
       setIsAdding(false); 
       isAddingRef.current = false;
@@ -151,7 +151,7 @@ export function useLinks() {
         setLinks(updated);
         setLinkCount(prev => Math.max(0, prev - 1)); // Update Count Real-time
         setOriginalLinks(JSON.parse(JSON.stringify(updated)));
-        toast.success("Link terhapus", {
+        toast.success("Link deleted", {
           style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' },
           iconTheme: { primary: '#ef4444', secondary: '#0a0a0a' }
         });

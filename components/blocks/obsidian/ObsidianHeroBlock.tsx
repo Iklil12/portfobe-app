@@ -98,7 +98,7 @@ export function ObsidianHeroBlock({ data, theme, isEditor }: any) {
                       variants={revealVariants} 
                       className={`inline-flex items-center gap-2 border border-white/10 ${btnShape} px-4 py-2 text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-400 bg-white/[0.02] mb-8`}
                     >
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                        <span className={`w-1.5 h-1.5 ${btnShape} bg-red-500 animate-pulse`}></span>
                         <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
                     </motion.div>
 
@@ -186,10 +186,10 @@ export function ObsidianHeroBlock({ data, theme, isEditor }: any) {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 pointer-events-none z-10"></div>
 
                         {/* Top Left Camera HUD UI: REC blink & Timecode */}
-                        <div className="absolute top-4 left-4 z-20 flex items-center gap-3 bg-black/60 px-3 py-1.5 rounded-lg border border-white/5 backdrop-blur-md font-mono text-[9px] text-zinc-300">
+                        <div className={`absolute top-4 left-4 z-20 flex items-center gap-3 bg-black/60 px-3 py-1.5 ${btnShape} border border-white/5 backdrop-blur-md font-mono text-[9px] text-zinc-300`}>
                             <span className="flex items-center gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-600 absolute"></span>
+                                <span className={`w-1.5 h-1.5 ${btnShape} bg-red-500 animate-ping`}></span>
+                                <span className={`w-1.5 h-1.5 ${btnShape} bg-red-600 absolute`}></span>
                                 REC
                             </span>
                             <span className="text-zinc-500">|</span>
@@ -197,13 +197,13 @@ export function ObsidianHeroBlock({ data, theme, isEditor }: any) {
                         </div>
 
                         {/* Top Right Camera HUD UI: Battery/Format */}
-                        <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/60 px-2.5 py-1.5 rounded-lg border border-white/5 backdrop-blur-md font-mono text-[9px] text-zinc-300">
+                        <div className={`absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/60 px-2.5 py-1.5 ${btnShape} border border-white/5 backdrop-blur-md font-mono text-[9px] text-zinc-300`}>
                             <span>4K</span>
                             <i className="fas fa-battery-three-quarters text-emerald-400"></i>
                         </div>
 
                         {/* Bottom Left Camera HUD UI: Reticles */}
-                        <div className="absolute bottom-4 left-4 z-20 font-mono text-[8px] text-zinc-400 bg-black/40 px-2 py-1 rounded border border-white/5">
+                        <div className={`absolute bottom-4 left-4 z-20 font-mono text-[8px] text-zinc-400 bg-black/40 px-2 py-1 ${btnShape} border border-white/5`}>
                             <span>TC // 23.98p</span>
                         </div>
 

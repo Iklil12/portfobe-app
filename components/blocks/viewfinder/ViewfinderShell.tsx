@@ -199,7 +199,9 @@ function ViewfinderShellContent({ children, theme, isEditor, isCardPreview, data
 }
 
 export function ViewfinderShell(props: any) {
-    return (
+    
+
+return (
         <ViewfinderProvider>
             <ViewfinderShellContent {...props} />
         </ViewfinderProvider>

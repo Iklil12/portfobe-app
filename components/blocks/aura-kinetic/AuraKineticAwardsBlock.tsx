@@ -15,7 +15,7 @@ export function AuraKineticAwardsBlock({ data, theme, isEditor }: any) {
       { title: "FWA of the Month", issuer: "FWA", year: "2023", status: "Nominee", mediaUrl: "https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=800" }
   ] : awardItems;
 
-  const cardRadiusClass = theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-3xl';
+  
   const highlightColor = theme?.themeColor || '#8b5cf6';
 
   const fadeUp = {
@@ -28,6 +28,18 @@ export function AuraKineticAwardsBlock({ data, theme, isEditor }: any) {
   };
 
   const animationTrigger = isEditor ? "animate" : "whileInView";
+
+  
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-xl';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
+
+    
+
 
   return (
     <section id="awards" className="relative z-10 w-full max-w-[1000px] mx-auto px-6 py-24 md:py-32">
@@ -49,7 +61,7 @@ export function AuraKineticAwardsBlock({ data, theme, isEditor }: any) {
                     <motion.div
                         key={i}
                         initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
-                        className={`group flex flex-col p-6 md:p-8 bg-white/5 border border-white/10 hover:border-[var(--hl)]/50 backdrop-blur-md hover:bg-white/10 transition-all duration-500 ${cardRadiusClass} relative overflow-hidden cursor-pointer`}
+                        className={`group flex flex-col p-6 md:p-8 bg-white/5 border border-white/10 hover:border-[var(--hl)]/50 backdrop-blur-md hover:bg-white/10 transition-all duration-500 ${cardShape} relative overflow-hidden cursor-pointer`}
                         onClick={() => toggleAward(i)}
                     >
                         <div className="absolute top-0 left-0 w-2 h-full bg-[var(--hl)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
@@ -64,7 +76,7 @@ export function AuraKineticAwardsBlock({ data, theme, isEditor }: any) {
                             </div>
 
                             <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-                                <span className="font-sans text-[10px] uppercase tracking-widest font-bold px-3 py-1 bg-white/5 rounded-full text-white/50 group-hover:text-white transition-colors">{award.status || 'Verified'}</span>
+                                <span className={`font-sans text-[10px] uppercase tracking-widest font-bold px-3 py-1 bg-white/5 ${btnShape} text-white/50 group-hover:text-white transition-colors`}>{award.status || 'Verified'}</span>
                                 <div className="flex items-center gap-2">
                                     {hasMedia && (
                                         <span className="text-xs font-mono text-[var(--hl)] opacity-80 group-hover:opacity-100 transition-opacity mr-1.5 hidden md:inline">
@@ -103,7 +115,7 @@ export function AuraKineticAwardsBlock({ data, theme, isEditor }: any) {
                                                 href={award.mediaUrl} 
                                                 target="_blank" 
                                                 rel="noreferrer" 
-                                                className="px-4 py-2 bg-white text-black font-sans text-xs font-bold rounded-full hover:bg-[var(--hl)] hover:text-white transition-colors flex items-center gap-2"
+                                                className={`px-4 py-2 bg-white text-black font-sans text-xs font-bold ${btnShape} hover:bg-[var(--hl)] hover:text-white transition-colors flex items-center gap-2`}
                                             >
                                                 <i className="fas fa-external-link-alt"></i>
                                                 Open in New Tab

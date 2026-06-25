@@ -20,6 +20,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { getVideoThumbnail } from '@/shared/lib/videoUtils';
+import { LazyImage } from '@/shared/ui/LazyImage';
 interface Project {
   id: string;
   title: string;
@@ -47,13 +48,11 @@ function ProjectThumbnail({ project }: { project: Project }) {
       {hasError ? (
         project.projectType === 'video' ? <Video className="w-5 h-5 text-white/20" /> : <ImageIcon className="w-5 h-5 text-white/20" />
       ) : (
-        <img 
+        <LazyImage 
           src={finalUrl} 
           alt={project.title} 
           className="w-full h-full object-cover" 
-          loading="lazy" 
-          decoding="async"
-          onError={() => setHasError(true)}
+          sizes="60px"
         />
       )}
       
@@ -84,21 +83,21 @@ function SortableProjectItem({
   onRemove: (id: string) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id });
-  const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1 };
+  const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : 1 };
 
   return (
-    <div ref={setNodeRef} style={style} className={`group flex items-center gap-3 p-3 rounded-none border border-white/10 bg-zinc-900 shadow-sm transition-colors duration-200 ${isDragging ? 'opacity-90 scale-[1.02] shadow-2xl border-[#ff9e00]' : 'hover:border-white/20'}`}>
-      <button {...attributes} {...listeners} className="w-6 h-6 flex items-center justify-center rounded-none hover:bg-white/10 transition-colors cursor-grab active:cursor-grabbing text-white/50 hover:text-white">
+    <div ref={setNodeRef} style={style} className={`group flex items-center gap-4 p-3 rounded-none border transition-all duration-200 ${isDragging ? 'bg-zinc-900 border-[#ff9e00] shadow-2xl shadow-[#ff9e00]/10 scale-[1.02] opacity-95' : 'bg-zinc-950 border-white/10 hover:border-white/30'}`}>
+      <button {...attributes} {...listeners} className="w-8 h-8 flex items-center justify-center text-white/20 hover:text-white/80 cursor-grab active:cursor-grabbing transition-colors">
         <GripVertical className="w-4 h-4" />
       </button>
-      <div className="w-14 h-14 bg-zinc-950 border border-white/10 shrink-0 flex items-center justify-center overflow-hidden">
-        <ProjectThumbnail project={project} />
+      <div className="w-16 h-12 bg-zinc-900 overflow-hidden shrink-0 border border-white/5 relative">
+         <ProjectThumbnail project={project} />
       </div>
       <div className="flex-1 min-w-0">
-        <h4 className="text-xs font-mono font-bold truncate text-white">{project.title}</h4>
-        <p className="text-[9px] font-mono text-white/40 uppercase tracking-widest mt-1">{project.projectType}</p>
+        <h4 className="text-sm font-mono font-bold truncate text-white tracking-wide">{project.title}</h4>
+        <p className="text-[10px] font-mono text-[#ff9e00] uppercase tracking-widest mt-0.5">{project.projectType}</p>
       </div>
-      <button onClick={() => onRemove(project.id)} className="w-6 h-6 rounded-none bg-zinc-950 hover:bg-red-950/50 border border-white/10 hover:border-red-500/50 hover:text-red-400 text-white/40 flex items-center justify-center transition-all">
+      <button onClick={() => onRemove(project.id)} className="w-8 h-8 flex items-center justify-center text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-colors border border-transparent hover:border-red-500/30 shrink-0">
         <Minus className="w-4 h-4" />
       </button>
     </div>
@@ -107,16 +106,16 @@ function SortableProjectItem({
 
 function AvailableProjectItem({ project, onAdd }: { project: Project, onAdd: (id: string) => void }) {
   return (
-    <div className="group flex items-center gap-3 p-3 rounded-none border border-white/5 bg-zinc-950/50 hover:bg-zinc-900 transition-colors duration-200 opacity-70 hover:opacity-100">
-      <div className="w-6 h-6 shrink-0" />
-      <div className="w-14 h-14 bg-zinc-900 border border-white/5 shrink-0 flex items-center justify-center overflow-hidden">
+    <div className="group flex items-center gap-4 p-3 rounded-none border border-transparent hover:border-white/10 bg-transparent hover:bg-white/[0.02] transition-all duration-200">
+      <div className="w-8 h-8 shrink-0" />
+      <div className="w-16 h-12 bg-zinc-900 overflow-hidden shrink-0 border border-white/5 opacity-60 group-hover:opacity-100 transition-opacity relative">
         <ProjectThumbnail project={project} />
       </div>
-      <div className="flex-1 min-w-0">
-        <h4 className="text-xs font-mono font-bold truncate text-white/70 group-hover:text-white transition-colors">{project.title}</h4>
-        <p className="text-[9px] font-mono text-white/30 uppercase tracking-widest mt-1">{project.projectType}</p>
+      <div className="flex-1 min-w-0 opacity-60 group-hover:opacity-100 transition-opacity">
+        <h4 className="text-sm font-mono font-bold truncate text-white tracking-wide">{project.title}</h4>
+        <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest mt-0.5">{project.projectType}</p>
       </div>
-      <button onClick={() => onAdd(project.id)} className="w-6 h-6 rounded-none bg-zinc-900 hover:bg-[#ff9e00]/20 border border-white/5 hover:border-[#ff9e00] hover:text-[#ff9e00] text-white/40 flex items-center justify-center transition-all">
+      <button onClick={() => onAdd(project.id)} className="w-8 h-8 flex items-center justify-center text-white/30 hover:text-[#ff9e00] hover:bg-[#ff9e00]/10 transition-colors border border-transparent hover:border-[#ff9e00]/30 shrink-0">
         <Plus className="w-4 h-4" />
       </button>
     </div>
@@ -192,31 +191,42 @@ export function ProjectSelectionModal({ isOpen, onClose, allProjects = [], selec
     .filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="fixed inset-0 z-[999999] bg-black/95 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl bg-zinc-950 border border-white/10 rounded-none shadow-2xl flex flex-col max-h-[95vh] h-[750px] animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-[999999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-5xl bg-[#09090b] border border-white/10 rounded-none shadow-2xl flex flex-col max-h-[90vh] h-[800px] animate-in zoom-in-95 duration-200 ring-1 ring-white/5">
         
         {/* Header */}
-        <div className="p-6 border-b border-white/5 flex items-start justify-between shrink-0 bg-zinc-900/20">
+        <div className="p-6 sm:p-8 border-b border-white/5 flex items-start justify-between shrink-0 bg-zinc-950 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#ff9e00]/50 to-transparent opacity-50"></div>
           <div>
-            <h2 className="text-sm font-mono font-bold text-white uppercase tracking-widest flex items-center gap-2">
-              <ImageIcon className="w-4 h-4 text-[#ff9e00]" /> Curate Projects
+            <h2 className="text-base sm:text-lg font-mono font-bold text-white uppercase tracking-[0.2em] flex items-center gap-3">
+              <div className="p-2 bg-[#ff9e00]/10 border border-[#ff9e00]/30 text-[#ff9e00]">
+                <ImageIcon className="w-4 h-4" />
+              </div>
+              Curate Projects
             </h2>
-            <p className="text-[11px] font-mono text-white/40 mt-2 max-w-lg leading-relaxed">
-              Add projects from the available list to the selected list. Drag the icons in the selected list to rearrange the order. If the selected list is empty, all projects will be shown by default.
+            <p className="text-xs font-mono text-white/40 mt-3 max-w-2xl leading-relaxed">
+              Define the narrative of your portfolio. Select and reorder the projects that best represent your expertise. Unselected projects will remain in your archive.
             </p>
           </div>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-none bg-zinc-900 hover:bg-zinc-800 text-white/40 hover:text-white transition-colors border border-white/5"><X className="w-4 h-4" /></button>
+          <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-none bg-zinc-900/50 hover:bg-zinc-800 text-white/50 hover:text-white transition-all border border-white/10 hover:border-white/30"><X className="w-5 h-5" /></button>
         </div>
 
         {/* Content Body */}
-        <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+        <div className="flex flex-col lg:flex-row flex-1 overflow-hidden bg-[#09090b]">
           
           {/* TERPILIH */}
-          <div className="flex-1 flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 bg-zinc-950/30 overflow-hidden">
-            <div className="p-4 border-b border-white/5 shrink-0 flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[#ff9e00] uppercase tracking-widest">
-                ● Selected Projects ({selectedList.length})
-              </span>
+          <div className="flex-1 flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 bg-zinc-950/50 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff9e00]/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="p-5 sm:p-6 border-b border-white/5 shrink-0 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                 <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff9e00]"></span>
+                 </span>
+                 <span className="text-xs font-mono font-bold text-white uppercase tracking-widest">
+                   Live Selection <span className="text-white/30 ml-2">({selectedList.length})</span>
+                 </span>
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto custom-scrollbar p-4 relative">
               {isSimulatingLoad ? (
@@ -255,19 +265,19 @@ export function ProjectSelectionModal({ isOpen, onClose, allProjects = [], selec
           </div>
 
           {/* TERSEDIA */}
-          <div className="flex-1 flex flex-col bg-zinc-950/80 overflow-hidden">
-            <div className="p-4 border-b border-white/5 shrink-0 flex flex-col gap-3">
-              <span className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest">
-                ○ Available List
+          <div className="flex-1 flex flex-col bg-zinc-900/20 overflow-hidden">
+            <div className="p-5 sm:p-6 border-b border-white/5 shrink-0 flex flex-col gap-4">
+              <span className="text-xs font-mono font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-white/20 rounded-full"></span> Available Projects
               </span>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
+              <div className="relative group">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-[#ff9e00] transition-colors" />
                 <input 
                   type="text" 
-                  placeholder="Search projects..." 
+                  placeholder="Search your archive..." 
                   value={searchQuery} 
                   onChange={(e) => setSearchQuery(e.target.value)} 
-                  className="w-full bg-zinc-900 border border-white/10 rounded-none py-2 pl-9 pr-4 text-[11px] font-mono text-white placeholder:text-white/30 focus:outline-none focus:border-[#ff9e00]/50" 
+                  className="w-full bg-zinc-950/50 border border-white/10 py-3 pl-10 pr-4 text-xs font-mono text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff9e00]/50 transition-all hover:border-white/20" 
                 />
               </div>
             </div>
@@ -304,9 +314,10 @@ export function ProjectSelectionModal({ isOpen, onClose, allProjects = [], selec
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-white/5 shrink-0 flex items-center justify-end gap-3 bg-zinc-900/20">
-          <button onClick={handleClose} className="px-6 py-2 bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-mono font-bold uppercase tracking-wider transition-colors shadow-lg">
-            Done
+        <div className="p-5 sm:p-6 border-t border-white/5 shrink-0 flex items-center justify-between bg-zinc-950">
+          <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest">Changes are saved automatically.</p>
+          <button onClick={handleClose} className="px-8 py-3 bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:shadow-[0_0_20px_rgba(255,158,0,0.3)] active:scale-95">
+            Close Panel
           </button>
         </div>
       </div>

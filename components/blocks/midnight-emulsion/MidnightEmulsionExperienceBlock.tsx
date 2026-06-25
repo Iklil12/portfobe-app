@@ -19,6 +19,29 @@ const getStaggerContainer = (delayStart = 0, staggerGap = 0.1) => ({
 });
 
 export function MidnightEmulsionExperienceBlock({ theme, isEditor }: any) {
+
+  const getBtnShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-full';
+  };
+  const btnShape = getBtnShapeClass(theme?.buttonShape);
+
+  const getCardShapeClass = (shape?: string) => {
+      if (shape === 'hard' || shape === 'square') return 'rounded-none';
+      if (shape === 'rounded') return 'rounded-xl';
+      return 'rounded-3xl';
+  };
+  const cardShape = getCardShapeClass(theme?.buttonShape);
+
+  const getCardStyleClass = (style?: string) => {
+      if (style === 'hard' || style === 'hard-shadow') return 'border border-white/20 bg-[#030508] shadow-[4px_4px_0_0_rgba(255,255,255,0.1)]';
+      if (style === 'flat') return 'border border-white/10 bg-transparent';
+      if (style === 'soft-shadow' || style === 'soft') return 'border border-white/5 bg-[#080b11] shadow-[0_10px_40px_rgba(0,0,0,0.5)]';
+      return 'border border-white/10 bg-[#06080c] shadow-2xl';
+  };
+  const cardStyleClass = getCardStyleClass(theme?.cardStyle);
+
     const customTexts = theme?.customTexts || {};
     const getCustomText = (key: string, fallback: string) => customTexts[key] || fallback;
 
@@ -151,7 +174,7 @@ export function MidnightEmulsionExperienceBlock({ theme, isEditor }: any) {
                                     {isEditor && (
                                         <button
                                             onClick={(e) => handleRemoveItem(index, e)}
-                                            className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg"
+                                            className={`absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white ${btnShape} w-5 h-5 flex items-center justify-center text-[10px] z-30 transition-colors shadow-lg`}
                                             title="Delete Experience"
                                         >
                                             ✕

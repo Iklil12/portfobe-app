@@ -75,14 +75,14 @@ export function ObsidianProjectsBlock({ data, theme, isEditor }: any) {
                 {displayProjects.map((p: any, i: number) => {
                     const isVideo = p.projectType === 'video';
                     return (
-                        <motion.div key={i} variants={revealVariants} className="block group cursor-pointer" onClick={() => {
+                        <motion.div key={i} variants={revealVariants} className={`block group cursor-pointer ${cardShape} bg-[#080808] p-4 md:p-6 flex flex-col`} onClick={() => {
                             if (isVideo || p.projectType === 'photo') {
                                 setSelectedMedia({ url: p.mediaUrl, title: p.title, type: p.projectType });
                             } else if (p.mediaUrl) {
                                 window.open(p.mediaUrl, '_blank');
                             }
                         }}>
-                            <div className={`w-full aspect-[4/3] ${cardShape} obsidian-img-container mb-6 bg-[#050505] relative`}>
+                            <div className={`w-full aspect-[4/3] ${cardShape} overflow-hidden obsidian-img-container mb-6 relative`}>
                                 <LazyImage src={isVideo ? getVideoThumbnail(p.mediaUrl) : p.mediaUrl} alt={p.title} className="w-full h-full object-cover" />
                                 {isVideo && (
                                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
@@ -90,13 +90,13 @@ export function ObsidianProjectsBlock({ data, theme, isEditor }: any) {
                                     </div>
                                 )}
                             </div>
-                            <div className="flex justify-between items-center">
+                            <div className="flex justify-between items-center mt-auto">
                                 <div>
                                     <h3 className="font-heading text-2xl font-medium mb-1 group-hover-accent transition-colors">{p.title}</h3>
                                     <p className="font-body text-[#8a8a93] text-sm capitalize">{p.projectType || 'Project'}</p>
                                 </div>
                                 <div className={`w-10 h-10 ${btnShape} border border-[rgba(255,255,255,0.1)] flex items-center justify-center group-hover-bg-accent transition-colors`}>
-                                    <i className="fas fa-arrow-right -rotate-45"></i>
+                                    <i className="fas fa-arrow-right -rotate-45 text-white/70 group-hover:text-black"></i>
                                 </div>
                             </div>
                         </motion.div>

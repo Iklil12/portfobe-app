@@ -127,7 +127,7 @@ export function useProfile() {
     }
 
     setIsSaving(true);
-    const toastId = toast.loading('Menyimpan profil...', {
+    const toastId = toast.loading('Saving profile...', {
       style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
     });
 
@@ -156,7 +156,7 @@ export function useProfile() {
       });
 
       if (response.ok) {
-        toast.success("Profil berhasil diperbarui!", {
+        toast.success("Profile updated!", {
           id: toastId,
           duration: 3000,
           style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' },
@@ -182,11 +182,11 @@ export function useProfile() {
 
       } else {
         const errorData = await response.json();
-        toast.error(errorData.error || "Gagal menyimpan perubahan.", { id: toastId });
+        toast.error(errorData.error || "Failed to save changes.", { id: toastId });
       }
     } catch (error) {
       console.error(error);
-      toast.error("Kesalahan jaringan. Coba lagi.", { id: toastId });
+      toast.error("Network error. Try again.", { id: toastId });
     } finally {
       setIsSaving(false);
     }

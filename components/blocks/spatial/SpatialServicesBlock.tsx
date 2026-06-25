@@ -36,6 +36,9 @@ export function SpatialServicesBlock({ data, theme, isEditor, isCardPreview }: a
 
   const radiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-full' : 'rounded-[24px]';
   const cardRadiusClass = theme?.buttonShape === 'hard' || theme?.buttonShape === 'square' ? 'rounded-none' : theme?.buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-[24px]';
+  
+  const cardStyle = theme?.cardStyle || 'flat';
+  const cardStyleClass = cardStyle === 'soft-shadow' || cardStyle === 'soft' ? 'bg-[#0f1115] shadow-[0_30px_60px_rgba(0,0,0,0.8)] border-transparent' : cardStyle === 'hard-shadow' || cardStyle === 'hard' ? 'bg-[#050505] border border-white/20 shadow-[8px_8px_0_0_#ffffff]' : 'glass-panel border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]';
 
   const auraAnim = isCardPreview
     ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
@@ -78,7 +81,7 @@ export function SpatialServicesBlock({ data, theme, isEditor, isCardPreview }: a
             variants={auraAnim}
             onMouseMove={handleMouseMove}
             whileHover={{ y: -6, transition: { duration: 0.3 } }}
-            className={`glass-panel ${cardRadiusClass} p-8 @md:p-10 border border-white/5 hover:border-white/15 transition-all duration-500 group relative overflow-hidden min-h-[240px] @lg:col-span-2 ${!isVisible1 ? 'opacity-40 bg-zinc-950/20' : ''
+            className={`${cardStyleClass} ${cardRadiusClass} p-8 @md:p-10 hover:border-white/15 transition-all duration-500 group relative overflow-hidden min-h-[240px] @lg:col-span-2 ${!isVisible1 ? 'opacity-40 bg-zinc-950/20' : ''
               }`}
             style={{
               backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px)',
@@ -123,7 +126,7 @@ export function SpatialServicesBlock({ data, theme, isEditor, isCardPreview }: a
             variants={auraAnim}
             onMouseMove={handleMouseMove}
             whileHover={{ y: -6, transition: { duration: 0.3 } }}
-            className={`glass-panel ${cardRadiusClass} p-8 @md:p-10 border border-white/5 hover:border-white/15 transition-all duration-500 group relative overflow-hidden min-h-[240px] @lg:col-span-2 ${!isVisible2 ? 'opacity-40 bg-zinc-950/20' : ''
+            className={`${cardStyleClass} ${cardRadiusClass} p-8 @md:p-10 hover:border-white/15 transition-all duration-500 group relative overflow-hidden min-h-[240px] @lg:col-span-2 ${!isVisible2 ? 'opacity-40 bg-zinc-950/20' : ''
               }`}
             style={{
               backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px)',
@@ -171,7 +174,7 @@ export function SpatialServicesBlock({ data, theme, isEditor, isCardPreview }: a
             variants={auraAnim}
             onMouseMove={handleMouseMove}
             whileHover={{ y: -6, transition: { duration: 0.3 } }}
-            className={`glass-panel ${cardRadiusClass} p-8 @md:p-10 border border-white/5 hover:border-white/15 transition-all duration-500 group relative overflow-hidden flex flex-col @md:flex-row gap-8 justify-between items-start @md:items-center min-h-[220px] @lg:col-span-3 ${!isVisible3 ? 'opacity-40 bg-zinc-950/20' : ''
+            className={`${cardStyleClass} ${cardRadiusClass} p-8 @md:p-10 hover:border-white/15 transition-all duration-500 group relative overflow-hidden flex flex-col @md:flex-row gap-8 justify-between items-start @md:items-center min-h-[220px] @lg:col-span-3 ${!isVisible3 ? 'opacity-40 bg-zinc-950/20' : ''
               }`}
             style={{
               backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px)',
@@ -206,7 +209,7 @@ export function SpatialServicesBlock({ data, theme, isEditor, isCardPreview }: a
         {/* Box 4: Interactive Status Monitor (Span 1 column) */}
         <motion.div
           variants={auraAnim}
-          className={`glass-panel ${cardRadiusClass} p-8 border border-white/5 hover:border-white/10 transition-all duration-500 relative overflow-hidden flex flex-col justify-between items-center text-center min-h-[220px] @lg:col-span-1`}
+          className={`${cardStyleClass} ${cardRadiusClass} p-8 hover:border-white/10 transition-all duration-500 relative overflow-hidden flex flex-col justify-between items-center text-center min-h-[220px] @lg:col-span-1`}
           style={{
             backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px)',
             backgroundSize: '20px 20px'

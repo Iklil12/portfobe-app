@@ -218,5 +218,15 @@ export async function updateAccountStatus(email: string, isLive: boolean) {
     }
   }
 
+  // INVALIDATE DASHBOARD SYNC CACHE JUGA BIAR REALTIME
+  try {
+    const keys = await redis.keys(`dashboard:sync:${user.id}:*`);
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+  } catch (err) {
+    console.error("Gagal menghapus cache dashboard sync redis", err);
+  }
+
   return { isLive };
 }

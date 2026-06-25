@@ -144,7 +144,6 @@ export function ProjectList({ state, actions }: { state: useProjectsState; actio
           100% { opacity: 1; transform: translateY(0)    scale(1);    filter: blur(0);   }
         }
       `}</style>
-      <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js" />
 
       {/* key={activeTab} → remount saat tab ganti agar observer reset */}
       <div key={activeTab} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">

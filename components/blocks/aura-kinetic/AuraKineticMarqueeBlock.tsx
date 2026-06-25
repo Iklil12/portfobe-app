@@ -20,6 +20,18 @@ export function AuraKineticMarqueeBlock({ data, theme, isEditor }: any) {
     { type: 'editable', field: 'aura_marquee_2', default: 'Available for work' },
   ];
 
+  
+    const getBtnShapeClass = (shape?: string) => {
+        if (shape === 'hard' || shape === 'square') return 'rounded-none';
+        if (shape === 'rounded') return 'rounded-xl';
+        return 'rounded-full';
+    };
+    const btnShape = getBtnShapeClass(theme?.buttonShape);
+    const cardShape = btnShape;
+
+    
+
+
   return (
     <motion.div
       initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }}

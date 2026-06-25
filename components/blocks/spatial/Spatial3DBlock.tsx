@@ -45,9 +45,9 @@ export function Spatial3DBlock({ data, theme, isMobileView, isCardPreview, isEdi
                 <motion.div
                     key={i}
                     variants={auraAnim}
-                    className="group flex flex-col gap-6"
+                    className={`group flex flex-col gap-6 ${cardStyleClass} ${xlCardRadiusClass} p-4 @md:p-6 transition-all duration-700 hover:shadow-[0_0_60px_rgba(var(--hl-rgb),0.2)]`}
                 >
-                    <div className={`w-full aspect-[4/3] @md:aspect-video ${xlCardRadiusClass} overflow-hidden relative ${cardStyleClass} p-2 @md:p-3 transition-all duration-700 group-hover:shadow-[0_0_60px_rgba(var(--hl-rgb),0.2)] group-hover:border-[var(--hl)]/30`}>
+                    <div className={`w-full aspect-[4/3] @md:aspect-video ${xlCardRadiusClass} overflow-hidden relative mb-4`}>
                         <div className="w-full h-full rounded-[24px] @md:rounded-[36px] overflow-hidden relative bg-[#0a0a0a]">
                             <Interactive3DViewer mediaUrl={p.mediaUrl} bgColor="#0a0a0a" />
 

@@ -51,6 +51,20 @@ export function ObsidianExperienceBlock({ theme, isEditor }: any) {
     };
     const btnShape = getBtnShapeClass(theme?.buttonShape);
 
+    const getCardShapeClass = (style?: string) => {
+        if (style === 'hard-shadow' || style === 'hard') {
+            return 'rounded-none border-2 border-[rgba(255,255,255,0.2)] shadow-[6px_6px_0_0_rgba(255,255,255,0.1)] transition-all duration-300 hover:border-[var(--brand-accent)] hover:shadow-[6px_6px_0_0_var(--brand-accent)] bg-white/[0.01]';
+        }
+        if (style === 'flat') {
+            return 'rounded-none border border-[rgba(255,255,255,0.1)] hover:border-[var(--brand-accent)] transition-colors duration-300 bg-transparent';
+        }
+        if (style === 'soft-shadow' || style === 'soft') {
+            return 'rounded-2xl border border-[rgba(255,255,255,0.05)] shadow-xl hover:shadow-[0_8px_30px_rgb(255,255,255,0.1)] transition-all duration-300 bg-white/[0.02]';
+        }
+        return 'rounded-xl border border-white/5 bg-white/[0.01] hover:border-white/10 hover:bg-white/[0.02]';
+    };
+    const cardShape = getCardShapeClass(theme?.cardStyle);
+
     return (
         <section className="w-full py-16 md:py-24 px-4 md:px-8 bg-zinc-950 border-t border-white/5 relative">
             {/* Soft backdrop blur spot */}
@@ -67,7 +81,7 @@ export function ObsidianExperienceBlock({ theme, isEditor }: any) {
                         </h2>
                     </div>
                     <div className="h-[1px] flex-1 bg-white/5 hidden @sm:block mx-8 mb-4"></div>
-                    <span className="text-[9px] md:text-[10px] font-mono text-zinc-400 uppercase tracking-widest bg-white/5 border border-white/10 px-2.5 py-1.5 rounded shrink-0">
+                    <span className={`text-[9px] md:text-[10px] font-mono text-zinc-400 uppercase tracking-widest bg-white/5 border border-white/10 px-2.5 py-1.5 shrink-0 ${btnShape}`}>
                         ROLL_DIR // SCENE_LIST
                     </span>
                 </div>
@@ -84,8 +98,8 @@ export function ObsidianExperienceBlock({ theme, isEditor }: any) {
                                 
                                 {/* Film Strip Perforation Indicator (Bullet Dot) */}
                                 <div className="absolute left-[-33px] md:left-[-69px] top-1 flex items-center justify-center">
-                                    <div className="w-4 h-4 rounded-full bg-zinc-950 border border-white/20 flex items-center justify-center group-hover:border-white transition-colors duration-300 relative z-10">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 group-hover:bg-red-500 transition-colors duration-300"></span>
+                                    <div className={`w-4 h-4 ${btnShape} bg-zinc-950 border border-white/20 flex items-center justify-center group-hover:border-white transition-colors duration-300 relative z-10`}>
+                                        <span className={`w-1.5 h-1.5 ${btnShape} bg-zinc-500 group-hover:bg-red-500 transition-colors duration-300`}></span>
                                     </div>
                                     {/* Connection node tag */}
                                     <span className="hidden md:inline absolute left-8 font-mono text-[9px] text-zinc-600 select-none">
@@ -137,7 +151,7 @@ export function ObsidianExperienceBlock({ theme, isEditor }: any) {
                                             </span>
                                         </div>
 
-                                        <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-2xl bg-white/[0.01] border border-white/5 p-4 rounded-xl group-hover:border-white/10 group-hover:bg-white/[0.02] transition-all duration-300">
+                                        <p className={`text-zinc-400 text-sm md:text-base leading-relaxed max-w-2xl p-4 transition-all duration-300 border border-white/5 bg-white/[0.01] hover:border-white/20 hover:bg-white/[0.02] ${btnShape}`}>
                                             <EditableText 
                                                 value={defaultDescription} 
                                                 onChange={(val) => handleUpdateItem(index, 'description', val)} 
@@ -166,7 +180,7 @@ export function ObsidianExperienceBlock({ theme, isEditor }: any) {
                     <div className="flex justify-center mt-16 w-full">
                         <button
                             onClick={handleAddItem}
-                            className={`px-8 py-3.5 border border-dashed border-white/25 hover:border-white/50 text-white/70 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10 ${btnShape}`}
+                            className="px-8 py-3.5 border border-dashed border-white/25 hover:border-white/50 text-white/70 hover:text-white uppercase tracking-widest text-[10px] font-mono transition-all duration-300 bg-white/5 hover:bg-white/10 rounded-full"
                         >
                             + Tambah Pengalaman
                         </button>
