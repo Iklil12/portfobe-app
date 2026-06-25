@@ -65,19 +65,9 @@ export function AnalyticsTracker({ subdomain }: { subdomain: string }) {
           if (analyticsId) {
             sessionStorage.setItem('_pfAnalyticsId', analyticsId);
 
-            if (heartbeatRef.current) clearInterval(heartbeatRef.current);
-            heartbeatRef.current = setInterval(() => {
-              const lastActivity = (window as any)._pfLastActivity || Date.now();
-              const isIdle = Date.now() - lastActivity > 5 * 60 * 1000; 
-              
-              if (document.visibilityState === 'visible' && document.hasFocus() && !isIdle) {
-                fetch('/api/analytics/track', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ type: 'HEARTBEAT', analyticsId })
-                }).catch(() => null);
-              }
-            }, 15000); 
+            // [OPTIMASI SERVER]: Interval Heartbeat (15s) dihapus. 
+            // Mem-ping server dengan ribuan user setiap 15 detik akan membuat server hancur (DDoS diri sendiri).
+            // Kita hanya akan mengirim durasi sesi ketika pengguna meninggalkan halaman (beacon).
 
             const flushDuration = () => {
               const id = sessionStorage.getItem('_pfAnalyticsId');

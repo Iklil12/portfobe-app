@@ -31,12 +31,30 @@ export function GithubStats({ userId, variant = 'monochrome', themeColor }: Gith
   const barRef = useRef<HTMLDivElement>(null);
   const [barAnimated, setBarAnimated] = useState(false);
 
-  const { data, error, isLoading } = useSWR(`/api/github/stats?userId=${userId}`, fetcher, {
+  // [OPTIMASI SERVER]: Jika ini mode demo (preview statis), gunakan data dummy lokal tanpa fetch jaringan
+  const isDemo = userId === 'demo';
+  const DEMO_STATS_DATA = {
+    username: 'shadcn',
+    topRepos: [
+      { name: 'open-source-ui', url: '#', description: 'A futuristic open source library for React.', stars: 12500, watchers: 340, forks: 1200, language: 'TypeScript', languageColor: '#3178c6' },
+      { name: 'webgl-experiments', url: '#', description: 'Collection of WebGL shaders and 3D kinetic text.', stars: 8900, watchers: 210, forks: 450, language: 'GLSL', languageColor: '#563d7c' },
+      { name: 'react-framer-components', url: '#', description: 'Highly accessible, animated UI components.', stars: 5400, watchers: 120, forks: 300, language: 'TypeScript', languageColor: '#3178c6' }
+    ],
+    languages: [
+      { name: 'TypeScript', percent: 65, color: '#3178c6' },
+      { name: 'GLSL', percent: 25, color: '#563d7c' },
+      { name: 'JavaScript', percent: 10, color: '#f1e05a' }
+    ]
+  };
+
+  const { data: swrData, error, isLoading } = useSWR(isDemo ? null : `/api/github/stats?userId=${userId}`, fetcher, {
     revalidateOnFocus: false,
     revalidateOnMount: true,
     revalidateIfStale: true,
     dedupingInterval: 10000,
   });
+
+  const data = isDemo ? DEMO_STATS_DATA : swrData;
 
   useEffect(() => {
     setBarAnimated(false);

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 interface Activity {
   id: string;
-  type: 'PushEvent' | 'CreateEvent';
+  type: 'PushEvent' | 'CreateEvent' | 'WatchEvent';
   repo: string;
   description: string;
   createdAt: string;
@@ -37,6 +37,19 @@ export function GithubActivityFeed({ userId, themeColor }: GithubActivityFeedPro
   const feedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!userId) return;
+
+    // [OPTIMASI SERVER]: Jika ini mode demo, gunakan data dummy statis
+    if (userId === 'demo') {
+      setActivities([
+        { id: '1', type: 'PushEvent', repo: 'auraspatial/webgl-experiments', description: 'Pushed 1 commit to', createdAt: new Date().toISOString(), link: 'https://github.com/auraspatial/webgl-experiments' },
+        { id: '2', type: 'CreateEvent', repo: 'auraspatial/open-source-ui', description: 'Created repository', createdAt: new Date(Date.now() - 86400000).toISOString(), link: 'https://github.com/auraspatial/open-source-ui' },
+        { id: '3', type: 'WatchEvent', repo: 'facebook/react', description: 'Starred repository', createdAt: new Date(Date.now() - 172800000).toISOString(), link: 'https://github.com/facebook/react' }
+      ]);
+      setLoading(false);
+      return;
+    }
+
     const fetchActivity = async () => {
       try {
         const res = await fetch(`/api/github/activity?userId=${userId}`);
@@ -51,7 +64,7 @@ export function GithubActivityFeed({ userId, themeColor }: GithubActivityFeedPro
       }
     };
 
-    if (userId) fetchActivity();
+    fetchActivity();
   }, [userId]);
 
   // Scroll-triggered visibility

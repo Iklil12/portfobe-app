@@ -11,7 +11,7 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
 
   const navItems = [
     { label: 'Features', href: '/#features' },
-    { label: 'Templates', href: '/#templates' },
+    { label: 'Templates', href: '/templates' },
     { label: 'Learn', href: '#', hasMegaMenu: true },
     { label: 'Pricing', href: '/pricing' }
   ];
@@ -42,12 +42,12 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center cursor-pointer group">
+          <Link href="/" className="flex items-center cursor-pointer group z-10 relative">
             <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-6 md:h-7 w-auto object-contain group-hover:scale-102 transition-transform duration-300 invert brightness-0" />
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-8 absolute left-1/2 -translate-x-1/2 z-10">
             {navItems.map((item) => {
               if (item.hasMegaMenu) {
                 return (
@@ -150,7 +150,7 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
           </div>
 
           {/* Right Action Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4 z-10 relative">
             <Link href="/login" className="font-mono text-[11px] uppercase tracking-wider text-white/70 hover:text-white px-4 py-2 transition-colors">
               Log in
             </Link>

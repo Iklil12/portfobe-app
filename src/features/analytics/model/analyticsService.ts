@@ -216,6 +216,11 @@ export async function trackAnalytics(req: Request) {
 
     dbSessionId = sessionRecord.id;
   }
+  if (subdomain && ip !== "unknown" && (!type || type === "VIEW")) {
+    // [OPTIMASI SERVER]: Karena heartbeat 15-detik telah dihapus, kita set status 'live_visitor'
+    // bertahan selama 5 menit sejak halaman pertama kali dimuat. Ini jauh lebih ringan dari polling.
+    await redis.set(`live_visitor:${subdomain.toLowerCase().trim()}:${ip}`, "1", "EX", 300);
+  }
 
   const newLog = await prisma.analytics.create({
     data: { userId, sessionId: dbSessionId, type: type || "VIEW", action, targetId, metadata: metadata ? JSON.stringify(metadata) : undefined, ipAddress: ip, userAgent, referrer: finalReferrer, pagePath: pagePath || "/", country, city, deviceType, os, browser, utmSource, utmMedium, utmCampaign }

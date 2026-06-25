@@ -68,10 +68,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return <SystemErrorUI error={swrError} reset={() => window.location.reload()} />;
   }
 
-  const isPublicPage = pathname === "/" || 
-                       pathname === "/pricing" || 
-                       pathname === "/privacy" || 
-                       pathname === "/terms";
+  // Halaman privat yang BENAR-BENAR membutuhkan SessionProvider (NextAuth)
+  const isPrivatePage = pathname?.startsWith("/dashboard") ||
+                        pathname?.startsWith("/impersonate") ||
+                        pathname?.startsWith("/checkout") ||
+                        pathname?.startsWith("/receipt") ||
+                        pathname?.startsWith("/register") ||
+                        pathname?.startsWith("/login") ||
+                        pathname?.startsWith("/verify") ||
+                        pathname?.startsWith("/reset-password");
+
+  // Semua route selain yang di atas (termasuk /[subdomain], /templates, /, /pricing) adalah publik
+  const isPublicPage = !isPrivatePage;
 
   // Toast renderer (diekstrak agar JSX lebih bersih)
   const toastRenderer = (t: any) => {
@@ -174,10 +182,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <SWRConfig
       value={{
         fetcher: globalFetcher,
-        revalidateOnFocus: true,
+        revalidateOnFocus: isPrivatePage, // [OPTIMASI SERVER] Matikan auto-fetch saat pindah tab untuk halaman publik
         focusThrottleInterval: 10000,
         dedupingInterval: 10000,
-        revalidateOnReconnect: true,
+        revalidateOnReconnect: isPrivatePage,
         onError: (error) => {
           // Hanya tangkap error 500 (Server Error) atau jaringan terputus (tanpa status)
           if (error.status >= 500 || !error.status) {

@@ -215,7 +215,7 @@ export function TemplatesSection() {
                       
                       {/* Action Button */}
                       <Link 
-                        href="/register" 
+                        href={`/templates`} 
                         className={`
                           shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-none 
                           flex items-center justify-center border
@@ -257,7 +257,7 @@ export function TemplatesSection() {
 
         {/* Global Action Button */}
         <div className="mt-10 md:mt-16 flex justify-center pb-0 px-6">
-            <Link href="/register" className="group relative flex items-center gap-4 px-8 py-4 rounded-none border border-white/10 text-white font-mono text-xs uppercase tracking-widest font-bold hover:border-white hover:bg-white hover:text-black transition-all duration-300 w-full md:w-auto justify-center overflow-hidden">
+            <Link href="/templates" className="group relative flex items-center gap-4 px-8 py-4 rounded-none border border-white/10 text-white font-mono text-xs uppercase tracking-widest font-bold hover:border-white hover:bg-white hover:text-black transition-all duration-300 w-full md:w-auto justify-center overflow-hidden">
               <span className="relative z-10">View Template Gallery</span>
               <i className="fas fa-arrow-right relative z-10 group-hover:translate-x-1 transition-transform"></i>
             </Link>

@@ -1,4 +1,5 @@
 import prisma from '@/shared/lib/prisma';
+import { redis } from '@/shared/lib/redis';
 import bcrypt from 'bcrypt';
 import { Resend } from 'resend';
 import crypto from 'crypto';
@@ -190,13 +191,15 @@ export async function getAccountStatus(email: string) {
 }
 
 export async function updateAccountStatus(email: string, isLive: boolean) {
-  if (isLive === true) {
-    const user = await prisma.user.findUnique({
-      where: { email },
-      select: { emailVerified: true }
-    });
+  const user = await prisma.user.findUnique({
+    where: { email },
+    include: { profile: true }
+  });
 
-    if (!user || user.emailVerified === null) {
+  if (!user) throw new Error("USER_NOT_FOUND");
+
+  if (isLive === true) {
+    if (user.emailVerified === null) {
       throw new Error("EMAIL_NOT_VERIFIED");
     }
   }
@@ -205,6 +208,15 @@ export async function updateAccountStatus(email: string, isLive: boolean) {
     where: { email },
     data: { isLive },
   });
+
+  // INVALIDATE REDIS CACHE AGAR PERUBAHAN INSTAN
+  if (user.profile?.subdomain) {
+    try {
+      await redis.del(`portfolio_db:${user.profile.subdomain.trim().toLowerCase()}`);
+    } catch (err) {
+      console.error("Gagal menghapus cache redis saat mengubah status", err);
+    }
+  }
 
   return { isLive };
 }

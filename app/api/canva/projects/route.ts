@@ -15,7 +15,11 @@ export async function GET(req: Request) {
     if (!targetUserId) return NextResponse.json({ projects: [] });
 
     const projects = await getCanvaProjects(targetUserId);
-    return NextResponse.json({ projects });
+    return NextResponse.json({ projects }, {
+      headers: {
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300"
+      }
+    });
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch Canva data" }, { status: 500 });
   }
