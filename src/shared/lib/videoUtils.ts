@@ -41,13 +41,13 @@ export const getVideoThumbnail = (urlOrId: string) => {
     if (pullZone) {
       return `https://${pullZone}/${bunnyGuid}/thumbnail.jpg`;
     }
-    // Fallback image untuk video
-    return 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop';
+    // Fallback image untuk video jika pull zone gagal
+    return 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop';
   }
 
   // Jika berupa file MP4 langsung
   if (urlOrId.endsWith('.mp4')) {
-    return 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop';
+    return 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop';
   }
 
   return urlOrId;

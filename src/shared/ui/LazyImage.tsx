@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-export const LazyImage = ({ src, alt, className, sizes }: { src: string, alt: string, className?: string, sizes?: string }) => {
+export const LazyImage = ({ src, alt, className, sizes, fallbackSrc }: { src: string, alt: string, className?: string, sizes?: string, fallbackSrc?: string }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [imgSrc, setImgSrc] = useState(src);
 
@@ -29,7 +29,7 @@ export const LazyImage = ({ src, alt, className, sizes }: { src: string, alt: st
         }
         onLoad={() => setIsLoaded(true)}
         onError={() => {
-          setImgSrc("https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop");
+          setImgSrc(fallbackSrc || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop");
           setIsLoaded(true);
         }}
         className={`
