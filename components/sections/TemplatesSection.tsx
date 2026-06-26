@@ -51,8 +51,8 @@ export function TemplatesSection() {
   return (
     <section id="templates" className="relative pt-24 pb-16 md:pt-32 md:pb-24 bg-[#050505] overflow-hidden border-t border-white/10">
       
-      {/* Subtle Background Glow (Absolute Noir Style) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#ff9e00]/[0.015] blur-[150px] rounded-full pointer-events-none"></div>
+      {/* Subtle Background Glow (Absolute Noir Style) - Optimized for performance */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle,_rgba(255,158,0,0.03)_0%,_transparent_70%)] rounded-full pointer-events-none"></div>
 
       {/* Subtle Grid Overlay */}
       <div 

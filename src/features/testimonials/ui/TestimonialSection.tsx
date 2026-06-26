@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { EditableText } from '@/shared/ui/EditableText';
 import { Star } from 'lucide-react';
-import { LazyImage } from '@/shared/ui/LazyImage';
+import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
 
 export interface Testimonial {
   id: string;
@@ -52,7 +52,7 @@ export function TestimonialSection({ testimonials, variant = 'grid', isEditor = 
               <div className="flex items-center gap-4 mb-4">
                 {t.avatarUrl ? (
                   <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
-                    <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover" />
+                    <OptimizedLazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover" />
                   </div>
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center font-bold">

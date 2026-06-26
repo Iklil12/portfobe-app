@@ -61,7 +61,7 @@ export default function ReceiptPage() {
           </div>
           <div className="text-right shrink-0">
              <div className="flex items-center justify-end gap-2 mb-2">
-                <img src="/portfo.be.png" alt="Portfobe Logo" className="h-8 w-auto object-contain" />
+                <img src="/portfo.be.webp" alt="Portfobe Logo" className="h-8 w-auto object-contain" />
              </div>
           </div>
         </div>

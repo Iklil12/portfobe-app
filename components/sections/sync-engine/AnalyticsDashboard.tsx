@@ -53,8 +53,8 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
 
   return (
     <div ref={containerRef} className="relative p-4 sm:p-6 rounded-none w-full overflow-hidden bg-[#0a0a0a] border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] text-left font-sans group">
-      {/* Subtle radial spotlight */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-32 bg-gradient-to-b from-[#ff9e00]/5 to-transparent blur-2xl pointer-events-none"></div>
+      {/* Subtle radial spotlight - Optimized */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-64 bg-[radial-gradient(ellipse_at_top,_rgba(255,158,0,0.08)_0%,_transparent_70%)] pointer-events-none"></div>
 
       {/* Grid Overlay with radial fade out */}
       <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] [mask-image:radial-gradient(ellipse_at_center,black_75%,transparent_100%)] opacity-80 pointer-events-none"></div>

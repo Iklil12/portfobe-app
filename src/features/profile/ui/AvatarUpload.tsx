@@ -89,7 +89,7 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
         <div className="relative z-10 p-4">
           <div className="absolute inset-0 bg-white/5 rounded-none blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
           <LazyImage
-            src="/portfo.be.png"
+            src="/portfo.be.webp"
             className="relative h-8 sm:h-10 w-auto object-contain opacity-40 group-hover:opacity-70 transition-opacity duration-300 drop-shadow-sm"
             alt="Portfo.be Cover"
           />

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import Image from 'next/image';
 
@@ -15,6 +17,11 @@ export const OptimizedLazyImage = ({ src, alt, className }: { src: string, alt: 
         alt={alt}
         fill
         sizes="(max-width: 768px) 100vw, 50vw"
+        unoptimized={
+          imgSrc.includes('b-cdn.net') || 
+          imgSrc.includes('bunnycdn') || 
+          imgSrc.includes('mediadelivery.net')
+        }
         onLoad={() => setIsLoaded(true)}
         onError={() => {
           setImgSrc("https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop");

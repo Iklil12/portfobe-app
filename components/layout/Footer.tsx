@@ -36,7 +36,7 @@ export function Footer() {
             {/* Logo & Description */}
             <div className="md:col-span-2 p-6 md:p-10">
                 <div className="mb-6">
-                    <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-8 md:h-10 w-auto object-contain brightness-0 invert" />
+                    <img src="/portfo.be.webp" alt="Portfo.be Logo" className="h-8 md:h-10 w-auto object-contain brightness-0 invert" />
                 </div>
                 <p className="text-sm font-medium leading-relaxed text-white/60 max-w-sm mb-8">
                     A premium portfolio building platform for visual creators. Launch your professional website to showcase work, manage your profile, and land high-paying clients—all without writing a single line of code.

@@ -56,8 +56,8 @@ export function PricingSection() {
           background: 'radial-gradient(ellipse at center, rgba(168,85,247,0.06) 0%, transparent 70%)',
         }}
       ></div>
-      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-[#a855f7]/4 blur-[200px] rounded-full pointer-events-none animate-blob"></div>
-      <div className="absolute top-1/3 right-[10%] w-[400px] h-[400px] bg-[#ff9e00]/3 blur-[180px] rounded-full pointer-events-none animate-blob animation-delay-4000"></div>
+      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-[radial-gradient(circle,_rgba(168,85,247,0.08)_0%,_transparent_70%)] rounded-full pointer-events-none animate-blob"></div>
+      <div className="absolute top-1/3 right-[10%] w-[400px] h-[400px] bg-[radial-gradient(circle,_rgba(255,158,0,0.06)_0%,_transparent_70%)] rounded-full pointer-events-none animate-blob animation-delay-4000"></div>
 
       {/* Subtle Grid */}
       <div 

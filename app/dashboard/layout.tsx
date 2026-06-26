@@ -127,10 +127,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#050505] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
 
-        {/* GLOBAL BACKGROUND STATIC */}
+        {/* GLOBAL BACKGROUND STATIC - Optimized for GPU */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-[#ff9e00]/5 rounded-full blur-[120px]"></div>
-          <div className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-white/5 rounded-full blur-[120px]"></div>
+          <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-[radial-gradient(circle,_rgba(255,158,0,0.1)_0%,_transparent_70%)] rounded-full"></div>
+          <div className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-[radial-gradient(circle,_rgba(255,255,255,0.08)_0%,_transparent_70%)] rounded-full"></div>
         </div>
 
         <div className="relative z-40 w-full flex flex-col">

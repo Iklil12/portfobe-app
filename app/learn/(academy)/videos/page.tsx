@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Video, Lock } from 'lucide-react';
+import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
 
 export const metadata = {
     title: 'Videos - Portfo.be Academy',
@@ -83,7 +84,7 @@ export default function VideosPage() {
                     {VIDEOS.map((video) => (
                         <div key={video.id} className="group cursor-not-allowed flex flex-col gap-4">
                             <div className="relative aspect-video bg-zinc-900 overflow-hidden border border-white/10 transition-colors">
-                                <img 
+                                <OptimizedLazyImage 
                                     src={video.thumbnail} 
                                     alt={video.title} 
                                     className="absolute inset-0 w-full h-full object-cover opacity-20 grayscale transition-all duration-700" 

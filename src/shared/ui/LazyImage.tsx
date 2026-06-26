@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
@@ -23,9 +25,7 @@ export const LazyImage = ({ src, alt, className, sizes, fallbackSrc }: { src: st
         unoptimized={
           imgSrc.includes('b-cdn.net') || 
           imgSrc.includes('bunnycdn') || 
-          imgSrc.includes('mediadelivery.net') || 
-          imgSrc.includes('cloudinary.com') || 
-          imgSrc.includes('unsplash.com')
+          imgSrc.includes('mediadelivery.net')
         }
         onLoad={() => setIsLoaded(true)}
         onError={() => {
@@ -36,8 +36,8 @@ export const LazyImage = ({ src, alt, className, sizes, fallbackSrc }: { src: st
           ${className || ''} 
           ${!className?.includes('absolute') && !className?.includes('fixed') ? 'relative' : ''} 
           ${!className?.includes('z-') ? 'z-0' : ''} 
-          transition-opacity duration-500 ease-in-out
-          ${isLoaded ? 'opacity-100' : 'opacity-0'}
+          transition-all duration-700 ease-in-out
+          ${isLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm scale-105'}
         `}
         style={{ 
           objectFit: className?.includes('object-cover') ? 'cover' : className?.includes('object-contain') ? 'contain' : 'inherit',

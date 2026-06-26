@@ -6,7 +6,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { SmoothScroll } from '@/shared/ui/SmoothScroll';
 import { THEMES_DATA } from '@/features/themes/config/themesData';
-import { LazyImage } from '@/shared/ui/LazyImage';
+import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
 import { 
   Sparkles,
   Lock,
@@ -68,7 +68,7 @@ export default function TemplatesPage() {
                     `}>
                       <div className="absolute inset-0 bg-[#050505] overflow-hidden">
                         {theme.img ? (
-                          <LazyImage
+                          <OptimizedLazyImage
                             src={theme.img}
                             className={`w-full h-full object-contain transition-transform duration-[10s] ease-linear group-hover:scale-[1.05] ${!theme.isAvailable ? 'blur-[2px] grayscale opacity-40' : ''}`}
                             alt={theme.name}

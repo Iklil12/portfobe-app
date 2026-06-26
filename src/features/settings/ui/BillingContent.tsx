@@ -314,7 +314,7 @@ export default function BillingContent() {
             <p className="text-white/40 text-[10px] font-mono font-bold uppercase tracking-widest mb-3">Connected Platforms</p>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center p-1.5">
-                <img src="/portfo.be.png" alt="Logo" className="w-full h-full object-contain brightness-0 invert opacity-95" />
+                <img src="/portfo.be.webp" alt="Logo" className="w-full h-full object-contain brightness-0 invert opacity-95" />
               </div>
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">Portfobe</span>
             </div>

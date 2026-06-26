@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, BookOpen, CheckCircle2 } from 'lucide-react';
+import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
 
 const LESSONS = [
     {
@@ -166,7 +167,7 @@ export default function PlatformGuidePage() {
             {/* Hero Cover Image */}
             <div className="w-full aspect-[21/9] bg-zinc-900 border-b border-white/10 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-black/40 z-10 transition-colors group-hover:bg-black/20 pointer-events-none"></div>
-                <img 
+                <OptimizedLazyImage 
                     src="https://images.unsplash.com/photo-1618761714954-0b8cd0026356?auto=format&fit=crop&w=1600&q=80" 
                     alt="Guide cover" 
                     className="absolute inset-0 w-full h-full object-cover opacity-70 grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" 

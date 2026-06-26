@@ -229,12 +229,12 @@ export function SyncEngineSection() {
           className="sticky top-0 h-screen w-full overflow-hidden flex items-center"
         >
 
-          {/* Abstract Orbs (Epic Bloom Entrance) */}
+          {/* Abstract Orbs (Epic Bloom Entrance) - Optimized */}
           <div
-            className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#ff9e00]/[0.02] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
+            className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[60vw] h-[60vw] bg-[radial-gradient(circle,_rgba(255,158,0,0.04)_0%,_transparent_70%)] rounded-full pointer-events-none z-0 transform-gpu"
           ></div>
           <div
-            className="absolute top-1/3 right-1/4 w-[40vw] h-[40vw] bg-[#ff9e00]/[0.01] rounded-full blur-[100px] pointer-events-none z-0 transform-gpu"
+            className="absolute top-1/3 right-1/4 w-[40vw] h-[40vw] bg-[radial-gradient(circle,_rgba(255,158,0,0.02)_0%,_transparent_70%)] rounded-full pointer-events-none z-0 transform-gpu"
           ></div>
 
           {/* LAYER 1: RAW CODE WATERMARK (Matrix Fade In) */}

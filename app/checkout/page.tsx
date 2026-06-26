@@ -122,7 +122,7 @@ function CheckoutContent() {
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center">
           <div className="bg-zinc-950 p-6 border border-white/10 mb-8 relative">
-            <img src="/portfo.be.png" alt="Portfo.be" className="h-7 w-auto relative z-10 invert brightness-0 animate-pulse" />
+            <img src="/portfo.be.webp" alt="Portfo.be" className="h-7 w-auto relative z-10 invert brightness-0 animate-pulse" />
           </div>
           
           <div className="flex gap-1.5">
@@ -209,7 +209,7 @@ function CheckoutContent() {
       {/* Navbar */}
       <nav className="bg-black/60 backdrop-blur-md border-b border-white/10 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-6 w-auto invert brightness-0" />
+          <img src="/portfo.be.webp" alt="Portfo.be Logo" className="h-6 w-auto invert brightness-0" />
         </Link>
         <div className="flex items-center gap-4">
           <span className="text-xs font-mono font-bold text-white/50 hidden md:block">{session?.user?.email}</span>

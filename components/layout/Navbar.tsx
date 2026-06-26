@@ -43,7 +43,7 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
 
           {/* Logo */}
           <Link href="/" className="flex items-center cursor-pointer group z-10 relative">
-            <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-6 md:h-7 w-auto object-contain group-hover:scale-102 transition-transform duration-300 invert brightness-0" />
+            <img src="/portfo.be.webp" alt="Portfo.be Logo" className="h-6 md:h-7 w-auto object-contain group-hover:scale-102 transition-transform duration-300 invert brightness-0" />
           </Link>
 
           {/* Desktop Navigation Links */}
@@ -172,7 +172,7 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
       <div className={`fixed top-0 right-0 w-[85%] max-w-sm h-[100dvh] bg-[#050505] border-l border-white/10 z-[70] shadow-2xl transform transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="flex justify-between items-center p-6 border-b border-white/10">
           <span className="flex items-center">
-            <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-6 w-auto object-contain invert brightness-0" />
+            <img src="/portfo.be.webp" alt="Portfo.be Logo" className="h-6 w-auto object-contain invert brightness-0" />
           </span>
           <button onClick={() => setIsMobileMenuOpen(false)} className="w-10 h-10 border border-white/10 flex items-center justify-center text-white/60 active:scale-95 transition-transform">
             <X className="w-5 h-5" />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 export function EnterpriseHeroSection() {
     const words = ['developers.', 'designers.', 'creators.', 'agencies.', 'brands.'];
@@ -54,7 +55,7 @@ export function EnterpriseHeroSection() {
                         {cards.map((card, i) => (
                             <div key={i} className={`relative w-[220px] h-[220px] md:w-[320px] md:h-[320px] overflow-hidden shrink-0 flex items-center justify-center ${card.type === 'color' ? card.bg : 'bg-zinc-900'} border border-white/10 grayscale hover:grayscale-0 transition-all duration-500`}>
                                 {card.type === 'image' ? (
-                                    <img src={card.src} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 cursor-pointer grayscale hover:grayscale-0 contrast-[1.2]" alt="Showcase" />
+                                    <Image src={card.src as string} alt="Showcase" fill sizes="(max-width: 768px) 220px, 320px" priority={i < 4} className="object-cover transition-transform duration-700 hover:scale-105 cursor-pointer grayscale hover:grayscale-0 contrast-[1.2]" />
                                 ) : (
                                     <div className="cursor-pointer hover:scale-105 transition-transform duration-500">{card.content}</div>
                                 )}
@@ -66,7 +67,7 @@ export function EnterpriseHeroSection() {
                         {cards.map((card, i) => (
                             <div key={i} className={`relative w-[220px] h-[220px] md:w-[320px] md:h-[320px] overflow-hidden shrink-0 flex items-center justify-center ${card.type === 'color' ? card.bg : 'bg-zinc-900'} border border-white/10 grayscale hover:grayscale-0 transition-all duration-500`}>
                                 {card.type === 'image' ? (
-                                    <img src={card.src} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 cursor-pointer grayscale hover:grayscale-0 contrast-[1.2]" alt="Showcase" />
+                                    <Image src={card.src as string} alt="Showcase" fill sizes="(max-width: 768px) 220px, 320px" priority={i < 4} className="object-cover transition-transform duration-700 hover:scale-105 cursor-pointer grayscale hover:grayscale-0 contrast-[1.2]" />
                                 ) : (
                                     <div className="cursor-pointer hover:scale-105 transition-transform duration-500">{card.content}</div>
                                 )}

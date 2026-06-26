@@ -3,7 +3,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
-import { LazyImage } from '@/shared/ui/LazyImage';
+import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
 import { getVideoThumbnail } from '@/shared/lib/videoUtils';
 import { FolderOpen, Trash2, Edit3, Check, Award, Box, Play, Image as ImageIcon } from 'lucide-react';
 import { useProjectsState, useProjectsActions } from '@/entities/portfolio/model/useProjects';
@@ -154,7 +154,7 @@ export function ProjectList({ state, actions }: { state: useProjectsState; actio
                 {item.projectType === '3d' ? (
                   <ModelViewerCard src={item.mediaUrl} />
                 ) : (
-                  <LazyImage
+                  <OptimizedLazyImage
                     src={item.projectType === 'video' ? getVideoThumbnail(item.mediaUrl) : item.mediaUrl}
                     alt={item.title}
                     className="w-full h-full object-cover transition-transform duration-750 group-hover:scale-105"

@@ -33,7 +33,7 @@ export async function generateMetadata(
     const fullName = data.profile.fullName || subdomain;
     const profession = data.profile.profession || 'Creative Professional';
     const fallbackBio = data.profile.bio || `Check out ${fullName}'s portfolio on Portfo.be`;
-    const avatar = data.profile.avatarUrl || 'https://portfo.be/portfo.be.png';
+    const avatar = data.profile.avatarUrl || 'https://portfo.be/portfo.be.webp';
 
     const seoTitle = customTexts?.seo_title || `${fullName} - ${profession}`;
     const seoDesc = customTexts?.seo_description || fallbackBio;

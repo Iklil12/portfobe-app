@@ -76,7 +76,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
             ) : (
               <>
                 <Link href="/dashboard" className="flex items-center group cursor-pointer">
-                   <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-6 w-auto object-contain invert brightness-0 group-hover:opacity-80 transition-opacity" />
+                   <img src="/portfo.be.webp" alt="Portfo.be Logo" className="h-6 w-auto object-contain invert brightness-0 group-hover:opacity-80 transition-opacity" />
                 </Link>
                 <button onClick={onToggleDesktopSidebar} className="w-6 h-6 flex items-center justify-center text-white/40 hover:text-[#ff9e00] transition-colors">
                   <PanelLeftClose className="w-5 h-5" />
@@ -212,7 +212,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
               <div className="h-8 w-28 skeleton-premium rounded-none"></div>
             ) : (
               <Link href="/" className="flex items-center group cursor-pointer">
-                 <img src="/portfo.be.png" alt="Portfo.be Logo" className="h-9 w-auto object-contain invert brightness-0" />
+                 <img src="/portfo.be.webp" alt="Portfo.be Logo" className="h-9 w-auto object-contain invert brightness-0" />
               </Link>
             )}
           </div>

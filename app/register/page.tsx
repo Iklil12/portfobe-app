@@ -138,7 +138,7 @@ export default function RegisterPage() {
         
         <div className="relative z-10 w-full max-w-md">
           <Link href="/">
-            <img src="/portfo.be.png" alt="Logo" className="h-6 mb-24 invert brightness-0 opacity-90 hover:opacity-100 transition-opacity cursor-pointer" />
+            <img src="/portfo.be.webp" alt="Logo" className="h-6 mb-24 invert brightness-0 opacity-90 hover:opacity-100 transition-opacity cursor-pointer" />
           </Link>
           
           <h2 className="text-4xl font-display font-bold text-white leading-tight tracking-tight mb-6">
@@ -172,7 +172,7 @@ export default function RegisterPage() {
 
         {/* Logo for mobile only */}
         <Link href="/" className="absolute top-10 left-8 sm:left-16 lg:hidden group z-20">
-          <img src="/portfo.be.png" alt="Logo" className="h-6 w-auto object-contain invert brightness-0 group-hover:scale-105 transition-transform" />
+          <img src="/portfo.be.webp" alt="Logo" className="h-6 w-auto object-contain invert brightness-0 group-hover:scale-105 transition-transform" />
         </Link>
 
         <div className="w-full max-w-md mx-auto py-12 mt-12 lg:mt-0 relative z-10">

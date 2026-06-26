@@ -222,7 +222,7 @@ export default function LoginClient() {
         <div className="absolute inset-0 z-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none"></div>
 
         <Link href="/" className="absolute top-10 left-8 sm:left-16 md:left-24 xl:left-40 group z-20">
-          <img src="/portfo.be.png" alt="Logo" className="h-6 w-auto object-contain invert brightness-0 group-hover:scale-105 transition-transform duration-300" />
+          <img src="/portfo.be.webp" alt="Logo" className="h-6 w-auto object-contain invert brightness-0 group-hover:scale-105 transition-transform duration-300" />
         </Link>
 
         <div className="w-full max-w-md mx-auto py-12 mt-12 md:mt-0 relative z-10">

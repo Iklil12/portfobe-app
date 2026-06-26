@@ -69,9 +69,9 @@ export default function BlogPage() {
 
                 {/* Top Grid Layout (Edge to Edge) */}
                 <header className="relative pt-32 pb-20 md:pt-48 md:pb-28 overflow-hidden border-b border-white/10">
-                    {/* Decorative background elements */}
-                    <div className="absolute top-0 right-0 w-[600px] lg:w-[800px] h-[600px] lg:h-[800px] bg-[#ff9e00]/10 rounded-full blur-[120px] pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
-                    <div className="absolute bottom-0 left-0 w-[400px] lg:w-[600px] h-[400px] lg:h-[600px] bg-white/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 translate-y-1/2"></div>
+                    {/* Decorative background elements - Optimized */}
+                    <div className="absolute top-0 right-0 w-[600px] lg:w-[800px] h-[600px] lg:h-[800px] bg-[radial-gradient(circle,_rgba(255,158,0,0.15)_0%,_transparent_70%)] rounded-full pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
+                    <div className="absolute bottom-0 left-0 w-[400px] lg:w-[600px] h-[400px] lg:h-[600px] bg-[radial-gradient(circle,_rgba(255,255,255,0.08)_0%,_transparent_70%)] rounded-full pointer-events-none -translate-x-1/2 translate-y-1/2"></div>
 
                     <div className="max-w-7xl mx-auto px-6 relative z-10">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-end">
@@ -170,6 +170,7 @@ export default function BlogPage() {
                                         src="/images/blog/digital-portfolio-showcase.png"
                                         alt="Membangun Portofolio Digital yang Menonjol Thumbnail"
                                         fill
+                                        sizes="(max-width: 1024px) 100vw, 25vw"
                                         className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out grayscale group-hover:grayscale-0"
                                     />
                                 </div>
@@ -204,6 +205,7 @@ export default function BlogPage() {
                                         src="/images/blog/linkedin-vs-portfolio.png"
                                         alt="Mengapa Profil LinkedIn Saja Tidak Cukup Thumbnail"
                                         fill
+                                        sizes="(max-width: 1024px) 100vw, 25vw"
                                         className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out grayscale group-hover:grayscale-0"
                                     />
                                 </div>
@@ -238,6 +240,7 @@ export default function BlogPage() {
                                         src="/images/blog/traditional-builder-death.png"
                                         alt="Matinya Website Builder Tradisional Thumbnail"
                                         fill
+                                        sizes="(max-width: 1024px) 100vw, 25vw"
                                         className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out grayscale group-hover:grayscale-0"
                                     />
                                 </div>
@@ -272,6 +275,7 @@ export default function BlogPage() {
                                         src="/images/blog/stealth-sitemap-hero.png"
                                         alt="Stealth Sitemap Thumbnail"
                                         fill
+                                        sizes="(max-width: 1024px) 100vw, 25vw"
                                         className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out grayscale group-hover:grayscale-0"
                                     />
                                 </div>

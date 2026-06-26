@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback, Suspense } from 'react';
-import { LazyImage } from '@/shared/ui/LazyImage';
+import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
 import PortfolioView from '@/components/PortfolioView';
 import useSWR from 'swr';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -68,7 +68,7 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: Th
                             {/* BACKGROUND STATIC IMAGE */}
                             <div className="absolute inset-0 bg-[#050505] overflow-hidden">
                                 {theme.img ? (
-                                    <LazyImage
+                                    <OptimizedLazyImage
                                         src={theme.img}
                                         className={`w-full h-full object-contain transition-transform duration-[10s] ease-linear group-hover:scale-[1.05] ${!theme.isAvailable ? 'blur-[2px] grayscale opacity-40' : ''}`}
                                         alt={theme.name}

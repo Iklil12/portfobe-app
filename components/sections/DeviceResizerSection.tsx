@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
 
 // ============================================================================
 // ARTISTIC CONCEPT: THE LIQUID CANVAS (DIMENSIONAL SHIFTER)
@@ -29,11 +30,12 @@ export function DeviceResizerSection() {
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
         <motion.div
           layout
-          className="absolute rounded-full blur-[120px] opacity-10"
+          className="absolute rounded-full opacity-10"
+          style={{ backgroundImage: 'radial-gradient(circle, currentColor 0%, transparent 70%)' }}
           animate={{
             width: previewMode === 'desktop' ? '80vw' : '40vw',
             height: previewMode === 'desktop' ? '40vw' : '80vw',
-            backgroundColor: previewMode === 'desktop' ? '#ff9e00' : '#ffffff',
+            color: previewMode === 'desktop' ? '#ff9e00' : '#ffffff',
           }}
           transition={{ duration: 1.5, ease: EASE }}
         />
@@ -182,7 +184,7 @@ export function DeviceResizerSection() {
 
                   {/* Grayscale Profile Avatar (Square, Full Width) */}
                   <div className="w-full aspect-square mb-6 overflow-hidden border border-gray-200 rounded-none relative group">
-                    <img
+                    <OptimizedLazyImage
                       src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=300&auto=format&fit=crop"
                       className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                       alt="avatar"
@@ -254,7 +256,7 @@ export function DeviceResizerSection() {
                   {/* Project 1 */}
                   <div className="group">
                     <div className="aspect-[4/3] w-full overflow-hidden relative bg-white border border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
-                      <img
+                      <OptimizedLazyImage
                         src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=200&auto=format&fit=crop"
                         className="w-full h-full object-cover grayscale"
                         alt="work"
@@ -278,7 +280,7 @@ export function DeviceResizerSection() {
                   {/* Project 2 */}
                   <div className="group">
                     <div className="aspect-[4/3] w-full overflow-hidden relative bg-white border border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none">
-                      <img
+                      <OptimizedLazyImage
                         src="https://images.unsplash.com/photo-1600132806370-bf17e65e942f?q=80&w=200&auto=format&fit=crop"
                         className="w-full h-full object-cover grayscale"
                         alt="work"
@@ -324,7 +326,7 @@ export function DeviceResizerSection() {
                   {/* Simulated 3D Viewer box */}
                   <div className="w-full aspect-[16/9] bg-zinc-50 border border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] flex flex-col justify-between p-3 relative overflow-hidden">
                     <div className="absolute inset-0 z-0">
-                      <img
+                      <OptimizedLazyImage
                         src="/minimalist_chair_3d.png"
                         className="w-full h-full object-cover grayscale opacity-95"
                         alt="3D Industrial Chair Render"
@@ -395,9 +397,9 @@ export function DeviceResizerSection() {
                     </h4>
 
                     <div className="w-full aspect-video bg-[#18191b] border border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none flex items-center justify-center p-4 relative overflow-hidden">
-                      <div className="w-3/5 h-auto flex items-center justify-center">
-                        <img
-                          src="/portfo.be.png"
+                      <div className="w-3/5 h-auto flex items-center justify-center relative min-h-[100px]">
+                        <OptimizedLazyImage
+                          src="/portfo.be.webp"
                           className="max-h-full max-w-full object-contain invert brightness-200"
                           alt="Portfo.be Logo Slide"
                         />
