@@ -59,13 +59,13 @@ export function HeroSection() {
             {/* ═══ BAND 2: FULL-WIDTH CENTERED HEADLINE ═══ */}
             <div className="w-full wire-b flex-1 flex flex-col items-center justify-center px-5 pt-32 pb-12 md:pt-40 md:pb-20 lg:pt-48 lg:pb-28 text-center relative overflow-hidden">
                 {/* Crosshair decorations */}
-                <div className="absolute top-6 left-6 md:top-10 md:left-10 font-mono text-[10px] text-white/20 tracking-widest">
+                <div aria-hidden="true" className="absolute top-6 left-6 md:top-10 md:left-10 font-mono text-[10px] text-white/20 tracking-widest">
                     <div className="flex items-center gap-2">
                         <span className="w-4 h-px bg-white/20"></span>
                         <span>00.HERO</span>
                     </div>
                 </div>
-                <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 font-mono text-[10px] text-white/20 tracking-widest">
+                <div aria-hidden="true" className="absolute bottom-6 right-6 md:bottom-10 md:right-10 font-mono text-[10px] text-white/20 tracking-widest">
                     <div className="flex items-center gap-2">
                         <span>SECTION_01</span>
                         <span className="w-4 h-px bg-white/20"></span>
@@ -88,7 +88,7 @@ export function HeroSection() {
                 
                 {/* Col 1: Overview */}
                 <div className="px-5 py-5 md:p-8 wire-b md:wire-b-0 md:wire-r bg-[#050505] flex flex-col justify-between min-h-[120px] md:min-h-[180px]">
-                    <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ OVERVIEW ]</span>
+                    <span aria-hidden="true" className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ OVERVIEW ]</span>
                     <p className="font-sans text-[13px] md:text-sm font-medium leading-relaxed mt-3 text-white/70">
                         The premium portofolio builder designed for visual creators. Sign in to seamlessly build, manage, and publish your professional portfolio in minutes—without writing any code.
                     </p>
@@ -96,7 +96,7 @@ export function HeroSection() {
 
                 {/* Col 2: Live Preview */}
                 <div className="px-5 py-5 md:p-8 wire-b md:wire-b-0 md:wire-r bg-[#0a0a0a] flex flex-col justify-between min-h-[120px] md:min-h-[180px]">
-                    <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ claim your username ]</span>
+                    <span aria-hidden="true" className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ claim your username ]</span>
                     <div className="mt-3">
                         <div className="font-mono text-[11px] text-white/30 mb-0.5">portfo.be/</div>
                         <div className="font-sans text-2xl md:text-3xl font-black text-white uppercase tracking-tight">
@@ -107,15 +107,15 @@ export function HeroSection() {
 
                 {/* Col 3: Stats */}
                 <div className="px-5 py-5 md:p-8 bg-[#050505] flex flex-col justify-between min-h-[120px] md:min-h-[180px]">
-                    <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ METRICS ]</span>
+                    <span aria-hidden="true" className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ METRICS ]</span>
                     <div className="mt-3 grid grid-cols-2 gap-4">
                         <div>
                             <div className="font-sans text-2xl md:text-3xl font-black text-white">100+</div>
-                            <div className="font-mono text-[10px] text-white/30 uppercase tracking-wider mt-1">DEPLOYED</div>
+                            <div aria-hidden="true" className="font-mono text-[10px] text-white/30 uppercase tracking-wider mt-1">DEPLOYED</div>
                         </div>
                         <div>
                             <div className="font-sans text-2xl md:text-3xl font-black text-white"><span>99.9</span><span className="text-white/40">%</span></div>
-                            <div className="font-mono text-[10px] text-white/30 uppercase tracking-wider mt-1">UPTIME</div>
+                            <div aria-hidden="true" className="font-mono text-[10px] text-white/30 uppercase tracking-wider mt-1">UPTIME</div>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@ export function HeroSection() {
                 <div className="flex flex-col md:flex-row">
                     {/* Label */}
                     <div className="px-5 py-4 md:px-8 md:py-6 md:wire-r flex items-center shrink-0">
-                        <span className="font-mono text-[10px] text-white/60 uppercase tracking-widest">[ CLAIM YOUR USERNAME ]</span>
+                        <span aria-hidden="true" className="font-mono text-[10px] text-white/60 uppercase tracking-widest">[ CLAIM YOUR USERNAME ]</span>
                     </div>
                     {/* Input */}
                     <form 
@@ -135,6 +135,7 @@ export function HeroSection() {
                     >
                         <span className="font-mono text-xs md:text-sm text-white/70 select-none whitespace-nowrap">PORTFO.BE/</span>
                         <input 
+                            aria-label="Username"
                             type="text"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value.toLowerCase().replace(/[^a-z0-9-_.]/g, ''))}
@@ -152,9 +153,9 @@ export function HeroSection() {
                 <button onClick={handleGetStarted} className="hover-invert px-5 py-5 md:px-8 md:py-6 wire-r font-sans text-base md:text-xl font-black uppercase tracking-tight flex items-center justify-center gap-2 md:gap-3 transition-colors min-h-[56px] active:bg-white active:text-black">
                     <span>GET STARTED</span> <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
-                <div onClick={handleGetStarted} className="px-5 py-5 md:px-8 md:py-6 bg-white text-black font-mono text-xs text-center uppercase tracking-widest font-bold flex items-center justify-center min-h-[56px] hover:bg-black hover:text-white active:bg-black active:text-white transition-colors cursor-pointer">
+                <button aria-label="Initiate Deployment" onClick={handleGetStarted} className="px-5 py-5 md:px-8 md:py-6 bg-white text-black font-mono text-xs text-center uppercase tracking-widest font-bold flex items-center justify-center min-h-[56px] hover:bg-black hover:text-white active:bg-black active:text-white transition-colors cursor-pointer w-full">
                     INITIATE_DEPLOYMENT →
-                </div>
+                </button>
             </div>
 
         </section>

@@ -160,7 +160,7 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
           </div>
 
           {/* Mobile Menu Icon */}
-          <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden focus:outline-none w-10 h-10 border border-white/10 flex items-center justify-center text-white bg-white/5 hover:bg-white/10 transition-all">
+          <button aria-label="Open Mobile Menu" onClick={() => setIsMobileMenuOpen(true)} className="md:hidden focus:outline-none w-10 h-10 border border-white/10 flex items-center justify-center text-white bg-white/5 hover:bg-white/10 transition-all">
             <Menu className="w-5 h-5" />
           </button>
         </div>
@@ -174,7 +174,7 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
           <span className="flex items-center">
             <img src="/portfo.be.webp" alt="Portfo.be Logo" className="h-6 w-auto object-contain invert brightness-0" />
           </span>
-          <button onClick={() => setIsMobileMenuOpen(false)} className="w-10 h-10 border border-white/10 flex items-center justify-center text-white/60 active:scale-95 transition-transform">
+          <button aria-label="Close Mobile Menu" onClick={() => setIsMobileMenuOpen(false)} className="w-10 h-10 border border-white/10 flex items-center justify-center text-white/60 active:scale-95 transition-transform">
             <X className="w-5 h-5" />
           </button>
         </div>

@@ -14,13 +14,15 @@ export default function LandingPage() {
     <SmoothScroll>
       <div className="text-white bg-[#050505] font-sans selection:bg-[#ff9e00]/30 selection:text-white overflow-x-clip w-full relative">
       <Navbar isDarkBg={true} />
-      <HeroSection />
-      <EnterpriseHeroSection />
-      <FeaturesSection />
-      <SyncEngineSection />
-      <TemplatesSection />
-      <DeviceResizerSection />
-      <FaqSection />
+      <main>
+        <HeroSection />
+        <EnterpriseHeroSection />
+        <FeaturesSection />
+        <SyncEngineSection />
+        <TemplatesSection />
+        <DeviceResizerSection />
+        <FaqSection />
+      </main>
       <Footer />
       </div>
     </SmoothScroll>
