@@ -72,7 +72,10 @@ export async function createProject(email: string, data: ProjectDTO) {
   }
 
   if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
-    throw new Error("INVALID_URL");
+    const isBunnyGuid = projectType === 'video' && mediaUrl.length === 36 && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(mediaUrl);
+    if (!isBunnyGuid) {
+      throw new Error("INVALID_URL");
+    }
   }
 
   const newProject = await prisma.project.create({
@@ -105,7 +108,10 @@ export async function updateProject(email: string, data: ProjectDTO) {
   }
 
   if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
-    throw new Error("INVALID_URL");
+    const isBunnyGuid = projectType === 'video' && mediaUrl.length === 36 && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(mediaUrl);
+    if (!isBunnyGuid) {
+      throw new Error("INVALID_URL");
+    }
   }
 
   const existingProject = await prisma.project.findUnique({ where: { id } });
