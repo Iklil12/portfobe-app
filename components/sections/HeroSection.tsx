@@ -55,22 +55,9 @@ export function HeroSection() {
                 }
             `}} />
 
-            {/* ═══ BAND 1: MARQUEE ═══ */}
-            <div className="w-full wire-b overflow-hidden bg-[#ff9e00] text-black py-2 pt-20 md:pt-2 r1">
-                <div className="flex animate-ticker font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] whitespace-nowrap w-max">
-                    {[...Array(8)].map((_, i) => (
-                        <div key={i} className="flex items-center gap-4 md:gap-8 px-3 md:px-4 pr-4 md:pr-8">
-                            <span>PORTFO_BE V.2.0</span>
-                            <span>[ STATUS: ACTIVE ]</span>
-                            <span>PORTFOLIO ENGINE</span>
-                            <span className="hidden sm:inline">LOCATION: GLOBAL</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
 
             {/* ═══ BAND 2: FULL-WIDTH CENTERED HEADLINE ═══ */}
-            <div className="w-full wire-b r2 flex-1 flex flex-col items-center justify-center px-5 py-12 md:py-20 lg:py-28 text-center relative overflow-hidden">
+            <div className="w-full wire-b r2 flex-1 flex flex-col items-center justify-center px-5 pt-32 pb-12 md:pt-40 md:pb-20 lg:pt-48 lg:pb-28 text-center relative overflow-hidden">
                 {/* Crosshair decorations */}
                 <div className="absolute top-6 left-6 md:top-10 md:left-10 font-mono text-[10px] text-white/20 tracking-widest">
                     <div className="flex items-center gap-2">

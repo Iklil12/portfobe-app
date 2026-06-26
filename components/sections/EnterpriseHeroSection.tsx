@@ -26,8 +26,9 @@ export function EnterpriseHeroSection() {
 
     return (
         <section className="bg-[#050505] text-white font-sans overflow-x-hidden w-full relative z-30 pt-24 pb-20 border-t border-white/10">
-            
-            <style dangerouslySetInnerHTML={{__html: `
+
+            <style dangerouslySetInnerHTML={{
+                __html: `
                 .wire-b-ent { border-bottom: 1px solid rgba(255,255,255,0.1); }
             `}} />
 
@@ -35,7 +36,7 @@ export function EnterpriseHeroSection() {
             <div className="w-full max-w-5xl mx-auto px-6 text-center mb-16 md:mb-20">
                 <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/30 block mb-6">[ SOCIAL PROOF ]</span>
                 <h2 className="text-[2.5rem] md:text-6xl lg:text-[4.5rem] font-black tracking-tighter text-white leading-[1.1] uppercase">
-                    Trusted by 10+<br/>
+                    Trusted by 10+<br />
                     <div className="h-[1.2em] overflow-hidden inline-flex mt-1 items-start justify-center min-w-[200px]">
                         <div className="flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]" style={{ transform: `translateY(-${currentIndex * 1.2}em)` }}>
                             {words.map((word, idx) => (

@@ -93,7 +93,7 @@ export function TemplatesSection() {
           ref={scrollContainerRef}
           className="
             flex w-full gap-4 md:gap-3 
-            overflow-x-auto md:overflow-visible snap-x snap-mandatory px-6 md:px-8 pb-4 md:pb-0
+            overflow-x-auto snap-x snap-mandatory px-6 md:px-8 pb-4 md:pb-0
             [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]
             md:h-[65vh] md:min-h-[480px] md:max-h-[650px]
           "
@@ -112,11 +112,11 @@ export function TemplatesSection() {
                   flex flex-col justify-end border transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)]
                   
                   /* MOBILE: Card dimensions & snapping */
-                  w-[85vw] sm:w-[65vw] aspect-square snap-center
+                  w-[85vw] sm:w-[60vw] md:w-auto aspect-square md:aspect-auto snap-center
                   
                   /* DESKTOP: Accordion logic override */
                   md:w-auto md:h-auto md:aspect-auto
-                  ${isActive ? 'md:flex-[6] border-[#ff9e00]' : 'md:flex-[1.2] border-white/10'}
+                  ${isActive ? 'md:flex-[6] md:min-w-[380px] border-[#ff9e00]' : 'md:flex-[1.2] md:min-w-[90px] border-white/10'}
                   ${isMobileActive ? 'border-[#ff9e00]' : 'border-white/10'}
                 `}
                 style={{ transitionDelay: `${index * 30}ms` }}
@@ -225,6 +225,7 @@ export function TemplatesSection() {
                             : 'bg-black border-white/10 text-white/40 scale-90'}
                           md:bg-black md:border-white/10 md:text-white md:scale-100
                           md:hover:bg-[#ff9e00] md:hover:border-[#ff9e00] md:hover:text-black
+
                           group/btn
                         `}
                       >
