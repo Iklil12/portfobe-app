@@ -57,7 +57,7 @@ export function HeroSection() {
 
 
             {/* ═══ BAND 2: FULL-WIDTH CENTERED HEADLINE ═══ */}
-            <div className="w-full wire-b r2 flex-1 flex flex-col items-center justify-center px-5 pt-32 pb-12 md:pt-40 md:pb-20 lg:pt-48 lg:pb-28 text-center relative overflow-hidden">
+            <div className="w-full wire-b flex-1 flex flex-col items-center justify-center px-5 pt-32 pb-12 md:pt-40 md:pb-20 lg:pt-48 lg:pb-28 text-center relative overflow-hidden">
                 {/* Crosshair decorations */}
                 <div className="absolute top-6 left-6 md:top-10 md:left-10 font-mono text-[10px] text-white/20 tracking-widest">
                     <div className="flex items-center gap-2">

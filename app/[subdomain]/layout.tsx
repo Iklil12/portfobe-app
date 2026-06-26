@@ -1,8 +1,12 @@
 // app/[subdomain]/layout.tsx
 import React from 'react';
 import { Metadata } from 'next';
-
+import { Space_Grotesk, Ubuntu, Playfair_Display } from 'next/font/google';
 import { getPortfolioData } from '@/features/portfolio/model/portfolioService';
+
+const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk', display: 'swap' });
+const ubuntu = Ubuntu({ weight: ['300', '400', '500', '700'], subsets: ['latin'], variable: '--font-ubuntu', display: 'swap' });
+const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair', display: 'swap' });
 
 function getOptimizedFavicon(url: string | null | undefined) {
   if (!url) return '/favicon.ico';
@@ -183,7 +187,9 @@ export default async function SubdomainLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       )}
-      {children}
+      <div className={`${spaceGrotesk.variable} ${ubuntu.variable} ${playfair.variable}`}>
+        {children}
+      </div>
     </>
   );
 }

@@ -5,10 +5,7 @@ import { Providers } from "./providers";
 import { Inter, Space_Grotesk, Ubuntu, Space_Mono, Playfair_Display } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk', display: 'swap' });
-const ubuntu = Ubuntu({ weight: ['300', '400', '500', '700'], subsets: ['latin'], variable: '--font-ubuntu', display: 'swap' });
 const spaceMono = Space_Mono({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-space-mono', display: 'swap' });
-const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair', display: 'swap' });
 
 export const metadata: Metadata = {
   title: "Portfo.be: Instant Visual & Creative Portfolio Builder",
@@ -61,7 +58,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full antialiased font-sans ${inter.variable} ${spaceGrotesk.variable} ${ubuntu.variable} ${spaceMono.variable} ${playfair.variable}`}
+      className={`h-full antialiased font-sans ${inter.variable} ${spaceMono.variable}`}
       suppressHydrationWarning
     >
       <head>
