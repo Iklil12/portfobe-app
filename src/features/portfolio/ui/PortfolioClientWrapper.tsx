@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useLayoutEffect } from 'react';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import Link from 'next/link';
 import PortfolioView from '@/components/PortfolioView';
 import { AnalyticsTracker } from '@/features/analytics/ui/AnalyticsTracker';

@@ -3,20 +3,21 @@
 import Link from 'next/link';
 import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
 import { useState, useEffect, useRef } from 'react';
+import { Layers, Box, Link2, Users, Infinity, Globe, BarChart3, EyeOff, Headphones, Rocket, Crown, Shield, Zap, XCircle } from 'lucide-react';
 
 const STARTER_FEATURES = [
-  { text: '1 Portfolio Page', icon: 'fa-layer-group' },
-  { text: 'Up to 12 Content Blocks', icon: 'fa-cube' },
-  { text: 'Standard portfo.be/name link', icon: 'fa-link' },
-  { text: 'Community Support', icon: 'fa-users' },
+  { text: '1 Portfolio Page', icon: <Layers className="w-2.5 h-2.5" /> },
+  { text: 'Up to 12 Content Blocks', icon: <Box className="w-2.5 h-2.5" /> },
+  { text: 'Standard portfo.be/name link', icon: <Link2 className="w-2.5 h-2.5" /> },
+  { text: 'Community Support', icon: <Users className="w-2.5 h-2.5" /> },
 ];
 
 const PRO_FEATURES = [
-  { text: 'Unlimited Pages & Blocks', icon: 'fa-infinity' },
-  { text: 'Custom Domain (.com/.id) coming soon', icon: 'fa-globe' },
-  { text: 'Advanced Analytics Dashboard', icon: 'fa-chart-line' },
-  { text: 'Remove Portfo.be Badge', icon: 'fa-eye-slash' },
-  { text: 'Priority Support', icon: 'fa-headset' },
+  { text: 'Unlimited Pages & Blocks', icon: <Infinity className="w-2.5 h-2.5" /> },
+  { text: 'Custom Domain (.com/.id) coming soon', icon: <Globe className="w-2.5 h-2.5" /> },
+  { text: 'Advanced Analytics Dashboard', icon: <BarChart3 className="w-2.5 h-2.5" /> },
+  { text: 'Remove Portfo.be Badge', icon: <EyeOff className="w-2.5 h-2.5" /> },
+  { text: 'Priority Support', icon: <Headphones className="w-2.5 h-2.5" /> },
 ];
 
 export function PricingSection() {
@@ -117,7 +118,7 @@ export function PricingSection() {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                      <i className="fas fa-rocket text-white/50 text-sm"></i>
+                      <Rocket className="w-3.5 h-3.5 text-white/50" />
                     </div>
                     <div>
                       <h3 className="text-lg font-bold text-white">Starter</h3>
@@ -168,7 +169,7 @@ export function PricingSection() {
                         transition-all duration-300
                         bg-white/[0.04] group-hover/item:bg-[#a855f7]/15
                       `}>
-                        <i className={`fas ${feat.icon} text-[10px] text-white/40 group-hover/item:text-[#c084fc] transition-colors duration-300`}></i>
+                        <span className="text-white/40 group-hover/item:text-[#c084fc] transition-colors duration-300">{feat.icon}</span>
                       </div>
                       <span className="text-white/50 text-sm font-medium group-hover/item:text-white/80 transition-colors duration-300">{feat.text}</span>
                     </div>
@@ -215,7 +216,7 @@ export function PricingSection() {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-[#a855f7]/10 flex items-center justify-center">
-                      <i className="fas fa-crown text-[#c084fc] text-sm"></i>
+                      <Crown className="w-3.5 h-3.5 text-[#c084fc]" />
                     </div>
                     <div>
                       <h3 className="text-lg font-bold text-white">Pro Creator</h3>
@@ -271,7 +272,7 @@ export function PricingSection() {
                         transition-all duration-300
                         bg-[#a855f7]/[0.08] group-hover/item:bg-[#a855f7]/20
                       `}>
-                        <i className={`fas ${feat.icon} text-[10px] text-[#a855f7]/60 group-hover/item:text-[#c084fc] transition-colors duration-300`}></i>
+                        <span className="text-[#a855f7]/60 group-hover/item:text-[#c084fc] transition-colors duration-300">{feat.icon}</span>
                       </div>
                       <span className="text-white/50 text-sm font-medium group-hover/item:text-white/80 transition-colors duration-300">{feat.text}</span>
                     </div>
@@ -291,17 +292,17 @@ export function PricingSection() {
         `}>
           <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10 text-white/20">
             <div className="flex items-center gap-2">
-              <i className="fas fa-shield-alt text-xs"></i>
+              <Shield className="w-3 h-3" />
               <span className="text-xs font-medium uppercase tracking-wider">Secure Payment</span>
             </div>
             <div className="w-px h-3 bg-white/10 hidden md:block"></div>
             <div className="flex items-center gap-2">
-              <i className="fas fa-bolt text-xs"></i>
+              <Zap className="w-3 h-3" />
               <span className="text-xs font-medium uppercase tracking-wider">Instant Setup</span>
             </div>
             <div className="w-px h-3 bg-white/10 hidden md:block"></div>
             <div className="flex items-center gap-2">
-              <i className="fas fa-times-circle text-xs"></i>
+              <XCircle className="w-3 h-3" />
               <span className="text-xs font-medium uppercase tracking-wider">Cancel Anytime</span>
             </div>
           </div>

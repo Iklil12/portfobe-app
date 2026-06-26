@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { Plus } from 'lucide-react';
 import { FAQ_LIST } from '@/shared/constants/constants';
 
 export function FaqSection() {
@@ -30,7 +31,7 @@ export function FaqSection() {
               >
                 <span className="text-base md:text-lg pr-4 uppercase tracking-tight font-black">{faq.q}</span>
                 <div className={`w-8 h-8 border border-white/20 flex items-center justify-center transition-all duration-300 shrink-0 group-hover:bg-[#ff9e00] group-hover:border-[#ff9e00] group-hover:text-black ${openFaq === faq.id ? 'bg-white text-black rotate-45' : 'text-white/40 rotate-0'}`}>
-                  <i className="fas fa-plus text-xs"></i>
+                  <Plus className="w-3 h-3" />
                 </div>
               </button>
               <div className={`text-white/50 text-sm md:text-base font-medium leading-relaxed transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${openFaq === faq.id ? 'max-h-40 pb-6 opacity-100' : 'max-h-0 pb-0 opacity-0 overflow-hidden'}`}>

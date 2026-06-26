@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
+import { Lock, Play, ArrowRight, ZoomIn, RefreshCw, Box, Star, GitBranch, ChevronDown, ExternalLink } from 'lucide-react';
 
 // ============================================================================
 // ARTISTIC CONCEPT: THE LIQUID CANVAS (DIMENSIONAL SHIFTER)
@@ -118,7 +119,7 @@ export function DeviceResizerSection() {
                     <div className="w-2.5 h-2.5 rounded-none bg-white/20"></div>
                   </div>
                   <div className="mx-auto px-6 py-1 bg-[#0a0a0a] text-[9px] font-mono text-white/40 border border-white/10 rounded-none flex items-center gap-2 font-bold truncate max-w-[250px]">
-                    <i className="fas fa-lock text-[7px] text-[#ff9e00]"></i>portfo.be/jamal
+                    <Lock className="w-2 h-2 text-[#ff9e00]" />portfo.be/jamal
                   </div>
                 </div>
               ) : (
@@ -139,9 +140,8 @@ export function DeviceResizerSection() {
               >
               <style dangerouslySetInnerHTML={{
                 __html: `
-                  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
                   .simulated-theme *:not(i):not(.fa):not(.fas):not(.far):not(.fab) {
-                    font-family: 'Space Mono', monospace !important;
+                    font-family: var(--font-space-mono), 'Space Mono', monospace !important;
                   }
                   .custom-scrollbar {
                     scrollbar-width: thin;
@@ -264,7 +264,7 @@ export function DeviceResizerSection() {
                       {/* Play Button Icon */}
                       <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
                         <div className="w-8 h-8 bg-white border border-black text-black flex items-center justify-center rounded-none shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
-                          <i className="fas fa-play text-[8px] ml-0.5"></i>
+                          <Play className="w-2 h-2 ml-0.5" fill="currentColor" />
                         </div>
                       </div>
                     </div>
@@ -288,7 +288,7 @@ export function DeviceResizerSection() {
                       {/* Arrow Icon */}
                       <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
                         <div className="w-8 h-8 bg-white border border-black text-black flex items-center justify-center rounded-none shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
-                          <i className="fas fa-arrow-right -rotate-45 text-[8px]"></i>
+                          <ArrowRight className="w-2 h-2 -rotate-45" />
                         </div>
                       </div>
                     </div>
@@ -308,7 +308,7 @@ export function DeviceResizerSection() {
                   <div className="inline-flex items-center gap-3 border border-gray-200 px-4 py-2 hover:bg-gray-50 cursor-pointer">
                     <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-gray-400">EXPLORE ARCHIVE</span>
                     <div className="w-6 h-6 border border-gray-200 flex items-center justify-center bg-white">
-                      <i className="fas fa-arrow-right text-[8px] text-gray-400"></i>
+                      <ArrowRight className="w-2 h-2 text-gray-400" />
                     </div>
                   </div>
                 </div>
@@ -320,14 +320,14 @@ export function DeviceResizerSection() {
                       <h3 className="text-[10px] uppercase font-bold">3D Showcase</h3>
                       <p className="text-[6px] text-gray-400 uppercase tracking-widest mt-0.5">Interactive Models</p>
                     </div>
-                    <span className="text-[7px] font-mono text-gray-400 uppercase"><i className="fas fa-cube mr-1"></i> 1 Model</span>
+                    <span className="text-[7px] font-mono text-gray-400 uppercase flex items-center gap-1"><Box className="w-2 h-2" /> 1 Model</span>
                   </div>
 
                   {/* Simulated 3D Viewer box */}
                   <div className="w-full aspect-[16/9] bg-zinc-50 border border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] flex flex-col justify-between p-3 relative overflow-hidden">
                     <div className="absolute inset-0 z-0">
                       <OptimizedLazyImage
-                        src="/minimalist_chair_3d.png"
+                        src="/minimalist_chair_3d.webp"
                         className="w-full h-full object-cover grayscale opacity-95"
                         alt="3D Industrial Chair Render"
                       />
@@ -338,8 +338,8 @@ export function DeviceResizerSection() {
                     <div className="flex justify-between z-20">
                       <span className="text-[7px] font-bold bg-black text-white px-1.5 py-0.5">Interactive</span>
                       <div className="flex gap-1">
-                        <span className="w-4 h-4 bg-white border border-black flex items-center justify-center text-[8px]"><i className="fas fa-search-plus"></i></span>
-                        <span className="w-4 h-4 bg-white border border-black flex items-center justify-center text-[8px]"><i className="fas fa-sync"></i></span>
+                        <span className="w-4 h-4 bg-white border border-black flex items-center justify-center"><ZoomIn className="w-2 h-2" /></span>
+                        <span className="w-4 h-4 bg-white border border-black flex items-center justify-center"><RefreshCw className="w-2 h-2" /></span>
                       </div>
                     </div>
 
@@ -378,7 +378,7 @@ export function DeviceResizerSection() {
                         <h4 className="text-[9px] font-bold uppercase truncate">Mobile UI Dashboard</h4>
                         <span className="text-[7px] text-gray-500">View on Penpot</span>
                       </div>
-                      <i className="fas fa-arrow-right -rotate-45 text-[8px] text-gray-400"></i>
+                      <ArrowRight className="w-2 h-2 -rotate-45 text-gray-400" />
                     </div>
                   </div>
                 </div>
@@ -406,7 +406,7 @@ export function DeviceResizerSection() {
                       </div>
 
                       <div className="absolute bottom-2 right-2 z-10 px-2 py-1 bg-black/60 backdrop-blur-sm text-white text-[6px] font-bold uppercase tracking-widest flex items-center gap-1">
-                        <i className="fas fa-external-link-alt text-[5px]"></i> Use Template
+                        <ExternalLink className="w-1.5 h-1.5" /> Use Template
                       </div>
                     </div>
                   </div>
@@ -423,13 +423,13 @@ export function DeviceResizerSection() {
                     {/* Top Repo */}
                     <div className="p-3 border border-black bg-white shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
                       <div className="flex items-center gap-1.5 mb-1">
-                        <i className="fab fa-github text-[10px]"></i>
+                        <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
                         <h4 className="text-[9px] font-bold">portfobe-app</h4>
                       </div>
                       <p className="text-[8px] text-gray-500 mb-2">Automated premium developer portfolio builder engine.</p>
                       <div className="flex items-center gap-3 text-[7px] font-bold text-gray-400">
-                        <span><i className="fas fa-star text-[7px]"></i> 12</span>
-                        <span><i className="fas fa-code-branch text-[7px]"></i> 4</span>
+                        <span className="flex items-center gap-0.5"><Star className="w-2 h-2" fill="currentColor" /> 12</span>
+                        <span className="flex items-center gap-0.5"><GitBranch className="w-2 h-2" /> 4</span>
                         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span> TypeScript</span>
                       </div>
                     </div>
@@ -506,7 +506,7 @@ export function DeviceResizerSection() {
                       </div>
                       <div className="flex items-center justify-end gap-2 w-1/3 text-[7px] text-gray-500 font-bold">
                         <span className="truncate">JFF</span>
-                        <i className="fas fa-chevron-down"></i>
+                        <ChevronDown className="w-2.5 h-2.5" />
                       </div>
                     </div>
 
@@ -518,7 +518,7 @@ export function DeviceResizerSection() {
                       </div>
                       <div className="flex items-center justify-end gap-2 w-1/3 text-[7px] text-gray-500 font-bold">
                         <span className="truncate">IAA</span>
-                        <i className="fas fa-chevron-down"></i>
+                        <ChevronDown className="w-2.5 h-2.5" />
                       </div>
                     </div>
                   </div>
@@ -543,12 +543,12 @@ export function DeviceResizerSection() {
                       </div>
 
                       {/* Star Ratings */}
-                      <div className="flex gap-0.5 mb-2.5 text-[#ff9e00] text-[8px]">
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
+                      <div className="flex gap-0.5 mb-2.5 text-[#ff9e00]">
+                        <Star className="w-2 h-2" fill="currentColor" />
+                        <Star className="w-2 h-2" fill="currentColor" />
+                        <Star className="w-2 h-2" fill="currentColor" />
+                        <Star className="w-2 h-2" fill="currentColor" />
+                        <Star className="w-2 h-2" fill="currentColor" />
                       </div>
 
                       <p className="text-[9px] text-gray-600 italic leading-relaxed">

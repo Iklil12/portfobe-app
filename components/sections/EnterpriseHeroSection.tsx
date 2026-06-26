@@ -16,13 +16,13 @@ export function EnterpriseHeroSection() {
     }, [totalWords]);
 
     const cards = [
-        { type: 'image', src: '/img/creative_portrait_1781107365968.png' },
+        { type: 'image', src: '/img/creative_portrait_1781107365968.webp' },
         { type: 'color', bg: 'bg-[#18181b]', content: <div className="flex flex-col items-center justify-center leading-none"><span className="text-white font-black text-5xl md:text-6xl tracking-tighter">CREATE</span><span className="text-[#ff9e00] font-bold text-lg md:text-xl tracking-[0.2em] mt-2">BEYOND</span></div> },
-        { type: 'image', src: '/img/abstract_shapes_1781107379628.png' },
+        { type: 'image', src: '/img/abstract_shapes_1781107379628.webp' },
         { type: 'color', bg: 'bg-[#0a0a0a] border border-white/10', content: <div className="flex flex-col items-center justify-center"><span className="w-12 h-[2px] bg-white/50 mb-4"></span><span className="text-white font-mono text-xs md:text-sm tracking-[0.4em] uppercase">Vanguard</span><span className="w-12 h-[2px] bg-white/50 mt-4"></span></div> },
-        { type: 'image', src: '/img/studio_setup_1781107390091.png' },
+        { type: 'image', src: '/img/studio_setup_1781107390091.webp' },
         { type: 'color', bg: 'bg-[#000000]', content: <span className="text-[#ff9e00] font-black text-[100px] leading-none opacity-80">✦</span> },
-        { type: 'image', src: '/img/hacker_code_1781107400239.png' },
+        { type: 'image', src: '/img/hacker_code_1781107400239.webp' },
     ];
 
     return (
@@ -55,7 +55,7 @@ export function EnterpriseHeroSection() {
                         {cards.map((card, i) => (
                             <div key={i} className={`relative w-[220px] h-[220px] md:w-[320px] md:h-[320px] overflow-hidden shrink-0 flex items-center justify-center ${card.type === 'color' ? card.bg : 'bg-zinc-900'} border border-white/10 grayscale hover:grayscale-0 transition-all duration-500`}>
                                 {card.type === 'image' ? (
-                                    <Image src={card.src as string} alt="Showcase" fill sizes="(max-width: 768px) 220px, 320px" priority={i < 4} className="object-cover transition-transform duration-700 hover:scale-105 cursor-pointer grayscale hover:grayscale-0 contrast-[1.2]" />
+                                    <Image src={card.src as string} alt="Showcase" fill sizes="(max-width: 768px) 220px, 320px" loading="lazy" className="object-cover transition-transform duration-700 hover:scale-105 cursor-pointer grayscale hover:grayscale-0 contrast-[1.2]" />
                                 ) : (
                                     <div className="cursor-pointer hover:scale-105 transition-transform duration-500">{card.content}</div>
                                 )}
@@ -67,7 +67,7 @@ export function EnterpriseHeroSection() {
                         {cards.map((card, i) => (
                             <div key={i} className={`relative w-[220px] h-[220px] md:w-[320px] md:h-[320px] overflow-hidden shrink-0 flex items-center justify-center ${card.type === 'color' ? card.bg : 'bg-zinc-900'} border border-white/10 grayscale hover:grayscale-0 transition-all duration-500`}>
                                 {card.type === 'image' ? (
-                                    <Image src={card.src as string} alt="Showcase" fill sizes="(max-width: 768px) 220px, 320px" priority={i < 4} className="object-cover transition-transform duration-700 hover:scale-105 cursor-pointer grayscale hover:grayscale-0 contrast-[1.2]" />
+                                    <Image src={card.src as string} alt="Showcase" fill sizes="(max-width: 768px) 220px, 320px" loading="lazy" className="object-cover transition-transform duration-700 hover:scale-105 cursor-pointer grayscale hover:grayscale-0 contrast-[1.2]" />
                                 ) : (
                                     <div className="cursor-pointer hover:scale-105 transition-transform duration-500">{card.content}</div>
                                 )}

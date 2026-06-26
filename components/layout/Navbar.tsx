@@ -121,7 +121,7 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
                            
                            <div className="flex items-center gap-6 relative z-10">
                               <div className="w-16 h-16 rounded-none bg-neutral-900 border border-white/10 overflow-hidden shrink-0 shadow-lg">
-                                 <img src="/minimalist_chair_3d.png" className="w-full h-full object-cover opacity-60 group-hover/feat:opacity-100 group-hover/feat:scale-105 transition-all duration-700 grayscale"/>
+                                 <img src="/minimalist_chair_3d.webp" className="w-full h-full object-cover opacity-60 group-hover/feat:opacity-100 group-hover/feat:scale-105 transition-all duration-700 grayscale"/>
                               </div>
                               <div className="flex flex-col py-1">
                                  <span className="text-[#ff9e00] font-mono text-[9px] uppercase tracking-widest mb-1">Major Update</span>

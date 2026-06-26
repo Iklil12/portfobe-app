@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
 import { TEMPLATE_LIST } from '@/shared/constants/constants';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { ArrowRight } from 'lucide-react';
 
 export function TemplatesSection() {
   const [hoveredIndex, setHoveredIndex] = useState<number>(0);
@@ -229,7 +230,7 @@ export function TemplatesSection() {
                           group/btn
                         `}
                       >
-                        <i className="fas fa-arrow-right -rotate-45 group-hover/btn:rotate-0 transition-transform duration-500 text-sm"></i>
+                        <ArrowRight className="w-4 h-4 -rotate-45 group-hover/btn:rotate-0 transition-transform duration-500" />
                       </Link>
                     </div>
                   </div>
@@ -260,7 +261,7 @@ export function TemplatesSection() {
         <div className="mt-10 md:mt-16 flex justify-center pb-0 px-6">
             <Link href="/templates" className="group relative flex items-center gap-4 px-8 py-4 rounded-none border border-white/10 text-white font-mono text-xs uppercase tracking-widest font-bold hover:border-white hover:bg-white hover:text-black transition-all duration-300 w-full md:w-auto justify-center overflow-hidden">
               <span className="relative z-10">View Template Gallery</span>
-              <i className="fas fa-arrow-right relative z-10 group-hover:translate-x-1 transition-transform"></i>
+              <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
             </Link>
         </div>
         

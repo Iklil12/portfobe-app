@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FEATURE_LIST } from '@/shared/constants/constants';
 import { useInView } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 
 export function FeaturesSection() {
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
@@ -76,11 +77,11 @@ export function FeaturesSection() {
 
                 <div className="mt-auto relative w-12 h-12 shrink-0">
                   <div className={`absolute bottom-0 left-0 w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white/40 transition-all duration-300 ${isActive ? 'opacity-0 scale-50 rotate-90' : 'opacity-100 scale-100 rotate-0'}`}>
-                    <i className="fas fa-arrow-right text-[10px]"></i>
+                    <ArrowRight className="w-2.5 h-2.5" />
                   </div>
 
                   <div className={`absolute bottom-0 left-0 w-12 h-12 rounded-full bg-[#ff9e00] flex items-center justify-center text-black transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isActive ? 'opacity-100 scale-100 shadow-[0_0_20px_rgba(255,158,0,0.3)] rotate-0' : 'opacity-0 scale-50 -rotate-90'}`}>
-                    <i className="fas fa-arrow-right text-sm"></i>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
               </div>
