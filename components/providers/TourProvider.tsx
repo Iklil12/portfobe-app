@@ -20,49 +20,66 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
       const isAppearanceRoot = pathname === '/dashboard/appearance';
 
       if (isDashboardRoot && profile.hasCompletedDashboardTour === false) {
-        const isMobile = window.innerWidth < 768;
+        const startDashboardTour = () => {
+          const isMobile = window.innerWidth < 768;
 
-        const d = driver({
-          popoverClass: 'portfobe-tour-theme',
-          showProgress: true,
-          animate: true,
-          allowClose: true,
-          overlayClickBehavior: () => {}, // Disable click-outside-to-close without hiding the X button
-          doneBtnText: 'Done',
-          nextBtnText: 'Next &rarr;',
-          prevBtnText: '&larr; Back',
-          onHighlightStarted: (element) => {
-            if (isMobile) {
-              const elId = element?.id || '';
-              if (elId.includes('design-menu') || elId.includes('profile-menu')) {
-                window.dispatchEvent(new Event('tour-open-mobile-sidebar'));
-              } else if (elId) {
-                window.dispatchEvent(new Event('tour-close-mobile-sidebar'));
+          const d = driver({
+            popoverClass: 'portfobe-tour-theme',
+            showProgress: true,
+            animate: true,
+            allowClose: true,
+            overlayClickBehavior: () => {}, // Disable click-outside-to-close without hiding the X button
+            doneBtnText: 'Done',
+            nextBtnText: 'Next &rarr;',
+            prevBtnText: '&larr; Back',
+            onHighlightStarted: (element) => {
+              if (isMobile) {
+                const elId = element?.id || '';
+                if (elId.includes('design-menu') || elId.includes('profile-menu')) {
+                  window.dispatchEvent(new Event('tour-open-mobile-sidebar'));
+                } else if (elId) {
+                  window.dispatchEvent(new Event('tour-close-mobile-sidebar'));
+                }
+                // Force driver to recalculate position after the sidebar animation (300ms) finishes
+                setTimeout(() => {
+                  window.dispatchEvent(new Event('resize'));
+                }, 350);
               }
-              // Force driver to recalculate position after the sidebar animation (300ms) finishes
-              setTimeout(() => {
-                window.dispatchEvent(new Event('resize'));
-              }, 350);
+            },
+            steps: [
+              { popover: { popoverClass: 'portfobe-tour-theme portfobe-welcome-step', title: 'Dashboard Overview', description: `<div class="minimal-welcome-art"><div class="art-grid"></div><div class="art-glow"></div><svg class="art-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div><p class="minimal-welcome-text">Welcome to your command center. Let's explore the tools and navigation that will help you build an extraordinary portfolio.</p>` } },
+              { element: isMobile ? '#tour-mobile-design-menu' : '#tour-design-menu', popover: { side: 'bottom', align: 'start', title: `Your Work is the Star <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a1a1aa; margin-left: 4px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`, description: 'Expand the Design menu to manage your projects, themes, and social links.' } },
+              { element: isMobile ? '#tour-mobile-profile-menu' : '#tour-profile-menu', popover: { side: 'top', align: 'start', title: `Your Profile <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a1a1aa; margin-left: 4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`, description: 'Set up your name, profession, bio, and configure your unique portfolio subdomain here.' } },
+              { element: '#tour-canvas-btn', popover: { side: 'bottom', align: 'end', title: `Canvas / Editor <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a1a1aa; margin-left: 4px;"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>`, description: 'Time to design! Click this canvas button or press CTRL + E to enter the Appearance Editor.' } },
+              { element: isMobile ? '#tour-mobile-preview-btn' : '#tour-preview-btn', popover: { side: 'bottom', align: 'end', title: `Preview / Live URL <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a1a1aa; margin-left: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`, description: 'Click here anytime to preview your live portfolio.' } },
+              { element: '#tour-upgrade-btn', popover: { side: 'top', align: 'end', title: `Upgrade / Free Trial <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a1a1aa; margin-left: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`, description: `One last thing: your new account is eligible for a FREE Premium trial. Now, let's get to work!` } }
+            ],
+            onDestroyStarted: () => {
+               d.destroy();
+               fetch('/api/profile', { 
+                 method: 'PATCH', 
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ hasCompletedDashboardTour: true }) 
+               }).then(() => mutate('/api/profile'));
             }
-          },
-          steps: [
-            { popover: { popoverClass: 'portfobe-tour-theme portfobe-welcome-step', title: 'Dashboard Overview', description: `<div class="minimal-welcome-art"><div class="art-grid"></div><div class="art-glow"></div><svg class="art-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div><p class="minimal-welcome-text">Welcome to your command center. Let's explore the tools and navigation that will help you build an extraordinary portfolio.</p>` } },
-            { element: isMobile ? '#tour-mobile-design-menu' : '#tour-design-menu', popover: { side: 'bottom', align: 'start', title: `Your Work is the Star <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a1a1aa; margin-left: 4px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`, description: 'Expand the Design menu to manage your projects, themes, and social links.' } },
-            { element: isMobile ? '#tour-mobile-profile-menu' : '#tour-profile-menu', popover: { side: 'top', align: 'start', title: `Your Profile <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a1a1aa; margin-left: 4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`, description: 'Set up your name, profession, bio, and configure your unique portfolio subdomain here.' } },
-            { element: '#tour-canvas-btn', popover: { side: 'bottom', align: 'end', title: `Canvas / Editor <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a1a1aa; margin-left: 4px;"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>`, description: 'Time to design! Click this canvas button or press CTRL + E to enter the Appearance Editor.' } },
-            { element: isMobile ? '#tour-mobile-preview-btn' : '#tour-preview-btn', popover: { side: 'bottom', align: 'end', title: `Preview / Live URL <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a1a1aa; margin-left: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`, description: 'Click here anytime to preview your live portfolio.' } },
-            { element: '#tour-upgrade-btn', popover: { side: 'top', align: 'end', title: `Upgrade / Free Trial <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a1a1aa; margin-left: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`, description: `One last thing: your new account is eligible for a FREE Premium trial. Now, let's get to work!` } }
-          ],
-          onDestroyStarted: () => {
-             d.destroy();
-             fetch('/api/profile', { 
-               method: 'PATCH', 
-               headers: { 'Content-Type': 'application/json' },
-               body: JSON.stringify({ hasCompletedDashboardTour: true }) 
-             }).then(() => mutate('/api/profile'));
-          }
-        });
-        d.drive();
+          });
+          d.drive();
+        };
+
+        if (!profile.subdomain || !sessionStorage.getItem("hasSeenWelcomePromo")) {
+          const checkInterval = setInterval(() => {
+            if (profile.subdomain && sessionStorage.getItem("hasSeenWelcomePromo")) {
+              clearInterval(checkInterval);
+              startDashboardTour();
+            }
+          }, 500);
+          
+          // Clear interval if user navigates away before completing onboarding
+          // Attach to the window object or define a custom cleanup within the useEffect
+          (window as any)._tourCheckInterval = checkInterval;
+        } else {
+          startDashboardTour();
+        }
       }
 
       if (isAppearanceRoot && profile.hasCompletedAppearanceTour === false) {
@@ -146,7 +163,10 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
       }
     }, 1500); // Beri waktu animasi halaman selesai loading
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if ((window as any)._tourCheckInterval) clearInterval((window as any)._tourCheckInterval);
+    };
   }, [profile, pathname]);
 
   return <>{children}</>;
