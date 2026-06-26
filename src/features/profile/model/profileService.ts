@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/shared/lib/prisma';
 import { isForbiddenUsername } from '@/shared/constants/reserved-usernames';
+import { redis } from '@/shared/lib/redis';
 
 export async function getFullProfile(email: string) {
   const user = await prisma.user.findUnique({
@@ -120,6 +121,12 @@ export async function updateProfileFull(email: string, data: ProfileUpdateDTO) {
     console.error("Gagal mengirim webhook ke n8n:", err);
   });
 
+  // Hapus cache dashboard SWR karena subdomain/profil berubah
+  await redis.del(`dashboard:sync:${user.id}:7d`);
+  await redis.del(`dashboard:sync:${user.id}:30d`);
+  await redis.del(`dashboard:sync:${user.id}:1d`);
+  await redis.del(`dashboard:sync:${user.id}:all`);
+
   return updatedProfile;
 }
 
@@ -155,6 +162,12 @@ export async function patchProfilePartial(email: string, data: ProfileUpdateDTO)
       bio: (updateData.bio as string) || null
     }
   });
+
+  // Hapus cache dashboard SWR karena sebagian profil berubah
+  await redis.del(`dashboard:sync:${user.id}:7d`);
+  await redis.del(`dashboard:sync:${user.id}:30d`);
+  await redis.del(`dashboard:sync:${user.id}:1d`);
+  await redis.del(`dashboard:sync:${user.id}:all`);
 
   return updatedProfile;
 }

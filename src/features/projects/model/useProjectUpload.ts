@@ -36,10 +36,10 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
     setIsUploadingImage(true);
     const formData = new FormData();
     formData.append('file', f);
-    formData.append('upload_preset', uploadPreset);
+    // formData.append('upload_preset', uploadPreset);
 
     try {
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      const res = await fetch('/api/upload/image', {
         method: 'POST',
         body: formData
       });
@@ -49,7 +49,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
         setMediaUrl(data.secure_url);
         showToast({ message: "Image uploaded successfully", id: "upload-asset-success", icon: "✨" });
       } else {
-        showToast({ message: data.error?.message || "Failed to upload image", id: "upload-asset-fail", icon: "❌" });
+        showToast({ message: data.error || "Failed to upload image", id: "upload-asset-fail", icon: "❌" });
       }
     } catch (err) {
       showToast({ message: "Network error occurred during upload", id: "upload-asset-err", icon: "⚠️" });

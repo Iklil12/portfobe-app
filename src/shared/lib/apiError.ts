@@ -7,7 +7,7 @@ export function handleApiError(error: unknown) {
   if (error instanceof ZodError) {
     return NextResponse.json(
       { 
-        error: 'Validation failed', 
+        error: `Validation failed: ${error.issues.map((e: any) => `${e.path.join('.')} - ${e.message}`).join(', ')}`, 
         details: error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`) 
       },
       { status: 400 }

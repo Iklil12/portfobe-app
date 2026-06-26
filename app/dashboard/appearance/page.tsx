@@ -275,7 +275,7 @@ function AppearanceEditor() {
               if (state.activeDraftId) actions.saveDraft();
               else actions.setIsSaveDraftModalOpen(true);
             }}
-            disabled={state.isSavingDraft || state.isPublishing || (state.activeDraftId ? !state.isDirty : false)}
+            disabled={state.isSavingDraft || state.isPublishing || (state.activeDraftId ? !state.isDirty : false) || isEditorLocked}
             className="px-3 py-1.5 bg-transparent hover:bg-white/5 text-white/70 hover:text-white text-[11px] font-medium transition-all disabled:opacity-50 flex items-center gap-2 rounded-md"
           >
             {state.isSavingDraft && <Loader2 className="w-3 h-3 animate-spin" />}
@@ -284,7 +284,7 @@ function AppearanceEditor() {
 
           <button
             onClick={actions.publishDesign}
-            disabled={state.isSavingDraft || state.isPublishing || !canPublish}
+            disabled={state.isSavingDraft || state.isPublishing || !canPublish || isEditorLocked}
             className="px-4 py-1.5 bg-[#0099ff] hover:bg-[#0077cc] text-white text-[11px] font-medium transition-all disabled:opacity-50 flex items-center gap-2 rounded-md shadow-sm"
           >
             {state.isPublishing && <Loader2 className="w-3 h-3 animate-spin" />}
@@ -297,25 +297,23 @@ function AppearanceEditor() {
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
         
         {isEditorLocked && !state.isLoading && (
-          <div className="absolute inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="bg-[#1a1a1a] border border-white/10 p-8 max-w-lg w-full text-center flex flex-col items-center shadow-2xl">
-              <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20">
-                <AlertTriangle className="w-8 h-8 text-amber-500" />
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[200] bg-[#1a1a1a] border border-amber-500/30 px-5 py-4 flex flex-col sm:flex-row items-center gap-4 shadow-[0_10px_40px_rgba(0,0,0,0.5)] rounded-none w-[90%] max-w-2xl">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="w-10 h-10 bg-amber-500/10 flex items-center justify-center shrink-0 border border-amber-500/20">
+                <AlertTriangle className="w-5 h-5 text-amber-500" />
               </div>
-              <h2 className="text-xl font-bold text-white mb-3 tracking-wide">PRO Features Locked!</h2>
-              <p className="text-sm text-white/60 mb-8 leading-relaxed">
-                Your plan has reverted to FREE, but your current portfolio design still uses exclusive PRO features (Premium Themes / Splash Screen / Smooth Scroll).
-                <br/><br/>
-                <span className="text-white/80 font-medium">Your public portfolio remains safe (still using this PRO theme)</span>, but you cannot edit the portfolio before extending PRO or resetting the design to standard mode.
+              <p className="text-[11px] text-white/80 font-mono leading-relaxed">
+                <strong className="text-amber-500 block text-xs mb-0.5">PRO Features Locked</strong>
+                You are on a FREE plan. You can preview PRO features, but <span className="text-white">saving/publishing is disabled</span>.
               </p>
-              <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
-                <Link href="/pricing" className="flex-1 w-full py-3 bg-[#ff9e00] hover:bg-[#ffaa22] text-black font-bold uppercase tracking-wider text-xs transition-colors flex items-center justify-center">
-                  Extend PRO
-                </Link>
-                <button onClick={handleRevertToFree} className="flex-1 w-full py-3 bg-transparent border border-white/20 hover:bg-white/5 text-white font-bold uppercase tracking-wider text-xs transition-colors">
-                  Revert to Free Theme
-                </button>
-              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
+              <Link href="/pricing" className="flex-1 sm:flex-none px-4 py-2 bg-[#ff9e00] hover:bg-[#ffaa22] text-black font-mono font-bold uppercase tracking-wider text-[10px] transition-colors text-center">
+                Extend PRO
+              </Link>
+              <button onClick={handleRevertToFree} className="flex-1 sm:flex-none px-4 py-2 bg-transparent border border-white/20 hover:bg-white/10 text-white font-mono font-bold uppercase tracking-wider text-[10px] transition-colors text-center">
+                Revert to Free
+              </button>
             </div>
           </div>
         )}

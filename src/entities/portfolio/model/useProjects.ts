@@ -143,8 +143,8 @@ export function useProjects() {
     const method = editingId ? 'PATCH' : 'POST';
 
     const payload = projectType === 'certificate' 
-      ? { id: editingId, title: projectTitle, description: projectDescription, mediaUrl, issuer: certIssuer, year: certYear, status: certStatus }
-      : { id: editingId, title: projectTitle, description: projectDescription, mediaUrl, projectType, tags: projectTags };
+      ? { id: editingId || undefined, title: projectTitle, description: projectDescription, mediaUrl, issuer: certIssuer, year: certYear, status: certStatus }
+      : { id: editingId || undefined, title: projectTitle, description: projectDescription, mediaUrl, projectType, tags: projectTags };
     
     try {
       const response = await fetch(endpoint, {

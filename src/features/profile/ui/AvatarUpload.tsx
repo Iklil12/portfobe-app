@@ -49,32 +49,25 @@ export function AvatarUpload({ state, actions }: AvatarUploadProps) {
       return;
     }
 
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET;
-    if (!cloudName || !uploadPreset) {
-      showToast({ message: "Cloudinary configuration not found", id: "upload-avatar-fail", icon: "fa-times" });
-      return;
-    }
-
     setIsUploading(true);
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', uploadPreset);
 
     try {
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      const res = await fetch('/api/upload/image', {
         method: 'POST',
         body: formData
       });
       const data = await res.json();
       if (res.ok && data.secure_url) {
         setAvatarUrl(data.secure_url);
-        showToast({ message: "Photo uploaded very fast via Edge Node! ⚡ Don't forget to click Save.", id: "upload-success-toast", icon: "fa-check-circle" });
+        showToast({ message: "Photo uploaded securely! ⚡ Don't forget to click Save.", id: "upload-success-toast", icon: "fa-check-circle" });
       } else {
-        showToast({ message: data.error?.message || "Failed to upload photo", id: "upload-avatar-fail", icon: "fa-times" });
+        showToast({ message: data.error || "Failed to upload photo", id: "upload-avatar-fail", icon: "fa-times" });
       }
     } catch (err) {
-      showToast({ message: "Edge network error occurred", id: "upload-avatar-err", icon: "fa-wifi" });
+      console.error("Avatar Upload Error:", err);
+      showToast({ message: "Network error occurred", id: "upload-avatar-err", icon: "fa-wifi" });
     } finally {
       setIsUploading(false);
     }

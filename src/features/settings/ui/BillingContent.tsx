@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import useSWR from "swr";
+import useSWR, { mutate as globalMutate } from "swr";
 import Link from "next/link";
 import { 
   Crown, Lock, Layers, Receipt, Gift, Loader2, Check, X, HelpCircle, 
@@ -86,6 +86,7 @@ export default function BillingContent() {
       if (res.ok) {
         setIsTrialSuccess(true);
         mutate(); // Refresh SWR data
+        globalMutate('/api/dashboard/sync'); // Refresh layout/sidebar data
       } else {
         alert("Failed: " + json.error);
         setIsTrialModalOpen(false);

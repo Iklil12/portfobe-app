@@ -65,7 +65,8 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
       if (!res.ok) throw new Error(data.error || "Failed to save data.");
       
       // Paksa refresh data SWR di background
-      await mutate('/api/layout-sync');
+      await mutate('/api/dashboard/sync');
+      await mutate('/api/profile');
       
       toast.success("Yay! Success.", { id: loadingToast });
       

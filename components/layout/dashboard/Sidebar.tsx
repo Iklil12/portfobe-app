@@ -173,8 +173,9 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                  <Link href="/pricing" className="w-full py-3 px-3 bg-zinc-900 rounded-none flex items-center justify-between group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title="Upgrade to PRO">
                     <div className="flex items-center gap-2">
                       <Crown className="text-[#ff9e00] w-4 h-4 group-hover:scale-110 transition-transform" />
-                      <span className="text-[10px] font-mono font-bold text-white tracking-widest uppercase">PRO</span>
+                      <span className="text-[10px] font-mono font-bold text-white tracking-widest uppercase">UPGRADE PRO</span>
                     </div>
+                    <div className="text-[8px] font-mono text-[#ff9e00] border border-[#ff9e00]/30 bg-[#ff9e00]/10 px-1 py-0.5 ml-auto mr-1">TRIAL</div>
                     <div className="w-1.5 h-1.5 bg-red-500 rounded-none border border-black shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
                  </Link>
                ) : (

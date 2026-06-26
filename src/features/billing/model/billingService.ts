@@ -1,4 +1,5 @@
 import prisma from '@/shared/lib/prisma';
+import { redis } from '@/shared/lib/redis';
 import { formatPlanExpiry, getRemainingDays, isProActive } from '@/features/billing';
 
 export async function getPricingPlans() {
@@ -165,6 +166,12 @@ export async function activateTrial(userId: string) {
       planExpiredAt: expiredAt,
     },
   });
+
+  // Hapus cache dashboard agar SWR /api/dashboard/sync langsung merefleksikan perubahan plan
+  await redis.del(`dashboard:sync:${userId}:7d`);
+  await redis.del(`dashboard:sync:${userId}:30d`);
+  await redis.del(`dashboard:sync:${userId}:1d`);
+  await redis.del(`dashboard:sync:${userId}:all`);
 
   return {
     success: true,
