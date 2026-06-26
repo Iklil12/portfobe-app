@@ -1,12 +1,12 @@
 export const TEMPLATE_LIST = [
-  { id: 1, image: "/themes/spatial.jpg", category: "Spatial & Glass", title: "Aura Spatial" },
-  { id: 2, image: "/themes/viewfinder.jpg", category: "Cinematic", title: "Viewfinder" },
-  { id: 3, image: "/themes/monolith.jpg", category: "Brutalist", title: "Monolith Vanguard" },
-  { id: 4, image: "/themes/acid.jpg", category: "Cyberpunk", title: "Acid Tech" },
-  { id: 5, image: "/themes/aura-kinetic.jpg", category: "Dynamic", title: "Aura Kinetic" },
-  { id: 6, image: "/themes/midnight-emulsion.jpg", category: "Noir", title: "Midnight Emulsion" },
-  { id: 7, image: "/themes/split.jpg", category: "Modern Split", title: "Nexus Split" },
-  { id: 8, image: "/themes/editorial.jpg", category: "Clean Editorial", title: "Editorial Clean" }
+  { id: 1, image: "/themes/spatial.webp", category: "Spatial & Glass", title: "Aura Spatial" },
+  { id: 2, image: "/themes/viewfinder.webp", category: "Cinematic", title: "Viewfinder" },
+  { id: 3, image: "/themes/monolith.webp", category: "Brutalist", title: "Monolith Vanguard" },
+  { id: 4, image: "/themes/acid.webp", category: "Cyberpunk", title: "Acid Tech" },
+  { id: 5, image: "/themes/aura-kinetic.webp", category: "Dynamic", title: "Aura Kinetic" },
+  { id: 6, image: "/themes/midnight-emulsion.webp", category: "Noir", title: "Midnight Emulsion" },
+  { id: 7, image: "/themes/split.webp", category: "Modern Split", title: "Nexus Split" },
+  { id: 8, image: "/themes/editorial.webp", category: "Clean Editorial", title: "Editorial Clean" }
 ];
 
 export const FEATURE_LIST = [
