@@ -10,6 +10,8 @@ export const ProfileUpdateSchema = z.object({
   location: z.string().max(100).optional(),
   avatarUrl: z.string().url().optional(),
   avatar: z.string().url().optional(),
+  hasCompletedDashboardTour: z.boolean().optional(),
+  hasCompletedAppearanceTour: z.boolean().optional(),
 }).catchall(z.any());
 
 export const ProjectSchema = z.object({

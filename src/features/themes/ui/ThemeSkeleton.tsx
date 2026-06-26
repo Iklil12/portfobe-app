@@ -33,8 +33,8 @@ export function ThemeSkeleton() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="flex flex-col gap-3">
-              {/* Visual Card 4:3 */}
-              <div className="relative w-full aspect-[4/3] bg-[#050505] rounded-none border border-white/10 overflow-hidden">
+              {/* Visual Card 16:9 */}
+              <div className="relative w-full aspect-video bg-[#050505] rounded-none border border-white/10 overflow-hidden">
                 <div className="absolute inset-0 bg-white/5 shimmer"></div>
               </div>
               

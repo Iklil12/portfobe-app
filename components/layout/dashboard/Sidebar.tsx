@@ -95,6 +95,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                   <PrimaryNavItem href="/dashboard" icon={<LayoutGrid className="w-[18px] h-[18px]" />} label="Overview" active={isActive('/dashboard')} isCollapsed={!isDesktopSidebarOpen} />
                   
                   <TreeAccordion 
+                    id="tour-design-menu"
                     icon={<Palette className="w-[18px] h-[18px]" />} 
                     label="Design" 
                     isOpen={isMobileDesignMenuOpen} 
@@ -109,10 +110,10 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                     active={isDesignRoute}
                     isCollapsed={!isDesktopSidebarOpen}
                   >
-                    <TreeChildItem href="/dashboard/projects" label="Projects & Works" active={isActive('/dashboard/projects')} count={projectsCount} />
+                    <TreeChildItem id="tour-add-project" href="/dashboard/projects" label="Projects & Works" active={isActive('/dashboard/projects')} count={projectsCount} />
                     <TreeChildItem href="/dashboard/themes" label="Theme Collection" active={isActive('/dashboard/themes')} />
                     <TreeChildItem href="/dashboard/build-with-ai" label="Build with AI" active={isActive('/dashboard/build-with-ai')} countText="AI" countColor="bg-[#ff9e00]/20 text-[#ff9e00]" />
-                    <TreeChildItem href="/dashboard/links" label="Links" active={isActive('/dashboard/links')} count={linksCount} />
+                    <TreeChildItem id="tour-links" href="/dashboard/links" label="Links" active={isActive('/dashboard/links')} count={linksCount} />
                     <TreeChildItem href="/dashboard/testimonials" label="Testimonials" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
                     <TreeChildItem href="/dashboard/integrations" label="Connected Works" active={isActive('/dashboard/integrations')} />
                     <TreeChildItem href="/dashboard/trash" label="Trash" active={isActive('/dashboard/trash')} isLast />
@@ -120,7 +121,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
 
                   <PrimaryNavItem href="/dashboard/explore" icon={<Compass className="w-[18px] h-[18px]" />} label="Explore" active={isActive('/dashboard/explore')} isCollapsed={!isDesktopSidebarOpen} />
                   <PrimaryNavItem href="/dashboard/analytics" icon={<PieChart className="w-[18px] h-[18px]" />} label="Metrics" active={isActive('/dashboard/analytics')} isCollapsed={!isDesktopSidebarOpen} />
-                  <PrimaryNavItem href="/dashboard/profile" icon={<User className="w-[18px] h-[18px]" />} label="Profile" active={isActive('/dashboard/profile')} isCollapsed={!isDesktopSidebarOpen} />
+                  <PrimaryNavItem id="tour-profile-menu" href="/dashboard/profile" icon={<User className="w-[18px] h-[18px]" />} label="Profile" active={isActive('/dashboard/profile')} isCollapsed={!isDesktopSidebarOpen} />
                </>
             )}
           </nav>
@@ -229,7 +230,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                  
                  {/* Menu Desain (Dengan Submenu Accordion) */}
                  <div className="pt-2">
-                   <button onClick={() => setIsMobileDesignMenuOpen(!isMobileDesignMenuOpen)} className={`w-full flex items-center transition-all duration-300 group py-3 rounded-none px-4 justify-between ${isDesignRoute ? 'text-white' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+                   <button id="tour-mobile-design-menu" onClick={() => setIsMobileDesignMenuOpen(!isMobileDesignMenuOpen)} className={`w-full flex items-center transition-all duration-300 group py-3 rounded-none px-4 justify-between ${isDesignRoute ? 'text-white' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
                      <div className="flex items-center gap-4">
                        <Palette className={`w-5 h-5 ${isDesignRoute ? 'text-white' : 'text-white/40'}`} /> 
                        <span className="font-mono text-xs font-bold tracking-wider uppercase">Design</span>
@@ -258,7 +259,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                    <p className="text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.25em]">Settings</p>
                  </div>
 
-                 <MobileNavItem href="/dashboard/profile" icon={<User className="w-5 h-5" />} label="Profile & Bio" active={isActive('/dashboard/profile')} />
+                 <MobileNavItem id="tour-mobile-profile-menu" href="/dashboard/profile" icon={<User className="w-5 h-5" />} label="Profile & Bio" active={isActive('/dashboard/profile')} />
                  <MobileNavItem href="/support" icon={<HelpCircle className="w-5 h-5" />} label="Support" active={isActive('/support')} />
                  <MobileNavItem href="/dashboard/settings" icon={<Settings className="w-5 h-5" />} label="Settings" active={isActive('/dashboard/settings')} />
                  
@@ -323,9 +324,10 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
 // --------------------------------------------------------
 // DESKTOP COMPONENTS
 // --------------------------------------------------------
-function PrimaryNavItem({ href, icon, label, active, isCollapsed }: { href: string, icon: React.ReactNode, label: string, active: boolean, isCollapsed?: boolean }) {
+function PrimaryNavItem({ href, icon, label, active, isCollapsed, id }: { href: string, icon: React.ReactNode, label: string, active: boolean, isCollapsed?: boolean, id?: string }) {
   return (
     <Link 
+      id={id}
       href={href} 
       className={`flex items-center w-full py-3 rounded-none transition-all duration-300 group ${
         active ? 'bg-zinc-900 border border-white/10 text-white shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
@@ -352,12 +354,12 @@ function PrimaryNavItem({ href, icon, label, active, isCollapsed }: { href: stri
 }
 
 function TreeAccordion({ 
-  icon, label, isOpen, onToggle, active, isCollapsed, popoverDirection = 'down', children 
+  icon, label, isOpen, onToggle, active, isCollapsed, popoverDirection = 'down', children, id 
 }: { 
-  icon: React.ReactNode, label: string, isOpen: boolean, onToggle: () => void, active?: boolean, isCollapsed?: boolean, popoverDirection?: 'up' | 'down', children: React.ReactNode 
+  icon: React.ReactNode, label: string, isOpen: boolean, onToggle: () => void, active?: boolean, isCollapsed?: boolean, popoverDirection?: 'up' | 'down', children: React.ReactNode, id?: string 
 }) {
   return (
-    <div className="flex flex-col w-full relative group/accordion">
+    <div id={id} className="flex flex-col w-full relative group/accordion">
       <button 
         onClick={onToggle} 
         className={`flex items-center w-full py-3 transition-colors group rounded-none ${
@@ -404,7 +406,7 @@ function TreeAccordion({
   );
 }
 
-function TreeChildItem({ href, label, active, count, countText, countColor, isLast, isFloating }: { href: string, label: string, active: boolean, count?: number, countText?: string, countColor?: string, isLast?: boolean, isFloating?: boolean }) {
+function TreeChildItem({ href, label, active, count, countText, countColor, isLast, isFloating, id }: { href: string, label: string, active: boolean, count?: number, countText?: string, countColor?: string, isLast?: boolean, isFloating?: boolean, id?: string }) {
   return (
     <div className={`relative flex items-center w-full group ${isFloating ? 'px-0 py-0' : 'px-2 py-0.5'}`}>
       {/* Brutalist Sharp Connector Lines */}
@@ -418,7 +420,7 @@ function TreeChildItem({ href, label, active, count, countText, countColor, isLa
       )}
       
       {/* Clickable item */}
-      <Link href={href} className={`${isFloating ? 'ml-0 px-3 py-2 w-full' : 'ml-[24px] flex-1 px-3 py-2.5'} flex items-center justify-between rounded-none transition-colors duration-200 z-10 border border-transparent ${
+      <Link id={id} href={href} className={`${isFloating ? 'ml-0 px-3 py-2 w-full' : 'ml-[24px] flex-1 px-3 py-2.5'} flex items-center justify-between rounded-none transition-colors duration-200 z-10 border border-transparent ${
         active ? 'bg-zinc-900 border-white/10 text-white' : 'text-white/50 hover:bg-white/5 hover:border-white/5 hover:text-white'
       }`}>
         <span className="text-[13px] font-sans font-semibold">{label}</span>
@@ -435,9 +437,9 @@ function TreeChildItem({ href, label, active, count, countText, countColor, isLa
 // --------------------------------------------------------
 // MOBILE COMPONENTS
 // --------------------------------------------------------
-function MobileNavItem({ href, icon, label, active, className = "" }: { href: string, icon: React.ReactNode, label: string, active: boolean, className?: string }) {
+function MobileNavItem({ href, icon, label, active, className = "", id }: { href: string, icon: React.ReactNode, label: string, active: boolean, className?: string, id?: string }) {
   return (
-    <Link href={href} className={`w-full flex items-center py-3.5 rounded-none transition-all duration-300 group px-4 gap-4 ${active ? 'bg-zinc-900 text-white border border-white/10' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${className}`}>
+    <Link id={id} href={href} className={`w-full flex items-center py-3.5 rounded-none transition-all duration-300 group px-4 gap-4 ${active ? 'bg-zinc-900 text-white border border-white/10' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${className}`}>
       <span className={active ? 'text-[#ff9e00]' : 'text-white/40 group-hover:text-white/60'}>
         {icon}
       </span>

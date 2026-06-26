@@ -40,7 +40,7 @@ export function useThemes() {
           }
         }
       } catch (error) {
-        console.error("Gagal memuat data saat ini:", error);
+        console.error("Failed to load current data:", error);
       } finally {
         setIsLoading(false);
         // Tandai bahwa data awal sudah masuk, sekarang perubahan boleh disimpan ke DB
@@ -80,7 +80,7 @@ export function useThemes() {
     if (!theme) return;
 
     if (!theme.isAvailable) {
-      toast(`Tema ${themeName} akan segera hadir!`, {
+      toast(`${themeName} theme is coming soon!`, {
         id: `theme-coming-soon-${themeId}`,
         icon: '🔒'
       });
@@ -89,7 +89,7 @@ export function useThemes() {
 
     // SELALU arahkan ke Editor dengan query param untuk PREVIEW.
     // Jangan pernah auto-publish (simpan ke DB) dari halaman Tema, biarkan user preview dulu di Editor.
-    toast.success(`Membuka editor untuk tema ${themeName}...`, {
+    toast.success(`Opening editor for ${themeName} theme...`, {
       id: `theme-preview-${themeId}`,
       icon: '✨',
       style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
@@ -99,7 +99,7 @@ export function useThemes() {
   };
 
   const handleProComingSoon = () => {
-    toast('Fitur Pro Creator Editor masih dalam tahap pengembangan.', {
+    toast('Pro Creator Editor is still under development.', {
       id: 'pro-editor-coming-soon',
       icon: '✨'
     });

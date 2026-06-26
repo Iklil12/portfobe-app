@@ -7,19 +7,19 @@ import { Toaster, resolveValue, toast } from 'react-hot-toast';
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { SystemErrorUI } from "@/components/errors/SystemErrorUI";
-import { 
-  Check, 
-  X, 
-  Loader2, 
-  AlertTriangle, 
-  Info, 
-  Image, 
-  Undo2, 
-  Wifi, 
-  Trash2, 
-  Globe, 
-  Link, 
-  UploadCloud, 
+import {
+  Check,
+  X,
+  Loader2,
+  AlertTriangle,
+  Info,
+  Image,
+  Undo2,
+  Wifi,
+  Trash2,
+  Globe,
+  Link,
+  UploadCloud,
   AlertCircle,
   Lock,
   Hand,
@@ -70,13 +70,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   // Halaman privat yang BENAR-BENAR membutuhkan SessionProvider (NextAuth)
   const isPrivatePage = pathname?.startsWith("/dashboard") ||
-                        pathname?.startsWith("/impersonate") ||
-                        pathname?.startsWith("/checkout") ||
-                        pathname?.startsWith("/receipt") ||
-                        pathname?.startsWith("/register") ||
-                        pathname?.startsWith("/login") ||
-                        pathname?.startsWith("/verify") ||
-                        pathname?.startsWith("/reset-password");
+    pathname?.startsWith("/impersonate") ||
+    pathname?.startsWith("/checkout") ||
+    pathname?.startsWith("/receipt") ||
+    pathname?.startsWith("/register") ||
+    pathname?.startsWith("/login") ||
+    pathname?.startsWith("/verify") ||
+    pathname?.startsWith("/reset-password");
 
   // Semua route selain yang di atas (termasuk /[subdomain], /templates, /, /pricing) adalah publik
   const isPublicPage = !isPrivatePage;
@@ -84,13 +84,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
   // Toast renderer (diekstrak agar JSX lebih bersih)
   const toastRenderer = (t: any) => {
     const message = resolveValue(t.message, t) as React.ReactNode;
-    
+
     let title = "Info";
     let IconComponent = Info;
     let borderClass = "border-white/30";
     let iconBgClass = "bg-white/10 text-white border border-white/20";
     let shadowClass = "shadow-[0_20px_50px_rgba(255,255,255,0.05)]";
-    
+
     if (t.type === 'success') {
       title = "Success!";
       IconComponent = Check;
@@ -152,21 +152,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
     };
 
     return (
-      <div 
+      <div
         className={`transition-all duration-300 ease-out flex items-start gap-3 w-[290px] md:w-[340px] max-w-full p-3 bg-zinc-800 border ${borderClass} rounded-none ${shadowClass} backdrop-blur-md pointer-events-auto origin-top font-mono
         ${t.visible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-6 scale-95'}`}
       >
         <div className={`transition-colors duration-300 w-7 h-7 rounded-none flex shrink-0 items-center justify-center ${iconBgClass}`}>
           {renderIcon()}
         </div>
-        
+
         <div className="flex flex-col flex-1 mt-[2px]">
           <p className="text-[11px] font-bold text-white uppercase tracking-wider leading-none mb-1">{title}</p>
           <p className="text-[10px] text-zinc-300 leading-relaxed font-mono">{message}</p>
         </div>
-        
+
         {t.type !== 'loading' && (
-          <button 
+          <button
             onClick={() => toast.dismiss(t.id)}
             className="w-7 h-7 rounded-none border border-transparent hover:border-white/10 flex shrink-0 items-center justify-center text-white/40 hover:text-white hover:bg-white/5 active:scale-95 transition-all"
           >

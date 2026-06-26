@@ -59,7 +59,7 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: Th
                         className="group flex flex-col gap-3"
                     >
                         {/* 1. IMAGE CONTAINER */}
-                        <div className={`relative w-full aspect-[4/3] rounded-none overflow-hidden transition-all duration-300
+                        <div className={`relative w-full aspect-video rounded-none overflow-hidden transition-all duration-300
                             ${isActive ? 'border-2 border-[#ff9e00] scale-[1.01] z-10' :
                                         theme.isAvailable ? 'border border-white/10 hover:border-white/20 hover:-translate-y-1 z-0' :
                                             'border border-white/5 opacity-80 z-0'} 
@@ -70,7 +70,7 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: Th
                                 {theme.img ? (
                                     <LazyImage
                                         src={theme.img}
-                                        className={`w-full h-full object-cover transition-transform duration-[10s] ease-linear group-hover:scale-[1.05] ${!theme.isAvailable ? 'blur-[2px] grayscale opacity-40' : ''}`}
+                                        className={`w-full h-full object-contain transition-transform duration-[10s] ease-linear group-hover:scale-[1.05] ${!theme.isAvailable ? 'blur-[2px] grayscale opacity-40' : ''}`}
                                         alt={theme.name}
                                     />
                                 ) : (
@@ -186,11 +186,13 @@ export function ThemeGrid({ themes, state, actions }: { themes: any[], state: Th
 
             {/* 3. PLACEHOLDER / COMING SOON CARD */}
             <div className="group flex flex-col gap-3">
-                <div className="relative w-full aspect-[4/3] border border-dashed border-white/10 rounded-none flex flex-col items-center justify-center bg-[#050505] hover:border-white/20 transition-all duration-300 group cursor-default">
+                <div className="relative w-full aspect-video border border-dashed border-white/10 rounded-none flex flex-col items-center justify-center bg-[#050505] hover:border-white/20 transition-all duration-300 group cursor-default">
                     <div className="w-12 h-12 bg-zinc-900 border border-white/10 rounded-none flex items-center justify-center mb-4 group-hover:scale-105 transition-transform duration-300 text-white/40 group-hover:text-white">
                         <Palette className="w-5 h-5" />
                     </div>
-                      Still Cooking By<br />Designers
+                    <div className="font-mono text-[10px] text-white/30 uppercase tracking-widest text-center leading-relaxed">
+                        Still Cooking By<br />Designers
+                    </div>
                 </div>
 
                 <div className="flex justify-between items-center px-1">

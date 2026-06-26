@@ -37,7 +37,9 @@ export interface ProfileUpdateDTO {
   firstName?: string;
   lastName?: string;
   avatar?: string;
-  [key: string]: string | undefined;
+  hasCompletedDashboardTour?: boolean;
+  hasCompletedAppearanceTour?: boolean;
+  [key: string]: string | boolean | undefined;
 }
 
 export async function checkSubdomainAvailability(subdomain: string) {
@@ -122,9 +124,9 @@ export async function updateProfileFull(email: string, data: ProfileUpdateDTO) {
 }
 
 export async function patchProfilePartial(email: string, data: ProfileUpdateDTO) {
-  const allowedFields = ['fullName', 'profession', 'bio', 'subdomain', 'location'];
+  const allowedFields = ['fullName', 'profession', 'bio', 'subdomain', 'location', 'hasCompletedDashboardTour', 'hasCompletedAppearanceTour'];
   
-  const updateData: Record<string, string | undefined> = {};
+  const updateData: Record<string, string | boolean | undefined> = {};
   for (const key of Object.keys(data)) {
     if (allowedFields.includes(key)) {
       updateData[key] = data[key];
@@ -147,10 +149,10 @@ export async function patchProfilePartial(email: string, data: ProfileUpdateDTO)
     update: updateData,
     create: {
       userId: user.id,
-      fullName: updateData.fullName || "Creator",
-      subdomain: updateData.subdomain || null,
-      profession: updateData.profession || null,
-      bio: updateData.bio || null
+      fullName: (updateData.fullName as string) || "Creator",
+      subdomain: (updateData.subdomain as string) || null,
+      profession: (updateData.profession as string) || null,
+      bio: (updateData.bio as string) || null
     }
   });
 

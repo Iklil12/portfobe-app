@@ -269,7 +269,7 @@ export function PreviewPanel({
   const activeSplitMobileScale = userSplitMobileScale !== null ? userSplitMobileScale : 1;
 
   return (
-    <div ref={containerRef} className={`flex-1 h-full w-full relative flex flex-row items-center justify-center overflow-hidden z-10 ${previewMode === 'mobile' || (previewMode === 'split' && state.splitModeType === 'flexible') ? 'p-0 lg:p-4 lg:sm:p-6 lg:md:p-10' : 'p-0'}`}>
+    <div id="appearance-preview-panel" ref={containerRef} className={`flex-1 h-full w-full relative flex flex-row items-center justify-center overflow-hidden z-10 ${previewMode === 'mobile' || (previewMode === 'split' && state.splitModeType === 'flexible') ? 'p-0 lg:p-4 lg:sm:p-6 lg:md:p-10' : 'p-0'}`}>
 
       <div 
         className="absolute inset-0 pointer-events-none z-0 hidden lg:block"
@@ -280,6 +280,7 @@ export function PreviewPanel({
       />
 
       <motion.div
+        id="tour-preview-canvas"
         drag={!isMobileDevice && ((previewMode === 'mobile') || (previewMode === 'split' && state.splitModeType === 'flexible'))}
         dragControls={dragControls}
         dragListener={false}

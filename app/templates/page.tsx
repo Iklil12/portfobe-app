@@ -63,14 +63,14 @@ export default function TemplatesPage() {
                   >
                     {/* Image Container */}
                     <div className={`
-                      relative w-full aspect-[4/3] rounded-none overflow-hidden transition-all duration-500
+                      relative w-full aspect-video rounded-none overflow-hidden transition-all duration-500
                       ${theme.isAvailable ? 'border border-white/10 hover:border-white/30 z-0' : 'border border-white/5 opacity-80 z-0'}
                     `}>
                       <div className="absolute inset-0 bg-[#050505] overflow-hidden">
                         {theme.img ? (
                           <LazyImage
                             src={theme.img}
-                            className={`w-full h-full object-cover transition-transform duration-[10s] ease-linear group-hover:scale-[1.05] ${!theme.isAvailable ? 'blur-[2px] grayscale opacity-40' : ''}`}
+                            className={`w-full h-full object-contain transition-transform duration-[10s] ease-linear group-hover:scale-[1.05] ${!theme.isAvailable ? 'blur-[2px] grayscale opacity-40' : ''}`}
                             alt={theme.name}
                           />
                         ) : (
@@ -81,8 +81,8 @@ export default function TemplatesPage() {
                       </div>
 
                       {/* Hover Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-end p-5 pointer-events-none">
-                        <div className="flex justify-between items-end transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-100 xl:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-end p-5 pointer-events-none">
+                        <div className="flex justify-between items-end transform translate-y-0 xl:translate-y-4 group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto">
                           <span className="text-white font-mono font-bold uppercase tracking-wider text-xs truncate pr-4 drop-shadow-md">
                             {theme.name}
                           </span>
@@ -153,15 +153,7 @@ export default function TemplatesPage() {
                           <span className="text-sm font-mono font-bold text-white uppercase tracking-wider truncate">
                             {theme.name}
                           </span>
-                          {theme.isPro && (
-                            <span className="bg-[#ff9e00] text-black text-[9px] font-mono font-bold px-2 py-0.5 rounded-none uppercase tracking-wider shrink-0">
-                              Pro
-                            </span>
-                          )}
                         </div>
-                        <p className="text-white/40 text-[11px] font-sans leading-relaxed line-clamp-2 pr-4">
-                          {theme.desc}
-                        </p>
                       </div>
                     </div>
                   </motion.div>

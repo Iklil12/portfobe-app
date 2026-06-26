@@ -160,7 +160,7 @@ export function ObsidianShellContent({ data, theme, isMobileView, isCardPreview,
           )}
 
           {/* BLOCK CHILDREN RENDERED HERE */}
-          <div className="w-full flex flex-col pt-32 md:pt-40 flex-1 [&>*:last-child]:mt-auto">
+          <div className="w-full flex flex-col pt-20 md:pt-24 flex-1 [&>*:last-child]:mt-auto">
             {children}
           </div>
       </div>

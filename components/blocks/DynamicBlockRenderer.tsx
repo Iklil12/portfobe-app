@@ -215,6 +215,14 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia, is
       </section> : null; break;
         }
         break;
+      case 'acid':
+      case 'acid-tech':
+        switch(baseBlockType) {
+          case 'PENPOT': content = data?.id || data?.userId ? <section className="w-full bg-[#09090b] border-b border-white/10"><PenpotShowcase userId={userId} variant="acid" themeColor={themeColor} /></section> : null; break;
+          case 'CANVA': content = data?.id || data?.userId ? <section className="w-full bg-[#09090b] border-b border-white/10"><CanvaShowcase userId={userId} variant="acid" themeColor={themeColor} /></section> : null; break;
+          case 'GITHUB': content = data?.id || data?.userId ? <section className="w-full bg-[#09090b] border-b border-white/10"><GithubStats userId={userId} variant="acid" themeColor={themeColor} /></section> : null; break;
+        }
+        break;
       case 'bentogrid':
         switch(baseBlockType) {
           case 'PENPOT': content = data?.id || data?.userId ? <div className="bento-card p-0 mb-6"><PenpotShowcase userId={userId} variant="bento" themeColor={themeColor} /></div> : null; break;

@@ -21,7 +21,9 @@ export function RightPanel({
   const { isEditorCollapsed, livePreviewTheme } = state;
 
   return (
-    <div className={`
+    <div 
+      id="appearance-right-panel"
+      className={`
       hidden lg:flex flex-col z-50 bg-[#111111] text-white border-l border-white/5 relative shrink-0
       transition-all duration-300
       ${isEditorCollapsed ? 'w-0 opacity-0 pointer-events-none' : 'w-[280px] opacity-100'}

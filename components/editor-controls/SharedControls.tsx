@@ -30,9 +30,9 @@ const DEFAULT_COLORS = [
 export function ColorPicker({ themeColor, setThemeColor }: { themeColor?: string, setThemeColor?: (c: string) => void }) {
   if (!setThemeColor) return null;
   return (
-    <div className="mb-6 animate-in fade-in slide-in-from-right-4 duration-500">
+    <div id="tour-accent-color" className="mb-6 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-white/70">Aksen Warna Utama</span>
+        <span className="text-xs font-medium text-white/70">Primary Accent Color</span>
         <div className="relative flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-[#1b1b1f] hover:bg-[#222226] border border-white/5 hover:border-white/10 transition-all cursor-pointer">
           <div 
             className="w-3.5 h-3.5 rounded border border-white/10 shrink-0" 
@@ -63,7 +63,7 @@ export function FontPicker({ fontHeading, setFontHeading, setFontBody }: { fontH
   return (
     <div className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-75">
       <div className="mb-3 px-0.5">
-        <h3 className="text-xs font-medium text-white/70">Tipografi Font</h3>
+        <h3 className="text-xs font-medium text-white/70">Typography Font</h3>
       </div>
       <div className="flex p-1 bg-zinc-900/30 rounded-md border border-white/5 gap-1">
         <button 
@@ -109,9 +109,9 @@ export function CardStylePicker({ cardStyle, setCardStyle }: { cardStyle?: strin
   const isCardSoft = cardStyle === 'soft-shadow' || cardStyle === 'soft';
 
   return (
-    <div className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-100">
+    <div id="tour-card-style" className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-100">
       <div className="mb-3 px-0.5">
-        <h3 className="text-xs font-medium text-white/70">Gaya Kartu Proyek</h3>
+        <h3 className="text-xs font-medium text-white/70">Project Card Style</h3>
       </div>
       <div className="grid grid-cols-3 gap-2">
         <button 
@@ -176,7 +176,7 @@ export function ButtonShapePicker({ buttonShape, setButtonShape }: { buttonShape
   return (
     <div className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-150">
       <div className="mb-3 px-0.5">
-        <h3 className="text-xs font-medium text-white/70">Bentuk Elemen</h3>
+        <h3 className="text-xs font-medium text-white/70">Element Shape</h3>
       </div>
       <div className="grid grid-cols-3 gap-2">
         <button 
@@ -188,7 +188,7 @@ export function ButtonShapePicker({ buttonShape, setButtonShape }: { buttonShape
           }`}
         >
           <div className={`w-8 h-4 transition-all duration-300 rounded-none ${isBtnHard ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
-          <span className="text-[10px] font-medium leading-tight text-center">Kotak</span>
+          <span className="text-[10px] font-medium leading-tight text-center">Square</span>
         </button>
         <button 
           onClick={() => setButtonShape('rounded')} 
@@ -199,7 +199,7 @@ export function ButtonShapePicker({ buttonShape, setButtonShape }: { buttonShape
           }`}
         >
           <div className={`w-8 h-4 transition-all duration-300 rounded ${isBtnRounded ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
-          <span className="text-[10px] font-medium leading-tight text-center">Melingkar</span>
+          <span className="text-[10px] font-medium leading-tight text-center">Rounded</span>
         </button>
         <button 
           onClick={() => setButtonShape('pill')} 
@@ -210,7 +210,7 @@ export function ButtonShapePicker({ buttonShape, setButtonShape }: { buttonShape
           }`}
         >
           <div className={`w-8 h-4 transition-all duration-300 rounded-full ${isBtnPill ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
-          <span className="text-[10px] font-medium leading-tight text-center">Kapsul</span>
+          <span className="text-[10px] font-medium leading-tight text-center">Pill</span>
         </button>
       </div>
     </div>
@@ -310,17 +310,17 @@ export function GalleryDesignPicker({ designStyle, setDesign }: { designStyle?: 
   const current = designStyle || 'classic';
   
   const options = [
-    { id: 'classic', name: 'Minimal Museum', desc: 'Desain bersih dengan tipografi klasik.' },
-    { id: 'editorial', name: 'Editorial Mag', desc: 'Gaya majalah eksklusif dengan aksen garis.' },
-    { id: 'glass', name: 'Frosted Glass', desc: 'Tampilan blur modern dengan gradasi latar.' },
-    { id: 'cyber', name: 'Cyber Tech', desc: 'Aesthetic futuristik, monospace, dan aksen warna.' },
-    { id: 'brutalist', name: 'Neo-Brutalist', desc: 'Desain berani dengan border tebal berenergi.' }
+    { id: 'classic', name: 'Minimal Museum', desc: 'Clean design with classic typography.' },
+    { id: 'editorial', name: 'Editorial Mag', desc: 'Exclusive magazine style with line accents.' },
+    { id: 'glass', name: 'Frosted Glass', desc: 'Modern blurred look with gradient background.' },
+    { id: 'cyber', name: 'Cyber Tech', desc: 'Futuristic aesthetic, monospace, and color accents.' },
+    { id: 'brutalist', name: 'Neo-Brutalist', desc: 'Bold design with energetic thick borders.' }
   ];
 
   return (
-    <div className="mb-6 animate-in fade-in slide-in-from-right-4 duration-500">
+    <div id="tour-gallery-design" className="mb-6 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="mb-3 px-0.5">
-        <h3 className="text-xs font-semibold text-white/70">Gallery Template Desain</h3>
+        <h3 className="text-xs font-semibold text-white/70">Gallery Template Design</h3>
       </div>
       <div className="grid grid-cols-2 gap-2">
         {options.map((opt) => {

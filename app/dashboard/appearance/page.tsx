@@ -136,7 +136,7 @@ function AppearanceEditor() {
       )}
 
       {/* FULL WIDTH NAVBAR */}
-      <div className="w-full h-14 bg-[#111111] border-b border-white/5 shrink-0 flex items-center justify-between px-4 lg:pl-0 lg:pr-6 z-[100] relative">
+      <div id="appearance-navbar" className="w-full h-14 bg-[#111111] border-b border-white/5 shrink-0 flex items-center justify-between px-4 lg:pl-0 lg:pr-6 z-[100] relative">
         {/* Left: Back & Title */}
         <div className="flex items-center">
           <div className="flex items-center justify-center w-12 lg:w-[56px] shrink-0">
@@ -322,7 +322,7 @@ function AppearanceEditor() {
 
         {/* LEFTMOST DOCK NAV (MATCHES REFERENCE IMAGE EXACTLY, ONLY THEME & PAGES) */}
         {!state.isEditorCollapsed && (
-          <div className="hidden lg:flex flex-col w-[56px] border-r border-white/5 bg-[#111111] z-[101] shrink-0 items-center pt-3 pb-6 gap-2">
+          <div id="appearance-dock" className="hidden lg:flex flex-col w-[56px] border-r border-white/5 bg-[#111111] z-[101] shrink-0 items-center pt-3 pb-6 gap-2">
             {/* Layers Button (Theme Settings) */}
             <button 
               onClick={() => setActiveTab('theme')}

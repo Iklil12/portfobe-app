@@ -94,9 +94,11 @@ model Profile {
   avatarUrl        String? @db.Text
   coverUrl         String? @db.Text
   location         String?
-  availableForHire Boolean @default(true)
-  whatsapp         String?
-  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  availableForHire           Boolean @default(true)
+  whatsapp                   String?
+  hasCompletedDashboardTour  Boolean @default(false)
+  hasCompletedAppearanceTour Boolean @default(false)
+  user                       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([fullName])
 }

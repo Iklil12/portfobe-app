@@ -8,7 +8,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#020202]',
         isAvailable: true,
         isPro: true,
-        img: '/themes/spatial.jpg'
+        img: '/themes/spatial.webp'
     },
     {
         id: 'obsidian-reel',
@@ -17,7 +17,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#050505]',
         isAvailable: true,
         isPro: true,
-        img: 'https://images.unsplash.com/photo-1534938665420-4193d6aa2a28?q=80&w=600&auto=format&fit=crop'
+        img: '/themes/obsidian-reel.webp'
     },
     {
         id: 'aura-kinetic',
@@ -26,7 +26,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#0a0a0c]',
         isAvailable: true,
         isPro: true,
-        img: '/themes/aura-kinetic.jpg'
+        img: '/themes/aura-kinetic.webp'
     },
     {
         id: 'editorial',
@@ -35,7 +35,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#fdfdfc]',
         isAvailable: true,
         isPro: true,
-        img: '/themes/editorial.jpg'
+        img: '/themes/editorial.webp'
     },
     {
         id: 'minimalist',
@@ -44,7 +44,7 @@ export const THEMES_DATA = [
         preview: 'bg-slate-100',
         isAvailable: true,
         isPro: false,
-        img: '/themes/minimalist.jpg'
+        img: '/themes/minimalist.webp'
     },
     {
         id: 'midnight-emulsion',
@@ -53,7 +53,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#05070a]',
         isAvailable: true,
         isPro: true,
-        img: '/themes/midnight-emulsion.jpg'
+        img: '/themes/midnight-emulsion.webp'
     },
     {
         id: 'viewfinder',
@@ -62,7 +62,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#050505]',
         isAvailable: true,
         isPro: true,
-        img: '/themes/viewfinder.jpg'
+        img: '/themes/viewfinder.webp'
     },
     {
         id: 'split',
@@ -71,7 +71,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#050505]',
         isAvailable: true,
         isPro: true,
-        img: '/themes/split.jpg'
+        img: '/themes/split.webp'
     },
     {
         id: 'monolith',
@@ -80,7 +80,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#050505]',
         isAvailable: true,
         isPro: true,
-        img: '/themes/monolith.jpg'
+        img: '/themes/monolith.webp'
     },
     {
         id: 'absolute-noir',
@@ -89,7 +89,7 @@ export const THEMES_DATA = [
         preview: 'bg-black',
         isAvailable: true,
         isPro: true,
-        img: '/themes/absolute-noir.jpg'
+        img: '/themes/absolute-noir.webp'
     },
     {
         id: 'cinematic',
@@ -98,7 +98,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#0a0a0a]',
         isAvailable: true,
         isPro: true,
-        img: '/themes/cinematicdark.jpg'
+        img: '/themes/cinematicdark.webp'
     },
     {
         id: 'acid',
@@ -107,7 +107,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#09090b]',
         isAvailable: true,
         isPro: true,
-        img: '/themes/acid.jpg'
+        img: '/themes/acid.webp'
     },
     {
         id: 'bentogrid',
@@ -116,7 +116,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#09090b]',
         isAvailable: true,
         isPro: false,
-        img: '/themes/bentogrid.jpg'
+        img: '/themes/bentogrid.webp'
     },
     {
         id: 'brutalism',
@@ -125,7 +125,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#0a0a0a]',
         isAvailable: true,
         isPro: false,
-        img: '/themes/brutalism.jpg'
+        img: '/themes/brutalism.webp'
     },
 
 
@@ -136,7 +136,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#050505]',
         isAvailable: true,
         isPro: true,
-        img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+        img: '/themes/cinematic-gallery.webp'
     },
     {
         id: 'layered-monolith',
@@ -145,7 +145,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#1A1A18]',
         isAvailable: true,
         isPro: true,
-        img: 'https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=600&auto=format&fit=crop'
+        img: '/themes/layered-monolith.webp'
     },
     {
         id: 'kinetic-avant-garde',
@@ -154,7 +154,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#0a0a0a]',
         isAvailable: true,
         isPro: true,
-        img: 'https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=600&auto=format&fit=crop'
+        img: '/themes/kinetic-avant-garde.webp'
     },
     {
         id: 'nexus-noir',
@@ -163,7 +163,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#050505]',
         isAvailable: true,
         isPro: true,
-        img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop'
+        img: '/themes/nexus-noir.webp'
     },
     {
         id: 'horizontal-flow',
@@ -172,7 +172,7 @@ export const THEMES_DATA = [
         preview: 'bg-[#050505]',
         isAvailable: true,
         isPro: true,
-        img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop'
+        img: '/themes/horizontal-flow.webp'
     },
     {
         id: 'split-screen-studio',
@@ -181,6 +181,6 @@ export const THEMES_DATA = [
         preview: 'bg-[#050505]',
         isAvailable: true,
         isPro: true,
-        img: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600&auto=format&fit=crop'
+        img: '/themes/split-screen-studio.webp'
     }
 ];

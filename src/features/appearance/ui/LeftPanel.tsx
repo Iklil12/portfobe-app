@@ -139,9 +139,11 @@ export function LeftPanel({
       />
 
       {/* MOBILE FLOATING DOCK */}
-      <div className={`
-         lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] 
-        bg-[#1a1a1a]/80 backdrop-blur-xl text-white rounded-full p-1.5
+      <div 
+        id="appearance-mobile-dock"
+        className={`
+        lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] 
+        bg-[#1a1a1a]/90 backdrop-blur-xl rounded-full p-1.5
         flex items-center shadow-2xl border border-white/10
         transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
         ${isMobileDrawerOpen ? 'translate-y-32 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}
@@ -184,6 +186,7 @@ export function LeftPanel({
 
       {/* LEFT SIDEBAR UTAMA */}
       <div 
+        id="appearance-left-panel"
         className={`
           flex flex-col z-[100] bg-[#111111] text-white border-r border-white/5 overscroll-none
           ${isEditorCollapsed ? 'lg:w-0 lg:opacity-0 lg:pointer-events-none lg:overflow-hidden' : 'lg:w-[280px] lg:opacity-100'}
@@ -295,6 +298,7 @@ export function LeftPanel({
                 <div className="p-4 rounded-md border border-white/5 bg-zinc-900/40 animate-pulse h-16"></div>
               ) : (
                 <div 
+                  id="tour-gallery-design"
                   className="group cursor-pointer p-3.5 rounded-md border border-white/5 bg-[#16161a] hover:bg-[#1f1f24] hover:border-white/10 transition-all flex items-center justify-between shadow-sm"
                   onClick={() => setIsThemeModalOpen(true)}
                 >

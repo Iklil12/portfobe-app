@@ -57,7 +57,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
         body: JSON.stringify({
           subdomain: sub.toLowerCase(),
           fullName: name.trim() || userName,
-          profession: selectedProfession === "other" ? null : selectedProfession,
+          profession: (!selectedProfession || selectedProfession === "other") ? "" : selectedProfession,
         }),
       });
       
@@ -293,7 +293,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
               {currentStep === 3 && (
                 <div className="animate-[fadeInBackdrop_0.5s_forwards]">
                   <h3 className="text-lg sm:text-xl font-mono font-bold text-white uppercase tracking-wider mb-3">One More Thing</h3>
-                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">What is your primary skill? We will customize the look for you.</p>
+                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">What is your primary skill?</p>
 
                   <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
                     {professions.map((p) => {

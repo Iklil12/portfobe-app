@@ -59,6 +59,7 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
                   Share
                 </button>
                 <a
+                  id="tour-preview-btn"
                   href={`/${subdomain}`} target="_blank" rel="noreferrer"
                   className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[10px] font-mono font-bold uppercase tracking-widest hover:border-white/20 hover:bg-zinc-800 hover:text-white transition-all duration-300 shadow-sm active:scale-95"
                 >
@@ -82,6 +83,7 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
             <span className="whitespace-nowrap uppercase tracking-wider">Project</span>
           </Link>
           <Link
+            id="tour-canvas-btn"
             href="/dashboard/appearance"
             className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-none border border-white/10 bg-transparent text-white/80 hover:bg-white/5 hover:text-white transition-all duration-300 font-mono font-bold text-xs md:text-sm"
           >
@@ -99,6 +101,7 @@ export function OverviewHeader({ subdomain, avatarUrl, isLoading }: OverviewHead
                 <Share2 className="w-4 h-4" />
               </button>
               <a
+                id="tour-mobile-preview-btn"
                 href={`/${subdomain}`} target="_blank" rel="noreferrer"
                 className="w-10 h-10 rounded-none border border-white/10 bg-zinc-900 text-white/70 flex items-center justify-center hover:bg-zinc-800 hover:text-[#ff9e00] hover:border-white/20 transition-all active:scale-90 shadow-sm"
               >

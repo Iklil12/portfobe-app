@@ -10,6 +10,7 @@ import { Sidebar } from '@/components/layout/dashboard/Sidebar';
 import { Topbar } from '@/components/layout/dashboard/Topbar';
 import { TopBanner } from '@/components/layout/dashboard/TopBanner';
 import { GlobalAnnouncementBanner } from '@/features/announcements';
+import { TourProvider } from '@/components/providers/TourProvider';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -69,6 +70,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, []);
 
+  useEffect(() => {
+    const handleOpenSidebar = () => setIsSidebarOpen(true);
+    const handleCloseSidebar = () => setIsSidebarOpen(false);
+    window.addEventListener('tour-open-mobile-sidebar', handleOpenSidebar);
+    window.addEventListener('tour-close-mobile-sidebar', handleCloseSidebar);
+    return () => {
+      window.removeEventListener('tour-open-mobile-sidebar', handleOpenSidebar);
+      window.removeEventListener('tour-close-mobile-sidebar', handleCloseSidebar);
+    };
+  }, [setIsSidebarOpen]);
+
   // Gabungkan jumlah proyek dan sertifikat untuk menu "Proyek & Karya"
   const totalProjectsAndCertificates = (projectsCount || 0) + (certificatesCount || 0);
 
@@ -79,10 +91,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (typeof window !== 'undefined') window.location.href = '/dashboard';
   }
 
-  if (isEditorPage) return <>{children}</>;
+  if (isEditorPage) return <TourProvider>{children}</TourProvider>;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#050505] font-sans text-white selection:bg-[#ff9e00] selection:text-black relative">
+    <TourProvider>
+      <div className="flex h-screen overflow-hidden bg-[#050505] font-sans text-white selection:bg-[#ff9e00] selection:text-black relative">
       <style dangerouslySetInnerHTML={{
         __html: `
         .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -169,5 +182,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         />
       )}
     </div>
+    </TourProvider>
   );
 }
