@@ -104,23 +104,7 @@ function AppearanceEditor() {
   return (
     <main className="h-screen w-screen m-0 p-0 flex flex-col bg-[#111111] font-sans overflow-hidden fixed inset-0 z-[99999]">
 
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap');
-        
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.1); border-radius: 0px; }
-        
-        .bg-grid-slate {
-            background-image: none;
-        }
 
-        :global(body > aside),
-        :global(body > header),
-        :global(main.layout-content-wrapper > header) { display: none !important; }
-        :global(main.layout-content-wrapper) { padding: 0 !important; margin: 0 !important; max-width: 100vw !important; }
-      `}} />
 
       {state.showOfflineModal && (
         <OfflineModal setShowOfflineModal={actions.setShowOfflineModal} />
@@ -385,13 +369,32 @@ function AppearanceEditor() {
 
 export default function AppearancePage() {
   return (
-    <Suspense fallback={
-      <div className="h-screen w-screen flex flex-col items-center justify-center bg-[#111111]">
-        <Loader2 className="w-10 h-10 text-[#ff9e00] animate-spin mb-4" />
-        <p className="text-white/40 text-[9px] font-sans font-bold uppercase ">Syncing Canvas...</p>
-      </div>
-    }>
-      <AppearanceEditor />
-    </Suspense>
+    <>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap');
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.1); border-radius: 0px; }
+        
+        .bg-grid-slate {
+            background-image: none;
+        }
+
+        :global(body > aside),
+        :global(body > header),
+        :global(main.layout-content-wrapper > header) { display: none !important; }
+        :global(main.layout-content-wrapper) { padding: 0 !important; margin: 0 !important; max-width: 100vw !important; }
+      `}} />
+      <Suspense fallback={
+        <div className="h-screen w-screen flex flex-col items-center justify-center bg-[#111111]">
+          <Loader2 className="w-10 h-10 text-[#ff9e00] animate-spin mb-4" />
+          <p className="text-white/40 text-[9px] font-sans font-bold uppercase ">Syncing Canvas...</p>
+        </div>
+      }>
+        <AppearanceEditor />
+      </Suspense>
+    </>
   );
 }

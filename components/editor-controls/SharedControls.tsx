@@ -30,7 +30,7 @@ const DEFAULT_COLORS = [
 export function ColorPicker({ themeColor, setThemeColor }: { themeColor?: string, setThemeColor?: (c: string) => void }) {
   if (!setThemeColor) return null;
   return (
-    <div id="tour-accent-color" className="mb-6 animate-in fade-in slide-in-from-right-4 duration-500">
+    <div id="tour-accent-color" className="mb-6">
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-white/70">Primary Accent Color</span>
         <div className="relative flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-[#1b1b1f] hover:bg-[#222226] border border-white/5 hover:border-white/10 transition-all cursor-pointer">
@@ -61,7 +61,7 @@ export function FontPicker({ fontHeading, setFontHeading, setFontBody }: { fontH
   const isFontSans = !isFontMono && !isFontSerif;
 
   return (
-    <div className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-75">
+    <div className="mb-8">
       <div className="mb-3 px-0.5">
         <h3 className="text-xs font-medium text-white/70">Typography Font</h3>
       </div>
@@ -109,7 +109,7 @@ export function CardStylePicker({ cardStyle, setCardStyle }: { cardStyle?: strin
   const isCardSoft = cardStyle === 'soft-shadow' || cardStyle === 'soft';
 
   return (
-    <div id="tour-card-style" className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-100">
+    <div id="tour-card-style" className="mb-8">
       <div className="mb-3 px-0.5">
         <h3 className="text-xs font-medium text-white/70">Project Card Style</h3>
       </div>
@@ -174,7 +174,7 @@ export function ButtonShapePicker({ buttonShape, setButtonShape }: { buttonShape
   const isBtnPill = buttonShape === 'pill';
 
   return (
-    <div className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-150">
+    <div className="mb-8">
       <div className="mb-3 px-0.5">
         <h3 className="text-xs font-medium text-white/70">Element Shape</h3>
       </div>
@@ -225,7 +225,7 @@ export function GalleryLayoutPicker({ layoutStyle, setLayout }: { layoutStyle?: 
   const isFluid = layoutStyle === 'fluid';
 
   return (
-    <div className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500 delay-300">
+    <div className="mb-8">
       <div className="mb-3 px-0.5">
         <h3 className="text-xs font-medium text-white/70">Gallery Layout</h3>
       </div>
@@ -318,7 +318,7 @@ export function GalleryDesignPicker({ designStyle, setDesign }: { designStyle?: 
   ];
 
   return (
-    <div id="tour-gallery-design" className="mb-6 animate-in fade-in slide-in-from-right-4 duration-500">
+    <div id="tour-gallery-design" className="mb-6">
       <div className="mb-3 px-0.5">
         <h3 className="text-xs font-semibold text-white/70">Gallery Template Design</h3>
       </div>

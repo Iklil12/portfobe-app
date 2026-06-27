@@ -44,12 +44,6 @@ export function HeroSection() {
                 .hover-invert:hover { background-color: white !important; color: black !important; }
                 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
                 .cursor-blink { animation: blink 1s step-end infinite; }
-                @keyframes rise { 0%{opacity:0;transform:translateY(30px)} 100%{opacity:1;transform:translateY(0)} }
-                .r1{animation:rise .8s cubic-bezier(.22,1,.36,1) .1s both}
-                .r2{animation:rise .8s cubic-bezier(.22,1,.36,1) .2s both}
-                .r3{animation:rise .8s cubic-bezier(.22,1,.36,1) .35s both}
-                .r4{animation:rise .8s cubic-bezier(.22,1,.36,1) .5s both}
-                .r5{animation:rise .8s cubic-bezier(.22,1,.36,1) .65s both}
                 @media (max-width: 767px) {
                     .mobile-stroke { -webkit-text-stroke: 1px white !important; }
                 }
@@ -84,7 +78,7 @@ export function HeroSection() {
             </div>
 
             {/* ═══ BAND 3: THREE-COLUMN INFO STRIP ═══ */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 wire-b r3">
+            <div className="w-full grid grid-cols-1 md:grid-cols-3 wire-b">
                 
                 {/* Col 1: Overview */}
                 <div className="px-5 py-5 md:p-8 wire-b md:wire-b-0 md:wire-r bg-[#050505] flex flex-col justify-between min-h-[120px] md:min-h-[180px]">
@@ -122,7 +116,7 @@ export function HeroSection() {
             </div>
 
             {/* ═══ BAND 4: FULL-WIDTH CLAIM INPUT ═══ */}
-            <div className="w-full wire-b r4 bg-[#0a0a0a]">
+            <div className="w-full wire-b bg-[#0a0a0a]">
                 <div className="flex flex-col md:flex-row">
                     {/* Label */}
                     <div className="px-5 py-4 md:px-8 md:py-6 md:wire-r flex items-center shrink-0">
@@ -149,7 +143,7 @@ export function HeroSection() {
             </div>
 
             {/* ═══ BAND 5: DUAL ACTION BAR ═══ */}
-            <div className="w-full grid grid-cols-2 r5">
+            <div className="w-full grid grid-cols-2">
                 <button onClick={handleGetStarted} className="hover-invert px-5 py-5 md:px-8 md:py-6 wire-r font-sans text-base md:text-xl font-black uppercase tracking-tight flex items-center justify-center gap-2 md:gap-3 transition-colors min-h-[56px] active:bg-white active:text-black">
                     <span>GET STARTED</span> <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>

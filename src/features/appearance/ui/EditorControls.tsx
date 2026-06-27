@@ -70,7 +70,7 @@ export function EditorControls({ state, actions }: { state: ThemeEditorState, ac
 
       {/* VIDEO SETTINGS SECTION (Conditional) */}
       {hasVideoShowcase && (
-        <div className="mb-8 animate-in fade-in slide-in-from-right-4 duration-500">
+        <div className="mb-8">
           <div className="mb-3 px-0.5">
             <h3 className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Video Settings</h3>
           </div>

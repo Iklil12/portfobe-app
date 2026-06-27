@@ -7,12 +7,10 @@ import { SyncEngineSection } from '@/components/sections/SyncEngineSection';
 import { DeviceResizerSection } from '@/components/sections/DeviceResizerSection';
 import { TemplatesSection } from '@/components/sections/TemplatesSection';
 import { FaqSection } from '@/components/sections/FaqSection';
-import { SmoothScroll } from '@/shared/ui/SmoothScroll';
 
 export default function LandingPage() {
   return (
-    <SmoothScroll>
-      <div className="text-white bg-[#050505] font-sans selection:bg-[#ff9e00]/30 selection:text-white overflow-x-clip w-full relative">
+    <div className="text-white bg-[#050505] font-sans selection:bg-[#ff9e00]/30 selection:text-white overflow-x-clip w-full relative">
       <Navbar isDarkBg={true} />
       <main>
         <HeroSection />
@@ -24,7 +22,6 @@ export default function LandingPage() {
         <FaqSection />
       </main>
       <Footer />
-      </div>
-    </SmoothScroll>
+    </div>
   );
 }
