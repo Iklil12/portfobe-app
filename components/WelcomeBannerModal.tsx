@@ -152,12 +152,12 @@ export default function WelcomeBannerModal({
       ></div>
 
       {/* KONTAINER MODAL */}
-      <div className={`relative w-full max-w-2xl bg-gradient-to-br ${displayBg} rounded-none shadow-none overflow-hidden modal-animate-in text-white border border-white/10 z-10`}>
+      <div className={`relative w-full max-w-2xl bg-gradient-to-br ${displayBg} rounded-md shadow-none overflow-hidden modal-animate-in text-white border border-white/10 z-10`}>
         
         {/* Tombol Close */}
         <button 
           onClick={handleClose} 
-          className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center bg-zinc-950 border border-white/10 text-white/50 hover:text-white rounded-none transition-colors z-20"
+          className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center bg-zinc-950 border border-white/10 text-white/50 hover:text-white rounded-md transition-colors z-20"
         >
           <X className="w-4 h-4" />
         </button>
@@ -168,20 +168,20 @@ export default function WelcomeBannerModal({
         <div className="relative z-10 p-8 sm:p-12 flex flex-col sm:flex-row items-center sm:items-start gap-8">
           
           {/* Visual Icon */}
-          <div className="shrink-0 w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center bg-zinc-950 border border-white/10 rounded-none shadow-none">
+          <div className="shrink-0 w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center bg-zinc-950 border border-white/10 rounded-md shadow-none">
             {displayIcon}
           </div>
 
           {/* Konten Teks */}
           <div className="flex-1 text-center sm:text-left">
-            <div className="inline-flex items-center px-4 py-1.5 rounded-none bg-zinc-950 border border-white/10 text-[9px] font-mono font-bold uppercase tracking-widest mb-4 text-[#ff9e00]">
+            <div className="inline-flex items-center px-4 py-1.5 rounded-md bg-zinc-950 border border-white/10 text-[9px] font-sans font-medium uppercase tracking-widest mb-4 text-[#ff9e00]">
               {badgeLabel}
             </div>
             
-            <h2 className="text-xl sm:text-2xl font-mono font-bold mb-3 leading-tight tracking-wider uppercase">
+            <h2 className="text-xl sm:text-2xl font-sans font-medium mb-3 leading-tight tracking-wider uppercase">
               {displayTitle}
             </h2>
-            <p className="text-white/60 text-xs sm:text-sm font-mono leading-relaxed mb-8">
+            <p className="text-white/60 text-xs sm:text-sm font-sans leading-relaxed mb-8">
               {displayDesc}
             </p>
 
@@ -189,7 +189,7 @@ export default function WelcomeBannerModal({
               <Link 
                 href={btnLink} 
                 onClick={handleClose}
-                className="px-8 py-4 bg-[#ff9e00] text-black font-mono font-bold rounded-none text-xs hover:bg-[#ffaa22] transition-colors flex items-center justify-center gap-2 uppercase tracking-wider"
+                className="px-8 py-4 bg-[#ff9e00] text-black font-sans font-medium rounded-md text-xs hover:bg-[#ffaa22] transition-colors flex items-center justify-center gap-2 uppercase tracking-wider"
               >
                 <span>{btnText}</span>
                 <ArrowRight className="w-3.5 h-3.5" />

@@ -62,7 +62,7 @@ export default function ExplorePage() {
         {/* ── HEADER ── */}
         <div className="animate-enter mb-12" style={{animationDelay:'0ms'}}>
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-zinc-900 border border-white/10 text-white/50 text-[9px] font-sans font-bold uppercase  mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-zinc-900 border border-white/10 text-white/50 text-[9px] font-sans font-medium mb-6">
             <span className="relative flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#ff9e00]"></span>
@@ -70,8 +70,8 @@ export default function ExplorePage() {
             In Development
           </div>
 
-          <h1 className="text-3xl font-sans font-bold text-white tracking-tight uppercase mb-3">
-            Explore <span className="text-white/40">Community</span>
+          <h1 className="text-3xl font-sans font-medium text-white tracking-tight uppercase mb-3">
+            Explore <span className="text-white/60">Community</span>
           </h1>
           <p className="text-white/50 text-xs font-sans max-w-lg leading-relaxed">
             Coming soon — a portfolio design marketplace from fellow Portfo.be creators. Discover, use, and share your best design work.
@@ -85,13 +85,13 @@ export default function ExplorePage() {
             return (
               <div
                 key={i}
-                className="bg-zinc-900/30 rounded-none border border-white/10 p-6 hover:border-[#ff9e00]/40 transition-all duration-300 group"
+                className="bg-zinc-900/30 rounded-md border border-white/10 p-6 hover:border-[#ff9e00]/40 transition-all duration-300 group"
               >
-                <div className="w-10 h-10 bg-zinc-950 border border-white/5 rounded-none flex items-center justify-center mb-4 group-hover:bg-[#ff9e00]/10 group-hover:border-[#ff9e00]/30 transition-colors text-white/30 group-hover:text-[#ff9e00]">
+                <div className="w-10 h-10 bg-zinc-950 border border-white/5 rounded-md flex items-center justify-center mb-4 group-hover:bg-[#ff9e00]/10 group-hover:border-[#ff9e00]/30 transition-colors text-white/50 group-hover:text-[#ff9e00]">
                   <Icon className="w-4 h-4" />
                 </div>
-                <h3 className="font-sans font-bold text-white text-xs uppercase  mb-2">{f.title}</h3>
-                <p className="text-white/40 text-[11px] font-sans leading-relaxed">{f.desc}</p>
+                <h3 className="font-sans font-medium text-white text-xs mb-2">{f.title}</h3>
+                <p className="text-white/60 text-[11px] font-sans leading-relaxed">{f.desc}</p>
               </div>
             );
           })}
@@ -101,21 +101,21 @@ export default function ExplorePage() {
         <div className="animate-enter" style={{animationDelay:'200ms'}}>
           <div className="flex items-end justify-between mb-5">
             <div>
-              <h2 className="font-sans font-bold text-white text-xs uppercase ">Community Preview</h2>
-              <p className="text-white/30 text-[9px] font-sans uppercase  mt-1">Initial release interface estimation</p>
+              <h2 className="font-sans font-medium text-white text-xs">Community Preview</h2>
+              <p className="text-white/50 text-[9px] font-sans mt-1">Initial release interface estimation</p>
             </div>
-            <span className="px-2.5 py-1 bg-zinc-900 text-white/40 text-[9px] font-sans font-bold rounded-none uppercase  border border-white/5">Soon</span>
+            <span className="px-2.5 py-1 bg-zinc-900 text-white/60 text-[9px] font-sans font-medium rounded-md border border-white/5">Soon</span>
           </div>
 
           {/* Blurred Grid Preview */}
-          <div className="relative rounded-none overflow-hidden border border-white/10">
+          <div className="relative rounded-md overflow-hidden border border-white/10">
             {/* Blur Overlay */}
             <div className="absolute inset-0 z-10 backdrop-blur-md bg-black/70 flex flex-col items-center justify-center px-4">
-              <div className="w-14 h-14 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center mb-4 text-white/30">
+              <div className="w-14 h-14 rounded-md bg-zinc-900 border border-white/10 flex items-center justify-center mb-4 text-white/50">
                 <Compass className="w-6 h-6 animate-pulse text-[#ff9e00]" />
               </div>
-              <p className="font-sans font-bold text-white text-xs uppercase  mb-1.5">Community Not Open</p>
-              <p className="text-white/40 font-sans text-[10px] text-center max-w-xs leading-relaxed">
+              <p className="font-sans font-medium text-white text-xs mb-1.5">Community Not Open</p>
+              <p className="text-white/60 font-mono text-[10px] text-center max-w-xs leading-relaxed">
                 We are designing the most seamless theme-sharing ecosystem for Portfo.be creators.
               </p>
             </div>
@@ -123,19 +123,19 @@ export default function ExplorePage() {
             {/* Mock Grid (behind blur) */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 p-5 pointer-events-none select-none">
               {mockCards.map((card, i) => (
-                <div key={i} className="bg-zinc-950 border border-white/5 rounded-none overflow-hidden flex flex-col">
+                <div key={i} className="bg-zinc-950 border border-white/5 rounded-md overflow-hidden flex flex-col">
                   {/* Mock thumbnail */}
                   <div className="h-28 shimmer-dark border-b border-white/5"></div>
                   <div className="p-3 flex flex-col gap-2">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-sans font-bold text-white/70 text-[10px] truncate">{card.label}</span>
-                      <span className="text-[9px] font-sans text-white/30 flex items-center gap-1 shrink-0">
+                      <span className="font-sans font-medium text-white/70 text-[10px] truncate">{card.label}</span>
+                      <span className="text-[9px] font-sans text-white/50 flex items-center gap-1 shrink-0">
                         <Download className="w-2.5 h-2.5" />{card.uses}
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[9px] text-white/40 font-sans truncate">{card.user}</span>
-                      <span className="text-[8px] px-1.5 py-0.5 bg-zinc-900 text-[#ff9e00] rounded-none font-sans font-bold uppercase  border border-white/5 shrink-0">{card.tag}</span>
+                      <span className="text-[9px] text-white/60 font-sans truncate">{card.user}</span>
+                      <span className="text-[8px] px-1.5 py-0.5 bg-zinc-900 text-[#ff9e00] rounded-md font-sans font-medium border border-white/5 shrink-0">{card.tag}</span>
                     </div>
                   </div>
                 </div>
@@ -146,18 +146,18 @@ export default function ExplorePage() {
 
         {/* ── NOTIFY BANNER ── */}
         <div className="animate-enter mt-10" style={{animationDelay:'300ms'}}>
-          <div className="bg-zinc-900/50 border border-white/10 rounded-none p-6 sm:p-8 relative overflow-hidden">
+          <div className="bg-zinc-900/50 border border-white/10 rounded-md p-6 sm:p-8 relative overflow-hidden">
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none bg-zinc-950 border border-white/10 text-white/60 text-[9px] font-sans font-bold uppercase  mb-4">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-950 border border-white/10 text-white/60 text-[9px] font-sans font-medium mb-4">
                   <Bell className="w-3 h-3 text-[#ff9e00]" /> Get Notified
                 </div>
-                <h3 className="font-sans font-bold text-white text-sm uppercase  mb-1">Be the First Creator</h3>
-                <p className="text-white/40 font-sans text-xs leading-relaxed max-w-xl">When the Explore Community launches, your custom themes can be instantly recognized and used by others.</p>
+                <h3 className="font-sans font-medium text-white text-sm mb-1">Be the First Creator</h3>
+                <p className="text-white/60 font-mono text-xs leading-relaxed max-w-xl">When the Explore Community launches, your custom themes can be instantly recognized and used by others.</p>
               </div>
               <button
                 onClick={() => {}}
-                className="flex-shrink-0 bg-[#ff9e00] hover:bg-[#ffaa22] text-black px-6 py-3.5 rounded-none font-sans font-bold text-xs uppercase  active:scale-95 transition-all whitespace-nowrap"
+                className="flex-shrink-0 bg-[#ff9e00] hover:bg-[#ffaa22] text-black px-6 py-3.5 rounded-md font-sans font-medium text-xs active:scale-95 transition-all whitespace-nowrap"
               >
                 Notify Me
               </button>

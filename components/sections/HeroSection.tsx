@@ -32,9 +32,10 @@ export function HeroSection() {
     }, []);
 
     return (
-        <section className="relative w-full min-h-screen bg-[#050505] text-white overflow-hidden font-sans selection:bg-white selection:text-black flex flex-col">
-            
-            <style dangerouslySetInnerHTML={{__html: `
+        <section className="relative w-full min-h-screen bg-[#050505] text-white overflow-hidden font-mono selection:bg-white selection:text-black flex flex-col">
+
+            <style dangerouslySetInnerHTML={{
+                __html: `
                 @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
                 .animate-ticker { animation: ticker 25s linear infinite; }
                 .wire-b { border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -79,11 +80,11 @@ export function HeroSection() {
 
             {/* ═══ BAND 3: THREE-COLUMN INFO STRIP ═══ */}
             <div className="w-full grid grid-cols-1 md:grid-cols-3 wire-b">
-                
+
                 {/* Col 1: Overview */}
                 <div className="px-5 py-5 md:p-8 wire-b md:wire-b-0 md:wire-r bg-[#050505] flex flex-col justify-between min-h-[120px] md:min-h-[180px]">
                     <span aria-hidden="true" className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ OVERVIEW ]</span>
-                    <p className="font-sans text-[13px] md:text-sm font-medium leading-relaxed mt-3 text-white/70">
+                    <p className="font-mono text-[13px] md:text-sm font-medium leading-relaxed mt-3 text-white/70">
                         The premium portofolio builder designed for visual creators. Sign in to seamlessly build, manage, and publish your professional portfolio in minutes—without writing any code.
                     </p>
                 </div>
@@ -93,7 +94,7 @@ export function HeroSection() {
                     <span aria-hidden="true" className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ claim your username ]</span>
                     <div className="mt-3">
                         <div className="font-mono text-[11px] text-white/30 mb-0.5">portfo.be/</div>
-                        <div className="font-sans text-2xl md:text-3xl font-black text-white uppercase tracking-tight">
+                        <div className="font-mono text-2xl md:text-3xl font-black text-white uppercase tracking-tight">
                             <span translate="no">{typed}</span><span className="cursor-blink text-white/50 font-light">|</span>
                         </div>
                     </div>
@@ -104,11 +105,11 @@ export function HeroSection() {
                     <span aria-hidden="true" className="font-mono text-[10px] text-white/30 uppercase tracking-widest">[ METRICS ]</span>
                     <div className="mt-3 grid grid-cols-2 gap-4">
                         <div>
-                            <div className="font-sans text-2xl md:text-3xl font-black text-white">100+</div>
+                            <div className="font-mono text-2xl md:text-3xl font-black text-white">100+</div>
                             <div aria-hidden="true" className="font-mono text-[10px] text-white/30 uppercase tracking-wider mt-1">DEPLOYED</div>
                         </div>
                         <div>
-                            <div className="font-sans text-2xl md:text-3xl font-black text-white"><span>99.9</span><span className="text-white/40">%</span></div>
+                            <div className="font-mono text-2xl md:text-3xl font-black text-white"><span>99.9</span><span className="text-white/40">%</span></div>
                             <div aria-hidden="true" className="font-mono text-[10px] text-white/30 uppercase tracking-wider mt-1">UPTIME</div>
                         </div>
                     </div>
@@ -123,12 +124,12 @@ export function HeroSection() {
                         <span aria-hidden="true" className="font-mono text-[10px] text-white/60 uppercase tracking-widest">[ CLAIM YOUR USERNAME ]</span>
                     </div>
                     {/* Input */}
-                    <form 
-                        onSubmit={(e) => { e.preventDefault(); handleGetStarted(); }} 
+                    <form
+                        onSubmit={(e) => { e.preventDefault(); handleGetStarted(); }}
                         className="flex-1 flex items-center px-5 py-4 md:px-8 md:py-6 gap-2"
                     >
                         <span className="font-mono text-xs md:text-sm text-white/70 select-none whitespace-nowrap">PORTFO.BE/</span>
-                        <input 
+                        <input
                             aria-label="Username"
                             type="text"
                             value={inputValue}
@@ -144,10 +145,10 @@ export function HeroSection() {
 
             {/* ═══ BAND 5: DUAL ACTION BAR ═══ */}
             <div className="w-full grid grid-cols-2">
-                <button onClick={handleGetStarted} className="hover-invert px-5 py-5 md:px-8 md:py-6 wire-r font-sans text-base md:text-xl font-black uppercase tracking-tight flex items-center justify-center gap-2 md:gap-3 transition-colors min-h-[56px] active:bg-white active:text-black">
+                <button onClick={handleGetStarted} className="hover-invert px-5 py-5 md:px-8 md:py-6 wire-r font-mono text-base md:text-xl font-black uppercase tracking-tight flex items-center justify-center gap-2 md:gap-3 transition-colors min-h-[56px] active:bg-white active:text-black">
                     <span>GET STARTED</span> <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
-                <button aria-label="Initiate Deployment" onClick={handleGetStarted} className="px-5 py-5 md:px-8 md:py-6 bg-white text-black font-mono text-xs text-center uppercase tracking-widest font-bold flex items-center justify-center min-h-[56px] hover:bg-black hover:text-white active:bg-black active:text-white transition-colors cursor-pointer w-full">
+                <button aria-label="Initiate Deployment" onClick={handleGetStarted} className="px-5 py-5 md:px-8 md:py-6 bg-white text-black font-mono text-xs text-center uppercase tracking-widest font-medium flex items-center justify-center min-h-[56px] hover:bg-black hover:text-white active:bg-black active:text-white transition-colors cursor-pointer w-full">
                     INITIATE_DEPLOYMENT →
                 </button>
             </div>

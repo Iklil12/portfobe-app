@@ -52,7 +52,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
   };
 
   return (
-    <div ref={containerRef} className="relative p-4 sm:p-6 rounded-none w-full overflow-hidden bg-[#0a0a0a] border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] text-left font-sans group">
+    <div ref={containerRef} className="relative p-4 sm:p-6 rounded-md w-full overflow-hidden bg-[#0a0a0a] border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] text-left font-mono group">
       {/* Subtle radial spotlight - Optimized */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-64 bg-[radial-gradient(ellipse_at_top,_rgba(255,158,0,0.08)_0%,_transparent_70%)] pointer-events-none"></div>
 
@@ -60,14 +60,14 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
       <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] [mask-image:radial-gradient(ellipse_at_center,black_75%,transparent_100%)] opacity-80 pointer-events-none"></div>
 
       {/* Borderless Chart Area */}
-      <div className="relative z-10 h-32 sm:h-40 w-full mb-4 sm:mb-6 bg-black/40 border border-white/10 rounded-none overflow-hidden p-2">
+      <div className="relative z-10 h-32 sm:h-40 w-full mb-4 sm:mb-6 bg-black/40 border border-white/10 rounded-md overflow-hidden p-2">
         {/* Clean Live Badge */}
-        <div className="absolute top-3 right-3 z-20 flex items-center gap-2 bg-black border border-[#ff9e00]/30 backdrop-blur-md px-3 py-1 rounded-none shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+        <div className="absolute top-3 right-3 z-20 flex items-center gap-2 bg-black border border-[#ff9e00]/30 backdrop-blur-md px-3 py-1 rounded-md shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
           <span className="relative flex h-1.5 w-1.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#ff9e00]"></span>
           </span>
-          <span className="text-[10px] font-mono text-[#ff9e00] font-bold uppercase tracking-wider">
+          <span className="text-[10px] font-mono text-[#ff9e00] font-medium">
             {liveVisitors} Live
           </span>
         </div>
@@ -152,7 +152,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff9e00] opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff9e00]"></span>
           </span>
-          <span className="bg-black border border-white/10 text-white font-mono text-[8px] font-bold px-2 py-0.5 rounded-none shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
+          <span className="bg-black border border-white/10 text-white font-mono text-[8px] font-medium px-2 py-0.5 rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
             Peak: {(liveVisitors * 1.4).toFixed(0)} r/s
           </span>
         </motion.div>
@@ -163,13 +163,13 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
         {/* Metric 1 */}
         <div className="flex flex-col">
           <div className="flex justify-between items-center mb-0.5 sm:mb-1">
-            <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider">Total Views</span>
-            <span className="text-[#ff9e00] bg-[#ff9e00]/10 border border-[#ff9e00]/20 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-none">
+            <span className="text-[9px] font-mono text-neutral-400">Total Views</span>
+            <span className="text-[#ff9e00] bg-[#ff9e00]/10 border border-[#ff9e00]/20 text-[8px] font-mono font-medium px-1.5 py-0.5 rounded-md">
               +14.8%
             </span>
           </div>
           <div className="flex items-baseline mt-1">
-            <span className="text-2xl sm:text-3xl font-extrabold tracking-tighter text-white font-sans">{formatSessions(sessionsCount)}</span>
+            <span className="text-2xl sm:text-3xl font-extrabold tracking-tighter text-white font-mono">{formatSessions(sessionsCount)}</span>
           </div>
           <span className="text-[8px] font-mono text-neutral-600 mt-1 sm:mt-1.5">Rolling 7 days</span>
         </div>
@@ -177,13 +177,13 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
         {/* Metric 2 */}
         <div className="flex flex-col border-l border-white/10 pl-6">
           <div className="flex justify-between items-center mb-0.5 sm:mb-1">
-            <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider">Unique Visitors</span>
-            <span className="text-neutral-400 bg-white/5 border border-white/10 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-none">
+            <span className="text-[9px] font-mono text-neutral-400">Unique Visitors</span>
+            <span className="text-neutral-400 bg-white/5 border border-white/10 text-[8px] font-mono font-medium px-1.5 py-0.5 rounded-md">
               Est. IP
             </span>
           </div>
           <div className="flex items-baseline mt-1">
-            <span className="text-2xl sm:text-3xl font-extrabold tracking-tighter text-white font-sans">{formatSessions(visitorsCount)}</span>
+            <span className="text-2xl sm:text-3xl font-extrabold tracking-tighter text-white font-mono">{formatSessions(visitorsCount)}</span>
           </div>
           <span className="text-[8px] font-mono text-neutral-600 mt-1 sm:mt-1.5">Based on IP & UA</span>
         </div>
@@ -191,8 +191,8 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
 
       {/* Activity Log List */}
       <div className="relative z-10 flex flex-col gap-1.5 sm:gap-2.5">
-        <div className="flex justify-between items-center text-[9px] font-mono text-neutral-500 pb-2 border-b border-white/10">
-          <span className="uppercase tracking-widest">Live Activity stream</span>
+        <div className="flex justify-between items-center text-[9px] font-mono text-neutral-400 pb-2 border-b border-white/10">
+          <span className="">Live Activity stream</span>
           <span className="animate-pulse flex items-center gap-1 text-[#ff9e00]">
             <span className="w-1 h-1 bg-[#ff9e00] rounded-full inline-block"></span>
             Streaming
@@ -212,16 +212,12 @@ export function AnalyticsDashboard({ instanceId }: { instanceId?: string }) {
               >
                 <div className="flex gap-2.5 items-center min-w-0">
                   <span className="text-neutral-600 font-mono text-[9px] shrink-0">[{log.time}]</span>
-                  <span className={`w-1 h-1 rounded-full shrink-0 ${log.type === 'CLICK' ? 'bg-[#ff9e00]' :
-                    log.type === 'VIEW' ? 'bg-white' :
-                      log.type === 'REFER' ? 'bg-neutral-400' :
-                        'bg-neutral-600'
-                    }`}></span>
+                  <span className={`w-1 h-1 rounded-full shrink-0 ${log.type === 'CLICK' ? 'bg-[#ff9e00]' : log.type === 'VIEW' ? 'bg-white' : log.type === 'REFER' ? 'bg-neutral-400' : 'bg-neutral-600' }`}></span>
                   <span className="text-neutral-300 font-mono truncate max-w-[150px] sm:max-w-[220px]">
                     {log.msg}
                   </span>
                 </div>
-                <span className="text-neutral-500 font-mono text-[9px]">{log.latency}</span>
+                <span className="text-neutral-400 font-mono text-[9px]">{log.latency}</span>
               </motion.div>
             ))}
           </AnimatePresence>

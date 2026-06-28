@@ -117,11 +117,11 @@ export function PricingSection() {
                 {/* Plan Label */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-md bg-white/5 flex items-center justify-center">
                       <Rocket className="w-3.5 h-3.5 text-white/50" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-white">Starter</h3>
+                      <h3 className="text-lg font-medium text-white">Starter</h3>
                       <p className="text-white/30 text-xs font-medium">Free forever</p>
                     </div>
                   </div>
@@ -139,7 +139,7 @@ export function PricingSection() {
                 <Link 
                   href="/register" 
                   className={`
-                    group/btn relative block w-full text-center py-4 rounded-2xl font-bold text-sm uppercase tracking-wider
+                    group/btn relative block w-full text-center py-4 rounded-2xl font-medium text-sm uppercase tracking-wider
                     transition-all duration-500 mb-9 overflow-hidden
                     bg-white/[0.07] text-white border border-white/10
                     hover:bg-white hover:text-[#0e0e14] hover:border-white
@@ -154,7 +154,7 @@ export function PricingSection() {
                 
                 {/* Features */}
                 <div className="space-y-0">
-                  <p className="text-white/20 text-[11px] font-bold uppercase tracking-widest mb-4">What&apos;s included</p>
+                  <p className="text-white/20 text-[11px] font-medium uppercase tracking-widest mb-4">What&apos;s included</p>
                   {STARTER_FEATURES.map((feat, i) => (
                     <div 
                       key={i} 
@@ -215,17 +215,17 @@ export function PricingSection() {
                 {/* Plan Label */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#a855f7]/10 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-md bg-[#a855f7]/10 flex items-center justify-center">
                       <Crown className="w-3.5 h-3.5 text-[#c084fc]" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-white">Pro Creator</h3>
+                      <h3 className="text-lg font-medium text-white">Pro Creator</h3>
                       <p className="text-[#c084fc]/60 text-xs font-medium">Most popular</p>
                     </div>
                   </div>
                   {/* Popular badge */}
                   <div className="px-3 py-1 rounded-full bg-[#a855f7]/10 border border-[#a855f7]/20">
-                    <span className="text-[#c084fc] text-[10px] font-bold uppercase tracking-wider">Popular</span>
+                    <span className="text-[#c084fc] text-[10px] font-medium uppercase tracking-wider">Popular</span>
                   </div>
                 </div>
                 
@@ -242,7 +242,7 @@ export function PricingSection() {
                 <Link 
                   href="/register" 
                   className={`
-                    group/btn relative block w-full text-center py-4 rounded-2xl font-bold text-sm uppercase tracking-wider
+                    group/btn relative block w-full text-center py-4 rounded-2xl font-medium text-sm uppercase tracking-wider
                     transition-all duration-500 mb-9 overflow-hidden
                     bg-gradient-to-r from-[#a855f7] to-[#7c3aed] text-white
                     hover:from-[#b366f8] hover:to-[#8b5cf6]
@@ -257,7 +257,7 @@ export function PricingSection() {
                 
                 {/* Features */}
                 <div className="space-y-0">
-                  <p className="text-[#c084fc]/40 text-[11px] font-bold uppercase tracking-widest mb-4">Everything in Starter, plus</p>
+                  <p className="text-[#c084fc]/40 text-[11px] font-medium uppercase tracking-widest mb-4">Everything in Starter, plus</p>
                   {PRO_FEATURES.map((feat, i) => (
                     <div 
                       key={i} 

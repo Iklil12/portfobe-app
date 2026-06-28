@@ -248,20 +248,20 @@ export default function TestimonialsPage() {
               onClick={() => !isDeleting && setTestimonialToDelete(null)}
             ></div>
             
-            <div className="relative z-10 w-full max-w-[320px] md:max-w-[400px] mx-auto bg-zinc-950 border border-white/10 rounded-none shadow-[0_45px_100px_rgba(0,0,0,0.9)] p-6 md:p-8 flex flex-col text-center">
+            <div className="relative z-10 w-full max-w-[320px] md:max-w-[400px] mx-auto bg-zinc-950 border border-white/10 rounded-md shadow-[0_45px_100px_rgba(0,0,0,0.9)] p-6 md:p-8 flex flex-col text-center">
               <button 
                 onClick={() => !isDeleting && setTestimonialToDelete(null)} 
-                className="absolute top-3.5 right-3.5 w-7 h-7 flex items-center justify-center rounded-none border border-transparent text-white/40 hover:text-white hover:bg-white/5 transition-colors"
+                className="absolute top-3.5 right-3.5 w-7 h-7 flex items-center justify-center rounded-md border border-transparent text-white/60 hover:text-white hover:bg-white/5 transition-colors"
               >
                  <X className="w-4 h-4" />
               </button>
 
-              <div className="relative flex items-center justify-center mx-auto mb-4 w-10 h-10 md:w-12 md:h-12 bg-[#ff9e00]/10 border border-[#ff9e00]/20 rounded-none text-[#ff9e00]">
+              <div className="relative flex items-center justify-center mx-auto mb-4 w-10 h-10 md:w-12 md:h-12 bg-[#ff9e00]/10 border border-[#ff9e00]/20 rounded-md text-[#ff9e00]">
                 <AlertTriangle className="w-5 h-5 md:w-6 md:h-6" />
               </div>
               
-              <h3 className="text-base md:text-lg font-mono font-bold uppercase tracking-wider text-white mb-2">Delete Testimonial?</h3>
-              <p className="text-xs font-mono text-white/50 mb-6 leading-relaxed px-1">
+              <h3 className="text-base md:text-lg font-sans font-medium text-white mb-2">Delete Testimonial?</h3>
+              <p className="text-xs font-sans text-white/50 mb-6 leading-relaxed px-1">
                 Data ini akan dihapus permanen dari sistem dan tidak dapat dikembalikan lagi.
               </p>
               
@@ -269,7 +269,7 @@ export default function TestimonialsPage() {
                 <button 
                   onClick={confirmDelete} 
                   disabled={isDeleting} 
-                  className="flex-1 py-2.5 md:py-3 bg-[#ff9e00] hover:bg-[#ffaa22] rounded-none font-mono font-bold text-black uppercase tracking-widest active:scale-95 transition-all flex items-center justify-center gap-1.5 text-[10px] md:text-xs disabled:opacity-50"
+                  className="flex-1 py-2.5 md:py-3 bg-[#ff9e00] hover:bg-[#ffaa22] rounded-md font-sans font-medium text-black active:scale-95 transition-all flex items-center justify-center gap-1.5 text-[10px] md:text-xs disabled:opacity-50"
                 >
                   {isDeleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
                   {isDeleting ? 'Deleting...' : 'Delete'}
@@ -277,7 +277,7 @@ export default function TestimonialsPage() {
                 <button 
                   onClick={() => setTestimonialToDelete(null)} 
                   disabled={isDeleting}
-                  className="flex-1 py-2.5 md:py-3 bg-zinc-900 border border-white/10 hover:bg-zinc-800 rounded-none font-mono font-bold text-white/70 uppercase tracking-widest active:scale-95 transition-all text-[10px] md:text-xs disabled:opacity-50"
+                  className="flex-1 py-2.5 md:py-3 bg-zinc-900 border border-white/10 hover:bg-zinc-800 rounded-md font-sans font-medium text-white/70 active:scale-95 transition-all text-[10px] md:text-xs disabled:opacity-50"
                 >
                   Cancel
                 </button>
@@ -291,32 +291,32 @@ export default function TestimonialsPage() {
           <div className="space-y-4 animate-enter">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
               <div className="space-y-2.5">
-                <div className="h-9 w-52 bg-white/5 border border-white/5 rounded-none animate-pulse shimmer"></div>
-                <div className="h-4 w-72 bg-white/5 border border-white/5 rounded-none animate-pulse shimmer"></div>
+                <div className="h-9 w-52 bg-white/5 border border-white/5 rounded-md animate-pulse shimmer"></div>
+                <div className="h-4 w-72 bg-white/5 border border-white/5 rounded-md animate-pulse shimmer"></div>
               </div>
-              <div className="h-10 w-44 bg-white/5 border border-white/5 rounded-none animate-pulse shimmer"></div>
+              <div className="h-10 w-44 bg-white/5 border border-white/5 rounded-md animate-pulse shimmer"></div>
             </div>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-zinc-950 p-5 sm:p-6 rounded-none border border-white/10 flex flex-col sm:flex-row gap-5">
+              <div key={i} className="bg-zinc-950 p-5 sm:p-6 rounded-md border border-white/10 flex flex-col sm:flex-row gap-5">
                 <div className="flex-shrink-0">
-                  <div className="w-14 h-14 rounded-none bg-white/5 border border-white/5 animate-pulse shimmer"></div>
+                  <div className="w-14 h-14 rounded-md bg-white/5 border border-white/5 animate-pulse shimmer"></div>
                 </div>
                 <div className="flex-1 space-y-3 py-1">
                   <div className="flex items-center gap-2">
-                    <div className="h-5 bg-white/5 rounded-none w-36 animate-pulse shimmer"></div>
-                    <div className="h-4 bg-white/5 rounded-none w-24 animate-pulse shimmer"></div>
+                    <div className="h-5 bg-white/5 rounded-md w-36 animate-pulse shimmer"></div>
+                    <div className="h-4 bg-white/5 rounded-md w-24 animate-pulse shimmer"></div>
                   </div>
                   <div className="flex gap-1">
-                    {[...Array(5)].map((_, j) => <div key={j} className="w-3.5 h-3.5 bg-white/5 rounded-none animate-pulse shimmer"></div>)}
+                    {[...Array(5)].map((_, j) => <div key={j} className="w-3.5 h-3.5 bg-white/5 rounded-md animate-pulse shimmer"></div>)}
                   </div>
                   <div className="space-y-2 pt-1">
-                    <div className="h-3.5 bg-white/5 rounded-none w-full animate-pulse shimmer"></div>
-                    <div className="h-3.5 bg-white/5 rounded-none w-4/5 animate-pulse shimmer"></div>
+                    <div className="h-3.5 bg-white/5 rounded-md w-full animate-pulse shimmer"></div>
+                    <div className="h-3.5 bg-white/5 rounded-md w-4/5 animate-pulse shimmer"></div>
                   </div>
                 </div>
                 <div className="hidden sm:flex flex-col gap-2 border-l border-white/5 pl-5 w-[130px] shrink-0">
-                  <div className="h-9 bg-white/5 rounded-none w-full animate-pulse shimmer"></div>
-                  <div className="h-9 bg-white/5 rounded-none w-full animate-pulse shimmer"></div>
+                  <div className="h-9 bg-white/5 rounded-md w-full animate-pulse shimmer"></div>
+                  <div className="h-9 bg-white/5 rounded-md w-full animate-pulse shimmer"></div>
                 </div>
               </div>
             ))}
@@ -325,15 +325,15 @@ export default function TestimonialsPage() {
           <>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 animate-enter">
               <div>
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold uppercase tracking-wider text-white flex items-center gap-3">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-sans font-medium uppercase tracking-wider text-white flex items-center gap-3">
                   <MessageSquare className="w-6 h-6 text-[#ff9e00]" />
                   Testimonials
                 </h1>
-                <p className="text-xs font-mono text-white/40 mt-2">Bangun kredibilitas portofoliomu dengan ulasan klien.</p>
+                <p className="text-xs font-sans text-white/60 mt-2">Bangun kredibilitas portofoliomu dengan ulasan klien.</p>
               </div>
               <button
                 onClick={() => { if (isFormOpen) resetForm(); else setIsFormOpen(true); }}
-                className="flex items-center gap-1.5 px-5 py-3 rounded-none border border-transparent bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-mono font-bold uppercase tracking-widest transition-all active:scale-95 shadow-md"
+                className="flex items-center gap-1.5 px-5 py-3 rounded-md border border-transparent bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-sans font-medium transition-all active:scale-95 shadow-md"
               >
                 {isFormOpen ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                 {isFormOpen ? 'Batal' : 'Add Testimonial'}
@@ -342,8 +342,8 @@ export default function TestimonialsPage() {
 
             {/* FORM TAMBAH / EDIT */}
             {isFormOpen && (
-              <div className="bg-zinc-950 p-6 sm:p-8 md:p-10 rounded-none border border-white/10 shadow-none mb-10 animate-enter">
-                <h2 className="font-mono font-bold text-sm uppercase tracking-wider text-white mb-6 flex items-center gap-2">
+              <div className="bg-zinc-950 p-6 sm:p-8 md:p-10 rounded-md border border-white/10 shadow-none mb-10 animate-enter">
+                <h2 className="font-sans font-medium text-sm text-white mb-6 flex items-center gap-2">
                   <PenTool className="w-4 h-4 text-[#ff9e00]" /> {editingId ? 'Edit Review' : 'Write Review'}
                 </h2>
                 
@@ -352,7 +352,7 @@ export default function TestimonialsPage() {
                   <div className="flex flex-col sm:flex-row gap-8">
                     {/* Bagian Upload Foto */}
                     <div className="flex flex-col items-center sm:items-start gap-3">
-                      <label className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider">Photo (Optional)</label>
+                      <label className="text-[9px] font-sans font-medium text-white/60">Photo (Optional)</label>
                       <input 
                         type="file" 
                         accept="image/png,image/jpeg,image/jpg,image/webp" 
@@ -362,7 +362,7 @@ export default function TestimonialsPage() {
                       />
                       <div 
                         onClick={() => !isUploadingImage && fileInputRef.current?.click()}
-                        className="w-24 h-24 rounded-none border-2 border-dashed border-white/10 flex items-center justify-center bg-[#0a0a0a] cursor-pointer hover:bg-white/[0.01] hover:border-[#ff9e00]/40 transition-all group overflow-hidden relative"
+                        className="w-24 h-24 rounded-md border-2 border-dashed border-white/10 flex items-center justify-center bg-[#0a0a0a] cursor-pointer hover:bg-white/[0.01] hover:border-[#ff9e00]/40 transition-all group overflow-hidden relative"
                       >
                         {isUploadingImage ? (
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30 animate-pulse">
@@ -375,9 +375,9 @@ export default function TestimonialsPage() {
                             <Camera className="w-6 h-6 absolute text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                           </>
                         ) : (
-                          <div className="flex flex-col items-center text-white/40 group-hover:text-[#ff9e00] transition-colors">
+                          <div className="flex flex-col items-center text-white/60 group-hover:text-[#ff9e00] transition-colors">
                             <Camera className="w-5 h-5 mb-1" />
-                            <span className="text-[8px] font-mono font-bold uppercase tracking-wider">Upload</span>
+                            <span className="text-[8px] font-sans font-medium">Upload</span>
                           </div>
                         )}
                       </div>
@@ -387,28 +387,28 @@ export default function TestimonialsPage() {
                     <div className="flex-1 space-y-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                          <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Client Name *</label>
-                          <input required type="text" value={formData.clientName} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-bold text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20" placeholder="Contoh: Budi Santoso" />
+                          <label className="block text-[9px] font-sans font-medium text-white/60 mb-2 ml-1">Client Name *</label>
+                          <input required type="text" value={formData.clientName} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-md px-4 py-3 text-xs font-sans font-medium text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20" placeholder="Contoh: Budi Santoso" />
                         </div>
                         <div>
-                          <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Position / Company</label>
-                          <input type="text" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-bold text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20" placeholder="Contoh: CEO, TechCorp" />
+                          <label className="block text-[9px] font-sans font-medium text-white/60 mb-2 ml-1">Position / Company</label>
+                          <input type="text" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-md px-4 py-3 text-xs font-sans font-medium text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20" placeholder="Contoh: CEO, TechCorp" />
                         </div>
                       </div>
                       
                       <div>
-                        <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Testimonial Content *</label>
-                        <textarea required rows={4} value={formData.content} onChange={(e) => setFormData({...formData, content: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-3 text-xs font-mono font-medium text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20 resize-none" placeholder="Write client appreciation or review here..." />
+                        <label className="block text-[9px] font-sans font-medium text-white/60 mb-2 ml-1">Testimonial Content *</label>
+                        <textarea required rows={4} value={formData.content} onChange={(e) => setFormData({...formData, content: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-md px-4 py-3 text-xs font-sans font-medium text-white outline-none focus:bg-[#0c0c0e] focus:border-[#ff9e00]/40 transition-all placeholder:text-white/20 resize-none" placeholder="Write client appreciation or review here..." />
                       </div>
 
                       <div>
-                        <label className="block text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mb-2 ml-1">Star Rating</label>
+                        <label className="block text-[9px] font-sans font-medium text-white/60 mb-2 ml-1">Star Rating</label>
                         <div className="flex gap-2">
                           {[1,2,3,4,5].map((star) => (
                             <button 
                               key={star} type="button" 
                               onClick={() => setFormData({...formData, rating: star})}
-                              className="w-10 h-10 rounded-none bg-[#0a0a0a] border border-white/10 flex items-center justify-center hover:bg-white/[0.02] transition-colors focus:outline-none"
+                              className="w-10 h-10 rounded-md bg-[#0a0a0a] border border-white/10 flex items-center justify-center hover:bg-white/[0.02] transition-colors focus:outline-none"
                             >
                               <Star className={`w-4 h-4 ${formData.rating >= star ? 'text-[#ff9e00] fill-[#ff9e00]' : 'text-white/10'}`} />
                             </button>
@@ -419,7 +419,7 @@ export default function TestimonialsPage() {
                   </div>
 
                   <div className="pt-6 border-t border-white/5 flex justify-end">
-                    <button disabled={isAdding} type="submit" className="bg-[#ff9e00] hover:bg-[#ffaa22] text-black px-8 py-3.5 rounded-none font-mono font-bold text-xs uppercase tracking-widest active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1.5 shadow-md">
+                    <button disabled={isAdding} type="submit" className="bg-[#ff9e00] hover:bg-[#ffaa22] text-black px-8 py-3.5 rounded-md font-sans font-medium text-xs active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1.5 shadow-md">
                       {isAdding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                       {isAdding ? 'Saving...' : 'Save Testimonial'}
                     </button>
@@ -431,65 +431,65 @@ export default function TestimonialsPage() {
             {/* LIST TESTIMONI */}
             <div className="space-y-4">
               {testimonials.length === 0 ? (
-                <div className="text-center py-16 bg-[#050505] rounded-none border border-white/10 border-dashed animate-enter">
-                  <div className="w-14 h-14 bg-zinc-900 border border-white/10 rounded-none flex items-center justify-center mx-auto mb-4 text-white/30 text-xl shadow-none">
+                <div className="text-center py-16 bg-[#050505] rounded-md border border-white/10 border-dashed animate-enter">
+                  <div className="w-14 h-14 bg-zinc-900 border border-white/10 rounded-md flex items-center justify-center mx-auto mb-4 text-white/50 text-xl shadow-none">
                     <MessageSquareOff className="w-6 h-6" />
                   </div>
-                  <h3 className="font-mono font-bold text-white uppercase tracking-wider mb-1">Belum ada testimoni</h3>
-                  <p className="text-white/40 text-xs font-mono max-w-xs mx-auto mb-6">Kamu belum memiliki ulasan dari klien. Tambahkan sekarang untuk meningkatkan kepercayaan.</p>
-                  <button onClick={() => setIsFormOpen(true)} className="text-xs font-mono font-bold uppercase tracking-wider text-[#ff9e00] hover:text-[#ffaa22]">
+                  <h3 className="font-sans font-medium text-white mb-1">Belum ada testimoni</h3>
+                  <p className="text-white/60 text-xs font-sans max-w-xs mx-auto mb-6">Kamu belum memiliki ulasan dari klien. Tambahkan sekarang untuk meningkatkan kepercayaan.</p>
+                  <button onClick={() => setIsFormOpen(true)} className="text-xs font-sans font-medium text-[#ff9e00] hover:text-[#ffaa22]">
                     + Tambah Testimoni Pertama
                   </button>
                 </div>
               ) : (
                 testimonials.map((t, index) => (
-                  <div key={t.id} className={`bg-zinc-950 p-5 sm:p-6 rounded-none border transition-all duration-300 ${t.isVisible ? 'border-white/10 hover:border-white/20 hover:bg-white/[0.01]' : 'border-white/5 opacity-40 bg-zinc-900/50'} flex flex-col sm:flex-row gap-5 animate-enter`} style={{animationDelay: `${index * 100}ms`}}>
+                  <div key={t.id} className={`bg-zinc-950 p-5 sm:p-6 rounded-md border transition-all duration-300 ${t.isVisible ? 'border-white/10 hover:border-white/20 hover:bg-white/[0.01]' : 'border-white/5 opacity-40 bg-zinc-900/50'} flex flex-col sm:flex-row gap-5 animate-enter`} style={{animationDelay: `${index * 100}ms`}}>
                     
                     <div className="flex-shrink-0 flex sm:flex-col items-center justify-between sm:justify-start gap-4 sm:gap-2">
                       <div className="flex flex-col gap-1 sm:hidden mr-2">
-                        <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="text-white/30 hover:text-[#ff9e00] disabled:opacity-30"><ChevronUp className="w-3.5 h-3.5" /></button>
-                        <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="text-white/30 hover:text-[#ff9e00] disabled:opacity-30"><ChevronDown className="w-3.5 h-3.5" /></button>
+                        <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="text-white/50 hover:text-[#ff9e00] disabled:opacity-30"><ChevronUp className="w-3.5 h-3.5" /></button>
+                        <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="text-white/50 hover:text-[#ff9e00] disabled:opacity-30"><ChevronDown className="w-3.5 h-3.5" /></button>
                       </div>
                       {t.avatarUrl ? (
-                        <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-14 h-14 rounded-none object-cover border border-white/10" />
+                        <LazyImage src={t.avatarUrl} alt={t.clientName} className="w-14 h-14 rounded-md object-cover border border-white/10" />
                       ) : (
-                        <div className="w-14 h-14 rounded-none bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/25 flex items-center justify-center font-mono font-bold text-lg">
+                        <div className="w-14 h-14 rounded-md bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/25 flex items-center justify-center font-sans font-medium text-lg">
                           {t.clientName.charAt(0).toUpperCase()}
                         </div>
                       )}
                       <div className="flex sm:hidden gap-2">
-                        <button onClick={() => handleEditClick(t)} className="w-9 h-9 flex items-center justify-center bg-zinc-900 border border-white/10 text-white rounded-none hover:bg-white/5 transition-all"><PenTool className="w-3.5 h-3.5" /></button>
-                        <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`w-9 h-9 flex items-center justify-center rounded-none transition-all disabled:opacity-50 ${t.isVisible ? 'bg-zinc-900 border border-white/10 text-white/50 hover:bg-white/5' : 'bg-[#ff9e00] text-black'}`}>
+                        <button onClick={() => handleEditClick(t)} className="w-9 h-9 flex items-center justify-center bg-zinc-900 border border-white/10 text-white rounded-md hover:bg-white/5 transition-all"><PenTool className="w-3.5 h-3.5" /></button>
+                        <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`w-9 h-9 flex items-center justify-center rounded-md transition-all disabled:opacity-50 ${t.isVisible ? 'bg-zinc-900 border border-white/10 text-white/50 hover:bg-white/5' : 'bg-[#ff9e00] text-black'}`}>
                           {processingId === t.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : (t.isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />)}
                         </button>
-                        <button onClick={() => handleDeleteClick(t.id)} className="w-9 h-9 flex items-center justify-center bg-zinc-900 border border-white/10 text-white rounded-none hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30 transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => handleDeleteClick(t.id)} className="w-9 h-9 flex items-center justify-center bg-zinc-900 border border-white/10 text-white rounded-md hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30 transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </div>
                     
                     <div className="flex-1 flex flex-col justify-center">
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2">
-                        <h3 className="font-mono font-bold text-white text-base">{t.clientName}</h3>
-                        {t.company && <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-white/50 px-2 py-0.5 bg-white/5 border border-white/10 rounded-none">{t.company}</span>}
+                        <h3 className="font-sans font-medium text-white text-base">{t.clientName}</h3>
+                        {t.company && <span className="text-[9px] font-sans font-medium text-white/50 px-2 py-0.5 bg-white/5 border border-white/10 rounded-md">{t.company}</span>}
                       </div>
                       <div className="flex gap-0.5 mb-3">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className={`w-3 h-3 ${i < t.rating ? 'text-[#ff9e00] fill-[#ff9e00]' : 'text-white/10'}`} />
                         ))}
                       </div>
-                      <p className="text-xs font-mono text-white/60 leading-relaxed max-w-2xl italic">"{t.content}"</p>
+                      <p className="text-xs font-sans text-white/60 leading-relaxed max-w-2xl italic">"{t.content}"</p>
                     </div>
                     
                     <div className="hidden sm:flex flex-col justify-between items-center px-2">
-                      <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="p-1 text-white/30 hover:text-[#ff9e00] disabled:opacity-30 transition-colors"><ChevronUp className="w-4 h-4" /></button>
-                      <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="p-1 text-white/30 hover:text-[#ff9e00] disabled:opacity-30 transition-colors"><ChevronDown className="w-4 h-4" /></button>
+                      <button disabled={index === 0} onClick={() => handleMove(index, 'up')} className="p-1 text-white/50 hover:text-[#ff9e00] disabled:opacity-30 transition-colors"><ChevronUp className="w-4 h-4" /></button>
+                      <button disabled={index === testimonials.length - 1} onClick={() => handleMove(index, 'down')} className="p-1 text-white/50 hover:text-[#ff9e00] disabled:opacity-30 transition-colors"><ChevronDown className="w-4 h-4" /></button>
                     </div>
                     
                     <div className="hidden sm:flex flex-col gap-2 justify-start border-l border-white/5 pl-5 w-[130px] shrink-0">
-                      <button onClick={() => handleEditClick(t)} className="px-3 py-2 flex items-center justify-center gap-1.5 rounded-none transition-all text-[10px] font-mono font-bold uppercase tracking-widest w-full bg-zinc-900 border border-white/10 text-white/70 hover:bg-zinc-800"><PenTool className="w-3.5 h-3.5" /> Edit</button>
-                      <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`px-3 py-2 flex items-center justify-center gap-1.5 rounded-none transition-all text-[10px] font-mono font-bold uppercase tracking-widest w-full disabled:opacity-50 ${t.isVisible ? 'bg-zinc-900 border border-white/10 text-white/70 hover:bg-zinc-800' : 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'}`}>
+                      <button onClick={() => handleEditClick(t)} className="px-3 py-2 flex items-center justify-center gap-1.5 rounded-md transition-all text-[10px] font-sans font-medium w-full bg-zinc-900 border border-white/10 text-white/70 hover:bg-zinc-800"><PenTool className="w-3.5 h-3.5" /> Edit</button>
+                      <button disabled={processingId === t.id} onClick={() => handleToggleVisible(t.id, t.isVisible)} className={`px-3 py-2 flex items-center justify-center gap-1.5 rounded-md transition-all text-[10px] font-sans font-medium w-full disabled:opacity-50 ${t.isVisible ? 'bg-zinc-900 border border-white/10 text-white/70 hover:bg-zinc-800' : 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'}`}>
                         {processingId === t.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : (t.isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />)} {t.isVisible ? 'Hide' : 'Show'}
                       </button>
-                      <button onClick={() => handleDeleteClick(t.id)} className="px-3 py-2 flex items-center justify-center gap-1.5 rounded-none transition-all text-[10px] font-mono font-bold uppercase tracking-widest w-full bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
+                      <button onClick={() => handleDeleteClick(t.id)} className="px-3 py-2 flex items-center justify-center gap-1.5 rounded-md transition-all text-[10px] font-sans font-medium w-full bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
                     </div>
                   </div>
                 ))

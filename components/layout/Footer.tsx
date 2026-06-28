@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-[#050505] text-white pt-0 pb-0 border-t border-white/10 font-sans">
+    <footer className="bg-[#050505] text-white pt-0 pb-0 border-t border-white/10 font-mono">
         
         <style dangerouslySetInnerHTML={{__html: `
             .wire-b-ft { border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -25,7 +25,7 @@ export function Footer() {
                     <h2 className="text-3xl md:text-5xl font-black text-white group-hover:text-black tracking-tighter uppercase">Ready to launch?</h2>
                     <p className="text-white/60 group-hover:text-black/75 font-medium mt-2 text-sm">Join thousands of visual creators on Portfo.be today.</p>
                 </div>
-                <div className="font-mono text-xs uppercase tracking-widest font-bold flex items-center gap-3 px-8 py-4 border border-white/30 group-hover:border-black/30 transition-colors">
+                <div className="font-mono text-xs uppercase tracking-widest font-medium flex items-center gap-3 px-8 py-4 border border-white/30 group-hover:border-black/30 transition-colors">
                     GET STARTED FREE <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
             </Link>
@@ -58,7 +58,7 @@ export function Footer() {
             {/* Platform Links */}
             <div className="p-6 md:p-10">
                 <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50 block mb-6">[ PLATFORM ]</span>
-                <ul className="space-y-4 text-sm font-bold uppercase tracking-wider">
+                <ul className="space-y-4 text-sm font-medium uppercase tracking-wider">
                     <li><a href="#features" className="text-white/75 hover:text-[#ff9e00] transition-colors">Features</a></li>
                     <li><a href="/pricing" className="text-white/75 hover:text-[#ff9e00] transition-colors">Pricing</a></li>
                     <li><a href="/support" className="text-white/75 hover:text-[#ff9e00] transition-colors">Support</a></li>
@@ -68,7 +68,7 @@ export function Footer() {
             {/* Legal Links */}
             <div className="p-6 md:p-10">
                 <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50 block mb-6">[ LEGAL ]</span>
-                <ul className="space-y-4 text-sm font-bold uppercase tracking-wider">
+                <ul className="space-y-4 text-sm font-medium uppercase tracking-wider">
                     <li><Link href="/privacy" className="text-white/75 hover:text-[#ff9e00] transition-colors">Privacy Policy</Link></li>
                     <li><Link href="/terms" className="text-white/75 hover:text-[#ff9e00] transition-colors">Terms of Service</Link></li>
                 </ul>
@@ -84,8 +84,8 @@ export function Footer() {
         {/* Giant Fading Wordmark */}
         <div className="overflow-hidden flex items-end justify-center text-center border-t border-white/10">
             <h2 
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-              className="font-bold text-[15vw] leading-[0.75] tracking-tighter text-white/[0.08] translate-y-4 md:translate-y-6 uppercase select-none"
+              className="font-mono font-black text-[15vw] leading-[0.75] tracking-tighter text-transparent translate-y-4 md:translate-y-6 uppercase select-none"
+              style={{ WebkitTextStroke: '4px rgb(255 255 255 / 15%)' }}
             >
               PORTFO.BE
             </h2>

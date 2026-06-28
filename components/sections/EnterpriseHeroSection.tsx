@@ -17,7 +17,7 @@ export function EnterpriseHeroSection() {
 
     const cards = [
         { type: 'image', src: '/img/creative_portrait_1781107365968.webp' },
-        { type: 'color', bg: 'bg-[#18181b]', content: <div className="flex flex-col items-center justify-center leading-none"><span className="text-white font-black text-5xl md:text-6xl tracking-tighter">CREATE</span><span className="text-[#ff9e00] font-bold text-lg md:text-xl tracking-[0.2em] mt-2">BEYOND</span></div> },
+        { type: 'color', bg: 'bg-[#18181b]', content: <div className="flex flex-col items-center justify-center leading-none"><span className="text-white font-black text-5xl md:text-6xl tracking-tighter">CREATE</span><span className="text-[#ff9e00] font-medium text-lg md:text-xl tracking-[0.2em] mt-2">BEYOND</span></div> },
         { type: 'image', src: '/img/abstract_shapes_1781107379628.webp' },
         { type: 'color', bg: 'bg-[#0a0a0a] border border-white/10', content: <div className="flex flex-col items-center justify-center"><span className="w-12 h-[2px] bg-white/50 mb-4"></span><span className="text-white font-mono text-xs md:text-sm tracking-[0.4em] uppercase">Vanguard</span><span className="w-12 h-[2px] bg-white/50 mt-4"></span></div> },
         { type: 'image', src: '/img/studio_setup_1781107390091.webp' },
@@ -26,7 +26,7 @@ export function EnterpriseHeroSection() {
     ];
 
     return (
-        <section className="bg-[#050505] text-white font-sans overflow-x-hidden w-full relative z-30 pt-24 pb-20 border-t border-white/10">
+        <section className="bg-[#050505] text-white font-mono overflow-x-hidden w-full relative z-30 pt-24 pb-20 border-t border-white/10">
 
             <style dangerouslySetInnerHTML={{
                 __html: `

@@ -55,12 +55,12 @@ export function TestimonialSection({ testimonials, variant = 'grid', isEditor = 
                     <OptimizedLazyImage src={t.avatarUrl} alt={t.clientName} className="w-full h-full object-cover" />
                   </div>
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center font-bold">
+                  <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center font-medium">
                     {t.clientName.charAt(0)}
                   </div>
                 )}
                 <div>
-                  <h4 className="font-bold">{t.clientName}</h4>
+                  <h4 className="font-medium">{t.clientName}</h4>
                   {t.company && <p className="text-sm opacity-70">{t.company}</p>}
                 </div>
               </div>
@@ -89,7 +89,7 @@ export function TestimonialSection({ testimonials, variant = 'grid', isEditor = 
             <div className="flex justify-center mb-2">
               {[...Array(t.rating)].map((_, i) => <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400 mx-0.5" />)}
             </div>
-            <h4 className="font-bold">{t.clientName}</h4>
+            <h4 className="font-medium">{t.clientName}</h4>
             {t.company && <p className="text-sm opacity-70">{t.company}</p>}
           </div>
         ))}

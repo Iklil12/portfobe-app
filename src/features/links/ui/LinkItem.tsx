@@ -74,13 +74,13 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
 
   return (
     <div 
-      className={`group bg-zinc-950 p-5 sm:p-6 rounded-none border border-white/10 shadow-none hover:border-white/20 hover:bg-white/[0.01] flex flex-col sm:flex-row gap-5 sm:gap-6 items-start sm:items-center transition-all duration-300 animate-enter relative ${isOpen ? 'z-[110]' : 'z-10'}`}
+      className={`group bg-zinc-950 p-5 sm:p-6 rounded-md border border-white/10 shadow-none hover:border-white/20 hover:bg-white/[0.01] flex flex-col sm:flex-row gap-5 sm:gap-6 items-start sm:items-center transition-all duration-300 animate-enter relative ${isOpen ? 'z-[110]' : 'z-10'}`}
       style={{animationDelay: `${index * 80}ms`, opacity: 0}}
     >
       <div className="flex w-full items-center gap-4 sm:gap-6">
 
         {/* Icon Box Premium */}
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none bg-zinc-900 border border-white/10 text-white/50 flex items-center justify-center shrink-0 group-hover:bg-[#ff9e00]/10 group-hover:border-[#ff9e00]/30 group-hover:text-[#ff9e00] transition-all duration-300 ml-1 sm:ml-2">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-md bg-zinc-900 border border-white/10 text-white/50 flex items-center justify-center shrink-0 group-hover:bg-[#ff9e00]/10 group-hover:border-[#ff9e00]/30 group-hover:text-[#ff9e00] transition-all duration-300 ml-1 sm:ml-2">
           <IconComponent className="w-6 h-6" />
         </div>
 
@@ -91,7 +91,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
           <div className="relative" ref={dropdownRef}>
             <button 
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center gap-1.5 w-full text-left font-mono font-bold text-white hover:text-[#ff9e00] transition-colors text-sm uppercase tracking-wider group/btn"
+              className="flex items-center gap-1.5 w-full text-left font-sans font-medium text-white hover:text-[#ff9e00] transition-colors text-sm uppercase tracking-wider group/btn"
             >
               {currentPlatform.name}
               <motion.div animate={{ rotate: isOpen ? 180 : 0 }}>
@@ -105,7 +105,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
                   initial={{ opacity: 0, y: 10, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                  className="absolute left-0 top-full mt-2 w-64 bg-zinc-950 border border-white/10 rounded-none shadow-[0_10px_30px_rgba(0,0,0,0.8)] z-[100] overflow-hidden p-1.5"
+                  className="absolute left-0 top-full mt-2 w-64 bg-zinc-950 border border-white/10 rounded-md shadow-[0_10px_30px_rgba(0,0,0,0.8)] z-[100] overflow-hidden p-1.5"
                 >
                   <div className="max-h-60 overflow-y-auto custom-scrollbar">
                     {PLATFORMS.map((p) => {
@@ -115,7 +115,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
                         <button
                           key={p.id}
                           onClick={() => selectPlatform(p.id)}
-                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all ${
+                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-md text-xs font-sans font-medium uppercase tracking-wider transition-all ${
                             isSel 
                               ? 'bg-[#ff9e00] text-black shadow-none' 
                               : 'text-white/50 hover:bg-white/5 hover:text-white'
@@ -140,7 +140,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
                 type="url" 
                 value={link.url} 
                 onChange={(e) => handleUrlChange(e.target.value)}
-                className="w-full bg-transparent text-xs font-mono font-bold text-white/40 focus:outline-none focus:text-white truncate placeholder:text-white/10 transition-colors"
+                className="w-full bg-transparent text-xs font-sans font-medium text-white/40 focus:outline-none focus:text-white truncate placeholder:text-white/10 transition-colors"
                 placeholder={currentPlatform.placeholder}
               />
           </div>
@@ -152,18 +152,18 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
         
         {/* Switch Status */}
         <div className="flex items-center gap-3">
-            <span className={`text-[9px] font-mono font-bold uppercase tracking-wider transition-colors ${link.isActive ? 'text-white' : 'text-white/30'}`}>
+            <span className={`text-[9px] font-sans font-medium uppercase tracking-wider transition-colors ${link.isActive ? 'text-white' : 'text-white/30'}`}>
               {link.isActive ? 'Visible' : 'Hidden'}
             </span>
 
           {/* Toggle Button iOS Style */}
           <button
             onClick={() => updateLocalLink(link.id, { isActive: !link.isActive })}
-            className={`relative inline-flex h-6 w-11 items-center rounded-none transition-all duration-300 focus:outline-none ${
+            className={`relative inline-flex h-6 w-11 items-center rounded-md transition-all duration-300 focus:outline-none ${
               link.isActive ? 'bg-[#ff9e00]' : 'bg-zinc-900 border border-white/10'
             }`}
           >
-            <span className={`inline-block h-4 w-4 transform rounded-none transition-transform duration-300 ${
+            <span className={`inline-block h-4 w-4 transform rounded-md transition-transform duration-300 ${
                 link.isActive ? 'translate-x-6 bg-black' : 'translate-x-1 bg-white/50'
             }`} />
           </button>
@@ -174,7 +174,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
         {/* Delete Button Monokrom */}
         <button 
           onClick={() => setLinkToDelete(link.id)}
-          className="w-9 h-9 sm:w-10 sm:h-10 rounded-none bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30 flex items-center justify-center active:scale-95 transition-all duration-300 shrink-0"
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-md bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30 flex items-center justify-center active:scale-95 transition-all duration-300 shrink-0"
           title="Delete link"
         >
           <Trash2 className="w-4 h-4" />

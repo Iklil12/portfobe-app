@@ -63,7 +63,7 @@ export function FeaturesSection() {
               <div className={`absolute top-0 left-0 w-full h-[2px] transition-all duration-500 z-10 ${isActive ? 'bg-[#ff9e00] shadow-[0_0_15px_rgba(255,158,0,0.4)]' : 'bg-transparent'}`}></div>
 
               <div className="relative h-full flex flex-col">
-                <h3 className={`text-2xl xl:text-3xl font-bold text-white pr-4 tracking-tight leading-snug transform transition-all duration-500 ${isActive ? 'mb-4 xl:-translate-y-2' : 'mb-4 xl:mb-6'}`}>
+                <h3 className={`text-2xl xl:text-3xl font-medium text-white pr-4 tracking-tight leading-snug transform transition-all duration-500 ${isActive ? 'mb-4 xl:-translate-y-2' : 'mb-4 xl:mb-6'}`}>
                   {feat.title}
                 </h3>
 

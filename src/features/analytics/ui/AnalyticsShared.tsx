@@ -39,12 +39,12 @@ export const getSourceIcon = (name: string) => {
     case 'TikTok':
       return <Play className="w-3.5 h-3.5 text-purple-400" />;
     default:
-      return <Link2 className="w-3.5 h-3.5 text-white/40" />;
+      return <Link2 className="w-3.5 h-3.5 text-white/60" />;
   }
 };
 
 export function SkeletonBlock({ className = '' }: { className?: string }) {
-  return <div className={`shimmer-dark rounded-none ${className}`} />;
+  return <div className={`shimmer-dark rounded-md ${className}`} />;
 }
 
 export interface CustomTooltipProps extends TooltipContentProps<number, string> {
@@ -54,18 +54,18 @@ export interface CustomTooltipProps extends TooltipContentProps<number, string> 
 export const CustomAreaTooltip = ({ active, payload, label, isHourly }: CustomTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-zinc-900 border border-white/10 rounded-none shadow-2xl px-4 py-3 min-w-[140px] font-mono">
-      <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-2">
+    <div className="bg-zinc-900 border border-white/10 rounded-md shadow-2xl px-4 py-3 min-w-[140px] font-sans">
+      <p className="text-[9px] font-medium text-white/60 mb-2">
         {isHourly ? `Time: ${label}` : label}
       </p>
       <div className="space-y-1.5">
         {payload.map((entry, i) => (
           <div key={i} className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-none" style={{ backgroundColor: entry.color }} />
-              <span className="text-[10px] font-bold text-white/70 capitalize">{entry.name}</span>
+              <div className="w-2 h-2 rounded-md" style={{ backgroundColor: entry.color }} />
+              <span className="text-[10px] font-medium text-white/70 capitalize">{entry.name}</span>
             </div>
-            <span className="text-xs font-bold text-white">{entry.value?.toLocaleString() || 0}</span>
+            <span className="text-xs font-medium text-white">{entry.value?.toLocaleString() || 0}</span>
           </div>
         ))}
       </div>

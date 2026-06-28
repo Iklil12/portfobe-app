@@ -48,13 +48,13 @@ function getActivityIcon(actionType: string) {
 export function RecentActivity({ activities, isLoading }: RecentActivityProps) {
   return (
     <AnimateOnScroll delay={200}>
-      <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-none transition-all hover:border-white/20 h-full">
+      <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-md transition-all hover:border-white/20 h-full">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h3 className="text-lg font-display font-bold text-white uppercase tracking-wider">Recent Activity</h3>
-            <p className="text-xs font-mono text-white/50 mt-1">Your change timeline</p>
+            <h3 className="text-lg font-sans font-medium text-white">Recent Activity</h3>
+            <p className="text-xs font-sans text-white/50 mt-1">Your change timeline</p>
           </div>
-          <Link href="/dashboard/history" className="w-8 h-8 flex items-center justify-center rounded-none border border-white/10 bg-zinc-900 text-white/70 hover:bg-white/5 hover:text-white transition-all group shadow-sm">
+          <Link href="/dashboard/history" className="w-8 h-8 flex items-center justify-center rounded-md border border-white/10 bg-zinc-900 text-white/70 hover:bg-white/5 hover:text-white transition-all group shadow-sm">
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
@@ -65,24 +65,24 @@ export function RecentActivity({ activities, isLoading }: RecentActivityProps) {
 
           <div className="space-y-6 relative z-10">
             {isLoading ? (
-              <div className="absolute inset-0 z-50 bg-zinc-950/40 backdrop-blur-md rounded-none border border-white/10 shimmer" style={{ margin: '-24px -32px' }}></div>
+              <div className="absolute inset-0 z-50 bg-zinc-950/40 backdrop-blur-md rounded-md border border-white/10 shimmer" style={{ margin: '-24px -32px' }}></div>
             ) : activities.length === 0 ? (
-              <div className="text-center py-10 text-white/40 text-xs rounded-none border border-dashed border-white/10 bg-white/[0.01] font-mono">No recent activity yet.</div>
+              <div className="text-center py-10 text-white/60 text-xs rounded-md border border-dashed border-white/10 bg-white/[0.01] font-sans">No recent activity yet.</div>
             ) : (
               activities.slice(0, 5).map((activity, idx) => {
                 return (
                   <AnimateOnScroll key={activity.id} delay={idx * 50}>
                     <div className="flex items-start gap-4 group cursor-default relative">
-                      <div className="w-9 h-9 shrink-0 rounded-none bg-zinc-900 text-white/80 border border-white/10 flex items-center justify-center relative z-20 shadow-sm">
+                      <div className="w-9 h-9 shrink-0 rounded-md bg-zinc-900 text-white/80 border border-white/10 flex items-center justify-center relative z-20 shadow-sm">
                         {getActivityIcon(activity.actionType)}
                       </div>
                       <div className="flex-1 min-w-0 pt-1">
-                        <p className="text-xs font-mono text-white/80 leading-snug">
+                        <p className="text-xs font-sans text-white/80 leading-snug">
                           {activity.details.split(/"|'/).map((part: string, i: number) =>
-                            i % 2 === 0 ? part : <span key={i} className="text-[#ff9e00] font-bold">"{part}"</span>
+                            i % 2 === 0 ? part : <span key={i} className="text-[#ff9e00] font-medium">"{part}"</span>
                           )}
                         </p>
-                        <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mt-1.5 flex items-center gap-1">
+                        <p className="text-[9px] font-sans font-medium text-white/60 mt-1.5 flex items-center gap-1">
                           <Clock className="w-3 h-3" /> {timeAgo(activity.createdAt)}
                         </p>
                       </div>

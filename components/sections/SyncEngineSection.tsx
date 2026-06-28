@@ -83,11 +83,11 @@ const PILLARS: Pillar[] = [
               pattern: <AIPattern />
             }
           ].map((item) => (
-            <div key={item.id} className="bg-[#0a0a0a] rounded-none p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between group hover:bg-[#111111] transition-colors border border-white/10">
+            <div key={item.id} className="bg-[#0a0a0a] rounded-md p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between group hover:bg-[#111111] transition-colors border border-white/10">
 
               {/* Top Row: Logo */}
               <div className="flex justify-between items-start relative z-10">
-                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-none ${item.iconBg} flex items-center justify-center border border-white/10 shadow-lg text-white`}>
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md ${item.iconBg} flex items-center justify-center border border-white/10 shadow-lg text-white`}>
                   {item.lucideIcon}
                 </div>
               </div>
@@ -95,7 +95,7 @@ const PILLARS: Pillar[] = [
               {/* Middle Row: Text Content */}
               <div className="mt-2.5 sm:mt-4 mb-1 sm:mb-2 relative z-10">
                 <p className="text-white/50 text-[8px] sm:text-[10px] uppercase tracking-wider mb-0.5 sm:mb-1">{item.label}</p>
-                <h4 className="text-white text-xs sm:text-sm font-bold tracking-tight leading-tight">{item.title}</h4>
+                <h4 className="text-white text-xs sm:text-sm font-medium tracking-tight leading-tight">{item.title}</h4>
                 <p className="text-white/70 text-[9px] sm:text-xs mt-0.5 sm:mt-1 font-mono">{item.subtitle}</p>
               </div>
 
@@ -120,7 +120,7 @@ const PILLARS: Pillar[] = [
     payloadStr: "{\n  \"renderer\": \"Bunny.net Edge\",\n  \"model\": \"architecture_v2.glb\",\n  \"polygons\": 142050,\n  \"materials\": \"PBR_Active\"\n}",
     renderComponent: (instanceId, isActive) => (
       <div className="w-full transition-all">
-        <div className="w-full aspect-square rounded-none bg-gradient-to-tr from-neutral-950 to-neutral-900 border border-white/10 relative overflow-hidden group">
+        <div className="w-full aspect-square rounded-md bg-gradient-to-tr from-neutral-950 to-neutral-900 border border-white/10 relative overflow-hidden group">
 
           <Abstract3DShowcase isActive={isActive} />
 
@@ -202,7 +202,7 @@ export function SyncEngineSection() {
                   <span className="font-mono text-[9px] tracking-widest uppercase text-neutral-500">
                     {pillar.type}
                   </span>
-                  <h3 className="text-white text-2xl font-bold uppercase tracking-tight mt-1">
+                  <h3 className="text-white text-2xl font-medium uppercase tracking-tight mt-1">
                     {pillar.name}
                   </h3>
                 </div>
@@ -224,7 +224,7 @@ export function SyncEngineSection() {
       </div>
 
       {/* DESKTOP LAYOUT (hidden lg:block) */}
-      <section ref={containerRef} className="relative w-full h-[320vh] bg-[#050505] font-sans hidden lg:block">
+      <section ref={containerRef} className="relative w-full h-[320vh] bg-[#050505] font-mono hidden lg:block">
 
         <div
           className="sticky top-0 h-screen w-full overflow-hidden flex items-center"
@@ -256,7 +256,7 @@ export function SyncEngineSection() {
                   }}
                   transition={{ duration: 0.45, ease: "easeOut" }}
                   style={{ willChange: "transform, opacity" }}
-                  className="text-[4vw] font-mono text-[#ff9e00] font-bold leading-none tracking-tighter absolute inset-0 flex items-center justify-end text-right"
+                  className="text-[4vw] font-mono text-[#ff9e00] font-medium leading-none tracking-tighter absolute inset-0 flex items-center justify-end text-right"
                 >
                   {pillar.payloadStr}
                 </motion.pre>

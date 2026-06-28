@@ -61,7 +61,7 @@ export default function PortfolioClientWrapper({
         <div className="relative z-10 flex flex-col items-center w-full max-w-xl mx-auto text-white">
           <h1 className="text-4xl md:text-6xl font-black mb-6 uppercase">Currently <span className="text-white/50 italic font-medium">Cooking.</span></h1>
           <p className="text-white/50 text-sm leading-relaxed mb-10">Access to this portfolio has been temporarily suspended by the owner.</p>
-          <Link href="/" className="px-8 py-4 bg-white text-black font-bold text-sm tracking-wide hover:bg-white/80 transition-colors">BUILD YOUR OWN</Link>
+          <Link href="/" className="px-8 py-4 bg-white text-black font-medium text-sm tracking-wide hover:bg-white/80 transition-colors">BUILD YOUR OWN</Link>
         </div>
       </div>
     );

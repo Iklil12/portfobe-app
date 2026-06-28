@@ -27,7 +27,7 @@ export function FaqSection() {
             <div key={faq.id} className="wire-b-faq">
               <button 
                 onClick={() => toggleFaq(faq.id)} 
-                className="w-full text-left px-0 py-6 font-bold text-white flex justify-between items-center transition-colors hover:text-[#ff9e00] group"
+                className="w-full text-left px-0 py-6 font-medium text-white flex justify-between items-center transition-colors hover:text-[#ff9e00] group"
               >
                 <span className="text-base md:text-lg pr-4 uppercase tracking-tight font-black">{faq.q}</span>
                 <div className={`w-8 h-8 border border-white/20 flex items-center justify-center transition-all duration-300 shrink-0 group-hover:bg-[#ff9e00] group-hover:border-[#ff9e00] group-hover:text-black ${openFaq === faq.id ? 'bg-white text-black rotate-45' : 'text-white/40 rotate-0'}`}>

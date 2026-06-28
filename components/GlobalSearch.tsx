@@ -180,10 +180,10 @@ export default function GlobalSearch() {
   return (
     <>
       <div className="hidden md:flex relative group max-w-md w-full cursor-pointer" onClick={() => setIsOpen(true)}>
-        <div className="relative flex items-center w-full transition-all duration-300 bg-[#0a0a0a] border border-white/10 rounded-none px-4 py-2.5 group-hover:bg-zinc-900 group-hover:border-[#ff9e00]/30">
+        <div className="relative flex items-center w-full transition-all duration-300 bg-[#0a0a0a] border border-white/10 rounded-md px-4 py-2.5 group-hover:bg-zinc-900 group-hover:border-[#ff9e00]/30">
           <Search className="w-4 h-4 text-white/40 group-hover:text-[#ff9e00] transition-colors" />
-          <div className="flex-1 text-[11px] font-mono font-bold text-white/40 px-3 text-left truncate uppercase tracking-wider">Search projects, features, metrics...</div>
-          <div className="flex items-center gap-1 px-2 py-1 bg-zinc-900 border border-white/10 text-[9px] font-mono font-bold text-white/50 rounded-none">
+          <div className="flex-1 text-[11px] font-sans font-medium text-white/40 px-3 text-left truncate">Search projects, features, metrics...</div>
+          <div className="flex items-center gap-1 px-2 py-1 bg-zinc-900 border border-white/10 text-[9px] font-sans font-medium text-white/50 rounded-md">
             <span>⌘</span><span>K</span>
           </div>
         </div>
@@ -200,11 +200,11 @@ export default function GlobalSearch() {
 
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-[fadeInOverlay_0.2s_forwards]" onClick={() => setIsOpen(false)}></div>
 
-          <div className="relative z-10 w-full max-w-2xl bg-zinc-950 border border-white/10 rounded-none shadow-[0_45px_100px_rgba(0,0,0,0.9)] overflow-hidden animate-search-pop flex flex-col max-h-[80vh]">
+          <div className="relative z-10 w-full max-w-2xl bg-zinc-950 border border-white/10 rounded-md shadow-[0_45px_100px_rgba(0,0,0,0.9)] overflow-hidden animate-search-pop flex flex-col max-h-[80vh]">
             
             <div className="flex items-center px-6 py-5 border-b border-white/10 shrink-0 bg-zinc-950">
               {isCurrentlyWaiting ? (
-                <div className="w-5 h-5 border-2 border-[#ff9e00] border-t-transparent rounded-none animate-spin shrink-0"></div>
+                <div className="w-5 h-5 border-2 border-[#ff9e00] border-t-transparent rounded-md animate-spin shrink-0"></div>
               ) : (
                 <Search className="w-5 h-5 text-[#ff9e00] shrink-0" />
               )}
@@ -214,9 +214,9 @@ export default function GlobalSearch() {
                 placeholder="Search projects, links, certificates, features..." 
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 bg-transparent border-none outline-none px-4 text-base font-mono font-bold text-white placeholder:text-white/20"
+                className="flex-1 bg-transparent border-none outline-none px-4 text-base font-sans font-medium text-white placeholder:text-white/20"
               />
-              <button onClick={() => setIsOpen(false)} className="px-3 py-1.5 bg-zinc-900 border border-white/10 text-white/70 rounded-none text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setIsOpen(false)} className="px-3 py-1.5 bg-zinc-900 border border-white/10 text-white/70 rounded-md text-[9px] font-sans font-medium hover:bg-zinc-800 transition-colors">
                 ESC
               </button>
             </div>
@@ -224,30 +224,30 @@ export default function GlobalSearch() {
             <div ref={resultsRef} className="overflow-y-auto p-3 hide-scrollbar bg-[#050505] flex-1">
               {filteredResults.length === 0 ? (
                 <div className="py-20 text-center flex flex-col items-center justify-center">
-                  <div className="w-12 h-12 bg-zinc-900 border border-white/10 rounded-none flex items-center justify-center mb-4 text-white/40">
+                  <div className="w-12 h-12 bg-zinc-900 border border-white/10 rounded-md flex items-center justify-center mb-4 text-white/40">
                     <Ghost className="w-6 h-6" />
                   </div>
-                  <p className="font-mono font-bold text-white/80 uppercase tracking-wider text-xs">No results for "{query}"</p>
-                  <p className="text-[10px] font-mono text-white/40 mt-1.5">Use keywords or run quick commands.</p>
+                  <p className="font-sans font-medium text-white/80 text-xs">No results for "{query}"</p>
+                  <p className="text-[10px] font-sans text-white/40 mt-1.5">Use keywords or run quick commands.</p>
                 </div>
               ) : (
                 <>
                   {!query && (
-                    <div className="p-4 mb-4 mx-1.5 mt-1.5 bg-[#ff9e00]/5 border border-[#ff9e00]/25 rounded-none">
-                      <p className="text-[10px] font-mono font-bold text-[#ff9e00] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <div className="p-4 mb-4 mx-1.5 mt-1.5 bg-[#ff9e00]/5 border border-[#ff9e00]/25 rounded-md">
+                      <p className="text-[10px] font-sans font-medium text-[#ff9e00] mb-2 flex items-center gap-1.5">
                         <Info className="w-3.5 h-3.5" /> What can be searched here?
                       </p>
                       <div className="flex flex-wrap gap-2">
-                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Projects & Work</span>
-                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Links</span>
-                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">Certificates</span>
-                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-none text-[9px] font-mono font-bold uppercase tracking-wider">System Menu</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-md text-[9px] font-sans font-medium">Projects & Work</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-md text-[9px] font-sans font-medium">Links</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-md text-[9px] font-sans font-medium">Certificates</span>
+                        <span className="px-2 py-1 bg-zinc-900 border border-white/10 text-white/80 rounded-md text-[9px] font-sans font-medium">System Menu</span>
                       </div>
                     </div>
                   )}
                   {Object.entries(groupedResults).map(([groupName, items]: [string, any]) => (
                     <div key={groupName} className="mb-4 last:mb-0">
-                      <div className="px-3 py-2 text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.2em] flex items-center gap-3">
+                      <div className="px-3 py-2 text-[9px] font-sans font-medium text-white/30 tracking-[0.2em] flex items-center gap-3">
                         {groupName} <div className="h-px bg-white/10 flex-1"></div>
                       </div>
                       <div className="space-y-1">
@@ -261,27 +261,21 @@ export default function GlobalSearch() {
                               key={item.id} 
                               onClick={() => handleItemClick(item)}
                               onMouseEnter={() => setSelectedIndex(currentIndex)}
-                              className={`w-full flex items-center justify-between p-3 rounded-none transition-all group border ${
-                                isSelected 
-                                  ? 'bg-white/5 border-white/10 text-white selected-item' 
-                                  : 'border-transparent text-white/60 hover:bg-white/[0.01] hover:text-white'
-                              }`}
+                              className={`w-full flex items-center justify-between p-3 rounded-md transition-all group border ${ isSelected ? 'bg-white/5 border-white/10 text-white selected-item' : 'border-transparent text-white/60 hover:bg-white/[0.01] hover:text-white' }`}
                             >
                               <div className="flex items-center gap-4">
-                                <div className={`w-9 h-9 rounded-none flex items-center justify-center border border-white/10 bg-zinc-900 transition-colors ${
-                                  isSelected ? 'border-[#ff9e00]/30 text-[#ff9e00]' : 'text-white/50'
-                                }`}>
+                                <div className={`w-9 h-9 rounded-md flex items-center justify-center border border-white/10 bg-zinc-900 transition-colors ${ isSelected ? 'border-[#ff9e00]/30 text-[#ff9e00]' : 'text-white/50' }`}>
                                   {getIcon(item.icon)}
                                 </div>
                                 <div className="text-left">
-                                  <p className="text-xs font-mono font-bold text-white">{item.title}</p>
-                                  <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-wider mt-0.5">
+                                  <p className="text-xs font-sans font-medium text-white">{item.title}</p>
+                                  <p className="text-[9px] font-sans font-medium text-white/40 mt-0.5">
                                     {item.type === 'action' ? '⚡ Run Command' : `Open ${item.link}`}
                                   </p>
                                 </div>
                               </div>
                               <div className={`transition-opacity flex items-center gap-1.5 ${isSelected ? 'opacity-100' : 'opacity-0'}`}>
-                                 <span className="text-[8px] font-mono font-bold text-black bg-[#ff9e00] px-2 py-1 uppercase tracking-widest">Select ↵</span>
+                                 <span className="text-[8px] font-sans font-medium text-black bg-[#ff9e00] px-2 py-1">Select ↵</span>
                               </div>
                             </button>
                           );
@@ -293,7 +287,7 @@ export default function GlobalSearch() {
               )}
             </div>
 
-            <div className="bg-zinc-950 px-6 py-4 border-t border-white/10 flex justify-between items-center text-[9px] font-mono font-bold text-white/30 uppercase tracking-widest shrink-0">
+            <div className="bg-zinc-950 px-6 py-4 border-t border-white/10 flex justify-between items-center text-[9px] font-sans font-medium text-white/30 shrink-0">
               <div className="flex gap-4">
                 <span className="flex items-center gap-1.5">⌘ K - Search</span>
                 <span className="flex items-center gap-1.5">↑↓ - Navigate</span>

@@ -38,7 +38,7 @@ export function ColorPicker({ themeColor, setThemeColor }: { themeColor?: string
             className="w-3.5 h-3.5 rounded border border-white/10 shrink-0" 
             style={{ backgroundColor: themeColor || '#000000' }}
           />
-          <span className="text-xs font-mono font-medium text-white/80 select-all uppercase">
+          <span className="text-xs font-sans font-medium text-white/80 select-all uppercase">
             {themeColor || '#000000'}
           </span>
           <input
@@ -68,7 +68,7 @@ export function FontPicker({ fontHeading, setFontHeading, setFontBody }: { fontH
       <div className="flex p-1 bg-zinc-900/30 rounded-md border border-white/5 gap-1">
         <button 
           onClick={() => {setFontHeading('Space Mono'); setFontBody?.('Space Mono')}} 
-          className={`flex-1 py-2 rounded text-[11px] transition-all duration-300 font-mono ${
+          className={`flex-1 py-2 rounded text-[11px] transition-all duration-300 font-sans ${
             isFontMono 
               ? 'bg-zinc-800 text-white shadow-sm' 
               : 'text-white/40 hover:text-white hover:bg-zinc-800/50'
@@ -187,7 +187,7 @@ export function ButtonShapePicker({ buttonShape, setButtonShape }: { buttonShape
               : 'bg-zinc-900/30 border-white/5 hover:border-white/20 text-white/50 hover:text-white hover:bg-zinc-800/30'
           }`}
         >
-          <div className={`w-8 h-4 transition-all duration-300 rounded-none ${isBtnHard ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
+          <div className={`w-8 h-4 transition-all duration-300 rounded-md ${isBtnHard ? 'bg-white/80' : 'bg-white/20 group-hover:bg-white/40'}`}></div>
           <span className="text-[10px] font-medium leading-tight text-center">Square</span>
         </button>
         <button 
@@ -339,7 +339,7 @@ export function GalleryDesignPicker({ designStyle, setDesign }: { designStyle?: 
               }`}
             >
               <div className="flex items-center justify-between w-full">
-                <span className="text-[11px] font-bold tracking-tight">{opt.name}</span>
+                <span className="text-[11px] font-medium tracking-tight">{opt.name}</span>
                 {isActive && <div className="w-1.5 h-1.5 rounded-full bg-[#ff9e00]"></div>}
               </div>
               <span className="text-[9px] text-white/40 leading-snug truncate w-full">{opt.desc}</span>

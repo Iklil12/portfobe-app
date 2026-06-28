@@ -104,24 +104,24 @@ export default function IdeasPage() {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto bg-zinc-950 font-mono">
+    <div className="flex flex-col h-full overflow-y-auto bg-zinc-950 font-sans">
       {/* Header */}
       <div className="px-6 md:px-8 pt-6 md:pt-8 max-w-3xl mx-auto w-full">
         <div className="flex items-center gap-2 mb-2">
-          <span className="bg-zinc-900 border border-white/10 text-white/50 text-[9px] font-mono font-bold px-2.5 py-1 rounded-none uppercase tracking-widest flex items-center gap-1.5">
+          <span className="bg-zinc-900 border border-white/10 text-white/50 text-[9px] font-sans font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5">
             <Lock className="w-3 h-3 text-[#ff9e00]" />
             <span>Admin Only</span>
           </span>
         </div>
-        <h1 className="text-xl md:text-2xl font-bold text-white tracking-tight uppercase">Feature Backlog</h1>
-        <p className="text-white/40 mt-1 text-xs">Daftar ide dan fitur yang akan dikembangkan selanjutnya.</p>
+        <h1 className="text-xl md:text-2xl font-medium text-white tracking-tight">Feature Backlog</h1>
+        <p className="text-white/60 mt-1 text-xs">Daftar ide dan fitur yang akan dikembangkan selanjutnya.</p>
       </div>
 
       {/* Content */}
       <div className="p-6 md:p-8 pb-24">
         <div className="max-w-3xl mx-auto">
           
-          <form onSubmit={handleAddIdea} className="bg-zinc-900/40 rounded-none border border-white/10 p-4 mb-8 flex flex-col sm:flex-row gap-3">
+          <form onSubmit={handleAddIdea} className="bg-zinc-900/40 rounded-md border border-white/10 p-4 mb-8 flex flex-col sm:flex-row gap-3">
             <input 
               type="text" 
               value={newIdea}
@@ -133,7 +133,7 @@ export default function IdeasPage() {
             <button 
               type="submit" 
               disabled={isSubmitting || !newIdea.trim()}
-              className="w-full sm:w-auto px-5 py-2.5 bg-[#ff9e00] disabled:opacity-50 hover:bg-[#ffaa22] text-black text-xs font-bold rounded-none transition-colors shrink-0 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-5 py-2.5 bg-[#ff9e00] disabled:opacity-50 hover:bg-[#ffaa22] text-black text-xs font-medium rounded-md transition-colors shrink-0 flex items-center justify-center gap-2"
             >
               {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Save Idea"}
             </button>
@@ -144,26 +144,22 @@ export default function IdeasPage() {
                <Loader2 className="w-8 h-8 text-[#ff9e00] animate-spin" />
             </div>
           ) : !Array.isArray(notes) || notes.length === 0 ? (
-            <div className="mt-4 p-16 border border-dashed border-white/10 rounded-none flex flex-col items-center justify-center bg-zinc-900/10 shadow-none">
-              <div className="w-20 h-20 bg-zinc-950 rounded-none flex items-center justify-center mb-6 border border-white/5 shadow-none text-[#ff9e00]">
+            <div className="mt-4 p-16 border border-dashed border-white/10 rounded-md flex flex-col items-center justify-center bg-zinc-900/10 shadow-none">
+              <div className="w-20 h-20 bg-zinc-950 rounded-md flex items-center justify-center mb-6 border border-white/5 shadow-none text-[#ff9e00]">
                 <Lightbulb className="w-8 h-8" />
               </div>
-              <h3 className="text-xs font-mono font-bold text-white uppercase mb-2">Belum Ada Catatan Ide</h3>
-              <p className="text-white/40 text-xs text-center max-w-sm leading-relaxed">
+              <h3 className="text-xs font-sans font-medium text-white mb-2">Belum Ada Catatan Ide</h3>
+              <p className="text-white/60 text-xs text-center max-w-sm leading-relaxed">
                 Catat semua ide brilian Anda di sini agar tidak terlupa.
               </p>
             </div>
           ) : (
-            <div className="bg-zinc-900/40 rounded-none border border-white/10 shadow-none overflow-hidden divide-y divide-white/5">
+            <div className="bg-zinc-900/40 rounded-md border border-white/10 shadow-none overflow-hidden divide-y divide-white/5">
               {notes?.map(note => (
                 <div key={note.id} className={`p-4 flex items-start gap-4 hover:bg-zinc-950/20 transition-colors group ${note.isCompleted ? 'opacity-60 bg-zinc-950/20' : ''}`}>
                   <button 
                     onClick={() => toggleComplete(note.id, note.isCompleted)}
-                    className={`mt-1 w-6 h-6 rounded-none flex items-center justify-center shrink-0 border transition-all ${
-                      note.isCompleted 
-                        ? 'bg-emerald-500 border-emerald-500 text-black' 
-                        : 'border-white/10 hover:border-[#ff9e00] text-transparent hover:text-[#ff9e00] bg-zinc-950'
-                    }`}
+                    className={`mt-1 w-6 h-6 rounded-md flex items-center justify-center shrink-0 border transition-all ${ note.isCompleted ? 'bg-emerald-500 border-emerald-500 text-black' : 'border-white/10 hover:border-[#ff9e00] text-transparent hover:text-[#ff9e00] bg-zinc-950' }`}
                   >
                     <Check className="w-3.5 h-3.5" />
                   </button>
@@ -173,7 +169,7 @@ export default function IdeasPage() {
                         <textarea
                           value={editContent}
                           onChange={(e) => setEditContent(e.target.value)}
-                          className="w-full text-xs font-mono font-bold text-white bg-zinc-950 border border-[#ff9e00]/50 focus:ring-1 focus:ring-[#ff9e00]/50 rounded-none px-3 py-2 outline-none resize-none"
+                          className="w-full text-xs font-sans font-medium text-white bg-zinc-950 border border-[#ff9e00]/50 focus:ring-1 focus:ring-[#ff9e00]/50 rounded-md px-3 py-2 outline-none resize-none"
                           rows={2}
                           autoFocus
                           onKeyDown={(e) => {
@@ -186,20 +182,20 @@ export default function IdeasPage() {
                           }}
                         />
                         <div className="flex flex-col gap-1 shrink-0">
-                          <button onClick={() => saveEdit(note.id)} className="w-8 h-8 rounded-none bg-[#ff9e00] text-black flex items-center justify-center hover:bg-[#ffaa22] transition-colors" title="Save (Enter)">
+                          <button onClick={() => saveEdit(note.id)} className="w-8 h-8 rounded-md bg-[#ff9e00] text-black flex items-center justify-center hover:bg-[#ffaa22] transition-colors" title="Save (Enter)">
                             <Check className="w-3.5 h-3.5" />
                           </button>
-                          <button onClick={() => setEditingId(null)} className="w-8 h-8 rounded-none bg-zinc-900 border border-white/10 text-white/50 flex items-center justify-center hover:bg-zinc-800 transition-colors" title="Cancel (Esc)">
+                          <button onClick={() => setEditingId(null)} className="w-8 h-8 rounded-md bg-zinc-900 border border-white/10 text-white/50 flex items-center justify-center hover:bg-zinc-800 transition-colors" title="Cancel (Esc)">
                             <X className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
                     ) : (
                       <>
-                        <p className={`text-white font-mono text-xs ${note.isCompleted ? 'line-through text-white/30' : ''}`}>
+                        <p className={`text-white font-mono text-xs ${note.isCompleted ? 'line-through text-white/50' : ''}`}>
                           {note.content}
                         </p>
-                        <p className="text-[9px] font-mono font-bold text-white/30 mt-1.5 uppercase tracking-widest">
+                        <p className="text-[9px] font-sans font-medium text-white/50 mt-1.5">
                           {new Date(note.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </>
@@ -212,7 +208,7 @@ export default function IdeasPage() {
                           setEditingId(note.id);
                           setEditContent(note.content);
                         }}
-                        className="w-8 h-8 rounded-none flex items-center justify-center text-white/30 hover:text-[#ff9e00] hover:bg-zinc-950 transition-colors"
+                        className="w-8 h-8 rounded-md flex items-center justify-center text-white/50 hover:text-[#ff9e00] hover:bg-zinc-950 transition-colors"
                         title="Edit Catatan"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -220,7 +216,7 @@ export default function IdeasPage() {
                     )}
                     <button 
                       onClick={() => deleteNote(note.id)}
-                      className="w-8 h-8 rounded-none flex items-center justify-center text-white/30 hover:text-rose-500 hover:bg-zinc-950 transition-colors"
+                      className="w-8 h-8 rounded-md flex items-center justify-center text-white/50 hover:text-rose-500 hover:bg-zinc-950 transition-colors"
                       title="Delete"
                     >
                       <Trash2 className="w-3.5 h-3.5" />

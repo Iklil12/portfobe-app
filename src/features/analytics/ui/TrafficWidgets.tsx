@@ -5,24 +5,24 @@ import { SkeletonBlock, CustomAreaTooltip } from './AnalyticsShared';
 
 export function TrafficOverviewChart({ isLoading, isMounted, chartData, range }: any) {
   if (isLoading) {
-    return <div className="lg:col-span-2 rounded-none shimmer-dark h-[400px]" />;
+    return <div className="lg:col-span-2 rounded-md shimmer-dark h-[400px]" />;
   }
   
   return (
-    <div className="lg:col-span-2 bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter" style={{ animationDelay: '300ms' }}>
+    <div className="lg:col-span-2 bg-zinc-950 border border-white/10 rounded-md p-6 md:p-8 shadow-none animate-enter" style={{ animationDelay: '300ms' }}>
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Traffic Overview</h3>
-          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">
+          <h3 className="text-sm font-sans font-medium text-white">Traffic Overview</h3>
+          <p className="text-xs font-sans font-medium text-white/70 mt-1">
             {range === '1d' ? 'Hourly — today' : range === '7d' ? 'Last 7 days' : range === '30d' ? 'Last 30 days' : 'All time'}
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-none bg-[#ff9e00] inline-block" /> Page Views
+          <span className="flex items-center gap-1.5 text-xs font-sans font-medium text-white/80">
+            <span className="w-2 h-2 rounded-md bg-[#ff9e00] inline-block" /> Page Views
           </span>
-          <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-none bg-white/40 inline-block" /> Uniq. Visitors
+          <span className="flex items-center gap-1.5 text-xs font-sans font-medium text-white/80">
+            <span className="w-2 h-2 rounded-md bg-white/40 inline-block" /> Uniq. Visitors
           </span>
         </div>
       </div>
@@ -48,7 +48,7 @@ export function TrafficOverviewChart({ isLoading, isMounted, chartData, range }:
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-white/20">
             <Ghost className="w-8 h-8 mb-3" />
-            <p className="text-[9px] font-mono font-bold tracking-widest uppercase">No traffic data yet</p>
+            <p className="text-xs font-sans font-medium">No traffic data yet</p>
           </div>
         )}
       </div>
@@ -58,17 +58,17 @@ export function TrafficOverviewChart({ isLoading, isMounted, chartData, range }:
 
 export function DailyVolumeChart({ isLoading, isMounted, chartData, peakEntry }: any) {
   if (isLoading) {
-    return <div className="rounded-none shimmer-dark h-[340px]" />;
+    return <div className="rounded-md shimmer-dark h-[340px]" />;
   }
 
   return (
-    <div className="bg-zinc-950 border border-white/10 rounded-none p-6 md:p-8 shadow-none animate-enter flex flex-col" style={{ animationDelay: '450ms' }}>
+    <div className="bg-zinc-950 border border-white/10 rounded-md p-6 md:p-8 shadow-none animate-enter flex flex-col" style={{ animationDelay: '450ms' }}>
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Daily Volume</h3>
-          <p className="text-[9px] font-mono font-bold text-white/30 mt-1 uppercase tracking-widest">Daily distribution</p>
+          <h3 className="text-sm font-sans font-medium text-white">Daily Volume</h3>
+          <p className="text-xs font-sans font-medium text-white/70 mt-1">Daily distribution</p>
         </div>
-        <div className="w-9 h-9 rounded-none bg-zinc-900 border border-white/5 flex items-center justify-center text-white/40">
+        <div className="w-9 h-9 rounded-md bg-zinc-900 border border-white/5 flex items-center justify-center text-white/80">
           <BarChart3 className="w-4 h-4 text-[#ff9e00]" />
         </div>
       </div>
@@ -93,20 +93,20 @@ export function DailyVolumeChart({ isLoading, isMounted, chartData, peakEntry }:
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-white/20">
             <Ghost className="w-8 h-8 mb-3" />
-            <p className="text-[9px] font-mono font-bold tracking-widest uppercase">No data yet</p>
+            <p className="text-xs font-sans font-medium">No data yet</p>
           </div>
         )}
       </div>
 
       {chartData.length > 0 && (
         <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 pt-4 border-t border-white/5">
-          <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40">
+          <span className="flex items-center gap-1.5 text-xs font-sans font-medium text-white/80">
             <span className="w-2.5 h-2.5 bg-[#ff9e00] inline-block" /> Peak
           </span>
-          <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40">
+          <span className="flex items-center gap-1.5 text-xs font-sans font-medium text-white/80">
             <span className="w-2.5 h-2.5 bg-white inline-block" /> Today
           </span>
-          <span className="flex items-center gap-1.5 text-[9px] font-mono font-bold text-white/40">
+          <span className="flex items-center gap-1.5 text-xs font-sans font-medium text-white/80">
             <span className="w-2.5 h-2.5 bg-white/10 inline-block" /> Others
           </span>
         </div>

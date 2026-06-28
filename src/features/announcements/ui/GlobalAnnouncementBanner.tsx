@@ -59,11 +59,11 @@ export function GlobalAnnouncementBanner({ announcements, userPlan }: Announceme
           <div key={item.id} className={`w-full py-3 px-4 sm:px-6 flex items-center justify-between gap-4 ${style} relative overflow-hidden transition-all duration-300`}>
             
             <div className="flex items-center gap-3 relative z-10 w-full max-w-7xl mx-auto justify-center">
-              <div className="p-1.5 bg-zinc-950 rounded-none w-7 h-7 flex items-center justify-center shrink-0 border border-white/10 shadow-none">
+              <div className="p-1.5 bg-zinc-950 rounded-md w-7 h-7 flex items-center justify-center shrink-0 border border-white/10 shadow-none">
                 <i className={`${iconClass} text-[11px]`} />
               </div>
               <span className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2.5 tracking-wider">
-                <strong className="tracking-widest uppercase font-mono text-[9px] font-bold bg-zinc-950 px-2 py-1 rounded-none border border-white/10 shrink-0 text-center text-white">
+                <strong className="tracking-widest uppercase font-mono text-[9px] font-medium bg-zinc-950 px-2 py-1 rounded-md border border-white/10 shrink-0 text-center text-white">
                   {item.title}
                 </strong> 
                 <span className="font-mono text-[10px] sm:text-[11px] uppercase text-white/70">{item.message}</span>
@@ -72,7 +72,7 @@ export function GlobalAnnouncementBanner({ announcements, userPlan }: Announceme
 
             <button 
               onClick={() => handleDismiss(item.id)}
-              className="relative z-10 w-7 h-7 flex items-center justify-center bg-zinc-950 hover:bg-zinc-900 rounded-none transition-all shrink-0 border border-white/10 hover:border-white/20 text-white/50 hover:text-white"
+              className="relative z-10 w-7 h-7 flex items-center justify-center bg-zinc-950 hover:bg-zinc-900 rounded-md transition-all shrink-0 border border-white/10 hover:border-white/20 text-white/50 hover:text-white"
               aria-label="Close Announcement"
             >
               <i className="fa-solid fa-xmark text-sm" />

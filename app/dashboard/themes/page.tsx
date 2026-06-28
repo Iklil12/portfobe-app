@@ -78,13 +78,12 @@ export default function ThemesPage() {
             className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 z-10 md:hidden flex items-center justify-end pr-1.5"
             style={{ background: 'linear-gradient(to left, rgba(9,9,11,0.98) 20%, transparent)' }}
           >
-            <ChevronRight className="scroll-hint-icon w-3.5 h-3.5 text-white/40" />
+            <ChevronRight className="scroll-hint-icon w-3.5 h-3.5 text-white/60" />
           </div>
 
           <div
             role="tablist"
-            className="flex items-center gap-1 bg-zinc-900 border border-white/10 rounded-none p-1
-              overflow-x-auto hide-scrollbar w-full md:w-auto md:inline-flex"
+            className="flex items-center gap-1 bg-zinc-900 border border-white/10 rounded-md p-1 overflow-x-auto hide-scrollbar w-full md:w-auto md:inline-flex"
           >
             {FILTER_TABS.map(tab => {
               const isActive = activeFilter === tab.id;
@@ -103,25 +102,12 @@ export default function ThemesPage() {
                   role="tab"
                   aria-selected={isActive}
                   onClick={() => setActiveFilter(tab.id)}
-                  className={`
-                    relative flex items-center gap-2
-                    px-4 py-2.5 rounded-none
-                    text-[10px] font-mono font-bold uppercase tracking-wider whitespace-nowrap shrink-0
-                    transition-all duration-200 select-none
-                    ${isActive
-                      ? 'bg-[#ff9e00] text-black'
-                      : 'text-white/40 hover:text-white hover:bg-white/5'
-                    }
-                  `}
+                  className={`relative flex items-center gap-2 px-4 py-2.5 rounded-md text-[10px] font-sans font-medium whitespace-nowrap shrink-0 transition-all duration-200 select-none ${isActive ? 'bg-[#ff9e00] text-black' : 'text-white/60 hover:text-white hover:bg-white/5' }`}
                 >
                   <TabIcon className="w-3.5 h-3.5 shrink-0" />
                   {tab.label}
                   {count > 0 && (
-                    <span className={`
-                      text-[9px] font-mono font-bold min-w-[18px] h-[18px] px-1.5 rounded-none
-                      inline-flex items-center justify-center leading-none
-                      ${isActive ? 'bg-black/10 text-black' : 'bg-white/5 border border-white/5 text-white/50'}
-                    `}>
+                    <span className={`text-[9px] font-sans font-medium min-w-[18px] h-[18px] px-1.5 rounded-md inline-flex items-center justify-center leading-none ${isActive ? 'bg-black/10 text-black' : 'bg-white/5 border border-white/5 text-white/50'}`}>
                       {count}
                     </span>
                   )}
@@ -133,17 +119,17 @@ export default function ThemesPage() {
 
         {filteredThemes.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center mb-6 text-white/30">
+            <div className="w-16 h-16 rounded-md bg-zinc-900 border border-white/10 flex items-center justify-center mb-6 text-white/50">
               {activeFilter === 'favorites' ? (
                 <HeartOff className="w-6 h-6" />
               ) : (
                 <Ghost className="w-6 h-6" />
               )}
             </div>
-            <p className="font-mono font-bold text-white uppercase tracking-wider mb-2">
+            <p className="font-sans font-medium text-white mb-2">
               {activeFilter === 'favorites' ? 'No favorites yet' : 'No themes'}
             </p>
-            <p className="text-white/40 text-xs font-mono max-w-xs">
+            <p className="text-white/60 text-xs font-sans max-w-xs">
               {activeFilter === 'favorites'
                 ? 'Click the ♡ icon on themes you like to save them here.'
                 : 'Try another filter or look out for new theme collections.'}

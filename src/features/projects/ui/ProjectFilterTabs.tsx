@@ -18,23 +18,23 @@ function FilterSkeleton() {
   return (
     <div className="mb-8 space-y-4 animate-pulse">
       {/* row 1: tab bar skeleton */}
-      <div className="inline-flex items-center gap-1 bg-zinc-900 border border-white/10 p-1.5 rounded-none">
+      <div className="inline-flex items-center gap-1 bg-zinc-900 border border-white/10 p-1.5 rounded-md">
         {[88, 72, 60, 96, 52].map((w, i) => (
           <div
             key={i}
-            className="h-9 bg-white/5 border border-white/5 rounded-none shrink-0 shimmer"
+            className="h-9 bg-white/5 border border-white/5 rounded-md shrink-0 shimmer"
             style={{ width: w }}
           />
         ))}
       </div>
       {/* row 2: tag chips skeleton */}
       <div className="flex items-center gap-2">
-        <div className="h-3 w-6 bg-white/5 rounded-none shimmer" />
+        <div className="h-3 w-6 bg-white/5 rounded-md shimmer" />
         <div className="h-3.5 w-px bg-white/10" />
         {[52, 68, 44].map((w, i) => (
           <div
             key={i}
-            className="h-7 bg-white/5 border border-white/5 rounded-none shimmer"
+            className="h-7 bg-white/5 border border-white/5 rounded-md shimmer"
             style={{ width: w }}
           />
         ))}
@@ -128,7 +128,7 @@ export function ProjectFilterTabs({ state, actions }: { state: useProjectsState;
           <div
             role="tablist"
             className={`flex items-center gap-1 bg-zinc-900 border border-white/10 p-1.5
-              overflow-x-auto hide-scrollbar w-full md:w-auto md:inline-flex rounded-none
+              overflow-x-auto hide-scrollbar w-full md:w-auto md:inline-flex rounded-md
               ${visible ? "filter-enter" : "opacity-0"}`}
           >
           {TYPE_TABS.map((tab) => {
@@ -144,8 +144,8 @@ export function ProjectFilterTabs({ state, actions }: { state: useProjectsState;
                 onClick={() => setActiveTab(tab.id)}
                 className={`
                   relative flex items-center gap-2
-                  px-4 py-2.5 rounded-none
-                  text-[11px] font-mono font-bold uppercase tracking-wider whitespace-nowrap shrink-0
+                  px-4 py-2.5 rounded-md
+                  text-[11px] font-sans font-medium uppercase tracking-wider whitespace-nowrap shrink-0
                   transition-all duration-200 select-none
                   ${isActive
                     ? "bg-zinc-800 text-white border border-white/10 shadow-sm"
@@ -157,7 +157,7 @@ export function ProjectFilterTabs({ state, actions }: { state: useProjectsState;
                 {tab.label}
                 {count > 0 && (
                   <span className={`
-                    text-[9px] font-mono font-bold min-w-[18px] h-[18px] px-1.5 rounded-none
+                    text-[9px] font-sans font-medium min-w-[18px] h-[18px] px-1.5 rounded-md
                     inline-flex items-center justify-center leading-none
                     ${isActive ? "bg-white/10 text-white" : "bg-white/5 text-white/40"}
                   `}>
@@ -173,7 +173,7 @@ export function ProjectFilterTabs({ state, actions }: { state: useProjectsState;
         {/* ── ROW 2: tag chips ── */}
         {allTags.length > 0 && (
           <div className={`flex items-center gap-2 flex-wrap ${visible ? "filter-enter-tags" : "opacity-0"}`}>
-            <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-white/40">
+            <span className="text-[9px] font-sans font-medium uppercase tracking-widest text-white/40">
               Tag
             </span>
             <div className="w-px h-3.5 bg-white/10" />
@@ -184,8 +184,8 @@ export function ProjectFilterTabs({ state, actions }: { state: useProjectsState;
                   key={tag}
                   onClick={() => onTag(tag)}
                   className={`
-                    flex items-center gap-1.5 px-3 py-1.5 rounded-none
-                    text-[10px] font-mono font-bold uppercase tracking-wider
+                    flex items-center gap-1.5 px-3 py-1.5 rounded-md
+                    text-[10px] font-sans font-medium uppercase tracking-wider
                     transition-all duration-150 border
                     ${isActive
                       ? "bg-[#ff9e00]/10 border-[#ff9e00] text-[#ff9e00]"
@@ -195,7 +195,7 @@ export function ProjectFilterTabs({ state, actions }: { state: useProjectsState;
                 >
                   <Hash className={`w-2.5 h-2.5 ${isActive ? "opacity-60" : "opacity-30"}`} />
                   {tag}
-                  <span className={`text-[9px] font-mono font-bold ml-0.5 ${isActive ? "text-white" : "text-white/40"}`}>
+                  <span className={`text-[9px] font-sans font-medium ml-0.5 ${isActive ? "text-white" : "text-white/40"}`}>
                     {counts[`tag:${tag}`] ?? 0}
                   </span>
                 </button>

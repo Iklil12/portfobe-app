@@ -40,8 +40,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: NAME */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8 pt-4">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Full Name</label>
-          <p className="text-[10px] font-mono text-white/30">Name that will be displayed publicly.</p>
+          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">Full Name</label>
+          <p className="text-[10px] font-sans text-white/30">Name that will be displayed publicly.</p>
         </div>
         <div className="w-full flex gap-3">
           <input 
@@ -50,7 +50,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             value={firstName} 
             onChange={(e) => setFirstName(sanitizeText(e.target.value))} 
             placeholder="Sienna"
-            className="w-1/2 px-4 py-3 rounded-none border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-mono text-white" 
+            className="w-1/2 px-4 py-3 rounded-md border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-sans text-white" 
           />
           <input 
             type="text" 
@@ -58,7 +58,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             value={lastName} 
             onChange={(e) => setLastName(sanitizeText(e.target.value))} 
             placeholder="Hewitt"
-            className="w-1/2 px-4 py-3 rounded-none border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-mono text-white" 
+            className="w-1/2 px-4 py-3 rounded-md border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-sans text-white" 
           />
         </div>
       </div>
@@ -66,8 +66,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: EMAIL ADDRESS */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Email Address</label>
-          <p className="text-[10px] font-mono text-white/30">Email for login and contact.</p>
+          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">Email Address</label>
+          <p className="text-[10px] font-sans text-white/30">Email for login and contact.</p>
         </div>
         <div className="w-full">
           <div className="relative flex items-center">
@@ -76,12 +76,12 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
               type="email" 
               value={email} 
               disabled
-              className="w-full pl-11 pr-4 py-3 rounded-none border border-white/5 bg-zinc-950/50 text-white/40 outline-none text-xs font-mono cursor-not-allowed opacity-80" 
+              className="w-full pl-11 pr-4 py-3 rounded-md border border-white/5 bg-zinc-950/50 text-white/40 outline-none text-xs font-sans cursor-not-allowed opacity-80" 
             />
           </div>
           {/* Tag "Terverifikasi oleh Google" HANYA MUNCUL jika login menggunakan Google */}
           {isGoogleUser && (
-            <p className="text-[10px] font-mono font-bold text-[#ff9e00] uppercase tracking-wider mt-2 flex items-center gap-1.5">
+            <p className="text-[10px] font-sans font-medium text-[#ff9e00] uppercase tracking-wider mt-2 flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5" /> Verified by Google
             </p>
           )}
@@ -91,8 +91,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: USERNAME / SUBDOMAIN */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8">
         <div className="w-full sm:w-1/3 shrink-0 pt-2">
-          <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Username / Link</label>
-          <p className="text-[10px] font-mono text-white/30">Your portfolio link.</p>
+          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">Username / Link</label>
+          <p className="text-[10px] font-sans text-white/30">Your portfolio link.</p>
         </div>
         <div className="w-full flex flex-col">
           <div 
@@ -105,7 +105,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
                 });
               }
             }}
-            className={`relative flex items-center text-xs font-mono text-white/50 pl-4 pr-[70px] py-3 rounded-none border transition-all overflow-hidden w-full ${
+            className={`relative flex items-center text-xs font-sans text-white/50 pl-4 pr-[70px] py-3 rounded-md border transition-all overflow-hidden w-full ${
               isUsernameChangeBlocked ? 'border-white/10 bg-zinc-950 cursor-pointer' :
               subdomainStatus === 'taken' ? 'border-rose-500/40 bg-rose-950/20' :
               subdomainStatus === 'available' ? 'border-emerald-500/40 bg-emerald-950/20' :
@@ -125,7 +125,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
                    e.preventDefault();
                  }
                }}
-               className={`bg-transparent outline-none text-white w-full p-0 border-none focus:ring-0 truncate font-mono ${
+               className={`bg-transparent outline-none text-white w-full p-0 border-none focus:ring-0 truncate font-sans ${
                  isUsernameChangeBlocked ? 'cursor-pointer select-none' : ''
                }`}
              />
@@ -134,7 +134,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
              <button 
                 type="button" 
                 onClick={(e) => copyLink(e)} 
-                className="absolute right-10 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-white/30 hover:text-white hover:bg-white/5 rounded-none transition-colors" 
+                className="absolute right-10 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-white/30 hover:text-white hover:bg-white/5 rounded-md transition-colors" 
                 title="Copy Link"
              >
                 <Copy className="w-3.5 h-3.5" />
@@ -148,7 +148,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
              </div>
           </div>
           {subdomainStatus === 'taken' && !isUsernameChangeBlocked && (
-            <span className="text-[10px] font-mono font-bold text-rose-400 mt-2">This username is already taken by someone else.</span>
+            <span className="text-[10px] font-sans font-medium text-rose-400 mt-2">This username is already taken by someone else.</span>
           )}
         </div>
       </div>
@@ -156,8 +156,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: PROFESSION & BIO */}
       <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Profession & Bio</label>
-          <p className="text-[10px] font-mono text-white/30">Tell us a bit about your expertise.</p>
+          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">Profession & Bio</label>
+          <p className="text-[10px] font-sans text-white/30">Tell us a bit about your expertise.</p>
         </div>
         <div className="w-full flex flex-col gap-4">
           <input 
@@ -166,7 +166,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             value={profession} 
             onChange={(e) => setProfession(sanitizeText(e.target.value))} 
             placeholder="e.g. UI/UX Designer"
-            className="w-full px-4 py-3 rounded-none border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-mono text-white" 
+            className="w-full px-4 py-3 rounded-md border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-sans text-white" 
           />
           <textarea 
             rows={4} 
@@ -174,7 +174,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             value={bio} 
             onChange={(e) => setBio(sanitizeText(e.target.value))} 
             placeholder="Write your short bio here..."
-            className="w-full px-4 py-3 rounded-none border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-mono leading-relaxed text-white resize-none" 
+            className="w-full px-4 py-3 rounded-md border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-sans leading-relaxed text-white resize-none" 
           />
         </div>
       </div>
@@ -182,20 +182,20 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: CONNECTED WORKS REDIRECT */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8 pt-2">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-xs font-mono font-bold text-white uppercase tracking-wider mb-1">Connected Works</label>
-          <p className="text-[10px] font-mono text-white/30">Showcase works from other platforms.</p>
+          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">Connected Works</label>
+          <p className="text-[10px] font-sans text-white/30">Showcase works from other platforms.</p>
         </div>
         <div className="w-full">
           <Link
             href="/dashboard/integrations"
-            className="flex items-center gap-3 px-5 py-4 rounded-none border border-white/10 bg-zinc-900/30 hover:bg-[#ff9e00]/10 hover:border-[#ff9e00]/30 transition-all group w-full sm:w-max"
+            className="flex items-center gap-3 px-5 py-4 rounded-md border border-white/10 bg-zinc-900/30 hover:bg-[#ff9e00]/10 hover:border-[#ff9e00]/30 transition-all group w-full sm:w-max"
           >
-            <div className="w-8 h-8 rounded-none bg-zinc-950 border border-white/5 flex items-center justify-center text-white/40 group-hover:text-white transition-colors">
+            <div className="w-8 h-8 rounded-md bg-zinc-950 border border-white/5 flex items-center justify-center text-white/40 group-hover:text-white transition-colors">
               <Plug className="w-4 h-4 text-[#ff9e00]" />
             </div>
             <div className="flex flex-col flex-1">
-              <span className="text-xs font-mono font-bold text-white group-hover:text-[#ff9e00] transition-colors leading-tight">Manage Connected Works</span>
-              <span className="text-[10px] font-mono text-white/40">GitHub, Penpot, and others</span>
+              <span className="text-xs font-sans font-medium text-white group-hover:text-[#ff9e00] transition-colors leading-tight">Manage Connected Works</span>
+              <span className="text-[10px] font-sans text-white/40">GitHub, Penpot, and others</span>
             </div>
             <ArrowRight className="w-3.5 h-3.5 text-white/30 group-hover:text-[#ff9e00] group-hover:translate-x-1 transition-all" />
           </Link>
@@ -204,13 +204,13 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       
       {/* ACTION BUTTONS */}
       <div className="pt-2 flex flex-col-reverse sm:flex-row justify-end gap-3">
-        <button type="button" onClick={() => window.location.reload()} className="w-full sm:w-auto px-6 py-2.5 rounded-none font-mono font-bold uppercase tracking-wider text-white/50 bg-zinc-900 border border-white/10 hover:bg-zinc-800 transition-colors text-xs">
+        <button type="button" onClick={() => window.location.reload()} className="w-full sm:w-auto px-6 py-2.5 rounded-md font-sans font-medium uppercase tracking-wider text-white/50 bg-zinc-900 border border-white/10 hover:bg-zinc-800 transition-colors text-xs">
           Cancel
         </button>
         <button 
           type="submit" 
           disabled={isSaving || !isFormValid} 
-          className={`relative px-8 py-2.5 rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 w-full sm:w-auto
+          className={`relative px-8 py-2.5 rounded-md text-xs font-sans font-medium uppercase tracking-wider transition-all duration-300 w-full sm:w-auto
             ${isSaving || !isFormValid 
               ? 'bg-zinc-900 text-white/20 border border-white/5 cursor-not-allowed' 
               : 'bg-[#ff9e00] text-black hover:bg-[#ffaa22] active:scale-95 border border-transparent'

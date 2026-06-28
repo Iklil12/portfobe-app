@@ -168,18 +168,18 @@ export default function AnalyticsPage() {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 animate-enter">
         <div>
-          <h1 className="text-3xl font-mono font-bold text-white tracking-tight uppercase mb-1.5">
+          <h1 className="text-3xl font-sans font-medium text-white tracking-tight uppercase mb-1.5">
             Metrics.
           </h1>
-          <p className="text-xs font-mono text-white/40">In-depth analysis of your portfolio's performance and traffic.</p>
+          <p className="text-xs font-sans text-white/60">In-depth analysis of your portfolio's performance and traffic.</p>
         </div>
-        <div className="flex bg-zinc-900 p-1 border border-white/10 rounded-none self-start md:self-auto">
+        <div className="flex bg-zinc-900 p-1 border border-white/10 rounded-md self-start md:self-auto">
           {RANGES.map(r => {
             const locked = r.pro && userPlan === 'FREE';
             return (
               <button key={r.id}
                 onClick={() => locked ? handleLocked() : setRange(r.id)}
-                className={`px-4 py-2 text-[10px] font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 whitespace-nowrap rounded-none ${range === r.id ? 'bg-zinc-800 text-[#ff9e00] border border-white/5' : 'text-white/40 hover:text-white'}`}
+                className={`px-4 py-2 text-[10px] font-sans font-medium transition-all flex items-center gap-1.5 whitespace-nowrap rounded-md ${range === r.id ? 'bg-zinc-800 text-[#ff9e00] border border-white/5' : 'text-white/60 hover:text-white'}`}
               >
                 {r.label}
                 {locked && <Lock className="w-3 h-3 text-[#ff9e00]/70" />}

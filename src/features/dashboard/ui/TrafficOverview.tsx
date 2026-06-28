@@ -20,16 +20,16 @@ const safeDateFormatter = (dateStr: string) => {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-zinc-950 p-3 rounded-none border border-white/15 shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
-        <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-2">{label}</p>
+      <div className="bg-zinc-950 p-3 rounded-md border border-white/15 shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
+        <p className="text-[9px] font-sans font-medium text-white/60 mb-2">{label}</p>
         <div className="space-y-1.5">
           {payload.map((entry: any, index: number) => (
             <div key={index} className="flex items-center gap-3 justify-between">
               <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-none" style={{ backgroundColor: entry.color }}></div>
-                <span className="text-[10px] font-mono font-bold text-white/70 capitalize">{entry.name}</span>
+                <div className="w-2 h-2 rounded-md" style={{ backgroundColor: entry.color }}></div>
+                <span className="text-[10px] font-sans font-medium text-white/70 capitalize">{entry.name}</span>
               </div>
-              <span className="text-xs font-mono font-bold text-white">{entry.value}</span>
+              <span className="text-xs font-sans font-medium text-white">{entry.value}</span>
             </div>
           ))}
         </div>
@@ -81,40 +81,40 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
 
   if (isLoading) {
     return (
-      <div className="bg-zinc-950 border border-white/10 rounded-none h-full min-h-[450px] shimmer w-full"></div>
+      <div className="bg-zinc-950 border border-white/10 rounded-md h-full min-h-[450px] shimmer w-full"></div>
     );
   }
 
   return (
     <AnimateOnScroll delay={100} className="h-full">
-      <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-none transition-all hover:border-white/20 h-full flex flex-col">
+      <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-md transition-all hover:border-white/20 h-full flex flex-col">
         {/* Header & Filters */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
           <div>
-            <h3 className="text-lg font-display font-bold text-white uppercase tracking-wider">Traffic Overview</h3>
-            <p className="text-xs font-mono text-white/50 mt-1">Your portfolio performance over the last 7 days</p>
+            <h3 className="text-lg font-sans font-medium text-white">Traffic Overview</h3>
+            <p className="text-xs font-sans text-white/50 mt-1">Your portfolio performance over the last 7 days</p>
           </div>
 
-          <div className="px-4 py-1.5 border border-white/10 bg-white/5 text-[9px] font-mono font-bold uppercase tracking-widest text-white/70 self-start lg:self-auto rounded-none">
+          <div className="px-4 py-1.5 border border-white/10 bg-white/5 text-[9px] font-sans font-medium text-white/70 self-start lg:self-auto rounded-md">
             Last 7 Days
           </div>
         </div>
 
         {/* Summary Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-8">
-          <div className="bg-white/[0.02] border border-white/5 rounded-none p-4">
-            <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-1.5">Total Views</p>
-            <h4 className="text-xl md:text-2xl font-display font-bold text-white">{summary.totalViews.toLocaleString()}</h4>
+          <div className="bg-white/[0.02] border border-white/5 rounded-md p-4">
+            <p className="text-[9px] font-sans font-medium text-white/60 mb-1.5">Total Views</p>
+            <h4 className="text-xl md:text-2xl font-sans font-medium text-white">{summary.totalViews.toLocaleString()}</h4>
           </div>
-          <div className="bg-white/[0.02] border border-white/5 rounded-none p-4">
-            <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-1.5">Daily Average</p>
-            <h4 className="text-xl md:text-2xl font-display font-bold text-white">{summary.avgDaily.toLocaleString()}</h4>
+          <div className="bg-white/[0.02] border border-white/5 rounded-md p-4">
+            <p className="text-[9px] font-sans font-medium text-white/60 mb-1.5">Daily Average</p>
+            <h4 className="text-xl md:text-2xl font-sans font-medium text-white">{summary.avgDaily.toLocaleString()}</h4>
           </div>
-          <div className="bg-[#ff9e00]/5 border border-[#ff9e00]/25 rounded-none p-4">
-            <p className="text-[9px] font-mono font-bold text-[#ff9e00] uppercase tracking-widest mb-1.5">Peak Visits</p>
+          <div className="bg-[#ff9e00]/5 border border-[#ff9e00]/25 rounded-md p-4">
+            <p className="text-[9px] font-sans font-medium text-[#ff9e00] mb-1.5">Peak Visits</p>
             <div className="flex items-baseline gap-2 truncate">
-              <h4 className="text-xl md:text-2xl font-display font-bold text-[#ff9e00]">{summary.peakDay}</h4>
-              <span className="text-[10px] font-mono font-bold text-[#ff9e00]/70">({summary.peakViews} views)</span>
+              <h4 className="text-xl md:text-2xl font-sans font-medium text-[#ff9e00]">{summary.peakDay}</h4>
+              <span className="text-[10px] font-sans font-medium text-[#ff9e00]/70">({summary.peakViews} views)</span>
             </div>
           </div>
         </div>
@@ -125,15 +125,15 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
             onClick={() => setActiveMetric(activeMetric === 'views' ? 'both' : 'views')}
             className="flex items-center gap-2 group"
           >
-            <div className={`w-2.5 h-2.5 rounded-none transition-colors ${activeMetric === 'views' || activeMetric === 'both' ? 'bg-[#ff9e00]' : 'bg-zinc-800 border border-white/10'}`}></div>
-            <span className={`text-[9px] font-mono font-bold uppercase tracking-widest transition-colors ${activeMetric === 'views' || activeMetric === 'both' ? 'text-white' : 'text-white/40 group-hover:text-white/60'}`}>Page Views</span>
+            <div className={`w-2.5 h-2.5 rounded-md transition-colors ${activeMetric === 'views' || activeMetric === 'both' ? 'bg-[#ff9e00]' : 'bg-zinc-800 border border-white/10'}`}></div>
+            <span className={`text-[9px] font-sans font-medium transition-colors ${activeMetric === 'views' || activeMetric === 'both' ? 'text-white' : 'text-white/60 group-hover:text-white/60'}`}>Page Views</span>
           </button>
           <button
             onClick={() => setActiveMetric(activeMetric === 'visitors' ? 'both' : 'visitors')}
             className="flex items-center gap-2 group"
           >
-            <div className={`w-2.5 h-2.5 rounded-none transition-colors ${activeMetric === 'visitors' || activeMetric === 'both' ? 'bg-white' : 'bg-zinc-800 border border-white/10'}`}></div>
-            <span className={`text-[9px] font-mono font-bold uppercase tracking-widest transition-colors ${activeMetric === 'visitors' || activeMetric === 'both' ? 'text-white' : 'text-white/40 group-hover:text-white/60'}`}>Uniq. Visitors</span>
+            <div className={`w-2.5 h-2.5 rounded-md transition-colors ${activeMetric === 'visitors' || activeMetric === 'both' ? 'bg-white' : 'bg-zinc-800 border border-white/10'}`}></div>
+            <span className={`text-[9px] font-sans font-medium transition-colors ${activeMetric === 'visitors' || activeMetric === 'both' ? 'text-white' : 'text-white/60 group-hover:text-white/60'}`}>Uniq. Visitors</span>
           </button>
         </div>
 

@@ -69,17 +69,17 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative bg-[#050505] w-full max-w-xl rounded-none border border-white/10 shadow-[0_0_40px_rgba(255,158,0,0.05)] overflow-hidden"
+            className="relative bg-[#050505] w-full max-w-xl rounded-md border border-white/10 shadow-[0_0_40px_rgba(255,158,0,0.05)] overflow-hidden"
           >
             {/* Header */}
             <div className="p-5 md:p-6 border-b border-white/10 flex items-center justify-between relative bg-zinc-950">
               <div className="flex-1 flex justify-center pr-8 sm:pr-0">
-                <h2 className="text-sm md:text-base font-mono font-bold text-white uppercase tracking-wider text-center">Share Portfolio</h2>
+                <h2 className="text-sm md:text-base font-sans font-medium text-white text-center">Share Portfolio</h2>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="absolute right-5 md:right-6 top-1/2 -translate-y-1/2 w-8 h-8 rounded-none border border-white/10 bg-zinc-900 flex items-center justify-center text-white/50 hover:text-white hover:bg-zinc-800 transition-colors active:scale-95"
+                className="absolute right-5 md:right-6 top-1/2 -translate-y-1/2 w-8 h-8 rounded-md border border-white/10 bg-zinc-900 flex items-center justify-center text-white/50 hover:text-white hover:bg-zinc-800 transition-colors active:scale-95"
               >
                 <i className="fas fa-times text-sm"></i>
               </button>
@@ -88,12 +88,12 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
             {/* Content */}
             <div className="p-5 sm:p-8">
               {/* URL Box */}
-              <div className="border border-white/10 rounded-none p-5 sm:p-6 bg-zinc-950 mb-6 sm:mb-8 flex flex-col items-center">
+              <div className="border border-white/10 rounded-md p-5 sm:p-6 bg-zinc-950 mb-6 sm:mb-8 flex flex-col items-center">
                 <a
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white hover:text-[#ff9e00] font-mono text-sm md:text-base mb-4 sm:mb-6 transition-colors break-all text-center underline decoration-white/20 underline-offset-4"
+                  className="text-white hover:text-[#ff9e00] font-sans text-sm md:text-base mb-4 sm:mb-6 transition-colors break-all text-center underline decoration-white/20 underline-offset-4"
                 >
                   {url}
                 </a>
@@ -103,7 +103,7 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 px-8 py-3 rounded-none border border-[#ff9e00]/25 text-[#ff9e00] bg-[#ff9e00]/5 hover:bg-[#ff9e00]/10 transition-colors font-mono font-bold text-[10px] uppercase tracking-wider"
+                    className="flex items-center justify-center gap-2 px-8 py-3 rounded-md border border-[#ff9e00]/25 text-[#ff9e00] bg-[#ff9e00]/5 hover:bg-[#ff9e00]/10 transition-colors font-sans font-medium text-[10px]"
                   >
                     <i className="fas fa-external-link-alt"></i> View Website
                   </a>
@@ -112,42 +112,36 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
 
               {/* Share Section */}
               <div className="flex flex-col items-center">
-                <p className="text-[10px] font-mono font-bold text-white/40 mb-4 uppercase tracking-widest">Share to Social Media</p>
+                <p className="text-[10px] font-sans font-medium text-white/60 mb-4">Share to Social Media</p>
                 <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
                   <button
                     onClick={shareFacebook}
-                    className="w-10 h-10 rounded-none border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-zinc-800 hover:text-[#1877F2] transition-all hover:border-white/20"
+                    className="w-10 h-10 rounded-md border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-zinc-800 hover:text-[#1877F2] transition-all hover:border-white/20"
                   >
                     <i className="fab fa-facebook-f"></i>
                   </button>
                   <button
                     onClick={shareTwitter}
-                    className="w-10 h-10 rounded-none border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-zinc-800 hover:text-white transition-all hover:border-white/20"
+                    className="w-10 h-10 rounded-md border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-zinc-800 hover:text-white transition-all hover:border-white/20"
                   >
                     <i className="fab fa-twitter"></i>
                   </button>
                   <button
                     onClick={shareLinkedIn}
-                    className="w-10 h-10 rounded-none border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-zinc-800 hover:text-[#0A66C2] transition-all hover:border-white/20"
+                    className="w-10 h-10 rounded-md border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-zinc-800 hover:text-[#0A66C2] transition-all hover:border-white/20"
                   >
                     <i className="fab fa-linkedin-in"></i>
                   </button>
                   <button
                     onClick={handleCopy}
-                    className={`w-10 h-10 rounded-none border flex items-center justify-center transition-all ${isCopied
-                        ? 'border-[#ff9e00] bg-[#ff9e00] text-black'
-                        : 'border-white/10 bg-zinc-900 text-white/70 hover:bg-zinc-800 hover:text-white hover:border-white/20'
-                      }`}
+                    className={`w-10 h-10 rounded-md border flex items-center justify-center transition-all ${isCopied ? 'border-[#ff9e00] bg-[#ff9e00] text-black' : 'border-white/10 bg-zinc-900 text-white/70 hover:bg-zinc-800 hover:text-white hover:border-white/20' }`}
                     title="Copy Link"
                   >
                     <i className={isCopied ? "fas fa-check" : "fas fa-link"}></i>
                   </button>
                   <button
                     onClick={() => setShowQR(!showQR)}
-                    className={`px-4 h-10 rounded-none border flex items-center justify-center gap-2 transition-colors font-mono text-[10px] font-bold uppercase tracking-wider ${showQR
-                        ? 'border-[#ff9e00] bg-[#ff9e00] text-black'
-                        : 'border-white/10 bg-zinc-900 text-white/70 hover:bg-zinc-800 hover:text-white hover:border-white/20'
-                      }`}
+                    className={`px-4 h-10 rounded-md border flex items-center justify-center gap-2 transition-colors font-mono text-[10px] font-medium ${showQR ? 'border-[#ff9e00] bg-[#ff9e00] text-black' : 'border-white/10 bg-zinc-900 text-white/70 hover:bg-zinc-800 hover:text-white hover:border-white/20' }`}
                   >
                     <i className="fas fa-qrcode"></i> QR Code
                   </button>
@@ -160,7 +154,7 @@ export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModal
                       initial={{ opacity: 0, height: 0, marginTop: 0 }}
                       animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
                       exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                      className="p-4 bg-white border-4 border-zinc-800 rounded-none overflow-hidden"
+                      className="p-4 bg-white border-4 border-zinc-800 rounded-md overflow-hidden"
                     >
                       <QRCode value={url} size={150} level="H" />
                     </motion.div>

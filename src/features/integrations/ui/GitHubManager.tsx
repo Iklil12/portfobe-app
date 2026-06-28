@@ -87,20 +87,20 @@ export function GitHubManager() {
   };
 
   return (
-    <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-none relative z-40">
+    <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-md relative z-40">
       <div className="space-y-8">
         {isGithubConnected ? (
           <>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 rounded-none border border-white/5 bg-[#0a0a0a]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 rounded-md border border-white/5 bg-[#0a0a0a]">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-[#ff9e00]">
+                <div className="w-14 h-14 rounded-md bg-zinc-900 border border-white/10 flex items-center justify-center text-[#ff9e00]">
                   <GithubIcon className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-base font-mono font-bold text-white tracking-wide">@{githubUsername}</p>
+                  <p className="text-base font-sans font-medium text-white tracking-wide">@{githubUsername}</p>
                   <div className="flex items-center gap-1.5 mt-1.5">
                     <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <p className="text-[9px] text-[#86efac] font-mono font-bold uppercase tracking-wider">Connected</p>
+                    <p className="text-[9px] text-[#86efac] font-sans font-medium uppercase tracking-wider">Connected</p>
                   </div>
                 </div>
               </div>
@@ -108,45 +108,45 @@ export function GitHubManager() {
                 href={`https://github.com/${githubUsername}`} 
                 target="_blank" 
                 rel="noreferrer" 
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none border border-white/10 bg-zinc-900 text-white/70 text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors shadow-none text-center"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md border border-white/10 bg-zinc-900 text-white/70 text-[10px] font-sans font-medium uppercase tracking-widest hover:bg-zinc-800 transition-colors shadow-none text-center"
               >
                 Profile <ExternalLink className="w-3.5 h-3.5 text-white/40" />
               </a>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-none border border-white/5 bg-[#0a0a0a]">
-                <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-4">Sync Management</p>
+              <div className="p-6 rounded-md border border-white/5 bg-[#0a0a0a]">
+                <p className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-widest mb-4">Sync Management</p>
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <span className="block text-xs text-white/70 font-mono font-bold">
+                    <span className="block text-xs text-white/70 font-sans font-medium">
                       {timeAgo(lastGithubRefresh) ? `Last synced ${timeAgo(lastGithubRefresh)}` : 'Never synced'}
                     </span>
-                    <p className="text-[9px] text-white/40 font-mono italic">Auto-sync every 15 minutes</p>
+                    <p className="text-[9px] text-white/40 font-sans italic">Auto-sync every 15 minutes</p>
                   </div>
                   <button
                     type="button"
                     onClick={handleRefreshGithub}
                     disabled={isRefreshingGithub}
-                    className="w-10 h-10 rounded-none bg-zinc-900 border border-white/10 text-white hover:bg-zinc-800 transition-colors disabled:opacity-30 flex items-center justify-center focus:outline-none"
+                    className="w-10 h-10 rounded-md bg-zinc-900 border border-white/10 text-white hover:bg-zinc-800 transition-colors disabled:opacity-30 flex items-center justify-center focus:outline-none"
                   >
                     <RefreshCw className={`w-4 h-4 ${isRefreshingGithub ? 'animate-spin text-[#ff9e00]' : ''}`} />
                   </button>
                 </div>
               </div>
 
-              <div className="p-6 rounded-none border border-white/5 bg-[#0a0a0a]">
-                <p className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest mb-4">Danger Zone</p>
+              <div className="p-6 rounded-md border border-white/5 bg-[#0a0a0a]">
+                <p className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-widest mb-4">Danger Zone</p>
                 {confirmDisconnect === 'github' ? (
                   <div className="flex gap-3">
-                    <button type="button" onClick={() => setConfirmDisconnect(null)} className="flex-1 py-2.5 rounded-none bg-zinc-900 border border-white/10 text-white/70 text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all">Cancel</button>
-                    <button type="button" onClick={handleDisconnectGithub} disabled={isDisconnectingGithub} className="flex-1 py-2.5 rounded-none bg-rose-600 text-white text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-rose-700 active:scale-95 transition-all">Disconnect</button>
+                    <button type="button" onClick={() => setConfirmDisconnect(null)} className="flex-1 py-2.5 rounded-md bg-zinc-900 border border-white/10 text-white/70 text-[9px] font-sans font-medium uppercase tracking-widest hover:bg-zinc-800 transition-all">Cancel</button>
+                    <button type="button" onClick={handleDisconnectGithub} disabled={isDisconnectingGithub} className="flex-1 py-2.5 rounded-md bg-rose-600 text-white text-[9px] font-sans font-medium uppercase tracking-widest hover:bg-rose-700 active:scale-95 transition-all">Disconnect</button>
                   </div>
                 ) : (
                   <button 
                     type="button"
                     onClick={() => setConfirmDisconnect('github')}
-                    className="w-full py-3 rounded-none border border-rose-900/30 bg-rose-950/20 text-rose-400 text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-rose-900/30 transition-all"
+                    className="w-full py-3 rounded-md border border-rose-900/30 bg-rose-950/20 text-rose-400 text-[10px] font-sans font-medium uppercase tracking-widest hover:bg-rose-900/30 transition-all"
                   >
                     Disconnect Account
                   </button>
@@ -156,17 +156,17 @@ export function GitHubManager() {
           </>
         ) : (
           <div className="py-20 flex flex-col items-center justify-center text-center space-y-6">
-            <div className="w-20 h-20 rounded-none bg-zinc-900 border border-white/10 flex items-center justify-center text-white/30">
+            <div className="w-20 h-20 rounded-md bg-zinc-900 border border-white/10 flex items-center justify-center text-white/30">
               <GithubIcon className="w-9 h-9" />
             </div>
             <div className="max-w-[280px]">
-              <h4 className="text-sm font-mono font-bold text-white uppercase tracking-wider">GitHub Not Connected</h4>
-              <p className="text-xs text-white/40 mt-2 font-mono leading-relaxed">Connect your account to display repositories and code activity on your portfolio.</p>
+              <h4 className="text-sm font-sans font-medium text-white uppercase tracking-wider">GitHub Not Connected</h4>
+              <p className="text-xs text-white/40 mt-2 font-sans leading-relaxed">Connect your account to display repositories and code activity on your portfolio.</p>
             </div>
             <button
               type="button"
               onClick={() => signIn('github', { callbackUrl: '/dashboard/integrations' })}
-              className="px-6 py-3.5 bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-mono font-bold uppercase tracking-widest transition-all active:scale-95 shadow-md"
+              className="px-6 py-3.5 bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-sans font-medium uppercase tracking-widest transition-all active:scale-95 shadow-md"
             >
               Connect GitHub Now
             </button>

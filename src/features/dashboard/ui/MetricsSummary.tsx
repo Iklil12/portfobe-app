@@ -69,7 +69,7 @@ export function MetricsSummary({ analytics, strength, breakdown = [], userPlan =
         <div className="flex items-center justify-between gap-4 h-full relative z-10 transition-all duration-300 group-hover:opacity-0 group-hover:scale-95">
           <div className="flex flex-col justify-between h-full py-1">
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">
+              <p className="text-[10px] font-medium text-slate-500 mb-1">
                 Portfolio Strength
               </p>
               <h4 className="text-sm md:text-base font-extrabold text-slate-900 tracking-tight leading-tight mt-2">
@@ -84,7 +84,7 @@ export function MetricsSummary({ analytics, strength, breakdown = [], userPlan =
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+              <span className="text-[9px] font-medium text-slate-500">
                 {strength === 100 ? 'Ready to Compete' : 'Needs Completion'}
               </span>
             </div>
@@ -113,7 +113,7 @@ export function MetricsSummary({ analytics, strength, breakdown = [], userPlan =
               <span className="text-base md:text-lg font-extrabold text-slate-900 tracking-tight">
                 <AnimatedCounter value={strength} duration={1500} />%
               </span>
-              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-0.5">
+              <span className="text-[8px] font-medium text-slate-400 leading-none mt-0.5">
                 Strength
               </span>
             </div>
@@ -122,7 +122,7 @@ export function MetricsSummary({ analytics, strength, breakdown = [], userPlan =
 
         {/* Premium Hover Breakdown Overlay */}
         <div className="absolute inset-0 bg-white/95 p-4 md:p-5 opacity-0 pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 transition-all duration-200 z-20 flex flex-col justify-center rounded-[2rem] border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
-          <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-900 mb-3 flex items-center gap-2 shrink-0">
+          <h4 className="text-[10px] font-medium text-slate-900 mb-3 flex items-center gap-2 shrink-0">
             <i className="fas fa-bullseye text-indigo-600"></i> Profile Completeness
           </h4>
           <div className="space-y-1.5 md:space-y-2 overflow-y-auto pr-1 pb-1" style={{ scrollbarWidth: 'none' }}>
@@ -140,7 +140,7 @@ export function MetricsSummary({ analytics, strength, breakdown = [], userPlan =
                     {item.label}
                   </span>
                 </div>
-                <span className={`text-[8px] font-mono font-bold px-2 py-0.5 border rounded-full ${item.done ? 'bg-emerald-50/50 text-emerald-600 border-emerald-100/50' : 'bg-slate-50 text-slate-400 border-slate-100'}`}>
+                <span className={`text-[8px] font-sans font-medium px-2 py-0.5 border rounded-full ${item.done ? 'bg-emerald-50/50 text-emerald-600 border-emerald-100/50' : 'bg-slate-50 text-slate-400 border-slate-100'}`}>
                   +{item.weight}%
                 </span>
               </div>

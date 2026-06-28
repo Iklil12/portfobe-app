@@ -161,10 +161,10 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
           </div>
 
           <div className="relative z-10 text-center modal-enter">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 bg-zinc-900 border border-white/10 rounded-none mx-auto flex items-center justify-center shadow-none mb-8">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 bg-zinc-900 border border-white/10 rounded-md mx-auto flex items-center justify-center shadow-none mb-8">
               <span className="text-4xl sm:text-5xl intro-wave">👋</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-mono font-bold text-white uppercase tracking-wider mb-4">Hello, Creator!</h1>
+            <h1 className="text-2xl sm:text-3xl font-sans font-medium text-white uppercase tracking-wider mb-4">Hello, Creator!</h1>
             <p className="text-white/45 font-mono text-xs uppercase tracking-widest">Let's build your digital space...</p>
           </div>
         </div>
@@ -178,13 +178,13 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
           <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-md backdrop-enter"></div>
 
           {/* Kontainer Modal */}
-          <div className="relative w-full max-w-5xl bg-zinc-900 rounded-none shadow-none flex flex-col-reverse lg:flex-row border border-white/10 overflow-hidden max-h-[95vh] modal-enter text-white">
+          <div className="relative w-full max-w-5xl bg-zinc-900 rounded-md shadow-none flex flex-col-reverse lg:flex-row border border-white/10 overflow-hidden max-h-[95vh] modal-enter text-white">
             
             {/* Tombol Back */}
             {currentStep > 1 && !isSubmitting && (
               <button 
                 onClick={handleBack} 
-                className="absolute top-4 left-4 lg:top-8 lg:left-8 z-50 w-8 h-8 bg-zinc-950 border border-white/10 text-white/50 hover:text-white rounded-none flex items-center justify-center transition-all"
+                className="absolute top-4 left-4 lg:top-8 lg:left-8 z-50 w-8 h-8 bg-zinc-950 border border-white/10 text-white/50 hover:text-white rounded-md flex items-center justify-center transition-all"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
@@ -198,7 +198,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                 {[1, 2, 3].map((step) => (
                   <div 
                     key={step} 
-                    className={`h-1 step-transition rounded-none ${
+                    className={`h-1 step-transition rounded-md ${
                       currentStep === step 
                         ? 'w-8 bg-[#ff9e00]' 
                         : currentStep > step 
@@ -211,12 +211,12 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
 
               {currentStep === 1 && (
                 <div className="animate-[fadeInBackdrop_0.5s_forwards]">
-                  <h3 className="text-lg sm:text-xl font-mono font-bold text-white uppercase tracking-wider mb-3">Claim Your Home</h3>
-                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">This is the permanent address that will be shared with your clients or audience.</p>
+                  <h3 className="text-lg sm:text-xl font-sans font-medium text-white uppercase tracking-wider mb-3">Claim Your Home</h3>
+                  <p className="text-[11px] font-sans text-white/40 mb-8 leading-relaxed uppercase tracking-wide">This is the permanent address that will be shared with your clients or audience.</p>
 
                   <form onSubmit={handleNext} className="space-y-5">
-                    <div className="relative flex items-center bg-zinc-950 border border-white/10 rounded-none focus-within:border-[#ff9e00] transition-all group">
-                      <div className="pl-5 pr-2 py-4 bg-zinc-900 border-r border-white/5 text-white/40 font-mono font-bold text-xs">portfo.be/</div>
+                    <div className="relative flex items-center bg-zinc-950 border border-white/10 rounded-md focus-within:border-[#ff9e00] transition-all group">
+                      <div className="pl-5 pr-2 py-4 bg-zinc-900 border-r border-white/5 text-white/40 font-sans font-medium text-xs">portfo.be/</div>
                       <input 
                         type="text" 
                         autoFocus 
@@ -224,19 +224,19 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                         value={sub} 
                         onChange={(e) => setSub(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ""))} 
                         placeholder="yourname" 
-                        className="flex-1 px-4 py-4 bg-transparent outline-none font-mono font-bold text-white text-xs placeholder:text-white/20" 
+                        className="flex-1 px-4 py-4 bg-transparent outline-none font-sans font-medium text-white text-xs placeholder:text-white/20" 
                       />
-                      <div className="pr-5 text-[9px] font-mono text-white/30">{sub.length}/15</div>
+                      <div className="pr-5 text-[9px] font-sans text-white/30">{sub.length}/15</div>
                     </div>
                     {err && (
-                      <p className="text-[10px] font-mono text-rose-500 ml-1 flex items-center gap-1.5 uppercase tracking-wide">
+                      <p className="text-[10px] font-sans text-rose-500 ml-1 flex items-center gap-1.5 uppercase tracking-wide">
                         <AlertCircle className="w-3.5 h-3.5" /> <span>{err}</span>
                       </p>
                     )}
                     <button 
                       type="submit" 
                       disabled={sub.length < 3 || isValidating} 
-                      className="w-full py-4 bg-[#ff9e00] hover:bg-[#ffaa22] text-black rounded-none font-mono font-bold text-xs uppercase tracking-wider flex justify-center items-center gap-2 transition-all disabled:opacity-40"
+                      className="w-full py-4 bg-[#ff9e00] hover:bg-[#ffaa22] text-black rounded-md font-sans font-medium text-xs uppercase tracking-wider flex justify-center items-center gap-2 transition-all disabled:opacity-40"
                     >
                       {isValidating ? (
                         <>
@@ -256,11 +256,11 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
 
               {currentStep === 2 && (
                 <div className="animate-[fadeInBackdrop_0.5s_forwards]">
-                  <h3 className="text-lg sm:text-xl font-mono font-bold text-white uppercase tracking-wider mb-3">Let's Get Acquainted</h3>
-                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">How should the world address you? This will be your main title.</p>
+                  <h3 className="text-lg sm:text-xl font-sans font-medium text-white uppercase tracking-wider mb-3">Let's Get Acquainted</h3>
+                  <p className="text-[11px] font-sans text-white/40 mb-8 leading-relaxed uppercase tracking-wide">How should the world address you? This will be your main title.</p>
 
                   <form onSubmit={handleNext} className="space-y-5">
-                    <div className="relative flex items-center bg-zinc-950 border border-white/10 rounded-none focus-within:border-[#ff9e00] transition-all">
+                    <div className="relative flex items-center bg-zinc-950 border border-white/10 rounded-md focus-within:border-[#ff9e00] transition-all">
                       <input 
                         type="text" 
                         autoFocus 
@@ -268,14 +268,14 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                         value={name} 
                         onChange={(e) => setName(e.target.value.replace(/[^a-zA-Z0-9\s\.\-]/g, ""))} 
                         placeholder="Full / Stage Name" 
-                        className="flex-1 px-5 py-4 bg-transparent outline-none font-mono font-bold text-white text-xs placeholder:text-white/20" 
+                        className="flex-1 px-5 py-4 bg-transparent outline-none font-sans font-medium text-white text-xs placeholder:text-white/20" 
                       />
-                      <div className="pr-5 text-[9px] font-mono text-white/30">{name.length}/50</div>
+                      <div className="pr-5 text-[9px] font-sans text-white/30">{name.length}/50</div>
                     </div>
                     <button 
                       type="submit" 
                       disabled={!name.trim()} 
-                      className="w-full py-4 bg-[#ff9e00] hover:bg-[#ffaa22] text-black rounded-none font-mono font-bold text-xs uppercase tracking-wider flex justify-center items-center gap-2 transition-all disabled:opacity-40"
+                      className="w-full py-4 bg-[#ff9e00] hover:bg-[#ffaa22] text-black rounded-md font-sans font-medium text-xs uppercase tracking-wider flex justify-center items-center gap-2 transition-all disabled:opacity-40"
                     >
                       <span>Final Step</span>
                       <ArrowRight className="w-4 h-4" />
@@ -283,7 +283,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                     <button 
                       type="button" 
                       onClick={() => setCurrentStep(3)} 
-                      className="w-full py-2 text-white/40 font-mono font-bold text-[9px] uppercase tracking-widest hover:text-white transition-colors"
+                      className="w-full py-2 text-white/40 font-sans font-medium text-[9px] uppercase tracking-widest hover:text-white transition-colors"
                     >
                       Skip for Now
                     </button>
@@ -293,8 +293,8 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
 
               {currentStep === 3 && (
                 <div className="animate-[fadeInBackdrop_0.5s_forwards]">
-                  <h3 className="text-lg sm:text-xl font-mono font-bold text-white uppercase tracking-wider mb-3">One More Thing</h3>
-                  <p className="text-[11px] font-mono text-white/40 mb-8 leading-relaxed uppercase tracking-wide">What is your primary skill?</p>
+                  <h3 className="text-lg sm:text-xl font-sans font-medium text-white uppercase tracking-wider mb-3">One More Thing</h3>
+                  <p className="text-[11px] font-sans text-white/40 mb-8 leading-relaxed uppercase tracking-wide">What is your primary skill?</p>
 
                   <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
                     {professions.map((p) => {
@@ -304,16 +304,16 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                           key={p.id} 
                           onClick={() => finishOnboarding(p.id)} 
                           disabled={isSubmitting} 
-                          className="flex flex-col items-center justify-center p-4 sm:p-5 rounded-none border border-white/10 bg-zinc-950 transition-all hover:border-[#ff9e00] hover:-translate-y-1 active:scale-95 disabled:opacity-50 group"
+                          className="flex flex-col items-center justify-center p-4 sm:p-5 rounded-md border border-white/10 bg-zinc-950 transition-all hover:border-[#ff9e00] hover:-translate-y-1 active:scale-95 disabled:opacity-50 group"
                         >
-                          <div className={`w-12 h-12 rounded-none ${p.bg} ${p.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
+                          <div className={`w-12 h-12 rounded-md ${p.bg} ${p.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
                             {isSubmitting ? (
                               <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
                               <IconComponent className="w-5 h-5" />
                             )}
                           </div>
-                          <span className="text-[9px] font-mono font-bold text-white/60 text-center uppercase tracking-tight">{p.label}</span>
+                          <span className="text-[9px] font-sans font-medium text-white/60 text-center uppercase tracking-tight">{p.label}</span>
                         </button>
                       );
                     })}
@@ -321,7 +321,7 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                   <button 
                     onClick={() => finishOnboarding(null)} 
                     disabled={isSubmitting} 
-                    className="w-full text-white/40 font-mono font-bold text-[9px] uppercase tracking-[0.2em] hover:text-white transition-colors py-2 disabled:opacity-50"
+                    className="w-full text-white/40 font-sans font-medium text-[9px] uppercase tracking-[0.2em] hover:text-white transition-colors py-2 disabled:opacity-50"
                   >
                     {isSubmitting ? "Processing..." : "Keep It Secret for Now"}
                   </button>
@@ -349,38 +349,38 @@ export default function OnboardingModal({ userName, onFinish }: OnboardingModalP
                 } shadow-none`}></div>
 
                 {/* Objek 2: Glass Panel Utama */}
-                <div className={`absolute z-10 bg-zinc-900/90 border border-white/10 rounded-none p-4 lg:p-6 shadow-none animate-float-slow step-transition flex flex-col ${
+                <div className={`absolute z-10 bg-zinc-900/90 border border-white/10 rounded-md p-4 lg:p-6 shadow-none animate-float-slow step-transition flex flex-col ${
                   currentStep === 1 ? 'w-40 lg:w-56 h-24 lg:h-32 rotate-[-3deg]' :
                   currentStep === 2 ? 'w-32 lg:w-48 h-40 lg:h-56 rotate-[3deg] translate-y-4' :
                   'w-48 lg:w-64 h-32 lg:h-40 rotate-[0deg] scale-105'
                 }`}>
                    {currentStep === 1 && (
                      <div className="w-full h-full flex flex-col justify-center gap-2 lg:gap-3">
-                       <div className="w-1/2 h-2.5 bg-white/10 rounded-none"></div>
-                       <div className="w-full h-8 bg-zinc-950 border border-white/5 rounded-none"></div>
+                       <div className="w-1/2 h-2.5 bg-white/10 rounded-md"></div>
+                       <div className="w-full h-8 bg-zinc-950 border border-white/5 rounded-md"></div>
                      </div>
                    )}
                    {currentStep === 2 && (
                      <div className="w-full h-full flex flex-col items-center justify-center gap-3">
-                       <div className="w-16 h-16 lg:w-20 lg:h-20 bg-zinc-950 border border-white/5 rounded-none shadow-none"></div>
-                       <div className="w-3/4 h-2.5 bg-white/10 rounded-none"></div>
-                       <div className="w-1/2 h-2 bg-white/5 rounded-none"></div>
+                       <div className="w-16 h-16 lg:w-20 lg:h-20 bg-zinc-950 border border-white/5 rounded-md shadow-none"></div>
+                       <div className="w-3/4 h-2.5 bg-white/10 rounded-md"></div>
+                       <div className="w-1/2 h-2 bg-white/5 rounded-md"></div>
                      </div>
                    )}
                    {currentStep === 3 && (
                      <div className="w-full h-full grid grid-cols-2 gap-2 lg:gap-3">
-                       <div className="bg-zinc-950 border border-white/5 rounded-none"></div>
-                       <div className="bg-[#ff9e00]/10 border border-[#ff9e00]/30 rounded-none flex items-center justify-center">
+                       <div className="bg-zinc-950 border border-white/5 rounded-md"></div>
+                       <div className="bg-[#ff9e00]/10 border border-[#ff9e00]/30 rounded-md flex items-center justify-center">
                          <Check className="w-4 h-4 text-[#ff9e00]" />
                        </div>
-                       <div className="bg-zinc-950 border border-white/5 rounded-none"></div>
-                       <div className="bg-zinc-950 border border-white/5 rounded-none"></div>
+                       <div className="bg-zinc-950 border border-white/5 rounded-md"></div>
+                       <div className="bg-zinc-950 border border-white/5 rounded-md"></div>
                      </div>
                    )}
                 </div>
 
                 {/* Objek 3: Floating Badges */}
-                <div className={`absolute z-20 bg-zinc-950 border border-white/10 px-3 py-2 lg:px-4 lg:py-2.5 rounded-none font-mono font-bold text-[9px] text-[#ff9e00] uppercase tracking-wider animate-float-fast step-transition ${
+                <div className={`absolute z-20 bg-zinc-950 border border-white/10 px-3 py-2 lg:px-4 lg:py-2.5 rounded-md font-sans font-medium text-[9px] text-[#ff9e00] uppercase tracking-wider animate-float-fast step-transition ${
                   currentStep === 1 ? 'bottom-0 left-0 rotate-[-5deg]' :
                   currentStep === 2 ? 'top-0 right-0 rotate-[5deg]' :
                   'top-[-10px] left-[-10px] rotate-[-2deg]'

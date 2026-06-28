@@ -80,7 +80,7 @@ export function TemplatesSection() {
         {/* Template Counter - Mobile Only */}
         <div className="flex md:hidden justify-between items-center px-6 mb-4">
           <span className="text-white/30 text-xs font-mono">
-            <span className="text-[#ff9e00] text-sm font-bold">{String(activeCardIndex + 1).padStart(2, '0')}</span>
+            <span className="text-[#ff9e00] text-sm font-medium">{String(activeCardIndex + 1).padStart(2, '0')}</span>
             <span className="mx-1">/</span>
             {String(TEMPLATE_LIST.length).padStart(2, '0')}
           </span>
@@ -109,7 +109,7 @@ export function TemplatesSection() {
                 data-card-index={index}
                 onMouseEnter={() => setHoveredIndex(index)}
                 className={`
-                  group relative rounded-none overflow-hidden cursor-pointer shrink-0
+                  group relative rounded-md overflow-hidden cursor-pointer shrink-0
                   flex flex-col justify-end border transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)]
                   
                   /* MOBILE: Card dimensions & snapping */
@@ -123,7 +123,7 @@ export function TemplatesSection() {
                 style={{ transitionDelay: `${index * 30}ms` }}
               >
                 {/* Inner Container with bg */}
-                <div className="absolute inset-0 rounded-none overflow-hidden bg-[#0a0a0a]">
+                <div className="absolute inset-0 rounded-md overflow-hidden bg-[#0a0a0a]">
                   
                   {/* Background Image with enhanced transitions */}
                   <OptimizedLazyImage 
@@ -154,7 +154,7 @@ export function TemplatesSection() {
                     ${isMobileActive ? 'opacity-80' : 'opacity-30'}
                     ${isActive ? 'md:opacity-80 md:translate-y-0' : 'md:opacity-0 md:translate-y-4'}
                   `}>
-                    <span className="text-[#ff9e00] text-xs font-mono tracking-widest font-bold">
+                    <span className="text-[#ff9e00] text-xs font-mono tracking-widest font-medium">
                       [{String(index + 1).padStart(2, '0')}]
                     </span>
                   </div>
@@ -218,7 +218,7 @@ export function TemplatesSection() {
                       <Link 
                         href={`/templates`} 
                         className={`
-                          shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-none 
+                          shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-md 
                           flex items-center justify-center border
                           transition-all duration-300 
                           ${isMobileActive 
@@ -248,7 +248,7 @@ export function TemplatesSection() {
               onClick={() => scrollToCard(index)}
               aria-label={`Go to template ${index + 1}`}
               className={`
-                h-1.5 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] rounded-none
+                h-1.5 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] rounded-md
                 ${activeCardIndex === index 
                   ? 'w-8 bg-[#ff9e00]' 
                   : 'w-2 bg-white/15 hover:bg-white/30'}
@@ -259,7 +259,7 @@ export function TemplatesSection() {
 
         {/* Global Action Button */}
         <div className="mt-10 md:mt-16 flex justify-center pb-0 px-6">
-            <Link href="/templates" className="group relative flex items-center gap-4 px-8 py-4 rounded-none border border-white/10 text-white font-mono text-xs uppercase tracking-widest font-bold hover:border-white hover:bg-white hover:text-black transition-all duration-300 w-full md:w-auto justify-center overflow-hidden">
+            <Link href="/templates" className="group relative flex items-center gap-4 px-8 py-4 rounded-md border border-white/10 text-white font-mono text-xs uppercase tracking-widest font-medium hover:border-white hover:bg-white hover:text-black transition-all duration-300 w-full md:w-auto justify-center overflow-hidden">
               <span className="relative z-10">View Template Gallery</span>
               <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
             </Link>

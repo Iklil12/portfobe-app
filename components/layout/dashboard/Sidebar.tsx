@@ -70,7 +70,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
         <aside className="w-full bg-[#0a0a0a] border-r border-white/10 flex flex-col h-full z-20 shrink-0">
           <div className={`h-[72px] shrink-0 flex items-center relative border-b border-white/5 transition-all duration-300 ${isDesktopSidebarOpen ? 'justify-between px-6' : 'justify-center px-0'}`}>
             {!isDesktopSidebarOpen ? (
-              <button onClick={onToggleDesktopSidebar} className="w-12 h-12 flex items-center justify-center text-white/40 hover:text-[#ff9e00] transition-colors">
+              <button onClick={onToggleDesktopSidebar} className="w-12 h-12 flex items-center justify-center text-white/60 hover:text-[#ff9e00] transition-colors">
                 <PanelLeft className="w-5 h-5" />
               </button>
             ) : (
@@ -78,17 +78,17 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                 <Link href="/dashboard" className="flex items-center group cursor-pointer">
                    <img src="/portfo.be.webp" alt="Portfo.be Logo" className="h-6 w-auto object-contain invert brightness-0 group-hover:opacity-80 transition-opacity" />
                 </Link>
-                <button onClick={onToggleDesktopSidebar} className="w-6 h-6 flex items-center justify-center text-white/40 hover:text-[#ff9e00] transition-colors">
+                <button onClick={onToggleDesktopSidebar} className="w-6 h-6 flex items-center justify-center text-white/60 hover:text-[#ff9e00] transition-colors">
                   <PanelLeftClose className="w-5 h-5" />
                 </button>
               </>
             )}
           </div>
 
-          <nav className={`flex-1 py-4 hide-scrollbar space-y-1 ${isDesktopSidebarOpen ? 'px-3 overflow-y-auto' : 'px-2 overflow-visible'}`}>
+          <nav className={`flex-1 py-2 hide-scrollbar space-y-0.5 ${isDesktopSidebarOpen ? 'px-3 overflow-y-auto' : 'px-2 overflow-visible'}`}>
             {isLoading ? (
                <div className="flex flex-col gap-1">
-                  {[1,2,3,4,5].map(i => <div key={i} className={`w-full h-11 skeleton-premium rounded-none ${!isDesktopSidebarOpen && 'h-11'}`}></div>)}
+                  {[1,2,3,4,5].map(i => <div key={i} className={`w-full h-11 skeleton-premium rounded-md ${!isDesktopSidebarOpen && 'h-11'}`}></div>)}
                </div>
             ) : (
                <>
@@ -127,10 +127,10 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
           </nav>
 
           {/* Utility Nav */}
-          <div className={`shrink-0 flex flex-col pt-3 pb-3 border-t border-white/5 space-y-1 mt-auto ${isDesktopSidebarOpen ? 'px-3' : 'px-2'}`}>
+          <div className={`shrink-0 flex flex-col pt-2 pb-2 border-t border-white/5 space-y-0.5 mt-auto ${isDesktopSidebarOpen ? 'px-3' : 'px-2'}`}>
             {isLoading ? (
                <div className="flex flex-col gap-1">
-                  {[1,2].map(i => <div key={i} className="w-full h-11 skeleton-premium rounded-none"></div>)}
+                  {[1,2].map(i => <div key={i} className="w-full h-11 skeleton-premium rounded-md"></div>)}
                </div>
             ) : (
               <>
@@ -167,32 +167,32 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
           {/* User Plan Indicator in Rail */}
           <div className={`shrink-0 pb-6 pt-2 flex justify-center ${isDesktopSidebarOpen ? 'px-3' : 'px-2'}`}>
              {isLoading ? (
-                <div className="w-full h-11 skeleton-premium rounded-none"></div>
+                <div className="w-full h-11 skeleton-premium rounded-md"></div>
              ) : userPlan === 'FREE' ? (
                isDesktopSidebarOpen ? (
-                 <Link href="/pricing" className="w-full py-3 px-3 bg-zinc-900 rounded-none flex items-center justify-between group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title="Upgrade to PRO">
+                 <Link href="/pricing" className="w-full py-3 px-3 bg-zinc-900 rounded-md flex items-center justify-between group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title="Upgrade to PRO">
                     <div className="flex items-center gap-2">
                       <Crown className="text-[#ff9e00] w-4 h-4 group-hover:scale-110 transition-transform" />
-                      <span className="text-[10px] font-mono font-bold text-white tracking-widest uppercase">UPGRADE PRO</span>
+                      <span className="text-[10px] font-sans font-medium text-white">UPGRADE PRO</span>
                     </div>
-                    <div className="text-[8px] font-mono text-[#ff9e00] border border-[#ff9e00]/30 bg-[#ff9e00]/10 px-1 py-0.5 ml-auto mr-1">TRIAL</div>
-                    <div className="w-1.5 h-1.5 bg-red-500 rounded-none border border-black shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+                    <div className="text-[8px] font-sans text-[#ff9e00] border border-[#ff9e00]/30 bg-[#ff9e00]/10 px-1 py-0.5 ml-auto mr-1">TRIAL</div>
+                    <div className="w-1.5 h-1.5 bg-red-500 rounded-md border border-black shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
                  </Link>
                ) : (
-                 <Link href="/pricing" className="w-full h-11 bg-zinc-900 rounded-none flex items-center justify-center group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title="Upgrade to PRO">
+                 <Link href="/pricing" className="w-full h-11 bg-zinc-900 rounded-md flex items-center justify-center group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title="Upgrade to PRO">
                     <Crown className="text-[#ff9e00] w-4 h-4 group-hover:scale-110 transition-transform" />
                  </Link>
                )
              ) : (
                isDesktopSidebarOpen ? (
-                 <div className={`w-full py-3 px-3 rounded-none flex items-center gap-2 border ${userPlan === 'SUPREME' ? 'bg-violet-950/30 border-violet-500/30' : 'bg-zinc-900 border-white/10'}`}>
+                 <div className={`w-full py-3 px-3 rounded-md flex items-center gap-2 border ${userPlan === 'SUPREME' ? 'bg-violet-950/30 border-violet-500/30' : 'bg-zinc-900 border-white/10'}`}>
                     <Gem className={`w-4 h-4 shrink-0 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`} />
-                    <span className={`text-[10px] font-mono font-bold tracking-widest uppercase truncate ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`}>
+                    <span className={`text-[10px] font-sans font-medium truncate ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`}>
                       {userPlan === 'SUPREME' ? 'Supreme' : 'Pro'}
                     </span>
                  </div>
                ) : (
-                 <div className={`w-full h-11 rounded-none flex items-center justify-center border ${userPlan === 'SUPREME' ? 'bg-violet-950/30 border-violet-500/30' : 'bg-zinc-900 border-white/10'}`} title={userPlan === 'SUPREME' ? 'Supreme Plan' : 'Pro Plan'}>
+                 <div className={`w-full h-11 rounded-md flex items-center justify-center border ${userPlan === 'SUPREME' ? 'bg-violet-950/30 border-violet-500/30' : 'bg-zinc-900 border-white/10'}`} title={userPlan === 'SUPREME' ? 'Supreme Plan' : 'Pro Plan'}>
                     <Gem className={`w-4 h-4 shrink-0 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`} />
                  </div>
                )
@@ -209,7 +209,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
         <aside className="w-full bg-black border-r border-white/10 flex flex-col h-full">
           <div className="h-[88px] shrink-0 flex items-center justify-between px-6 border-b border-white/5">
             {isLoading ? (
-              <div className="h-8 w-28 skeleton-premium rounded-none"></div>
+              <div className="h-8 w-28 skeleton-premium rounded-md"></div>
             ) : (
               <Link href="/" className="flex items-center group cursor-pointer">
                  <img src="/portfo.be.webp" alt="Portfo.be Logo" className="h-9 w-auto object-contain invert brightness-0" />
@@ -221,7 +221,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
             {isLoading ? (
               <div className="space-y-3 py-4">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-11 w-full skeleton-premium rounded-none"></div>
+                  <div key={i} className="h-11 w-full skeleton-premium rounded-md"></div>
                 ))}
               </div>
             ) : (
@@ -231,12 +231,12 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                  
                  {/* Menu Desain (Dengan Submenu Accordion) */}
                  <div className="pt-2">
-                   <button id="tour-mobile-design-menu" onClick={() => setIsMobileDesignMenuOpen(!isMobileDesignMenuOpen)} className={`w-full flex items-center transition-all duration-300 group py-3 rounded-none px-4 justify-between ${isDesignRoute ? 'text-white' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+                   <button id="tour-mobile-design-menu" onClick={() => setIsMobileDesignMenuOpen(!isMobileDesignMenuOpen)} className={`w-full flex items-center transition-all duration-300 group py-3 rounded-md px-4 justify-between ${isDesignRoute ? 'text-white' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
                      <div className="flex items-center gap-4">
-                       <Palette className={`w-5 h-5 ${isDesignRoute ? 'text-white' : 'text-white/40'}`} /> 
-                       <span className="font-mono text-xs font-bold tracking-wider uppercase">Design</span>
+                       <Palette className={`w-5 h-5 ${isDesignRoute ? 'text-white' : 'text-white/60'}`} /> 
+                       <span className="font-mono text-xs font-medium">Design</span>
                      </div>
-                     <ChevronDown className={`w-4 h-4 text-white/40 transition-transform duration-300 ${isMobileDesignMenuOpen ? 'rotate-180' : ''}`} />
+                     <ChevronDown className={`w-4 h-4 text-white/60 transition-transform duration-300 ${isMobileDesignMenuOpen ? 'rotate-180' : ''}`} />
                    </button>
 
                    {/* Submenu Inline (Accordion) */}
@@ -257,7 +257,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                  <MobileNavItem href="/dashboard/analytics" icon={<PieChart className="w-5 h-5" />} label="Metrics" active={isActive('/dashboard/analytics')} />
 
                  <div className="px-5 pt-6 pb-2">
-                   <p className="text-[9px] font-mono font-bold text-white/30 uppercase tracking-[0.25em]">Settings</p>
+                   <p className="text-[9px] font-sans font-medium text-white/50 tracking-[0.25em]">Settings</p>
                  </div>
 
                  <MobileNavItem id="tour-mobile-profile-menu" href="/dashboard/profile" icon={<User className="w-5 h-5" />} label="Profile & Bio" active={isActive('/dashboard/profile')} />
@@ -267,12 +267,12 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                  {/* Menu Admin (Dengan Submenu Accordion) */}
                  {userRole === 'ADMIN' && (
                    <div className="pt-2">
-                     <button onClick={() => setIsMobileAdminMenuOpen(!isMobileAdminMenuOpen)} className={`w-full flex items-center transition-all duration-300 group py-3 rounded-none px-4 justify-between ${isAdminRoute ? 'text-violet-400' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+                     <button onClick={() => setIsMobileAdminMenuOpen(!isMobileAdminMenuOpen)} className={`w-full flex items-center transition-all duration-300 group py-3 rounded-md px-4 justify-between ${isAdminRoute ? 'text-violet-400' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
                        <div className="flex items-center gap-4">
-                         <Terminal className={`w-5 h-5 ${isAdminRoute ? 'text-violet-400' : 'text-white/40'}`} /> 
-                         <span className="font-mono text-xs font-bold tracking-wider uppercase">Developer Hub</span>
+                         <Terminal className={`w-5 h-5 ${isAdminRoute ? 'text-violet-400' : 'text-white/60'}`} /> 
+                         <span className="font-mono text-xs font-medium">Developer Hub</span>
                        </div>
-                       <ChevronDown className={`w-4 h-4 text-white/40 transition-transform duration-300 ${isMobileAdminMenuOpen ? 'rotate-180' : ''}`} />
+                       <ChevronDown className={`w-4 h-4 text-white/60 transition-transform duration-300 ${isMobileAdminMenuOpen ? 'rotate-180' : ''}`} />
                      </button>
 
                      {/* Submenu Inline (Accordion) */}
@@ -290,25 +290,25 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
           
           <div className="shrink-0 border-t border-white/5 bg-black z-10 p-4">
             {isLoading ? (
-               <div className="h-28 w-full skeleton-premium rounded-none"></div>
+               <div className="h-28 w-full skeleton-premium rounded-md"></div>
             ) : userPlan === 'FREE' ? (
-              <div className="relative overflow-hidden bg-zinc-950 p-4 rounded-none border border-white/10">
+              <div className="relative overflow-hidden bg-zinc-950 p-4 rounded-md border border-white/10">
                 <Crown className="absolute -bottom-4 -right-3 w-16 h-16 text-white opacity-[0.02] transform rotate-12" />
                 <div className="relative z-10">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 border border-[#ff9e00]/20 bg-[#ff9e00]/5 text-[9px] font-mono font-bold uppercase tracking-widest text-[#ff9e00] mb-3">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 border border-[#ff9e00]/20 bg-[#ff9e00]/5 text-[9px] font-sans font-medium text-[#ff9e00] mb-3">
                     <Crown className="w-3 h-3" /> PRO
                   </div>
-                  <Link href="/pricing" className="block w-full text-center bg-[#ff9e00] text-black text-[10px] font-mono font-bold tracking-widest uppercase py-2.5 px-2 rounded-none hover:bg-[#ffaa22] active:scale-95 transition-all">
+                  <Link href="/pricing" className="block w-full text-center bg-[#ff9e00] text-black text-[10px] font-sans font-medium py-2.5 px-2 rounded-md hover:bg-[#ffaa22] active:scale-95 transition-all">
                     Upgrade
                   </Link>
                 </div>
               </div>
             ) : (
-              <div className="relative overflow-hidden bg-zinc-900 border border-white/10 p-4 rounded-none group">
+              <div className="relative overflow-hidden bg-zinc-900 border border-white/10 p-4 rounded-md group">
                 <div className="relative z-10 flex items-center justify-between">
                   <div>
-                    <p className={`text-[9px] font-mono font-bold tracking-widest uppercase mb-1 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`}>Status</p>
-                    <p className="text-xs font-mono font-bold text-white">{userPlan === 'SUPREME' ? 'Supreme Creator' : 'Pro Creator'}</p>
+                    <p className={`text-[9px] font-sans font-medium mb-1 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`}>Status</p>
+                    <p className="text-xs font-sans font-medium text-white">{userPlan === 'SUPREME' ? 'Supreme Creator' : 'Pro Creator'}</p>
                   </div>
                   <CheckCircle className={`w-5 h-5 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`} />
                 </div>
@@ -330,9 +330,7 @@ function PrimaryNavItem({ href, icon, label, active, isCollapsed, id }: { href: 
     <Link 
       id={id}
       href={href} 
-      className={`flex items-center w-full py-3 rounded-none transition-all duration-300 group ${
-        active ? 'bg-zinc-900 border border-white/10 text-white shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
-      } ${isCollapsed ? 'px-0 justify-center' : 'px-3'}`}
+      className={`flex items-center w-full py-2 rounded-md transition-all duration-300 group ${ active ? 'bg-zinc-900 border border-white/10 text-white shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white' } ${isCollapsed ? 'px-0 justify-center' : 'px-3'}`}
       title={isCollapsed ? label : undefined}
     >
       <div className={`shrink-0 transition-transform duration-300 ${active ? 'scale-110 text-[#ff9e00]' : 'group-hover:scale-110'}`}>
@@ -340,12 +338,12 @@ function PrimaryNavItem({ href, icon, label, active, isCollapsed, id }: { href: 
       </div>
       {!isCollapsed && (
         <>
-          <span className="ml-3 text-[14px] font-sans font-semibold tracking-wide truncate">
+          <span className="ml-3 text-[13px] font-sans font-medium tracking-wide truncate">
             {label}
           </span>
           {active && (
             <div className="ml-auto w-6 flex items-center justify-center shrink-0">
-              <div className="w-1.5 h-1.5 bg-[#ff9e00] rounded-none border border-black shadow-[0_0_8px_rgba(255,158,0,0.5)]"></div>
+              <div className="w-1.5 h-1.5 bg-[#ff9e00] rounded-md border border-black shadow-[0_0_8px_rgba(255,158,0,0.5)]"></div>
             </div>
           )}
         </>
@@ -363,18 +361,16 @@ function TreeAccordion({
     <div id={id} className="flex flex-col w-full relative group/accordion">
       <button 
         onClick={onToggle} 
-        className={`flex items-center w-full py-3 transition-colors group rounded-none ${
-          isOpen || active ? 'text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'
-        } ${isCollapsed ? 'justify-center px-0' : 'justify-between px-3'}`}
+        className={`flex items-center w-full py-2 transition-colors group rounded-md ${ isOpen || active ? 'text-white' : 'text-white/60 hover:bg-white/5 hover:text-white' } ${isCollapsed ? 'justify-center px-0' : 'justify-between px-3'}`}
         title={isCollapsed ? label : undefined}
       >
         <div className={`flex items-center ${isCollapsed ? '' : 'gap-3'}`}>
           <div className={`shrink-0 transition-transform duration-300 ${(isOpen || active) ? 'scale-110 text-[#ff9e00]' : 'group-hover:scale-110'}`}>{icon}</div>
-          {!isCollapsed && <span className="text-[14px] font-sans font-semibold tracking-wide">{label}</span>}
+          {!isCollapsed && <span className="text-[13px] font-sans font-medium tracking-wide">{label}</span>}
         </div>
         {!isCollapsed && (
           <div className="w-6 flex items-center justify-center shrink-0">
-            <ChevronDown className={`w-4 h-4 text-white/40 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-white/60 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
           </div>
         )}
       </button>
@@ -389,9 +385,9 @@ function TreeAccordion({
 
       {/* Floating Popover on Hover (Collapsed State) */}
       {isCollapsed && (
-        <div className={`absolute left-[calc(100%+8px)] ${popoverDirection === 'up' ? 'bottom-0' : 'top-0'} w-52 bg-[#0a0a0a] border border-white/10 shadow-2xl opacity-0 invisible group-hover/accordion:opacity-100 group-hover/accordion:visible transition-all duration-200 z-50 rounded-none transform translate-x-[-10px] group-hover/accordion:translate-x-0`}>
+        <div className={`absolute left-[calc(100%+8px)] ${popoverDirection === 'up' ? 'bottom-0' : 'top-0'} w-52 bg-[#0a0a0a] border border-white/10 shadow-2xl opacity-0 invisible group-hover/accordion:opacity-100 group-hover/accordion:visible transition-all duration-200 z-50 rounded-md transform translate-x-[-10px] group-hover/accordion:translate-x-0`}>
           <div className="px-4 py-3 border-b border-white/5 bg-zinc-900/50">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/60">{label}</span>
+            <span className="text-[10px] font-sans font-medium text-white/60">{label}</span>
           </div>
           <div className="flex flex-col p-1.5 gap-0.5">
             {React.Children.map(children, child => {
@@ -421,14 +417,10 @@ function TreeChildItem({ href, label, active, count, countText, countColor, isLa
       )}
       
       {/* Clickable item */}
-      <Link id={id} href={href} className={`${isFloating ? 'ml-0 px-3 py-2 w-full' : 'ml-[24px] flex-1 px-3 py-2.5'} flex items-center justify-between rounded-none transition-colors duration-200 z-10 border border-transparent ${
-        active ? 'bg-zinc-900 border-white/10 text-white' : 'text-white/50 hover:bg-white/5 hover:border-white/5 hover:text-white'
-      }`}>
-        <span className="text-[13px] font-sans font-semibold">{label}</span>
+      <Link id={id} href={href} className={`${isFloating ? 'ml-0 px-3 py-1.5 w-full' : 'ml-[24px] flex-1 px-3 py-1.5'} flex items-center justify-between rounded-md transition-colors duration-200 z-10 border border-transparent ${ active ? 'bg-zinc-900 border-white/10 text-white' : 'text-white/50 hover:bg-white/5 hover:border-white/5 hover:text-white' }`}>
+        <span className="text-[12px] font-sans font-medium">{label}</span>
         {(count !== undefined || countText) && (
-          <span className={`text-[10px] px-1.5 py-0.5 rounded-none font-mono leading-none flex items-center justify-center border ${
-            countColor ? countColor + ' border-transparent' : (active ? 'bg-[#ff9e00] text-black border-black font-bold' : 'bg-white/10 text-white/60 border-transparent')
-          }`}>{countText || count}</span>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-sans leading-none flex items-center justify-center border ${ countColor ? countColor + ' border-transparent' : (active ? 'bg-[#ff9e00] text-black border-black font-medium' : 'bg-white/10 text-white/60 border-transparent') }`}>{countText || count}</span>
         )}
       </Link>
     </div>
@@ -440,28 +432,28 @@ function TreeChildItem({ href, label, active, count, countText, countColor, isLa
 // --------------------------------------------------------
 function MobileNavItem({ href, icon, label, active, className = "", id }: { href: string, icon: React.ReactNode, label: string, active: boolean, className?: string, id?: string }) {
   return (
-    <Link id={id} href={href} className={`w-full flex items-center py-3.5 rounded-none transition-all duration-300 group px-4 gap-4 ${active ? 'bg-zinc-900 text-white border border-white/10' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${className}`}>
+    <Link id={id} href={href} className={`w-full flex items-center py-3.5 rounded-md transition-all duration-300 group px-4 gap-4 ${active ? 'bg-zinc-900 text-white border border-white/10' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${className}`}>
       <span className={active ? 'text-[#ff9e00]' : 'text-white/40 group-hover:text-white/60'}>
         {icon}
       </span>
-      <span className="font-mono text-xs font-bold tracking-wider uppercase">{label}</span>
+      <span className="font-mono text-xs font-medium">{label}</span>
     </Link>
   );
 }
 
 function MobileSubNavItem({ href, label, active, count, highlightText }: { href: string, label: string, active: boolean, count?: number, highlightText?: string }) {
   return (
-    <Link href={href} className={`w-full flex items-center justify-between px-4 py-2.5 rounded-none font-mono text-xs transition-all relative ${active ? 'text-white bg-white/5' : 'text-white/50 hover:text-white hover:bg-white/5'}`}>
+    <Link href={href} className={`w-full flex items-center justify-between px-4 py-2.5 rounded-md font-mono text-xs transition-all relative ${active ? 'text-white bg-white/5' : 'text-white/50 hover:text-white hover:bg-white/5'}`}>
       <div className="flex items-center">
         {active && <div className="absolute left-0 w-0.5 h-1/2 bg-[#ff9e00]"></div>} 
         <span className={active ? '' : 'pl-1'}>{label}</span>
       </div>
       {highlightText ? (
-        <span className="text-[8px] px-1.5 py-0.5 font-bold uppercase tracking-wide bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20">
+        <span className="text-[8px] px-1.5 py-0.5 font-medium tracking-wide bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20">
           {highlightText}
         </span>
       ) : count !== undefined ? (
-        <span className={`text-[9px] px-1.5 py-0.5 transition-colors ${active ? 'bg-zinc-900 text-white border border-white/10' : 'bg-white/5 text-white/40'}`}>
+        <span className={`text-[9px] px-1.5 py-0.5 transition-colors ${active ? 'bg-zinc-900 text-white border border-white/10' : 'bg-white/5 text-white/60'}`}>
           {count}
         </span>
       ) : null}
