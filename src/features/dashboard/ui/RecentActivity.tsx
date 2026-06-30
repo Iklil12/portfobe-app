@@ -47,14 +47,14 @@ function getActivityIcon(actionType: string) {
 
 export function RecentActivity({ activities, isLoading }: RecentActivityProps) {
   return (
-    <AnimateOnScroll delay={200}>
-      <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-md transition-all hover:border-white/20 h-full">
-        <div className="flex justify-between items-center mb-8">
+    <AnimateOnScroll delay={200} className="w-full">
+      <div className="bg-[#1a1a1a] p-6 border border-white/5 rounded-xl transition-all hover:border-white/10 w-full">
+        <div className="flex justify-between items-center mb-6">
           <div>
-            <h3 className="text-lg font-sans font-medium text-white">Recent Activity</h3>
+            <h3 className="text-base font-sans font-medium text-white">Recent Activity</h3>
             <p className="text-xs font-sans text-white/50 mt-1">Your change timeline</p>
           </div>
-          <Link href="/dashboard/history" className="w-8 h-8 flex items-center justify-center rounded-md border border-white/10 bg-zinc-900 text-white/70 hover:bg-white/5 hover:text-white transition-all group shadow-sm">
+          <Link href="/dashboard/history" className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/5 bg-[#111111] text-white/70 hover:bg-white/10 hover:text-white transition-all group shadow-sm">
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>

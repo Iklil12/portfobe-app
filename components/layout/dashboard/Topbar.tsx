@@ -64,8 +64,19 @@ export function Topbar({
       if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) setIsProfileMenuOpen(false);
       if (notifRef.current && !notifRef.current.contains(event.target as Node)) setIsNotifOpen(false);
     };
+    
+    const handleTourOpen = () => setIsProfileMenuOpen(true);
+    const handleTourClose = () => setIsProfileMenuOpen(false);
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    window.addEventListener("tour-open-profile", handleTourOpen);
+    window.addEventListener("tour-close-profile", handleTourClose);
+    
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("tour-open-profile", handleTourOpen);
+      window.removeEventListener("tour-close-profile", handleTourClose);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -78,15 +89,18 @@ export function Topbar({
 
   return (
     <>
-      <header className="sticky top-0 z-40 h-[72px] w-full bg-[#050505]/60 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-6 sm:px-10 shrink-0 animate-page-load delay-100">
-        <div className="flex items-center gap-6 flex-1">
+      <header className="sticky top-0 z-40 h-[72px] w-full bg-[#111111]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 sm:px-10 shrink-0 animate-page-load delay-100">
+        <div className="flex items-center md:flex-1">
           <button className="md:hidden w-11 h-11 rounded-md border border-white/10 bg-zinc-900 text-white/70 hover:text-white active:scale-95 transition-all flex items-center justify-center shadow-sm" onClick={onToggleSidebar}>
             <Menu className="w-5 h-5" />
           </button>
+        </div>
+        
+        <div className="hidden md:flex justify-center flex-[2] max-w-[600px]">
           <GlobalSearch />
         </div>
         
-        <div className="flex items-center gap-4 sm:gap-6">
+        <div className="flex items-center justify-end gap-4 sm:gap-6 md:flex-1">
           {!isLoading && (
             <>
               {canClaimTrial && (
@@ -150,15 +164,15 @@ export function Topbar({
             ) : (
               <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
                 <div className="hidden sm:block text-right">
-                  <p className="text-xs font-sans font-medium text-white tracking-wide group-hover:text-[#ff9e00] transition-colors">{userName}</p>
-                  <p className={`text-[9px] font-sans font-medium mt-0.5 ${userPlan === 'SUPREME' ? 'text-violet-400' : userPlan !== 'FREE' ? 'text-[#ff9e00]' : 'text-white/50'}`}>{userPlan} PLAN</p>
+                  <p className="text-xs font-sans font-medium text-white tracking-wide group-hover:text-[#ff9e00] transition-colors uppercase">{userName}</p>
+                  <p className={`text-[9px] font-sans font-bold mt-0.5 tracking-wider text-[#ff9e00]`}>{userPlan} PLAN</p>
                 </div>
                 <div className="relative">
-                  <div className={`w-10 h-10 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 ${userPlan === 'SUPREME' ? 'border border-violet-500 shadow-[0_0_15px_rgba(139,92,246,0.2)]' : userPlan !== 'FREE' ? 'border border-[#ff9e00] shadow-[0_0_15px_rgba(255,158,0,0.2)]' : 'border border-white/10'}`}>
+                  <div className={`w-10 h-10 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 border-[2px] border-[#ff9e00] shadow-[0_0_15px_rgba(255,158,0,0.4)]`}>
                     <img src={userAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=18181b&color=ffffff&bold=true`} className="w-full h-full object-cover" alt="Profile" />
                   </div>
                   {userPlan !== 'FREE' && (
-                    <div className={`absolute -top-0.5 -right-0.5 border-2 border-black rounded-full shadow-sm z-10 w-4 h-4 flex items-center justify-center ${userPlan === 'SUPREME' ? 'bg-violet-500 text-white' : 'bg-[#ff9e00] text-black'}`}>
+                    <div className={`absolute -bottom-1 -right-1 border-2 border-black rounded-full shadow-sm z-10 w-4 h-4 flex items-center justify-center bg-[#ff9e00] text-black`}>
                       <Crown className="w-2.5 h-2.5" />
                     </div>
                   )}
@@ -166,8 +180,7 @@ export function Topbar({
               </div>
             )}
 
-            {isProfileMenuOpen && !isLoading && (
-              <div className="absolute top-[calc(100%+16px)] right-0 w-[280px] bg-zinc-950 rounded-md shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-white/10 py-2 animate-dropdown z-50">
+            <div className={`absolute top-[calc(100%+16px)] right-0 w-[280px] bg-zinc-950 rounded-md shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-white/10 py-2 z-50 transition-all duration-200 ${isProfileMenuOpen && !isLoading ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}>
                 {/* Header Profile */}
                 <div className="px-4 py-3 flex items-center gap-3 border-b border-white/10 mb-1">
                   <div className="relative shrink-0">
@@ -191,6 +204,7 @@ export function Topbar({
                   {/* Lihat Web */}
                   {userSubdomain ? (
                     <a
+                      id="tour-preview-btn"
                       href={`/${userSubdomain}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -201,7 +215,7 @@ export function Topbar({
                       <span className="flex-1">View Site</span>
                     </a>
                   ) : (
-                    <div className="px-3 py-2.5 text-[11px] font-sans font-medium text-white/20 flex items-center gap-3 cursor-not-allowed" title="Set subdomain first">
+                    <div id="tour-preview-btn" className="px-3 py-2.5 text-[11px] font-sans font-medium text-white/20 flex items-center gap-3 cursor-not-allowed" title="Set subdomain first">
                       <ExternalLink className="w-4 h-4" />
                       <span className="flex-1">View Site</span>
                     </div>
@@ -242,7 +256,6 @@ export function Topbar({
                   </button>
                 </div>
               </div>
-            )}
           </div>
         </div>
       </header>

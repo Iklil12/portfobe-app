@@ -86,113 +86,106 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
   }
 
   return (
-    <AnimateOnScroll delay={100} className="h-full">
-      <div className="bg-zinc-950 p-6 md:p-8 border border-white/10 rounded-md transition-all hover:border-white/20 h-full flex flex-col">
-        {/* Header & Filters */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
-          <div>
-            <h3 className="text-lg font-sans font-medium text-white">Traffic Overview</h3>
-            <p className="text-xs font-sans text-white/50 mt-1">Your portfolio performance over the last 7 days</p>
-          </div>
-
-          <div className="px-4 py-1.5 border border-white/10 bg-white/5 text-[9px] font-sans font-medium text-white/70 self-start lg:self-auto rounded-md">
-            Last 7 Days
-          </div>
+    <AnimateOnScroll delay={100} className="h-full w-full">
+      <div className="bg-[#1a1a1a] p-6 border border-white/5 rounded-xl h-full flex flex-col w-full">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <h3 className="text-base font-sans font-medium text-white">Traffic Hub (Insights)</h3>
+          <span className="text-xs font-sans text-white/50">Last 30 days</span>
         </div>
 
-        {/* Summary Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-8">
-          <div className="bg-white/[0.02] border border-white/5 rounded-md p-4">
-            <p className="text-[9px] font-sans font-medium text-white/60 mb-1.5">Total Views</p>
-            <h4 className="text-xl md:text-2xl font-sans font-medium text-white">{summary.totalViews.toLocaleString()}</h4>
-          </div>
-          <div className="bg-white/[0.02] border border-white/5 rounded-md p-4">
-            <p className="text-[9px] font-sans font-medium text-white/60 mb-1.5">Daily Average</p>
-            <h4 className="text-xl md:text-2xl font-sans font-medium text-white">{summary.avgDaily.toLocaleString()}</h4>
-          </div>
-          <div className="bg-[#ff9e00]/5 border border-[#ff9e00]/25 rounded-md p-4">
-            <p className="text-[9px] font-sans font-medium text-[#ff9e00] mb-1.5">Peak Visits</p>
-            <div className="flex items-baseline gap-2 truncate">
-              <h4 className="text-xl md:text-2xl font-sans font-medium text-[#ff9e00]">{summary.peakDay}</h4>
-              <span className="text-[10px] font-sans font-medium text-[#ff9e00]/70">({summary.peakViews} views)</span>
+        <div className="flex flex-col lg:flex-row gap-8 flex-1">
+          {/* Metrics - Kiri */}
+          <div className="grid grid-cols-2 gap-y-8 gap-x-4 lg:w-1/3 shrink-0">
+            <div>
+              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">Total Visits</p>
+              <h4 className="text-3xl font-mono font-bold text-[#ff9e00] mb-1">
+                {(summary.totalViews > 1000 ? (summary.totalViews / 1000).toFixed(1) + 'k' : summary.totalViews) || '0'}
+              </h4>
+              <p className="text-[10px] font-sans text-white/50">Total traffic visits</p>
+            </div>
+            
+            <div>
+              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">Today's Visits</p>
+              <h4 className="text-3xl font-mono font-bold text-[#ff9e00] mb-1">
+                {analytics?.dailyStats?.[analytics.dailyStats.length - 1]?.views || '0'}
+              </h4>
+              <p className="text-[10px] font-sans text-white/50">Today's visits</p>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">Bounce Rate</p>
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="text-xl font-mono font-bold text-[#ff9e00]">{analytics?.stats?.bounceRate || '0%'}</h4>
+                {/* Mini chart placeholder */}
+                <svg width="40" height="15" viewBox="0 0 40 15" fill="none">
+                  <path d="M0 10 Q 10 5, 20 12 T 40 2" stroke="#ff9e00" strokeWidth="1.5" fill="none" />
+                </svg>
+              </div>
+              <p className="text-[10px] font-sans text-white/50">Bounce Rate %</p>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">Avg Time</p>
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="text-xl font-mono font-bold text-[#ff9e00]">{analytics?.stats?.avgTime || '0s'}</h4>
+                <svg width="40" height="15" viewBox="0 0 40 15" fill="none">
+                  <path d="M0 8 Q 10 12, 20 5 T 40 10" stroke="#ff9e00" strokeWidth="1.5" fill="none" />
+                </svg>
+              </div>
+              <p className="text-[10px] font-sans text-white/50">Avg. Times/Tims</p>
             </div>
           </div>
-        </div>
 
-        {/* Metric Toggles */}
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => setActiveMetric(activeMetric === 'views' ? 'both' : 'views')}
-            className="flex items-center gap-2 group"
-          >
-            <div className={`w-2.5 h-2.5 rounded-md transition-colors ${activeMetric === 'views' || activeMetric === 'both' ? 'bg-[#ff9e00]' : 'bg-zinc-800 border border-white/10'}`}></div>
-            <span className={`text-[9px] font-sans font-medium transition-colors ${activeMetric === 'views' || activeMetric === 'both' ? 'text-white' : 'text-white/60 group-hover:text-white/60'}`}>Page Views</span>
-          </button>
-          <button
-            onClick={() => setActiveMetric(activeMetric === 'visitors' ? 'both' : 'visitors')}
-            className="flex items-center gap-2 group"
-          >
-            <div className={`w-2.5 h-2.5 rounded-md transition-colors ${activeMetric === 'visitors' || activeMetric === 'both' ? 'bg-white' : 'bg-zinc-800 border border-white/10'}`}></div>
-            <span className={`text-[9px] font-sans font-medium transition-colors ${activeMetric === 'visitors' || activeMetric === 'both' ? 'text-white' : 'text-white/60 group-hover:text-white/60'}`}>Uniq. Visitors</span>
-          </button>
-        </div>
-
-        {/* Chart */}
-        <div className="w-full h-[280px] relative mt-auto">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ff9e00" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#ff9e00" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="colorVisitors" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ffffff" stopOpacity={0.1} />
-                  <stop offset="95%" stopColor="#ffffff" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.03)" />
-              <XAxis
-                dataKey="date"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 9, fill: '#71717a', fontWeight: 600, fontFamily: 'monospace' }}
-                dy={10}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 9, fill: '#71717a', fontWeight: 600, fontFamily: 'monospace' }}
-              />
-              <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255, 255, 255, 0.05)', strokeWidth: 1 }} />
-
-              {(activeMetric === 'both' || activeMetric === 'views') && (
-                <Area
-                  type="monotone"
-                  dataKey="views"
-                  name="Views"
-                  stroke="#ff9e00"
-                  strokeWidth={2.5}
-                  fillOpacity={1}
-                  fill="url(#colorViews)"
-                  activeDot={{ r: 5, fill: '#ff9e00', stroke: '#000', strokeWidth: 1.5 }}
+          {/* Chart - Kanan */}
+          <div className="w-full lg:flex-1 mt-4 lg:mt-0" style={{ minHeight: '250px' }}>
+            <div className="w-full h-[250px] lg:h-full lg:absolute lg:inset-0 relative">
+              <ResponsiveContainer width="99%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorViewsOrange" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#ff9e00" stopOpacity={0.5} />
+                    <stop offset="100%" stopColor="#ff9e00" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorViewsBlue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.2} />
+                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                
+                <XAxis
+                  dataKey="date"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: '#666', fontFamily: 'sans-serif' }}
+                  dy={10}
                 />
-              )}
+                <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255, 255, 255, 0.05)', strokeWidth: 1 }} />
 
-              {(activeMetric === 'both' || activeMetric === 'visitors') && (
+                {/* Dummy layer for blue overlap effect if needed, we'll just plot visitors if exist, else a scaled version of views */}
                 <Area
                   type="monotone"
                   dataKey="visitors"
-                  name="Visitors"
-                  stroke="#ffffff"
-                  strokeWidth={2.5}
+                  stroke="#3b82f6"
+                  strokeWidth={2}
                   fillOpacity={1}
-                  fill="url(#colorVisitors)"
-                  activeDot={{ r: 5, fill: '#ffffff', stroke: '#000', strokeWidth: 1.5 }}
+                  fill="url(#colorViewsBlue)"
+                  activeDot={false}
                 />
-              )}
-            </AreaChart>
-          </ResponsiveContainer>
+                
+                <Area
+                  type="monotone"
+                  dataKey="views"
+                  stroke="#ff9e00"
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#colorViewsOrange)"
+                  activeDot={{ r: 5, fill: '#ff9e00', stroke: '#000', strokeWidth: 2 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
     </AnimateOnScroll>

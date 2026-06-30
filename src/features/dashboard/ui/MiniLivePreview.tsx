@@ -19,53 +19,53 @@ export function MiniLivePreview({ themeName, subdomain, isLoading }: MiniLivePre
   }
 
   return (
-    <AnimateOnScroll delay={150} className="h-full">
-      <div className="bg-zinc-950 border border-white/10 p-6 md:p-8 h-full flex flex-col justify-between relative overflow-hidden group rounded-md hover:border-white/20 transition-all duration-300">
+    <AnimateOnScroll delay={150} className="w-full">
+      <div className="bg-[#1a1a1a] border border-white/5 p-6 md:p-8 flex flex-col justify-between relative overflow-hidden group rounded-xl hover:border-white/10 transition-all duration-300 w-full">
         <div className="relative z-10 flex justify-between items-start mb-6">
           <div>
-            <p className="text-[9px] font-sans font-medium text-white/60 mb-1">Active Theme</p>
-            <h3 className="text-xl md:text-2xl font-sans font-medium text-white tracking-tight">{themeName}</h3>
+            <p className="text-[10px] font-sans font-bold text-white/60 mb-1">Active Theme</p>
+            <h3 className="text-2xl font-sans font-bold text-white tracking-tight">{themeName}</h3>
           </div>
           <Link
             href="/dashboard/appearance"
-            className="w-8 h-8 rounded-md border border-white/10 bg-zinc-900 flex items-center justify-center text-white/70 hover:bg-white/5 hover:text-white transition-all shadow-sm"
+            className="w-10 h-10 rounded-xl border border-white/5 bg-[#111111] flex items-center justify-center text-white/70 hover:bg-white/10 hover:text-white transition-all shadow-[0_4px_10px_rgba(0,0,0,0.3)]"
           >
-            <Palette className="w-4 h-4" />
+            <Palette className="w-5 h-5" />
           </Link>
         </div>
 
         {/* Mockup Device */}
-        <div className="relative z-10 mt-4 flex-1 min-h-[180px] flex items-center justify-center">
-          <div className="relative w-full max-w-[280px] aspect-[16/10] bg-black border border-white/10 rounded-md shadow-[0_15px_40px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden">
+        <div className="relative z-10 mt-2 w-full flex justify-center">
+          <div className="relative w-full aspect-[16/10] bg-[#111111] border border-white/5 rounded-xl shadow-[0_15px_40px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden">
             {/* Browser Header */}
-            <div className="h-6 bg-zinc-950 w-full flex items-center justify-between px-3 border-b border-white/10 text-[8px] font-sans text-white/50 shrink-0">
+            <div className="h-8 bg-[#111111] w-full flex items-center justify-between px-4 border-b border-white/5 text-[9px] font-sans font-medium text-white/50 shrink-0">
               <span className="truncate">portfo.be/{subdomain}</span>
-              <div className="flex gap-1">
-                <div className="w-1 h-1 bg-white/20 rounded-md"></div>
-                <div className="w-1 h-1 bg-white/20 rounded-md"></div>
+              <div className="flex gap-1.5">
+                <div className="w-1.5 h-1.5 bg-white/20 rounded-full"></div>
+                <div className="w-1.5 h-1.5 bg-white/20 rounded-full"></div>
               </div>
             </div>
             {/* Browser Content (Mock) */}
-            <div className="flex-1 bg-[#050505] p-3 relative overflow-hidden flex flex-col">
+            <div className="flex-1 bg-[#1a1a1a] p-4 relative overflow-hidden flex flex-col">
               {/* Skeleton for Portfolio */}
-              <div className="w-6 h-6 rounded-md bg-white/10 mb-2 border border-white/10"></div>
-              <div className="w-3/4 h-1.5 bg-white/10 rounded-md mb-1"></div>
-              <div className="w-1/2 h-1.5 bg-white/5 rounded-md mb-3"></div>
+              <div className="w-8 h-8 rounded-lg bg-white/5 mb-3 border border-white/5"></div>
+              <div className="w-3/4 h-2 bg-white/10 rounded-md mb-2"></div>
+              <div className="w-1/2 h-2 bg-white/5 rounded-md mb-4"></div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div className="h-8 bg-zinc-900 border border-white/5 rounded-md"></div>
-                <div className="h-8 bg-zinc-900 border border-white/5 rounded-md"></div>
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                <div className="h-10 bg-[#111111] border border-white/5 rounded-lg"></div>
+                <div className="h-10 bg-[#111111] border border-white/5 rounded-lg"></div>
               </div>
 
               {/* Overlay blur and view button */}
-              <div className="absolute inset-0 bg-black/90 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
+              <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
                 <a
                   href={`/${subdomain}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="px-4 py-2 bg-[#ff9e00] text-black rounded-md text-[9px] font-sans font-medium transition-all duration-200 hover:bg-[#ffaa22] hover:scale-105 flex items-center gap-1.5 shadow-md"
+                  className="px-5 py-2.5 bg-[#ff9e00] text-black rounded-lg text-xs font-sans font-bold transition-all duration-300 hover:bg-[#ffaa22] hover:scale-105 flex items-center gap-2 shadow-[0_0_15px_rgba(255,158,0,0.4)]"
                 >
-                  <ExternalLink className="w-3 h-3" /> Live Preview
+                  <ExternalLink className="w-4 h-4" /> Live Preview
                 </a>
               </div>
             </div>

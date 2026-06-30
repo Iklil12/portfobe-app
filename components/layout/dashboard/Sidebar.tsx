@@ -67,7 +67,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
       {/* DESKTOP SIDEBAR (SINGLE PANE TREE LAYOUT)                      */}
       {/* ============================================================== */}
       <div className={`hidden md:flex h-full shrink-0 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-visible ${isDesktopSidebarOpen ? 'w-[240px]' : 'w-[72px]'}`}>
-        <aside className="w-full bg-[#0a0a0a] border-r border-white/10 flex flex-col h-full z-20 shrink-0">
+        <aside className="w-full bg-[#111111] border-r border-white/5 flex flex-col h-full z-20 shrink-0">
           <div className={`h-[72px] shrink-0 flex items-center relative border-b border-white/5 transition-all duration-300 ${isDesktopSidebarOpen ? 'justify-between px-6' : 'justify-center px-0'}`}>
             {!isDesktopSidebarOpen ? (
               <button onClick={onToggleDesktopSidebar} className="w-12 h-12 flex items-center justify-center text-white/60 hover:text-[#ff9e00] transition-colors">
@@ -330,7 +330,7 @@ function PrimaryNavItem({ href, icon, label, active, isCollapsed, id }: { href: 
     <Link 
       id={id}
       href={href} 
-      className={`flex items-center w-full py-2 rounded-md transition-all duration-300 group ${ active ? 'bg-zinc-900 border border-white/10 text-white shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white' } ${isCollapsed ? 'px-0 justify-center' : 'px-3'}`}
+      className={`flex items-center w-full py-2.5 rounded-md transition-all duration-300 group ${ active ? 'bg-[#ff9e00]/5 text-[#ff9e00]' : 'text-white/60 hover:bg-white/5 hover:text-white' } ${isCollapsed ? 'px-0 justify-center' : 'px-3'}`}
       title={isCollapsed ? label : undefined}
     >
       <div className={`shrink-0 transition-transform duration-300 ${active ? 'scale-110 text-[#ff9e00]' : 'group-hover:scale-110'}`}>
@@ -343,7 +343,7 @@ function PrimaryNavItem({ href, icon, label, active, isCollapsed, id }: { href: 
           </span>
           {active && (
             <div className="ml-auto w-6 flex items-center justify-center shrink-0">
-              <div className="w-1.5 h-1.5 bg-[#ff9e00] rounded-md border border-black shadow-[0_0_8px_rgba(255,158,0,0.5)]"></div>
+              <div className="w-1.5 h-1.5 bg-[#ff9e00] rounded-full shadow-[0_0_8px_rgba(255,158,0,0.8)]"></div>
             </div>
           )}
         </>
@@ -361,11 +361,11 @@ function TreeAccordion({
     <div id={id} className="flex flex-col w-full relative group/accordion">
       <button 
         onClick={onToggle} 
-        className={`flex items-center w-full py-2 transition-colors group rounded-md ${ isOpen || active ? 'text-white' : 'text-white/60 hover:bg-white/5 hover:text-white' } ${isCollapsed ? 'justify-center px-0' : 'justify-between px-3'}`}
+        className={`flex items-center w-full py-2.5 transition-colors group rounded-md ${ isOpen || active ? 'text-white' : 'text-white/60 hover:bg-white/5 hover:text-white' } ${isCollapsed ? 'justify-center px-0' : 'justify-between px-3'}`}
         title={isCollapsed ? label : undefined}
       >
         <div className={`flex items-center ${isCollapsed ? '' : 'gap-3'}`}>
-          <div className={`shrink-0 transition-transform duration-300 ${(isOpen || active) ? 'scale-110 text-[#ff9e00]' : 'group-hover:scale-110'}`}>{icon}</div>
+          <div className={`shrink-0 transition-transform duration-300 ${(isOpen || active) ? 'scale-110' : 'group-hover:scale-110'}`}>{icon}</div>
           {!isCollapsed && <span className="text-[13px] font-sans font-medium tracking-wide">{label}</span>}
         </div>
         {!isCollapsed && (
@@ -432,11 +432,12 @@ function TreeChildItem({ href, label, active, count, countText, countColor, isLa
 // --------------------------------------------------------
 function MobileNavItem({ href, icon, label, active, className = "", id }: { href: string, icon: React.ReactNode, label: string, active: boolean, className?: string, id?: string }) {
   return (
-    <Link id={id} href={href} className={`w-full flex items-center py-3.5 rounded-md transition-all duration-300 group px-4 gap-4 ${active ? 'bg-zinc-900 text-white border border-white/10' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${className}`}>
+    <Link id={id} href={href} className={`w-full flex items-center py-3.5 rounded-md transition-all duration-300 group px-4 gap-4 ${active ? 'bg-[#ff9e00]/5 text-[#ff9e00]' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${className}`}>
       <span className={active ? 'text-[#ff9e00]' : 'text-white/40 group-hover:text-white/60'}>
         {icon}
       </span>
       <span className="font-mono text-xs font-medium">{label}</span>
+      {active && <div className="ml-auto w-1.5 h-1.5 bg-[#ff9e00] rounded-full shadow-[0_0_8px_rgba(255,158,0,0.8)]"></div>}
     </Link>
   );
 }
