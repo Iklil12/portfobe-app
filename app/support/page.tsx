@@ -133,51 +133,82 @@ export default function SupportPage() {
 
         </div>
 
-        {/* Form Support Section */}
-        <div className="mt-20 max-w-2xl mx-auto bg-zinc-950 p-10 border border-white/10">
-          <h4 className="text-xl font-display font-bold text-white mb-2">Contact Form</h4>
-          <p className="text-xs text-white/50 font-mono tracking-wide mb-8">Need further assistance? Fill out the form below and we will reply within 24-48 hours.</p>
+        {/* Contact Section */}
+        <div className="mt-20 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-8">
+          
+          {/* Business Info */}
+          <div className="md:col-span-2 bg-zinc-950 p-10 border border-white/10 h-fit">
+            <h4 className="text-xl font-display font-bold text-white mb-2">Business Information</h4>
+            <p className="text-xs text-white/50 font-mono tracking-wide mb-8">Official contact details for Portfo.be support and inquiries.</p>
+            
+            <div className="space-y-6 text-sm font-mono text-white/70">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Legal Name</div>
+                <strong className="text-white">Portfobe</strong>
+              </div>
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Physical Address</div>
+                <div>
+                  Jl. jl.Raya Telang, Kamal, Bangkalan, jawa Timur, Indonesia 69162<br/>
+                </div>
+              </div>
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Email</div>
+                <a href="mailto:ikiluluyun@ritions.com" className="text-[#ff9e00] hover:underline">ikiluluyun@ritions.com</a>
+              </div>
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Phone</div>
+                <a href="tel:+6283144303789" className="text-[#ff9e00] hover:underline">+6283144303789</a>
+              </div>
+            </div>
+          </div>
 
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 block">Full Name</label>
-                <input
-                  type="text"
-                  placeholder="Enter name..."
-                  className="w-full px-4 py-3 bg-black border border-white/10 text-sm font-mono text-white placeholder:text-white/20 focus:border-[#ff9e00] outline-none transition-all"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                />
+          {/* Form Support Section */}
+          <div className="md:col-span-3 bg-zinc-950 p-10 border border-white/10">
+            <h4 className="text-xl font-display font-bold text-white mb-2">Contact Form</h4>
+            <p className="text-xs text-white/50 font-mono tracking-wide mb-8">Need further assistance? Fill out the form below and we will reply within 24-48 hours.</p>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 block">Full Name</label>
+                  <input
+                    type="text"
+                    placeholder="Enter name..."
+                    className="w-full px-4 py-3 bg-black border border-white/10 text-sm font-mono text-white placeholder:text-white/20 focus:border-[#ff9e00] outline-none transition-all"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 block">Email</label>
+                  <input
+                    type="email"
+                    placeholder="email@contoh.com"
+                    className="w-full px-4 py-3 bg-black border border-white/10 text-sm font-mono text-white placeholder:text-white/20 focus:border-[#ff9e00] outline-none transition-all"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </div>
               </div>
               <div>
-                <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 block">Email</label>
-                <input
-                  type="email"
-                  placeholder="email@contoh.com"
-                  className="w-full px-4 py-3 bg-black border border-white/10 text-sm font-mono text-white placeholder:text-white/20 focus:border-[#ff9e00] outline-none transition-all"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
+                <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 block">Message / Issue</label>
+                <textarea
+                  rows={4}
+                  placeholder="Tell us about your issue in detail..."
+                  className="w-full px-4 py-3 bg-black border border-white/10 text-sm font-mono text-white placeholder:text-white/20 focus:border-[#ff9e00] outline-none transition-all resize-none"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                ></textarea>
               </div>
+              <button
+                onClick={handleSend}
+                disabled={isSending}
+                className="w-full py-4 bg-[#ff9e00] text-black text-xs font-mono font-bold uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#ffaa22]"
+              >
+                {isSending ? 'Sending...' : 'Submit Form'}
+              </button>
             </div>
-            <div>
-              <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 mb-2 block">Message / Issue</label>
-              <textarea
-                rows={4}
-                placeholder="Tell us about your issue in detail..."
-                className="w-full px-4 py-3 bg-black border border-white/10 text-sm font-mono text-white placeholder:text-white/20 focus:border-[#ff9e00] outline-none transition-all resize-none"
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              ></textarea>
-            </div>
-            <button
-              onClick={handleSend}
-              disabled={isSending}
-              className="w-full py-4 bg-[#ff9e00] text-black text-xs font-mono font-bold uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#ffaa22]"
-            >
-              {isSending ? 'Sending...' : 'Submit Form'}
-            </button>
           </div>
         </div>
 

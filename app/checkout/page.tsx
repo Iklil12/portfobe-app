@@ -28,6 +28,7 @@ function CheckoutContent() {
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [couponError, setCouponError] = useState('');
   const [showCouponInput, setShowCouponInput] = useState(false);
+  const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
 
   const handleApplyCoupon = async () => {
     if (!coupon.trim()) return;
@@ -55,6 +56,32 @@ function CheckoutContent() {
       setCouponError('Terjadi kesalahan jaringan');
     } finally {
       setIsApplyingCoupon(false);
+    }
+  };
+
+  const handleCheckout = async () => {
+    setIsProcessingCheckout(true);
+    try {
+      const res = await fetch('/api/checkout/duitku', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          plan,
+          duration,
+          coupon: appliedCoupon ? appliedCoupon.code : undefined
+        })
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      } else {
+        alert(data.error || 'Gagal memproses pembayaran');
+        setIsProcessingCheckout(false);
+      }
+    } catch (err) {
+      alert('Terjadi kesalahan jaringan');
+      setIsProcessingCheckout(false);
     }
   };
 
@@ -464,8 +491,19 @@ function CheckoutContent() {
                 </div>
 
                 <div>
-                  <button className="w-full bg-[#ff9e00] hover:bg-[#ffaa22] text-black font-mono font-bold uppercase tracking-widest text-[11px] py-4.5 rounded-none transition-all active:scale-[0.98] flex items-center justify-center gap-2">
-                    Lanjutkan Pembayaran <ArrowRight className="w-4 h-4" />
+                  <button 
+                    onClick={handleCheckout}
+                    disabled={isProcessingCheckout}
+                    className="w-full bg-[#ff9e00] hover:bg-[#ffaa22] text-black font-mono font-bold uppercase tracking-widest text-[11px] py-4.5 rounded-none transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70"
+                  >
+                    {isProcessingCheckout ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                        Memproses...
+                      </div>
+                    ) : (
+                      <>Lanjutkan Pembayaran <ArrowRight className="w-4 h-4" /></>
+                    )}
                   </button>
 
                   {/* Trust Badges */}
