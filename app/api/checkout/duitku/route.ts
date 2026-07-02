@@ -124,14 +124,22 @@ export async function POST(req: Request) {
       body: JSON.stringify(payload)
     });
 
-    const data = await res.json();
+    const responseText = await res.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("Duitku returned non-JSON:", responseText);
+      return NextResponse.json({ error: `Duitku API Error: ${res.status} - ${responseText}` }, { status: 500 });
+    }
+    
     console.log("Duitku response:", data);
 
     if (data.statusCode === "00" && data.paymentUrl) {
       return NextResponse.json({ paymentUrl: data.paymentUrl });
     } else {
       console.error("Duitku Create Invoice Error:", data);
-      return NextResponse.json({ error: "Gagal membuat tagihan pembayaran." }, { status: 500 });
+      return NextResponse.json({ error: data.statusMessage || "Gagal membuat tagihan pembayaran." }, { status: 500 });
     }
 
   } catch (error: any) {

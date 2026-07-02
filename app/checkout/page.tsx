@@ -71,7 +71,17 @@ function CheckoutContent() {
           coupon: appliedCoupon ? appliedCoupon.code : undefined
         })
       });
-      const data = await res.json();
+
+      let data;
+      const text = await res.text();
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.error("Non-JSON response:", text);
+        alert(`Server error: ${res.status} - ${text.substring(0, 50)}`);
+        setIsProcessingCheckout(false);
+        return;
+      }
       
       if (res.ok && data.paymentUrl) {
         window.location.href = data.paymentUrl;
@@ -80,6 +90,7 @@ function CheckoutContent() {
         setIsProcessingCheckout(false);
       }
     } catch (err) {
+      console.error(err);
       alert('Terjadi kesalahan jaringan');
       setIsProcessingCheckout(false);
     }
