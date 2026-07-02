@@ -84,23 +84,25 @@ export async function POST(req: Request) {
       });
     }
 
+    const finalAmountInt = Math.floor(finalAmount);
+
     // Integrasi Duitku
-    const merchantCode = process.env.DUITKU_MERCHANT_CODE;
-    const apiKey = process.env.DUITKU_API_KEY;
+    const merchantCode = process.env.DUITKU_MERCHANT_CODE?.trim();
+    const apiKey = process.env.DUITKU_API_KEY?.trim();
 
     if (!merchantCode || !apiKey) {
       throw new Error("Duitku credentials not configured in environment");
     }
 
     // Signature MD5(merchantCode + merchantOrderId + paymentAmount + apiKey)
-    const signatureStr = `${merchantCode}${merchantOrderId}${finalAmount}${apiKey}`;
+    const signatureStr = `${merchantCode}${merchantOrderId}${finalAmountInt}${apiKey}`;
     const signature = crypto.createHash('md5').update(signatureStr).digest('hex');
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://portfo.be";
 
     const payload = {
       merchantCode,
-      paymentAmount: finalAmount,
+      paymentAmount: finalAmountInt,
       merchantOrderId,
       productDetails: `Portfobe ${plan.toUpperCase()} - ${duration}`,
       email: user.email,
@@ -111,15 +113,17 @@ export async function POST(req: Request) {
     };
 
     const isSandbox = process.env.DUITKU_ENV !== 'production';
-    // Gunakan URL Sandbox secara default
+    // Gunakan URL Sandbox secara default (dengan huruf I kapital sesuai spesifikasi API baru)
     const apiUrl = isSandbox 
-      ? 'https://api-sandbox.duitku.com/api/merchant/createinvoice'
-      : 'https://api-prod.duitku.com/api/merchant/createinvoice';
+      ? 'https://api-sandbox.duitku.com/api/merchant/createInvoice'
+      : 'https://api-prod.duitku.com/api/merchant/createInvoice';
 
     const res = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'User-Agent': 'Portfobe/1.0',
       },
       body: JSON.stringify(payload)
     });

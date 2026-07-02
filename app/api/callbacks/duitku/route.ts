@@ -117,6 +117,13 @@ export async function POST(req: Request) {
             planExpiredAt: expiredAt,
           }
         });
+
+        // Hapus cache dashboard agar UI langsung update ke PRO/SUPREME
+        const { redis } = await import("@/shared/lib/redis");
+        await redis.del(`dashboard:sync:${user.id}:7d`);
+        await redis.del(`dashboard:sync:${user.id}:30d`);
+        await redis.del(`dashboard:sync:${user.id}:1d`);
+        await redis.del(`dashboard:sync:${user.id}:all`);
       }
       
     } else {
