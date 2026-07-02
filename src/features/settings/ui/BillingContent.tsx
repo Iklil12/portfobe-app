@@ -271,14 +271,12 @@ export default function BillingContent() {
                 <p className="text-[10px] font-sans text-white/30">
                   License granted by: <span className="font-medium text-white/50">{sub?.grantedBy || 'System Admin'}</span>
                 </p>
-                <a
-                  href={`https://wa.me/628xxxxxxxxx?text=Halo%2C+saya+ingin+memperpanjang+paket+${plan}+saya.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/pricing"
                   className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-zinc-900 border border-white/10 hover:bg-zinc-800 text-white text-xs font-sans font-medium uppercase tracking-wider rounded-md transition-colors"
                 >
                   Extend {plan}
-                </a>
+                </Link>
               </>
             ) : (
               <>

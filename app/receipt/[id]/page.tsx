@@ -48,37 +48,38 @@ export default function ReceiptPage() {
       <div className="w-full max-w-3xl bg-white p-12 print:p-0 print:shadow-none shadow-xl border border-gray-150 print:border-none text-slate-800 rounded-none">
         
         {/* HEADER */}
-        <div className="flex flex-col sm:flex-row justify-between items-start mb-16 gap-8">
-          <div className="text-[12px] leading-relaxed text-slate-600 font-mono">
-            <h2 className="font-bold text-sm mb-1 text-slate-900 uppercase tracking-wider">
-              Portfo.be, Inc.
+        <div className="flex flex-col sm:flex-row justify-between items-start mb-16 gap-8 border-b border-slate-100 pb-10">
+          <div className="text-[13px] leading-relaxed text-slate-600 font-sans">
+            <h2 className="font-bold text-lg mb-2 text-slate-900 tracking-tight">
+              Portfobe
             </h2>
-            <p>Jakarta, Indonesia</p>
+            <p>Jl. Raya Telang, Kamal</p>
+            <p>Bangkalan, Jawa Timur, Indonesia 69162</p>
             <div className="mt-4">
-              <p>Registration no.: 1234567890</p>
-              <p>Email: support@portfo.be</p>
+              <p>Phone: +6283144303789</p>
+              <p>Email: ikiluluyun@ritions.com</p>
             </div>
           </div>
           <div className="text-right shrink-0">
              <div className="flex items-center justify-end gap-2 mb-2">
-                <img src="/portfo.be.webp" alt="Portfobe Logo" className="h-8 w-auto object-contain" />
+                <img src="/portfo.be.webp" alt="Portfobe Logo" className="h-10 w-auto object-contain" />
              </div>
           </div>
         </div>
 
         {/* CUSTOMER INFO & RECEIPT INFO */}
         <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-8">
-          <div className="text-[12px] leading-relaxed text-slate-600 font-mono">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Billed To</p>
-            <h3 className="font-bold text-slate-900 text-xs mb-0.5 uppercase tracking-wide">{data.user.fullName}</h3>
+          <div className="text-[13px] leading-relaxed text-slate-600 font-sans">
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Billed To</p>
+            <h3 className="font-bold text-slate-900 text-sm mb-0.5 tracking-wide">{data.user.fullName}</h3>
             <p>{data.user.email}</p>
             <p>{data.user.location}</p>
           </div>
-          <div className="text-right text-[12px] leading-relaxed text-slate-600 font-mono">
+          <div className="text-right text-[13px] leading-relaxed text-slate-600 font-sans">
             <p className="font-bold text-slate-900 mb-0.5">Receipt No.: {data.receiptNumber}</p>
             <p>Date of issue: {dateStr}</p>
-            <div className="mt-3">
-              <span className="uppercase text-[9px] font-mono font-bold tracking-widest px-2.5 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-none inline-block">
+            <div className="mt-4">
+              <span className="uppercase text-[11px] font-sans font-bold tracking-widest px-3 py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-full inline-block">
                  PAID
               </span>
             </div>
@@ -87,24 +88,24 @@ export default function ReceiptPage() {
 
         {/* ITEMS TABLE */}
         <div className="mb-10">
-          <h3 className="font-mono font-bold uppercase tracking-wider mb-4 text-xs border-b border-slate-900 pb-2 text-slate-900">Items</h3>
-          <table className="w-full text-[12px] font-mono">
+          <h3 className="font-sans font-bold uppercase tracking-wider mb-4 text-sm border-b border-slate-200 pb-2 text-slate-900">Items</h3>
+          <table className="w-full text-[13px] font-sans">
             <thead>
               <tr className="border-b border-slate-100 text-slate-500">
-                <th className="text-left py-3 font-bold uppercase tracking-wider w-full">Description</th>
-                <th className="text-right py-3 font-bold uppercase tracking-wider whitespace-nowrap pl-8">Amount</th>
+                <th className="text-left py-3 font-bold uppercase tracking-wider w-full text-xs">Description</th>
+                <th className="text-right py-3 font-bold uppercase tracking-wider whitespace-nowrap pl-8 text-xs">Amount</th>
               </tr>
             </thead>
             <tbody className="text-slate-700">
               <tr className="border-b border-slate-100">
                 <td className="py-5">
-                  <p className="font-bold text-slate-900 mb-0.5 uppercase tracking-wider">Portfo.be {data.plan} Plan</p>
-                  <p className="text-slate-500 text-[11px]">{data.durationDays >= 36500 ? "Lifetime access" : `${data.durationDays} Days access`}</p>
-                  <p className="text-[10px] text-slate-400 mt-2">
+                  <p className="font-bold text-slate-900 mb-0.5 text-sm">Portfobe {data.plan.toUpperCase()} Plan</p>
+                  <p className="text-slate-500 text-[12px]">{data.durationDays >= 36500 ? "Lifetime access" : `${data.durationDays} Days access`}</p>
+                  <p className="text-[11px] text-slate-400 mt-2">
                     Payment via {data.gateway}
                   </p>
                 </td>
-                <td className="py-5 text-right align-top font-bold text-slate-900 whitespace-nowrap pl-8">
+                <td className="py-5 text-right align-top font-bold text-slate-900 text-sm whitespace-nowrap pl-8">
                   Rp {data.amount.toLocaleString("id-ID")}
                 </td>
               </tr>
@@ -113,15 +114,15 @@ export default function ReceiptPage() {
         </div>
 
         {/* TOTAL */}
-        <div className="flex justify-between items-center py-4 font-mono font-bold text-xs border-b border-slate-900 text-slate-900 uppercase tracking-widest">
+        <div className="flex justify-between items-center py-5 font-sans font-bold text-sm border-b-2 border-slate-900 text-slate-900 uppercase tracking-widest mt-4">
           <p>Total paid</p>
           <p>Rp {data.amount.toLocaleString("id-ID")}</p>
         </div>
 
         {/* FOOTER MESSAGE */}
-        <div className="mt-24 text-center text-[10px] font-mono text-slate-400 print:mt-16 leading-relaxed">
-          <p>Thank you for subscribing to Portfo.be PRO.</p>
-          <p>If you have any questions, contact us at support@portfo.be</p>
+        <div className="mt-24 text-center text-[12px] font-sans text-slate-400 print:mt-16 leading-relaxed">
+          <p>Thank you for subscribing to Portfobe PRO.</p>
+          <p>If you have any questions, contact us at ikiluluyun@ritions.com</p>
         </div>
 
       </div>
