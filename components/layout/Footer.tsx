@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function Footer() {
+    const t = useTranslations('Footer');
     return (
         <footer className="bg-[#050505] text-white pt-0 pb-0 border-t border-white/10 font-mono">
 
@@ -22,12 +24,12 @@ export function Footer() {
             <div className="wire-b-ft">
                 <Link href="/register" className="group flex flex-col md:flex-row items-center justify-between px-6 md:px-12 py-16 md:py-20 hover-invert-ft transition-colors cursor-pointer">
                     <div className="text-center md:text-left mb-6 md:mb-0">
-                        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50 group-hover:text-black/60 block mb-4">[ FINAL ACTION ]</span>
-                        <h2 className="text-3xl md:text-5xl font-black text-white group-hover:text-black tracking-tighter uppercase">Ready to launch?</h2>
-                        <p className="text-white/60 group-hover:text-black/75 font-medium mt-2 text-sm">Join thousands of visual creators on Portfo.be today.</p>
+                        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50 group-hover:text-black/60 block mb-4">[ {t('ctaBadge')} ]</span>
+                        <h2 className="text-3xl md:text-5xl font-black text-white group-hover:text-black tracking-tighter uppercase">{t('ctaTitle')}</h2>
+                        <p className="text-white/60 group-hover:text-black/75 font-medium mt-2 text-sm">{t('ctaDesc')}</p>
                     </div>
                     <div className="font-mono text-xs uppercase tracking-widest font-medium flex items-center gap-3 px-8 py-4 border border-white/30 group-hover:border-black/30 transition-colors">
-                        GET STARTED FREE <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                        {t('ctaButton')} <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                 </Link>
             </div>
@@ -41,7 +43,7 @@ export function Footer() {
                         <img src="/portfo.be.webp" alt="Portfo.be Logo" className="h-8 md:h-10 w-auto object-contain brightness-0 invert" />
                     </div>
                     <p className="text-sm font-medium leading-relaxed text-white/60 max-w-sm mb-8">
-                        A premium portfolio building platform for visual creators. Launch your professional website to showcase work, manage your profile, and land high-paying clients—all without writing a single line of code.
+                        {t('description')}
                     </p>
                     <div className="flex gap-3">
                         <a aria-label="Facebook" href="https://web.facebook.com/profile.php?id=61589094247534" target="_blank" rel="noopener noreferrer" className="w-10 h-10 border border-white/20 flex items-center justify-center text-white/60 hover:bg-white hover:text-black hover:border-white transition-all duration-300">
@@ -58,20 +60,20 @@ export function Footer() {
 
                 {/* Platform Links */}
                 <div className="p-6 md:p-10">
-                    <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50 block mb-6">[ PLATFORM ]</span>
+                    <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50 block mb-6">[ {t('platform')} ]</span>
                     <ul className="space-y-4 text-sm font-medium uppercase tracking-wider">
-                        <li><a href="#features" className="text-white/75 hover:text-[#ff9e00] transition-colors">Features</a></li>
-                        <li><a href="/pricing" className="text-white/75 hover:text-[#ff9e00] transition-colors">Pricing</a></li>
-                        <li><a href="/support" className="text-white/75 hover:text-[#ff9e00] transition-colors">Support</a></li>
+                        <li><a href="#features" className="text-white/75 hover:text-[#ff9e00] transition-colors">{t('features')}</a></li>
+                        <li><a href="/pricing" className="text-white/75 hover:text-[#ff9e00] transition-colors">{t('pricing')}</a></li>
+                        <li><a href="/support" className="text-white/75 hover:text-[#ff9e00] transition-colors">{t('support')}</a></li>
                     </ul>
                 </div>
 
                 {/* Legal Links */}
                 <div className="p-6 md:p-10">
-                    <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50 block mb-6">[ LEGAL ]</span>
+                    <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/50 block mb-6">[ {t('legal')} ]</span>
                     <ul className="space-y-4 text-sm font-medium uppercase tracking-wider">
-                        <li><Link href="/privacy" className="text-white/75 hover:text-[#ff9e00] transition-colors">Privacy Policy</Link></li>
-                        <li><Link href="/terms" className="text-white/75 hover:text-[#ff9e00] transition-colors">Terms of Service</Link></li>
+                        <li><Link href="/privacy" className="text-white/75 hover:text-[#ff9e00] transition-colors">{t('privacy')}</Link></li>
+                        <li><Link href="/terms" className="text-white/75 hover:text-[#ff9e00] transition-colors">{t('terms')}</Link></li>
                     </ul>
                 </div>
             </div>
@@ -79,7 +81,9 @@ export function Footer() {
             {/* Bottom Copyright */}
             <div className="border-t border-white/10 px-6 md:px-12 py-6 flex flex-col md:flex-row justify-between items-center gap-4 font-mono text-[10px] uppercase tracking-widest text-white/55">
                 <p>&copy; {new Date().getFullYear()} Portfo.be Inc.</p>
-                <p>Surabaya, Indonesia</p>
+                <div className="flex items-center gap-6">
+                    <p>Surabaya, Indonesia</p>
+                </div>
             </div>
 
             {/* Giant Fading Wordmark */}

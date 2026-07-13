@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimateOnScroll } from '@/shared/ui/AnimateOnScroll';
 import { FolderOpen, Award, MessageSquare, Link2, CheckCircle2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 function AnimatedCounter({ value, duration = 1500 }: { value: number, duration?: number }) {
   const [count, setCount] = useState(0);
@@ -35,6 +36,7 @@ interface QuickStatsProps {
 }
 
 export function QuickStats({ type, stats, isLoadingStats, strength = 0, strengthBreakdown = [] }: QuickStatsProps) {
+  const t = useTranslations('DashboardOverview');
   if (isLoadingStats) {
     return <div className="h-[300px] bg-[#1a1a1a] border border-white/5 rounded-xl shimmer w-full"></div>;
   }
@@ -43,7 +45,7 @@ export function QuickStats({ type, stats, isLoadingStats, strength = 0, strength
     return (
       <AnimateOnScroll delay={0} className="w-full h-full">
         <div className="bg-[#1a1a1a] border border-white/5 p-5 md:p-6 rounded-xl w-full h-full flex flex-col">
-          <h3 className="text-base font-sans font-medium text-white mb-6">My Works & Collections</h3>
+          <h3 className="text-base font-sans font-medium text-white mb-6">{t('statsWorksTitle')}</h3>
           
           <div className="grid grid-cols-2 gap-4 flex-1">
             <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-4 flex flex-col justify-between hover:bg-zinc-900 transition-colors">
@@ -51,8 +53,8 @@ export function QuickStats({ type, stats, isLoadingStats, strength = 0, strength
                 <div className="w-8 h-8 rounded-md bg-white/5 flex items-center justify-center shrink-0">
                   <FolderOpen className="w-4 h-4 text-white/70" />
                 </div>
-                <span className="text-sm font-sans text-white/80">Projects</span>
-                <span className="ml-auto text-[9px] px-2 py-0.5 rounded bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20 font-medium tracking-wide">Live</span>
+                <span className="text-sm font-sans text-white/80">{t('statsProjects')}</span>
+                <span className="ml-auto text-[9px] px-2 py-0.5 rounded bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20 font-medium tracking-wide">{t('badgeLive')}</span>
               </div>
               <div className="flex items-end justify-between">
                 <span className="text-3xl font-mono font-bold text-[#ff9e00]"><AnimatedCounter value={stats?.projects ?? 0} /></span>
@@ -65,8 +67,8 @@ export function QuickStats({ type, stats, isLoadingStats, strength = 0, strength
                 <div className="w-8 h-8 rounded-md bg-white/5 flex items-center justify-center shrink-0">
                   <Award className="w-4 h-4 text-white/70" />
                 </div>
-                <span className="text-sm font-sans text-white/80">Certificates</span>
-                <span className="ml-auto text-[9px] px-2 py-0.5 rounded bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20 font-medium tracking-wide">Verified</span>
+                <span className="text-sm font-sans text-white/80">{t('statsCerts')}</span>
+                <span className="ml-auto text-[9px] px-2 py-0.5 rounded bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20 font-medium tracking-wide">{t('badgeVerified')}</span>
               </div>
               <div className="flex items-end justify-between">
                 <span className="text-3xl font-mono font-bold text-[#ff9e00]"><AnimatedCounter value={stats?.awards ?? 0} /></span>
@@ -79,8 +81,8 @@ export function QuickStats({ type, stats, isLoadingStats, strength = 0, strength
                 <div className="w-8 h-8 rounded-md bg-white/5 flex items-center justify-center shrink-0">
                   <MessageSquare className="w-4 h-4 text-white/70" />
                 </div>
-                <span className="text-sm font-sans text-white/80 truncate">Testimonials</span>
-                <span className="ml-auto text-[9px] px-2 py-0.5 rounded bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20 font-medium tracking-wide">Social</span>
+                <span className="text-sm font-sans text-white/80 truncate">{t('statsTesti')}</span>
+                <span className="ml-auto text-[9px] px-2 py-0.5 rounded bg-[#ff9e00]/10 text-[#ff9e00] border border-[#ff9e00]/20 font-medium tracking-wide">{t('badgeSocial')}</span>
               </div>
               <div className="flex items-end justify-between">
                 <span className="text-3xl font-mono font-bold text-white"><AnimatedCounter value={stats?.testimonials ?? 0} /></span>
@@ -93,7 +95,7 @@ export function QuickStats({ type, stats, isLoadingStats, strength = 0, strength
                 <div className="w-8 h-8 rounded-md bg-white/5 flex items-center justify-center shrink-0">
                   <Link2 className="w-4 h-4 text-white/70" />
                 </div>
-                <span className="text-sm font-sans text-white/80">Links</span>
+                <span className="text-sm font-sans text-white/80">{t('statsLinks')}</span>
               </div>
               <div className="flex items-end justify-between">
                 <span className="text-3xl font-mono font-bold text-white"><AnimatedCounter value={stats?.links ?? 0} /></span>

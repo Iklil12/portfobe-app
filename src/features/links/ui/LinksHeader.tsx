@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link2, Crown, Sparkles, Check, Plus, Loader2 } from 'lucide-react';
 
@@ -18,6 +19,7 @@ interface LinksHeaderProps {
 }
 
 export function LinksHeader({ state, actions }: LinksHeaderProps) {
+  const t = useTranslations('DashboardLinks');
   const { hasChanges, isSaving, isAdding, isLoading, userPlan, linkCount } = state;
   const { addLink, saveAllChanges } = actions;
 
@@ -62,9 +64,7 @@ export function LinksHeader({ state, actions }: LinksHeaderProps) {
           </AnimatePresence>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-sans font-medium uppercase tracking-wider text-white mb-2 flex items-center justify-center md:justify-start gap-3">
-          Social Links
-          <Sparkles className="w-5 h-5 text-white/30 animate-spin-slow" />
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-sans font-medium uppercase tracking-wider text-white mb-2 flex items-center justify-center md:justify-start gap-3">{t('socialLinks')}<Sparkles className="w-5 h-5 text-white/30 animate-spin-slow" />
         </h1>
 
         <AnimatePresence mode="wait">
@@ -99,7 +99,7 @@ export function LinksHeader({ state, actions }: LinksHeaderProps) {
                   animate={{ opacity: 1 }}
                   className={`text-[9px] font-sans font-medium uppercase tracking-wider ${isFull ? 'text-rose-500' : 'text-white/40'}`}
                 >
-                  {linkCount}/1 Links Used
+                  {t('linksUsed', { count: linkCount })}
                 </motion.span>
              </motion.div>
           ) : (
@@ -108,9 +108,7 @@ export function LinksHeader({ state, actions }: LinksHeaderProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-xs font-sans text-white/50 max-w-lg mt-2"
-            >
-              Manage unlimited link directory as a {userPlan === 'SUPREME' ? 'Supreme' : 'Pro'} Creator.
-            </motion.p>
+            > {t('managePro', { plan: userPlan === 'SUPREME' ? 'Supreme' : 'Pro' })}</motion.p>
           )}
         </AnimatePresence>
 
@@ -169,7 +167,7 @@ export function LinksHeader({ state, actions }: LinksHeaderProps) {
             className="w-full sm:w-auto px-6 py-3.5 bg-[#ff9e00] hover:bg-[#ffaa22] text-black rounded-md text-[10px] font-sans font-medium uppercase tracking-widest flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
           >
             {isAdding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />} 
-            {isAdding ? 'Creating...' : 'Add New'}
+            {isAdding ? t('creatingBtn') : t('addNewBtn')}
           </motion.button>
         )}
       </div>

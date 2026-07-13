@@ -124,7 +124,7 @@ export async function updateAppearance(email: string, data: AppearanceDTO) {
     const isProSmoothScroll = (typeof customTexts === 'object' && customTexts !== null) ? (customTexts as Record<string, unknown>).smooth_scroll === 'true' : false;
 
     if ((isProTheme || isProSplash || isProSmoothScroll) && getEffectivePlan(user) === 'FREE') {
-      const lockReason = isProTheme ? "Tema ini eksklusif untuk PRO Creator." : isProSplash ? "Fitur Cinematic Intro eksklusif untuk PRO Creator." : "Fitur Smooth Scroll eksklusif untuk PRO Creator.";
+      const lockReason = isProTheme ? "This theme is exclusive to PRO Creators." : isProSplash ? "Cinematic Intro feature is exclusive to PRO Creators." : "Smooth Scroll feature is exclusive to PRO Creators.";
       throw new Error(`FEATURE_LOCKED:${lockReason}`);
     }
   }
@@ -213,9 +213,9 @@ export async function createDraft(email: string, data: DraftDTO) {
 
   const draftCount = await prisma.themeDraft.count({ where: { userId: user.id } });
   if (getEffectivePlan(user) === 'FREE') {
-    if (draftCount >= 1) throw new Error("FEATURE_LOCKED:Kuota FREE maksimal 1 draft. Silakan upgrade ke PRO.");
+    if (draftCount >= 1) throw new Error("FEATURE_LOCKED:FREE plan allows maximum 1 draft. Please upgrade to PRO.");
   } else if (getEffectivePlan(user) === 'PRO') {
-    if (draftCount >= 5) throw new Error("MAXIMUM_DRAFTS_REACHED:Batas maksimal draft untuk versi PRO adalah 5.");
+    if (draftCount >= 5) throw new Error("MAXIMUM_DRAFTS_REACHED:Maximum drafts limit for PRO version is 5.");
   }
 
   const { name, description, themeTemplate, themeColor, fontHeading, fontBody, buttonShape, cardStyle, splashScreen, customTexts, selectedProjects } = data;

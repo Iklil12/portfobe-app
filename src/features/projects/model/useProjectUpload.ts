@@ -21,7 +21,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
     const maxImageLabel = userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB';
     
     if (f.size > maxImageSize) {
-      showToast({ message: `Maksimal ukuran gambar ${maxImageLabel}`, id: "err-img", icon: "⚠️" });
+      showToast({ message: `Maximum image size is ${maxImageLabel}`, id: "err-img", icon: "⚠️" });
       return;
     }
 
@@ -29,7 +29,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
     const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET;
     
     if (!cloudName || !uploadPreset) {
-      showToast({ message: "Konfigurasi Cloudinary tidak ditemukan", id: "upload-asset-fail", icon: "❌" });
+      showToast({ message: "Cloudinary configuration not found", id: "upload-asset-fail", icon: "❌" });
       return;
     }
 
@@ -69,7 +69,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
     const maxVideoSizeLabel = userPlan === 'SUPREME' ? '100MB' : '50MB';
 
     if (f.size > maxVideoSize) {
-      showToast({ message: `Ukuran video maksimal ${maxVideoSizeLabel}`, id: "err-video-size", icon: "⚠️" });
+      showToast({ message: `Maximum video size is ${maxVideoSizeLabel}`, id: "err-video-size", icon: "⚠️" });
       return;
     }
 
@@ -125,7 +125,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
       upload.start();
 
     } catch (error: any) {
-    console.error(error);
+      console.error(error);
       showToast({ message: error.message || "Failed to process video", id: "upload-exception", icon: "⚠️" });
       setIsUploadingVideo(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -136,7 +136,7 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
     const max3DSize = userPlan === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
     const max3DLabel = userPlan === 'SUPREME' ? '100MB' : '50MB';
     if (f.size > max3DSize) {
-       showToast({ message: `Maksimal ${max3DLabel}`, id: "err-3d", icon: "⚠️" });
+       showToast({ message: `Maximum ${max3DLabel}`, id: "err-3d", icon: "⚠️" });
        return;
     }
     setFile3d(f);
@@ -163,20 +163,20 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
     if (projectType === 'photo') {
       const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
       if (!validMimeTypes.includes(file.type)) {
-        showToast({ message: "Format tidak didukung. Harap unggah JPG, PNG, WEBP, atau GIF.", id: "err-img-type", icon: "⚠️" });
+        showToast({ message: "Format not supported. Please upload JPG, PNG, WEBP, or GIF.", id: "err-img-type", icon: "⚠️" });
         return;
       }
       await processImageUpload(file);
     } else if (projectType === 'video') {
       if (!file.type.startsWith('video/')) {
-        showToast({ message: "Harap unggah file video yang valid.", id: "err-video-type", icon: "⚠️" });
+        showToast({ message: "Please upload a valid video file.", id: "err-video-type", icon: "⚠️" });
         return;
       }
       await processVideoUpload(file);
     } else if (projectType === '3d') {
       const isGlb = file.name.endsWith('.glb') || file.name.endsWith('.gltf');
       if (!isGlb) {
-        showToast({ message: "Harap unggah file 3D berformat .GLB atau .GLTF.", id: "err-3d-type", icon: "⚠️" });
+        showToast({ message: "Please upload a .GLB or .GLTF 3D file.", id: "err-3d-type", icon: "⚠️" });
         return;
       }
       process3DFile(file);
@@ -212,5 +212,3 @@ export function useProjectUpload({ userPlan, projectTitle, projectType, setMedia
     handleVideoUpload
   };
 }
-
-

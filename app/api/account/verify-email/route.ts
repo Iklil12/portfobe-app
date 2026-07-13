@@ -10,16 +10,16 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const token = url.searchParams.get("token");
 
-    if (!token) return NextResponse.redirect(`${settingsUrl}?error=Token tidak valid`);
+    if (!token) return NextResponse.redirect(`${settingsUrl}?error=Invalid token`);
 
     await verifyEmailChange(token);
 
-    return NextResponse.redirect(`${settingsUrl}?success=Email berhasil diperbarui!`);
+    return NextResponse.redirect(`${settingsUrl}?success=Email successfully updated!`);
   } catch (error: unknown) {
-    if (getErrorMessage(error) === "INVALID_TOKEN") return NextResponse.redirect(`${settingsUrl}?error=Tautan tidak valid atau sudah digunakan`);
-    if (getErrorMessage(error) === "EXPIRED_TOKEN") return NextResponse.redirect(`${settingsUrl}?error=Tautan kadaluarsa, silakan ajukan ulang`);
+    if (getErrorMessage(error) === "INVALID_TOKEN") return NextResponse.redirect(`${settingsUrl}?error=Link is invalid or already used`);
+    if (getErrorMessage(error) === "EXPIRED_TOKEN") return NextResponse.redirect(`${settingsUrl}?error=Link expired, please request again`);
     
     console.error("VERIFY_EMAIL_ERROR:", error);
-    return NextResponse.redirect(`${settingsUrl}?error=Terjadi kesalahan internal`);
+    return NextResponse.redirect(`${settingsUrl}?error=An internal error occurred`);
   }
 }

@@ -17,12 +17,12 @@ export async function PATCH(req: Request) {
 
     await updatePassword(session.user.email, currentPassword, newPassword);
 
-    return NextResponse.json({ message: "Kata sandi berhasil diperbarui." }, { status: 200 });
+    return NextResponse.json({ message: "Password successfully updated." }, { status: 200 });
   } catch (error: unknown) {
     if (getErrorMessage(error) === "INVALID_PASSWORD_LENGTH") return NextResponse.json({ error: "New password must be at least 6 characters." }, { status: 400 });
-    if (getErrorMessage(error) === "USER_NOT_FOUND") return NextResponse.json({ error: "User tidak ditemukan." }, { status: 404 });
-    if (getErrorMessage(error) === "CURRENT_PASSWORD_REQUIRED") return NextResponse.json({ error: "Kata sandi saat ini diperlukan." }, { status: 400 });
-    if (getErrorMessage(error) === "CURRENT_PASSWORD_INVALID") return NextResponse.json({ error: "Kata sandi saat ini salah." }, { status: 400 });
+    if (getErrorMessage(error) === "USER_NOT_FOUND") return NextResponse.json({ error: "User not found." }, { status: 404 });
+    if (getErrorMessage(error) === "CURRENT_PASSWORD_REQUIRED") return NextResponse.json({ error: "Current password is required." }, { status: 400 });
+    if (getErrorMessage(error) === "CURRENT_PASSWORD_INVALID") return NextResponse.json({ error: "Current password is incorrect." }, { status: 400 });
 
     console.error("UPDATE_PASSWORD_ERROR:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

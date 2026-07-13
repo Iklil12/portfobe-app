@@ -22,10 +22,10 @@ export async function purgeTrash() {
     ]);
 
     const total = projects.count + certificates.count;
-    console.log(`[purge-trash] Dihapus permanen: ${projects.count} proyek, ${certificates.count} sertifikat`);
+    console.log(`[purge-trash] Permanently deleted: ${projects.count} projects, ${certificates.count} certificates`);
 
     return {
-      message: `Purge selesai: ${total} item dihapus permanen`,
+      message: `Purge complete: ${total} items permanently deleted`,
       projects: projects.count,
       certificates: certificates.count,
       cutoffDate: cutoff.toISOString(),

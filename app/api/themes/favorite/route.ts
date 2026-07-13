@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const liked = await toggleFavoriteTheme(session.user.email, body.themeId);
     return NextResponse.json({ liked });
   } catch (error: unknown) {
-    if (getErrorMessage(error) === "INVALID_DATA") return NextResponse.json({ error: "themeId tidak valid" }, { status: 400 });
+    if (getErrorMessage(error) === "INVALID_DATA") return NextResponse.json({ error: "Invalid themeId" }, { status: 400 });
     console.error("POST ThemeFavorite Error:", error);
     return NextResponse.json({ error: "Failed to save favorite" }, { status: 500 });
   }

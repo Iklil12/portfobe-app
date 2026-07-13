@@ -12,10 +12,12 @@ import {
   Check, 
   Loader2 
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export function ManualPenpotManager() {
+  const t = useTranslations('DashboardIntegrations');
   const { data, mutate } = useSWR('/api/penpot/manual', fetcher);
   const [projects, setProjects] = useState<{ title: string; url: string }[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -34,7 +36,7 @@ export function ManualPenpotManager() {
 
   const persistData = async (updatedProjects: { title: string; url: string }[]) => {
     setIsSaving(true);
-    const toastId = toast.loading('Saving changes...');
+    const toastId = toast.loading(t('savingToast'));
     try {
       const res = await fetch('/api/penpot/manual', {
         method: 'POST',
@@ -43,12 +45,12 @@ export function ManualPenpotManager() {
       });
       if (res.ok) {
         await mutate();
-        toast.success('Autosaved!', { id: toastId });
+        toast.success(t('autosavedToast'), { id: toastId });
       } else {
-        toast.error('Failed to autosave.', { id: toastId });
+        toast.error(t('failedAutosaveToast'), { id: toastId });
       }
     } catch (err) {
-      toast.error('Network error.', { id: toastId });
+      toast.error(t('networkErrorToast'), { id: toastId });
     } finally {
       setIsSaving(false);
     }
@@ -57,13 +59,13 @@ export function ManualPenpotManager() {
   const handleAdd = (e?: React.MouseEvent) => {
     e?.preventDefault();
     if (projects.length >= 10) {
-      toast.error('Maximum 10 projects allowed.');
+      toast.error(t('maxProjectsToast'));
       return;
     }
     const newIndex = projects.length;
     setProjects(prev => [...prev, { title: '', url: '' }]);
     setEditingIndex(newIndex);
-    toast.success('New row added.');
+    toast.success(t('newRowAddedToast'));
   };
 
   const handleRemove = async (index: number, e?: React.MouseEvent) => {
@@ -107,7 +109,7 @@ export function ManualPenpotManager() {
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-wider mb-2 block">Project Title</label>
+                      <label className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-wider mb-2 block">{t('projectTitle')}</label>
                       <input 
                         type="text" 
                         placeholder="e.g., Landing Page Design" 
@@ -118,7 +120,7 @@ export function ManualPenpotManager() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-wider mb-2 block">Public Share Link</label>
+                      <label className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-wider mb-2 block">{t('publicShareLink')}</label>
                       <input 
                         type="text" 
                         placeholder="https://design.penpot.app/..." 
@@ -129,7 +131,7 @@ export function ManualPenpotManager() {
                     </div>
                   </div>
                   <div className="flex justify-end items-center gap-4 pt-2 border-t border-white/5">
-                     <button type="button" onClick={() => setEditingIndex(null)} className="text-[10px] font-sans font-medium text-white/45 hover:text-white uppercase tracking-wider">Cancel</button>
+                     <button type="button" onClick={() => setEditingIndex(null)} className="text-[10px] font-sans font-medium text-white/45 hover:text-white uppercase tracking-wider">{t('cancelBtn')}</button>
                      <button type="button" onClick={handleDone} disabled={isSaving} className="px-5 py-2.5 rounded-md bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-sans font-medium uppercase tracking-widest flex items-center gap-1.5 active:scale-95 transition-all">
                        {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                        Save & Done
@@ -149,7 +151,7 @@ export function ManualPenpotManager() {
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-sans font-medium text-white tracking-wide truncate">{p.title || 'Untitled Project'}</p>
+                      <p className="text-sm font-sans font-medium text-white tracking-wide truncate">{p.title || t('untitledProject')}</p>
                       <p className="text-[9px] font-sans text-white/30 truncate mt-1">{p.url}</p>
                     </div>
                   </div>
@@ -159,7 +161,7 @@ export function ManualPenpotManager() {
                     </button>
                     {deleteConfirm === idx ? (
                       <div className="flex items-center gap-1.5">
-                         <button type="button" onClick={(e) => { e.stopPropagation(); handleRemove(idx, e); }} className="px-3 py-1.5 rounded-md bg-rose-600 text-white text-[9px] font-sans font-medium uppercase tracking-widest hover:bg-rose-700 transition-colors">Yes, Delete</button>
+                         <button type="button" onClick={(e) => { e.stopPropagation(); handleRemove(idx, e); }} className="px-3 py-1.5 rounded-md bg-rose-600 text-white text-[9px] font-sans font-medium uppercase tracking-widest hover:bg-rose-700 transition-colors">{t('yesDeleteBtn')}</button>
                          <button type="button" onClick={(e) => { e.stopPropagation(); setDeleteConfirm(null); }} className="p-1.5 text-white/40 hover:text-white transition-colors"><X className="w-4 h-4" /></button>
                       </div>
                     ) : (

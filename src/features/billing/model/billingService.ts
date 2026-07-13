@@ -111,10 +111,10 @@ export async function activateTrial(userId: string) {
     select: { plan: true, planExpiredAt: true }
   });
 
-  if (!user) throw new Error("404:User tidak ditemukan");
+  if (!user) throw new Error("404:User not found");
 
   if (isProActive({ plan: user.plan, planExpiredAt: user.planExpiredAt })) {
-    throw new Error("400:Kamu sudah memiliki langganan aktif. Tidak bisa mengklaim trial.");
+    throw new Error("400:You already have an active subscription. Cannot claim trial.");
   }
 
   const pastTrial = await prisma.transaction.findFirst({
@@ -124,7 +124,7 @@ export async function activateTrial(userId: string) {
     },
   });
 
-  if (pastTrial) throw new Error("400:Kamu sudah pernah mengklaim trial PRO sebelumnya.");
+  if (pastTrial) throw new Error("400:You have already claimed a PRO trial before.");
 
   const now = new Date();
   const durationDays = 14;
@@ -175,51 +175,51 @@ export async function activateTrial(userId: string) {
 
   return {
     success: true,
-    message: "Trial PRO 14 Hari berhasil diaktifkan!",
+    message: "14-Day PRO Trial successfully activated!",
     subscription,
   };
 }
 
 export async function validateCoupon(email: string | null | undefined, code: string, plan: string, subtotal: number) {
-  if (!code) throw new Error("400:Kode kupon diperlukan");
-  if (code.length > 50) throw new Error("400:Kode kupon tidak valid (terlalu panjang)");
+  if (!code) throw new Error("400:Coupon code is required");
+  if (code.length > 50) throw new Error("400:Invalid coupon code (too long)");
 
   const coupon = await prisma.coupon.findUnique({
     where: { code: code.toUpperCase() }
   });
 
-  if (!coupon) throw new Error("404:Kode kupon tidak ditemukan");
-  if (!coupon.isActive) throw new Error("400:Kupon ini sedang dinonaktifkan");
+  if (!coupon) throw new Error("404:Coupon code not found");
+  if (!coupon.isActive) throw new Error("400:This coupon is currently disabled");
 
   const now = new Date();
-  if (coupon.validFrom && now < coupon.validFrom) throw new Error("400:Kupon ini belum bisa digunakan");
-  if (coupon.validUntil && now > coupon.validUntil) throw new Error("400:Kupon ini sudah kedaluwarsa");
-  if (coupon.maxUses && coupon.currentUses >= coupon.maxUses) throw new Error("400:Batas penggunaan kupon sudah habis");
+  if (coupon.validFrom && now < coupon.validFrom) throw new Error("400:This coupon cannot be used yet");
+  if (coupon.validUntil && now > coupon.validUntil) throw new Error("400:This coupon has expired");
+  if (coupon.maxUses && coupon.currentUses >= coupon.maxUses) throw new Error("400:Coupon usage limit reached");
 
   if (coupon.minPurchase !== null && coupon.minPurchase !== undefined) {
     if (subtotal !== undefined && subtotal < coupon.minPurchase) {
-      throw new Error(`400:Minimal pembelian untuk menggunakan kupon ini adalah Rp ${coupon.minPurchase.toLocaleString('id-ID')}`);
+      throw new Error(`400:Minimum purchase to use this coupon is Rp ${coupon.minPurchase.toLocaleString('id-ID')}`);
     }
   }
 
   if (coupon.allowedPlan && coupon.allowedPlan !== "ALL") {
     if (plan && plan !== coupon.allowedPlan) {
-      throw new Error(`400:Kupon ini hanya berlaku untuk pembelian paket ${coupon.allowedPlan.toUpperCase()}`);
+      throw new Error(`400:This coupon is only valid for purchasing the ${coupon.allowedPlan.toUpperCase()} plan`);
     }
   }
 
   if (coupon.maxUsesPerUser) {
-    if (!email) throw new Error("401:Harap masuk terlebih dahulu untuk menggunakan kupon ini");
+    if (!email) throw new Error("401:Please log in first to use this coupon");
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) throw new Error("404:Pengguna tidak ditemukan");
+    if (!user) throw new Error("404:User not found");
 
     const userUsageCount = await prisma.couponUsage.count({
       where: { couponId: coupon.id, userId: user.id }
     });
 
     if (userUsageCount >= coupon.maxUsesPerUser) {
-      throw new Error(`400:Anda sudah menggunakan kupon ini sebanyak batas maksimal (${coupon.maxUsesPerUser} kali)`);
+      throw new Error(`400:You have used this coupon the maximum number of times (${coupon.maxUsesPerUser} times)`);
     }
   }
 
@@ -253,7 +253,7 @@ export async function getReceiptDetails(userId: string, id: string) {
     },
   });
 
-  if (!transaction) throw new Error("404:Transaksi tidak ditemukan");
+  if (!transaction) throw new Error("404:Transaction not found");
 
   const year = new Date(transaction.createdAt).getFullYear();
   const shortId = transaction.id.replace(/-/g, "").substring(0, 8).toUpperCase();

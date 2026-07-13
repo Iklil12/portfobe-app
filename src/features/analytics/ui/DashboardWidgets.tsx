@@ -1,6 +1,7 @@
 import React from 'react';
 import { Eye, User, Clock, LogOut, BarChart3, Trophy, Calendar, FolderOpen, RefreshCw, Lock } from 'lucide-react';
 import { AnimatedCounter, SkeletonBlock } from './AnalyticsShared';
+import { useTranslations } from 'next-intl';
 
 export function KpiCards({
   isLoading,
@@ -13,12 +14,13 @@ export function KpiCards({
   lockedBounceRate,
   handleLocked
 }: any) {
+  const t = useTranslations('DashboardAnalytics');
   const cards = [
-    { label: 'Total Views', val: stats.totalViews, icon: Eye, badge: `${growth > 0 ? '+' : ''}${growth}%`, badgeColor: growth >= 0 ? 'bg-[#ff9e00]/10 text-[#ff9e00]' : 'bg-rose-500/10 text-rose-400', locked: false },
-    { label: 'Unique Visitors', val: stats.uniqueVisitors, icon: User, badge: 'Est.', badgeColor: 'bg-white/5 text-white/70 border border-white/5', locked: false },
-    { label: 'Avg. Time', val: isFree ? lockedAvgTime : stats.avgTime, icon: Clock, badge: 'PRO', badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
-    { label: 'Bounce Rate', val: isFree ? lockedBounceRate : stats.bounceRate, icon: LogOut, badge: 'PRO', badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
-    { label: 'Returning Rate', val: isFree ? '18%' : stats.returningRate, icon: RefreshCw, badge: 'PRO', badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
+    { label: t('kpiTotalViews'), val: stats.totalViews, icon: Eye, badge: `${growth > 0 ? '+' : ''}${growth}%`, badgeColor: growth >= 0 ? 'bg-[#ff9e00]/10 text-[#ff9e00]' : 'bg-rose-500/10 text-rose-400', locked: false },
+    { label: t('kpiUniqueVisitors'), val: stats.uniqueVisitors, icon: User, badge: t('badgeEst'), badgeColor: 'bg-white/5 text-white/70 border border-white/5', locked: false },
+    { label: t('kpiAvgTime'), val: isFree ? lockedAvgTime : stats.avgTime, icon: Clock, badge: t('badgePro'), badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
+    { label: t('kpiBounceRate'), val: isFree ? lockedBounceRate : stats.bounceRate, icon: LogOut, badge: t('badgePro'), badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
+    { label: t('kpiReturningRate'), val: isFree ? '18%' : stats.returningRate, icon: RefreshCw, badge: t('badgePro'), badgeColor: 'bg-[#ff9e00] text-black', locked: isFree },
   ];
 
   return (
@@ -35,7 +37,7 @@ export function KpiCards({
                 <div className="w-8 h-8 bg-zinc-900 text-white border border-white/15 rounded-md flex items-center justify-center mb-1.5">
                   <Lock className="w-3.5 h-3.5 text-[#ff9e00]" />
                 </div>
-                <span className="text-[10px] font-sans font-medium text-[#ff9e00]">PRO ONLY</span>
+                <span className="text-[10px] font-sans font-medium text-[#ff9e00]">{t('proOnly')}</span>
               </div>
             )}
             <div className="flex justify-between items-start mb-4">
@@ -68,11 +70,12 @@ export function SecondaryMetricStrip({
   galleryClicks,
   handleLocked
 }: any) {
+  const t = useTranslations('DashboardAnalytics');
   const metrics = [
-    { label: 'Daily Average', val: isFree ? lockedAvgDaily : avgDaily, suffix: isFree ? 'views/day' : 'views/day', icon: BarChart3 },
-    { label: 'Peak Visits', val: isFree ? lockedPeakViews : peakEntry.views, suffix: isFree ? lockedPeakDay : peakEntry.day, icon: Trophy },
-    { label: 'Total Period', val: isFree ? lockedTotalPeriod : totalPeriod, suffix: isFree ? 'in 7 days' : `in ${chartDataLength} days`, icon: Calendar },
-    { label: 'Gallery Clicks', val: isFree ? 75 : (galleryClicks || 0), suffix: 'archive visits', icon: FolderOpen },
+    { label: t('secDailyAvg'), val: isFree ? lockedAvgDaily : avgDaily, suffix: t('suffixViewsPerDay'), icon: BarChart3 },
+    { label: t('secPeakVisits'), val: isFree ? lockedPeakViews : peakEntry.views, suffix: isFree ? lockedPeakDay : peakEntry.day, icon: Trophy },
+    { label: t('secTotalPeriod'), val: isFree ? lockedTotalPeriod : totalPeriod, suffix: t('suffixInDays', { days: isFree ? 7 : chartDataLength }), icon: Calendar },
+    { label: t('secGalleryClicks'), val: isFree ? 75 : (galleryClicks || 0), suffix: t('suffixArchiveVisits'), icon: FolderOpen },
   ];
 
   return (
@@ -89,7 +92,7 @@ export function SecondaryMetricStrip({
                 <div className="w-7 h-7 bg-zinc-900 border border-white/10 text-white rounded-md flex items-center justify-center mb-1">
                   <Lock className="w-3 h-3 text-[#ff9e00]" />
                 </div>
-                <span className="text-[10px] font-sans font-medium text-[#ff9e00]">PRO ONLY</span>
+                <span className="text-[10px] font-sans font-medium text-[#ff9e00]">{t('proOnly')}</span>
               </div>
             )}
             <div className="w-9 h-9 md:w-10 md:h-10 rounded-md bg-zinc-950 border border-white/5 flex items-center justify-center text-white/70 shrink-0">

@@ -78,7 +78,7 @@ export async function registerUser(formData: FormData) {
     // Hanya lakukan validasi jika admin sudah menyetel Secret Key
     if (process.env.RECAPTCHA_SECRET_KEY) {
       if (!captchaToken) {
-        return { error: "Harap selesaikan verifikasi reCAPTCHA terlebih dahulu." };
+        return { error: "Please complete the reCAPTCHA verification first." };
       }
 
       const verifyRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
@@ -91,7 +91,7 @@ export async function registerUser(formData: FormData) {
 
       if (!verifyData.success) {
         console.error("CAPTCHA Validation Failed:", verifyData);
-        return { error: "Validasi CAPTCHA gagal. Sistem mendeteksi aktivitas mencurigakan." };
+        return { error: "CAPTCHA validation failed. System detected suspicious activity." };
       }
     }
     // -----------------------------------------
@@ -102,7 +102,7 @@ export async function registerUser(formData: FormData) {
     });
 
     if (existingUser) {
-      return { error: "Email sudah terdaftar." };
+      return { error: "Email is already registered." };
     }
 
     // 2. Enkripsi Password agar aman di Hostinger
@@ -143,7 +143,7 @@ export async function registerUser(formData: FormData) {
       }
     });
 
-    console.log("✅ User berhasil dibuat:", newUser.email);
+    console.log("✅ User successfully created:", newUser.email);
 
     // ==============================================================
     // 4. KIRIM WELCOME EMAIL SETELAH USER SUKSES DIBUAT
@@ -152,30 +152,29 @@ export async function registerUser(formData: FormData) {
       from: 'Portfobe <hellocreator@mail.ritions.com>',
       to: email,
       replyTo: 'ikliluluyun@ritions.com', // User bisa balas langsung ke Anda
-      subject: 'Welcome to Portfobe!',
-      html: `
+      subject: 'Welcome to Portfobe!',      html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
           <p style="font-size: 16px;">Hey,</p>
           <p style="font-size: 16px;">My name is <strong>IKLIL</strong> — I'm the founder and CEO of <strong>portfobe</strong>.</p>
-          <p style="font-size: 16px;">Saya ingin mengucapkan terima kasih secara personal karena kamu telah memilih portfobe sebagai tempat untuk memamerkan karya terbaikmu. Kami membangun platform ini dengan satu misi: membantu kreator seperti kamu memiliki 'rumah digital' yang profesional, elegan, dan selesai dalam hitungan menit.</p>
+          <p style="font-size: 16px;">I want to personally thank you for choosing portfobe as the place to showcase your best work. We built this platform with one mission: to help creators like you have a professional, elegant 'digital home' ready in minutes.</p>
           
           <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #ff9e00;">
-            <p style="font-size: 16px; margin-top: 0; font-weight: bold;">Verifikasi Akun Anda</p>
-            <p style="font-size: 14px; margin-bottom: 20px;">Masukkan 6 digit kode keamanan di bawah ini untuk menyelesaikan pendaftaran Anda.</p>
-            <div style="background-color: #0f172a; color: #ffffff; padding: 16px 24px; border-radius: 6px; font-weight: bold; font-size: 24px; letter-spacing: 0.2em; text-align: center;">${verificationToken}</div>
-            <p style="font-size: 12px; margin-top: 15px; color: #64748b;">Kode ini hanya berlaku selama 15 menit.</p>
+            <p style="font-size: 16px; margin-top: 0; font-weight: bold;">Verify Your Account</p>
+            <p style="font-size: 14px; margin-bottom: 20px;">Enter the 6-digit security code below to complete your registration.</p>
+            <div style="background-color: #0f172a; color: #ffffff; padding: 16px 24px; border-radius: 6px; font-weight: bold; font-size: 24px; letter-spacing: 0.2em; text-align: center;">\${verificationToken}</div>
+            <p style="font-size: 12px; margin-top: 15px; color: #64748b;">This code is only valid for 15 minutes.</p>
           </div>
 
-          <p style="font-size: 16px;">Saya sangat tidak sabar melihat portofolio yang akan kamu bangun. Jika kamu punya masukan, ide fitur, atau sekadar ingin menyapa, jangan ragu untuk membalas email ini.</p>
-          <p style="font-size: 16px;">Selamat berkarya!</p>
+          <p style="font-size: 16px;">I can't wait to see the portfolio you will build. If you have any feedback, feature ideas, or just want to say hi, feel free to reply to this email.</p>
+          <p style="font-size: 16px;">Happy creating!</p>
           <br />
           <p style="font-size: 16px; margin-bottom: 5px;">Best,</p>
           <p style="font-size: 16px; font-weight: bold; margin-top: 0; margin-bottom: 2px;">IKLIL</p>
           <p style="font-size: 14px; color: #64748b; margin-top: 0;">Founder, portfobe</p>
         </div>
       `,
-    }).catch((err) => console.error("🚨 Gagal mengirim Welcome Email:", err));
-    // ==============================================================
+    }).catch((err) => console.error("🚨 Failed to send Welcome Email:", err));
+    // =====================================================================
 
     // Rate limiter sudah diupdate di atas untuk mencatat setiap attempt.
 
@@ -198,8 +197,8 @@ export async function resendVerificationEmail(email: string) {
       include: { profile: true }
     });
 
-    if (!user) return { error: "Pengguna tidak ditemukan." };
-    if (user.emailVerified !== null) return { error: "Email sudah terverifikasi." };
+    if (!user) return { error: "User not found." };
+    if (user.emailVerified !== null) return { error: "Email is already verified." };
 
     // --- RATE LIMITING (5 MENIT) ---
     const existingToken = await prisma.verificationToken.findFirst({
@@ -214,7 +213,7 @@ export async function resendVerificationEmail(email: string) {
 
       // Jika token baru dibuat kurang dari 2 menit lalu, jangan izinkan kirim ulang
       if (timeRemainingMs > (fifteenMinutesMs - twoMinutesMs)) {
-        return { error: "Tunggu sekitar 2 menit sebelum Anda dapat mengirim ulang email verifikasi." };
+        return { error: "Please wait about 2 minutes before you can resend the verification email." };
       }
     }
     // -------------------------------
@@ -234,26 +233,26 @@ export async function resendVerificationEmail(email: string) {
       }
     });
 
-    const fullName = user.profile?.fullName || "Kreator";
+    const fullName = user.profile?.fullName || "Creator";
 
     await resend.emails.send({
       from: 'Portfobe <hellocreator@mail.ritions.com>',
       to: email,
       replyTo: 'ikliluluyun@ritions.com',
-      subject: 'Verifikasi Ulang Akun Portfobe Anda',
+      subject: 'Verify Your Portfobe Account',
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; color: #334155; line-height: 1.6;">
-          <p style="font-size: 16px;">Halo ${fullName},</p>
-          <p style="font-size: 16px;">Kami menerima permintaan untuk mengirimkan ulang tautan verifikasi email Anda.</p>
+          <p style="font-size: 16px;">Hi ${fullName},</p>
+          <p style="font-size: 16px;">We received a request to resend your email verification link.</p>
           
           <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #ff9e00;">
-            <p style="font-size: 16px; margin-top: 0; font-weight: bold;">Verifikasi Akun Anda</p>
-            <p style="font-size: 14px; margin-bottom: 20px;">Masukkan 6 digit kode keamanan di bawah ini untuk memverifikasi alamat email Anda.</p>
+            <p style="font-size: 16px; margin-top: 0; font-weight: bold;">Verify Your Account</p>
+            <p style="font-size: 14px; margin-bottom: 20px;">Enter the 6-digit security code below to verify your email address.</p>
             <div style="background-color: #0f172a; color: #ffffff; padding: 16px 24px; border-radius: 6px; font-weight: bold; font-size: 24px; letter-spacing: 0.2em; text-align: center;">${verificationToken}</div>
-            <p style="font-size: 12px; margin-top: 15px; color: #64748b;">Kode ini hanya berlaku selama 15 menit.</p>
+            <p style="font-size: 12px; margin-top: 15px; color: #64748b;">This code is only valid for 15 minutes.</p>
           </div>
 
-          <p style="font-size: 14px; color: #64748b;">Jika Anda tidak meminta email ini, abaikan saja.</p>
+          <p style="font-size: 14px; color: #64748b;">If you didn't request this email, please ignore it.</p>
           <br />
           <p style="font-size: 16px; margin-bottom: 5px;">Best,</p>
           <p style="font-size: 16px; font-weight: bold; margin-top: 0; margin-bottom: 2px;">IKLIL</p>
@@ -279,11 +278,11 @@ export async function verifyRegistrationOtp(email: string, otp: string) {
     });
 
     if (!tokenRecord) {
-      return { error: "Kode OTP tidak valid atau salah." };
+      return { error: "Invalid or incorrect OTP code." };
     }
 
     if (new Date() > tokenRecord.expires) {
-      return { error: "Kode OTP sudah kedaluwarsa. Silakan minta kode baru." };
+      return { error: "OTP code has expired. Please request a new one." };
     }
 
     // Update status emailVerified
@@ -300,7 +299,7 @@ export async function verifyRegistrationOtp(email: string, otp: string) {
     return { success: true };
   } catch (e) {
     console.error("Error verifying OTP:", e);
-    return { error: "Terjadi kesalahan sistem saat memverifikasi kode." };
+    return { error: "A system error occurred while verifying the code." };
   }
 }
 

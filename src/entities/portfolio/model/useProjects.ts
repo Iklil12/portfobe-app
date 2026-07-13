@@ -123,11 +123,11 @@ export function useProjects() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projectTitle) {
-      showToast({ message: 'Judul wajib diisi!', id: 'err-title', icon: 'fa-exclamation-circle' });
+      showToast({ message: 'Title is required!', id: 'err-title', icon: 'fa-exclamation-circle' });
       return;
     }
     if (!mediaUrl) {
-      showToast({ message: 'Aset visual wajib dilampirkan!', id: 'err-media', icon: 'fa-image' });
+      showToast({ message: 'Visual asset must be attached!', id: 'err-media', icon: 'fa-image' });
       return;
     }
     if (projectType === 'certificate' && (!certIssuer || !certYear || !certStatus)) {
@@ -191,7 +191,7 @@ export function useProjects() {
     try {
       const response = await fetch(endpoint, { method: 'DELETE' });
       if (response.ok) {
-        showToast({ message: 'Data berhasil dihapus.', id: 'del-success', icon: 'fa-trash-alt' });
+        showToast({ message: 'Data successfully deleted.', id: 'del-success', icon: 'fa-trash-alt' });
         fetchAllData(); 
       } else {
         const errorData = await response.json();

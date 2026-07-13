@@ -11,6 +11,7 @@ import { useProjectUpload } from '../model/useProjectUpload';
 import { UpgradeToProModal } from './UpgradeToProModal';
 import { ProjectTypeSelection } from './ProjectTypeSelection';
 import { useProjectsState, useProjectsActions } from '@/entities/portfolio/model/useProjects';
+import { useTranslations } from 'next-intl';
 
 
 
@@ -30,6 +31,7 @@ const cardItem = {
 };
 
 export function ProjectFormModal({ state, actions }: { state: useProjectsState; actions: useProjectsActions }) {
+  const t = useTranslations('DashboardProjects');
   const [videoMethod, setVideoMethod] = useState<'link' | 'upload'>('link');
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
@@ -459,10 +461,26 @@ export function ProjectFormModal({ state, actions }: { state: useProjectsState; 
                       
                       {/* INPUT DESKRIPSI */}
                       <div className="md:col-span-2">
-                        <label className="block text-[10px] font-sans font-medium uppercase tracking-widest text-white/40 mb-2 ml-1">Description (Optional)</label>
+                        <div className="flex justify-between items-end mb-2 ml-1 pr-1">
+                          <label className="block text-[10px] font-sans font-medium uppercase tracking-widest text-white/40">Description (Optional)</label>
+                          <span className={`text-[10px] font-sans font-medium ${(projectDescription?.length || 0) >= 191 ? 'text-rose-500' : 'text-white/30'}`}>
+                            {projectDescription?.length || 0}/191
+                          </span>
+                        </div>
                         <textarea
-                          rows={3} value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} placeholder="Add a short explanation..."
-                          className="w-full px-5 py-4 rounded-md border border-white/10 bg-zinc-900 focus:bg-zinc-950 focus:border-[#ff9e00] outline-none text-sm font-sans text-white resize-none transition-all duration-300 placeholder:text-white/30 custom-scrollbar"
+                          rows={3} 
+                          value={projectDescription || ''} 
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (val.length > 191) {
+                              showToast({ message: "Description max 191 characters!", id: "desc-limit", icon: "⚠️" });
+                              setProjectDescription(val.slice(0, 191));
+                            } else {
+                              setProjectDescription(val);
+                            }
+                          }} 
+                          placeholder="Add a short explanation..."
+                          className={`w-full px-5 py-4 rounded-md border bg-zinc-900 focus:bg-zinc-950 outline-none text-sm font-sans text-white resize-none transition-all duration-300 placeholder:text-white/30 custom-scrollbar ${(projectDescription?.length || 0) >= 191 ? 'border-rose-500/50 focus:border-rose-500' : 'border-white/10 focus:border-[#ff9e00]'}`}
                         />
                       </div>
 

@@ -21,7 +21,10 @@ const PenpotIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+import { useTranslations } from 'next-intl';
+
 export function DeviceResizerSection() {
+  const t = useTranslations('DeviceResizer');
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
 
   return (
@@ -64,13 +67,13 @@ export function DeviceResizerSection() {
           className="text-center mb-16 space-y-6"
         >
           <span className="font-mono text-[#ff9e00] text-[10px] tracking-[0.5em] uppercase block border-b border-[#ff9e00]/30 pb-4 inline-block">
-            [ DIMENSIONAL FLUIDITY ]
+            [ {t('dimensionalFluidity')} ]
           </span>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tight">
-            Liquid <span className="text-[#ff9e00]">Architecture</span>
+            {t('liquid')} <span className="text-[#ff9e00]">{t('architecture')}</span>
           </h2>
           <p className="text-white/40 font-mono text-[9px] md:text-xs tracking-[0.2em] max-w-lg mx-auto uppercase leading-relaxed">
-            The interface bends to the vessel. Complete responsive precision without breaking the artistic narrative.
+            {t('desc')}
           </p>
         </div>
 
@@ -82,7 +85,7 @@ export function DeviceResizerSection() {
             onClick={() => setPreviewMode('desktop')}
             className={`relative px-8 py-3 rounded-md transition-colors duration-500 z-10 ${previewMode === 'desktop' ? 'text-black font-medium' : 'text-white/40 hover:text-white/80 font-normal'}`}
           >
-            <span className="relative z-20 font-mono text-[10px] uppercase tracking-widest font-medium">Desktop Layout</span>
+            <span className="relative z-20 font-mono text-[10px] uppercase tracking-widest font-medium">{t('desktopLayout')}</span>
             {previewMode === 'desktop' && (
               <motion.div layoutId="pill-active" className="absolute inset-0 bg-[#ff9e00] rounded-md z-10" />
             )}
@@ -91,7 +94,7 @@ export function DeviceResizerSection() {
             onClick={() => setPreviewMode('mobile')}
             className={`relative px-8 py-3 rounded-md transition-colors duration-500 z-10 ${previewMode === 'mobile' ? 'text-black font-medium' : 'text-white/40 hover:text-white/80 font-normal'}`}
           >
-            <span className="relative z-20 font-mono text-[10px] uppercase tracking-widest font-medium">Mobile View</span>
+            <span className="relative z-20 font-mono text-[10px] uppercase tracking-widest font-medium">{t('mobileView')}</span>
             {previewMode === 'mobile' && (
               <motion.div layoutId="pill-active" className="absolute inset-0 bg-[#ff9e00] rounded-md z-10" />
             )}

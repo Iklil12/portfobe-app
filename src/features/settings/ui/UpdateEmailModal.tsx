@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Loader2, Check, X } from 'lucide-react';
 import { SettingsState, SettingsActions } from '../model/useSettings';
+import { useTranslations } from 'next-intl';
 
 
 interface UpdateEmailModalProps {
@@ -10,6 +11,7 @@ interface UpdateEmailModalProps {
 }
 
 export function UpdateEmailModal({ state, actions }: UpdateEmailModalProps) {
+  const t = useTranslations('DashboardSettings');
   const { showEmailModal, isUpdatingEmail, isSuccessModal, successData } = state;
   const { setShowEmailModal, setIsSuccessModal, handleUpdateEmail, handleInternalForgotPassword } = actions;
 
@@ -60,19 +62,17 @@ export function UpdateEmailModal({ state, actions }: UpdateEmailModalProps) {
                   setTimeout(() => setIsSuccessModal(false), 300);
                 }} 
                 className="w-full bg-[#ff9e00] text-black py-3 rounded-md text-xs font-sans font-medium uppercase tracking-wider hover:bg-[#ffaa22] transition-all"
-              >
-                Done
-              </button>
+              >{t('done')}</button>
             </div>
         ) : (
             /* --- TAMPILAN FORM ASLI --- */
             <>
-                <h3 className="text-sm font-sans font-medium text-white uppercase tracking-wider mb-2">Change Email</h3>
-                <p className="text-white/40 mb-8 text-xs font-sans leading-relaxed">Enter your new email address and current password for verification.</p>
+                <h3 className="text-sm font-sans font-medium text-white uppercase tracking-wider mb-2">{t('changeEmailTitle')}</h3>
+                <p className="text-white/40 mb-8 text-xs font-sans leading-relaxed">{t('changeEmailDesc')}</p>
                 
                 <form onSubmit={onSubmit} className="flex flex-col gap-5">
                   <div>
-                    <label className="block text-[10px] font-sans font-medium uppercase tracking-wider text-white/40 mb-2">New Email</label>
+                    <label className="block text-[10px] font-sans font-medium uppercase tracking-wider text-white/40 mb-2">{t('newEmail')}</label>
                     <div className="relative flex items-center">
                       <Mail className="absolute left-4 text-white/20 w-4 h-4" />
                       <input type="email" required value={newEmail} onChange={(e) => setNewEmail(e.target.value)} className="w-full pl-11 pr-5 py-3 bg-zinc-950 border border-white/10 rounded-md text-xs font-sans text-white outline-none focus:border-[#ff9e00]/50 transition-all" placeholder="email@baru.com" />
@@ -80,14 +80,12 @@ export function UpdateEmailModal({ state, actions }: UpdateEmailModalProps) {
                   </div>
                   <div className="mb-2">
                     <div className="flex justify-between items-end mb-2">
-                        <label className="block text-[10px] font-sans font-medium uppercase tracking-wider text-white/40">Current Password</label>
+                        <label className="block text-[10px] font-sans font-medium uppercase tracking-wider text-white/40">{t('currentPassword')}</label>
                         <button 
                           type="button"
                           onClick={handleInternalForgotPassword}
                           className="text-[10px] text-[#ff9e00] font-sans font-medium hover:underline transition-all"
-                        >
-                          Forgot current password?
-                        </button>
+                        >{t('forgotCurrentPassword')}</button>
                     </div>
                     
                     <div className="relative flex items-center">  
@@ -96,9 +94,9 @@ export function UpdateEmailModal({ state, actions }: UpdateEmailModalProps) {
                     </div>
                   </div>
                   <div className="flex gap-3 pt-2">
-                    <button type="button" onClick={() => setShowEmailModal(false)} disabled={isUpdatingEmail} className="flex-1 py-2.5 rounded-md font-sans font-medium uppercase tracking-wider text-white/50 bg-zinc-900 border border-white/10 hover:bg-zinc-800 transition-all text-xs">Cancel</button>
+                    <button type="button" onClick={() => setShowEmailModal(false)} disabled={isUpdatingEmail} className="flex-1 py-2.5 rounded-md font-sans font-medium uppercase tracking-wider text-white/50 bg-zinc-900 border border-white/10 hover:bg-zinc-800 transition-all text-xs">{t('cancel')}</button>
                     <button type="submit" disabled={isUpdatingEmail} className="flex-1 py-2.5 rounded-md font-sans font-medium uppercase tracking-wider text-black bg-[#ff9e00] hover:bg-[#ffaa22] transition-all flex items-center justify-center gap-2 text-xs">
-                      {isUpdatingEmail ? <Loader2 className="w-4 h-4 animate-spin text-black" /> : 'Send Link'}
+                      {isUpdatingEmail ? <Loader2 className="w-4 h-4 animate-spin text-black" /> : t('sendLink')}
                     </button>
                   </div>
                 </form>

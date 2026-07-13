@@ -2,6 +2,7 @@
 import React from 'react';
 import { Mail, Globe } from 'lucide-react';
 import { SettingsState, SettingsActions } from '../model/useSettings';
+import { useTranslations } from 'next-intl';
 
 
 interface EmailCredentialCardProps {
@@ -10,13 +11,14 @@ interface EmailCredentialCardProps {
 }
 
 export function EmailCredentialCard({ state, actions }: EmailCredentialCardProps) {
+  const t = useTranslations('DashboardSettings');
   const { session, isOAuthLinked } = state;
   const { setShowEmailModal } = actions;
 
   return (
     <div className="bg-zinc-900/40 p-6 sm:p-8 md:p-10 rounded-md border border-white/10 shadow-none hover:border-[#ff9e00]/30 transition-all duration-300 animate-enter" style={{animationDelay: '250ms'}}>
-      <h4 className="text-sm font-sans font-medium text-white uppercase tracking-wider mb-2">Email Credential</h4>
-      <p className="text-xs font-sans text-white/40 mb-6 sm:mb-8 leading-relaxed max-w-md">The primary email address linked to your Portfo.be account.</p>
+      <h4 className="text-sm font-sans font-medium text-white uppercase tracking-wider mb-2">{t('emailCredential')}</h4>
+      <p className="text-xs font-sans text-white/40 mb-6 sm:mb-8 leading-relaxed max-w-md">{t('emailCredentialDesc')}</p>
       
       <div className="flex flex-col sm:flex-row items-center gap-4">
         <div className="relative w-full">
@@ -38,10 +40,10 @@ export function EmailCredentialCard({ state, actions }: EmailCredentialCardProps
           {isOAuthLinked ? (
             <>
               <Globe className="w-3.5 h-3.5 mr-2 text-[#ff9e00]" />
-              <span>Locked (Google)</span>
+              <span>{t('lockedGoogle')}</span>
             </>
           ) : (
-            'Change Email'
+            t('changeEmail')
           )}
         </button>
       </div>

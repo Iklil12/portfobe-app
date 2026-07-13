@@ -7,6 +7,7 @@ import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
 import { getVideoThumbnail } from '@/shared/lib/videoUtils';
 import { FolderOpen, Trash2, Edit3, Check, Award, Box, Play, Image as ImageIcon } from 'lucide-react';
 import { useProjectsState, useProjectsActions } from '@/entities/portfolio/model/useProjects';
+import { useTranslations } from 'next-intl';
 
 
 const ModelViewer = 'model-viewer' as any;
@@ -89,6 +90,7 @@ function ModelViewerCard({ src }: { src: string }) {
 }
 
 export function ProjectList({ state, actions }: { state: useProjectsState; actions: useProjectsActions }) {
+  const t = useTranslations('DashboardProjects');
   const { isLoading, filteredItems, activeTab } = state;
   const { handleOpenModal, confirmDelete } = actions;
 
@@ -120,16 +122,14 @@ export function ProjectList({ state, actions }: { state: useProjectsState; actio
           <FolderOpen className="w-8 h-8" />
         </div>
         <h3 className="text-base sm:text-lg font-sans font-medium text-white uppercase tracking-wider mb-2">
-          {activeTab === 'all' ? 'No data yet' : `No ${activeTab} found`}
+          {activeTab === 'all' ? t('noDataYet') : t('noTypeFound', { type: activeTab })}
         </h3>
-        <p className="text-white/40 font-mono text-xs mb-6 sm:mb-8 max-w-xs px-4">Enrich your profile by adding your latest achievements.</p>
+        <p className="text-white/40 font-mono text-xs mb-6 sm:mb-8 max-w-xs px-4">{t('enrichProfile')}</p>
         {activeTab === 'all' && (
           <button 
             onClick={() => handleOpenModal()} 
             className="text-black bg-[#ff9e00] hover:bg-[#ffaa22] px-6 py-3.5 rounded-md text-[10px] font-sans font-medium uppercase tracking-widest transition-all active:scale-95"
-          >
-            Upload First Data
-          </button>
+          >{t('uploadFirst')}</button>
         )}
       </div>
     );
@@ -171,7 +171,7 @@ export function ProjectList({ state, actions }: { state: useProjectsState; actio
                   ) : (
                     <ImageIcon className="w-3 h-3 text-[#ff9e00]" />
                   )}
-                  {item.itemType === 'certificate' ? 'Certificate' : item.projectType}
+                  {item.itemType === 'certificate' ? t('certificate') : item.projectType}
                 </div>
               </div>
 
@@ -186,7 +186,7 @@ export function ProjectList({ state, actions }: { state: useProjectsState; actio
                 </div>
 
                 <p className="text-[11px] text-white/40 font-sans line-clamp-2 leading-relaxed">
-                  {item.description || "No additional description details for this work."}
+                  {item.description || t('noDescription')}
                 </p>
 
                 {/* Tag chips */}
@@ -205,17 +205,17 @@ export function ProjectList({ state, actions }: { state: useProjectsState; actio
                 })()}
                 <div className="mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-white/5 flex items-center justify-between">
                   <div>
-                    <p className="text-[8px] font-sans font-medium text-white/30 uppercase tracking-widest mb-0.5">Year</p>
+                    <p className="text-[8px] font-sans font-medium text-white/30 uppercase tracking-widest mb-0.5">{t('year')}</p>
                     <p className="text-xs font-sans font-medium text-white">{item.year || new Date(item.createdAt).getFullYear()}</p>
                   </div>
                   {item.itemType === 'certificate' && item.status ? (
                     <div className="text-right">
-                      <p className="text-[8px] font-sans font-medium text-white/30 uppercase tracking-widest mb-0.5">Achievement</p>
+                      <p className="text-[8px] font-sans font-medium text-white/30 uppercase tracking-widest mb-0.5">{t('achievement')}</p>
                       <p className="text-xs font-sans font-medium text-white truncate max-w-[100px] sm:max-w-[120px]">{item.status}</p>
                     </div>
                   ) : item.itemType === 'certificate' && item.issuer ? (
                     <div className="text-right">
-                      <p className="text-[8px] font-sans font-medium text-white/30 uppercase tracking-widest mb-0.5">Issuer</p>
+                      <p className="text-[8px] font-sans font-medium text-white/30 uppercase tracking-widest mb-0.5">{t('issuer')}</p>
                       <p className="text-xs font-sans font-medium text-white truncate max-w-[100px] sm:max-w-[120px]">{item.issuer}</p>
                     </div>
                   ) : null}

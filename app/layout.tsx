@@ -3,6 +3,8 @@ import "./globals.css";
 import './fonts.css';
 import { Providers } from "./providers";
 import { Inter, Space_Grotesk, Ubuntu, Space_Mono, Playfair_Display } from 'next/font/google';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getLocale } from 'next-intl/server';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 const spaceMono = Space_Mono({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-space-mono', display: 'swap' });
@@ -31,11 +33,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -57,7 +61,7 @@ export default function RootLayout({
 
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`h-full antialiased font-sans ${inter.variable} ${spaceMono.variable}`}
       suppressHydrationWarning
     >
@@ -82,7 +86,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col text-gray-900 bg-white transition-colors duration-300 overflow-x-clip w-full relative" suppressHydrationWarning>
         <Providers>
-          {children}
+          <NextIntlClientProvider messages={messages} locale={locale}>
+            {children}
+          </NextIntlClientProvider>
         </Providers>
       </body>
     </html>

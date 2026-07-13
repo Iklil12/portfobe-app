@@ -4,6 +4,7 @@ import React from 'react';
 import { AnimateOnScroll } from '@/shared/ui/AnimateOnScroll';
 import Link from 'next/link';
 import { Palette, ExternalLink } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface MiniLivePreviewProps {
   themeName: string;
@@ -12,6 +13,7 @@ interface MiniLivePreviewProps {
 }
 
 export function MiniLivePreview({ themeName, subdomain, isLoading }: MiniLivePreviewProps) {
+  const t = useTranslations('DashboardOverview');
   if (isLoading) {
     return (
       <div className="bg-zinc-950 border border-white/10 rounded-md h-full min-h-[250px] shimmer w-full"></div>
@@ -23,7 +25,7 @@ export function MiniLivePreview({ themeName, subdomain, isLoading }: MiniLivePre
       <div className="bg-[#1a1a1a] border border-white/5 p-6 md:p-8 flex flex-col justify-between relative overflow-hidden group rounded-xl hover:border-white/10 transition-all duration-300 w-full">
         <div className="relative z-10 flex justify-between items-start mb-6">
           <div>
-            <p className="text-[10px] font-sans font-bold text-white/60 mb-1">Active Theme</p>
+            <p className="text-[10px] font-sans font-bold text-white/60 mb-1">{t('activeTheme')}</p>
             <h3 className="text-2xl font-sans font-bold text-white tracking-tight">{themeName}</h3>
           </div>
           <Link
@@ -65,7 +67,7 @@ export function MiniLivePreview({ themeName, subdomain, isLoading }: MiniLivePre
                   rel="noreferrer"
                   className="px-5 py-2.5 bg-[#ff9e00] text-black rounded-lg text-xs font-sans font-bold transition-all duration-300 hover:bg-[#ffaa22] hover:scale-105 flex items-center gap-2 shadow-[0_0_15px_rgba(255,158,0,0.4)]"
                 >
-                  <ExternalLink className="w-4 h-4" /> Live Preview
+                  <ExternalLink className="w-4 h-4" /> {t('livePreview')}
                 </a>
               </div>
             </div>

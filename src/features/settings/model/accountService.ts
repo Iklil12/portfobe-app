@@ -214,7 +214,7 @@ export async function updateAccountStatus(email: string, isLive: boolean) {
     try {
       await redis.del(`portfolio_db:${user.profile.subdomain.trim().toLowerCase()}`);
     } catch (err) {
-      console.error("Gagal menghapus cache redis saat mengubah status", err);
+      console.error("Failed to delete redis cache when changing status", err);
     }
   }
 
@@ -225,7 +225,7 @@ export async function updateAccountStatus(email: string, isLive: boolean) {
       await redis.del(...keys);
     }
   } catch (err) {
-    console.error("Gagal menghapus cache dashboard sync redis", err);
+    console.error("Failed to delete dashboard sync redis cache", err);
   }
 
   return { isLive };

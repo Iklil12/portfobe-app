@@ -28,16 +28,16 @@ export async function createTestimonial(email: string, data: any) {
 
   if (getEffectivePlan(user) === 'FREE') {
     const testimonialCount = await prisma.testimonial.count({ where: { userId: user.id } });
-    if (testimonialCount >= 2) throw new Error("QUOTA_EXCEEDED:Kuota FREE maksimal 2 testimoni. Silakan upgrade ke PRO.");
+    if (testimonialCount >= 2) throw new Error("QUOTA_EXCEEDED:FREE plan allows maximum 2 testimonials. Please upgrade to PRO.");
   }
 
   const sanitizeHtml = (await import('sanitize-html')).default;
   let { clientName, company, content, rating, avatarUrl } = data;
 
-  if (!clientName || !content) throw new Error("INVALID_DATA:Nama dan isi testimoni wajib diisi");
+  if (!clientName || !content) throw new Error("INVALID_DATA:Name and testimonial content are required");
 
   if (avatarUrl && !avatarUrl.startsWith('https://res.cloudinary.com/') && !avatarUrl.startsWith('https://ui-avatars.com/')) {
-    throw new Error("INVALID_AVATAR:URL gambar tidak valid atau tidak tepercaya");
+    throw new Error("INVALID_AVATAR:Invalid or untrusted image URL");
   }
 
   const sanitizeConfig = { allowedTags: [], allowedAttributes: {} };
@@ -69,13 +69,13 @@ export async function updateTestimonial(email: string, id: string, data: any) {
   if (!user) throw new Error("USER_NOT_FOUND");
 
   const existingTestimonial = await prisma.testimonial.findUnique({ where: { id } });
-  if (!existingTestimonial || existingTestimonial.userId !== user.id) throw new Error("FORBIDDEN:Testimonial tidak ditemukan atau akses ditolak");
+  if (!existingTestimonial || existingTestimonial.userId !== user.id) throw new Error("FORBIDDEN:Testimonial not found or access denied");
 
   const sanitizeHtml = (await import('sanitize-html')).default;
   let { clientName, company, content, rating, avatarUrl, isVisible, order } = data;
 
   if (avatarUrl && !avatarUrl.startsWith('https://res.cloudinary.com/') && !avatarUrl.startsWith('https://ui-avatars.com/')) {
-    throw new Error("INVALID_AVATAR:URL gambar tidak valid atau tidak tepercaya");
+    throw new Error("INVALID_AVATAR:Invalid or untrusted image URL");
   }
 
   const sanitizeConfig = { allowedTags: [], allowedAttributes: {} };
@@ -107,7 +107,7 @@ export async function deleteTestimonial(email: string, id: string) {
   if (!user) throw new Error("USER_NOT_FOUND");
 
   const existingTestimonial = await prisma.testimonial.findUnique({ where: { id } });
-  if (!existingTestimonial || existingTestimonial.userId !== user.id) throw new Error("FORBIDDEN:Testimonial tidak ditemukan atau akses ditolak");
+  if (!existingTestimonial || existingTestimonial.userId !== user.id) throw new Error("FORBIDDEN:Testimonial not found or access denied");
 
   await prisma.testimonial.delete({ where: { id } });
   await logActivity(user.id, "DELETE_TESTIMONIAL", `Deleted testimonial from ${existingTestimonial.clientName}`);
@@ -120,7 +120,7 @@ export async function reorderTestimonials(email: string, orderedIds: string[]) {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) throw new Error("USER_NOT_FOUND");
 
-  if (!orderedIds || !Array.isArray(orderedIds)) throw new Error("INVALID_DATA:Format data tidak valid");
+  if (!orderedIds || !Array.isArray(orderedIds)) throw new Error("INVALID_DATA:Invalid data format");
 
   const updatePromises = orderedIds.map((id: string, index: number) => {
     return prisma.testimonial.update({
@@ -130,7 +130,7 @@ export async function reorderTestimonials(email: string, orderedIds: string[]) {
   });
 
   await prisma.$transaction(updatePromises);
-  await logActivity(user.id, "REORDER_TESTIMONIALS", "Mengubah urutan testimoni");
+  await logActivity(user.id, "REORDER_TESTIMONIALS", "Reordered testimonials");
   await invalidatePortfolioCache(user.id);
 
   return true;

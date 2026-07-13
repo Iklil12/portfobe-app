@@ -31,7 +31,7 @@ export function ProBanner({ actions }: { actions: ThemesActions }) {
           </h4>
           
           <p className="text-white/40 text-xs font-sans leading-relaxed mb-10 max-w-lg group-hover:text-white/60 transition-colors duration-500">
-            Kendalikan setiap piksel portofoliomu. Ubah tata letak, warna, tipografi, dan efek secara instan dengan editor visual kelas studio profesional.
+            Control every pixel of your portfolio. Change layout, colors, typography, and effects instantly with a professional studio-class visual editor.
           </p>
           
           <div className="flex flex-wrap justify-center gap-2 mb-12">
@@ -43,7 +43,7 @@ export function ProBanner({ actions }: { actions: ThemesActions }) {
           </div>
 
           <div className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-zinc-900 border border-white/10 text-white/70 hover:bg-zinc-800 hover:text-white rounded-md text-[10px] font-sans font-medium uppercase tracking-widest transition-all duration-300 active:scale-95">
-            <Lock className="w-3.5 h-3.5 text-white/40" /> Segera Hadir
+            <Lock className="w-3.5 h-3.5 text-white/40" /> Coming Soon
           </div>
       </div>
     </div>

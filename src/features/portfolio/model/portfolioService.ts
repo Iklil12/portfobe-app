@@ -37,7 +37,7 @@ export const getPortfolioData = cache(async (subdomain: string) => {
     }
   }
 
-  if (!userData || !userData.profile) throw new Error("404:Portfolio tidak ditemukan");
+  if (!userData || !userData.profile) throw new Error("404:Portfolio not found");
 
   let finalProjects = userData.projects;
   if (userData.siteAppearance?.projects && userData.siteAppearance.projects.length > 0) {

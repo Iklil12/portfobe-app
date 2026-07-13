@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AnimateOnScroll } from '@/shared/ui/AnimateOnScroll';
+import { useTranslations } from 'next-intl';
 
 interface TrafficOverviewProps {
   analytics: any;
@@ -40,6 +41,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) {
+  const t = useTranslations('DashboardOverview');
   const [activeMetric, setActiveMetric] = useState<'both' | 'views' | 'visitors'>('both');
 
   const chartData = useMemo(() => {
@@ -90,31 +92,31 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
       <div className="bg-[#1a1a1a] p-6 border border-white/5 rounded-xl h-full flex flex-col w-full">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <h3 className="text-base font-sans font-medium text-white">Traffic Hub (Insights)</h3>
-          <span className="text-xs font-sans text-white/50">Last 30 days</span>
+          <h3 className="text-base font-sans font-medium text-white">{t('trafficTitle')}</h3>
+          <span className="text-xs font-sans text-white/50">{t('last30Days')}</span>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 flex-1">
           {/* Metrics - Kiri */}
           <div className="grid grid-cols-2 gap-y-8 gap-x-4 lg:w-1/3 shrink-0">
             <div>
-              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">Total Visits</p>
+              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">{t('totalVisits')}</p>
               <h4 className="text-3xl font-mono font-bold text-[#ff9e00] mb-1">
                 {(summary.totalViews > 1000 ? (summary.totalViews / 1000).toFixed(1) + 'k' : summary.totalViews) || '0'}
               </h4>
-              <p className="text-[10px] font-sans text-white/50">Total traffic visits</p>
+              <p className="text-[10px] font-sans text-white/50">{t('totalVisitsDesc')}</p>
             </div>
             
             <div>
-              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">Today's Visits</p>
+              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">{t('todayVisits')}</p>
               <h4 className="text-3xl font-mono font-bold text-[#ff9e00] mb-1">
                 {analytics?.dailyStats?.[analytics.dailyStats.length - 1]?.views || '0'}
               </h4>
-              <p className="text-[10px] font-sans text-white/50">Today's visits</p>
+              <p className="text-[10px] font-sans text-white/50">{t('todayVisitsDesc')}</p>
             </div>
 
             <div>
-              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">Bounce Rate</p>
+              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">{t('bounceRate')}</p>
               <div className="flex items-center gap-2 mb-1">
                 <h4 className="text-xl font-mono font-bold text-[#ff9e00]">{analytics?.stats?.bounceRate || '0%'}</h4>
                 {/* Mini chart placeholder */}
@@ -122,18 +124,18 @@ export function TrafficOverview({ analytics, isLoading }: TrafficOverviewProps) 
                   <path d="M0 10 Q 10 5, 20 12 T 40 2" stroke="#ff9e00" strokeWidth="1.5" fill="none" />
                 </svg>
               </div>
-              <p className="text-[10px] font-sans text-white/50">Bounce Rate %</p>
+              <p className="text-[10px] font-sans text-white/50">{t('bounceRateDesc')}</p>
             </div>
 
             <div>
-              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">Avg Time</p>
+              <p className="text-[10px] font-sans font-bold text-[#ff9e00] tracking-wider uppercase mb-1">{t('avgTime')}</p>
               <div className="flex items-center gap-2 mb-1">
                 <h4 className="text-xl font-mono font-bold text-[#ff9e00]">{analytics?.stats?.avgTime || '0s'}</h4>
                 <svg width="40" height="15" viewBox="0 0 40 15" fill="none">
                   <path d="M0 8 Q 10 12, 20 5 T 40 10" stroke="#ff9e00" strokeWidth="1.5" fill="none" />
                 </svg>
               </div>
-              <p className="text-[10px] font-sans text-white/50">Avg. Times/Tims</p>
+              <p className="text-[10px] font-sans text-white/50">{t('avgTimeDesc')}</p>
             </div>
           </div>
 

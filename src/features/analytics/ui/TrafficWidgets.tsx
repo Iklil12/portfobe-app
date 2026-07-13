@@ -2,8 +2,10 @@ import React from 'react';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Ghost, BarChart3 } from 'lucide-react';
 import { SkeletonBlock, CustomAreaTooltip } from './AnalyticsShared';
+import { useTranslations } from 'next-intl';
 
 export function TrafficOverviewChart({ isLoading, isMounted, chartData, range }: any) {
+  const t = useTranslations('DashboardAnalytics');
   if (isLoading) {
     return <div className="lg:col-span-2 rounded-md shimmer-dark h-[400px]" />;
   }
@@ -12,9 +14,9 @@ export function TrafficOverviewChart({ isLoading, isMounted, chartData, range }:
     <div className="lg:col-span-2 bg-zinc-950 border border-white/10 rounded-md p-6 md:p-8 shadow-none animate-enter" style={{ animationDelay: '300ms' }}>
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-sm font-sans font-medium text-white">Traffic Overview</h3>
+          <h3 className="text-sm font-sans font-medium text-white">{t('widgetTrafficOverview')}</h3>
           <p className="text-xs font-sans font-medium text-white/70 mt-1">
-            {range === '1d' ? 'Hourly — today' : range === '7d' ? 'Last 7 days' : range === '30d' ? 'Last 30 days' : 'All time'}
+            {range === '1d' ? t('rangeHourlyToday') : range === '7d' ? t('rangeLast7Days') : range === '30d' ? t('rangeLast30Days') : t('rangeAllTime')}
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -41,14 +43,14 @@ export function TrafficOverviewChart({ isLoading, isMounted, chartData, range }:
               <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }} dy={10} />
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }} />
               <Tooltip content={(props: any) => <CustomAreaTooltip {...props} isHourly={range === '1d'} />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
-              <Area type="monotone" dataKey="views" name="Page Views" stroke="#ff9e00" strokeWidth={2} fill="url(#viewsGrad)" dot={false} activeDot={{ r: 4, fill: '#ff9e00', stroke: '#000', strokeWidth: 2 }} animationDuration={1500} />
-              <Area type="monotone" dataKey="visitors" name="Uniq. Visitors" stroke="rgba(255,255,255,0.4)" strokeWidth={2} fill="transparent" dot={false} activeDot={{ r: 4, fill: 'rgba(255,255,255,0.4)', stroke: '#000', strokeWidth: 2 }} animationDuration={1500} />
+              <Area type="monotone" dataKey="views" name={t('pageViews')} stroke="#ff9e00" strokeWidth={2} fill="url(#viewsGrad)" dot={false} activeDot={{ r: 4, fill: '#ff9e00', stroke: '#000', strokeWidth: 2 }} animationDuration={1500} />
+              <Area type="monotone" dataKey="visitors" name={t('uniqVisitors')} stroke="rgba(255,255,255,0.4)" strokeWidth={2} fill="transparent" dot={false} activeDot={{ r: 4, fill: 'rgba(255,255,255,0.4)', stroke: '#000', strokeWidth: 2 }} animationDuration={1500} />
             </AreaChart>
           </ResponsiveContainer>
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-white/20">
             <Ghost className="w-8 h-8 mb-3" />
-            <p className="text-xs font-sans font-medium">No traffic data yet</p>
+            <p className="text-xs font-sans font-medium">{t('noTrafficData')}</p>
           </div>
         )}
       </div>
@@ -57,6 +59,7 @@ export function TrafficOverviewChart({ isLoading, isMounted, chartData, range }:
 }
 
 export function DailyVolumeChart({ isLoading, isMounted, chartData, peakEntry }: any) {
+  const t = useTranslations('DashboardAnalytics');
   if (isLoading) {
     return <div className="rounded-md shimmer-dark h-[340px]" />;
   }
@@ -65,8 +68,8 @@ export function DailyVolumeChart({ isLoading, isMounted, chartData, peakEntry }:
     <div className="bg-zinc-950 border border-white/10 rounded-md p-6 md:p-8 shadow-none animate-enter flex flex-col" style={{ animationDelay: '450ms' }}>
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-sm font-sans font-medium text-white">Daily Volume</h3>
-          <p className="text-xs font-sans font-medium text-white/70 mt-1">Daily distribution</p>
+          <h3 className="text-sm font-sans font-medium text-white">{t('widgetDailyVolume')}</h3>
+          <p className="text-xs font-sans font-medium text-white/70 mt-1">{t('dailyDistribution')}</p>
         </div>
         <div className="w-9 h-9 rounded-md bg-zinc-900 border border-white/5 flex items-center justify-center text-white/80">
           <BarChart3 className="w-4 h-4 text-[#ff9e00]" />
@@ -93,7 +96,7 @@ export function DailyVolumeChart({ isLoading, isMounted, chartData, peakEntry }:
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-white/20">
             <Ghost className="w-8 h-8 mb-3" />
-            <p className="text-xs font-sans font-medium">No data yet</p>
+            <p className="text-xs font-sans font-medium">{t('noDataYet')}</p>
           </div>
         )}
       </div>

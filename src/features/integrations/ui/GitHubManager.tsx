@@ -12,10 +12,12 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { GithubIcon } from '@/shared/ui/Icons';
+import { useTranslations } from 'next-intl';
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export function GitHubManager() {
+  const t = useTranslations('DashboardIntegrations');
   const { data: session } = useSession();
   const { data: integrationsData } = useSWR('/api/settings/integrations', fetcher);
 
@@ -46,18 +48,18 @@ export function GitHubManager() {
   const handleRefreshGithub = async () => {
     if (!session?.user?.id || isRefreshingGithub) return;
     setIsRefreshingGithub(true);
-    const toastId = toast.loading('Syncing GitHub data...');
+    const toastId = toast.loading(t('syncingToast'));
     try {
       const res = await fetch(`/api/github/stats?userId=${session.user.id}&bust=1`);
       if (res.ok) {
         setLastGithubRefresh(new Date());
-        toast.success('GitHub sync successful!', { id: toastId });
+        toast.success(t('syncSuccessToast'), { id: toastId });
       } else {
         const err = await res.json();
-        toast.error(err.error || 'Sync failed.', { id: toastId });
+        toast.error(err.error || t('syncFailedToast'), { id: toastId });
       }
     } catch {
-      toast.error('Network error during sync.', { id: toastId });
+      toast.error(t('networkErrorToast'), { id: toastId });
     } finally {
       setIsRefreshingGithub(false);
     }
@@ -65,7 +67,7 @@ export function GitHubManager() {
 
   const handleDisconnectGithub = async () => {
     setIsDisconnectingGithub(true);
-    const toastId = toast.loading('Disconnecting GitHub...');
+    const toastId = toast.loading(t('disconnectingToast'));
     try {
       const res = await fetch('/api/settings/integrations/disconnect', {
         method: 'POST',
@@ -75,12 +77,12 @@ export function GitHubManager() {
       if (res.ok) {
         mutate('/api/settings/integrations');
         setConfirmDisconnect(null);
-        toast.success('GitHub disconnected.', { id: toastId });
+        toast.success(t('disconnectSuccessToast'), { id: toastId });
       } else {
-        toast.error('Failed to disconnect.', { id: toastId });
+        toast.error(t('disconnectFailedToast'), { id: toastId });
       }
     } catch {
-      toast.error('Network error.', { id: toastId });
+      toast.error(t('networkErrorToast'), { id: toastId });
     } finally {
       setIsDisconnectingGithub(false);
     }
@@ -100,7 +102,7 @@ export function GitHubManager() {
                   <p className="text-base font-sans font-medium text-white tracking-wide">@{githubUsername}</p>
                   <div className="flex items-center gap-1.5 mt-1.5">
                     <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <p className="text-[9px] text-[#86efac] font-sans font-medium uppercase tracking-wider">Connected</p>
+                    <p className="text-[9px] text-[#86efac] font-sans font-medium uppercase tracking-wider">{t('githubConnected')}</p>
                   </div>
                 </div>
               </div>
@@ -110,19 +112,19 @@ export function GitHubManager() {
                 rel="noreferrer" 
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md border border-white/10 bg-zinc-900 text-white/70 text-[10px] font-sans font-medium uppercase tracking-widest hover:bg-zinc-800 transition-colors shadow-none text-center"
               >
-                Profile <ExternalLink className="w-3.5 h-3.5 text-white/40" />
+                {t('githubProfileBtn')} <ExternalLink className="w-3.5 h-3.5 text-white/40" />
               </a>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-6 rounded-md border border-white/5 bg-[#0a0a0a]">
-                <p className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-widest mb-4">Sync Management</p>
+                <p className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-widest mb-4">{t('githubSyncMgmt')}</p>
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="block text-xs text-white/70 font-sans font-medium">
-                      {timeAgo(lastGithubRefresh) ? `Last synced ${timeAgo(lastGithubRefresh)}` : 'Never synced'}
+                      {timeAgo(lastGithubRefresh) ? t('githubLastSync', { time: timeAgo(lastGithubRefresh) as string }) : t('githubNeverSync')}
                     </span>
-                    <p className="text-[9px] text-white/40 font-sans italic">Auto-sync every 15 minutes</p>
+                    <p className="text-[9px] text-white/40 font-sans italic">{t('githubAutoSync')}</p>
                   </div>
                   <button
                     type="button"
@@ -136,11 +138,11 @@ export function GitHubManager() {
               </div>
 
               <div className="p-6 rounded-md border border-white/5 bg-[#0a0a0a]">
-                <p className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-widest mb-4">Danger Zone</p>
+                <p className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-widest mb-4">{t('githubDangerZone')}</p>
                 {confirmDisconnect === 'github' ? (
                   <div className="flex gap-3">
-                    <button type="button" onClick={() => setConfirmDisconnect(null)} className="flex-1 py-2.5 rounded-md bg-zinc-900 border border-white/10 text-white/70 text-[9px] font-sans font-medium uppercase tracking-widest hover:bg-zinc-800 transition-all">Cancel</button>
-                    <button type="button" onClick={handleDisconnectGithub} disabled={isDisconnectingGithub} className="flex-1 py-2.5 rounded-md bg-rose-600 text-white text-[9px] font-sans font-medium uppercase tracking-widest hover:bg-rose-700 active:scale-95 transition-all">Disconnect</button>
+                    <button type="button" onClick={() => setConfirmDisconnect(null)} className="flex-1 py-2.5 rounded-md bg-zinc-900 border border-white/10 text-white/70 text-[9px] font-sans font-medium uppercase tracking-widest hover:bg-zinc-800 transition-all">{t('cancelBtn')}</button>
+                    <button type="button" onClick={handleDisconnectGithub} disabled={isDisconnectingGithub} className="flex-1 py-2.5 rounded-md bg-rose-600 text-white text-[9px] font-sans font-medium uppercase tracking-widest hover:bg-rose-700 active:scale-95 transition-all">{t('disconnectBtn')}</button>
                   </div>
                 ) : (
                   <button 
@@ -148,7 +150,7 @@ export function GitHubManager() {
                     onClick={() => setConfirmDisconnect('github')}
                     className="w-full py-3 rounded-md border border-rose-900/30 bg-rose-950/20 text-rose-400 text-[10px] font-sans font-medium uppercase tracking-widest hover:bg-rose-900/30 transition-all"
                   >
-                    Disconnect Account
+                    {t('disconnectAccountBtn')}
                   </button>
                 )}
               </div>
@@ -160,16 +162,14 @@ export function GitHubManager() {
               <GithubIcon className="w-9 h-9" />
             </div>
             <div className="max-w-[280px]">
-              <h4 className="text-sm font-sans font-medium text-white uppercase tracking-wider">GitHub Not Connected</h4>
-              <p className="text-xs text-white/40 mt-2 font-sans leading-relaxed">Connect your account to display repositories and code activity on your portfolio.</p>
+              <h4 className="text-sm font-sans font-medium text-white uppercase tracking-wider">{t('githubNotConnected')}</h4>
+              <p className="text-xs text-white/40 mt-2 font-sans leading-relaxed">{t('githubNotConnectedDesc')}</p>
             </div>
             <button
               type="button"
               onClick={() => signIn('github', { callbackUrl: '/dashboard/integrations' })}
               className="px-6 py-3.5 bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-sans font-medium uppercase tracking-widest transition-all active:scale-95 shadow-md"
-            >
-              Connect GitHub Now
-            </button>
+            >{t('connectGithubBtn')}</button>
           </div>
         )}
       </div>

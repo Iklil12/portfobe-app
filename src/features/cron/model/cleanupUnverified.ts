@@ -21,10 +21,10 @@ export async function cleanupUnverified() {
       }
     });
 
-    console.log(`[cleanup-unverified] Dihapus permanen: ${deletedUsers.count} akun yang belum diverifikasi selama > 7 hari`);
+    console.log(`[cleanup-unverified] Permanently deleted: ${deletedUsers.count} unverified accounts for > 7 days`);
 
     return {
-      message: `Pembersihan selesai: ${deletedUsers.count} akun dihapus permanen`,
+      message: `Cleanup complete: ${deletedUsers.count} accounts permanently deleted`,
       deletedCount: deletedUsers.count,
       cutoffDate: cutoffDate.toISOString(),
     };

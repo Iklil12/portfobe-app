@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { AnimateOnScroll } from '@/shared/ui/AnimateOnScroll';
+import { useTranslations } from 'next-intl';
 import {
   ArrowRight,
   CheckCircle2,
@@ -19,7 +20,7 @@ interface RecentActivityProps {
 }
 
 // --- HELPER: FORMAT WAKTU ---
-function timeAgo(dateParam: string | Date) {
+function timeAgo(dateParam: string | Date, t: ReturnType<typeof useTranslations>) {
   const date = typeof dateParam === 'object' ? dateParam : new Date(dateParam);
   const today = new Date();
   const seconds = Math.round((today.getTime() - date.getTime()) / 1000);
@@ -27,11 +28,11 @@ function timeAgo(dateParam: string | Date) {
   const hours = Math.round(minutes / 60);
   const days = Math.round(hours / 24);
 
-  if (seconds < 60) return 'Just now';
-  if (minutes < 60) return `${minutes} minutes ago`;
-  if (hours < 24) return `${hours} hours ago`;
-  if (days === 1) return 'Yesterday';
-  if (days < 7) return `${days} days ago`;
+  if (seconds < 60) return t('timeJustNow');
+  if (minutes < 60) return t('timeMinsAgo', { minutes });
+  if (hours < 24) return t('timeHoursAgo', { hours });
+  if (days === 1) return t('timeYesterday');
+  if (days < 7) return t('timeDaysAgo', { days });
   return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
 }
 
@@ -46,13 +47,14 @@ function getActivityIcon(actionType: string) {
 }
 
 export function RecentActivity({ activities, isLoading }: RecentActivityProps) {
+  const t = useTranslations('DashboardOverview');
   return (
     <AnimateOnScroll delay={200} className="w-full">
       <div className="bg-[#1a1a1a] p-6 border border-white/5 rounded-xl transition-all hover:border-white/10 w-full">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h3 className="text-base font-sans font-medium text-white">Recent Activity</h3>
-            <p className="text-xs font-sans text-white/50 mt-1">Your change timeline</p>
+            <h3 className="text-base font-sans font-medium text-white">{t('recentTitle')}</h3>
+            <p className="text-xs font-sans text-white/50 mt-1">{t('recentDesc')}</p>
           </div>
           <Link href="/dashboard/history" className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/5 bg-[#111111] text-white/70 hover:bg-white/10 hover:text-white transition-all group shadow-sm">
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -67,7 +69,7 @@ export function RecentActivity({ activities, isLoading }: RecentActivityProps) {
             {isLoading ? (
               <div className="absolute inset-0 z-50 bg-zinc-950/40 backdrop-blur-md rounded-md border border-white/10 shimmer" style={{ margin: '-24px -32px' }}></div>
             ) : activities.length === 0 ? (
-              <div className="text-center py-10 text-white/60 text-xs rounded-md border border-dashed border-white/10 bg-white/[0.01] font-sans">No recent activity yet.</div>
+              <div className="text-center py-10 text-white/60 text-xs rounded-md border border-dashed border-white/10 bg-white/[0.01] font-sans">{t('noRecent')}</div>
             ) : (
               activities.slice(0, 5).map((activity, idx) => {
                 return (
@@ -83,7 +85,7 @@ export function RecentActivity({ activities, isLoading }: RecentActivityProps) {
                           )}
                         </p>
                         <p className="text-[9px] font-sans font-medium text-white/60 mt-1.5 flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {timeAgo(activity.createdAt)}
+                          <Clock className="w-3 h-3" /> {timeAgo(activity.createdAt, t)}
                         </p>
                       </div>
                     </div>

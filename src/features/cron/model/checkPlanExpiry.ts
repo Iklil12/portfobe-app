@@ -41,7 +41,7 @@ export async function checkPlanExpiry(req: Request) {
     });
 
     console.log(
-      `[Cron] Menemukan ${expiredSubscriptions.length} subscription yang expired.`
+      `[Cron] Found ${expiredSubscriptions.length} expired subscriptions.`
     );
 
     if (expiredSubscriptions.length === 0) {
@@ -58,7 +58,7 @@ export async function checkPlanExpiry(req: Request) {
     for (const sub of expiredSubscriptions) {
       const userId = sub.userId;
       const userEmail = sub.user.email;
-      const userName = sub.user.profile?.fullName || "Pengguna";
+      const userName = sub.user.profile?.fullName || "User";
       
       const daysSinceExpiry = Math.floor((now.getTime() - sub.expiredAt!.getTime()) / (1000 * 60 * 60 * 24));
 
@@ -115,7 +115,7 @@ export async function checkPlanExpiry(req: Request) {
                 </div>
               </div>
               `,
-            }).catch(err => console.error(`Gagal kirim email downgrade ke ${userEmail}:`, err));
+            }).catch(err => console.error(`Failed to send downgrade email to ${userEmail}:`, err));
           }
         }
       } 
@@ -192,14 +192,14 @@ export async function checkPlanExpiry(req: Request) {
     });
 
     console.log(
-      `[Cron] ${expiringSoonSubs.length} subscription akan expire dalam 7 hari.`
+      `[Cron] ${expiringSoonSubs.length} subscriptions will expire in 7 days.`
     );
 
     for (const sub of expiringSoonSubs) {
       const daysLeft = Math.ceil(
         (sub.expiredAt!.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
       );
-      const userName = sub.user.profile?.fullName || "Pengguna";
+      const userName = sub.user.profile?.fullName || "User";
       const userEmail = sub.user.email;
 
       // Kirim reminder hanya di hari ke-7, ke-3, dan ke-1
@@ -256,7 +256,7 @@ export async function checkPlanExpiry(req: Request) {
         (now.getTime() - sub.expiredAt!.getTime()) / (1000 * 60 * 60 * 24)
       );
 
-      const userName = sub.user.profile?.fullName || "Pengguna";
+      const userName = sub.user.profile?.fullName || "User";
       const userEmail = sub.user.email;
 
       // H+3 Setelah Downgrade
@@ -279,12 +279,16 @@ export async function checkPlanExpiry(req: Request) {
                 <p style="margin: 0; font-size: 15px; color: #047857;">Use promo code <strong>COMEBACK30</strong> to get a 30% discount on renewing your PRO Plan today.</p>
               </div>
               <p style="font-size: 16px;">Elevate your professional career again and get in-depth analytics and a custom domain right now.</p>
+                <h3 style="margin: 0 0 10px 0; color: #065f46; font-size: 18px;">Special Creator Comeback Offer!</h3>
+                <p style="margin: 0; font-size: 15px; color: #047857;">Use promo code <strong>COMEBACK30</strong> to get a 30% discount on renewing your PRO Plan today.</p>
+              </div>
+              <p style="font-size: 16px;">Elevate your professional career again and get in-depth analytics and a custom domain right now.</p>
               <br/>
               <p style="font-size: 14px; color: #64748b;">Warm regards,<br/>Portfobe Team</p>
             </div>
           </div>
           `,
-        }).catch(err => console.error(`Gagal kirim win-back H+3 ke ${userEmail}:`, err));
+        }).catch(err => console.error(`Failed to send H+3 win-back to ${userEmail}:`, err));
         winbackEmailsSent++;
       }
       
@@ -313,14 +317,14 @@ export async function checkPlanExpiry(req: Request) {
             </div>
           </div>
           `,
-        }).catch(err => console.error(`Gagal kirim win-back H+7 ke ${userEmail}:`, err));
+        }).catch(err => console.error(`Failed to send H+7 win-back to ${userEmail}:`, err));
         winbackEmailsSent++;
       }
     }
 
     return {
       success: true,
-      message: `Berhasil memproses ${expiredSubscriptions.length} subscription expired.`,
+      message: `Successfully processed ${expiredSubscriptions.length} expired subscriptions.`,
       downgraded: downgradedUsers.length,
       downgradedUsers,
       remindersChecked: expiringSoonSubs.length,

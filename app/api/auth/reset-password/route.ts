@@ -12,11 +12,11 @@ export async function POST(req: Request) {
 
     await processResetPassword(token, password);
 
-    return NextResponse.json({ message: "Kata sandi berhasil diubah." }, { status: 200 });
+    return NextResponse.json({ message: "Password successfully changed." }, { status: 200 });
   } catch (error: unknown) {
-    if (getErrorMessage(error) === "INVALID_DATA") return NextResponse.json({ error: "Data tidak valid atau sandi minimal 6 karakter." }, { status: 400 });
-    if (getErrorMessage(error) === "INVALID_TOKEN") return NextResponse.json({ error: "Link reset tidak valid atau sudah digunakan." }, { status: 400 });
-    if (getErrorMessage(error) === "EXPIRED_TOKEN") return NextResponse.json({ error: "Link reset sudah kadaluarsa. Silakan minta ulang." }, { status: 400 });
+    if (getErrorMessage(error) === "INVALID_DATA") return NextResponse.json({ error: "Invalid data or password must be at least 6 characters." }, { status: 400 });
+    if (getErrorMessage(error) === "INVALID_TOKEN") return NextResponse.json({ error: "Reset link is invalid or already used." }, { status: 400 });
+    if (getErrorMessage(error) === "EXPIRED_TOKEN") return NextResponse.json({ error: "Reset link has expired. Please request a new one." }, { status: 400 });
 
     console.error("RESET_PW_ERROR:", error);
     return NextResponse.json({ error: "A server error occurred." }, { status: 500 });

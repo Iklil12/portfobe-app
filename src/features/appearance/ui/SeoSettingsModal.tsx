@@ -10,7 +10,7 @@ export function SeoSettingsModal({ state, actions }: { state: useThemeEditorStat
   const profile = state.livePreviewData?.profile || {};
 
   // Computed fallback values based on user's real profile
-  const fallbackTitle = `${profile.fullName || 'Nama Anda'} - ${profile.profession || 'Creative Professional'}`;
+  const fallbackTitle = `${profile.fullName || 'Your Name'} - ${profile.profession || 'Creative Professional'}`;
   const fallbackDescription = profile.bio || `Welcome to the creative portfolio of ${profile.fullName || 'me'}. Explore my latest works and experiences.`;
   const displayImage = profile.avatarUrl || '/default-og-image.jpg'; // Menggunakan foto profil asli atau default
 

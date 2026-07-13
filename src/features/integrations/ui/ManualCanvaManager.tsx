@@ -12,10 +12,12 @@ import {
   Check, 
   Loader2 
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export function ManualCanvaManager() {
+  const t = useTranslations('DashboardIntegrations');
   const { data, mutate } = useSWR('/api/canva/projects', fetcher);
   const [projects, setProjects] = useState<{ title: string; embedLink: string }[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -34,7 +36,7 @@ export function ManualCanvaManager() {
 
   const persistData = async (updatedProjects: { title: string; embedLink: string }[]) => {
     setIsSaving(true);
-    const toastId = toast.loading('Saving Canva design...');
+    const toastId = toast.loading(t('savingToast'));
     try {
       const res = await fetch('/api/canva/projects', {
         method: 'POST',
@@ -43,12 +45,12 @@ export function ManualCanvaManager() {
       });
       if (res.ok) {
         await mutate();
-        toast.success('Autosaved!', { id: toastId });
+        toast.success(t('autosavedToast'), { id: toastId });
       } else {
-        toast.error('Failed to autosave.', { id: toastId });
+        toast.error(t('failedAutosaveToast'), { id: toastId });
       }
     } catch (err) {
-      toast.error('Network error.', { id: toastId });
+      toast.error(t('networkErrorToast'), { id: toastId });
     } finally {
       setIsSaving(false);
     }
@@ -57,13 +59,13 @@ export function ManualCanvaManager() {
   const handleAdd = (e?: React.MouseEvent) => {
     e?.preventDefault();
     if (projects.length >= 10) {
-      toast.error('Maximum 10 designs allowed.');
+      toast.error(t('maxProjectsToast'));
       return;
     }
     const newIndex = projects.length;
     setProjects(prev => [...prev, { title: '', embedLink: '' }]);
     setEditingIndex(newIndex);
-    toast.success('New row added.');
+    toast.success(t('newRowAddedToast'));
   };
 
   const handleRemove = async (index: number, e?: React.MouseEvent) => {
@@ -107,7 +109,7 @@ export function ManualCanvaManager() {
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-wider mb-2 block">Project Title</label>
+                      <label className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-wider mb-2 block">{t('projectTitle')}</label>
                       <input 
                         type="text" 
                         placeholder="e.g., Social Media Kit" 
@@ -118,7 +120,7 @@ export function ManualCanvaManager() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-wider mb-2 block">Embed Link</label>
+                      <label className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-wider mb-2 block">{t('embedLink')}</label>
                       <input 
                         type="text" 
                         placeholder="<iframe ... atau https://..." 
@@ -129,7 +131,7 @@ export function ManualCanvaManager() {
                     </div>
                   </div>
                   <div className="flex justify-end items-center gap-4 pt-2 border-t border-white/5">
-                     <button type="button" onClick={() => setEditingIndex(null)} className="text-[10px] font-sans font-medium text-white/45 hover:text-white uppercase tracking-wider">Cancel</button>
+                     <button type="button" onClick={() => setEditingIndex(null)} className="text-[10px] font-sans font-medium text-white/45 hover:text-white uppercase tracking-wider">{t('cancelBtn')}</button>
                      <button type="button" onClick={handleDone} disabled={isSaving} className="px-5 py-2.5 rounded-md bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[10px] font-sans font-medium uppercase tracking-widest flex items-center gap-1.5 active:scale-95 transition-all">
                        {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                        Save & Done
@@ -149,7 +151,7 @@ export function ManualCanvaManager() {
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-sans font-medium text-white tracking-wide truncate">{p.title || 'Untitled Design'}</p>
+                      <p className="text-sm font-sans font-medium text-white tracking-wide truncate">{p.title || t('untitledDesign')}</p>
                       <p className="text-[9px] font-sans text-white/30 truncate mt-1">{p.embedLink}</p>
                     </div>
                   </div>
@@ -159,7 +161,7 @@ export function ManualCanvaManager() {
                     </button>
                     {deleteConfirm === idx ? (
                       <div className="flex items-center gap-1.5">
-                         <button type="button" onClick={(e) => { e.stopPropagation(); handleRemove(idx, e); }} className="px-3 py-1.5 rounded-md bg-rose-600 text-white text-[9px] font-sans font-medium uppercase tracking-widest hover:bg-rose-700 transition-colors">Yes, Delete</button>
+                         <button type="button" onClick={(e) => { e.stopPropagation(); handleRemove(idx, e); }} className="px-3 py-1.5 rounded-md bg-rose-600 text-white text-[9px] font-sans font-medium uppercase tracking-widest hover:bg-rose-700 transition-colors">{t('yesDeleteBtn')}</button>
                          <button type="button" onClick={(e) => { e.stopPropagation(); setDeleteConfirm(null); }} className="p-1.5 text-white/40 hover:text-white transition-colors"><X className="w-4 h-4" /></button>
                       </div>
                     ) : (

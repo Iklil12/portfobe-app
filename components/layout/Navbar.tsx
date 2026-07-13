@@ -3,17 +3,20 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, ChevronRight, Zap, ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import LanguageSwitcherPublic from '@/components/ui/LanguageSwitcherPublic';
 
 export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(null);
+  const t = useTranslations('Navbar');
 
   const navItems = [
-    { label: 'Features', href: '/#features' },
-    { label: 'Templates', href: '/templates' },
-    { label: 'Learn', href: '#', hasMegaMenu: true },
-    { label: 'Pricing', href: '/pricing' }
+    { label: t('features'), href: '/#features' },
+    { label: t('templates'), href: '/templates' },
+    { label: t('learn'), href: '#', hasMegaMenu: true },
+    { label: t('pricing'), href: '/pricing' }
   ];
 
   useEffect(() => {
@@ -68,12 +71,12 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
                                  <div className="w-10 h-10 bg-neutral-900 border border-white/10 rounded-md flex items-center justify-center text-white/40 group-hover/item:text-[#ff9e00] group-hover/item:bg-neutral-800 group-hover/item:border-[#ff9e00]/40 transition-all duration-300 shrink-0">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                                  </div>
-                                 <div className="flex flex-col">
+                                  <div className="flex flex-col">
                                     <h4 className="font-mono text-xs uppercase tracking-wider text-white group-hover/item:text-[#ff9e00] transition-colors mb-1 flex items-center gap-2">
-                                      Engineering Blog 
+                                      {t('mega_engBlog_title')} 
                                       <span className="bg-[#ff9e00] text-black text-[8px] px-1.5 py-0.5 rounded-md font-medium tracking-widest font-sans">NEW</span>
                                     </h4>
-                                    <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">Deep dives into architecture, design systems, and frontend optimizations.</p>
+                                    <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">{t('mega_engBlog_desc')}</p>
                                  </div>
                               </Link>
 
@@ -82,8 +85,8 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                                  </div>
                                  <div className="flex flex-col">
-                                    <h4 className="font-mono text-xs uppercase tracking-wider text-white group-hover/item:text-[#ff9e00] transition-colors mb-1">Creator Showcases</h4>
-                                    <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">Discover how top professionals use Portfo.be to stand out in the industry.</p>
+                                    <h4 className="font-mono text-xs uppercase tracking-wider text-white group-hover/item:text-[#ff9e00] transition-colors mb-1">{t('mega_creator_title')}</h4>
+                                    <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">{t('mega_creator_desc')}</p>
                                  </div>
                               </Link>
                            </div>
@@ -98,8 +101,8 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                                  </div>
                                  <div className="flex flex-col">
-                                    <h4 className="font-mono text-xs uppercase tracking-wider text-white group-hover/item:text-[#ff9e00] transition-colors mb-1">Knowledge Base</h4>
-                                    <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">Everything you need to know to build and manage your portfolio effectively.</p>
+                                    <h4 className="font-mono text-xs uppercase tracking-wider text-white group-hover/item:text-[#ff9e00] transition-colors mb-1">{t('mega_kb_title')}</h4>
+                                    <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">{t('mega_kb_desc')}</p>
                                  </div>
                               </Link>
 
@@ -108,8 +111,8 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
                                  </div>
                                  <div className="flex flex-col">
-                                    <h4 className="font-mono text-xs uppercase tracking-wider text-white group-hover/item:text-[#ff9e00] transition-colors mb-1">Platform Guide</h4>
-                                    <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">A step-by-step masterclass on editor tools and advanced layout settings.</p>
+                                    <h4 className="font-mono text-xs uppercase tracking-wider text-white group-hover/item:text-[#ff9e00] transition-colors mb-1">{t('mega_guide_title')}</h4>
+                                    <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">{t('mega_guide_desc')}</p>
                                  </div>
                               </Link>
                            </div>
@@ -124,14 +127,14 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
                                  <img src="/minimalist_chair_3d.webp" className="w-full h-full object-cover opacity-60 group-hover/feat:opacity-100 group-hover/feat:scale-105 transition-all duration-700 grayscale"/>
                               </div>
                               <div className="flex flex-col py-1">
-                                 <span className="text-[#ff9e00] font-mono text-[9px] uppercase tracking-widest mb-1">Major Update</span>
-                                 <h4 className="font-medium text-white text-base mb-0.5 group-hover/feat:text-[#ff9e00] transition-colors">Dynamic Canvas 2.0</h4>
-                                 <p className="text-[10px] text-white/40 max-w-[340px] leading-normal font-sans font-medium">Unlock the power of unlimited layout flexibility and highly responsive web elements with our new visual engine.</p>
+                                 <span className="text-[#ff9e00] font-mono text-[9px] uppercase tracking-widest mb-1">{t('mega_update_badge')}</span>
+                                 <h4 className="font-medium text-white text-base mb-0.5 group-hover/feat:text-[#ff9e00] transition-colors">{t('mega_update_title')}</h4>
+                                 <p className="text-[10px] text-white/40 max-w-[340px] leading-normal font-sans font-medium">{t('mega_update_desc')}</p>
                               </div>
                            </div>
                            
                            <Link href="#" className="relative z-10 bg-white/10 hover:bg-[#ff9e00] hover:text-black text-white text-xs font-sans uppercase tracking-wider px-5 py-3 rounded-md border border-white/10 transition-all duration-300 flex items-center gap-2 shadow-sm whitespace-nowrap">
-                              Explore Update <ArrowRight className="w-3.5 h-3.5 group-hover/feat:translate-x-1 transition-transform" />
+                              {t('mega_update_btn')} <ArrowRight className="w-3.5 h-3.5 group-hover/feat:translate-x-1 transition-transform" />
                            </Link>
                         </div>
                         
@@ -151,11 +154,12 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
 
           {/* Right Action Buttons */}
           <div className="hidden md:flex items-center space-x-4 z-10 relative">
+            <LanguageSwitcherPublic />
             <Link href="/login" className="font-mono text-[11px] uppercase tracking-wider text-white/70 hover:text-white px-4 py-2 transition-colors">
-              Log in
+              {t('login')}
             </Link>
             <Link href="/register" className="px-6 py-2.5 bg-white text-black hover:bg-[#ff9e00] hover:text-black font-mono text-[11px] uppercase tracking-wider font-bold transition-all flex items-center gap-2 group border border-white/10">
-              Get Started
+              {t('getStarted')}
             </Link>
           </div>
 
@@ -192,12 +196,11 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
                     <ChevronRight className={`w-5 h-5 text-white/30 group-hover:text-[#ff9e00] transition-transform duration-300 ${isExpanded ? 'rotate-90 text-[#ff9e00]' : ''}`} />
                   </button>
                   
-                  {/* Sub menu items for mobile */}
-                  <div className={`flex flex-col gap-4 pl-4 border-l border-white/10 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[400px] mt-2 opacity-100' : 'max-h-0 opacity-0'}`}>
-                     <Link href="/learn/knowledge-base" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-white/50 hover:text-white transition-colors">Knowledge Base</Link>
-                     <Link href="/learn/guide" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-white/50 hover:text-white transition-colors">Platform Guide</Link>
-                     <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-white/50 hover:text-white flex items-center gap-3 transition-colors">Engineering Blog <span className="text-[9px] bg-[#ff9e00] text-black px-1.5 py-0.5 font-medium tracking-widest font-sans">NEW</span></Link>
-                     <Link href="#" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-white/50 hover:text-white transition-colors">Creator Showcases</Link>
+                     <div className={`flex flex-col gap-4 pl-4 border-l border-white/10 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[400px] mt-2 opacity-100' : 'max-h-0 opacity-0'}`}>
+                     <Link href="/learn/knowledge-base" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-white/50 hover:text-white transition-colors">{t('mega_kb_title')}</Link>
+                     <Link href="/learn/guide" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-white/50 hover:text-white transition-colors">{t('mega_guide_title')}</Link>
+                     <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-white/50 hover:text-white flex items-center gap-3 transition-colors">{t('mega_engBlog_title')} <span className="text-[9px] bg-[#ff9e00] text-black px-1.5 py-0.5 font-medium tracking-widest font-sans">NEW</span></Link>
+                     <Link href="#" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-white/50 hover:text-white transition-colors">{t('mega_creator_title')}</Link>
                   </div>
                 </div>
               );
@@ -211,9 +214,10 @@ export function Navbar({ isDarkBg = true }: { isDarkBg?: boolean } = {}) {
           })}
         </div>
         <div className="p-6 border-t border-white/10 flex flex-col gap-3">
-          <Link href="/login" className="block w-full text-white/80 font-mono text-xs uppercase tracking-wider py-4 text-center border border-white/10 bg-white/5 hover:bg-white/10 transition-colors">Log in</Link>
+          <LanguageSwitcherPublic isMobile={true} />
+          <Link href="/login" className="block w-full text-white/80 font-mono text-xs uppercase tracking-wider py-4 text-center border border-white/10 bg-white/5 hover:bg-white/10 transition-colors">{t('login')}</Link>
           <Link href="/register" className="block w-full py-4 bg-[#ff9e00] text-black text-center font-mono text-xs uppercase tracking-wider font-medium hover:bg-white transition-colors flex items-center justify-center gap-2">
-            Get Started Free <Zap className="w-4 h-4 fill-black text-black" />
+            {t('getStartedFree')} <Zap className="w-4 h-4 fill-black text-black" />
           </Link>
         </div>
       </div>

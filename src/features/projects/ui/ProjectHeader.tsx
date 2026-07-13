@@ -2,9 +2,11 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Crown, Plus } from 'lucide-react';
 import { useProjectsState, useProjectsActions } from '@/entities/portfolio/model/useProjects';
+import { useTranslations } from 'next-intl';
 
 
 export function ProjectHeader({ state, actions }: { state: useProjectsState; actions: useProjectsActions }) {
+  const t = useTranslations('DashboardProjects');
   const { handleOpenModal } = actions;
   const { userPlan, projectCount, certCount, isLoading } = state;
   
@@ -16,9 +18,7 @@ export function ProjectHeader({ state, actions }: { state: useProjectsState; act
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 sm:mb-10 gap-6 animate-enter">
       <div>
         <div className="flex items-center gap-3 mb-1.5">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-sans font-medium uppercase tracking-wider text-white flex items-center gap-2.5 sm:gap-3">
-            Works & Certificates
-            <Sparkles className="w-5 h-5 text-white/30 animate-spin-slow" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-sans font-medium uppercase tracking-wider text-white flex items-center gap-2.5 sm:gap-3">{t('pageTitle')}<Sparkles className="w-5 h-5 text-white/30 animate-spin-slow" />
           </h1>
           
           <AnimatePresence mode="wait">
@@ -45,9 +45,7 @@ export function ProjectHeader({ state, actions }: { state: useProjectsState; act
                 initial={{ opacity: 0, scale: 0.8, x: -10 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 className="bg-zinc-900 text-white/50 text-[9px] font-sans font-medium px-2.5 py-1 rounded-md tracking-widest uppercase border border-white/10"
-               >
-                 FREE
-               </motion.span>
+               >{t('badgeFree')}</motion.span>
             )}
           </AnimatePresence>
         </div>
@@ -79,7 +77,7 @@ export function ProjectHeader({ state, actions }: { state: useProjectsState; act
             >
               <div className="flex flex-col gap-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-[0.1em]">Project Capacity</span>
+                  <span className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-[0.1em]">{t('projectCapacity')}</span>
                   <span className={`text-[10px] font-sans font-medium ${isProjectFull ? 'text-rose-500' : 'text-white'}`}>{projectCount}/4</span>
                 </div>
                 <div className="w-full h-1 bg-zinc-900 border border-white/10 rounded-md overflow-hidden">
@@ -93,7 +91,7 @@ export function ProjectHeader({ state, actions }: { state: useProjectsState; act
               </div>
               <div className="flex flex-col gap-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-[0.1em]">Certificate Capacity</span>
+                  <span className="text-[9px] font-sans font-medium text-white/40 uppercase tracking-[0.1em]">{t('certCapacity')}</span>
                   <span className={`text-[10px] font-sans font-medium ${isCertFull ? 'text-rose-500' : 'text-white'}`}>{certCount}/1</span>
                 </div>
                 <div className="w-full h-1 bg-zinc-900 border border-white/10 rounded-md overflow-hidden">
@@ -129,10 +127,10 @@ export function ProjectHeader({ state, actions }: { state: useProjectsState; act
               <Crown className="w-3.5 h-3.5 text-rose-400" /> 
               <p className="text-[9px] font-sans font-medium text-rose-400 uppercase tracking-wide leading-none">
                 {isProjectFull && isCertFull 
-                  ? "All limits reached. Upgrade PRO for unlimited access."
+                  ? t('allLimitsReached')
                   : isProjectFull 
-                    ? "Project limit reached. Upgrade PRO to add more works."
-                    : "Certificate limit reached. Upgrade PRO to add achievements."}
+                    ? t('projectLimitReached')
+                    : t('certLimitReached')}
               </p>
             </motion.div>
           )}
@@ -159,9 +157,7 @@ export function ProjectHeader({ state, actions }: { state: useProjectsState; act
                 href="/pricing"
                 className="w-full md:w-auto bg-zinc-900 text-white border border-white/10 px-7 py-4 rounded-md text-[10px] font-sans font-medium uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-zinc-800 transition-all duration-300 active:scale-95 group relative overflow-hidden"
               >
-                <Crown className="w-3.5 h-3.5 text-[#ff9e00]" /> 
-                Upgrade to Pro
-              </Link>
+                <Crown className="w-3.5 h-3.5 text-[#ff9e00]" />{t('upgradeToPro')}</Link>
             </motion.div>
           ) : (
             <motion.button
@@ -171,9 +167,7 @@ export function ProjectHeader({ state, actions }: { state: useProjectsState; act
               onClick={() => handleOpenModal()}
               className="group w-full md:w-auto relative overflow-hidden flex items-center justify-center gap-2 rounded-md bg-[#ff9e00] hover:bg-[#ffaa22] transition-all duration-300 active:scale-95 hover:-translate-y-0.5 px-6 py-3.5 text-black font-sans font-medium uppercase tracking-widest text-[10px]"
             >
-              <Plus className="w-3.5 h-3.5 text-black" />
-              Add New
-            </motion.button>
+              <Plus className="w-3.5 h-3.5 text-black" />{t('addNew')}</motion.button>
           )}
         </AnimatePresence>
       </div>

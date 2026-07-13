@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import QRCode from 'react-qr-code';
 import { showToast } from '@/shared/lib/customToast';
 import { Copy, ExternalLink, QrCode, X, Check } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface ShareModalProps {
 }
 
 export function ShareModal({ isOpen, onClose, subdomain, avatarUrl }: ShareModalProps) {
+  const t = useTranslations('DashboardOverview');
   const [showQR, setShowQR] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [mounted, setMounted] = useState(false);

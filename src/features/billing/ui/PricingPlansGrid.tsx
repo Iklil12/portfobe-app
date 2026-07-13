@@ -1,8 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { Check, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function PricingPlansGrid({ plans }: { plans: any[] }) {
+  const t = useTranslations('Pricing');
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
       {plans.map((plan, idx) => (
@@ -27,7 +29,7 @@ export function PricingPlansGrid({ plans }: { plans: any[] }) {
               {plan.originalPrice && (
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-sm font-sans text-white/30 line-through">{plan.originalPrice}</span>
-                  <span className="text-[9px] font-sans font-medium text-red-400 bg-red-400/10 px-2 py-0.5 border border-red-400/20">OFF</span>
+                  <span className="text-[9px] font-sans font-medium text-red-400 bg-red-400/10 px-2 py-0.5 border border-red-400/20">{t('off')}</span>
                 </div>
               )}
               <div className="flex items-baseline gap-1.5">
@@ -45,8 +47,8 @@ export function PricingPlansGrid({ plans }: { plans: any[] }) {
                   </span>
                   <span className="font-sans tracking-wide">
                     {feature.text}
-                    {feature.soon && <span className="ml-2 text-[8px] px-1.5 py-0.5 bg-white/10 text-white/60 font-sans">SOON</span>}
-                    {feature.bonus && <span className="ml-2 text-[8px] px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 font-sans border border-emerald-500/30">BONUS</span>}
+                    {feature.soon && <span className="ml-2 text-[8px] px-1.5 py-0.5 bg-white/10 text-white/60 font-sans">{t('soon')}</span>}
+                    {feature.bonus && <span className="ml-2 text-[8px] px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 font-sans border border-emerald-500/30">{t('bonus')}</span>}
                   </span>
                 </div>
               ))}

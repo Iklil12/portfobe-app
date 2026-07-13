@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AnimateOnScroll } from '@/shared/ui/AnimateOnScroll';
+import { useTranslations } from 'next-intl';
 
 // Smooth Counter Component
 function AnimatedCounter({ value, duration = 1500 }: { value: number, duration?: number }) {
@@ -44,6 +45,7 @@ interface StatCardsProps {
 }
 
 export function StatCards({ stats, isLoading }: StatCardsProps) {
+  const t = useTranslations('DashboardOverview');
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10">

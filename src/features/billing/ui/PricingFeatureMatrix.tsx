@@ -1,19 +1,21 @@
 import React from 'react';
 import Link from 'next/link';
 import { Check, X, Layers, Grid, Palette, Award, EyeOff, Globe, Gift, BarChart2, Code, Headphones, Sparkles, HelpCircle, Crown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pricing: any, billingCycle: 'monthly' | 'yearly', formatIDR: (num: number) => string }) {
+  const t = useTranslations('Pricing');
   return (
         <div className="mt-32 max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#ff9e00]/20 bg-[#ff9e00]/5 text-[#ff9e00] text-[10px] font-sans uppercase tracking-[0.2em] mb-4">
-              Feature Matrix
+              {t('matrixBadge')}
             </div>
             <h2 className="text-3xl md:text-5xl font-sans font-medium text-white tracking-tight mb-4">
-              Compare <span className="text-white/40 italic font-light">Every Feature</span>
+              {t('matrixTitlePrefix')} <span className="text-white/40 italic font-light">{t('matrixTitleHighlight')}</span>
             </h2>
             <p className="text-white/50 max-w-xl mx-auto text-xs md:text-sm font-medium leading-relaxed font-sans">
-              Find the plan that matches your production, domain, and customization needs.
+              {t('matrixDesc')}
             </p>
           </div>
 
@@ -23,7 +25,7 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                 {/* Table Header with Plans info */}
                 <tr className="border-b border-white/10">
                   <th className="p-6 w-[34%] bg-black/40">
-                    <span className="text-xs font-sans font-medium uppercase tracking-widest text-white/40">Plan Features</span>
+                    <span className="text-xs font-sans font-medium uppercase tracking-widest text-white/40">{t('planFeatures')}</span>
                   </th>
                   
                   {/* Starter Plan Column Header */}
@@ -32,13 +34,13 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <div>
                         <span className="text-lg font-sans font-medium text-white block">Starter</span>
                         <span className="text-sm font-sans font-medium text-white/40 mt-1 block">Rp 0</span>
-                        <span className="text-[10px] font-sans text-white/30 mt-0.5 block">Forever</span>
+                        <span className="text-[10px] font-sans text-white/30 mt-0.5 block">{t('forever')}</span>
                       </div>
                       <Link
                         href="/register"
                         className="mt-6 w-full py-2.5 px-4 text-[10px] font-sans font-medium uppercase tracking-widest text-white border border-white/20 hover:bg-white/5 hover:border-white/30 transition-all text-center rounded-lg active:scale-95"
                       >
-                        Start Free
+                        {t('startFree')}
                       </Link>
                     </div>
                   </th>
@@ -57,14 +59,14 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                           {pricing && pricing.pro ? formatIDR(pricing.pro[billingCycle].price) : (billingCycle === 'monthly' ? "Rp 39.000" : "Rp 30.000")}
                         </span>
                         <span className="text-[10px] font-sans text-white/50 mt-0.5 block">
-                          {billingCycle === 'monthly' ? "Per month" : "Per month, billed annually"}
+                          {billingCycle === 'monthly' ? t('perMonth') : t('perMonthYearly')}
                         </span>
                       </div>
                       <Link
                         href="/checkout?plan=pro"
                         className="mt-6 w-full py-2.5 px-4 text-[10px] font-sans font-medium uppercase tracking-widest text-black bg-[#ff9e00] hover:bg-[#ffaa22] transition-all text-center rounded-lg active:scale-95 shadow-[0_4px_20px_rgba(255,158,0,0.15)]"
                       >
-                        Get Pro
+                        {t('getPro')}
                       </Link>
                     </div>
                   </th>
@@ -78,14 +80,14 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                           {pricing && pricing.supreme ? formatIDR(pricing.supreme[billingCycle].price) : (billingCycle === 'monthly' ? "Rp 79.000" : "Rp 65.000")}
                         </span>
                         <span className="text-[10px] font-sans text-white/50 mt-0.5 block">
-                          {billingCycle === 'monthly' ? "Per month" : "Per month, billed annually"}
+                          {billingCycle === 'monthly' ? t('perMonth') : t('perMonthYearly')}
                         </span>
                       </div>
                       <Link
                         href="/checkout?plan=supreme"
                         className="mt-6 w-full py-2.5 px-4 text-[10px] font-sans font-medium uppercase tracking-widest text-white border border-white/20 hover:bg-white/5 hover:border-white/30 transition-all text-center rounded-lg active:scale-95"
                       >
-                        Get Supreme
+                        {t('getSupreme')}
                       </Link>
                     </div>
                   </th>
@@ -95,7 +97,7 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                 {/* Category 1: Portfolio & Content */}
                 <tr>
                   <td colSpan={4} className="py-4 px-6 bg-zinc-900/60 text-[#ff9e00] font-sans font-medium text-sm tracking-wide border-y border-white/5">
-                    Portfolio & Content
+                    {t('catPortfolio')}
                   </td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors bg-white/[0.015]">
@@ -104,18 +106,18 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <Layers className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Max Portfolio Pages</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mMaxPages')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans">
-                          The number of active pages you can create under your portfolio web app.
+                          {t('mMaxPagesDesc')}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">1 Page</td>
-                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">3 Pages</td>
-                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">Unlimited</td>
+                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">{t('val1Page')}</td>
+                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">{t('val3Pages')}</td>
+                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valUnlimited')}</td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
                   <td className="p-4 px-6 flex items-center gap-3">
@@ -123,18 +125,18 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <Grid className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Content Blocks per Page</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mBlocks')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans">
-                          The number of content blocks (text, images, links, projects, etc.) you can add to each page.
+                          {t('mBlocksDesc')}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">Up to 12 Blocks</td>
-                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">Unlimited</td>
-                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">Unlimited</td>
+                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">{t('val12Blocks')}</td>
+                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valUnlimited')}</td>
+                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valUnlimited')}</td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors bg-white/[0.015]">
                   <td className="p-4 px-6 flex items-center gap-3">
@@ -142,18 +144,18 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <Palette className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Design Themes & Layouts</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mThemes')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans">
-                          Access to professional, customizable templates and layout styles.
+                          {t('mThemesDesc')}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">Basic (3-5 Themes)</td>
-                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">All Premium Themes</td>
-                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">All Premium Themes</td>
+                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">{t('valBasicThemes')}</td>
+                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valAllThemes')}</td>
+                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valAllThemes')}</td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
                   <td className="p-4 px-6 flex items-center gap-3">
@@ -161,24 +163,23 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <Award className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Project & Cert Showcase</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mShowcase')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans">
-                          Upload limits for showcasing projects and adding credentials/certificates.
+                          {t('mShowcaseDesc')}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">Max 4 Projects & 1 Cert</td>
-                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">Unlimited</td>
-                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">Unlimited</td>
+                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">{t('val4Proj1Cert')}</td>
+                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valUnlimited')}</td>
+                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valUnlimited')}</td>
                 </tr>
 
-                {/* Category 2: Branding & Domains */}
                 <tr>
                   <td colSpan={4} className="py-4 px-6 bg-zinc-900/60 text-[#ff9e00] font-sans font-medium text-sm tracking-wide border-y border-white/5">
-                    Branding & Custom Domains
+                    {t('catBranding')}
                   </td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors bg-white/[0.015]">
@@ -187,11 +188,11 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <EyeOff className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Remove Portfo.be Badge</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mBadge')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans">
-                          Remove the 'Made with Portfo.be' branding badge from your portfolio pages.
+                          {t('mBadgeDesc')}
                         </div>
                       </div>
                     </div>
@@ -212,11 +213,11 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <Globe className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Connect Custom Domain</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mDomain')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans">
-                          Link your own custom domain (e.g. yourname.com) instead of using our default domain prefix.
+                          {t('mDomainDesc')}
                         </div>
                       </div>
                     </div>
@@ -228,7 +229,7 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                     <X className="w-4 h-4 text-zinc-600 mx-auto" />
                   </td>
                   <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">
-                    1-Click Auto Setup
+                    {t('val1ClickSetup')}
                   </td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors bg-white/[0.015]">
@@ -237,11 +238,11 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <Gift className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Free 1-Year Domain</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mFreeDomain')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans">
-                          Get a free .com, .net, or .me domain registration for the first year. Requires yearly plan.
+                          {t('mFreeDomainDesc')}
                         </div>
                       </div>
                     </div>
@@ -253,14 +254,13 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                     <X className="w-4 h-4 text-zinc-600 mx-auto" />
                   </td>
                   <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">
-                    <span className="text-emerald-400 font-medium bg-emerald-500/10 px-2.5 py-1 border border-emerald-500/20 rounded-md">Yearly Plan</span>
+                    <span className="text-emerald-400 font-medium bg-emerald-500/10 px-2.5 py-1 border border-emerald-500/20 rounded-md">{t('valYearlyPlan')}</span>
                   </td>
                 </tr>
 
-                {/* Category 3: Advanced Features & Integrations */}
                 <tr>
                   <td colSpan={4} className="py-4 px-6 bg-zinc-900/60 text-[#ff9e00] font-sans font-medium text-sm tracking-wide border-y border-white/5">
-                    Advanced Features & Integrations
+                    {t('catAdvanced')}
                   </td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors bg-white/[0.015]">
@@ -269,18 +269,18 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <BarChart2 className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Visitor Analytics</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mAnalytics')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans">
-                          Detailed visitor counts, location logs, referrer stats, and direct search engine indexing hooks.
+                          {t('mAnalyticsDesc')}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">Basic Analytics</td>
-                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">Deep Analytics & SEO</td>
-                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">Deep Analytics & SEO</td>
+                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">{t('valBasicAnalytics')}</td>
+                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valDeepAnalytics')}</td>
+                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valDeepAnalytics')}</td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
                   <td className="p-4 px-6 flex items-center gap-3">
@@ -288,11 +288,11 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <Code className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Custom CSS & HTML Injection</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mInjection')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans">
-                          Directly write custom styling or inject verification header/footer scripts (e.g. Google Analytics).
+                          {t('mInjectionDesc')}
                         </div>
                       </div>
                     </div>
@@ -308,10 +308,9 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                   </td>
                 </tr>
 
-                {/* Category 4: Support & Service */}
                 <tr>
                   <td colSpan={4} className="py-4 px-6 bg-zinc-900/60 text-[#ff9e00] font-sans font-medium text-sm tracking-wide border-y border-white/5">
-                    Support & Service
+                    {t('catSupport')}
                   </td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors bg-white/[0.015]">
@@ -320,18 +319,18 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <Headphones className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Customer Support</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mCustomerSupport')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans">
-                          The support channel speed and handling priority for issues.
+                          {t('mCustomerSupportDesc')}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">Community</td>
-                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">VIP Support</td>
-                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">Priority 24/7 Support</td>
+                  <td className="p-4 text-center border-l border-white/5 text-xs font-sans text-white/60">{t('valCommunity')}</td>
+                  <td className="p-4 text-center bg-zinc-900/20 border-x border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valVipSupport')}</td>
+                  <td className="p-4 text-center border-r border-white/5 text-xs font-sans text-white/80 font-semibold">{t('valPriorityVip')}</td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
                   <td className="p-4 px-6 flex items-center gap-3">
@@ -339,11 +338,11 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                       <Sparkles className="w-4 h-4 text-[#ff9e00]" />
                     </div>
                     <div className="flex items-center gap-1.5 group relative">
-                      <span className="text-xs font-sans text-white/90 font-medium">Early Access to Features</span>
+                      <span className="text-xs font-sans text-white/90 font-medium">{t('mEarlyAccess')}</span>
                       <div className="relative inline-block group/tooltip">
                         <HelpCircle className="w-3.5 h-3.5 text-white/30 hover:text-white cursor-help transition-colors" />
                         <div className="absolute bottom-full left-0 mb-2 w-56 p-2.5 bg-zinc-950 border border-white/10 rounded-lg text-[10px] font-sans text-zinc-300 opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-150 z-30 shadow-xl leading-normal whitespace-normal font-sans font-sans">
-                          Test drive newer themes, widget integrations, and design blocks before the public release.
+                          {t('mEarlyAccessDesc')}
                         </div>
                       </div>
                     </div>

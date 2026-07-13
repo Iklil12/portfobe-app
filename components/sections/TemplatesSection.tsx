@@ -6,8 +6,10 @@ import { OptimizedLazyImage } from '@/shared/ui/OptimizedLazyImage';
 import { TEMPLATE_LIST } from '@/shared/constants/constants';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function TemplatesSection() {
+  const t = useTranslations('Templates');
   const [hoveredIndex, setHoveredIndex] = useState<number>(0);
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -68,12 +70,12 @@ export function TemplatesSection() {
         
         {/* Clean Centered Header with Absolute Noir Style */}
         <div className="text-center mb-12 md:mb-20 px-6">
-          <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/30 block mb-4">[ ARCHITECTURES ]</span>
+          <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/30 block mb-4">[ {t('architectures')} ]</span>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tight mb-6 uppercase">
-            Engineered for <span className="text-[#ff9e00]">Brilliance.</span>
+            {t('engineeredFor')} <span className="text-[#ff9e00]">{t('brilliance')}</span>
           </h2>
           <p className="text-white/40 text-sm md:text-base max-w-xl mx-auto font-medium leading-relaxed font-mono uppercase tracking-tight">
-            Swipe to explore on mobile, hover on desktop. Each architectural canvas is fully customizable.
+            {t('swipeText')}
           </p>
         </div>
 
@@ -210,7 +212,7 @@ export function TemplatesSection() {
                           transition-all duration-500 delay-100
                           ${isActive ? 'md:opacity-100 md:translate-y-0' : 'md:opacity-0 md:translate-y-4'}
                         `}>
-                          Architectural template design context. Click button to explore layout parameters.
+                          {t('designContext')}
                         </p>
                       </div>
                       
@@ -260,7 +262,7 @@ export function TemplatesSection() {
         {/* Global Action Button */}
         <div className="mt-10 md:mt-16 flex justify-center pb-0 px-6">
             <Link href="/templates" className="group relative flex items-center gap-4 px-8 py-4 rounded-md border border-white/10 text-white font-mono text-xs uppercase tracking-widest font-medium hover:border-white hover:bg-white hover:text-black transition-all duration-300 w-full md:w-auto justify-center overflow-hidden">
-              <span className="relative z-10">View Template Gallery</span>
+              <span className="relative z-10">{t('viewGallery')}</span>
               <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
             </Link>
         </div>

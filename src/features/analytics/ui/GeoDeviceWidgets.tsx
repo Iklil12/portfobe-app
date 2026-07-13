@@ -1,7 +1,9 @@
 import React from 'react';
 import { Lock, Globe, Ghost } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function DeviceBreakdown({ isLoading, isFree, handleLocked, deviceData, animReady }: any) {
+  const t = useTranslations('DashboardAnalytics');
   if (isLoading) {
     return <div className="rounded-md shimmer-dark h-[400px]" />;
   }
@@ -16,13 +18,13 @@ export function DeviceBreakdown({ isLoading, isFree, handleLocked, deviceData, a
           <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-md flex items-center justify-center mb-2">
             <Lock className="w-4 h-4 text-[#ff9e00]" />
           </div>
-          <span className="text-xs font-sans font-medium text-[#ff9e00]">PRO ONLY</span>
-          <p className="text-[10px] text-white/80 font-sans mt-1 text-center">Upgrade to view device data</p>
+          <span className="text-xs font-sans font-medium text-[#ff9e00]">{t('proOnly')}</span>
+          <p className="text-[10px] text-white/80 font-sans mt-1 text-center">{t('upgradeDevice')}</p>
         </div>
       )}
       <div className="mb-6">
-        <h3 className="text-sm font-sans font-medium text-white">Devices</h3>
-        <p className="text-xs font-sans font-medium text-white/70 mt-1">Device distribution</p>
+        <h3 className="text-sm font-sans font-medium text-white">{t('widgetDevices')}</h3>
+        <p className="text-xs font-sans font-medium text-white/70 mt-1">{t('deviceDistribution')}</p>
       </div>
       <div className="space-y-5 flex-1">
         {deviceData.map((d: any, i: number) => (
@@ -43,7 +45,7 @@ export function DeviceBreakdown({ isLoading, isFree, handleLocked, deviceData, a
         ))}
 
         <div className="pt-4 mt-4 border-t border-white/5">
-          <p className="text-xs font-sans font-medium text-white/70 mb-3">User Agent Estimation</p>
+          <p className="text-xs font-sans font-medium text-white/70 mb-3">{t('userAgentEst')}</p>
           <div className="grid grid-cols-3 gap-2">
             {deviceData.map((d: any) => (
               <div key={d.name} className="bg-zinc-900/40 rounded-md p-2.5 text-center border border-white/5">
@@ -59,6 +61,7 @@ export function DeviceBreakdown({ isLoading, isFree, handleLocked, deviceData, a
 }
 
 export function TopLocations({ isLoading, isFree, handleLocked, dataList, animReady, title, subtitle }: any) {
+  const t = useTranslations('DashboardAnalytics');
   if (isLoading) {
     return <div className="rounded-md shimmer-dark h-[340px]" />;
   }
@@ -73,8 +76,8 @@ export function TopLocations({ isLoading, isFree, handleLocked, dataList, animRe
           <div className="w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-md flex items-center justify-center mb-2">
             <Lock className="w-4 h-4 text-[#ff9e00]" />
           </div>
-          <span className="text-xs font-sans font-medium text-[#ff9e00]">PRO ONLY</span>
-          <p className="text-[10px] text-white/80 font-sans mt-1 text-center">Upgrade to view visitor locations</p>
+          <span className="text-xs font-sans font-medium text-[#ff9e00]">{t('proOnly')}</span>
+          <p className="text-[10px] text-white/80 font-sans mt-1 text-center">{t('upgradeLocations')}</p>
         </div>
       )}
       <div className="flex justify-between items-start mb-6">
@@ -90,7 +93,7 @@ export function TopLocations({ isLoading, isFree, handleLocked, dataList, animRe
       {dataList.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-10 text-white/20">
           <Ghost className="w-8 h-8 mb-3" />
-          <p className="text-xs font-sans font-medium">No location data yet</p>
+          <p className="text-xs font-sans font-medium">{t('noLocationData')}</p>
         </div>
       ) : (
         <div className="space-y-5">
@@ -102,7 +105,7 @@ export function TopLocations({ isLoading, isFree, handleLocked, dataList, animRe
                 </div>
                 <div className="text-right">
                   <p className="text-base font-mono font-bold text-white">{item.percentage}%</p>
-                  <p className="text-xs font-sans text-white/70 mt-0.5">{item.count} hits</p>
+                  <p className="text-xs font-sans text-white/70 mt-0.5">{t('hitsCount', { count: item.count })}</p>
                 </div>
               </div>
               <div className="w-full h-1.5 bg-zinc-900 border border-white/5 rounded-md overflow-hidden">

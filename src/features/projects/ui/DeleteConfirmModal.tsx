@@ -3,9 +3,11 @@
 import React from 'react';
 import { X, AlertTriangle, Loader2, Trash2 } from 'lucide-react';
 import { useProjectsState, useProjectsActions } from '@/entities/portfolio/model/useProjects';
+import { useTranslations } from 'next-intl';
 
 
 export function DeleteConfirmModal({ state, actions }: { state: useProjectsState; actions: useProjectsActions }) {
+  const t = useTranslations('DashboardProjects');
   const { itemToDelete, isDeleting } = state;
   const { cancelDelete, executeDelete } = actions;
 

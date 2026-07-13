@@ -7,7 +7,7 @@ const DEFAULT_LIMIT = 10;
 
 export async function getTrashItems(email: string, pageParam: string | null, limitParam: string | null) {
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) throw new Error("404:User tidak ditemukan");
+  if (!user) throw new Error("404:User not found");
 
   const page  = Math.max(1, parseInt(pageParam ?? "1", 10));
   const limit = Math.min(50, Math.max(1, parseInt(limitParam ?? String(DEFAULT_LIMIT), 10)));
@@ -57,7 +57,7 @@ export async function getTrashItems(email: string, pageParam: string | null, lim
 
 export async function processTrashAction(email: string, action: string, id: string, type: string) {
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) throw new Error("404:User tidak ditemukan");
+  if (!user) throw new Error("404:User not found");
 
   if (action === "restore") {
     if (!id || !type) throw new Error("400:Incomplete data");
@@ -66,7 +66,7 @@ export async function processTrashAction(email: string, action: string, id: stri
       if (getEffectivePlan(user) === "FREE") {
         const activeCount = await prisma.project.count({ where: { userId: user.id, deletedAt: null } });
         if (activeCount >= 4) {
-          throw new Error("403:Kuota proyek FREE sudah penuh (4/4). Hapus proyek aktif atau upgrade ke PRO.");
+          throw new Error("403:FREE project quota is full (4/4). Delete active projects or upgrade to PRO.");
         }
       }
       const item = await prisma.project.findUnique({ where: { id } });
@@ -74,14 +74,14 @@ export async function processTrashAction(email: string, action: string, id: stri
 
       await prisma.project.update({ where: { id }, data: { deletedAt: null } });
       await logActivity(user.id, "RESTORE_PROJECT", `Restored work from trash: "${item.title}"`);
-      return { message: "Proyek berhasil dipulihkan" };
+      return { message: "Project successfully restored" };
     }
 
     if (type === "certificate") {
       if (getEffectivePlan(user) === "FREE") {
         const activeCount = await prisma.certificate.count({ where: { userId: user.id, deletedAt: null } });
         if (activeCount >= 1) {
-          throw new Error("403:Kuota sertifikat FREE sudah penuh (1/1). Hapus sertifikat aktif atau upgrade ke PRO.");
+          throw new Error("403:FREE certificate quota is full (1/1). Delete active certificate or upgrade to PRO.");
         }
       }
       const item = await prisma.certificate.findUnique({ where: { id } });
@@ -92,7 +92,7 @@ export async function processTrashAction(email: string, action: string, id: stri
       return { message: "Certificate successfully restored" };
     }
 
-    throw new Error("400:Tipe tidak valid");
+    throw new Error("400:Invalid type");
   }
 
   if (action === "purge") {
@@ -103,7 +103,7 @@ export async function processTrashAction(email: string, action: string, id: stri
       if (!item || item.userId !== user.id) throw new Error("403:Access denied");
       await prisma.project.delete({ where: { id } });
       await logActivity(user.id, "PURGE_PROJECT", `Permanently deleted work: "${item.title}"`);
-      return { message: "Proyek dihapus permanen" };
+      return { message: "Project permanently deleted" };
     }
 
     if (type === "certificate") {
@@ -114,7 +114,7 @@ export async function processTrashAction(email: string, action: string, id: stri
       return { message: "Certificate permanently deleted" };
     }
 
-    throw new Error("400:Tipe tidak valid");
+    throw new Error("400:Invalid type");
   }
 
   if (action === "purge_all") {
@@ -124,8 +124,8 @@ export async function processTrashAction(email: string, action: string, id: stri
     ]);
     const total = projDel.count + certDel.count;
     await logActivity(user.id, "PURGE_ALL_TRASH", `Emptied trash: ${total} items permanently deleted`);
-    return { message: `${total} item dihapus permanen` };
+    return { message: `${total} items permanently deleted` };
   }
 
-  throw new Error("400:Action tidak dikenali");
+  throw new Error("400:Action not recognized");
 }

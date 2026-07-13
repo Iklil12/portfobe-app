@@ -4,8 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import { FEATURE_LIST } from '@/shared/constants/constants';
 import { useInView } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function FeaturesSection() {
+  const t = useTranslations('Features');
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
   const [isHovering, setIsHovering] = useState(false);
   const [autoCycleIndex, setAutoCycleIndex] = useState(0);
@@ -35,7 +37,7 @@ export function FeaturesSection() {
       >
         <div className="max-w-2xl relative">
           <div className="absolute -top-32 -right-64 w-[500px] h-[500px] border border-white/5 rounded-full pointer-events-none hidden lg:block animate-pulse animation-delay-4000"></div>
-          <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-white leading-tight">Built for speed.<br /><span className="text-slate-500 font-light">Designed to impress.</span></h2>
+          <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-white leading-tight">{t('headline1')}<br /><span className="text-slate-500 font-light">{t('headline2')}</span></h2>
         </div>
       </div>
 
@@ -64,13 +66,13 @@ export function FeaturesSection() {
 
               <div className="relative h-full flex flex-col">
                 <h3 className={`text-2xl xl:text-3xl font-medium text-white pr-4 tracking-tight leading-snug transform transition-all duration-500 ${isActive ? 'mb-4 xl:-translate-y-2' : 'mb-4 xl:mb-6'}`}>
-                  {feat.title}
+                  {t(`feat_${feat.id}_title`)}
                 </h3>
 
                 <div className={`grid transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isActive ? 'grid-rows-[1fr] opacity-100 xl:translate-y-0 mb-6' : 'grid-rows-[0fr] opacity-0 xl:translate-y-8 mb-0'}`}>
                   <div className="overflow-hidden">
                     <p className="text-slate-400 text-sm md:text-base font-medium leading-relaxed max-w-sm pt-2">
-                      {feat.desc}
+                      {t(`feat_${feat.id}_desc`)}
                     </p>
                   </div>
                 </div>

@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Search, Layers, Video, FileText, MessageCircle, ChevronRight, Menu } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function LearnSidebar() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
+    const t = useTranslations('LearnSidebar');
 
     const isActive = (path: string) => pathname?.includes(path);
 
@@ -20,7 +22,7 @@ export function LearnSidebar() {
             >
                 <div className="flex items-center gap-3">
                     <Menu className="w-5 h-5 text-[#ff9e00]" />
-                    <span className="font-medium tracking-widest">ACADEMY MENU</span>
+                    <span className="font-medium tracking-widest">{t('menuTitle')}</span>
                 </div>
                 <ChevronRight className={`w-5 h-5 transition-transform duration-300 ${isOpen ? 'rotate-90' : ''}`} />
             </button>
@@ -33,7 +35,7 @@ export function LearnSidebar() {
                     <Search className="w-4 h-4 text-white/40 absolute left-4 group-focus-within:text-[#ff9e00] transition-colors" />
                     <input 
                         type="text" 
-                        placeholder="SEARCH..." 
+                        placeholder={t('searchPlaceholder')}
                         className="w-full bg-white/5 border border-white/10 focus:border-[#ff9e00] focus:ring-1 focus:ring-[#ff9e00] text-white py-4 pl-12 pr-4 outline-none transition-all placeholder:text-white/20 text-xs"
                     />
                     <div className="absolute right-4 text-[10px] text-white/30 px-1.5 py-0.5 border border-white/10 bg-black font-medium">/</div>
@@ -45,7 +47,7 @@ export function LearnSidebar() {
                 {/* Group: Learn */}
                 <div className="flex flex-col border-b border-white/10">
                     <div className="px-6 py-4 bg-[#0a0a0a] text-white/40 text-[10px] font-medium tracking-[0.2em] flex items-center gap-4">
-                        <span>LEARN</span>
+                        <span>{t('groupLearn')}</span>
                         <div className="h-px bg-white/10 flex-1"></div>
                     </div>
                     <div className="flex flex-col">
@@ -55,7 +57,7 @@ export function LearnSidebar() {
                         >
                             <div className="flex items-center gap-4">
                                 <Layers className={`w-5 h-5 group-hover:text-black ${isActive('/learn/courses') ? 'text-[#ff9e00]' : 'opacity-50 group-hover:opacity-100'}`} />
-                                <span className={isActive('/learn/courses') ? 'font-medium' : ''}>Courses</span>
+                                <span className={isActive('/learn/courses') ? 'font-medium' : ''}>{t('courses')}</span>
                             </div>
                             <ChevronRight className={`w-4 h-4 transition-opacity ${isActive('/learn/courses') ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
                         </Link>
@@ -66,7 +68,7 @@ export function LearnSidebar() {
                         >
                             <div className="flex items-center gap-4">
                                 <Video className={`w-5 h-5 group-hover:text-black ${isActive('/learn/videos') ? 'text-[#ff9e00]' : 'opacity-50 group-hover:opacity-100'}`} />
-                                <span className={isActive('/learn/videos') ? 'font-medium' : ''}>Videos</span>
+                                <span className={isActive('/learn/videos') ? 'font-medium' : ''}>{t('videos')}</span>
                             </div>
                             <ChevronRight className={`w-4 h-4 transition-opacity ${isActive('/learn/videos') ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
                         </Link>
@@ -77,7 +79,7 @@ export function LearnSidebar() {
                         >
                             <div className="flex items-center gap-4">
                                 <FileText className={`w-5 h-5 group-hover:text-black ${isActive('/learn/guide') ? 'text-[#ff9e00]' : 'opacity-50 group-hover:opacity-100'}`} />
-                                <span className={isActive('/learn/guide') ? 'font-medium' : ''}>Platform Guide</span>
+                                <span className={isActive('/learn/guide') ? 'font-medium' : ''}>{t('guide')}</span>
                             </div>
                             <ChevronRight className={`w-4 h-4 transition-opacity ${isActive('/learn/guide') ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
                         </Link>
@@ -87,7 +89,7 @@ export function LearnSidebar() {
                 {/* Group: Help */}
                 <div className="flex flex-col border-b border-white/10">
                     <div className="px-6 py-4 bg-[#0a0a0a] text-white/40 text-[10px] font-medium tracking-[0.2em] flex items-center gap-4">
-                        <span>HELP</span>
+                        <span>{t('groupHelp')}</span>
                         <div className="h-px bg-white/10 flex-1"></div>
                     </div>
                     <div className="flex flex-col">
@@ -97,7 +99,7 @@ export function LearnSidebar() {
                         >
                             <div className="flex items-center gap-4">
                                 <FileText className="w-5 h-5 group-hover:text-black opacity-50 group-hover:opacity-100" />
-                                <span>Articles</span>
+                                <span>{t('articles')}</span>
                             </div>
                             <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </Link>
@@ -107,7 +109,7 @@ export function LearnSidebar() {
                         >
                             <div className="flex items-center gap-4">
                                 <MessageCircle className="w-5 h-5 group-hover:text-black opacity-50 group-hover:opacity-100" />
-                                <span>Support</span>
+                                <span>{t('support')}</span>
                             </div>
                             <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </Link>

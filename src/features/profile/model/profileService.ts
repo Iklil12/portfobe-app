@@ -221,7 +221,7 @@ export async function updateProfileAvatarAndBio(email: string, data: ProfileUpda
     }
   }
 
-  const fullName = `${firstName || ""} ${lastName || ""}`.trim() || "User Baru";
+  const fullName = `${firstName || ""} ${lastName || ""}`.trim() || "New User";
 
   const updatedUser = await prisma.user.update({
     where: { email },

@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './src/i18n/routing';
+
+const intlMiddleware = createMiddleware(routing);
 
 type RateLimitRecord = {
   count: number;
@@ -153,7 +157,19 @@ export async function proxy(req: NextRequest) {
     return response;
   }
 
-  return NextResponse.next();
+  // ── 4. I18N ROUTING (NEXT-INTL) ─────────────────────────────────────────
+  // Kita bypass route yang tidak perlu diterjemahkan di URL
+  if (
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/dashboard') || 
+    pathname.startsWith('/preview') ||
+    pathname.includes('.')
+  ) {
+    return NextResponse.next();
+  }
+
+  return intlMiddleware(req);
 }
 
 export const config = {

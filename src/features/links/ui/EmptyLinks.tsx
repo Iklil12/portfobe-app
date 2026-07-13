@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Link2, Plus } from 'lucide-react';
 import { LinksState, LinksActions } from '../model/useLinks';
 
@@ -9,6 +10,7 @@ interface EmptyLinksProps {
 }
 
 export function EmptyLinks({ state, actions }: EmptyLinksProps) {
+  const t = useTranslations('DashboardLinks');
   const { isAdding } = state;
   const { addLink } = actions;
 
@@ -17,10 +19,8 @@ export function EmptyLinks({ state, actions }: EmptyLinksProps) {
       <div className="w-14 h-14 sm:w-16 sm:h-16 bg-zinc-900 border border-white/10 rounded-md flex items-center justify-center mb-6 text-white/30 text-xl shadow-none">
         <Link2 className="w-6 h-6" />
       </div>
-      <h3 className="text-base sm:text-lg font-sans font-medium text-white uppercase tracking-wider mb-2">No links yet</h3>
-      <p className="text-xs font-sans text-white/40 mb-8 max-w-xs leading-relaxed px-4">
-        Add your portfolio, social media, or email links here to make it easier for clients to contact you.
-      </p>
+      <h3 className="text-base sm:text-lg font-sans font-medium text-white uppercase tracking-wider mb-2">{t('noLinksYet')}</h3>
+      <p className="text-xs font-sans text-white/40 mb-8 max-w-xs leading-relaxed px-4">{t('addLinksDesc')}</p>
       <button 
         onClick={addLink} 
         disabled={isAdding}

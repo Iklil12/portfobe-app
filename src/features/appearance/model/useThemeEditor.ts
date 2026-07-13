@@ -113,11 +113,11 @@ export function useThemeEditor() {
   };
 
   // --- STATE UNTUK DATA PROFIL ---
-  const [fullName, setFullName] = useState("Nama Anda");
+  const [fullName, setFullName] = useState("Your Name");
   const fullNameRef = useRef(fullName);
   useEffect(() => { fullNameRef.current = fullName; }, [fullName]);
   
-  const [profession, setProfession] = useState("Profesi / Bio Singkat");
+  const [profession, setProfession] = useState("Profession / Short Bio");
   const [bio, setBio] = useState("");
   const [location, setLocation] = useState("Indonesia");
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -311,7 +311,7 @@ export function useThemeEditor() {
     window.history.pushState(null, '', window.location.href);
 
     const handlePopState = () => {
-      if (window.confirm('Keluar dari Editor? Perubahan yang Anda lakukan mungkin tidak disimpan.')) {
+      if (window.confirm('Leave Editor? Your changes may not be saved.')) {
         window.history.back();
       } else {
         window.history.pushState(null, '', window.location.href);
@@ -423,8 +423,8 @@ export function useThemeEditor() {
                 customTexts: texts,
                 pageBlocks: cleanBlocks,
                 selectedProjects: sa.projects ? sa.projects.map((p: any) => p.projectId) : [],
-                fullName: appData.profile?.fullName || "Nama Anda",
-                profession: appData.profile?.profession || "Profesi / Bio Singkat",
+                fullName: appData.profile?.fullName || "Your Name",
+                profession: appData.profile?.profession || "Profession / Short Bio",
                 bio: appData.profile?.bio || "",
                 location: appData.profile?.location || "Indonesia"
               });
@@ -556,7 +556,7 @@ export function useThemeEditor() {
         }
 
       } catch (error) {
-        console.error("Gagal memuat data:", error);
+        console.error("Failed to load data:", error);
       } finally {
         setTimeout(() => {
           setIsLoading(false);
@@ -572,7 +572,7 @@ export function useThemeEditor() {
     const isFav = favorites.includes(themeId);
     const updated = isFav ? favorites.filter(id => id !== themeId) : [...favorites, themeId];
     setFavorites(updated);
-    toast(isFav ? 'Dihapus dari favorit' : 'Ditambahkan ke favorit ❤️', {
+    toast(isFav ? 'Removed from favorites' : 'Added to favorites ❤️', {
       id: `fav-${themeId}`,
       style: { borderRadius: '10px', background: '#333', color: '#fff', fontSize: '12px' }
     });

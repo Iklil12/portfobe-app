@@ -9,6 +9,7 @@ import {
   Crown, Lock, Layers, Receipt, Gift, Loader2, Check, X, HelpCircle, 
   Folder, Palette, User, BarChart2, Globe, ArrowRight 
 } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -50,6 +51,7 @@ function StatusBadge({ status }: { status: string }) {
 // ── component ──────────────────────────────────────────────────────────────────
 
 export default function BillingContent() {
+  const t = useTranslations('DashboardSettings');
   const { data, isLoading, mutate } = useSWR("/api/subscriptions", fetcher);
   const [tab, setTab] = useState<"subscriptions" | "transactions">("subscriptions");
   const [isClaimingTrial, setIsClaimingTrial] = useState(false);
@@ -158,10 +160,8 @@ export default function BillingContent() {
 
       {/* ── PAGE HEADER ── */}
       <div className="animate-billing-fade">
-        <h1 className="text-sm font-sans font-medium text-white uppercase tracking-wider">Billing & Subscription</h1>
-        <p className="text-white/40 mt-2 font-mono text-xs">
-          Manage account plans, monitor remaining days, and download transaction history.
-        </p>
+        <h1 className="text-sm font-sans font-medium text-white uppercase tracking-wider">{t('billingTitle')}</h1>
+        <p className="text-white/40 mt-2 font-mono text-xs">{t('billingDesc')}</p>
       </div>
 
       {/* ── TRIAL BANNER ── */}
@@ -171,15 +171,13 @@ export default function BillingContent() {
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#ff9e00]/10 border border-[#ff9e00]/20 rounded-md text-[9px] font-sans font-medium uppercase tracking-widest mb-3 text-[#ff9e00]">
               <Gift className="w-3 h-3" /> New User Gift
             </div>
-            <h2 className="text-lg font-sans font-medium uppercase tracking-wider mb-1 text-white">Try PRO Free for 14 Days!</h2>
-            <p className="text-white/40 text-xs font-sans">Unlock all limits for themes, analytics, and projects. No credit card required.</p>
+            <h2 className="text-lg font-sans font-medium uppercase tracking-wider mb-1 text-white">{t('tryProFree')}</h2>
+            <p className="text-white/40 text-xs font-sans">{t('tryProDesc')}</p>
           </div>
           <button
             onClick={handleOpenTrialModal}
             className="shrink-0 w-full sm:w-auto px-8 py-3 bg-[#ff9e00] text-black font-sans font-medium uppercase tracking-wider text-xs rounded-md hover:bg-[#ffaa22] transition-colors"
-          >
-            Claim Trial Now
-          </button>
+          >{t('claimTrialNow')}</button>
         </div>
       )}
 
@@ -192,7 +190,7 @@ export default function BillingContent() {
           <div className="p-8 flex-1 relative z-10">
             <div className="flex justify-between items-start mb-8">
               <div>
-                <p className="text-[10px] font-sans font-medium text-white/40 uppercase tracking-widest mb-2">Current Plan</p>
+                <p className="text-[10px] font-sans font-medium text-white/40 uppercase tracking-widest mb-2">{t('currentPlan')}</p>
                 <div className="flex items-center gap-3">
                   <h2 className="text-sm font-sans font-medium text-white uppercase tracking-wider">{isPro ? planLabel : "Starter"}</h2>
                   {isPro && sub && (
@@ -215,40 +213,38 @@ export default function BillingContent() {
               {isPro && sub ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 mt-6">
                   <div className="py-3 border-b border-white/5">
-                    <p className="text-[10px] font-sans font-medium text-white/40 uppercase tracking-wider mb-1">Remaining Days</p>
+                    <p className="text-[10px] font-sans font-medium text-white/40 uppercase tracking-wider mb-1">{t('remainingDays')}</p>
                     <div className="font-sans font-medium text-white text-xs">
                       {remainingDays === -1 ? (
-                        <span className="text-[#ff9e00]">Lifetime ♾️</span>
+                        <span className="text-[#ff9e00]">{t('lifetime')}</span>
                       ) : (
                         <span className="flex items-center gap-2">
                           <span>{remainingDays} Days</span>
                           {remainingDays !== null && remainingDays <= 7 && (
-                            <span className="text-[9px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded-md uppercase font-sans font-medium">Expiring Soon</span>
+                            <span className="text-[9px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded-md uppercase font-sans font-medium">{t('expiringSoon')}</span>
                           )}
                         </span>
                       )}
                     </div>
                   </div>
                   <div className="py-3 border-b border-white/5">
-                    <p className="text-[10px] font-sans font-medium text-white/40 uppercase tracking-wider mb-1">Expires On</p>
+                    <p className="text-[10px] font-sans font-medium text-white/40 uppercase tracking-wider mb-1">{t('expiresOn')}</p>
                     <p className="font-sans font-medium text-white text-xs">
                       {sub.isLifetime ? "Forever" : formatDate(sub.expiredAt)}
                     </p>
                   </div>
                   <div className="py-3 border-b border-white/5 sm:col-span-2">
-                    <p className="text-[10px] font-sans font-medium text-white/40 uppercase tracking-wider mb-1">Billing Cycle (Start)</p>
+                    <p className="text-[10px] font-sans font-medium text-white/40 uppercase tracking-wider mb-1">{t('billingCycleStart')}</p>
                     <p className="font-sans font-medium text-white text-xs">{formatDate(sub.startedAt)}</p>
                   </div>
                 </div>
               ) : (
                 <div className="pt-2 max-w-lg">
-                  <p className="text-xs font-sans text-white/40 leading-relaxed mb-6">
-                    You are using the free plan. Upgrade to PRO to unlock access to all themes, advanced analytics, and remove project limits.
-                  </p>
+                  <p className="text-xs font-sans text-white/40 leading-relaxed mb-6">{t('freePlanDesc')}</p>
                   <div className="grid grid-cols-2 gap-4">
                     {[
-                      { label: "5 Projects Limit", icon: Folder },
-                      { label: "Limited Themes", icon: Palette },
+                      { label: t('projectsLimit'), icon: Folder },
+                      { label: t('limitedThemes'), icon: Palette },
                     ].map((f) => {
                       const IconComp = f.icon;
                       return (
@@ -280,12 +276,12 @@ export default function BillingContent() {
               </>
             ) : (
               <>
-                <p className="text-[10px] font-sans text-white/30">No monthly fees.</p>
+                <p className="text-[10px] font-sans text-white/30">{t('noMonthlyFees')}</p>
                 <Link
                   href="/pricing"
                   className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[#ff9e00] text-black text-xs font-sans font-medium uppercase tracking-wider rounded-md hover:bg-[#ffaa22] transition-colors"
                 >
-                  <span>Upgrade to PRO</span>
+                  <span>{t('upgradeToPro')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </>
@@ -303,13 +299,13 @@ export default function BillingContent() {
             </div>
             
             <div>
-              <p className="text-white/40 text-[10px] font-sans font-medium uppercase tracking-widest mb-1.5">Member Since</p>
+              <p className="text-white/40 text-[10px] font-sans font-medium uppercase tracking-widest mb-1.5">{t('memberSince')}</p>
               <p className="text-lg font-sans font-medium tracking-wider">{formatDate(data?.memberSince)}</p>
             </div>
           </div>
           
           <div className="mt-12 pt-6 border-t border-white/5 relative z-10">
-            <p className="text-white/40 text-[10px] font-sans font-medium uppercase tracking-widest mb-3">Connected Platforms</p>
+            <p className="text-white/40 text-[10px] font-sans font-medium uppercase tracking-widest mb-3">{t('connectedPlatforms')}</p>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-md bg-zinc-950 border border-white/5 flex items-center justify-center p-1.5">
                 <img src="/portfo.be.webp" alt="Logo" className="w-full h-full object-contain brightness-0 invert opacity-95" />
@@ -326,17 +322,17 @@ export default function BillingContent() {
         
         {/* Custom Pill Tabs */}
         <div className="inline-flex p-1 bg-zinc-950 border border-white/10 rounded-md mb-6">
-          {(["subscriptions", "transactions"] as const).map((t) => (
+          {(["subscriptions", "transactions"] as const).map((tabItem) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
+              key={tabItem}
+              onClick={() => setTab(tabItem)}
               className={`px-5 py-2.5 text-[11px] font-sans font-medium uppercase tracking-wider rounded-md transition-all ${
-                tab === t 
+                tab === tabItem 
                   ? "bg-zinc-900 border border-white/10 text-white" 
                   : "text-white/40 hover:text-white"
               }`}
             >
-              {t === "subscriptions" ? "Subscription History" : "Invoices & Transactions"}
+              {tabItem === "subscriptions" ? t('subscriptionHistory') : t('invoicesTransactions')}
             </button>
           ))}
         </div>
@@ -348,7 +344,7 @@ export default function BillingContent() {
           {tab === "subscriptions" && (
             <div className="divide-y divide-white/5">
               {subHistory.length === 0 ? (
-                <EmptyState icon={Layers} text="No subscription history recorded yet." />
+                <EmptyState icon={Layers} text={t('noSubHistory')} />
               ) : (
                 subHistory.map((s: any) => (
                   <div key={s.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-zinc-950/20 transition-colors">
@@ -368,7 +364,7 @@ export default function BillingContent() {
                       {s.notes && <p className="text-[10px] font-sans text-white/30 mt-1.5 italic flex items-center gap-1.5"><HelpCircle className="w-3.5 h-3.5 text-white/20" /> {s.notes}</p>}
                     </div>
                     <div className="text-left sm:text-right shrink-0 mt-2 sm:mt-0">
-                      <p className="text-[10px] font-sans font-medium text-white/40 uppercase tracking-widest">Created At</p>
+                      <p className="text-[10px] font-sans font-medium text-white/40 uppercase tracking-widest">{t('createdAt')}</p>
                       <p className="text-xs font-sans font-medium text-white mt-0.5">{formatDate(s.createdAt)}</p>
                     </div>
                   </div>
@@ -381,38 +377,38 @@ export default function BillingContent() {
           {tab === "transactions" && (
             <div className="divide-y divide-white/5">
               {transactions.length === 0 ? (
-                <EmptyState icon={Receipt} text="No transaction history." />
+                <EmptyState icon={Receipt} text={t('noTxHistory')} />
               ) : (
-                transactions.map((t: any) => (
-                  <div key={t.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-zinc-950/20 transition-colors group">
-                    <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 border ${t.status === "SUCCESS" ? "bg-zinc-950 border-white/10" : "bg-zinc-950 border-white/5"}`}>
-                      <Receipt className={`w-5 h-5 ${t.status === "SUCCESS" ? "text-emerald-400" : "text-white/20"}`} />
+                transactions.map((tx: any) => (
+                  <div key={tx.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-zinc-950/20 transition-colors group">
+                    <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 border ${tx.status === "SUCCESS" ? "bg-zinc-950 border-white/10" : "bg-zinc-950 border-white/5"}`}>
+                      <Receipt className={`w-5 h-5 ${tx.status === "SUCCESS" ? "text-emerald-400" : "text-white/20"}`} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1">
                         <span className="text-xs font-sans font-medium text-white uppercase tracking-wider">
-                          {t.plan} Access — {t.durationDays >= 36500 ? "Lifetime" : `${t.durationDays} Days`}
+                          {tx.plan} Access — {tx.durationDays >= 36500 ? "Lifetime" : `${tx.durationDays} Days`}
                         </span>
-                        <StatusBadge status={t.status} />
+                        <StatusBadge status={tx.status} />
                       </div>
                       <p className="text-[11px] font-sans text-white/40">
-                        via {formatGateway(t.gateway)} · {formatDate(t.createdAt)}
+                        via {formatGateway(tx.gateway)} · {formatDate(tx.createdAt)}
                       </p>
                     </div>
                     <div className="flex flex-col sm:items-end gap-3 mt-4 sm:mt-0">
                       <div className="sm:text-right">
                         <p className="text-sm font-sans font-medium text-white">
-                          {t.amount === 0 ? <span className="text-[#ff9e00]">Free / Granted</span> : `Rp ${t.amount.toLocaleString("id-ID")}`}
+                          {tx.amount === 0 ? <span className="text-[#ff9e00]">{t('freeGranted')}</span> : `Rp ${tx.amount.toLocaleString("id-ID")}`}
                         </p>
-                        <p className="text-[9px] text-white/30 font-sans mt-0.5">{t.id.substring(0, 12).toUpperCase()}</p>
+                        <p className="text-[9px] text-white/30 font-sans mt-0.5">{tx.id.substring(0, 12).toUpperCase()}</p>
                       </div>
-                      {t.status === "SUCCESS" && (
+                      {tx.status === "SUCCESS" && (
                         <Link 
-                          href={`/receipt/${t.id}`}
+                          href={`/receipt/${tx.id}`}
                           target="_blank"
                           className="text-[10px] font-sans font-medium text-white/50 hover:text-white bg-zinc-950 border border-white/10 hover:border-white/20 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 w-fit"
                         >
-                          <span>Receipt</span>
+                          <span>{t('receipt')}</span>
                         </Link>
                       )}
                     </div>
@@ -449,16 +445,14 @@ export default function BillingContent() {
                 <div className="w-24 h-24 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-md flex items-center justify-center mb-8 relative z-10 shadow-none">
                   <Check className="w-12 h-12" />
                 </div>
-                <h3 className="text-lg font-sans font-medium text-white uppercase tracking-wider mb-4 relative z-10">Welcome to PRO! 🎉</h3>
+                <h3 className="text-lg font-sans font-medium text-white uppercase tracking-wider mb-4 relative z-10">{t('welcomePro')}</h3>
                 <p className="text-white/40 text-xs font-sans leading-relaxed mb-10 max-w-lg relative z-10">
                   Your <strong>PRO Creator 14 Days</strong> plan is now active. You are free to explore all premium features without limits.
                 </p>
                 <button 
                   onClick={handleCloseTrialModal}
                   className="w-full max-w-sm py-3 bg-[#ff9e00] text-black font-sans font-medium uppercase tracking-wider text-xs rounded-md hover:bg-[#ffaa22] transition-transform active:scale-95 relative z-10"
-                >
-                  Start Using PRO
-                </button>
+                >{t('startUsingPro')}</button>
               </div>
             ) : (
               /* Activation State (2 Columns) */
@@ -470,7 +464,7 @@ export default function BillingContent() {
                   </div>
                   
                   <h3 className="text-white text-sm font-sans font-medium uppercase tracking-wider mb-3 relative z-10 tracking-tight leading-tight">Portfobe<br/><span className="text-[#ff9e00]">PRO Creator</span></h3>
-                  <p className="text-white/40 text-[11px] font-sans relative z-10">Elevate your professional career with comprehensive tools.</p>
+                  <p className="text-white/40 text-[11px] font-sans relative z-10">{t('elevateCareer')}</p>
                 </div>
 
                 {/* Right Column (Content) */}
@@ -485,17 +479,17 @@ export default function BillingContent() {
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#ff9e00]/10 border border-[#ff9e00]/20 text-[#ff9e00] rounded-md text-[9px] font-sans font-medium uppercase tracking-widest mb-4">
                       <Gift className="w-3 h-3" /> Special Offer
                     </div>
-                    <h3 className="text-lg font-sans font-medium text-white uppercase tracking-wider mb-3">Claim 14 Days Trial</h3>
-                    <p className="text-white/40 text-xs font-sans">Unlock all features without limits. No credit card required. 100% Free during the trial period.</p>
+                    <h3 className="text-lg font-sans font-medium text-white uppercase tracking-wider mb-3">{t('claim14DaysTrial')}</h3>
+                    <p className="text-white/40 text-xs font-sans">{t('trialDesc')}</p>
                   </div>
                   
                   {/* Features List */}
                   <div className="space-y-5 mb-10">
                     {[
-                      { icon: BarChart2, title: "Deep Analytics", desc: "Monitor visitors & portfolio performance." },
-                      { icon: Globe, title: "Personal Custom Domain", desc: "Change URL to yourname.com." },
-                      { icon: Layers, title: "Unlimited Projects", desc: "Upload as many works as you want." },
-                      { icon: Palette, title: "Exclusive Themes", desc: "Access all premium templates." }
+                      { icon: BarChart2, title: t('deepAnalytics'), desc: t('deepAnalyticsDesc') },
+                      { icon: Globe, title: t('personalDomain'), desc: t('personalDomainDesc') },
+                      { icon: Layers, title: t('unlimitedProjects'), desc: t('unlimitedProjectsDesc') },
+                      { icon: Palette, title: t('exclusiveThemes'), desc: t('exclusiveThemesDesc') }
                     ].map((feature, i) => {
                       const IconComp = feature.icon;
                       return (
@@ -517,18 +511,16 @@ export default function BillingContent() {
                       onClick={handleCloseTrialModal}
                       disabled={isClaimingTrial}
                       className="px-6 py-3 bg-zinc-900 border border-white/10 text-white/50 font-sans font-medium uppercase tracking-wider rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 text-xs"
-                    >
-                      Cancel
-                    </button>
+                    >{t('cancel')}</button>
                     <button 
                       onClick={handleClaimTrial}
                       disabled={isClaimingTrial}
                       className="flex-1 py-3 bg-[#ff9e00] text-black font-sans font-medium uppercase tracking-wider rounded-md hover:bg-[#ffaa22] transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-xs relative overflow-hidden group"
                     >
                       {isClaimingTrial ? (
-                        <><Loader2 className="w-4 h-4 animate-spin" /> Activating...</>
+                        <><Loader2 className="w-4 h-4 animate-spin" /> {t('activating')}</>
                       ) : (
-                        <>Activate Now</>
+                        <>{t('activateNow')}</>
                       )}
                     </button>
                   </div>
@@ -548,18 +540,14 @@ export default function BillingContent() {
             <HelpCircle className="w-5 h-5 text-white/40" />
           </div>
           <div>
-            <h3 className="text-xs font-sans font-medium text-white uppercase mb-1">Have billing issues?</h3>
-            <p className="text-[10px] font-sans text-white/40 leading-relaxed">
-              Our support team is ready to help with questions about upgrades, payments, or extensions.
-            </p>
+            <h3 className="text-xs font-sans font-medium text-white uppercase mb-1">{t('haveBillingIssues')}</h3>
+            <p className="text-[10px] font-sans text-white/40 leading-relaxed">{t('billingSupport')}</p>
           </div>
         </div>
         <a
           href="/support"
           className="shrink-0 px-6 py-2.5 bg-zinc-950 border border-white/10 text-white text-[11px] font-sans font-medium uppercase tracking-wider rounded-md hover:bg-zinc-900 transition-colors"
-        >
-          Contact Support
-        </a>
+        >{t('contactSupport')}</a>
       </div>
 
     </div>

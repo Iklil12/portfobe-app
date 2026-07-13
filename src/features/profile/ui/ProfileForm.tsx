@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { showToast } from '@/shared/lib/customToast';
 import { Mail, CheckCircle2, Copy, Loader2, Plug, ArrowRight, XCircle, Check } from 'lucide-react';
 import { useProfileState, useProfileActions } from '@/entities/user/model/useProfile';
-
+import { useTranslations } from 'next-intl';
 
 interface ProfileFormProps {
   state: useProfileState;
@@ -12,6 +12,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ state, actions }: ProfileFormProps) {
+  const t = useTranslations('DashboardProfile');
   const { firstName, lastName, profession, bio, isSaving, isFormValid, subdomain, subdomainStatus, session, isUsernameChangeBlocked, remainingDays } = state;
   const { setFirstName, setLastName, setProfession, setBio, handleSave, setSubdomain } = actions;
   
@@ -31,7 +32,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
   const copyLink = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     navigator.clipboard.writeText(`portfo.be/${subdomain}`);
-    showToast({ message: "Link successfully copied!", id: "copy-link", icon: "fa-link" });
+    showToast({ message: t('linkCopied'), id: "copy-link", icon: "fa-link" });
   };
 
   return (
@@ -40,8 +41,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: NAME */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8 pt-4">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">Full Name</label>
-          <p className="text-[10px] font-sans text-white/30">Name that will be displayed publicly.</p>
+          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">{t('fullNameTitle')}</label>
+          <p className="text-[10px] font-sans text-white/30">{t('fullNameDesc')}</p>
         </div>
         <div className="w-full flex gap-3">
           <input 
@@ -49,7 +50,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             maxLength={10} 
             value={firstName} 
             onChange={(e) => setFirstName(sanitizeText(e.target.value))} 
-            placeholder="Sienna"
+            placeholder={t('placeholderFirstName')}
             className="w-1/2 px-4 py-3 rounded-md border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-sans text-white" 
           />
           <input 
@@ -57,7 +58,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             maxLength={10} 
             value={lastName} 
             onChange={(e) => setLastName(sanitizeText(e.target.value))} 
-            placeholder="Hewitt"
+            placeholder={t('placeholderLastName')}
             className="w-1/2 px-4 py-3 rounded-md border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-sans text-white" 
           />
         </div>
@@ -66,8 +67,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: EMAIL ADDRESS */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">Email Address</label>
-          <p className="text-[10px] font-sans text-white/30">Email for login and contact.</p>
+          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">{t('emailAddressTitle')}</label>
+          <p className="text-[10px] font-sans text-white/30">{t('emailAddressDesc')}</p>
         </div>
         <div className="w-full">
           <div className="relative flex items-center">
@@ -82,7 +83,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
           {/* Tag "Terverifikasi oleh Google" HANYA MUNCUL jika login menggunakan Google */}
           {isGoogleUser && (
             <p className="text-[10px] font-sans font-medium text-[#ff9e00] uppercase tracking-wider mt-2 flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Verified by Google
+              <CheckCircle2 className="w-3.5 h-3.5" /> {t('verifiedGoogle')}
             </p>
           )}
         </div>
@@ -91,15 +92,15 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: USERNAME / SUBDOMAIN */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8">
         <div className="w-full sm:w-1/3 shrink-0 pt-2">
-          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">Username / Link</label>
-          <p className="text-[10px] font-sans text-white/30">Your portfolio link.</p>
+          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">{t('usernameTitle')}</label>
+          <p className="text-[10px] font-sans text-white/30">{t('usernameDesc')}</p>
         </div>
         <div className="w-full flex flex-col">
           <div 
             onClick={() => {
               if (isUsernameChangeBlocked) {
                 showToast({
-                  message: `Subdomain change is locked (${remainingDays} days remaining)`,
+                  message: t('usernameLocked', { days: remainingDays }),
                   id: "username-locked",
                   icon: "fa-lock"
                 });
@@ -148,7 +149,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
              </div>
           </div>
           {subdomainStatus === 'taken' && !isUsernameChangeBlocked && (
-            <span className="text-[10px] font-sans font-medium text-rose-400 mt-2">This username is already taken by someone else.</span>
+            <span className="text-[10px] font-sans font-medium text-rose-400 mt-2">{t('usernameTaken')}</span>
           )}
         </div>
       </div>
@@ -156,8 +157,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: PROFESSION & BIO */}
       <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">Profession & Bio</label>
-          <p className="text-[10px] font-sans text-white/30">Tell us a bit about your expertise.</p>
+          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">{t('profBioTitle')}</label>
+          <p className="text-[10px] font-sans text-white/30">{t('profBioDesc')}</p>
         </div>
         <div className="w-full flex flex-col gap-4">
           <input 
@@ -165,7 +166,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             maxLength={20} 
             value={profession} 
             onChange={(e) => setProfession(sanitizeText(e.target.value))} 
-            placeholder="e.g. UI/UX Designer"
+            placeholder={t('placeholderProfession')}
             className="w-full px-4 py-3 rounded-md border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-sans text-white" 
           />
           <textarea 
@@ -173,7 +174,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             maxLength={250} 
             value={bio} 
             onChange={(e) => setBio(sanitizeText(e.target.value))} 
-            placeholder="Write your short bio here..."
+            placeholder={t('placeholderBio')}
             className="w-full px-4 py-3 rounded-md border border-white/10 bg-zinc-950 focus:border-[#ff9e00]/50 outline-none transition-all text-xs font-sans leading-relaxed text-white resize-none" 
           />
         </div>
@@ -182,8 +183,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
       {/* SECTION: CONNECTED WORKS REDIRECT */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b border-white/5 pb-6 sm:pb-8 pt-2">
         <div className="w-full sm:w-1/3 shrink-0">
-          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">Connected Works</label>
-          <p className="text-[10px] font-sans text-white/30">Showcase works from other platforms.</p>
+          <label className="block text-xs font-sans font-medium text-white uppercase tracking-wider mb-1">{t('connectedWorksTitle')}</label>
+          <p className="text-[10px] font-sans text-white/30">{t('connectedWorksDesc')}</p>
         </div>
         <div className="w-full">
           <Link
@@ -194,8 +195,8 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
               <Plug className="w-4 h-4 text-[#ff9e00]" />
             </div>
             <div className="flex flex-col flex-1">
-              <span className="text-xs font-sans font-medium text-white group-hover:text-[#ff9e00] transition-colors leading-tight">Manage Connected Works</span>
-              <span className="text-[10px] font-sans text-white/40">GitHub, Penpot, and others</span>
+              <span className="text-xs font-sans font-medium text-white group-hover:text-[#ff9e00] transition-colors leading-tight">{t('manageConnectedWorks')}</span>
+              <span className="text-[10px] font-sans text-white/40">{t('manageConnectedDesc')}</span>
             </div>
             <ArrowRight className="w-3.5 h-3.5 text-white/30 group-hover:text-[#ff9e00] group-hover:translate-x-1 transition-all" />
           </Link>

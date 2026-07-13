@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { X, AlertTriangle, Loader2, Trash2 } from 'lucide-react';
 import { LinksState, LinksActions } from '../model/useLinks';
 
@@ -11,6 +12,7 @@ interface DeleteLinkModalProps {
 }
 
 export function DeleteLinkModal({ state, actions }: DeleteLinkModalProps) {
+  const t = useTranslations('DashboardLinks');
   const { linkToDelete, isDeleting } = state;
   const { setLinkToDelete, confirmDelete } = actions;
 
@@ -36,10 +38,8 @@ export function DeleteLinkModal({ state, actions }: DeleteLinkModalProps) {
           <AlertTriangle className="w-5 h-5 md:w-6 md:h-6" />
         </div>
 
-        <h3 className="text-base md:text-lg font-sans font-medium uppercase tracking-wider text-white mb-2">Delete Link?</h3>
-        <p className="text-xs font-sans text-white/50 mb-6 leading-relaxed px-1">
-          This data will be permanently deleted from the system and cannot be recovered.
-        </p>
+        <h3 className="text-base md:text-lg font-sans font-medium uppercase tracking-wider text-white mb-2">{t('deleteModalTitle')}</h3>
+        <p className="text-xs font-sans text-white/50 mb-6 leading-relaxed px-1">{t('deleteModalDesc')}</p>
 
         <div className="flex flex-row gap-2 md:gap-3 w-full">
           <button 

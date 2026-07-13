@@ -11,7 +11,7 @@ import './sync-engine-integrations.css';
 import { AnalyticsDashboard } from './sync-engine/AnalyticsDashboard';
 import { GitHubPattern, PenpotPattern, CanvaPattern, AIPattern } from './sync-engine/SyncEnginePatterns';
 import { LazyMobilePillar } from './sync-engine/LazyMobilePillar';
-
+import { useTranslations } from 'next-intl';
 
 // ============================================================================
 // ARTISTIC CONCEPT: THE INFINITE DATA SEA (PURE ABSTRACT EXHIBITION)
@@ -26,13 +26,13 @@ interface Pillar {
   renderComponent: (instanceId?: string, isActive?: boolean) => React.ReactNode;
 }
 
-const PILLARS: Pillar[] = [
+const getPillars = (t: any): Pillar[] => [
   {
     id: 'integrations',
     name: 'Integrations',
-    type: 'External Data Sync',
+    type: t('type_integrations'),
     payloadStr: "{\n  \"action\": \"SYNC_ALL\",\n  \"targets\": [\"GitHub\", \"Penpot\", \"Canva\", \"AI Core\"]\n}",
-    renderComponent: (instanceId, isActive) => (
+    renderComponent: (instanceId?: string, isActive?: boolean) => (
       <div className="w-full h-[400px] lg:h-[450px] flex flex-col gap-4 sm:gap-6">
 
         {/* 2x2 Grid Layout with responsive gaps */}
@@ -43,10 +43,10 @@ const PILLARS: Pillar[] = [
               lucideIcon: <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>,
               iconBg: 'bg-neutral-800', // GitHub dark
               date: '28 Nov 2024',
-              label: 'Code Repositories',
+              label: t('git_label'),
               title: 'GitHub',
-              subtitle: 'Commits & PRs sync',
-              location: 'Pipeline Active',
+              subtitle: t('git_sub'),
+              location: t('pipeline_active'),
               pattern: <GitHubPattern />
             },
             {
@@ -54,10 +54,10 @@ const PILLARS: Pillar[] = [
               lucideIcon: <PenTool className="w-3 h-3 sm:w-3.5 sm:h-3.5" />,
               iconBg: 'bg-neutral-800',
               date: '12 Oct 2024',
-              label: 'UI/UX Design',
+              label: t('penpot_label'),
               title: 'Penpot',
-              subtitle: 'Design assets sync',
-              location: 'Pipeline Active',
+              subtitle: t('penpot_sub'),
+              location: t('pipeline_active'),
               pattern: <PenpotPattern />
             },
             {
@@ -65,10 +65,10 @@ const PILLARS: Pillar[] = [
               lucideIcon: <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5" />,
               iconBg: 'bg-neutral-800',
               date: '30 Dec 2024',
-              label: 'Presentations',
+              label: t('canva_label'),
               title: 'Canva',
-              subtitle: 'Slides & graphics sync',
-              location: 'Pipeline Active',
+              subtitle: t('canva_sub'),
+              location: t('pipeline_active'),
               pattern: <CanvaPattern />
             },
             {
@@ -76,10 +76,10 @@ const PILLARS: Pillar[] = [
               lucideIcon: <Bot className="w-3 h-3 sm:w-3.5 sm:h-3.5" />,
               iconBg: 'bg-neutral-800',
               date: '13 Aug 2024',
-              label: 'Artificial Intelligence',
+              label: t('ai_label'),
               title: 'AI Integration',
-              subtitle: 'Automated content',
-              location: 'Core Neural Active',
+              subtitle: t('ai_sub'),
+              location: t('core_neural'),
               pattern: <AIPattern />
             }
           ].map((item) => (
@@ -116,16 +116,14 @@ const PILLARS: Pillar[] = [
   {
     id: '3d-showcase',
     name: '3D Showcase',
-    type: 'Immersive WebGL',
+    type: t('type_3d'),
     payloadStr: "{\n  \"renderer\": \"Bunny.net Edge\",\n  \"model\": \"architecture_v2.glb\",\n  \"polygons\": 142050,\n  \"materials\": \"PBR_Active\"\n}",
-    renderComponent: (instanceId, isActive) => (
+    renderComponent: (instanceId?: string, isActive?: boolean) => (
       <div className="w-full transition-all">
         <div className="w-full aspect-square rounded-md bg-gradient-to-tr from-neutral-950 to-neutral-900 border border-white/10 relative overflow-hidden group">
-
           <Abstract3DShowcase isActive={isActive} />
-
           <div className="absolute bottom-6 left-6 font-mono text-[10px] text-white/50 tracking-widest pointer-events-none">
-            [ WEBGL ACCELERATED ]
+            [ {t('webglAccelerated')} ]
           </div>
         </div>
       </div>
@@ -134,9 +132,9 @@ const PILLARS: Pillar[] = [
   {
     id: 'themes',
     name: 'Theme Engine',
-    type: 'Architectural Layouts',
+    type: t('type_themes'),
     payloadStr: "{\n  \"activeId\": \"morphic_hover\",\n  \"cssVariables\": {\n    \"--bg\": \"#000000\",\n    \"--text\": \"#ffffff\",\n    \"--radius\": \"0px\"\n  }\n}",
-    renderComponent: (instanceId, isActive) => (
+    renderComponent: (instanceId?: string, isActive?: boolean) => (
       <div className="w-full h-[380px] md:h-[450px]">
         <ThemeHoverShowcase />
       </div>
@@ -145,9 +143,9 @@ const PILLARS: Pillar[] = [
   {
     id: 'analytics',
     name: 'Analytics',
-    type: 'Visitor Intelligence',
+    type: t('type_analytics'),
     payloadStr: "{\n  \"event\": \"SESSION_START\",\n  \"visitorId\": \"v_9f82x\",\n  \"device\": \"Desktop\",\n  \"country\": \"ID\",\n  \"duration\": 245\n}",
-    renderComponent: (instanceId, isActive) => (
+    renderComponent: (instanceId?: string, isActive?: boolean) => (
       <AnalyticsDashboard instanceId={instanceId} />
     )
   }
@@ -157,6 +155,9 @@ const PILLARS: Pillar[] = [
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export function SyncEngineSection() {
+  const t = useTranslations('SyncEngine');
+  const PILLARS = getPillars(t);
+  
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -184,10 +185,10 @@ export function SyncEngineSection() {
       <div className="lg:hidden w-full bg-[#050505] py-20 px-6 flex flex-col gap-16 relative z-20">
         <div className="flex flex-col gap-2">
           <span className="text-[#ff9e00] font-mono text-[10px] tracking-[0.4em] uppercase block border-l-2 border-[#ff9e00] pl-4">
-            [ PLATFORM PILLARS ]
+            [ {t('platformPillars')} ]
           </span>
           <h2 className="text-white text-3xl font-black tracking-tight mt-2 uppercase">
-            Core Architecture
+            {t('coreArchitecture')}
           </h2>
         </div>
 
@@ -280,7 +281,7 @@ export function SyncEngineSection() {
               className="absolute top-12 md:top-24 left-6 md:left-12 z-30 hidden md:block"
             >
               <span className="text-[#ff9e00] font-mono text-[10px] tracking-[0.4em] uppercase block border-l-2 border-[#ff9e00] pl-4">
-                [ PLATFORM PILLARS ]
+                [ {t('platformPillars')} ]
               </span>
             </div>
 
@@ -288,7 +289,7 @@ export function SyncEngineSection() {
             <div
               className="absolute bottom-12 md:bottom-24 left-6 md:left-12 z-30 hidden md:flex items-center gap-3 text-neutral-600 font-mono text-[9px] tracking-widest uppercase animate-pulse"
             >
-              <ArrowDown className="w-3 h-3" /> KEEP SCROLLING
+              <ArrowDown className="w-3 h-3" /> {t('keepScrolling')}
             </div>
 
             {/* LAYER 3: MASSIVE HOLLOW TYPOGRAPHY MENU WITH SCROLL TRACKER */}
@@ -296,7 +297,7 @@ export function SyncEngineSection() {
               {/* Mobile-only header (flow-based) */}
               <div className="md:hidden mb-6">
                 <span className="text-[#ff9e00] font-mono text-[10px] tracking-[0.4em] uppercase block border-l-2 border-[#ff9e00] pl-4">
-                  [ PLATFORM PILLARS ]
+                  [ {t('platformPillars')} ]
                 </span>
               </div>
 
@@ -348,7 +349,7 @@ export function SyncEngineSection() {
                               }`}
                           >
                             <span className="font-mono text-[9px] md:text-[10px] tracking-widest uppercase text-neutral-500 ml-1 block mt-1 md:mt-3">
-                              ARCHITECTURE // {pillar.type}
+                              {t('architectureLabel')} // {pillar.type}
                             </span>
                           </div>
                         </div>

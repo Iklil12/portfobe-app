@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { LinkData } from '@/features/links';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -38,6 +39,7 @@ const PLATFORMS = [
 ];
 
 export function LinkItem({ link, index, actions }: LinkItemProps) {
+  const t = useTranslations('DashboardLinks');
   const { updateLocalLink, setLinkToDelete } = actions;
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -57,7 +59,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
 
   const handleUrlChange = (val: string) => {
     if (link.platform === 'whatsapp' && val.length > 8 && !val.includes('wa.me')) {
-      toast('WhatsApp format should ideally use wa.me', {
+      toast(t('waHint'), {
         id: 'wa-hint',
         icon: '💡',
         style: { borderRadius: '0px', background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '11px', fontFamily: 'monospace' },
@@ -153,7 +155,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
         {/* Switch Status */}
         <div className="flex items-center gap-3">
             <span className={`text-[9px] font-sans font-medium uppercase tracking-wider transition-colors ${link.isActive ? 'text-white' : 'text-white/30'}`}>
-              {link.isActive ? 'Visible' : 'Hidden'}
+              {link.isActive ? t('visible') : t('hidden')}
             </span>
 
           {/* Toggle Button iOS Style */}
@@ -175,7 +177,7 @@ export function LinkItem({ link, index, actions }: LinkItemProps) {
         <button 
           onClick={() => setLinkToDelete(link.id)}
           className="w-9 h-9 sm:w-10 sm:h-10 rounded-md bg-zinc-900 border border-white/10 text-white/50 hover:bg-rose-950/20 hover:text-rose-400 hover:border-rose-900/30 flex items-center justify-center active:scale-95 transition-all duration-300 shrink-0"
-          title="Delete link"
+          title={t('deleteLinkTooltip')}
         >
           <Trash2 className="w-4 h-4" />
         </button>

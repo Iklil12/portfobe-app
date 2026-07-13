@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { LazyImage } from '@/shared/ui/LazyImage';
 import { 
   LayoutGrid, 
@@ -44,6 +45,7 @@ interface SidebarProps {
 
 export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0, linksCount = 0, testimonialsCount = 0, userRole = 'USER', isDesktopSidebarOpen = true, onToggleDesktopSidebar }: SidebarProps) {
   const pathname = usePathname();
+  const t = useTranslations('DashboardSidebar');
   
   const isActive = (path: string) => pathname === path;
   
@@ -92,12 +94,12 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                </div>
             ) : (
                <>
-                  <PrimaryNavItem href="/dashboard" icon={<LayoutGrid className="w-[18px] h-[18px]" />} label="Overview" active={isActive('/dashboard')} isCollapsed={!isDesktopSidebarOpen} />
+                  <PrimaryNavItem href="/dashboard" icon={<LayoutGrid className="w-[18px] h-[18px]" />} label={t('overview')} active={isActive('/dashboard')} isCollapsed={!isDesktopSidebarOpen} />
                   
                   <TreeAccordion 
                     id="tour-design-menu"
                     icon={<Palette className="w-[18px] h-[18px]" />} 
-                    label="Design" 
+                    label={t('design')} 
                     isOpen={isMobileDesignMenuOpen} 
                     onToggle={() => {
                       if (!isDesktopSidebarOpen) {
@@ -110,18 +112,18 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                     active={isDesignRoute}
                     isCollapsed={!isDesktopSidebarOpen}
                   >
-                    <TreeChildItem id="tour-add-project" href="/dashboard/projects" label="Projects & Works" active={isActive('/dashboard/projects')} count={projectsCount} />
-                    <TreeChildItem href="/dashboard/themes" label="Theme Collection" active={isActive('/dashboard/themes')} />
-                    <TreeChildItem href="/dashboard/build-with-ai" label="Build with AI" active={isActive('/dashboard/build-with-ai')} countText="AI" countColor="bg-[#ff9e00]/20 text-[#ff9e00]" />
-                    <TreeChildItem id="tour-links" href="/dashboard/links" label="Links" active={isActive('/dashboard/links')} count={linksCount} />
-                    <TreeChildItem href="/dashboard/testimonials" label="Testimonials" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
-                    <TreeChildItem href="/dashboard/integrations" label="Connected Works" active={isActive('/dashboard/integrations')} />
-                    <TreeChildItem href="/dashboard/trash" label="Trash" active={isActive('/dashboard/trash')} isLast />
+                    <TreeChildItem id="tour-add-project" href="/dashboard/projects" label={t('projects')} active={isActive('/dashboard/projects')} count={projectsCount} />
+                    <TreeChildItem href="/dashboard/themes" label={t('themes')} active={isActive('/dashboard/themes')} />
+                    <TreeChildItem href="/dashboard/build-with-ai" label={t('buildAi')} active={isActive('/dashboard/build-with-ai')} countText="AI" countColor="bg-[#ff9e00]/20 text-[#ff9e00]" />
+                    <TreeChildItem id="tour-links" href="/dashboard/links" label={t('links')} active={isActive('/dashboard/links')} count={linksCount} />
+                    <TreeChildItem href="/dashboard/testimonials" label={t('testimonials')} active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
+                    <TreeChildItem href="/dashboard/integrations" label={t('connectedWorks')} active={isActive('/dashboard/integrations')} />
+                    <TreeChildItem href="/dashboard/trash" label={t('trash')} active={isActive('/dashboard/trash')} isLast />
                   </TreeAccordion>
 
-                  <PrimaryNavItem href="/dashboard/explore" icon={<Compass className="w-[18px] h-[18px]" />} label="Explore" active={isActive('/dashboard/explore')} isCollapsed={!isDesktopSidebarOpen} />
-                  <PrimaryNavItem href="/dashboard/analytics" icon={<PieChart className="w-[18px] h-[18px]" />} label="Metrics" active={isActive('/dashboard/analytics')} isCollapsed={!isDesktopSidebarOpen} />
-                  <PrimaryNavItem id="tour-profile-menu" href="/dashboard/profile" icon={<User className="w-[18px] h-[18px]" />} label="Profile" active={isActive('/dashboard/profile')} isCollapsed={!isDesktopSidebarOpen} />
+                  <PrimaryNavItem href="/dashboard/explore" icon={<Compass className="w-[18px] h-[18px]" />} label={t('explore')} active={isActive('/dashboard/explore')} isCollapsed={!isDesktopSidebarOpen} />
+                  <PrimaryNavItem href="/dashboard/analytics" icon={<PieChart className="w-[18px] h-[18px]" />} label={t('metrics')} active={isActive('/dashboard/analytics')} isCollapsed={!isDesktopSidebarOpen} />
+                  <PrimaryNavItem id="tour-profile-menu" href="/dashboard/profile" icon={<User className="w-[18px] h-[18px]" />} label={t('profile')} active={isActive('/dashboard/profile')} isCollapsed={!isDesktopSidebarOpen} />
                </>
             )}
           </nav>
@@ -134,13 +136,13 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                </div>
             ) : (
               <>
-                <PrimaryNavItem href="/support" icon={<HelpCircle className="w-[18px] h-[18px]" />} label="Support" active={isActive('/support')} isCollapsed={!isDesktopSidebarOpen} />
-                <PrimaryNavItem href="/dashboard/settings" icon={<Settings className="w-[18px] h-[18px]" />} label="Settings" active={isActive('/dashboard/settings')} isCollapsed={!isDesktopSidebarOpen} />
+                <PrimaryNavItem href="/support" icon={<HelpCircle className="w-[18px] h-[18px]" />} label={t('support')} active={isActive('/support')} isCollapsed={!isDesktopSidebarOpen} />
+                <PrimaryNavItem href="/dashboard/settings" icon={<Settings className="w-[18px] h-[18px]" />} label={t('settingsLabel')} active={isActive('/dashboard/settings')} isCollapsed={!isDesktopSidebarOpen} />
                 
                 {userRole === 'ADMIN' && (
                   <TreeAccordion 
                     icon={<Terminal className="w-[18px] h-[18px]" />} 
-                    label="Developer Hub" 
+                    label={t('developerHub')} 
                     isOpen={isMobileAdminMenuOpen} 
                     onToggle={() => {
                       if (!isDesktopSidebarOpen) {
@@ -154,10 +156,10 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                     isCollapsed={!isDesktopSidebarOpen}
                     popoverDirection="up"
                   >
-                    <TreeChildItem href="/dashboard/admin/architecture" label="TDD Plan" active={isActive('/dashboard/admin/architecture')} />
-                    <TreeChildItem href="/dashboard/admin/ideas" label="Feature Backlog" active={isActive('/dashboard/admin/ideas')} />
-                    <TreeChildItem href="/dashboard/admin/errors" label="System Logs" active={isActive('/dashboard/admin/errors')} />
-                    <TreeChildItem href="/dashboard/admin/features" label="Feature Flags" active={isActive('/dashboard/admin/features')} isLast />
+                    <TreeChildItem href="/dashboard/admin/architecture" label={t('tddPlan')} active={isActive('/dashboard/admin/architecture')} />
+                    <TreeChildItem href="/dashboard/admin/ideas" label={t('featureBacklog')} active={isActive('/dashboard/admin/ideas')} />
+                    <TreeChildItem href="/dashboard/admin/errors" label={t('systemLogs')} active={isActive('/dashboard/admin/errors')} />
+                    <TreeChildItem href="/dashboard/admin/features" label={t('featureFlags')} active={isActive('/dashboard/admin/features')} isLast />
                   </TreeAccordion>
                 )}
               </>
@@ -170,16 +172,16 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
                 <div className="w-full h-11 skeleton-premium rounded-md"></div>
              ) : userPlan === 'FREE' ? (
                isDesktopSidebarOpen ? (
-                 <Link href="/pricing" className="w-full py-3 px-3 bg-zinc-900 rounded-md flex items-center justify-between group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title="Upgrade to PRO">
+                 <Link href="/pricing" className="w-full py-3 px-3 bg-zinc-900 rounded-md flex items-center justify-between group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title={t('upgradePro')}>
                     <div className="flex items-center gap-2">
                       <Crown className="text-[#ff9e00] w-4 h-4 group-hover:scale-110 transition-transform" />
-                      <span className="text-[10px] font-sans font-medium text-white">UPGRADE PRO</span>
+                      <span className="text-[10px] font-sans font-medium text-white">{t('upgradePro')}</span>
                     </div>
-                    <div className="text-[8px] font-sans text-[#ff9e00] border border-[#ff9e00]/30 bg-[#ff9e00]/10 px-1 py-0.5 ml-auto mr-1">TRIAL</div>
+                    <div className="text-[8px] font-sans text-[#ff9e00] border border-[#ff9e00]/30 bg-[#ff9e00]/10 px-1 py-0.5 ml-auto mr-1">{t('trial')}</div>
                     <div className="w-1.5 h-1.5 bg-red-500 rounded-md border border-black shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
                  </Link>
                ) : (
-                 <Link href="/pricing" className="w-full h-11 bg-zinc-900 rounded-md flex items-center justify-center group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title="Upgrade to PRO">
+                 <Link href="/pricing" className="w-full h-11 bg-zinc-900 rounded-md flex items-center justify-center group shadow-sm border border-white/10 hover:bg-zinc-800 transition-colors" title={t('upgradePro')}>
                     <Crown className="text-[#ff9e00] w-4 h-4 group-hover:scale-110 transition-transform" />
                  </Link>
                )
@@ -227,7 +229,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
             ) : (
                <>
                  {/* Menu Overview */}
-                 <MobileNavItem href="/dashboard" icon={<LayoutGrid className="w-5 h-5" />} label="Overview" active={isActive('/dashboard')} />
+                 <MobileNavItem href="/dashboard" icon={<LayoutGrid className="w-5 h-5" />} label={t('overview')} active={isActive('/dashboard')} />
                  
                  {/* Menu Desain (Dengan Submenu Accordion) */}
                  <div className="pt-2">
@@ -241,28 +243,28 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
 
                    {/* Submenu Inline (Accordion) */}
                    <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${isMobileDesignMenuOpen ? 'max-h-80 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 pointer-events-none'}`}>
-                     <MobileSubNavItem href="/dashboard/projects" label="Projects & Works" active={isActive('/dashboard/projects')} count={projectsCount} />
-                     <MobileSubNavItem href="/dashboard/themes" label="Theme Collection" active={isActive('/dashboard/themes')} />
-                     <MobileSubNavItem href="/dashboard/build-with-ai" label="Build with AI" active={isActive('/dashboard/build-with-ai')} highlightText="Soon" />
-                     <MobileSubNavItem href="/dashboard/links" label="Links" active={isActive('/dashboard/links')} count={linksCount} />
-                     <MobileSubNavItem href="/dashboard/testimonials" label="Testimonials" active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
-                     <MobileSubNavItem href="/dashboard/integrations" label="Connected Works" active={isActive('/dashboard/integrations')} />
+                     <MobileSubNavItem href="/dashboard/projects" label={t('projects')} active={isActive('/dashboard/projects')} count={projectsCount} />
+                     <MobileSubNavItem href="/dashboard/themes" label={t('themes')} active={isActive('/dashboard/themes')} />
+                     <MobileSubNavItem href="/dashboard/build-with-ai" label={t('buildAi')} active={isActive('/dashboard/build-with-ai')} highlightText="Soon" />
+                     <MobileSubNavItem href="/dashboard/links" label={t('links')} active={isActive('/dashboard/links')} count={linksCount} />
+                     <MobileSubNavItem href="/dashboard/testimonials" label={t('testimonials')} active={isActive('/dashboard/testimonials')} count={testimonialsCount} />
+                     <MobileSubNavItem href="/dashboard/integrations" label={t('connectedWorks')} active={isActive('/dashboard/integrations')} />
                      <div className="h-px bg-white/10 my-2" />
-                     <MobileSubNavItem href="/dashboard/trash" label="Trash" active={isActive('/dashboard/trash')} />
+                     <MobileSubNavItem href="/dashboard/trash" label={t('trash')} active={isActive('/dashboard/trash')} />
                    </div>
                  </div>
 
                  {/* Menu Lainnya */}
-                 <MobileNavItem href="/dashboard/explore" icon={<Compass className="w-5 h-5" />} label="Explore" active={isActive('/dashboard/explore')} className="mt-2" />
-                 <MobileNavItem href="/dashboard/analytics" icon={<PieChart className="w-5 h-5" />} label="Metrics" active={isActive('/dashboard/analytics')} />
+                 <MobileNavItem href="/dashboard/explore" icon={<Compass className="w-5 h-5" />} label={t('explore')} active={isActive('/dashboard/explore')} className="mt-2" />
+                 <MobileNavItem href="/dashboard/analytics" icon={<PieChart className="w-5 h-5" />} label={t('metrics')} active={isActive('/dashboard/analytics')} />
 
                  <div className="px-5 pt-6 pb-2">
-                   <p className="text-[9px] font-sans font-medium text-white/50 tracking-[0.25em]">Settings</p>
+                   <p className="text-[9px] font-sans font-medium text-white/50 tracking-[0.25em]">{t('settingsLabel')}</p>
                  </div>
 
-                 <MobileNavItem id="tour-mobile-profile-menu" href="/dashboard/profile" icon={<User className="w-5 h-5" />} label="Profile & Bio" active={isActive('/dashboard/profile')} />
-                 <MobileNavItem href="/support" icon={<HelpCircle className="w-5 h-5" />} label="Support" active={isActive('/support')} />
-                 <MobileNavItem href="/dashboard/settings" icon={<Settings className="w-5 h-5" />} label="Settings" active={isActive('/dashboard/settings')} />
+                 <MobileNavItem id="tour-mobile-profile-menu" href="/dashboard/profile" icon={<User className="w-5 h-5" />} label={t('profileBio')} active={isActive('/dashboard/profile')} />
+                 <MobileNavItem href="/support" icon={<HelpCircle className="w-5 h-5" />} label={t('support')} active={isActive('/support')} />
+                 <MobileNavItem href="/dashboard/settings" icon={<Settings className="w-5 h-5" />} label={t('settingsLabel')} active={isActive('/dashboard/settings')} />
                  
                  {/* Menu Admin (Dengan Submenu Accordion) */}
                  {userRole === 'ADMIN' && (
@@ -277,10 +279,10 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
 
                      {/* Submenu Inline (Accordion) */}
                      <div className={`flex flex-col pl-[3.25rem] pr-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${isMobileAdminMenuOpen ? 'max-h-60 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 pointer-events-none'}`}>
-                       <MobileSubNavItem href="/dashboard/admin/architecture" label="TDD Plan" active={isActive('/dashboard/admin/architecture')} />
-                       <MobileSubNavItem href="/dashboard/admin/ideas" label="Feature Backlog" active={isActive('/dashboard/admin/ideas')} />
-                       <MobileSubNavItem href="/dashboard/admin/errors" label="System Logs" active={isActive('/dashboard/admin/errors')} />
-                       <MobileSubNavItem href="/dashboard/admin/features" label="Feature Flags" active={isActive('/dashboard/admin/features')} />
+                       <MobileSubNavItem href="/dashboard/admin/architecture" label={t('tddPlan')} active={isActive('/dashboard/admin/architecture')} />
+                       <MobileSubNavItem href="/dashboard/admin/ideas" label={t('featureBacklog')} active={isActive('/dashboard/admin/ideas')} />
+                       <MobileSubNavItem href="/dashboard/admin/errors" label={t('systemLogs')} active={isActive('/dashboard/admin/errors')} />
+                       <MobileSubNavItem href="/dashboard/admin/features" label={t('featureFlags')} active={isActive('/dashboard/admin/features')} />
                      </div>
                    </div>
                  )}
@@ -307,7 +309,7 @@ export function Sidebar({ isLoading, userPlan, isSidebarOpen, projectsCount = 0,
               <div className="relative overflow-hidden bg-zinc-900 border border-white/10 p-4 rounded-md group">
                 <div className="relative z-10 flex items-center justify-between">
                   <div>
-                    <p className={`text-[9px] font-sans font-medium mb-1 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`}>Status</p>
+                    <p className={`text-[9px] font-sans font-medium mb-1 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`}>{t('status')}</p>
                     <p className="text-xs font-sans font-medium text-white">{userPlan === 'SUPREME' ? 'Supreme Creator' : 'Pro Creator'}</p>
                   </div>
                   <CheckCircle className={`w-5 h-5 ${userPlan === 'SUPREME' ? 'text-violet-400' : 'text-[#ff9e00]'}`} />
