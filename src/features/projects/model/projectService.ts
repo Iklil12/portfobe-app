@@ -157,3 +157,57 @@ export async function deleteProject(email: string, id: string) {
 
   return true;
 }
+
+export async function batchCreateProjects(email: string, projectsData: ProjectDTO[]) {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) throw new Error("USER_NOT_FOUND");
+
+  if (!projectsData || projectsData.length === 0) {
+    throw new Error("MISSING_DATA");
+  }
+
+  // Quota check for FREE users
+  if (getEffectivePlan(user) === 'FREE') {
+    const projectCount = await prisma.project.count({ where: { userId: user.id, deletedAt: null } });
+    if (projectCount + projectsData.length > 4) {
+      throw new Error("QUOTA_EXCEEDED");
+    }
+  }
+
+  const createdProjects = [];
+
+  for (const data of projectsData) {
+    const { title, description, mediaUrl, projectType, tags } = data;
+
+    if (!title || !mediaUrl) {
+      continue; // Skip invalid entries
+    }
+
+    if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
+      const isBunnyGuid = projectType === 'video' && mediaUrl.length === 36 && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(mediaUrl);
+      if (!isBunnyGuid) {
+        continue; // Skip invalid mediaUrl
+      }
+    }
+
+    const newProject = await prisma.project.create({
+      data: {
+        title,
+        description: description || null,
+        mediaUrl,
+        projectType: projectType || "photo",
+        tags: Array.isArray(tags) ? JSON.stringify(tags) : "[]",
+        userId: user.id
+      }
+    });
+
+    createdProjects.push(newProject);
+  }
+
+  if (createdProjects.length > 0) {
+    await logActivity(user.id, "UPLOAD_PROJECT", `Batch uploaded ${createdProjects.length} items`);
+    await invalidatePortfolioCache(user.id);
+  }
+
+  return createdProjects;
+}

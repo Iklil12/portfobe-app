@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Crown, Plus } from 'lucide-react';
+import { Sparkles, Crown, Plus, UploadCloud } from 'lucide-react';
 import { useProjectsState, useProjectsActions } from '@/entities/portfolio/model/useProjects';
 import { useTranslations } from 'next-intl';
 
@@ -160,14 +160,25 @@ export function ProjectHeader({ state, actions }: { state: useProjectsState; act
                 <Crown className="w-3.5 h-3.5 text-[#ff9e00]" />{t('upgradeToPro')}</Link>
             </motion.div>
           ) : (
-            <motion.button
-              key="add-btn"
+            <motion.div
+              key="add-buttons"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              onClick={() => handleOpenModal()}
-              className="group w-full md:w-auto relative overflow-hidden flex items-center justify-center gap-2 rounded-md bg-[#ff9e00] hover:bg-[#ffaa22] transition-all duration-300 active:scale-95 hover:-translate-y-0.5 px-6 py-3.5 text-black font-sans font-medium uppercase tracking-widest text-[10px]"
+              className="flex flex-col sm:flex-row gap-3 w-full md:w-auto"
             >
-              <Plus className="w-3.5 h-3.5 text-black" />{t('addNew')}</motion.button>
+              <button
+                onClick={() => actions.handleOpenBatchModal?.()}
+                className="group w-full sm:w-auto relative overflow-hidden flex items-center justify-center gap-2 rounded-md bg-zinc-900 border border-white/10 hover:bg-zinc-800 transition-all duration-300 active:scale-95 px-6 py-3.5 text-white font-sans font-medium uppercase tracking-widest text-[10px]"
+              >
+                <UploadCloud className="w-3.5 h-3.5 text-white/70" /> Bulk Upload
+              </button>
+              <button
+                onClick={() => handleOpenModal()}
+                className="group w-full sm:w-auto relative overflow-hidden flex items-center justify-center gap-2 rounded-md bg-[#ff9e00] hover:bg-[#ffaa22] transition-all duration-300 active:scale-95 hover:-translate-y-0.5 px-6 py-3.5 text-black font-sans font-medium uppercase tracking-widest text-[10px]"
+              >
+                <Plus className="w-3.5 h-3.5 text-black" />{t('addNew')}
+              </button>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>

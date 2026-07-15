@@ -98,6 +98,7 @@ model Profile {
   whatsapp                   String?
   hasCompletedDashboardTour  Boolean @default(false)
   hasCompletedAppearanceTour Boolean @default(false)
+  resumeData                 String? @db.LongText
   user                       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([fullName])

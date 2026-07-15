@@ -8,6 +8,7 @@ import { ProjectHeader } from '@/features/projects';
 import { ProjectFilterTabs } from '@/features/projects';
 import { ProjectList } from '@/features/projects';
 import { ProjectFormModal } from '@/features/projects';
+import { BatchUploadModal } from '@/features/projects';
 import { DeleteConfirmModal } from '@/features/projects';
 
 export default function ProjectsPage() {
@@ -45,6 +46,7 @@ export default function ProjectsPage() {
       <div className="max-w-6xl mx-auto p-4 sm:p-6 md:p-10 relative z-10">
         
         {state.mounted && createPortal(<ProjectFormModal state={state} actions={actions} />, document.body)}
+        {state.mounted && createPortal(<BatchUploadModal state={state} actions={actions} />, document.body)}
         {state.mounted && createPortal(<DeleteConfirmModal state={state} actions={actions} />, document.body)}
 
         <ProjectHeader state={state} actions={actions} />

@@ -15,10 +15,14 @@ export function RightPanel({
 }: { 
   state: ThemeEditorState, 
   actions: ThemeEditorActions,
-  activeTab?: 'theme' | 'pages',
+  activeTab?: 'theme' | 'pages' | 'resume',
   selectedPage?: 'home' | 'gallery'
 }) {
   const { isEditorCollapsed, livePreviewTheme } = state;
+
+  if (activeTab === 'resume') {
+    return null;
+  }
 
   return (
     <div 

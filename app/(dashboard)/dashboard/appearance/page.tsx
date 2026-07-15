@@ -20,7 +20,7 @@ function AppearanceEditor() {
   const modeDropdownRef = useRef<HTMLDivElement>(null);
   
   // Dock & Page States
-  const [activeTab, setActiveTab] = useState<'theme' | 'pages'>('theme');
+  const [activeTab, setActiveTab] = useState<'theme' | 'pages' | 'resume'>('theme');
   const [selectedPage, setSelectedPage] = useState<'home' | 'gallery'>('home');
 
   // Lock Editor Logic
@@ -327,6 +327,19 @@ function AppearanceEditor() {
             >
               <Layout className="w-[18px] h-[18px] stroke-[1.5]" />
               <div className="absolute left-full ml-3 px-2 py-1 bg-[#222] border border-white/10 text-white text-[10px] whitespace-nowrap rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">Pages</div>
+            </button>
+
+            {/* Resume / CV Builder Button */}
+            <div className="w-6 h-px bg-white/5 my-1" />
+            <button 
+              onClick={() => setActiveTab('resume')}
+              className={`w-10 h-10 rounded-md flex items-center justify-center relative transition-all group ${
+                activeTab === 'resume' ? 'bg-[#2c2c35] text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
+              }`}
+              title="Resume Builder"
+            >
+              <FileText className="w-[18px] h-[18px] stroke-[1.5]" />
+              <div className="absolute left-full ml-3 px-2 py-1 bg-[#222] border border-white/10 text-white text-[10px] whitespace-nowrap rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">Resume Builder</div>
             </button>
           </div>
         )}

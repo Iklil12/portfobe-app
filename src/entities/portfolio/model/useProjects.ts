@@ -11,6 +11,7 @@ export function useProjects() {
   const cachedPlan = (syncData?.layout?.plan || 'FREE') as 'FREE' | 'PRO' | 'SUPREME';
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
   const [projectType, setProjectType] = useState<ProjectType>(null);
   const [mounted, setMounted] = useState(false);
   const [items, setItems] = useState<any[]>([]);
@@ -120,6 +121,16 @@ export function useProjects() {
     document.body.style.overflow = 'unset'; 
   };
 
+  const handleOpenBatchModal = () => {
+    setIsBatchModalOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleCloseBatchModal = () => {
+    setIsBatchModalOpen(false);
+    document.body.style.overflow = 'unset';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projectTitle) {
@@ -225,6 +236,7 @@ export function useProjects() {
     state: {
       mounted,
       isModalOpen,
+      isBatchModalOpen,
       projectType,
       items,
       isLoading,
@@ -257,10 +269,13 @@ export function useProjects() {
       setProjectTags,
       handleOpenModal,
       handleCloseModal,
+      handleOpenBatchModal,
+      handleCloseBatchModal,
       handleSubmit,
       confirmDelete,
       cancelDelete,
-      executeDelete
+      executeDelete,
+      fetchAllData
     }
   };
 }

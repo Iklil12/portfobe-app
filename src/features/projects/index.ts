@@ -5,5 +5,7 @@ export { ProjectHeader } from './ui/ProjectHeader';
 export { ProjectList } from './ui/ProjectList';
 export { ProjectTypeSelection } from './ui/ProjectTypeSelection';
 export { UpgradeToProModal } from './ui/UpgradeToProModal';
+export { BatchUploadModal } from './ui/BatchUploadModal';
 
 export { useProjectUpload } from './model/useProjectUpload';
+export { useBatchUpload } from './model/useBatchUpload';

@@ -139,6 +139,7 @@ export function useThemeEditor() {
   useEffect(() => { customTextsRef.current = customTexts; }, [customTexts]);
   const [pageBlocks, setPageBlocks] = useState<PageBlock[]>([]);
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
+  const [resumeData, setResumeData] = useState<any>(null);
   const dataLoaded = useRef(false);
 
   // --- STATE DRAFTS & PUBLISHING ---
@@ -620,6 +621,8 @@ export function useThemeEditor() {
       } else if (event.data?.type === 'INLINE_EDIT' && event.data?.entity === 'appearance') {
         const { field, value } = event.data;
         setCustomTexts({ ...customTextsRef.current, [field]: value });
+      } else if (event.data?.type === 'RESUME_DATA_UPDATE') {
+        setResumeData(event.data.data);
       } else if (event.data?.type === 'BLOCK_MOVE_UP') {
         setPageBlocks(prev => {
           const index = prev.findIndex(b => b.id === event.data.blockId);
@@ -798,6 +801,33 @@ export function useThemeEditor() {
     } finally {
       setIsSavingDraft(false);
     }
+  };
+
+  const saveResumeData = async () => {
+    if (!resumeData) return;
+    const toastId = toast.loading('Saving CV data...', {
+      style: { borderRadius: '12px', background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 'bold' }
+    });
+    try {
+      const res = await fetch('/api/profile/resume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resumeData: JSON.stringify(resumeData) })
+      });
+      if (res.ok) {
+        toast.dismiss(toastId);
+        showToast({ message: 'CV data saved successfully!', id: toastId, icon: 'fa-check-circle' });
+      } else {
+        throw new Error('Failed to save CV data');
+      }
+    } catch (error: any) {
+      toast.dismiss(toastId);
+      toast.error(error.message || 'Server error occurred.', { style: { background: '#333', color: '#fff' }});
+    }
+  };
+
+  const updateResumeData = (updates: any) => {
+    setResumeData((prev: any) => ({ ...prev, ...updates }));
   };
 
   const publishDesign = async () => {
@@ -1046,7 +1076,15 @@ export function useThemeEditor() {
 
   const livePreviewData = {
     ...dbData,
-    profile: { fullName, profession, bio, avatarUrl, subdomain, location },
+    profile: {
+      fullName,
+      profession,
+      bio,
+      location,
+      avatarUrl,
+      subdomain,
+      resumeData
+    },
     pageBlocks,
     projects: previewProjects
   };
@@ -1100,6 +1138,7 @@ export function useThemeEditor() {
       hasUnpublishedChanges,
       pageBlocks,
       selectedProjects,
+      resumeData,
       rawProjects: dbData.projects || [],
       previewMode,
       splitModeType,
@@ -1141,7 +1180,9 @@ export function useThemeEditor() {
       setSelectedProjects,
       resetToThemePreset,
       undo,
-      redo
+      redo,
+      saveResumeData,
+      updateResumeData
     }
   };
 }

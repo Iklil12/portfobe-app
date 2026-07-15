@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import PortfolioView from '@/components/PortfolioView';
 import { GalleryPageView } from '@/features/gallery';
+import ResumeCanvas from '@/src/components/cv/ResumeCanvas';
 
 export default function PreviewPage() {
   const [data, setData] = useState<any>(null);
@@ -10,7 +11,7 @@ export default function PreviewPage() {
   const [isReady, setIsReady] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
   
-  const [activeTab, setActiveTab] = useState<'theme' | 'pages'>('theme');
+  const [activeTab, setActiveTab] = useState<'theme' | 'pages' | 'resume'>('theme');
   const [selectedPage, setSelectedPage] = useState<'home' | 'gallery'>('home');
   const [isOrphaned, setIsOrphaned] = useState(false);
 
@@ -32,6 +33,10 @@ export default function PreviewPage() {
         if (event.data.activeTab) setActiveTab(event.data.activeTab);
         if (event.data.selectedPage) setSelectedPage(event.data.selectedPage);
         setIsReady(true);
+      }
+      
+      if (event.data?.type === 'PRINT_RESUME') {
+        window.print();
       }
     };
 
@@ -85,6 +90,20 @@ export default function PreviewPage() {
       <div className="flex items-center justify-center min-h-screen bg-[#050505]">
         <div className="w-6 h-6 border-2 border-slate-700 border-t-white rounded-full animate-spin"></div>
       </div>
+    );
+  }
+
+  if (activeTab === 'resume') {
+    const customTexts = typeof theme?.customTexts === 'string' 
+      ? JSON.parse(theme.customTexts) 
+      : (theme?.customTexts || {});
+
+    return (
+      <ResumeCanvas 
+        profile={data?.profile} 
+        customTexts={customTexts} 
+        isMobileView={isMobileView} 
+      />
     );
   }
 

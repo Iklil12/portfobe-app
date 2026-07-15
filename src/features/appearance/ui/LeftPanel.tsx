@@ -38,8 +38,8 @@ export function LeftPanel({
 }: { 
   state: ThemeEditorState, 
   actions: ThemeEditorActions,
-  activeTab?: 'theme' | 'pages',
-  setActiveTab?: (tab: 'theme' | 'pages') => void,
+  activeTab?: 'theme' | 'pages' | 'resume',
+  setActiveTab?: (tab: 'theme' | 'pages' | 'resume') => void,
   selectedPage?: 'home' | 'gallery',
   setSelectedPage?: (page: 'home' | 'gallery') => void
 }) {
@@ -488,6 +488,102 @@ export function LeftPanel({
                   />
                 </div>
               )}
+            </div>
+          </div>
+          {/* TAB RESUME */}
+          <div className={activeTab === 'resume' ? 'block' : 'hidden'}>
+            <div className="mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <h3 className="text-[11px] font-semibold text-white/50 tracking-wider uppercase mb-4 px-1">CV / Resume Builder</h3>
+              
+              <div className="flex flex-col gap-3">
+                {/* Info Card */}
+                <div className="p-3 bg-white/5 border border-white/10 rounded-lg flex flex-col gap-2">
+                  <span className="text-[10px] text-white/70 leading-relaxed font-medium">
+                    This is your interactive Resume Canvas. Click directly on any text on the right to edit your experience and skills.
+                  </span>
+                </div>
+
+                <div className="w-full h-px bg-white/5 my-2"></div>
+                <h4 className="text-[10px] font-bold text-white/40 tracking-wider uppercase px-1">Select Template</h4>
+
+                {/* Templates List */}
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  <button 
+                    onClick={() => actions.updateResumeData?.({ template: 'harvard' })}
+                    className={`flex flex-col items-center justify-center p-3 rounded-md transition-all gap-2 group shadow-sm ${
+                      (!state.resumeData?.template || state.resumeData?.template === 'harvard') 
+                        ? 'bg-[#2c2c35] border border-white/20' 
+                        : 'bg-transparent border border-white/5 hover:border-white/20 hover:bg-white/5'
+                    }`}
+                  >
+                    <FileText className={`w-5 h-5 group-hover:scale-110 transition-transform ${
+                      (!state.resumeData?.template || state.resumeData?.template === 'harvard') ? 'text-white/80' : 'text-white/40 group-hover:text-white/80'
+                    }`} />
+                    <span className={`text-[10px] font-semibold ${
+                      (!state.resumeData?.template || state.resumeData?.template === 'harvard') ? 'text-white' : 'text-white/60 group-hover:text-white'
+                    }`}>Harvard ATS</span>
+                  </button>
+                  <button 
+                    onClick={() => actions.updateResumeData?.({ template: 'minimalist' })}
+                    className={`flex flex-col items-center justify-center p-3 rounded-md transition-all gap-2 group shadow-sm ${
+                      state.resumeData?.template === 'minimalist' 
+                        ? 'bg-[#2c2c35] border border-white/20' 
+                        : 'bg-transparent border border-white/5 hover:border-white/20 hover:bg-white/5'
+                    }`}
+                  >
+                    <Layout className={`w-5 h-5 group-hover:scale-110 transition-transform ${
+                      state.resumeData?.template === 'minimalist' ? 'text-white/80' : 'text-white/40 group-hover:text-white/80'
+                    }`} />
+                    <span className={`text-[10px] font-semibold ${
+                      state.resumeData?.template === 'minimalist' ? 'text-white' : 'text-white/60 group-hover:text-white'
+                    }`}>Minimalist</span>
+                  </button>
+                  <button 
+                    onClick={() => actions.updateResumeData?.({ template: 'creative' })}
+                    className={`flex flex-col items-center justify-center p-3 rounded-md transition-all gap-2 group shadow-sm ${
+                      state.resumeData?.template === 'creative' 
+                        ? 'bg-[#2c2c35] border border-white/20' 
+                        : 'bg-transparent border border-white/5 hover:border-white/20 hover:bg-white/5'
+                    }`}
+                  >
+                    <Gem className={`w-5 h-5 group-hover:scale-110 transition-transform ${
+                      state.resumeData?.template === 'creative' ? 'text-white/80' : 'text-white/40 group-hover:text-white/80'
+                    }`} />
+                    <span className={`text-[10px] font-semibold ${
+                      state.resumeData?.template === 'creative' ? 'text-white' : 'text-white/60 group-hover:text-white'
+                    }`}>Creative</span>
+                  </button>
+                </div>
+
+                <div className="w-full h-px bg-white/5 my-2"></div>
+                
+                <div className="flex flex-col gap-2 mt-2">
+                  <button 
+                    onClick={() => {
+                      if (actions && 'saveResumeData' in actions) {
+                        (actions as any).saveResumeData();
+                      }
+                    }}
+                    className="w-full py-2.5 rounded-md bg-white hover:bg-white/90 text-black text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    Save CV
+                  </button>
+
+                  <button 
+                    onClick={() => {
+                      const iframe = document.querySelector('iframe[title="Portfolio Preview"]') as HTMLIFrameElement;
+                      if (iframe && iframe.contentWindow) {
+                        iframe.contentWindow.postMessage({ type: 'PRINT_RESUME' }, window.location.origin);
+                      }
+                    }}
+                    className="w-full py-2.5 rounded-md bg-[#ff9e00] hover:bg-[#ffaa22] text-black text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    Download PDF
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

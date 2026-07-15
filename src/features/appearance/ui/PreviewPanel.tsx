@@ -407,7 +407,7 @@ export function PreviewPanel({
             ref={iframeRef}
             src="/preview"
             title="Portfolio Preview"
-            sandbox="allow-scripts allow-same-origin allow-popups"
+            sandbox="allow-scripts allow-same-origin allow-popups allow-modals"
             style={!isMobileDevice && previewMode === 'desktop' ? {
               border: 'none',
               transformOrigin: 'top left',
