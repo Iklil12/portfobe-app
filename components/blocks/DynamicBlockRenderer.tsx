@@ -275,6 +275,8 @@ export const BlockMapper = ({ block, data, theme, isEditor, setSelectedMedia, is
 export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: any) => {
   const [selectedMedia, setSelectedMediaState] = useState<{ url: string, title: string, type: 'video' | 'photo' | 'certificate' } | null>(null);
 
+  console.log("[DynamicBlockRenderer] RENDER STARTED WITH THEME:", theme?.themeTemplate);
+
   const setSelectedMedia = (media: any) => {
     setSelectedMediaState(media);
     if (media && !isEditor) {
@@ -531,23 +533,23 @@ export const DynamicBlockRenderer = ({ blocks, data, theme, isMobileView = false
   const buttonShape = theme?.buttonShape || 'rounded';
   const radiusClass = buttonShape === 'hard' || buttonShape === 'square' ? 'rounded-none' : buttonShape === 'pill' ? 'rounded-[32px]' : 'rounded-lg';
 
-  // Urutkan blok berdasarkan orderIndex dan filter yang tersembunyi
+  // Urutkan blok berdasarkan orderIndex
   let sortedBlocks = [...(blocks || [])].sort((a, b) => a.orderIndex - b.orderIndex);
 
   if (!isEditor) {
     sortedBlocks = sortedBlocks.filter(b => b.isVisible !== false);
+  }
 
-    // Fallback: Jika pengguna belum pernah menyimpan blok (database kosong),
-    // berikan blok standar agar halaman tidak kosong melompong.
-    if (sortedBlocks.length === 0) {
-      const DEFAULT_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SKILLS', 'EXPERIENCE', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
-      sortedBlocks = DEFAULT_ORDER.map((type, i) => ({
-        id: `fallback-${i}`,
-        blockType: type,
-        orderIndex: i,
-        isVisible: true
-      }));
-    }
+  // Fallback: Jika pengguna belum pernah menyimpan blok (database kosong),
+  // berikan blok standar agar halaman tidak kosong melompong (baik publik maupun editor).
+  if (sortedBlocks.length === 0) {
+    const DEFAULT_ORDER = ['HERO', 'MARQUEE', 'ABOUT', 'SKILLS', 'EXPERIENCE', 'SERVICES', 'STATS', 'PROJECTS', '3D', 'AWARDS', 'TESTIMONIALS', 'FOOTER'];
+    sortedBlocks = DEFAULT_ORDER.map((type, i) => ({
+      id: `fallback-${i}`,
+      blockType: type,
+      orderIndex: i,
+      isVisible: true
+    }));
   }
 
   const isSmoothScroll = (!isMobileView && !isCardPreview) && (theme?.customTexts?.smooth_scroll === 'true');

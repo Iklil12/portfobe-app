@@ -74,6 +74,7 @@ export default function PortfolioClientWrapper({
       <style dangerouslySetInnerHTML={{
         __html: `
         html { overflow-y: scroll; }
+        html.skip-splash .splash-screen { display: none !important; opacity: 0 !important; pointer-events: none !important; z-index: -1 !important; visibility: hidden !important; }
         .splash-screen { position: fixed; inset: 0; width: 100vw; z-index: 9999; background-color: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.8s cubic-bezier(0.76, 0, 0.24, 1); }
         .curtain-up { transform: translateY(-100%); opacity: 0; pointer-events: none; }
         .splash-text { color: #ffffff; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: bold; opacity: 0; animation: blurFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
@@ -82,6 +83,17 @@ export default function PortfolioClientWrapper({
         @keyframes blurFadeIn { 0% { opacity: 0; filter: blur(5px); transform: translateY(10px); } 100% { opacity: 1; filter: blur(0px); transform: translateY(0); } }
         @keyframes loadProgress { 0% { width: 0%; } 40% { width: 60%; } 100% { width: 100%; } }
       `}} />
+
+      {/* Synchronous script execution before paint to prevent FOUC */}
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          try {
+            if (sessionStorage.getItem('_pfIntroPlayed_${subdomain}')) {
+              document.documentElement.classList.add('skip-splash');
+            }
+          } catch(e) {}
+        `
+      }} />
 
       {!removeSplash && showSplash && (
         <div className={`splash-screen ${liftCurtain ? 'curtain-up' : ''}`}>

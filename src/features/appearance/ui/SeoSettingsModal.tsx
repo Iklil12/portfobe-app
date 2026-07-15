@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { X, Globe, Share2, Image as ImageIcon, RotateCcw } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useThemeEditorState, useThemeEditorActions } from '../model/useThemeEditor';
+import { ThemeEditorState, ThemeEditorActions } from '../store/types';
 
 
-export function SeoSettingsModal({ state, actions }: { state: useThemeEditorState; actions: useThemeEditorActions }) {
-  const customTexts = state.livePreviewTheme?.customTexts || {};
+import { selectLivePreviewData } from '@/features/appearance/store/useEditorStore';
+
+export function SeoSettingsModal({ state, actions }: { state: ThemeEditorState; actions: ThemeEditorActions }) {
+  const customTexts = state.customTexts || {};
   
-  const profile = state.livePreviewData?.profile || {};
+  const profile = selectLivePreviewData(state)?.profile || {};
 
   // Computed fallback values based on user's real profile
   const fallbackTitle = `${profile.fullName || 'Your Name'} - ${profile.profession || 'Creative Professional'}`;

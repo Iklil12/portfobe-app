@@ -64,6 +64,7 @@ const PUBLIC_API_ROUTES = [
   "/api/search",
   "/api/support",
   "/api/callbacks",
+  "/api/debug/appearance"
 ];
 
 // ── API Routes khusus ADMIN ──────────────────────────────────────────────────

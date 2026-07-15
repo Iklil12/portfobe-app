@@ -70,19 +70,6 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <script dangerouslySetInnerHTML={{__html: `
-          try {
-            var sub = window.location.hostname === 'localhost' 
-              ? window.location.pathname.split('/')[1] 
-              : window.location.hostname.split('.')[0];
-            if (sessionStorage.getItem('_pfIntroPlayed_' + sub)) {
-              var style = document.createElement('style');
-              style.innerHTML = '.splash-screen { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
-              document.head.appendChild(style);
-            }
-          } catch(e) {}
-        `}} />
-
       </head>
       <body className="min-h-full flex flex-col text-gray-900 bg-white transition-colors duration-300 overflow-x-clip w-full relative" suppressHydrationWarning>
         <Providers>

@@ -25,7 +25,8 @@ export const LazyImage = ({ src, alt, className, sizes, fallbackSrc }: { src: st
         unoptimized={
           imgSrc.includes('b-cdn.net') || 
           imgSrc.includes('bunnycdn') || 
-          imgSrc.includes('mediadelivery.net')
+          imgSrc.includes('mediadelivery.net') ||
+          imgSrc.includes('dicebear.com')
         }
         onLoad={() => setIsLoaded(true)}
         onError={() => {

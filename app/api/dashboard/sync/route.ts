@@ -22,8 +22,11 @@ export async function GET(req: Request) {
     return NextResponse.json(responseData);
   } catch (error: unknown) {
     if (getErrorMessage(error).includes(":")) {
-      const [status, msg] = getErrorMessage(error).split(":");
-      return NextResponse.json({ error: msg }, { status: parseInt(status) });
+      const [statusStr, msg] = getErrorMessage(error).split(":");
+      const status = parseInt(statusStr);
+      if (!isNaN(status) && status >= 200 && status <= 599) {
+        return NextResponse.json({ error: msg }, { status });
+      }
     }
     console.error("Dashboard Sync API Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

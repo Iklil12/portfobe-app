@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "test": "vitest",
+    "test:e2e": "playwright test",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -62,6 +63,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4",
     "@types/bad-words": "^3.0.3",
     "@types/bcrypt": "^6.0.0",

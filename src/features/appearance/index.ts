@@ -15,6 +15,5 @@ export { ThemeSelectionModal } from './ui/ThemeSelectionModal';
 
 export { GlobalCursor } from './ui/GlobalCursor';
 // Export Models (Hooks & State)
-export { useThemeEditor, FORBIDDEN_BLOCKS_PER_THEME } from './model/useThemeEditor';
-
-export type { ThemeEditorState, ThemeEditorActions, PageBlock } from './model/useThemeEditor';
+export { FORBIDDEN_BLOCKS_PER_THEME } from './store/types';
+export type { ThemeEditorState, ThemeEditorActions, PageBlock } from './store/types';

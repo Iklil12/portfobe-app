@@ -18,7 +18,7 @@ export function RightPanel({
   activeTab?: 'theme' | 'pages' | 'resume',
   selectedPage?: 'home' | 'gallery'
 }) {
-  const { isEditorCollapsed, livePreviewTheme } = state;
+  const { isEditorCollapsed, customTexts } = state;
 
   if (activeTab === 'resume') {
     return null;
@@ -46,11 +46,11 @@ export function RightPanel({
 
                 <div>
                   <GalleryDesignPicker 
-                    designStyle={livePreviewTheme?.customTexts?.galleryDesign} 
+                    designStyle={customTexts?.galleryDesign} 
                     setDesign={(val: string) => actions.updateCustomText('galleryDesign', val)} 
                   />
                   <GalleryLayoutPicker 
-                    layoutStyle={livePreviewTheme?.customTexts?.galleryTemplate} 
+                    layoutStyle={customTexts?.galleryTemplate} 
                     setLayout={(val: string) => actions.updateCustomText('galleryTemplate', val)} 
                   />
 

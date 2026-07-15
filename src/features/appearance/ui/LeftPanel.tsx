@@ -7,6 +7,7 @@ import { DraftManagerModal } from './DraftManagerModal';
 import { SaveDraftModal } from './SaveDraftModal';
 import { ProjectSelectionModal } from './ProjectSelectionModal';
 import { THEMES_DATA } from '@/features/themes';
+import { selectLivePreviewData } from '@/features/appearance/store/useEditorStore';
 import { 
   Layout, Film, Bolt, Grid, Star, Layers, Box, Move, 
   Columns, Newspaper, Moon, Waves, Square, Video, Image, Gem, 
@@ -45,10 +46,10 @@ export function LeftPanel({
 }) {
   const {
     isEditorCollapsed, isSavingDraft, isPublishing, activeTheme, splashScreen,
-    isThemeModalOpen, showProModal, isDraftsModalOpen, isLoading, livePreviewData,
+    isThemeModalOpen, showProModal, isDraftsModalOpen, isLoading,
     favorites, drafts, activeDraftId, activeDraftName, publishedDraftId, isDirty,
-    hasUnpublishedChanges, isSaveDraftModalOpen, selectedProjects, subdomain: stateSubdomain,
-    previewMode, themeColor, fontHeading, fontBody, cardStyle, buttonShape, livePreviewTheme
+    isSaveDraftModalOpen, selectedProjects, subdomain: stateSubdomain,
+    previewMode, themeColor, fontHeading, fontBody, cardStyle, buttonShape, customTexts
   } = state;
 
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
@@ -59,17 +60,18 @@ export function LeftPanel({
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const touchOrigin = React.useRef<'handle' | 'content'>('content');
 
+  const livePreviewData = selectLivePreviewData(state);
   const subdomain = stateSubdomain || livePreviewData?.subdomain;
   const userPlan = livePreviewData?.plan || 'FREE';
 
   const {
     setIsThemeModalOpen, setActiveTheme, setShowProModal, setIsDraftsModalOpen,
-    setIsSaveDraftModalOpen, saveDraft, publishDesign, loadDraft, toggleFavorite, setSelectedProjects,
-    setThemeColor, setFontHeading, setFontBody, setCardStyle, setButtonShape, setSplashScreen, updateCustomText
+    setIsSaveDraftModalOpen, saveSettings, loadDraft, toggleFavorite, setSelectedProjects,
+    setThemeColor, setFontHeading, setFontBody, setCardStyle, setButtonShape, setSplashScreen, updateCustomText, exitDraft
   } = actions;
 
   const isCurrentlyLive = activeDraftId ? activeDraftId === publishedDraftId : publishedDraftId === null;
-  const canPublish = isDirty || !isCurrentlyLive || hasUnpublishedChanges;
+  const canPublish = isDirty || !isCurrentlyLive;
 
   const ActiveThemeIcon = THEME_ICONS[activeTheme] || Box;
 
@@ -126,11 +128,11 @@ export function LeftPanel({
       <DraftManagerModal
         isOpen={isDraftsModalOpen} onClose={() => setIsDraftsModalOpen(false)}
         drafts={drafts} activeDraftId={activeDraftId} publishedDraftId={publishedDraftId}
-        onLoadDraft={loadDraft}
+        onLoadDraft={(id) => { loadDraft(id); setIsDraftsModalOpen(false); }}
       />
       <SaveDraftModal
         isOpen={isSaveDraftModalOpen} onClose={() => setIsSaveDraftModalOpen(false)}
-        onSave={(name, desc) => saveDraft(name, desc)} isSaving={isSavingDraft}
+        onSave={(name, desc) => saveSettings({ draftName: name })} isSaving={isSavingDraft}
       />
       <ProjectSelectionModal
         isOpen={isProjectModalOpen} onClose={() => setIsProjectModalOpen(false)}
@@ -149,7 +151,7 @@ export function LeftPanel({
         ${isMobileDrawerOpen ? 'translate-y-32 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}
       `}>
         <button 
-          onClick={() => { if (activeDraftId) saveDraft(); else setIsSaveDraftModalOpen(true); }} 
+          onClick={() => { if (activeDraftId) saveSettings(); else setIsSaveDraftModalOpen(true); }} 
           disabled={isSavingDraft || isPublishing || (activeDraftId ? !isDirty : false)}
           className={`flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full transition-all ${activeDraftId && !isDirty ? 'text-white/30' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}
         >
@@ -169,7 +171,7 @@ export function LeftPanel({
         <div className="w-px h-5 bg-white/10 mx-1"></div>
 
         <button 
-          onClick={publishDesign} 
+          onClick={() => saveSettings({ isPublishing: true })} 
           disabled={!canPublish || isPublishing}
           className={`flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full transition-all ${canPublish ? 'bg-[#0099ff] text-white shadow-lg shadow-[#0099ff]/20' : 'bg-transparent text-white/30'}`}
         >
@@ -223,13 +225,13 @@ export function LeftPanel({
               </span>
 
               {/* Styled Status Badge */}
-              {publishedDraftId === activeDraftId && !hasUnpublishedChanges && (
+              {publishedDraftId === activeDraftId && !isDirty && (
                 <span className="inline-flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold shrink-0">
                   <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
                   LIVE
                 </span>
               )}
-              {publishedDraftId === activeDraftId && hasUnpublishedChanges && (
+              {publishedDraftId === activeDraftId && isDirty && (
                 <span className="inline-flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold shrink-0">
                   <span className="w-1 h-1 rounded-full bg-amber-400 animate-pulse" />
                   CHANGES
@@ -245,7 +247,7 @@ export function LeftPanel({
 
             {/* Exit/Keluar Button */}
             <button
-              onClick={actions.exitDraft}
+              onClick={exitDraft}
               className="flex items-center gap-1.5 text-[10px] font-semibold text-zinc-400 hover:text-red-400 bg-white/5 hover:bg-red-500/10 px-2.5 py-1 rounded-md transition-all duration-200 border border-white/5 hover:border-red-500/20 shadow-sm"
             >
               <LogOut className="w-3 h-3" />
@@ -319,17 +321,17 @@ export function LeftPanel({
               
               {/* Status Perubahan / Live */}
               <div className="mt-3.5 px-1.5 flex items-center justify-between">
-                {isCurrentlyLive && !isDirty && !hasUnpublishedChanges && (
+                {isCurrentlyLive && !isDirty && (
                    <span className="text-[10px] font-semibold text-emerald-400 flex items-center gap-2 tracking-wide">
                      <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Currently Live
                    </span>
                 )}
-                {isCurrentlyLive && !isDirty && hasUnpublishedChanges && (
+                {isCurrentlyLive && isDirty && (
                    <span className="text-[10px] font-semibold text-[#ff9e00] flex items-center gap-2 tracking-wide">
                      <span className="w-1.5 h-1.5 bg-[#ff9e00] rounded-full animate-pulse"></span> Unpublished Changes
                    </span>
                 )}
-                {isDirty && (
+                {!isCurrentlyLive && isDirty && (
                    <span className="text-[10px] font-semibold text-sky-400 flex items-center gap-2 tracking-wide">
                      <span className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-pulse"></span> Unsaved Changes
                    </span>
@@ -466,11 +468,11 @@ export function LeftPanel({
 
                   <div className="flex flex-col gap-4">
                     <GalleryDesignPicker 
-                      designStyle={livePreviewTheme?.customTexts?.galleryDesign} 
+                      designStyle={customTexts?.galleryDesign} 
                       setDesign={(val: string) => actions.updateCustomText('galleryDesign', val)} 
                     />
                     <GalleryLayoutPicker 
-                      layoutStyle={livePreviewTheme?.customTexts?.galleryTemplate} 
+                      layoutStyle={customTexts?.galleryTemplate} 
                       setLayout={(val: string) => actions.updateCustomText('galleryTemplate', val)} 
                     />
                   </div>

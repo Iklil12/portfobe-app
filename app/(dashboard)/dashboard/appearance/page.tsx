@@ -2,7 +2,7 @@
 "use client";
 
 import React, { Suspense, useEffect, useState, useRef } from 'react';
-import { useThemeEditor } from '@/features/appearance';
+import { useEditorStore } from '@/features/appearance/store/useEditorStore';
 import Link from 'next/link';
 import { LeftPanel } from '@/features/appearance';
 import { RightPanel } from '@/features/appearance';
@@ -15,13 +15,20 @@ import { THEMES_DATA } from '@/features/themes';
 import { getEffectivePlan } from '@/features/billing';
 
 function AppearanceEditor() {
-  const { state, actions } = useThemeEditor();
+  const store = useEditorStore();
+  const state = store;
+  const actions = store;
   const [isModeDropdownOpen, setIsModeDropdownOpen] = useState(false);
   const modeDropdownRef = useRef<HTMLDivElement>(null);
   
   // Dock & Page States
   const [activeTab, setActiveTab] = useState<'theme' | 'pages' | 'resume'>('theme');
   const [selectedPage, setSelectedPage] = useState<'home' | 'gallery'>('home');
+
+  useEffect(() => {
+    store.fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Lock Editor Logic
   const effectivePlan = getEffectivePlan({ plan: state.userPlan, planExpiredAt: state.planExpiredAt ? new Date(state.planExpiredAt) : null });
@@ -99,7 +106,7 @@ function AppearanceEditor() {
   }
 
   const isCurrentlyLive = state.activeDraftId === state.publishedDraftId;
-  const canPublish = state.isDirty || (state.activeDraftId && state.activeDraftId !== state.publishedDraftId) || state.hasUnpublishedChanges;
+  const canPublish = state.isDirty || (state.activeDraftId && state.activeDraftId !== state.publishedDraftId) || state.isDirty;
 
   return (
     <main className="h-screen w-screen m-0 p-0 flex flex-col bg-[#111111] font-sans overflow-hidden fixed inset-0 z-[99999]">
@@ -177,8 +184,6 @@ function AppearanceEditor() {
             </div>
           </div>
 
-          {/* Split Mode Toggle - Removed as per user request to default to Fixed */}
-
           {/* Undo / Redo */}
           <div className="flex items-center gap-0.5">
             <button
@@ -205,8 +210,8 @@ function AppearanceEditor() {
           <div className={`hidden lg:flex items-center gap-1 transition-all duration-300 ${state.previewMode === 'desktop' ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
             <div className="w-px h-4 bg-white/10 mx-2"></div>
             <button
-              onClick={() => actions.zoomOut(state.previewMode === 'desktop' ? 'desktop' : 'mobile')}
-              disabled={state.previewMode === 'desktop' ? state.desktopZoom <= state.ZOOM_MIN : state.mobileZoom <= state.ZOOM_MIN}
+              onClick={() => actions.zoomOut()}
+              disabled={state.previewMode === 'desktop' || state.previewMode === 'split' ? state.desktopZoom <= 0.4 : state.mobileZoom <= 0.4}
               className="w-7 h-7 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-20 transition-all rounded-md"
             >
               <Minus className="w-3.5 h-3.5" />
@@ -215,8 +220,8 @@ function AppearanceEditor() {
               {Math.round((state.previewMode === 'desktop' || state.previewMode === 'split' ? state.desktopZoom : state.mobileZoom) * 100)}%
             </span>
             <button
-              onClick={() => actions.zoomIn(state.previewMode === 'desktop' ? 'desktop' : 'mobile')}
-              disabled={state.previewMode === 'desktop' ? state.desktopZoom >= state.ZOOM_MAX : state.mobileZoom >= (state.ZOOM_MAX_MOBILE || 1.5)}
+              onClick={() => actions.zoomIn()}
+              disabled={state.previewMode === 'desktop' || state.previewMode === 'split' ? state.desktopZoom >= 1.0 : state.mobileZoom >= 1.5}
               className="w-7 h-7 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-20 transition-all rounded-md"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -256,7 +261,7 @@ function AppearanceEditor() {
 
           <button
             onClick={() => {
-              if (state.activeDraftId) actions.saveDraft();
+              if (state.activeDraftId) actions.saveSettings();
               else actions.setIsSaveDraftModalOpen(true);
             }}
             disabled={state.isSavingDraft || state.isPublishing || (state.activeDraftId ? !state.isDirty : false) || isEditorLocked}
@@ -267,7 +272,7 @@ function AppearanceEditor() {
           </button>
 
           <button
-            onClick={actions.publishDesign}
+            onClick={() => actions.saveSettings({ isPublishing: true })}
             disabled={state.isSavingDraft || state.isPublishing || !canPublish || isEditorLocked}
             className="px-4 py-1.5 bg-[#0099ff] hover:bg-[#0077cc] text-white text-[11px] font-medium transition-all disabled:opacity-50 flex items-center gap-2 rounded-md shadow-sm"
           >

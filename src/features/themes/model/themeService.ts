@@ -3,7 +3,7 @@ import { logActivity } from '@/shared/lib/activity';
 import { safeStringifyJson, safeParseJson } from '@/shared/lib/safeJson';
 import { ensureUniversalBlocks } from '@/shared/lib/blockSeeder';
 import { getEffectivePlan } from '@/features/billing';
-import { invalidatePortfolioCache } from '@/shared/lib/redis';
+import { invalidatePortfolioCache, redis } from '@/shared/lib/redis';
 import { THEMES_DATA } from '@/features/themes';
 
 const rateLimitMap = new Map<string, { count: number, resetTime: number }>();
@@ -37,44 +37,81 @@ export async function getAppearance(email: string, mode?: string | null) {
     return liteData;
   }
 
+  const tStart = Date.now();
+  const cacheKey = `appearance_v2:${email}`;
+  // REDIS BYPASSED due to hanging issues:
+  // if (mode !== 'refresh') { ... } else { ... }
+
+
+  const tPrisma1 = Date.now();
+  console.log(`[getAppearance] Fetching Prisma userData...`);
   const userData = await prisma.user.findUnique({
     where: { email },
     include: {
       profile: true,
       siteAppearance: {
         include: { projects: { orderBy: { orderIndex: 'asc' } } }
-      },
-      links: { orderBy: { order: 'asc' } },
-      projects: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
-      certificates: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
-      testimonials: { orderBy: { order: 'asc' } },
-      pageBlocks: { orderBy: { orderIndex: 'asc' } }
+      }
     }
   });
+  console.log(`[getAppearance] Prisma userData finished (took ${Date.now() - tPrisma1}ms)`);
 
   if (!userData) return null;
 
-  if (userData.pageBlocks.length < 13) {
+  const tPrisma2 = Date.now();
+  console.log(`[getAppearance] Fetching Prisma Promise.all...`);
+  const [links, projects, certificates, testimonials, pageBlocks, drafts] = await Promise.all([
+    prisma.link.findMany({ where: { userId: userData.id }, orderBy: { order: 'asc' } }),
+    prisma.project.findMany({ where: { userId: userData.id, deletedAt: null }, orderBy: { createdAt: 'desc' } }),
+    prisma.certificate.findMany({ where: { userId: userData.id, deletedAt: null }, orderBy: { createdAt: 'desc' } }),
+    prisma.testimonial.findMany({ where: { userId: userData.id }, orderBy: { order: 'asc' } }),
+    prisma.pageBlock.findMany({ where: { userId: userData.id }, orderBy: { orderIndex: 'asc' } }),
+    prisma.themeDraft.findMany({ where: { userId: userData.id }, orderBy: { updatedAt: 'desc' }, include: { projects: { orderBy: { orderIndex: 'asc' } } } })
+  ]);
+  console.log(`[getAppearance] Prisma Promise.all finished (took ${Date.now() - tPrisma2}ms)`);
+
+  let finalPageBlocks = pageBlocks;
+  if (finalPageBlocks.length < 13) {
+    const tPrisma3 = Date.now();
+    console.log(`[getAppearance] Ensuring Universal Blocks...`);
     await ensureUniversalBlocks(userData.id);
-    userData.pageBlocks = await prisma.pageBlock.findMany({
+    finalPageBlocks = await prisma.pageBlock.findMany({
       where: { userId: userData.id },
       orderBy: { orderIndex: 'asc' }
     });
+    console.log(`[getAppearance] Ensuring Universal Blocks finished (took ${Date.now() - tPrisma3}ms)`);
   }
 
+  const tProcess = Date.now();
   const tokenKey = process.env.BUNNY_API_KEY || 'default_secret';
   const { signBunnyUrl } = require('@/shared/lib/bunnySign');
 
-  if (userData.projects && userData.projects.length > 0) {
-    (userData as any).projects = userData.projects.map((proj: any) => {
-      if (proj.projectType === 'video' && proj.mediaUrl) {
-        return { ...proj, mediaUrl: signBunnyUrl(proj.mediaUrl, tokenKey) };
-      }
-      return proj;
-    });
-  }
+  const processedProjects = projects.map((proj: any) => {
+    if (proj.projectType === 'video' && proj.mediaUrl) {
+      return { ...proj, mediaUrl: signBunnyUrl(proj.mediaUrl, tokenKey) };
+    }
+    return proj;
+  });
 
-  return userData;
+  const fullData = {
+    ...userData,
+    profile: userData.profile,
+    siteAppearance: userData.siteAppearance,
+    links,
+    projects: processedProjects,
+    certificates,
+    testimonials,
+    pageBlocks: finalPageBlocks,
+    drafts
+  };
+
+  const tRedisSet = Date.now();
+  console.log(`[getAppearance] Setting redis cache bypassed...`);
+  // try { await redis.set(cacheKey, JSON.stringify(fullData), 'EX', 60); } catch (e) {}
+  console.log(`[getAppearance] Redis set finished (took ${Date.now() - tRedisSet}ms)`);
+  console.log(`[getAppearance] TOTAL TIME: ${Date.now() - tStart}ms`);
+
+  return fullData;
 }
 
 

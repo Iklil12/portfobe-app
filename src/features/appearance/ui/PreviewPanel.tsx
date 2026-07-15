@@ -95,6 +95,7 @@ const ResizeHandle = ({
   )
 }
 import type { ThemeEditorState, ThemeEditorActions } from '@/features/appearance';
+import { selectLivePreviewData } from '@/features/appearance/store/useEditorStore';
 
 export function PreviewPanel({ 
   state, 
@@ -145,10 +146,9 @@ export function PreviewPanel({
     isEditorCollapsed,
     subdomain,
     isLive,
-    livePreviewData,
-    livePreviewTheme,
     previewMode
   } = state;
+  const livePreviewData = selectLivePreviewData(state);
 
   useEffect(() => {
     if (previewMode === 'desktop') {
@@ -166,7 +166,7 @@ export function PreviewPanel({
   const { setIsEditorCollapsed } = actions;
 
   useEffect(() => {
-    const currentTemplate = livePreviewTheme?.themeTemplate;
+    const currentTemplate = state.activeTheme;
     
     if (prevThemeRef.current !== null && currentTemplate !== prevThemeRef.current) {
       setIsChangingTheme(true);
@@ -179,30 +179,38 @@ export function PreviewPanel({
       return () => clearTimeout(timer);
     }
     prevThemeRef.current = currentTemplate || null;
-  }, [livePreviewTheme?.themeTemplate]);
+  }, [state.activeTheme]);
 
   const dataRef = useRef(livePreviewData);
-  const themeRef = useRef(livePreviewTheme);
+  const themeRef = useRef(livePreviewData?.theme);
   const activeTabRef = useRef(activeTab);
   const selectedPageRef = useRef(selectedPage);
 
   useEffect(() => {
     dataRef.current = livePreviewData;
-    themeRef.current = livePreviewTheme;
+    themeRef.current = livePreviewData?.theme;
     activeTabRef.current = activeTab;
     selectedPageRef.current = selectedPage;
-  }, [livePreviewData, livePreviewTheme, activeTab, selectedPage]);
+  }, [livePreviewData, activeTab, selectedPage]);
 
   const sendDataToIframe = useCallback(() => {
     if (iframeRef.current?.contentWindow && iframeReady.current) {
-      iframeRef.current.contentWindow.postMessage({
+      const payload = {
         type: 'PREVIEW_UPDATE',
         data: dataRef.current,
         theme: themeRef.current,
         activeTab: activeTabRef.current,
         selectedPage: selectedPageRef.current,
         isMobileView: false
-      }, window.location.origin);
+      };
+      
+      console.log("[PreviewPanel] SENDING DATA TO IFRAME:", {
+        themeTemplate: payload.theme?.themeTemplate,
+        fullName: payload.data?.profile?.fullName,
+        dataRef: payload.data,
+      });
+
+      iframeRef.current.contentWindow.postMessage(payload, window.location.origin);
     }
     if (mobileIframeRef.current?.contentWindow && mobileIframeReady.current) {
       mobileIframeRef.current.contentWindow.postMessage({
@@ -242,7 +250,7 @@ export function PreviewPanel({
       sendDataToIframe();
     }, 100);
     return () => clearTimeout(timer);
-  }, [livePreviewData, livePreviewTheme, activeTab, selectedPage, sendDataToIframe]);
+  }, [livePreviewData, activeTab, selectedPage, sendDataToIframe]);
 
   useEffect(() => {
     const calculateScale = () => {

@@ -68,15 +68,19 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return <SystemErrorUI error={swrError} reset={() => window.location.reload()} />;
   }
 
+  // Hapus prefix bahasa (seperti /en/ atau /id/) dari pathname agar pengecekan rute valid
+  const normalizedPathname = pathname ? pathname.replace(/^\/[a-zA-Z]{2}(?=\/|$)/, '') : '';
+  const basePath = normalizedPathname === '' ? '/' : normalizedPathname;
+
   // Halaman privat yang BENAR-BENAR membutuhkan SessionProvider (NextAuth)
-  const isPrivatePage = pathname?.startsWith("/dashboard") ||
-    pathname?.startsWith("/impersonate") ||
-    pathname?.startsWith("/checkout") ||
-    pathname?.startsWith("/receipt") ||
-    pathname?.startsWith("/register") ||
-    pathname?.startsWith("/login") ||
-    pathname?.startsWith("/verify") ||
-    pathname?.startsWith("/reset-password");
+  const isPrivatePage = basePath.startsWith("/dashboard") ||
+    basePath.startsWith("/impersonate") ||
+    basePath.startsWith("/checkout") ||
+    basePath.startsWith("/receipt") ||
+    basePath.startsWith("/register") ||
+    basePath.startsWith("/login") ||
+    basePath.startsWith("/verify") ||
+    basePath.startsWith("/reset-password");
 
   // Semua route selain yang di atas (termasuk /[subdomain], /templates, /, /pricing) adalah publik
   const isPublicPage = !isPrivatePage;

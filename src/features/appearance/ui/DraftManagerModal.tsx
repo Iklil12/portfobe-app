@@ -249,7 +249,7 @@ export function DraftManagerModal({
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 mb-10 md:mb-12 pb-8 border-b border-white/5">
                   <button 
-                    onClick={() => onLoadDraft(selectedDraft)}
+                    onClick={() => onLoadDraft(selectedDraft.id)}
                     disabled={activeDraftId === selectedDraft.id}
                     className={`w-full sm:w-auto justify-center px-10 py-4 rounded-none text-[11px] font-mono font-bold uppercase tracking-[0.2em] transition-all flex items-center gap-3 ${
                       activeDraftId === selectedDraft.id 
