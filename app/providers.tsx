@@ -80,6 +80,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     basePath.startsWith("/register") ||
     basePath.startsWith("/login") ||
     basePath.startsWith("/verify") ||
+    basePath.startsWith("/pricing") ||
     basePath.startsWith("/reset-password");
 
   // Semua route selain yang di atas (termasuk /[subdomain], /templates, /, /pricing) adalah publik

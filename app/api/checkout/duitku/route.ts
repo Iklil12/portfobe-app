@@ -14,6 +14,12 @@ export async function POST(req: Request) {
 
     const { plan, duration, coupon } = await req.json();
 
+    const isAdmin = session.user.role === "ADMIN";
+
+    if (plan === 'supreme' && !isAdmin) {
+      return NextResponse.json({ error: "Paket Supreme sedang dinonaktifkan sementara waktu." }, { status: 400 });
+    }
+
     if (!['pro', 'supreme'].includes(plan)) {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }

@@ -9,12 +9,16 @@ import { PricingPlansGrid } from '@/features/billing';
 import { PricingFeatureMatrix } from '@/features/billing';
 import { PricingDomainAdvantages } from '@/features/billing';
 import { useTranslations } from 'next-intl';
+import { useSession } from 'next-auth/react';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
   const t = useTranslations('Pricing');
+  
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === 'ADMIN';
 
   const { data: pricing } = useSWR('/api/pricing', fetcher);
 
@@ -65,7 +69,7 @@ export default function PricingPage() {
         { text: t('fVipSupport'), active: false },
       ]
     }]),
-    ...(pricing && !pricing.supreme ? [] : [{
+    ...(pricing && pricing.supreme ? [{
       name: "Supreme VIP",
       tagline: t('supremeTagline'),
       originalPrice: pricing && pricing.supreme ? formatIDR(pricing.supreme[billingCycle].original) : "Rp 89.000",
@@ -74,7 +78,8 @@ export default function PricingPage() {
       badge: t('powerUser'),
       isPro: true,
       isSupreme: true,
-      buttonText: t('getSupreme'),
+      disabled: !isAdmin,
+      buttonText: isAdmin ? t('getSupreme') : 'DITUTUP',
       link: "/checkout?plan=supreme",
       features: [
         { text: t('fAllPro'), active: true },
@@ -84,7 +89,7 @@ export default function PricingPage() {
         { text: t('fPriorityVip'), active: true },
         { text: t('fConnectDomain'), active: billingCycle === 'yearly' },
       ]
-    }])
+    }] : [])
   ];
 
   return (
@@ -97,7 +102,7 @@ export default function PricingPage() {
 
         <PricingPlansGrid plans={plans} />
 
-        <PricingFeatureMatrix pricing={pricing} billingCycle={billingCycle} formatIDR={formatIDR} />
+        <PricingFeatureMatrix pricing={pricing} billingCycle={billingCycle} formatIDR={formatIDR} isAdmin={isAdmin} />
 
         <PricingDomainAdvantages />
 

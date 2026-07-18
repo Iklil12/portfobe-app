@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Check, X, Layers, Grid, Palette, Award, EyeOff, Globe, Gift, BarChart2, Code, Headphones, Sparkles, HelpCircle, Crown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pricing: any, billingCycle: 'monthly' | 'yearly', formatIDR: (num: number) => string }) {
+export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR, isAdmin = false }: { pricing: any, billingCycle: 'monthly' | 'yearly', formatIDR: (num: number) => string, isAdmin?: boolean }) {
   const t = useTranslations('Pricing');
   return (
         <div className="mt-32 max-w-7xl mx-auto">
@@ -83,12 +83,18 @@ export function PricingFeatureMatrix({ pricing, billingCycle, formatIDR }: { pri
                           {billingCycle === 'monthly' ? t('perMonth') : t('perMonthYearly')}
                         </span>
                       </div>
-                      <Link
-                        href="/checkout?plan=supreme"
-                        className="mt-6 w-full py-2.5 px-4 text-[10px] font-sans font-medium uppercase tracking-widest text-white border border-white/20 hover:bg-white/5 hover:border-white/30 transition-all text-center rounded-lg active:scale-95"
-                      >
-                        {t('getSupreme')}
-                      </Link>
+                      {isAdmin ? (
+                        <Link
+                          href="/checkout?plan=supreme"
+                          className="mt-6 w-full py-2.5 px-4 text-[10px] font-sans font-medium uppercase tracking-widest text-white border border-white/20 hover:bg-white/5 hover:border-white/30 transition-all text-center rounded-lg active:scale-95"
+                        >
+                          {t('getSupreme')}
+                        </Link>
+                      ) : (
+                        <span className="mt-6 block w-full py-2.5 px-4 text-[10px] font-sans font-medium uppercase tracking-widest text-white/50 border border-white/10 text-center rounded-lg cursor-not-allowed bg-zinc-800">
+                          DITUTUP
+                        </span>
+                      )}
                     </div>
                   </th>
                 </tr>

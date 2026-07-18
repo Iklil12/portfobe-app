@@ -55,16 +55,28 @@ export function PricingPlansGrid({ plans }: { plans: any[] }) {
             </div>
           </div>
 
-          <Link 
-            href={plan.link}
-            className={`block w-full text-center py-4 text-xs font-sans font-medium uppercase tracking-widest transition-all active:scale-95 ${
-              plan.isSupreme || plan.isPro
-                ? 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'
-                : 'bg-transparent border border-white/20 text-white hover:bg-white/5'
-            }`}
-          >
-            {plan.buttonText}
-          </Link>
+          {plan.disabled ? (
+            <span
+              className={`block w-full text-center py-4 text-xs font-sans font-medium uppercase tracking-widest transition-all cursor-not-allowed opacity-50 ${
+                plan.isSupreme || plan.isPro
+                  ? 'bg-zinc-800 text-zinc-400'
+                  : 'bg-transparent border border-white/20 text-white'
+              }`}
+            >
+              {plan.buttonText}
+            </span>
+          ) : (
+            <Link 
+              href={plan.link}
+              className={`block w-full text-center py-4 text-xs font-sans font-medium uppercase tracking-widest transition-all active:scale-95 ${
+                plan.isSupreme || plan.isPro
+                  ? 'bg-[#ff9e00] text-black hover:bg-[#ffaa22]'
+                  : 'bg-transparent border border-white/20 text-white hover:bg-white/5'
+              }`}
+            >
+              {plan.buttonText}
+            </Link>
+          )}
         </div>
       ))}
     </div>
