@@ -1,12 +1,13 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocale } from 'next-intl';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from '@/src/i18n/routing';
 import { Globe, ChevronDown, Check } from 'lucide-react';
 
 export default function LanguageSwitcherPublic({ isMobile = false }: { isMobile?: boolean } = {}) {
   const locale = useLocale();
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -24,15 +25,7 @@ export default function LanguageSwitcherPublic({ isMobile = false }: { isMobile?
     setIsOpen(false);
     if (nextLocale === locale) return;
     
-    const segments = pathname.split('/');
-    if (segments[1] === 'en' || segments[1] === 'id') {
-      segments[1] = nextLocale;
-    } else {
-      segments.splice(1, 0, nextLocale);
-    }
-    
-    const newPath = segments.join('/') || '/';
-    window.location.href = newPath;
+    router.replace(pathname, { locale: nextLocale });
   };
 
   const languages = [

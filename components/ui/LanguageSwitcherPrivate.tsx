@@ -1,12 +1,13 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocale } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from '@/src/i18n/routing';
 import { Globe, ChevronDown, Check } from 'lucide-react';
 
 export default function LanguageSwitcherPrivate() {
   const locale = useLocale();
   const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -24,11 +25,14 @@ export default function LanguageSwitcherPrivate() {
     setIsOpen(false);
     if (nextLocale === locale) return;
     
-    // Set cookie untuk rute privat (dashboard)
-    document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
-    
     // Hard reload is generally safer to ensure all context, HTML tags, and dictionaries update cleanly
-    window.location.reload();
+    // Dengan next-intl router, router.replace akan menangani update cookie secara otomatis
+    router.replace(pathname, { locale: nextLocale });
+    
+    // Memberikan waktu sedikit sebelum reload agar cookie tersimpan
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   const languages = [
