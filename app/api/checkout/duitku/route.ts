@@ -103,7 +103,11 @@ export async function POST(req: Request) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://portfo.be";
     const productName = `Portfobe ${plan.toUpperCase()} - ${duration}`;
 
-    // Payload JSON (TANPA signature di dalam body)
+    // Generasi Signature MD5 untuk payload body Duitku: MD5(merchantCode + merchantOrderId + paymentAmount + apiKey)
+    const signatureBodyStr = `${merchantCode}${merchantOrderId}${finalAmountInt}${apiKey}`;
+    const signatureBody = crypto.createHash("md5").update(signatureBodyStr).digest("hex");
+
+    // Payload JSON resmi Duitku API
     const payload = {
       merchantCode,
       paymentAmount: finalAmountInt,
@@ -113,6 +117,7 @@ export async function POST(req: Request) {
       customerVaName: user.profile?.fullName || user.email.split('@')[0],
       callbackUrl: `${appUrl}/api/callbacks/duitku`,
       returnUrl: `${appUrl}/checkout/success`,
+      signature: signatureBody,
       expiryPeriod: 1440, // 24 jam dalam menit
       itemDetails: [
         {
@@ -123,15 +128,15 @@ export async function POST(req: Request) {
       ]
     };
 
-    const isSandbox = process.env.DUITKU_ENV !== 'production';
+    const isSandbox = process.env.DUITKU_ENV === 'sandbox';
     const apiUrl = isSandbox 
       ? 'https://api-sandbox.duitku.com/api/merchant/createInvoice'
       : 'https://api-prod.duitku.com/api/merchant/createInvoice';
 
-    // Signature Headers Duitku POP API: SHA256(merchantCode + timestamp + merchantKey)
+    // Signature Headers Duitku POP API: SHA256(merchantCode + timestamp + apiKey)
     const timestamp = Date.now().toString();
-    const signatureStr = `${merchantCode}${timestamp}${apiKey}`;
-    const signature = crypto.createHash('sha256').update(signatureStr).digest('hex');
+    const signatureHeaderStr = `${merchantCode}${timestamp}${apiKey}`;
+    const signatureHeader = crypto.createHash('sha256').update(signatureHeaderStr).digest('hex');
 
     const res = await fetch(apiUrl, {
       method: 'POST',
@@ -139,7 +144,7 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'User-Agent': 'Portfobe/1.0',
-        'x-duitku-signature': signature,
+        'x-duitku-signature': signatureHeader,
         'x-duitku-timestamp': timestamp,
         'x-duitku-merchantcode': merchantCode
       },
